@@ -29,6 +29,10 @@ class UserDataSingleton {
   // 私有构造函数防止外部实例化
   UserDataSingleton._internal();
 
+  void init(SharedPreferences pre) {
+    prefs = pre;
+  }
+
   // 数据操作方法
   void setMap(String key, Map<String, dynamic> value) {
     _userData[key] = value;
