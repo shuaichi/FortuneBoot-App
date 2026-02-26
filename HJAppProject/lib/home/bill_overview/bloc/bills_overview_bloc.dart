@@ -35,6 +35,8 @@ class BillsOverviewBloc extends Bloc<BillsOverviewEvent, BillsOverviewState> {
     emit(state.copyWith(status: () => BillsOverviewStatus.loading));
     print('🔍 DEBUG: BLoC状态设置为loading');
     
+    _billsRepository.refreshBills(clear: false);
+
     await emit.forEach<List<BillItem>>(
       _billsRepository.getBills(),
       onData: (bills) {
