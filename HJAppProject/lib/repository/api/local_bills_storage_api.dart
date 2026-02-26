@@ -201,14 +201,19 @@ class LocalStorageBillsApi extends BillsApi {
       return;
     }
 
-    var billResponse = await _billService.getPage(
-      pageNum: pageNum,
-      pageSize: pageSize,
-      bookId: '$bookId',
-    );
-    print('🔍 DEBUG: API响应 - code: ${billResponse.code}, data: ${billResponse.data != null ? "有数据" : "无数据"}');
-    await refreshStatic(startTime, endTime);
-    if (billResponse.code == 0) {
+    try {
+      var billResponse = await _billService.getPage(
+        pageNum: pageNum,
+        pageSize: pageSize,
+        bookId: '$bookId',
+      );
+      print('🔍 DEBUG: API响应 - code: ${billResponse.code}, data: ${billResponse.data != null ? "有数据" : "无数据"}');
+      try {
+        await refreshStatic(startTime, endTime);
+      } catch (e) {
+        print('❌ ERROR: 刷新统计数据失败: $e');
+      }
+      if (billResponse.code == 0) {
       print('🔍 DEBUG: 开始解析API响应数据...');
 
       // 检查 billResponse.data 是否存在
@@ -280,10 +285,15 @@ class LocalStorageBillsApi extends BillsApi {
       print('🔍 DEBUG: hasMore: $hasMore, total: $allBillsCount');
       _billStreamController.add(items);
       // _setValue(kBillsCollectionKey, json.encode(items));
-    } else {
-      print('❌ ERROR: API响应失败 - code: ${billResponse.code}, message: ');
+      } else {
+        print('❌ ERROR: API响应失败 - code: ${billResponse.code}, message: ');
+      }
+    } catch (e, stackTrace) {
+      print('❌ ERROR: queryNewBills发生异常: $e');
+      print('❌ ERROR: 堆栈跟踪: $stackTrace');
+    } finally {
+      isLoadingMore = false;
     }
-    isLoadingMore = false;
   }
 
   @override
