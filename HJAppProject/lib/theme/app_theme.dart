@@ -235,7 +235,7 @@ class AppTheme {
           color: errorColor,
         ),
       ),
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         color: cardColor,
         elevation: 2,
         shape: RoundedRectangleBorder(
@@ -267,7 +267,7 @@ class AppTheme {
           ),
         ),
       ),
-      dialogTheme: DialogTheme(
+      dialogTheme: DialogThemeData(
         backgroundColor: cardColor,
         elevation: 4,
         shape: RoundedRectangleBorder(

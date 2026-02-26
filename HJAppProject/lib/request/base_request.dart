@@ -9,7 +9,12 @@ abstract class BaseService {
 
 class AccountErrorReport extends ParseErrorLogger {
   @override
-  void logError(Object error, StackTrace stackTrace, RequestOptions options) {
+  void logError(
+    Object error,
+    StackTrace stackTrace,
+    RequestOptions options, {
+    Response? response,
+  }) {
     debugPrint('LoginErrorReport: $error $stackTrace $options');
   }
 }
