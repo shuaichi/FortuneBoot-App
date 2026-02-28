@@ -44,8 +44,11 @@ class TagTreeNode<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
-    final tt = Theme.of(context).textTheme;
+    // Design Tokens aligned with CategoryTreeNode
+    const Color surfaceColor = Colors.white;
+    const Color primaryText = Colors.black87;
+    const Color secondaryText = Colors.grey;
+    const double cardRadius = 16.0;
 
     final List<T> children = childrenOf(node);
     final bool hasChildren = children.isNotEmpty;
@@ -54,311 +57,214 @@ class TagTreeNode<T> extends StatelessWidget {
     final String? remark = remarkOf(node);
     final bool expanded = isExpanded(node);
 
-    final Widget leading = Icon(
-      hasChildren ? Icons.label : Icons.label_outline,
-      size: 16,
-      color: cs.secondary,
+    // Modern typography style
+    final TextStyle titleStyle = TextStyle(
+      fontSize: depth == 0 ? 16 : 14,
+      fontWeight: depth == 0 ? FontWeight.bold : FontWeight.w500,
+      color: primaryText,
     );
 
-    // 构建状态标识：四态固定展示（支出/收入/转账/启用），true高亮、false置灰，使用主题色
-    Widget _buildStatusChips() {
-      final List<Widget> chips = [];
-      final bool exp = canExpenseOf?.call(node) ?? false;
-      final bool inc = canIncomeOf?.call(node) ?? false;
-      final bool trf = canTransferOf?.call(node) ?? false;
-      final bool en = enableOf?.call(node) ?? true;
+    final TextStyle subtitleStyle = TextStyle(
+      fontSize: 13,
+      color: secondaryText,
+    );
 
-      // 固定四态展示，颜色由 _buildStatusChip 内部统一映射
-      chips.add(_buildStatusChip('支出', exp, 'expense', context));
-      chips.add(_buildStatusChip('收入', inc, 'income', context));
-      chips.add(_buildStatusChip('转账', trf, 'transfer', context));
-      chips.add(_buildStatusChip('启用', en, 'enabled', context));
-
-      // 在四态之后追加中性信息的子标签数量Chip（始终展示）
-      final int childrenCount = _resolveChildrenCount(node, children);
-      chips.add(_buildChildrenCountChip(context, childrenCount));
-      
-      return Wrap(
-        spacing: 4,
-        runSpacing: 4,
-        children: chips,
-      );
-    }
-
-
-    final Widget menu = Tooltip(
-      message: '更多操作',
-      child: PopupMenuButton<int>(
-        tooltip: '更多操作',
-        icon: const Icon(Icons.more_vert),
-        onSelected: (value) {
-          if (value == 0) {
-            onModify(node);
-          } else if (value == 1) {
-            onMoveToRecycle(node);
-          } else if (value == 2) {
-            onAddChild(node);
-          }
-        },
-        itemBuilder: (context) => [
-          PopupMenuItem(
-            value: 2,
-            child: Row(
-              children: [
-                Icon(Icons.add, color: cs.tertiary),
-                const SizedBox(width: 8),
-                const Text('新增子标签'),
-              ],
-            ),
-          ),
-          PopupMenuItem(
-            value: 0,
-            child: Row(
-              children: [
-                Icon(Icons.edit, color: cs.primary),
-                const SizedBox(width: 8),
-                const Text('修改'),
-              ],
-            ),
-          ),
-          PopupMenuItem(
-            value: 1,
-            child: Row(
-              children: [
-                Icon(Icons.delete_outline, color: cs.error),
-                const SizedBox(width: 8),
-                const Text('移入回收站'),
-              ],
-            ),
-          ),
-        ],
+    // Leading icon - distinct for root vs child
+    final Widget leading = Container(
+      width: 40,
+      height: 40,
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        color: depth == 0 ? const Color(0xFFF5F5F5) : Colors.transparent,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Icon(
+        hasChildren ? Icons.local_offer : Icons.local_offer_outlined,
+        size: 20,
+        color: depth == 0 ? Colors.black54 : Colors.grey,
       ),
     );
 
-    final Widget arrowIcon = Icon(
-      expanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
-      color: cs.outline,
-    );
-
-    final Widget trailing = Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        menu,
-        const SizedBox(width: 8),
-        hasChildren
-            ? arrowIcon
-            : InkWell(
-                onTap: () => onToggleNode(node, !expanded),
-                borderRadius: BorderRadius.circular(8),
-                child: arrowIcon,
-              ),
-      ],
-    );
-
-    final Widget? subtitle = Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        if (remark != null && remark.isNotEmpty)
-          Padding(
-            padding: const EdgeInsets.only(top: 4),
-            child: Text(
-              remark,
-              style: tt.bodySmall?.copyWith(color: cs.onSurfaceVariant),
-              softWrap: true,
-            ),
-          ),
-        const SizedBox(height: 4),
-        _buildStatusChips(),
-      ],
-    );
-
-    final Widget tile = hasChildren
-        ? ExpansionTile(
-            key: ValueKey('tag-node-${idOf(node)}-$expanded'),
-            initiallyExpanded: expanded,
-            leading: leading,
-            title: Text(
-              name,
-              style: depth == 0
-                  ? tt.titleMedium?.copyWith(fontWeight: FontWeight.w600)
-                  : tt.bodyMedium?.copyWith(fontWeight: FontWeight.w500),
-            ),
-            trailing: trailing,
-            onExpansionChanged: (v) => onToggleNode(node, v),
-            subtitle: subtitle,
-            children: children
-                .map(
-                  (c) => TagTreeNode<T>(
-                    node: c,
-                    depth: depth + 1,
-                    childrenOf: childrenOf,
-                    nameOf: nameOf,
-                    remarkOf: remarkOf,
-                    idOf: idOf,
-                    isExpanded: isExpanded, // child recomputes via parent
-                    onToggleNode: onToggleNode,
-                    onModify: onModify,
-                    onMoveToRecycle: onMoveToRecycle,
-                    onAddChild: onAddChild,
-                    enableOf: enableOf,
-                    canExpenseOf: canExpenseOf,
-                    canIncomeOf: canIncomeOf,
-                    canTransferOf: canTransferOf,
-                  ),
-                )
-                .toList(),
-          )
-        : ListTile(
-            leading: leading,
-            title: Text(
-              name,
-              style: tt.bodyMedium?.copyWith(fontWeight: FontWeight.w500),
-            ),
-            trailing: trailing,
-            subtitle: subtitle,
-          );
-
-    if (depth == 0) {
-      final double targetElevation = (expanded && hasChildren) ? 2.0 : 1.0;
-      return TweenAnimationBuilder<double>(
-        tween: Tween<double>(begin: targetElevation, end: targetElevation),
-        duration: const Duration(milliseconds: 200),
-        curve: Curves.easeInOut,
-        builder: (context, value, _) {
-          return Card(
-            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-            elevation: value,
-            color: cs.surface,
-            surfaceTintColor: cs.surfaceTint,
-            shape: RoundedRectangleBorder(
+    // Meta info (Child count)
+    final Widget metaInfo = childCount > 0
+        ? Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+            decoration: BoxDecoration(
+              color: const Color(0xFFF5F5F5),
               borderRadius: BorderRadius.circular(12),
-              side: BorderSide(color: cs.outlineVariant),
             ),
-            child: tile,
-          );
-        },
+            child: Text(
+              '$childCount',
+              style: const TextStyle(fontSize: 12, color: Colors.grey, fontWeight: FontWeight.bold),
+            ),
+          )
+        : const SizedBox.shrink();
+
+    // Context Menu
+    final Widget menu = PopupMenuButton<int>(
+      tooltip: '更多操作',
+      icon: const Icon(Icons.more_horiz, color: Colors.grey),
+      color: surfaceColor,
+      surfaceTintColor: Colors.transparent,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      onSelected: (value) {
+        if (value == 0) onModify(node);
+        else if (value == 1) onMoveToRecycle(node);
+        else if (value == 2) onAddChild(node);
+      },
+      itemBuilder: (context) => [
+        const PopupMenuItem(
+          value: 2,
+          child: Row(children: [Icon(Icons.add_circle_outline, size: 20), SizedBox(width: 12), Text('新增子标签')]),
+        ),
+        const PopupMenuItem(
+          value: 0,
+          child: Row(children: [Icon(Icons.edit_outlined, size: 20), SizedBox(width: 12), Text('修改')]),
+        ),
+        const PopupMenuItem(
+          value: 1,
+          child: Row(children: [Icon(Icons.delete_outline, size: 20, color: Colors.red), SizedBox(width: 12), Text('移入回收站', style: TextStyle(color: Colors.red))]),
+        ),
+      ],
+    );
+
+    // Expand/Collapse logic
+    final Widget arrowIcon = AnimatedRotation(
+      turns: expanded ? 0.5 : 0.0,
+      duration: const Duration(milliseconds: 200),
+      child: const Icon(Icons.keyboard_arrow_down, color: Colors.grey),
+    );
+
+    // Status Chips Logic (Enabled/Expense/Income/Transfer)
+    Widget buildStatusChips() {
+       final List<Widget> chips = [];
+       final bool exp = canExpenseOf?.call(node) ?? false;
+       final bool inc = canIncomeOf?.call(node) ?? false;
+       final bool trf = canTransferOf?.call(node) ?? false;
+       final bool en = enableOf?.call(node) ?? true;
+
+       if (!en) chips.add(_buildMiniChip('已禁用', Colors.grey));
+       if (exp) chips.add(_buildMiniChip('支出', Colors.green));
+       if (inc) chips.add(_buildMiniChip('收入', Colors.red));
+       if (trf) chips.add(_buildMiniChip('转账', Colors.blue));
+
+       if (chips.isEmpty) return const SizedBox.shrink();
+       
+       return Padding(
+         padding: const EdgeInsets.only(top: 4),
+         child: Wrap(
+           spacing: 4,
+           runSpacing: 4,
+           children: chips,
+         ),
+       );
+    }
+
+    // Subtitle logic (Remark + Status Chips)
+    final Widget? subtitleWidget = (remark != null && remark.isNotEmpty) || 
+        (canExpenseOf != null) // If adapters are provided, show chips
+        ? Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (remark != null && remark.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.only(top: 2),
+                  child: Text(remark, style: subtitleStyle, maxLines: 1, overflow: TextOverflow.ellipsis),
+                ),
+              buildStatusChips(),
+            ],
+          )
+        : null;
+
+
+    // Tile Construction
+    final Widget tile = ExpansionTile(
+      key: ValueKey('tag-node-${idOf(node)}-$expanded'),
+      initiallyExpanded: expanded,
+      onExpansionChanged: (v) => onToggleNode(node, v),
+      tilePadding: EdgeInsets.only(left: depth == 0 ? 8 : 0, right: 8, top: 4, bottom: 4), // Added vertical padding
+      shape: const Border(), // Remove default border
+      collapsedShape: const Border(),
+      backgroundColor: Colors.transparent,
+      leading: leading,
+      title: Text(name, style: titleStyle),
+      subtitle: subtitleWidget,
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          metaInfo,
+          const SizedBox(width: 4),
+          menu,
+          if (hasChildren) ...[
+            const SizedBox(width: 0),
+            arrowIcon,
+          ],
+        ],
+      ),
+      children: children.map((c) => TagTreeNode<T>(
+        node: c,
+        depth: depth + 1,
+        childrenOf: childrenOf,
+        nameOf: nameOf,
+        remarkOf: remarkOf,
+        idOf: idOf,
+        isExpanded: isExpanded,
+        onToggleNode: onToggleNode,
+        onModify: onModify,
+        onMoveToRecycle: onMoveToRecycle,
+        onAddChild: onAddChild,
+        enableOf: enableOf,
+        canExpenseOf: canExpenseOf,
+        canIncomeOf: canIncomeOf,
+        canTransferOf: canTransferOf,
+      )).toList(),
+    );
+
+    // Root nodes get a Card, children get indentation
+    if (depth == 0) {
+      return Container(
+        margin: const EdgeInsets.symmetric(horizontal: 0, vertical: 6),
+        decoration: BoxDecoration(
+          color: surfaceColor,
+          borderRadius: BorderRadius.circular(cardRadius),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.04),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        clipBehavior: Clip.hardEdge,
+        child: tile,
+      );
+    } else {
+      // Child nodes
+      return Container(
+        decoration: const BoxDecoration(
+          border: Border(top: BorderSide(color: Color(0xFFF0F0F0), width: 1)),
+        ),
+        padding: const EdgeInsets.only(left: 16), // Indentation
+        child: tile,
       );
     }
-    return Padding(
-      padding: EdgeInsets.only(left: 12.0 * depth),
-      child: tile,
-    );
   }
 
-  Widget _buildStatusChip(String label, bool active, String type, BuildContext context) {
-    final ColorScheme cs = Theme.of(context).colorScheme;
-    final bool isDark = Theme.of(context).brightness == Brightness.dark;
-
-    // 统一的类型到颜色映射
-    Color colorByType;
-    switch (type) {
-      case 'expense':
-        colorByType = Colors.red;
-        break;
-      case 'income':
-        colorByType = Colors.green;
-        break;
-      case 'transfer':
-        colorByType = Colors.amber.shade700;
-        break;
-      case 'enabled':
-        colorByType = Colors.blue;
-        break;
-      default:
-        colorByType = cs.primary; // 兜底，理论上不会走到
-    }
-
-    // active 配色与置灰策略
-    final Color bg = active
-        ? (type == 'transfer'
-            ? (isDark ? colorByType.withOpacity(0.16) : colorByType.withOpacity(0.10))
-            : colorByType.withOpacity(0.08))
-        : cs.surfaceVariant;
-    final Color border = active ? colorByType : cs.outlineVariant;
-    final Color text = active ? colorByType : cs.onSurfaceVariant;
-
+  Widget _buildMiniChip(String label, Color color) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
       decoration: BoxDecoration(
-        color: bg,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: border),
+        color: color.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(4),
+        border: Border.all(color: color.withOpacity(0.3), width: 0.5),
       ),
       child: Text(
         label,
-        style: const TextStyle(
+        style: TextStyle(
           fontSize: 10,
+          color: color,
           fontWeight: FontWeight.w500,
-        ).copyWith(color: text),
-      ),
-    );
-  }
-
-  // 获取子标签数量的逻辑：
-  // 优先从 node 中取：childrenCount ?? children?.length ?? childCount ?? 0
-  // 若存在 hasChildren 字段但没有数量，则显示 0
-  // 最后兜底使用当前 childrenOf 适配器提供的列表长度
-  int _resolveChildrenCount(T node, List<T> currentChildren) {
-    // 1) childrenCount
-    try {
-      final d = node as dynamic;
-      final v = d.childrenCount;
-      if (v != null) {
-        return v as int;
-      }
-    } catch (_) {}
-
-    // 2) children?.length
-    try {
-      final d = node as dynamic;
-      final v = d.children;
-      if (v is List) {
-        return v.length;
-      }
-    } catch (_) {}
-
-    // 3) childCount
-    try {
-      final d = node as dynamic;
-      final v = d.childCount;
-      if (v != null) {
-        return v as int;
-      }
-    } catch (_) {}
-
-    // 4) hasChildren提示但没有数量 => 显示0
-    bool hasChildrenHint = false;
-    try {
-      final d = node as dynamic;
-      final v = d.hasChildren;
-      if (v is bool) {
-        hasChildrenHint = v;
-      }
-    } catch (_) {}
-    if (hasChildrenHint) {
-      return 0;
-    }
-
-    // 5) 兜底：使用当前childrenOf返回的长度
-    return currentChildren.length;
-  }
-
-  // 渲染中性信息样式的“{count}个子标签”Chip
-  Widget _buildChildrenCountChip(BuildContext context, int count) {
-    final ColorScheme cs = Theme.of(context).colorScheme;
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-      decoration: BoxDecoration(
-        color: cs.surfaceVariant,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: cs.outlineVariant),
-      ),
-      child: Text(
-        '$count个子标签',
-        style: const TextStyle(
-          fontSize: 10,
-          fontWeight: FontWeight.w500,
-        ).copyWith(color: cs.onSurfaceVariant),
+        ),
       ),
     );
   }

@@ -72,7 +72,9 @@ class _TagManagePageState extends State<TagManagePage> {
   Widget build(BuildContext context) {
     final double width = MediaQuery.of(context).size.width;
     final double gap = width < 600 ? 8 : 12;
+    // Design Token: Background #FAFAFA
     return Scaffold(
+      backgroundColor: const Color(0xFFFAFAFA),
       appBar: TagManageAppBar(
         onAddPressed: () => _openAddPage(initialParentId: -1),
       ),
