@@ -84,17 +84,24 @@ class _CategoryManagePageState extends State<CategoryManagePage> {
   Widget build(BuildContext context) {
     final double width = MediaQuery.of(context).size.width;
     final double gap = width < 600 ? 8 : 12;
+    // Design Token: Background #FAFAFA
     return Scaffold(
+      backgroundColor: const Color(0xFFFAFAFA),
       appBar: CategoryManageAppBar(
         onAddPressed: () => _openAddPage(initialParentId: -1),
       ),
       body: Column(
         children: [
-          CategoryFilterBar(
-            selectedType: _categoryType,
-            onTypeChanged: (type) {
-              _switchType(type);
-            },
+          // Using a more integrated FilterBar style
+          Container(
+            color: Colors.white,
+            padding: const EdgeInsets.only(bottom: 12),
+            child: CategoryFilterBar(
+              selectedType: _categoryType,
+              onTypeChanged: (type) {
+                _switchType(type);
+              },
+            ),
           ),
           SizedBox(height: gap),
           Expanded(

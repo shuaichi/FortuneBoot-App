@@ -36,9 +36,12 @@ class CategoryTreeNode<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
-    final tt = Theme.of(context).textTheme;
-
+    // Design Tokens
+    const Color surfaceColor = Colors.white;
+    const Color primaryText = Colors.black87;
+    const Color secondaryText = Colors.grey; // Grey600 approximation
+    const double cardRadius = 16.0;
+    
     final List<T> children = childrenOf(node);
     final bool hasChildren = children.isNotEmpty;
     final int childCount = children.length;
@@ -46,173 +49,159 @@ class CategoryTreeNode<T> extends StatelessWidget {
     final String? remark = remarkOf(node);
     final bool expanded = isExpanded(node);
 
-    final Widget leading = Icon(
-      hasChildren ? Icons.label : Icons.label_outline,
-      size: 16,
-      color: cs.secondary,
+    // Modern typography style
+    final TextStyle titleStyle = TextStyle(
+      fontSize: depth == 0 ? 16 : 14,
+      fontWeight: depth == 0 ? FontWeight.bold : FontWeight.w500,
+      color: primaryText,
     );
 
-    final Widget countChip = Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+    final TextStyle subtitleStyle = TextStyle(
+      fontSize: 13,
+      color: secondaryText,
+    );
+
+    // Leading icon - distinct for root vs child
+    final Widget leading = Container(
+      width: 40,
+      height: 40,
+      alignment: Alignment.center,
       decoration: BoxDecoration(
-        color: cs.secondaryContainer,
-        borderRadius: BorderRadius.circular(12),
+        color: depth == 0 ? const Color(0xFFF5F5F5) : Colors.transparent,
+        borderRadius: BorderRadius.circular(10),
       ),
-      child: Text(
-        '$childCount 子类',
-        textAlign: TextAlign.center,
-        style: tt.labelSmall?.copyWith(color: cs.onSecondaryContainer),
-      ),
-    );
-
-    final Widget menu = Tooltip(
-      message: '更多操作',
-      child: PopupMenuButton<int>(
-        tooltip: '更多操作',
-        icon: const Icon(Icons.more_vert),
-        onSelected: (value) {
-          if (value == 0) {
-            onModify(node);
-          } else if (value == 1) {
-            onMoveToRecycle(node);
-          } else if (value == 2) {
-            onAddChild(node);
-          }
-        },
-        itemBuilder: (context) => [
-          PopupMenuItem(
-            value: 2,
-            child: Row(
-              children: [
-                Icon(Icons.add, color: cs.tertiary),
-                const SizedBox(width: 8),
-                const Text('新增子类'),
-              ],
-            ),
-          ),
-          PopupMenuItem(
-            value: 0,
-            child: Row(
-              children: [
-                Icon(Icons.edit, color: cs.primary),
-                const SizedBox(width: 8),
-                const Text('修改'),
-              ],
-            ),
-          ),
-          PopupMenuItem(
-            value: 1,
-            child: Row(
-              children: [
-                Icon(Icons.delete_outline, color: cs.error),
-                const SizedBox(width: 8),
-                const Text('移入回收站'),
-              ],
-            ),
-          ),
-        ],
+      child: Icon(
+        hasChildren ? Icons.folder_open_rounded : Icons.label_outline_rounded,
+        size: 20,
+        color: depth == 0 ? Colors.black54 : Colors.grey,
       ),
     );
 
-    final Widget arrowIcon = Icon(
-      expanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
-      color: cs.outline,
-    );
+    // Meta info (Child count)
+    final Widget metaInfo = childCount > 0
+        ? Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+            decoration: BoxDecoration(
+              color: const Color(0xFFF5F5F5),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Text(
+              '$childCount',
+              style: const TextStyle(fontSize: 12, color: Colors.grey, fontWeight: FontWeight.bold),
+            ),
+          )
+        : const SizedBox.shrink();
 
-    final Widget trailing = Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        countChip,
-        const SizedBox(width: 8),
-        menu,
-        const SizedBox(width: 8),
-        hasChildren
-            ? arrowIcon
-            : InkWell(
-                onTap: () => onToggleNode(node, !expanded),
-                borderRadius: BorderRadius.circular(8),
-                child: arrowIcon,
-              ),
+    // Context Menu
+    final Widget menu = PopupMenuButton<int>(
+      tooltip: '更多操作',
+      icon: const Icon(Icons.more_horiz, color: Colors.grey),
+      color: surfaceColor,
+      surfaceTintColor: Colors.transparent,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      onSelected: (value) {
+        if (value == 0) onModify(node);
+        else if (value == 1) onMoveToRecycle(node);
+        else if (value == 2) onAddChild(node);
+      },
+      itemBuilder: (context) => [
+        const PopupMenuItem(
+          value: 2,
+          child: Row(children: [Icon(Icons.add_circle_outline, size: 20), SizedBox(width: 12), Text('新增子类')]),
+        ),
+        const PopupMenuItem(
+          value: 0,
+          child: Row(children: [Icon(Icons.edit_outlined, size: 20), SizedBox(width: 12), Text('修改')]),
+        ),
+        const PopupMenuItem(
+          value: 1,
+          child: Row(children: [Icon(Icons.delete_outline, size: 20, color: Colors.red), SizedBox(width: 12), Text('移入回收站', style: TextStyle(color: Colors.red))]),
+        ),
       ],
     );
 
-    final Widget? subtitle = (remark != null && remark.isNotEmpty)
+    // Expand/Collapse logic
+    final Widget arrowIcon = AnimatedRotation(
+      turns: expanded ? 0.5 : 0.0,
+      duration: const Duration(milliseconds: 200),
+      child: const Icon(Icons.keyboard_arrow_down, color: Colors.grey),
+    );
+
+    // Subtitle logic
+    final Widget? subtitleWidget = (remark != null && remark.isNotEmpty)
         ? Padding(
-            padding: const EdgeInsets.only(top: 4),
-            child: Text(
-              remark,
-              style: tt.bodySmall?.copyWith(color: cs.onSurfaceVariant),
-              softWrap: true,
-            ),
+            padding: const EdgeInsets.only(top: 2),
+            child: Text(remark, style: subtitleStyle, maxLines: 1, overflow: TextOverflow.ellipsis),
           )
         : null;
 
-    final Widget tile = hasChildren
-        ? ExpansionTile(
-            key: ValueKey('node-${idOf(node)}-$expanded'),
-            initiallyExpanded: expanded,
-            leading: leading,
-            title: Text(
-              name,
-              style: depth == 0
-                  ? tt.titleMedium?.copyWith(fontWeight: FontWeight.w600)
-                  : tt.bodyMedium?.copyWith(fontWeight: FontWeight.w500),
-            ),
-            trailing: trailing,
-            onExpansionChanged: (v) => onToggleNode(node, v),
-            subtitle: subtitle,
-            children: children
-                .map(
-                  (c) => CategoryTreeNode<T>(
-                    node: c,
-                    depth: depth + 1,
-                    childrenOf: childrenOf,
-                    nameOf: nameOf,
-                    remarkOf: remarkOf,
-                    idOf: idOf,
-                    isExpanded: isExpanded, // child recomputes via parent
-                    onToggleNode: onToggleNode,
-                    onModify: onModify,
-                    onMoveToRecycle: onMoveToRecycle,
-                    onAddChild: onAddChild,
-                  ),
-                )
-                .toList(),
-          )
-        : ListTile(
-            leading: leading,
-            title: Text(
-              name,
-              style: tt.bodyMedium?.copyWith(fontWeight: FontWeight.w500),
-            ),
-            trailing: trailing,
-            subtitle: subtitle,
-          );
+    // Tile Construction
+    // We use ExpansionTile for logic but customize heavily
+    final Widget tile = ExpansionTile(
+      key: ValueKey('node-${idOf(node)}-$expanded'),
+      initiallyExpanded: expanded,
+      onExpansionChanged: (v) => onToggleNode(node, v),
+      tilePadding: EdgeInsets.only(left: depth == 0 ? 8 : 0, right: 8, top: 0, bottom: 0),
+      shape: const Border(), // Remove default border
+      collapsedShape: const Border(),
+      backgroundColor: Colors.transparent,
+      leading: leading,
+      title: Text(name, style: titleStyle),
+      subtitle: subtitleWidget,
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          metaInfo,
+          const SizedBox(width: 4),
+          menu,
+          if (hasChildren) ...[
+            const SizedBox(width: 0),
+            arrowIcon,
+          ],
+        ],
+      ),
+      children: children.map((c) => CategoryTreeNode<T>(
+        node: c,
+        depth: depth + 1,
+        childrenOf: childrenOf,
+        nameOf: nameOf,
+        remarkOf: remarkOf,
+        idOf: idOf,
+        isExpanded: isExpanded,
+        onToggleNode: onToggleNode,
+        onModify: onModify,
+        onMoveToRecycle: onMoveToRecycle,
+        onAddChild: onAddChild,
+      )).toList(),
+    );
 
+    // Root nodes get a Card, children get indentation
     if (depth == 0) {
-      final double targetElevation = (expanded && hasChildren) ? 2.0 : 1.0;
-      return TweenAnimationBuilder<double>(
-        tween: Tween<double>(begin: targetElevation, end: targetElevation),
-        duration: const Duration(milliseconds: 200),
-        curve: Curves.easeInOut,
-        builder: (context, value, _) {
-          return Card(
-            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-            elevation: value,
-            color: cs.surface,
-            surfaceTintColor: cs.surfaceTint,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-              side: BorderSide(color: cs.outlineVariant),
+      return Container(
+        margin: const EdgeInsets.symmetric(horizontal: 0, vertical: 6), // Margin handled by ListView padding usually, but here vertical gap
+        decoration: BoxDecoration(
+          color: surfaceColor,
+          borderRadius: BorderRadius.circular(cardRadius),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.04),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
             ),
-            child: tile,
-          );
-        },
+          ],
+        ),
+        clipBehavior: Clip.hardEdge,
+        child: tile,
+      );
+    } else {
+      // Child nodes
+      return Container(
+        decoration: const BoxDecoration(
+          border: Border(top: BorderSide(color: Color(0xFFF0F0F0), width: 1)),
+        ),
+        padding: const EdgeInsets.only(left: 16), // Indentation
+        child: tile,
       );
     }
-    return Padding(
-      padding: EdgeInsets.only(left: 12.0 * depth),
-      child: tile,
-    );
   }
 }

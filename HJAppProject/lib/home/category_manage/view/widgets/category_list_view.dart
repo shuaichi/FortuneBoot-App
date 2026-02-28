@@ -62,20 +62,24 @@ class CategoryListView<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // 断点式横向内边距（Material 3 间距体系）
+    // Breakpoint-based horizontal padding
     double _horizontalPadding() {
       final width = MediaQuery.of(context).size.width;
-      if (width < 600) return 16;
-      if (width < 1024) return 20;
-      return 24;
+      if (width < 600) return 20; // Increased base padding for cleaner look
+      if (width < 1024) return 24;
+      return 32;
     }
 
-    // 构建列表/空态内容，统一 ListView padding 与栅格
+    // List or Empty State Builder
     Widget _buildListOrEmpty() {
       final double hPadding = _horizontalPadding();
+      
+      // Vertical padding for the list
+      const EdgeInsets listPadding = EdgeInsets.only(top: 8, bottom: 24);
+
       if (roots.isEmpty) {
         return ListView(
-          padding: EdgeInsets.symmetric(horizontal: hPadding),
+          padding: EdgeInsets.symmetric(horizontal: hPadding).add(listPadding),
           children: [
             CategorySummaryBar(typeText: typeText, total: total, currentPage: currentPage),
             const SizedBox(height: 80),
@@ -91,37 +95,39 @@ class CategoryListView<T> extends StatelessWidget {
           ],
         );
       }
-      return ListView(
+      return ListView.separated(
         physics: const AlwaysScrollableScrollPhysics(),
-        padding: EdgeInsets.symmetric(horizontal: hPadding),
-        children: [
-          CategorySummaryBar(typeText: typeText, total: total, currentPage: currentPage),
-          const SizedBox(height: 12),
-          ...roots.map(
-            (n) => CategoryTreeNode<T>(
-              node: n,
-              depth: 0,
-              childrenOf: childrenOf,
-              nameOf: nameOf,
-              remarkOf: remarkOf,
-              idOf: idOf,
-              isExpanded: (x) => expandedNodeIds.contains(idOf(x)),
-              onToggleNode: onToggleNode,
-              onModify: onModify,
-              onMoveToRecycle: onMoveToRecycle,
-              onAddChild: onAddChild,
-            ),
-          ),
-          const SizedBox(height: 12),
-          CategoryPager(
-            total: total,
-            hasPrev: hasPrev,
-            hasNext: hasNext,
-            onPrev: onPrev,
-            onNext: onNext,
-          ),
-          const SizedBox(height: 12),
-        ],
+        padding: EdgeInsets.symmetric(horizontal: hPadding).add(listPadding),
+        itemCount: roots.length + 2, // Summary + Roots + Pager
+        separatorBuilder: (context, index) => const SizedBox(height: 12),
+        itemBuilder: (context, index) {
+          if (index == 0) {
+            return CategorySummaryBar(typeText: typeText, total: total, currentPage: currentPage);
+          }
+          if (index == roots.length + 1) {
+            return CategoryPager(
+              total: total,
+              hasPrev: hasPrev,
+              hasNext: hasNext,
+              onPrev: onPrev,
+              onNext: onNext,
+            );
+          }
+          final node = roots[index - 1];
+          return CategoryTreeNode<T>(
+            node: node,
+            depth: 0,
+            childrenOf: childrenOf,
+            nameOf: nameOf,
+            remarkOf: remarkOf,
+            idOf: idOf,
+            isExpanded: (x) => expandedNodeIds.contains(idOf(x)),
+            onToggleNode: onToggleNode,
+            onModify: onModify,
+            onMoveToRecycle: onMoveToRecycle,
+            onAddChild: onAddChild,
+          );
+        },
       );
     }
 

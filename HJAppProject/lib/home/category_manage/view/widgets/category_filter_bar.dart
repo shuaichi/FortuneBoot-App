@@ -18,8 +18,7 @@ class CategoryFilterBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
-
+    // 根据规范使用固定内边距体系
     double hPadding() {
       final w = MediaQuery.of(context).size.width;
       if (w < 600) return 16;
@@ -27,101 +26,101 @@ class CategoryFilterBar extends StatelessWidget {
       return 24;
     }
 
+    // 语义颜色
+    final expenseColor = Colors.green; // 支出：Green
+    final incomeColor = Colors.red;    // 收入：Red
+
     return Padding(
-      padding: EdgeInsets.fromLTRB(hPadding(), 12, hPadding(), 0),
-      child: Card(
-        elevation: 1,
-        color: cs.surface,
-        surfaceTintColor: cs.surfaceTint,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-          side: BorderSide(color: cs.outlineVariant),
+      padding: EdgeInsets.symmetric(horizontal: hPadding(), vertical: 12),
+      child: Container(
+        padding: const EdgeInsets.all(4),
+        decoration: BoxDecoration(
+          color: const Color(0xFFF1F1F1), // 浅灰背景槽
+          borderRadius: BorderRadius.circular(12), // 统一圆角
         ),
-        child: Padding(
-          padding: const EdgeInsets.all(8),
-          child: Row(
-            children: [
-              Expanded(
-                child: _typeButton(
-                  context: context,
-                  type: expenseType,
-                  label: '支出分类',
-                  selected: selectedType == expenseType,
-                  icon: Icons.remove_circle,
-                ),
+        child: Row(
+          children: [
+            Expanded(
+              child: _TabButton(
+                title: '支出分类',
+                icon: Icons.remove_circle_outline,
+                isSelected: selectedType == expenseType,
+                activeColor: expenseColor,
+                onTap: () => onTypeChanged(expenseType),
               ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: _typeButton(
-                  context: context,
-                  type: incomeType,
-                  label: '收入分类',
-                  selected: selectedType == incomeType,
-                  icon: Icons.add_circle,
-                ),
+            ),
+            Expanded(
+              child: _TabButton(
+                title: '收入分类',
+                icon: Icons.add_circle_outline,
+                isSelected: selectedType == incomeType,
+                activeColor: incomeColor,
+                onTap: () => onTypeChanged(incomeType),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
   }
+}
 
-  Widget _typeButton({
-    required BuildContext context,
-    required int type,
-    required String label,
-    required bool selected,
-    required IconData icon,
-  }) {
-    final tt = Theme.of(context).textTheme;
+class _TabButton extends StatelessWidget {
+  const _TabButton({
+    required this.title,
+    required this.icon,
+    required this.isSelected,
+    required this.activeColor,
+    required this.onTap,
+  });
 
-    final Widget child = Row(
-      mainAxisSize: MainAxisSize.min,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Icon(icon, size: 18),
-        const SizedBox(width: 8),
-        Flexible(
-          child: Text(
-            label,
-            overflow: TextOverflow.ellipsis,
-            style: tt.labelLarge,
-          ),
+  final String title;
+  final IconData icon;
+  final bool isSelected;
+  final Color activeColor;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      behavior: HitTestBehavior.opaque,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.easeInOut,
+        padding: const EdgeInsets.symmetric(vertical: 10),
+        decoration: BoxDecoration(
+          color: isSelected ? Colors.white : Colors.transparent,
+          borderRadius: BorderRadius.circular(10),
+          boxShadow: isSelected
+              ? [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.08),
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  )
+                ]
+              : null,
         ),
-      ],
-    );
-
-    final shape = RoundedRectangleBorder(borderRadius: BorderRadius.circular(10));
-
-    final ButtonStyle baseStyle = ButtonStyle(
-      shape: MaterialStatePropertyAll(shape),
-      minimumSize: const MaterialStatePropertyAll(Size.fromHeight(44)),
-      padding: const MaterialStatePropertyAll(EdgeInsets.symmetric(vertical: 12)),
-      visualDensity: VisualDensity.standard,
-    );
-
-    final Widget button = selected
-        ? FilledButton.tonal(
-            onPressed: () => onTypeChanged(type),
-            style: baseStyle,
-            child: child,
-          )
-        : OutlinedButton(
-            onPressed: () => onTypeChanged(type),
-            style: baseStyle,
-            child: child,
-          );
-
-    return Tooltip(
-      message: label,
-      waitDuration: const Duration(milliseconds: 400),
-      child: Semantics(
-        button: true,
-        selected: selected,
-        label: label,
-        onTapHint: '切换$type',
-        child: FocusTraversalGroup(child: button),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              icon,
+              size: 18,
+              color: isSelected ? activeColor : Colors.grey[600],
+            ),
+            const SizedBox(width: 8),
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                color: isSelected ? Colors.black87 : Colors.grey[600],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
