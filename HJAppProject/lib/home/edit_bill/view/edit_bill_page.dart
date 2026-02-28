@@ -1,20 +1,22 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hjproject/home/edit_bill/bloc/edit_bill_bloc.dart';
-import 'package:hjproject/home/edit_bill/models/edit_select_item.dart';
-import 'package:hjproject/home/edit_bill/view/select_field/category_select_field.dart';
-import 'package:hjproject/home/edit_bill/view/select_field/tag_select_field.dart';
-import 'package:hjproject/home/edit_bill/widgets/attachment_upload_widget.dart';
-import 'package:hjproject/home/bill_overview/models/bill_item.dart';
-import 'package:hjproject/home/bill_overview/models/bill_item_add.dart';
-import 'package:hjproject/generated/l10n.dart';
-import 'package:hjproject/repository/repository/bills_repository.dart';
 import 'package:intl/intl.dart';
 import 'package:multi_dropdown/multi_dropdown.dart';
-import 'package:omni_datetime_picker/omni_datetime_picker.dart';
+import 'package:hjproject/generated/l10n.dart';
+import 'package:hjproject/home/bill_overview/models/bill_item.dart';
+import 'package:hjproject/home/bill_overview/models/bill_item_add.dart';
+import 'package:hjproject/home/edit_bill/bloc/edit_bill_bloc.dart';
+import 'package:hjproject/home/edit_bill/models/edit_select_item.dart';
+import 'package:hjproject/home/edit_bill/widgets/attachment_upload_widget.dart';
+import 'package:hjproject/repository/repository/bills_repository.dart';
 
+/// 重构后的记账页面
+/// 采用现代移动端设计：
+/// 1. 顶部类型切换 (分段控制)
+/// 2. 沉浸式金额显示与分类图标
+/// 3. 中部区域：分类选择 (支出/收入) 或 账户选择 (转账)
+/// 4. 底部区域：工具栏 + 数字键盘
 class EditBillPage extends StatelessWidget {
   const EditBillPage({super.key});
 
@@ -37,1341 +39,627 @@ class EditBillPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiBlocListener(
-        listeners: [
-          BlocListener<EditBillBloc, EditBillState>(
-            listenWhen: (previous, current) =>
-            previous.status != current.status,
-            listener: (context, state) {
-              if (state.status == EditBillStatus.failure) {
-                ScaffoldMessenger.of(context)
-                  ..hideCurrentSnackBar()
-                  ..showSnackBar(
-                    SnackBar(
-                      content: Text(S.current.todosOverviewErrorSnackbarText),
-                    ),
-                  );
-              }
-            },
-          ),
-          BlocListener<EditBillBloc, EditBillState>(
-            listenWhen: (previous, current) =>
-            previous.status != current.status,
-            listener: (context, state) {
-              if (state.status == EditBillStatus.closed) {
-                ScaffoldMessenger.of(context)
-                  ..hideCurrentSnackBar()
-                  ..showSnackBar(
-                    SnackBar(
-                      content: Text(state.isNewBill ? '添加成功' : '修改成功'),
-                    ),
-                  );
-                Navigator.of(context).pop();
-              }
-            },
-          ),
-          BlocListener<EditBillBloc, EditBillState>(
-            listenWhen: (previous, current) =>
-            previous.status != current.status,
-            listener: (context, state) {
-              if (state.status == EditBillStatus.submitFailed) {
-                ScaffoldMessenger.of(context)
-                  ..hideCurrentSnackBar()
-                  ..showSnackBar(
-                    const SnackBar(
-                      content: Text('添加失败'),
-                    ),
-                  );
-              }
-            },
-          ),
-        ],
-        child: BlocListener<EditBillBloc, EditBillState>(
-          listenWhen: (previous, current) =>
-          previous.status != current.status &&
-              current.status == EditBillStatus.success,
-          listener: (context, state) => (),
-          child: EditBillView(),
-        ));
-  }
-}
-
-class EditBillView extends StatefulWidget {
-  EditBillView({super.key});
-
-  @override
-  State<EditBillView> createState() => _EditBillViewState();
-}
-
-class _EditBillViewState extends State<EditBillView> {
-  final TextEditingController _amountController = TextEditingController();
-  final TextEditingController _titleController = TextEditingController();
-  final TextEditingController _remarkController = TextEditingController();
-
-  final ValueNotifier<bool> _isTagExpanded = ValueNotifier(true);
-  final ValueNotifier<bool?> _confirm = ValueNotifier(null);
-  final ValueNotifier<bool?> _include = ValueNotifier(null);
-  final ValueNotifier<String?> _tradeTimeStr = ValueNotifier(null);
-  GlobalKey<CategoryTreeWidgetState>? curCategoryKey;
-  BillType? _lastCategoryBillType;
-
-  @override
-  void dispose() {
-    _amountController.dispose();
-    _titleController.dispose();
-    _remarkController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final status = context.select((EditBillBloc bloc) => bloc.state.status);
-    final state = context.select((EditBillBloc bloc) => bloc.state);
-
-    // 强校验：拦截“余额调整”账单进入编辑页（无论是复制还是编辑）
-    final bool isEditingOrCopyingAdjust = state.initialBill != null &&
-        (BillType.fromValue(state.editBill.data?.billType ?? 1) == BillType.adjust);
-    if (isEditingOrCopyingAdjust) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        // 轻提示并返回上一页，防止通过路由参数直接进入
-        ScaffoldMessenger.of(context).removeCurrentSnackBar();
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('余额调整账单不支持复制或编辑')),
-        );
-        Navigator.of(context).maybePop();
-      });
-      return const SizedBox.shrink();
-    }
-
-    if (_confirm.value == null || _include.value == null) {
-      // 如果是转账类型，则强制设置为 true
-      if (curBillType() == BillType.transfer) {
-        _confirm.value = true;
-        _include.value = true;
-        // 同时更新账单数据
-        state.editBill.data!.confirm = true;
-        state.editBill.data!.include = true;
-      } else {
-        _confirm.value = state.editBill.data!.confirm;
-        _include.value = state.editBill.data!.include;
-      }
-    } else if (curBillType() == BillType.transfer) {
-      // 如果已经初始化过，但当前是转账类型，也要确保值为 true
-      _confirm.value = true;
-      _include.value = true;
-      state.editBill.data!.confirm = true;
-      state.editBill.data!.include = true;
-    }
-    // 初始化备注控制器
-    if (state.editBill.data?.remark != null && _remarkController.text.isEmpty) {
-      _remarkController.text = state.editBill.data!.remark!;
-    }
-    print('zctodo 222 = ${state.editBill.data}');
-    final isNewBill = context.select(
-          (EditBillBloc bloc) => bloc.state.isNewBill,
-    );
-    return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        tooltip: S.current.editTodoSaveButtonTooltip,
-        shape: const ContinuousRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(32)),
-        ),
-        onPressed:
-        status.isLoadingOrInit ? null : () => _submitBill(state.editBill),
-        child: status.isLoadingOrInit
-            ? const CupertinoActivityIndicator()
-            : const Icon(Icons.check_rounded),
-      ),
-      appBar: AppBar(
-        title: Text(
-          isNewBill ? '记一笔' : '编辑账单',
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
-        // actions: [
-        //   if (status.isLoadingOrSuccess)
-        //     const Padding(
-        //       padding: EdgeInsets.all(16.0),
-        //       child: CupertinoActivityIndicator(),
-        //     )
-        //   else
-        //     TextButton.icon(
-        //       onPressed: _submitBill,
-        //       icon: const Icon(Icons.check_circle_outline),
-        //       label: const Text('保存'),
-        //       style: TextButton.styleFrom(
-        //         foregroundColor: theme.colorScheme.primary,
-        //       ),
-        //     ),
-        // ],
-      ),
-      body: CupertinoScrollbar(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              // 账单类型选择器
-              _buildBillTypeSelector(),
-              // 基本信息
-              wrapCard(
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildBasicInfoSection(),
-                    const SizedBox(height: 16),
-                    _buildCategorySection(),
-                    const SizedBox(height: 8),
-                    // 日期时间选择
-                    TimeSelector(
-                        tradeTimeStr: _tradeTimeStr,
-                        context: context,
-                        state: state),
-                  ],
-                ),
-              ),
-              wrapCard(
-                _buildAccountSection(),
-              ),
-              // 分类选择区域
-              // 附加信息区域
-              wrapCard(Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildTagSection(),
-                ],
-              )),
-              wrapCard(
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildAdditionalOptionsSection(),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 24),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget wrapCard(Widget child) {
-    return Card(
-        margin: const EdgeInsets.all(8),
-        elevation: 0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-          side: BorderSide(color: Colors.grey.shade300),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: child,
-        ));
-  }
-
-  BillType curBillType() {
-    final state = context.watch<EditBillBloc>().state;
-    return BillType.fromValue(state.editBill.data?.billType ?? 1) ??
-        BillType.expenditure;
-  }
-
-  // 账单类型选择器
-  Widget _buildBillTypeSelector() {
-    final enable =
-        context.watch<EditBillBloc>().state.status != EditBillStatus.loading;
-    final billType = curBillType();
-    return Container(
-      margin: const EdgeInsets.all(8),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            spreadRadius: 1,
-            blurRadius: 2,
-            offset: const Offset(0, 1),
-          ),
-        ],
-      ),
-      child: SegmentedButton<BillType>(
-        segments: [
-          ButtonSegment(
-            enabled: enable,
-            value: BillType.expenditure,
-            label: const Text('支出'),
-            icon: const Icon(Icons.arrow_upward),
-          ),
-          ButtonSegment(
-            enabled: enable,
-            value: BillType.income,
-            label: const Text('收入'),
-            icon: const Icon(Icons.arrow_downward),
-          ),
-          ButtonSegment(
-            enabled: enable,
-            value: BillType.transfer,
-            label: const Text('转账'),
-            icon: const Icon(Icons.swap_horiz),
-          ),
-        ],
-        selected: {billType},
-        onSelectionChanged: (Set<BillType> newSelection) {
-          // 如果切换到转账类型，确保"是否确认"和"是否统计"为 true
-          if (newSelection.first == BillType.transfer) {
-            _confirm.value = true;
-            _include.value = true;
-            context.read<EditBillBloc>().state.editBill.data?.confirm = true;
-            context.read<EditBillBloc>().state.editBill.data?.include = true;
-          }
-          context
-              .read<EditBillBloc>()
-              .add(EditBillTypeChange(newSelection.first));
-        },
-        style: ButtonStyle(
-          backgroundColor: WidgetStateProperty.resolveWith<Color>(
-                (Set<WidgetState> states) {
-              if (states.contains(WidgetState.selected)) {
-                return Theme.of(context).colorScheme.primaryContainer;
-              }
-              return Colors.transparent;
-            },
-          ),
-        ),
-      ),
-    );
-  }
-
-  // 基本信息区域
-  Widget _buildBasicInfoSection() {
-    var state = context.watch<EditBillBloc>().state;
-    _titleController.text = state.editBill.data?.title ?? '';
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          '基本信息',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(height: 16),
-        // 标题输入
-        TitleField(titleController: _titleController, state: state),
-      ],
-    );
-  }
-
-  // 账户区域
-  Widget _buildAccountSection() {
-    if (curBillType() == BillType.transfer) {
-      return _buildTransferAccountSection();
-    } else {
-      return _buildNormalAccountSection();
-    }
-  }
-
-  // 普通账户选择（支出/收入）
-  Widget _buildNormalAccountSection() {
-    final state = context.watch<EditBillBloc>().state;
-    final items = curBillType() == BillType.income
-        ? state.incomeAccountList
-        : state.expenseAccountList;
-    final payeeItems = state.payeeList;
-    // 优先使用账单中的账户ID，如果没有则使用默认账户ID
-    final int? accountSelectId = state.editBill.data?.accountId ??
-        (curBillType() == BillType.income
-            ? state.defaultIncomeAccountId
-            : state.defaultExpenseAccountId);
-    AccountSelectItem? selectItem;
-    for (final item in items) {
-      if (item.value.id == accountSelectId) {
-        selectItem = item.value;
-        break;
-      }
-    }
-    PayeeSelectItem? payeeSelectItem;
-    for (final item in payeeItems) {
-      if (item.value.id == state.editBill.data?.payeeId) {
-        payeeSelectItem = item.value;
-        break;
-      }
-    }
-    // 只在原始账户ID为null时设置默认账户ID
-    if (state.editBill.data?.accountId == null && selectItem != null) {
-      state.editBill.data?.accountId = selectItem.id;
-    }
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          '账户信息',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(height: 16),
-        // 账户选择
-        InkWell(
-          onTap: () => _showAccountSelectionDialog(context, items, selectItem, (value) {
-            setState(() {
-              state.editBill.data?.accountId = value?.id;
-            });
-          }),
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey.shade400),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Row(
-              children: [
-                const Icon(Icons.account_balance_wallet, color: Colors.grey),
-                const SizedBox(width: 12),
-                Text(
-                  '账户',
-                  style: TextStyle(
-                    color: Colors.grey.shade700,
-                    fontSize: 16,
-                  ),
-                ),
-                const Spacer(),
-                Text(
-                  selectItem?.title ?? '请选择账户',
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                const SizedBox(width: 8),
-                const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
-              ],
-            ),
-          ),
-        ),
-        const SizedBox(height: 16),
-
-        // 交易对象选择
-        InkWell(
-          onTap: () => _showPayeeSelectionDialog(context, payeeItems, payeeSelectItem, (value) {
-            setState(() {
-              state.editBill.data?.payeeId = value?.id;
-            });
-          }),
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey.shade400),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Row(
-              children: [
-                const Icon(Icons.person, color: Colors.grey),
-                const SizedBox(width: 12),
-                Text(
-                  '交易对象',
-                  style: TextStyle(
-                    color: Colors.grey.shade700,
-                    fontSize: 16,
-                  ),
-                ),
-                const Spacer(),
-                Text(
-                  payeeSelectItem?.title ?? '请选择交易对象',
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                const SizedBox(width: 8),
-                const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  // 转账账户选择
-  Widget _buildTransferAccountSection() {
-    final state = context.watch<EditBillBloc>().state;
-    if (state.editBill.data?.amount != null) {
-      _amountController.text = (state.editBill.data?.amount ?? 0).toString();
-    }
-    final inItems = state.transferAccountList;
-    final outItems = state.transferOutAccountList;
-    AccountSelectItem? selectInItem;
-    // 优先使用账单中的账户ID，如果没有则使用默认账户ID
-    final int? selectAccountId =
-        state.editBill.data?.accountId ?? state.defaultTransferInAccountId;
-    final int? selectOutAccountId =
-        state.editBill.data?.toAccountId ?? state.defaultTransferOutAccountId;
-    for (final item in outItems) {
-      if (item.value.id == selectAccountId) {
-        selectInItem = item.value;
-        break;
-      }
-    }
-    AccountSelectItem? selectOutItem;
-    for (final item in inItems) {
-      if (item.value.id == selectOutAccountId) {
-        selectOutItem = item.value;
-        break;
-      }
-    }
-    print(
-        'lxjtodo: _buildTransferAccountSection $outItems \n $inItems\n $selectInItem\n $selectOutItem\n $selectAccountId $selectOutAccountId');
-    if (state.editBill.data?.accountId == null && selectInItem != null) {
-      state.editBill.data?.accountId = selectInItem.id;
-    }
-    if(state.editBill.data?.toAccountId == null && selectOutItem != null) {
-      state.editBill.data?.toAccountId = selectOutItem.id;
-    }
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          '转账信息',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(height: 16),
-        TextField(
-          controller: _amountController,
-          onChanged: (value) {
-            state.editBill.data?.amount = double.tryParse(value) ?? 0;
-          },
-          keyboardType: const TextInputType.numberWithOptions(
-            decimal: true,
-            signed: true,
-          ),
-          inputFormatters: [
-            FilteringTextInputFormatter.allow(
-                RegExp(r'^-?\d*\.?\d{0,5}')), // 允许负号、数字和最多5位小数
-          ],
-          decoration: InputDecoration(
-            hintText: '请输入金额',
-            labelText: '金额',
-            labelStyle: TextStyle(
-              color: Colors.grey.shade700,
-              fontSize: 16,
-            ),
-            prefixIcon: const Icon(Icons.monetization_on_outlined),
-            // 统一所有状态下的边框样式
-            enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.grey.shade400),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderSide: const BorderSide(color: Colors.blue), // 聚焦状态边框颜色
-              borderRadius: BorderRadius.circular(12),
-            ),
-            errorBorder: OutlineInputBorder(
-              borderSide: const BorderSide(color: Colors.red), // 错误状态边框颜色
-              borderRadius: BorderRadius.circular(12),
-            ),
-            border: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.grey.shade400),
-              borderRadius: BorderRadius.circular(12),
-            ),
-          ),
-          maxLength: 50,
-        ),
-        const SizedBox(height: 8),
-        // 转入账户选择
-        InkWell(
-          onTap: () => _showTransferInAccountSelectionDialog(context, inItems, selectOutItem, (value) {
-            setState(() {
-              state.editBill.data?.toAccountId = value?.id;
-            });
-          }),
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey.shade400),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Row(
-              children: [
-                const Icon(Icons.arrow_upward, color: Colors.grey),
-                const SizedBox(width: 12),
-                Text(
-                  '转入账户',
-                  style: TextStyle(
-                    color: Colors.grey.shade700,
-                    fontSize: 16,
-                  ),
-                ),
-                const Spacer(),
-                Text(
-                  selectOutItem?.title ?? '请选择转入账户',
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                const SizedBox(width: 8),
-                const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
-              ],
-            ),
-          ),
-        ),
-        const SizedBox(height: 16),
-
-        // 转出账户选择
-        InkWell(
-          onTap: () => _showTransferOutAccountSelectionDialog(context, outItems, selectInItem, (value) {
-            setState(() {
-              state.editBill.data?.accountId = value?.id;
-            });
-          }),
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey.shade400),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Row(
-              children: [
-                const Icon(Icons.arrow_downward, color: Colors.grey),
-                const SizedBox(width: 12),
-                Text(
-                  '转出账户',
-                  style: TextStyle(
-                    color: Colors.grey.shade700,
-                    fontSize: 16,
-                  ),
-                ),
-                const Spacer(),
-                Text(
-                  selectInItem?.title ?? '请选择转出账户',
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                const SizedBox(width: 8),
-                const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  // 分类选择区域
-  Widget _buildCategorySection() {
-    // 转账类型不需要分类
-    final billType = curBillType();
-    if (billType == BillType.transfer) {
-      return const SizedBox.shrink();
-    }
-    final state = context.watch<EditBillBloc>().state;
-    final List<Map<String, num>> curCategroy =
-        state.editBill.data?.categoryAmountPair ?? [];
-    final Map<int, double> categoryAmountPair = {};
-    for (final category in curCategroy) {
-      final amount = category["amount"] ?? 0.0;
-      final categoryId = category["categoryId"] ?? 0;
-
-      categoryAmountPair[categoryId.toInt()] = amount.toDouble();
-    }
-    if (curCategoryKey == null || _lastCategoryBillType != billType) {
-      curCategoryKey = GlobalKey<CategoryTreeWidgetState>(debugLabel: '${billType}_category');
-      _lastCategoryBillType = billType;
-    }
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          '费用',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(height: 16),
-
-        // 分类选择器
-        Container(
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey.shade300),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(12),
-            child: CategoryTreeWidget(
-                key: curCategoryKey,
-                categoryAmountPairs: categoryAmountPair,
-                categories: state.categoryList,
-                billType: billType,
-                onCategorySelected: (categorys) {
-                  fetchAmountList(categorys, state.editBill);
-                }),
-          ),
-        ),
-      ],
-    );
-  }
-
-  void fetchAmountList(Map<int, double>? categorys, BillItemAdd editBill) {
-    if (categorys == null || categorys.isEmpty) {
-      return;
-    }
-    final List<Map<String, num>> categoryAmountPairList = [];
-    categorys.forEach((categoryId, categoryAmount) {
-      categoryAmountPairList
-          .add({"categoryId": categoryId, "amount": categoryAmount});
-    });
-    editBill.data?.categoryAmountPair = categoryAmountPairList;
-  }
-
-  // 快速选择常用分类
-  Widget _buildQuickCategorySelector() {
-    BillType billType = curBillType();
-    // 这里可以根据用户的使用频率或者预设的常用分类来显示
-    List<Map<String, dynamic>> quickCategories = [];
-
-    if (billType == BillType.expenditure) {
-      quickCategories = [
-        {'name': '餐饮', 'icon': Icons.restaurant},
-        {'name': '交通', 'icon': Icons.directions_car},
-        {'name': '购物', 'icon': Icons.shopping_bag},
-        {'name': '娱乐', 'icon': Icons.movie},
-        {'name': '日用', 'icon': Icons.home},
-      ];
-    } else if (billType == BillType.income) {
-      quickCategories = [
-        {'name': '工资', 'icon': Icons.work},
-        {'name': '奖金', 'icon': Icons.card_giftcard},
-        {'name': '理财', 'icon': Icons.account_balance},
-        {'name': '报销', 'icon': Icons.receipt},
-        {'name': '其他', 'icon': Icons.more_horiz},
-      ];
-    }
-
-    return SizedBox(
-      height: 90,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        itemCount: quickCategories.length,
-        itemBuilder: (context, index) {
-          final category = quickCategories[index];
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8),
-            child: Column(
-              children: [
-                InkWell(
-                  onTap: () {
-                    // 选择该分类的逻辑
-                  },
-                  borderRadius: BorderRadius.circular(20),
-                  child: Container(
-                    width: 60,
-                    height: 60,
-                    decoration: BoxDecoration(
-                      color: Theme.of(context)
-                          .colorScheme
-                          .primaryContainer
-                          .withOpacity(0.3),
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(
-                      category['icon'] as IconData?,
-                      size: 28,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  category['name'] as String? ?? '',
-                  style: const TextStyle(fontSize: 12),
-                ),
-              ],
-            ),
-          );
-        },
-      ),
-    );
-  }
-
-  // 标签选择区域
-  Widget _buildTagSection() {
-    var state = context.watch<EditBillBloc>().state;
-    return ValueListenableBuilder(
-        valueListenable: _isTagExpanded,
-        builder: (b, expanded, child) {
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              GestureDetector(
-                  onTap: () {
-                    _isTagExpanded.value = !expanded;
-                  },
-                  child: Row(
-                    // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text(
-                        '标签',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      expanded
-                          ? Icon(Icons.expand_more)
-                          : Icon(Icons.expand_less),
-                    ],
-                  )),
-              const SizedBox(height: 16),
-              Visibility(
-                visible: !expanded,
-                child: Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey.shade300),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
-                    child: TagTreeSelection(
-                        key: Key('${curBillType()}_tag'),
-                        selectedTagIds: state.editBill.data?.tagIdList ?? [],
-                        tags: state.tagList,
-                        onTagSelected: (tags) {
-                          state.editBill.data?.tagIdList = tags;
-                        }),
-                  ),
-                ),
-              )
-            ],
-          );
-        });
-  }
-
-  // 附加选项区域
-  Widget _buildAdditionalOptionsSection() {
-    var state = context.watch<EditBillBloc>().state;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          '附加信息',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(height: 16),
-
-        // 是否确认
-        ValueListenableBuilder(
-            valueListenable: _confirm,
-            builder: (_, confirm, __) {
-              // 转账类型时，"是否确认"开关不可修改且保持开启状态
-              final isTransfer = curBillType() == BillType.transfer;
-              return SwitchListTile(
-                title: const Text('是否确认'),
-                subtitle: const Text('确认后将会扣除对应账户金额'),
-                value: isTransfer ? true : (confirm ?? true),
-                onChanged: isTransfer ? null : (value) {
-                  state.editBill.data?.confirm = value;
-                  _confirm.value = value;
-                },
-                secondary: const Icon(Icons.verified),
-                contentPadding: EdgeInsets.zero,
-              );
-            }),
-        ValueListenableBuilder(
-            valueListenable: _include,
-            builder: (_, include, __) {
-              // 转账类型时，"是否统计"开关不可修改且保持开启状态
-              final isTransfer = curBillType() == BillType.transfer;
-              return SwitchListTile(
-                title: const Text('是否统计'),
-                subtitle: const Text('纳入统计的账单会在报表中显示'),
-                value: isTransfer ? true : (include ?? true),
-                onChanged: isTransfer ? null : (value) {
-                  state.editBill.data?.include = value;
-                  _include.value = value;
-                },
-                secondary: const Icon(Icons.bar_chart),
-                contentPadding: EdgeInsets.zero,
-              );
-            }),
-
-        const SizedBox(height: 16),
-
-        // 备注
-        TextField(
-          textInputAction: TextInputAction.done,
-          keyboardType: TextInputType.multiline,
-          controller: _remarkController,
-          onChanged: (value) {
-            state.editBill.data?.remark = value;
-          },
-          decoration: InputDecoration(
-            labelText: '备注',
-            prefixIcon: const Icon(Icons.note),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-          ),
-          maxLines: 2,
-          maxLength: 300,
-        ),
-
-        const SizedBox(height: 24),
-
-        const SizedBox(height: 16),
-        AttachmentUploadWidget(
-          initialAttachments: state.attachments,
-          onAttachmentsChanged: (attachments) {
-            context.read<EditBillBloc>().add(EditBillAttachmentsChanged(attachments));
+      listeners: [
+        BlocListener<EditBillBloc, EditBillState>(
+          listenWhen: (previous, current) => previous.status != current.status,
+          listener: (context, state) {
+            if (state.status == EditBillStatus.failure) {
+              ScaffoldMessenger.of(context)
+                ..hideCurrentSnackBar()
+                ..showSnackBar(SnackBar(content: Text(S.current.todosOverviewErrorSnackbarText)));
+            } else if (state.status == EditBillStatus.closed) {
+              ScaffoldMessenger.of(context)
+                ..hideCurrentSnackBar()
+                ..showSnackBar(SnackBar(content: Text(state.isNewBill ? '添加成功' : '修改成功')));
+              Navigator.of(context).pop();
+            } else if (state.status == EditBillStatus.submitFailed) {
+              ScaffoldMessenger.of(context)
+                ..hideCurrentSnackBar()
+                ..showSnackBar(const SnackBar(content: Text('提交失败，请检查网络或必填项')));
+            }
           },
         ),
       ],
-    );
-  }
-
-  // 提交账单
-  void _submitBill(BillItemAdd billItemAdd) {
-    // 验证必填字段
-    print('lxjtodo: _submitBill $billItemAdd');
-    if (!(billItemAdd.data!.title?.isNotEmpty == true)) {
-      billItemAdd.data!.title = '未命名账单';
-    }
-    if (billItemAdd.data?.billType == BillType.transfer.value) {
-      if (billItemAdd.data!.amount == null || billItemAdd.data!.amount == 0) {
-        ScaffoldMessenger.of(context).removeCurrentSnackBar();
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('请填入非零金额')),
-        );
-        return;
-      }
-    } else {
-      if (!(billItemAdd.data?.categoryAmountPair?.isNotEmpty == true)) {
-        fetchAmountList(curCategoryKey?.currentState?.categorys(), billItemAdd);
-        if (!(billItemAdd.data?.categoryAmountPair?.isNotEmpty == true)) {
-          ScaffoldMessenger.of(context).removeCurrentSnackBar();
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('请填入费用或类型')),
-          );
-          return;
-        }
-      }
-    }
-
-    if (billItemAdd.data?.billType == BillType.transfer.value) {
-      // 转账类型
-      if (billItemAdd.data?.accountId == null ||
-          billItemAdd.data?.toAccountId == null) {
-        ScaffoldMessenger.of(context).removeCurrentSnackBar();
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('请选择转账账户')),
-        );
-        return;
-      }
-    }
-    context.read<EditBillBloc>().add(EditBillSubmitted());
-  }
-}
-
-class TimeSelector extends StatelessWidget {
-  const TimeSelector({
-    super.key,
-    required ValueNotifier<String?> tradeTimeStr,
-    required this.context,
-    required this.state,
-  }) : _tradeTimeStr = tradeTimeStr;
-
-  final ValueNotifier<String?> _tradeTimeStr;
-  final BuildContext context;
-  final EditBillState state;
-
-  @override
-  Widget build(BuildContext context) {
-    return ValueListenableBuilder(
-        valueListenable: _tradeTimeStr,
-        builder: (_, value, __) {
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                '时间',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 16),
-              InkWell(
-                onTap: () => _showCustomDateTimePicker(context, value),
-                child: Container(
-                  padding:
-                  const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey.shade400),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(Icons.calendar_today, color: Colors.grey.shade700),
-                      const SizedBox(width: 12),
-                      Text(
-                        '日期时间',
-                        style: TextStyle(
-                          color: Colors.grey.shade700,
-                          fontSize: 16,
-                        ),
-                      ),
-                      const Spacer(),
-                      Text(
-                        state.editBill.data?.tradeTime ??
-                            DateFormat('yyyy-MM-dd HH:mm:ss')
-                                .format(DateTime.now()),
-                        style: const TextStyle(
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      const Icon(Icons.arrow_forward_ios,
-                          size: 16, color: Colors.grey),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          );
-        });
-  }
-
-  void _showCustomDateTimePicker(BuildContext context, String? currentValue) {
-    DateTime initialDate = currentValue != null
-        ? DateFormat('yyyy-MM-dd HH:mm:ss').parse(currentValue)
-        : DateTime.now();
-
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-      ),
-      builder: (context) {
-        return DraggableScrollableSheet(
-          initialChildSize: 0.5,
-          minChildSize: 0.5,
-          maxChildSize: 0.9,
-          expand: false,
-          builder: (context, scrollController) {
-            return CustomDateTimePicker(
-              initialDate: initialDate,
-              onDateTimeChanged: (DateTime selectedDateTime) {
-                _tradeTimeStr.value =
-                    DateFormat('yyyy-MM-dd HH:mm:ss').format(selectedDateTime);
-                state.editBill.data?.tradeTime = _tradeTimeStr.value;
-                Navigator.pop(context);
-              },
-            );
-          },
-        );
-      },
+      child: const _EditBillView(),
     );
   }
 }
 
-class CustomDateTimePicker extends StatefulWidget {
-  final DateTime initialDate;
-  final Function(DateTime) onDateTimeChanged;
-
-  const CustomDateTimePicker({
-    super.key,
-    required this.initialDate,
-    required this.onDateTimeChanged,
-  });
+class _EditBillView extends StatefulWidget {
+  const _EditBillView();
 
   @override
-  State<CustomDateTimePicker> createState() => _CustomDateTimePickerState();
+  State<_EditBillView> createState() => _EditBillViewState();
 }
 
-class _CustomDateTimePickerState extends State<CustomDateTimePicker> {
-  late FixedExtentScrollController _yearController;
-  late FixedExtentScrollController _monthController;
-  late FixedExtentScrollController _dayController;
-  late FixedExtentScrollController _hourController;
-  late FixedExtentScrollController _minuteController;
+class _EditBillViewState extends State<_EditBillView> {
+  // 金额输入逻辑
+  String _amountStr = '0.00';
 
-  late int selectedYear;
-  late int selectedMonth;
-  late int selectedDay;
-  late int selectedHour;
-  late int selectedMinute;
-
-  final int startYear = 2000;
-  final int endYear = DateTime.now().year + 25;
+  // 备注控制器
+  late TextEditingController _remarkController;
 
   @override
   void initState() {
     super.initState();
-    selectedYear = widget.initialDate.year;
-    selectedMonth = widget.initialDate.month;
-    selectedDay = widget.initialDate.day;
-    selectedHour = widget.initialDate.hour;
-    selectedMinute = widget.initialDate.minute;
+    _remarkController = TextEditingController();
+  }
 
-    _yearController = FixedExtentScrollController(
-      initialItem: selectedYear - startYear,
-    );
-    _monthController = FixedExtentScrollController(
-      initialItem: selectedMonth - 1,
-    );
-    _dayController = FixedExtentScrollController(
-      initialItem: selectedDay - 1,
-    );
-    _hourController = FixedExtentScrollController(
-      initialItem: selectedHour,
-    );
-    _minuteController = FixedExtentScrollController(
-      initialItem: selectedMinute,
-    );
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // 初始化数据回显
+    final state = context.read<EditBillBloc>().state;
+    if (state.initialBill != null && _amountStr == '0.00') {
+      // 如果是编辑模式，初始化金额
+      // 注意：这里简化处理，如果是编辑模式，需要处理多分类金额求和或者单分类金额
+      // 这里的逻辑假设单分类或者取总金额
+      double initAmount = 0.0;
+      if (state.editBill.data?.billType == BillType.transfer.value) {
+        initAmount = state.editBill.data?.amount ?? 0.0;
+      } else {
+        // 支出/收入：累加分类金额
+        final pairs = state.editBill.data?.categoryAmountPair;
+        if (pairs != null && pairs.isNotEmpty) {
+          for (var p in pairs) {
+            initAmount += (p['amount'] as num).toDouble();
+          }
+        }
+      }
+      if (initAmount > 0) {
+        _amountStr = initAmount.toStringAsFixed(2);
+        // 去除末尾的0
+        if (_amountStr.endsWith('.00')) {
+          _amountStr = _amountStr.substring(0, _amountStr.length - 3);
+        } else if (_amountStr.contains('.') && _amountStr.endsWith('0')) {
+           _amountStr = _amountStr.substring(0, _amountStr.length - 1);
+        }
+      }
+    }
+    
+    if (state.editBill.data?.remark != null) {
+      _remarkController.text = state.editBill.data!.remark!;
+    }
   }
 
   @override
   void dispose() {
-    _yearController.dispose();
-    _monthController.dispose();
-    _dayController.dispose();
-    _hourController.dispose();
-    _minuteController.dispose();
+    _remarkController.dispose();
     super.dispose();
   }
 
-  int _getDaysInMonth(int year, int month) {
-    return DateTime(year, month + 1, 0).day;
+  // --- 逻辑处理 ---
+
+  void _onKeypadTap(String value) {
+    setState(() {
+      if (value == 'DEL') {
+        if (_amountStr.isNotEmpty && _amountStr != '0') {
+          _amountStr = _amountStr.substring(0, _amountStr.length - 1);
+          if (_amountStr.isEmpty) _amountStr = '0';
+        }
+      } else if (value == '.') {
+        if (!_amountStr.contains('.')) {
+          _amountStr += '.';
+        }
+      } else if (value == 'OK') {
+        _submit();
+      } else {
+        // 数字
+        if (_amountStr == '0' || _amountStr == '0.00') {
+          _amountStr = value;
+        } else {
+          // 限制小数位数
+          if (_amountStr.contains('.')) {
+            final parts = _amountStr.split('.');
+            if (parts.length > 1 && parts[1].length >= 2) {
+              return; // 最多2位小数
+            }
+          }
+           // 限制总长度
+          if (_amountStr.replaceAll('.', '').length < 9) {
+             _amountStr += value;
+          }
+        }
+      }
+      _updateBlocAmount();
+    });
   }
 
-  void _updateDay() {
-    final daysInMonth = _getDaysInMonth(selectedYear, selectedMonth);
-    if (selectedDay > daysInMonth) {
-      selectedDay = daysInMonth;
-      _dayController.animateToItem(
-        selectedDay - 1,
-        duration: const Duration(milliseconds: 200),
-        curve: Curves.easeInOut,
+  void _updateBlocAmount() {
+    // 实时更新 Bloc 中的金额数据
+    // 注意：这里需要根据当前选中的分类去分配金额。
+    // 简化逻辑：如果是单选分类模式，直接更新该分类金额。
+    // 如果是转账，直接更新 amount 字段。
+    final amount = double.tryParse(_amountStr) ?? 0.0;
+    final bloc = context.read<EditBillBloc>();
+    final state = bloc.state;
+    final billType = BillType.fromValue(state.editBill.data?.billType ?? 1);
+
+    if (billType == BillType.transfer) {
+      state.editBill.data?.amount = amount;
+    } else {
+      // 支出/收入：更新当前选中分类的金额
+      // 获取当前选中的分类ID
+      // 这里假设UI上只支持单选分类（现代App常用模式）
+      // 如果有多分类需求，需要在Model层做更复杂的处理，这里简化为单分类更新
+      // 查找当前选中的分类
+      final pairs = state.editBill.data?.categoryAmountPair;
+      if (pairs != null && pairs.isNotEmpty) {
+        // 更新第一个（也是当前选中的）
+        pairs.first['amount'] = amount;
+      }
+    }
+  }
+
+  void _submit() {
+    final amount = double.tryParse(_amountStr) ?? 0.0;
+    if (amount <= 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('请输入有效金额')),
       );
+      return;
+    }
+    
+    // 触发Bloc提交
+    // 确保数据已同步
+    _updateBlocAmount();
+    
+    // 额外校验
+    final state = context.read<EditBillBloc>().state;
+    final billType = BillType.fromValue(state.editBill.data?.billType ?? 1);
+    
+    if (billType != BillType.transfer) {
+       final pairs = state.editBill.data?.categoryAmountPair;
+       if (pairs == null || pairs.isEmpty) {
+         ScaffoldMessenger.of(context).showSnackBar(
+           const SnackBar(content: Text('请选择分类')),
+         );
+         return;
+       }
+    } else {
+       if (state.editBill.data?.accountId == null || state.editBill.data?.toAccountId == null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+           const SnackBar(content: Text('请完善转账账户信息')),
+         );
+         return;
+       }
+    }
+
+    context.read<EditBillBloc>().add(EditBillSubmitted());
+  }
+
+  void _onCategorySelected(int categoryId, double amount) {
+    // 更新 Bloc
+    final bloc = context.read<EditBillBloc>();
+    // 清空旧的，添加新的（单选模式）
+    bloc.state.editBill.data?.categoryAmountPair = [
+      {'categoryId': categoryId, 'amount': amount}
+    ];
+    // 强制刷新UI
+    setState(() {});
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // 拦截余额调整
+    final state = context.watch<EditBillBloc>().state;
+    final isAdjust = state.initialBill != null &&
+        (BillType.fromValue(state.editBill.data?.billType ?? 1) == BillType.adjust);
+    if (isAdjust) return const SizedBox();
+
+    final billType = BillType.fromValue(state.editBill.data?.billType ?? 1) ?? BillType.expenditure;
+    final primaryColor = _getBillTypeColor(billType);
+
+    return Scaffold(
+      backgroundColor: Colors.grey[50], // 浅灰背景
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.close, color: Colors.black87),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        title: _BillTypeSegmentedControl(
+          currentType: billType,
+          onTypeChanged: (type) {
+            context.read<EditBillBloc>().add(EditBillTypeChange(type));
+            // 切换类型时可能需要重置部分状态
+          },
+        ),
+        centerTitle: true,
+      ),
+      body: Column(
+        children: [
+          // 1. 顶部金额展示区域 (Hero)
+          _buildAmountDisplay(billType, primaryColor),
+
+          // 2. 中间内容区域 (分类/账户选择)
+          Expanded(
+            child: Container(
+              color: Colors.white,
+              child: billType == BillType.transfer
+                  ? _TransferSelector(state: state)
+                  : _CategorySelector(
+                      billType: billType,
+                      state: state,
+                      onSelect: (id) => _onCategorySelected(id, double.tryParse(_amountStr) ?? 0.0),
+                    ),
+            ),
+          ),
+
+          // 3. 底部操作区域 (工具栏 + 键盘)
+          _buildBottomPanel(state, primaryColor),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAmountDisplay(BillType type, Color color) {
+    final state = context.read<EditBillBloc>().state;
+    String categoryName = '未分类';
+    IconData categoryIcon = Icons.category_outlined;
+    
+    if (type == BillType.transfer) {
+      categoryName = '转账';
+      categoryIcon = Icons.swap_horiz;
+    } else {
+      // 获取当前分类名称
+      final pairs = state.editBill.data?.categoryAmountPair;
+      if (pairs != null && pairs.isNotEmpty) {
+        final catId = pairs.first['categoryId'];
+        // 从 state.categoryList 中查找
+        final cat = _findCategoryById(state.categoryList, catId as int);
+        if (cat != null) {
+          categoryName = cat.title;
+          // categoryIcon = Icons.local_dining; // 实际项目中应从 cat.icon 获取
+        }
+      }
+    }
+
+    return Container(
+      color: Colors.white,
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          // 左侧：分类图标和名称
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(categoryIcon, color: color, size: 24),
+          ),
+          const SizedBox(width: 12),
+          Text(
+            categoryName,
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+          ),
+          
+          const Spacer(),
+          
+          // 右侧：金额
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(
+                '金额',
+                style: TextStyle(fontSize: 12, color: Colors.grey[500]),
+              ),
+              Text(
+                _amountStr,
+                style: TextStyle(
+                  fontSize: 32,
+                  fontWeight: FontWeight.bold,
+                  color: color,
+                  fontFamily: 'Monospace', // 等宽字体对齐
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBottomPanel(EditBillState state, Color color) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            offset: const Offset(0, -4),
+            blurRadius: 16,
+          ),
+        ],
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // 工具栏
+          _ActionToolbar(
+            state: state,
+            remarkController: _remarkController,
+            onUpdate: () => setState(() {}),
+          ),
+          const Divider(height: 1),
+          // 数字键盘
+          _NumericKeypad(
+            onTap: _onKeypadTap,
+            confirmColor: color,
+          ),
+          SizedBox(height: MediaQuery.of(context).padding.bottom),
+        ],
+      ),
+    );
+  }
+
+  Color _getBillTypeColor(BillType type) {
+    switch (type) {
+      case BillType.expenditure:
+        return Colors.redAccent;
+      case BillType.income:
+        return Colors.green;
+      case BillType.transfer:
+        return Colors.blue;
+      default:
+        return Colors.blue;
+    }
+  }
+
+  CategorySelectItem? _findCategoryById(List<CategorySelectItem> list, int id) {
+    for (var item in list) {
+      if (item.id == id) return item;
+      if (item.children != null) {
+        final found = _findCategoryById(item.children!, id);
+        if (found != null) return found;
+      }
+    }
+    return null;
+  }
+}
+
+// --- 组件：分段控制器 ---
+class _BillTypeSegmentedControl extends StatelessWidget {
+  final BillType currentType;
+  final ValueChanged<BillType> onTypeChanged;
+
+  const _BillTypeSegmentedControl({
+    required this.currentType,
+    required this.onTypeChanged,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 36,
+      decoration: BoxDecoration(
+        color: Colors.grey[200],
+        borderRadius: BorderRadius.circular(18),
+      ),
+      padding: const EdgeInsets.all(2),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _buildSegment(BillType.expenditure, '支出'),
+          _buildSegment(BillType.income, '收入'),
+          _buildSegment(BillType.transfer, '转账'),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSegment(BillType type, String label) {
+    final isSelected = currentType == type;
+    return GestureDetector(
+      onTap: () => onTypeChanged(type),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: isSelected ? Colors.white : Colors.transparent,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: isSelected
+              ? [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 4,
+                    offset: const Offset(0, 1),
+                  )
+                ]
+              : null,
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+            color: isSelected ? Colors.black : Colors.grey[600],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+
+// 修正后的分类选择器
+class _CategorySelectorWrapper extends StatefulWidget {
+  final BillType billType;
+  final EditBillState state;
+  final Function(int) onSelect;
+
+  const _CategorySelectorWrapper({
+    required this.billType,
+    required this.state,
+    required this.onSelect,
+  });
+
+  @override
+  State<_CategorySelectorWrapper> createState() => _CategorySelectorWrapperState();
+}
+
+class _CategorySelectorWrapperState extends State<_CategorySelectorWrapper> {
+  int _selectedParentId = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.state.categoryList.isNotEmpty) {
+      _selectedParentId = widget.state.categoryList.first.id;
+      // 如果已选了分类，定位到该分类的父级
+      final pairs = widget.state.editBill.data?.categoryAmountPair;
+      if (pairs != null && pairs.isNotEmpty) {
+        final selectedId = pairs.first['categoryId'] as int;
+        for(var parent in widget.state.categoryList) {
+          if (parent.id == selectedId) {
+             _selectedParentId = parent.id;
+             break;
+          }
+          if (parent.children != null) {
+            for(var child in parent.children!) {
+              if (child.id == selectedId) {
+                _selectedParentId = parent.id;
+                break;
+              }
+            }
+          }
+        }
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    final parentList = widget.state.categoryList;
+    final currentParent = parentList.firstWhere(
+      (e) => e.id == _selectedParentId,
+      orElse: () => parentList.isNotEmpty ? parentList.first : CategorySelectItem('', 0),
+    );
+    final subCategories = currentParent.children ?? [];
+
+    return Row(
       children: [
-        // 顶部标题栏
+        // 一级分类列表
         Container(
-          padding: const EdgeInsets.all(16),
-          decoration: const BoxDecoration(
-            border: Border(bottom: BorderSide(color: Colors.grey, width: 0.5)),
-          ),
-          child: Row(
-            children: [
-              GestureDetector(
-                onTap: () => Navigator.pop(context),
-                child: const Text(
-                  '取消',
-                  style: TextStyle(fontSize: 16, color: Colors.grey),
-                ),
-              ),
-              const Expanded(
-                child: Text(
-                  '选择日期时间',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
+          width: 100,
+          color: Colors.grey[100],
+          child: ListView.separated(
+            padding: EdgeInsets.zero,
+            itemCount: parentList.length,
+            separatorBuilder: (c, i) => const Divider(height: 1, indent: 16),
+            itemBuilder: (context, index) {
+              final cat = parentList[index];
+              final isSelected = cat.id == _selectedParentId;
+              return InkWell(
+                onTap: () => setState(() => _selectedParentId = cat.id),
+                child: Container(
+                  height: 56,
+                  color: isSelected ? Colors.white : Colors.transparent,
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 4,
+                        height: 32,
+                        decoration: BoxDecoration(
+                          color: isSelected ? Theme.of(context).primaryColor : Colors.transparent,
+                          borderRadius: const BorderRadius.horizontal(right: Radius.circular(2)),
+                        ),
+                      ),
+                      Expanded(
+                        child: Center(
+                          child: Text(
+                            cat.title,
+                            style: TextStyle(
+                              color: isSelected ? Colors.black87 : Colors.grey[600],
+                              fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                              fontSize: 14,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                  textAlign: TextAlign.center,
                 ),
-              ),
-              GestureDetector(
-                onTap: () {
-                  final selectedDateTime = DateTime(
-                    selectedYear,
-                    selectedMonth,
-                    selectedDay,
-                    selectedHour,
-                    selectedMinute,
-                  );
-                  widget.onDateTimeChanged(selectedDateTime);
-                },
-                child: const Text(
-                  '确定',
-                  style: TextStyle(fontSize: 16, color: Colors.blue),
-                ),
-              ),
-            ],
+              );
+            },
           ),
         ),
-        // 滚动选择器
+        // 二级分类网格
         Expanded(
-          child: Row(
-            children: [
-              // 年份选择器
-              Expanded(
-                child: Column(
-                  children: [
-                    const Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Text('年', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+          child: subCategories.isEmpty 
+          ? Center(
+              child: InkWell(
+                 onTap: () => widget.onSelect(currentParent.id),
+                 child: Column(
+                   mainAxisSize: MainAxisSize.min,
+                   children: [
+                     const Icon(Icons.check_circle_outline, size: 40, color: Colors.grey),
+                     const SizedBox(height: 8),
+                     Text('直接选择 "${currentParent.title}"', style: const TextStyle(color: Colors.grey)),
+                   ],
+                 ),
+              )
+            )
+          : GridView.builder(
+            padding: const EdgeInsets.all(16),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 3,
+              mainAxisSpacing: 16,
+              crossAxisSpacing: 16,
+              childAspectRatio: 1.0,
+            ),
+            itemCount: subCategories.length,
+            itemBuilder: (context, index) {
+              final subCat = subCategories[index];
+              // 检查是否被选中
+              final pairs = widget.state.editBill.data?.categoryAmountPair;
+              bool isSelected = false;
+              if (pairs != null && pairs.isNotEmpty) {
+                 isSelected = pairs.any((p) => p['categoryId'] == subCat.id);
+              }
+
+              return InkWell(
+                onTap: () => widget.onSelect(subCat.id),
+                borderRadius: BorderRadius.circular(12),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: isSelected ? Theme.of(context).primaryColor.withOpacity(0.1) : Colors.white,
+                    border: Border.all(
+                      color: isSelected ? Theme.of(context).primaryColor : Colors.grey.shade200,
+                      width: isSelected ? 1.5 : 1,
                     ),
-                    Expanded(
-                      child: CupertinoPicker(
-                        scrollController: _yearController,
-                        itemExtent: 40,
-                        onSelectedItemChanged: (index) {
-                          setState(() {
-                            selectedYear = startYear + index;
-                            _updateDay();
-                          });
-                        },
-                        children: List.generate(
-                          endYear - startYear + 1,
-                          (index) => Center(
-                            child: Text(
-                              '${startYear + index}',
-                              style: const TextStyle(fontSize: 18),
-                            ),
-                          ),
-                        ),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.category, // TODO: 支持自定义图标
+                        color: isSelected ? Theme.of(context).primaryColor : Colors.grey[600],
+                        size: 28,
                       ),
-                    ),
-                  ],
-                ),
-              ),
-              // 月份选择器
-              Expanded(
-                child: Column(
-                  children: [
-                    const Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Text('月', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                    ),
-                    Expanded(
-                      child: CupertinoPicker(
-                        scrollController: _monthController,
-                        itemExtent: 40,
-                        onSelectedItemChanged: (index) {
-                          setState(() {
-                            selectedMonth = index + 1;
-                            _updateDay();
-                          });
-                        },
-                        children: List.generate(
-                          12,
-                          (index) => Center(
-                            child: Text(
-                              '${index + 1}',
-                              style: const TextStyle(fontSize: 18),
-                            ),
-                          ),
+                      const SizedBox(height: 8),
+                      Text(
+                        subCat.title,
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: isSelected ? Theme.of(context).primaryColor : Colors.grey[700],
+                          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                         ),
+                        textAlign: TextAlign.center,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-              // 日期选择器
-              Expanded(
-                child: Column(
-                  children: [
-                    const Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Text('日', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                    ),
-                    Expanded(
-                      child: CupertinoPicker(
-                        scrollController: _dayController,
-                        itemExtent: 40,
-                        onSelectedItemChanged: (index) {
-                          setState(() {
-                            selectedDay = index + 1;
-                          });
-                        },
-                        children: List.generate(
-                          _getDaysInMonth(selectedYear, selectedMonth),
-                          (index) => Center(
-                            child: Text(
-                              '${index + 1}',
-                              style: const TextStyle(fontSize: 18),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              // 小时选择器
-              Expanded(
-                child: Column(
-                  children: [
-                    const Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Text('时', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                    ),
-                    Expanded(
-                      child: CupertinoPicker(
-                        scrollController: _hourController,
-                        itemExtent: 40,
-                        onSelectedItemChanged: (index) {
-                          setState(() {
-                            selectedHour = index;
-                          });
-                        },
-                        children: List.generate(
-                          24,
-                          (index) => Center(
-                            child: Text(
-                              index.toString().padLeft(2, '0'),
-                              style: const TextStyle(fontSize: 18),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              // 分钟选择器
-              Expanded(
-                child: Column(
-                  children: [
-                    const Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Text('分', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                    ),
-                    Expanded(
-                      child: CupertinoPicker(
-                        scrollController: _minuteController,
-                        itemExtent: 40,
-                        onSelectedItemChanged: (index) {
-                          setState(() {
-                            selectedMinute = index;
-                          });
-                        },
-                        children: List.generate(
-                          60,
-                          (index) => Center(
-                            child: Text(
-                              index.toString().padLeft(2, '0'),
-                              style: const TextStyle(fontSize: 18),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
+              );
+            },
           ),
         ),
       ],
@@ -1379,391 +667,470 @@ class _CustomDateTimePickerState extends State<CustomDateTimePicker> {
   }
 }
 
-class TitleField extends StatelessWidget {
-  const TitleField({
-    super.key,
-    required TextEditingController titleController,
-    required this.state,
-  }) : _titleController = titleController;
+// 别名，指向上面的Wrapper
+typedef _CategorySelector = _CategorySelectorWrapper;
 
-  final TextEditingController _titleController;
+// --- 组件：转账选择器 ---
+class _TransferSelector extends StatefulWidget {
   final EditBillState state;
+  const _TransferSelector({required this.state});
 
   @override
+  State<_TransferSelector> createState() => _TransferSelectorState();
+}
+
+class _TransferSelectorState extends State<_TransferSelector> {
+  @override
   Widget build(BuildContext context) {
-    return TextField(
-      // lxjtodo:
-      controller: _titleController,
-      onChanged: (value) {
-        state.editBill.data?.title = value;
-      },
-      decoration: InputDecoration(
-        hintText: '请输入标题',
-        labelText: '标题',
-        labelStyle: TextStyle(
-          color: Colors.grey.shade700,
-          fontSize: 16,
+    final state = widget.state;
+    final outAccountName = _getAccountName(state.transferOutAccountList, state.editBill.data?.accountId);
+    final inAccountName = _getAccountName(state.transferAccountList, state.editBill.data?.toAccountId);
+
+    return Padding(
+      padding: const EdgeInsets.all(24.0),
+      child: Column(
+        children: [
+          _buildAccountCard(
+            title: '转出账户',
+            value: outAccountName,
+            icon: Icons.upload_rounded,
+            color: Colors.redAccent,
+            onTap: () => _showAccountSelect(context, state.transferOutAccountList, true),
+          ),
+          const Padding(
+            padding: EdgeInsets.symmetric(vertical: 16),
+            child: Icon(Icons.arrow_downward, color: Colors.grey),
+          ),
+          _buildAccountCard(
+            title: '转入账户',
+            value: inAccountName,
+            icon: Icons.download_rounded,
+            color: Colors.green,
+            onTap: () => _showAccountSelect(context, state.transferAccountList, false),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _getAccountName(List<DropdownItem<AccountSelectItem>> list, int? id) {
+    if (id == null) return '请选择';
+    try {
+      return list.firstWhere((e) => e.value.id == id).label;
+    } catch (e) {
+      return '未知账户';
+    }
+  }
+
+  Widget _buildAccountCard({
+    required String title,
+    required String value,
+    required IconData icon,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(16),
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          border: Border.all(color: Colors.grey.shade300),
+          borderRadius: BorderRadius.circular(16),
         ),
-        prefixIcon: const Icon(Icons.title),
-        // 统一所有状态下的边框样式
-        enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.grey.shade400),
-          borderRadius: BorderRadius.circular(12),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.blue), // 聚焦状态边框颜色
-          borderRadius: BorderRadius.circular(12),
-        ),
-        errorBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.red), // 错误状态边框颜色
-          borderRadius: BorderRadius.circular(12),
-        ),
-        border: OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.grey.shade400),
-          borderRadius: BorderRadius.circular(12),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: color.withOpacity(0.1),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(icon, color: color, size: 20),
+            ),
+            const SizedBox(width: 16),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(title, style: TextStyle(fontSize: 12, color: Colors.grey[600])),
+                const SizedBox(height: 4),
+                Text(value, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+              ],
+            ),
+            const Spacer(),
+            const Icon(Icons.chevron_right, color: Colors.grey),
+          ],
         ),
       ),
-      maxLength: 50,
+    );
+  }
+
+  void _showAccountSelect(BuildContext context, List<DropdownItem<AccountSelectItem>> items, bool isOut) {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
+      builder: (ctx) => ListView.builder(
+        shrinkWrap: true,
+        itemCount: items.length,
+        itemBuilder: (c, i) => ListTile(
+          title: Text(items[i].label),
+          onTap: () {
+            final bloc = context.read<EditBillBloc>();
+            if (isOut) {
+              bloc.state.editBill.data?.accountId = items[i].value.id;
+            } else {
+              bloc.state.editBill.data?.toAccountId = items[i].value.id;
+            }
+            Navigator.pop(ctx);
+            setState(() {});
+          },
+        ),
+      ),
     );
   }
 }
 
-// 显示账户选择弹窗
-  void _showAccountSelectionDialog(
-    BuildContext context,
-    List<DropdownItem<AccountSelectItem>> items,
-    AccountSelectItem? currentItem,
-    Function(AccountSelectItem?) onSelected,
-  ) {
-    if (items.isEmpty) {
-      ScaffoldMessenger.of(context).removeCurrentSnackBar();
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('暂无可选账户')),
-      );
-      return;
-    }
+// --- 组件：底部工具栏 ---
+class _ActionToolbar extends StatelessWidget {
+  final EditBillState state;
+  final TextEditingController remarkController;
+  final VoidCallback onUpdate;
 
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+  const _ActionToolbar({
+    required this.state,
+    required this.remarkController,
+    required this.onUpdate,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final dateStr = state.editBill.data?.tradeTime ?? DateFormat('MM-dd').format(DateTime.now());
+    final displayDate = dateStr.contains(' ') ? dateStr.split(' ')[0] : dateStr;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          // 日期选择
+          _ToolButton(
+            icon: Icons.calendar_today,
+            label: displayDate,
+            onTap: () => _showDatePicker(context),
+          ),
+          
+          // 账户选择 (非转账模式)
+          if (BillType.fromValue(state.editBill.data?.billType ?? 1) != BillType.transfer)
+             _ToolButton(
+              icon: Icons.wallet,
+              label: '账户',
+              isActive: state.editBill.data?.accountId != null,
+              onTap: () => _showAccountPicker(context),
+            ),
+
+          // 标签
+          _ToolButton(
+            icon: Icons.local_offer_outlined,
+            label: '标签',
+            isActive: (state.editBill.data?.tagIdList ?? []).isNotEmpty,
+            onTap: () => _showTagPicker(context),
+          ),
+
+          // 备注
+          _ToolButton(
+            icon: Icons.edit_note,
+            label: '备注',
+            isActive: remarkController.text.isNotEmpty,
+            onTap: () => _showRemarkDialog(context),
+          ),
+          
+          // 附件
+          _ToolButton(
+            icon: Icons.attach_file,
+            label: '附件',
+            isActive: state.attachments.isNotEmpty,
+            onTap: () => _showAttachmentPicker(context),
+          ),
+        ],
       ),
-      builder: (context) {
-        return DraggableScrollableSheet(
-          initialChildSize: 0.5,
-          minChildSize: 0.5,
-          maxChildSize: 0.9,
-          expand: false,
-          builder: (context, scrollController) {
-            return Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // 顶部标题栏
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: const BoxDecoration(
-                    border: Border(bottom: BorderSide(color: Colors.grey, width: 0.5)),
-                  ),
-                  child: Row(
-                    children: [
-                      const Expanded(
-                        child: Text(
-                          '选择账户',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () => Navigator.pop(context),
-                        child: const Icon(Icons.close),
-                      ),
-                    ],
-                  ),
-                ),
-                // 列表内容
-                Expanded(
-                  child: ListView.builder(
-                    controller: scrollController,
-                    itemCount: items.length,
-                    itemBuilder: (context, index) {
-                      final item = items[index];
-                      final isSelected = currentItem?.id == item.value.id;
-                      return ListTile(
-                        title: Text(item.label),
-                        trailing: isSelected
-                            ? const Icon(Icons.check, color: Colors.green)
-                            : null,
-                        onTap: () {
-                          Navigator.pop(context);
-                          onSelected(item.value);
-                        },
-                      );
-                    },
-                  ),
-                ),
-              ],
-            );
-          },
-        );
-      },
     );
   }
 
-  // 显示交易对象选择弹窗
-  void _showPayeeSelectionDialog(
-    BuildContext context,
-    List<DropdownItem<PayeeSelectItem>> items,
-    PayeeSelectItem? currentItem,
-    Function(PayeeSelectItem?) onSelected,
-  ) {
-    if (items.isEmpty) {
-      ScaffoldMessenger.of(context).removeCurrentSnackBar();
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('暂无可选交易对象')),
+  void _showDatePicker(BuildContext context) async {
+    final now = DateTime.now();
+    final result = await showDatePicker(
+      context: context,
+      initialDate: now,
+      firstDate: now.subtract(const Duration(days: 365 * 5)),
+      lastDate: now.add(const Duration(days: 365)),
+    );
+    if (result != null) {
+      final timeStr = DateFormat('yyyy-MM-dd HH:mm:ss').format(
+        DateTime(result.year, result.month, result.day, now.hour, now.minute)
       );
-      return;
+      state.editBill.data?.tradeTime = timeStr;
+      onUpdate();
     }
+  }
+
+  void _showAccountPicker(BuildContext context) {
+    final billType = BillType.fromValue(state.editBill.data?.billType ?? 1);
+    final items = billType == BillType.income 
+        ? state.incomeAccountList 
+        : state.expenseAccountList;
 
     showModalBottomSheet(
       context: context,
-      isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
+      builder: (ctx) => Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Padding(padding: EdgeInsets.all(16), child: Text("选择账户", style: TextStyle(fontWeight: FontWeight.bold))),
+          ...items.map((e) => ListTile(
+            title: Text(e.label),
+            leading: const Icon(Icons.wallet),
+            selected: state.editBill.data?.accountId == e.value.id,
+            onTap: () {
+               state.editBill.data?.accountId = e.value.id;
+               Navigator.pop(ctx);
+               onUpdate();
+            },
+          )),
+        ],
       ),
-      builder: (context) {
-        return DraggableScrollableSheet(
-          initialChildSize: 0.5,
-          minChildSize: 0.5,
-          maxChildSize: 0.9,
-          expand: false,
-          builder: (context, scrollController) {
-            return Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // 顶部标题栏
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: const BoxDecoration(
-                    border: Border(bottom: BorderSide(color: Colors.grey, width: 0.5)),
-                  ),
-                  child: Row(
-                    children: [
-                      const Expanded(
-                        child: Text(
-                          '选择交易对象',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () => Navigator.pop(context),
-                        child: const Icon(Icons.close),
-                      ),
-                    ],
-                  ),
-                ),
-                // 列表内容
-                Expanded(
-                  child: ListView.builder(
-                    controller: scrollController,
-                    itemCount: items.length,
-                    itemBuilder: (context, index) {
-                      final item = items[index];
-                      final isSelected = currentItem?.id == item.value.id;
-                      return ListTile(
-                        title: Text(item.label),
-                        trailing: isSelected
-                            ? const Icon(Icons.check, color: Colors.green)
-                            : null,
-                        onTap: () {
-                          Navigator.pop(context);
-                          onSelected(item.value);
-                        },
-                      );
-                    },
-                  ),
-                ),
-              ],
-            );
-          },
-        );
-      },
     );
   }
 
-// 显示转入账户选择弹窗
-  void _showTransferInAccountSelectionDialog(
-    BuildContext context,
-    List<DropdownItem<AccountSelectItem>> items,
-    AccountSelectItem? currentItem,
-    Function(AccountSelectItem?) onSelected,
-  ) {
-    if (items.isEmpty) {
-      ScaffoldMessenger.of(context).removeCurrentSnackBar();
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('暂无可选转入账户')),
-      );
-      return;
-    }
+  void _showRemarkDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('添加备注'),
+        content: TextField(
+          controller: remarkController,
+          autofocus: true,
+          decoration: const InputDecoration(hintText: '写点什么...'),
+          onChanged: (v) => state.editBill.data?.remark = v,
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('确定')),
+        ],
+      ),
+    ).then((_) => onUpdate());
+  }
 
+  void _showTagPicker(BuildContext context) {
+    // 简化版标签选择，实际可复用原有的TagTree
+    showModalBottomSheet(
+      context: context,
+      builder: (ctx) => Container(
+        padding: const EdgeInsets.all(16),
+        height: 400,
+        child: Column(
+          children: [
+            const Text('选择标签', style: TextStyle(fontWeight: FontWeight.bold)),
+            const SizedBox(height: 16),
+            Expanded(
+              child: ListView(
+                children: state.tagList.map((tag) {
+                  final isSelected = state.editBill.data?.tagIdList?.contains(tag.id) ?? false;
+                  return CheckboxListTile(
+                    title: Text(tag.title),
+                    value: isSelected,
+                    onChanged: (v) {
+                       List<int> ids = state.editBill.data?.tagIdList ?? [];
+                       if (v == true) {
+                         ids.add(tag.id);
+                       } else {
+                         ids.remove(tag.id);
+                       }
+                       state.editBill.data?.tagIdList = ids;
+                       // 强制刷新当前Sheet (这里简化了，实际需要StatefulBuilder)
+                       Navigator.pop(ctx); // 简单粗暴，关掉重开或让用户自己关
+                       _showTagPicker(context); 
+                    },
+                  );
+                }).toList(),
+              ),
+            ),
+          ],
+        ),
+      ),
+    ).then((_) => onUpdate());
+  }
+  
+  void _showAttachmentPicker(BuildContext context) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => Container(
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+        ),
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+             AttachmentUploadWidget(
+               initialAttachments: state.attachments,
+               onAttachmentsChanged: (list) {
+                 context.read<EditBillBloc>().add(EditBillAttachmentsChanged(list));
+                 onUpdate();
+               },
+             ),
+             const SizedBox(height: 20),
+          ]
+        ),
       ),
-      builder: (context) {
-        return DraggableScrollableSheet(
-          initialChildSize: 0.5,
-          minChildSize: 0.5,
-          maxChildSize: 0.9,
-          expand: false,
-          builder: (context, scrollController) {
-            return Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // 顶部标题栏
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: const BoxDecoration(
-                    border: Border(bottom: BorderSide(color: Colors.grey, width: 0.5)),
-                  ),
-                  child: Row(
-                    children: [
-                      const Expanded(
-                        child: Text(
-                          '选择转入账户',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () => Navigator.pop(context),
-                        child: const Icon(Icons.close),
-                      ),
-                    ],
-                  ),
+    );
+  }
+}
+
+class _ToolButton extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final bool isActive;
+  final VoidCallback onTap;
+
+  const _ToolButton({
+    required this.icon,
+    required this.label,
+    this.isActive = false,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(8),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        child: Column(
+          children: [
+            Icon(icon, size: 20, color: isActive ? Theme.of(context).primaryColor : Colors.grey[600]),
+            const SizedBox(height: 2),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 10,
+                color: isActive ? Theme.of(context).primaryColor : Colors.grey[600],
+                fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// --- 组件：数字键盘 ---
+class _NumericKeypad extends StatelessWidget {
+  final Function(String) onTap;
+  final Color confirmColor;
+
+  const _NumericKeypad({required this.onTap, required this.confirmColor});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: Colors.grey[50],
+      padding: const EdgeInsets.only(bottom: 16, top: 8),
+      child: Column(
+        children: [
+          _buildRow(['1', '2', '3', 'DEL']),
+          _buildRow(['4', '5', '6', 'OK'], isLastColumnSpecial: true), // OK 占两行? 布局稍微复杂点，先简单做
+          // 重新设计：
+          // 1 2 3 DEL
+          // 4 5 6
+          // 7 8 9 OK (span 2 row)
+          // . 0   
+          Row(
+            children: [
+              Expanded(
+                flex: 3,
+                child: Column(
+                  children: [
+                    _buildKeyRow(['1', '2', '3']),
+                    _buildKeyRow(['4', '5', '6']),
+                    _buildKeyRow(['7', '8', '9']),
+                    _buildKeyRow(['.', '0', 'HIDE']), // HIDE: 收起键盘或者00
+                  ],
                 ),
-                // 列表内容
-                Expanded(
-                  child: ListView.builder(
-                    controller: scrollController,
-                    itemCount: items.length,
-                    itemBuilder: (context, index) {
-                      final item = items[index];
-                      final isSelected = currentItem?.id == item.value.id;
-                      return ListTile(
-                        title: Text(item.label),
-                        trailing: isSelected
-                            ? const Icon(Icons.check, color: Colors.green)
-                            : null,
-                        onTap: () {
-                          Navigator.pop(context);
-                          onSelected(item.value);
-                        },
-                      );
-                    },
-                  ),
+              ),
+              Expanded(
+                flex: 1,
+                child: Column(
+                  children: [
+                    _buildKey('DEL', height: 112, color: Colors.transparent), // 2格高
+                    _buildKey('OK', height: 112, color: confirmColor, textColor: Colors.white),
+                  ],
                 ),
-              ],
-            );
-          },
-        );
-      },
+              ),
+            ],
+          )
+        ],
+      ),
     );
   }
 
-  // 显示转出账户选择弹窗
-  void _showTransferOutAccountSelectionDialog(
-    BuildContext context,
-    List<DropdownItem<AccountSelectItem>> items,
-    AccountSelectItem? currentItem,
-    Function(AccountSelectItem?) onSelected,
-  ) {
-    if (items.isEmpty) {
-      ScaffoldMessenger.of(context).removeCurrentSnackBar();
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('暂无可选转出账户')),
-      );
-      return;
+  Widget _buildRow(List<String> keys, {bool isLastColumnSpecial = false}) {
+    return Row(
+      children: keys.map((k) => Expanded(child: _buildKey(k))).toList(),
+    );
+  }
+
+  Widget _buildKeyRow(List<String> keys) {
+    return Row(
+      children: keys.map((k) => Expanded(child: _buildKey(k))).toList(),
+    );
+  }
+
+  Widget _buildKey(String value, {double height = 56, Color? color, Color? textColor}) {
+    // 处理特殊建
+    Widget content;
+    if (value == 'DEL') {
+      content = const Icon(Icons.backspace_outlined);
+    } else if (value == 'OK') {
+      content = const Text('完成', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold));
+    } else if (value == 'HIDE') {
+       // content = const Icon(Icons.keyboard_hide_outlined);
+       content = const SizedBox(); // 占位，或者换成 '00'
+    } else {
+      content = Text(value, style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w500));
+    }
+    
+    // 特殊逻辑：如果是HIDE，换成空白占位，但为了对齐，不响应点击
+    if (value == 'HIDE') {
+       return SizedBox(height: height);
     }
 
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+    return GestureDetector(
+      onTap: () => onTap(value),
+      child: Container(
+        height: height,
+        margin: const EdgeInsets.all(4),
+        decoration: BoxDecoration(
+          color: color ?? Colors.white,
+          borderRadius: BorderRadius.circular(8),
+          boxShadow: color == null ? [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              offset: const Offset(0, 1),
+              blurRadius: 1,
+            )
+          ] : null,
+        ),
+        alignment: Alignment.center,
+        child: DefaultTextStyle(
+          style: TextStyle(color: textColor ?? Colors.black87),
+          child: content,
+        ),
       ),
-      builder: (context) {
-        return DraggableScrollableSheet(
-          initialChildSize: 0.5,
-          minChildSize: 0.5,
-          maxChildSize: 0.9,
-          expand: false,
-          builder: (context, scrollController) {
-            return Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // 顶部标题栏
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: const BoxDecoration(
-                    border: Border(bottom: BorderSide(color: Colors.grey, width: 0.5)),
-                  ),
-                  child: Row(
-                    children: [
-                      const Expanded(
-                        child: Text(
-                          '选择转出账户',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () => Navigator.pop(context),
-                        child: const Icon(Icons.close),
-                      ),
-                    ],
-                  ),
-                ),
-                // 列表内容
-                Expanded(
-                  child: ListView.builder(
-                    controller: scrollController,
-                    itemCount: items.length,
-                    itemBuilder: (context, index) {
-                      final item = items[index];
-                      final isSelected = currentItem?.id == item.value.id;
-                      return ListTile(
-                        title: Text(item.label),
-                        trailing: isSelected
-                            ? const Icon(Icons.check, color: Colors.green)
-                            : null,
-                        onTap: () {
-                          Navigator.pop(context);
-                          onSelected(item.value);
-                        },
-                      );
-                    },
-                  ),
-                ),
-              ],
-            );
-          },
-        );
-      },
     );
   }
+}
