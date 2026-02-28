@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:hjproject/home/setting_page/models/mine_setting.dart';
 
-/// 通用的设置项列表组件，封装了不同 SettingType 的展示与交互：
-/// - currentGroup / currentBook：展示副标题为当前选择项，点击触发选择逻辑
-/// - accountOverview：展示账户概览信息，点击进入详情
-/// - 其它类型：展示通用标题、副标题和图标，点击触发通用处理
-class SettingItemTile extends StatefulWidget {
+/// 通用的设置项列表组件 - Refactored for Design Skill
+/// - Height: 56px
+/// - Typography: Title 15px W500, Subtitle 13px Grey
+/// - Interaction: InkWell feedback
+class SettingItemTile extends StatelessWidget {
   final Setting element;
-  final ValueChanged<Setting> onSelectSetting; // 针对 currentGroup/currentBook
-  final ValueChanged<Setting> onTapSetting; // 其它通用点击
+  final ValueChanged<Setting> onSelectSetting;
+  final ValueChanged<Setting> onTapSetting;
 
   const SettingItemTile({
     super.key,
@@ -18,190 +18,128 @@ class SettingItemTile extends StatefulWidget {
   });
 
   @override
-  State<SettingItemTile> createState() => _SettingItemTileState();
-}
-
-class _SettingItemTileState extends State<SettingItemTile>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _animationController;
-  late Animation<double> _scaleAnimation;
-  bool _isHovered = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _animationController = AnimationController(
-      duration: const Duration(milliseconds: 200),
-      vsync: this,
-    );
-    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.98).animate(
-      CurvedAnimation(parent: _animationController, curve: Curves.easeOut),
-    );
-  }
-
-  @override
-  void dispose() {
-    _animationController.dispose();
-    super.dispose();
-  }
-
-  void _onTapDown() {
-    _animationController.forward();
-  }
-
-  void _onTapCancel() {
-    _animationController.reverse();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return _buildTile(context);
-  }
+    // Determine content based on type
+    Widget? leading = element.leadingWidget;
+    String title = element.type.title;
+    String? subtitle = element.content ?? element.detail;
+    VoidCallback onTap = () => onTapSetting(element);
 
-  Widget _buildTile(BuildContext context) {
-    final element = widget.element;
-    if (element.type == SettingType.currentGroup ||
-        element.type == SettingType.currentBook) {
-      final curItem = element.content;
-      return _buildTileWithAnimation(
-        context,
-        leading: element.leadingWidget ??
-            Icon(
-              element.type == SettingType.currentGroup
-                  ? Icons.group
-                  : Icons.book,
-              color: Theme.of(context).primaryColor,
-            ),
-        title: element.type.title,
-        subtitle: curItem ?? '未选择',
-        onTap: () => widget.onSelectSetting(element),
-      );
-    }
-
-    if (element.type == SettingType.accountOverview) {
-      return _buildTileWithAnimation(
-        context,
-        leading: element.leadingWidget ??
-            Icon(
-              Icons.account_balance_wallet,
-              color: Theme.of(context).primaryColor,
-            ),
-        title: '账户概览',
-        subtitle: element.detail,
-        onTap: () => widget.onTapSetting(element),
-      );
-    }
-
-    return _buildTileWithAnimation(
-      context,
-      leading: element.leadingWidget ??
+    if (element.type == SettingType.currentGroup) {
+      leading = leading ??
+          const Icon(
+            Icons.group_outlined,
+            color: Colors.black87,
+            size: 20,
+          );
+      subtitle = element.content ?? '未选择';
+      onTap = () => onSelectSetting(element);
+    } else if (element.type == SettingType.currentBook) {
+      leading = leading ??
+          const Icon(
+            Icons.book_outlined,
+            color: Colors.black87,
+            size: 20,
+          );
+      subtitle = element.content ?? '未选择';
+      onTap = () => onSelectSetting(element);
+    } else if (element.type == SettingType.accountOverview) {
+      leading = leading ??
+          const Icon(
+            Icons.account_balance_wallet_outlined,
+            color: Colors.black87,
+            size: 20,
+          );
+      title = '账户概览';
+      subtitle = element.detail;
+      onTap = () => onTapSetting(element);
+    } else {
+      // Default icon handling if not provided
+      leading = leading ??
           Icon(
-            _iconForType(element.type),
-            color: Theme.of(context).primaryColor,
-          ),
-      title: element.type.title,
-      subtitle: element.content ?? element.detail,
-      onTap: () => widget.onTapSetting(element),
-    );
-  }
+            _getIconForType(element.type),
+            color: Colors.black87,
+            size: 20,
+          );
+    }
 
-  Widget _buildTileWithAnimation(
-    BuildContext context, {
-    required Widget leading,
-    required String title,
-    String? subtitle,
-    required VoidCallback onTap,
-  }) {
-    return Column(
-      children: [
-        ScaleTransition(
-          scale: _scaleAnimation,
-          child: Material(
-            color: Colors.transparent,
-            child: MouseRegion(
-              onEnter: (_) {
-                setState(() => _isHovered = true);
-              },
-              onExit: (_) {
-                setState(() => _isHovered = false);
-              },
-              child: GestureDetector(
-                onTapDown: (_) => _onTapDown(),
-                onTapCancel: _onTapCancel,
-                onTap: () {
-                  _onTapCancel();
-                  onTap();
-                },
-                child: Container(
-                  color: _isHovered
-                      ? Colors.grey[100]
-                      : Colors.transparent,
-                  child: ListTile(
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 8,
-                    ),
-                    leading: leading,
-                    title: Text(
-                      title,
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    subtitle: subtitle != null
-                        ? Text(
-                            subtitle,
-                            style: TextStyle(
-                              color: Colors.grey[600],
-                              fontSize: 13,
-                            ),
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                          )
-                        : null,
-                    trailing: Icon(
-                      Icons.arrow_forward_ios,
-                      size: 16,
-                      color: Colors.grey[400],
-                    ),
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        child: Container(
+          height: 56, // Component Standard: Min height 56
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Row(
+            children: [
+              // Icon Circle (Optional: can be removed if prefer plain icon)
+              Container(
+                width: 32,
+                height: 32,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: Colors.grey[50],
+                  shape: BoxShape.circle,
+                ),
+                child: leading,
+              ),
+              const SizedBox(width: 16),
+              
+              // Title
+              Expanded(
+                child: Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black87, // Token: Primary Text
                   ),
                 ),
               ),
-            ),
+
+              // Subtitle & Trailing
+              if (subtitle != null && subtitle.isNotEmpty) ...[
+                const SizedBox(width: 8),
+                Text(
+                  subtitle,
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: Colors.grey[500], // Token: Hint Text
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(width: 8),
+              ],
+              
+              const Icon(
+                Icons.arrow_forward_ios,
+                size: 14,
+                color: Colors.grey,
+              ),
+            ],
           ),
         ),
-        Divider(
-          height: 1,
-          indent: 56,
-          endIndent: 16,
-          color: Colors.grey[200],
-        ),
-      ],
+      ),
     );
   }
 
-  IconData _iconForType(SettingType type) {
+  IconData _getIconForType(SettingType type) {
     switch (type) {
       case SettingType.username:
-        return Icons.person;
-      case SettingType.accountOverview:
-        return Icons.account_balance_wallet;
-      case SettingType.currentGroup:
-        return Icons.group;
-      case SettingType.currentBook:
-        return Icons.book;
+        return Icons.person_outline;
       case SettingType.currentTheme:
-        return Icons.color_lens;
+        return Icons.color_lens_outlined;
       case SettingType.currentLanguage:
-        return Icons.language;
+        return Icons.language_outlined;
       case SettingType.api:
-        return Icons.api;
+        return Icons.api_outlined;
       case SettingType.currentVersion:
-        return Icons.info;
+        return Icons.info_outline;
       case SettingType.apiVersion:
-        return Icons.cloud;
+        return Icons.cloud_outlined;
       default:
-        return Icons.settings;
+        return Icons.settings_outlined;
     }
   }
 }

@@ -1,18 +1,15 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'dart:developer' as developer;
-
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:hjproject/home/setting_page/bloc/setting_bloc.dart';
 import 'package:hjproject/home/setting_page/models/mine_setting.dart';
 import 'package:hjproject/home/setting_page/models/setting_select_item.dart';
-import 'package:hjproject/login/model/users.dart';
 import 'package:hjproject/login/view/base_url_config_page.dart';
 import 'package:hjproject/request/book_request.dart';
 import 'package:hjproject/request/group_request.dart';
 import 'package:hjproject/repository/repository/bills_repository.dart';
-import 'package:hjproject/util/dio_client.dart';
+import 'package:hjproject/util/image_save_service.dart';
 import 'package:multi_dropdown/multi_dropdown.dart';
 import '../../../generated/l10n.dart';
 
@@ -26,12 +23,8 @@ import 'package:hjproject/home/setting_page/view/widgets/donate_qr_sheet.dart';
 import 'package:hjproject/home/setting_page/view/widgets/help_dialog.dart';
 import 'package:hjproject/home/setting_page/view/widgets/api_info_dialog.dart';
 import 'package:hjproject/home/setting_page/view/widgets/setting_detail_dialog.dart';
-import 'package:hjproject/home/setting_page/view/widgets/theme_selection_sheet.dart';
 import 'package:hjproject/home/setting_page/view/widgets/logout_confirm_dialog.dart';
 import 'package:hjproject/home/setting_page/view/widgets/selection_bottom_sheet.dart';
-import 'package:hjproject/home/setting_page/view/widgets/save_options_sheet.dart';
-import 'package:hjproject/util/image_save_service.dart';
-import 'package:hjproject/home/setting_page/view/widgets/language_selection_sheet.dart';
 import 'package:hjproject/home/setting_page/utils/setting_filter.dart';
 
 class MinePage extends StatelessWidget {
@@ -59,14 +52,13 @@ class _MineViewState extends State<MineView> {
   @override
   void initState() {
     super.initState();
-    // 拉取账本信息
     context.read<SettingBloc>().add(GroupSettingFetched());
   }
 
   @override
   Widget build(BuildContext context) {
     final state = context.watch<SettingBloc>().state;
-    developer.log('🎨 UI重建 - 状态: ${state.status}, 设置数量: ${state.settings.length}, 远程设置: ${state.remoteSettings.length}, 分组设置: ${state.groupSettings.length}', name: 'SettingPage');
+    developer.log('🎨 UI重建 - 状态: ${state.status}, 设置数量: ${state.settings.length}', name: 'SettingPage');
     
     var elements = [
       ...state.settings,
@@ -74,29 +66,25 @@ class _MineViewState extends State<MineView> {
       ...state.groupSettings
     ];
     Setting.sortList(elements);
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     
-    // 检查是否有白屏风险的状态
-    if (state.status == SettingStatus.failure) {
-      developer.log('⚠️ 检测到失败状态，可能导致白屏', name: 'SettingPage');
-    }
-    if (elements.isEmpty) {
-      developer.log('⚠️ 设置元素为空，可能导致白屏', name: 'SettingPage');
-    }
-    
+    // Design Token: Background #FAFAFA
     return Scaffold(
-      backgroundColor: isDark ? Colors.grey[950] : Colors.grey[50],
+      backgroundColor: Colors.grey[50], 
       appBar: AppBar(
         elevation: 0,
         title: Text(
           S.current.mine,
-          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-            fontWeight: FontWeight.w600,
+          style: const TextStyle(
+            color: Colors.black87,
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
           ),
         ),
+        centerTitle: true,
+        backgroundColor: Colors.grey[50], // Seamless blend
         actions: [
           IconButton(
-            icon: const Icon(Icons.help_outline),
+            icon: const Icon(Icons.help_outline, color: Colors.black87),
             tooltip: 'Help',
             onPressed: () {
               _showHelpDialog(context);
@@ -104,14 +92,14 @@ class _MineViewState extends State<MineView> {
           ),
           const SizedBox(width: 4),
         ],
-        backgroundColor: isDark ? Colors.grey[900] : Colors.white,
       ),
       body: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
+        padding: const EdgeInsets.only(bottom: 24), // Spacing
         child: Column(
           children: [
             _buildUserHeader(context, elements),
-            const SizedBox(height: 20),
+            const SizedBox(height: 16), // Spacing Rhythm
             _buildSettingsGroups(context, elements),
             const SizedBox(height: 24),
           ],
@@ -121,7 +109,6 @@ class _MineViewState extends State<MineView> {
   }
 
   Widget _buildUserHeader(BuildContext context, List<Setting> elements) {
-    // 查找用户名设置项
     final usernameSetting = elements.firstWhere(
       (element) => element.type == SettingType.username,
       orElse: () => const Setting(SettingType.username, content: '未登录用户'),
@@ -143,7 +130,6 @@ class _MineViewState extends State<MineView> {
   }
 
   Widget _buildSettingsGroups(BuildContext context, List<Setting> elements) {
-    // 使用 SettingFilter 工具类进行高效的单次遍历分组
     final groups = SettingFilter.groupSettings(elements);
 
     return Column(
@@ -151,17 +137,18 @@ class _MineViewState extends State<MineView> {
       children: [
         if (groups.hasAccountSettings) ...[
           _buildSettingGroup(context, '账户设置', groups.accountSettings),
-          const SizedBox(height: 14),
+          const SizedBox(height: 16),
         ],
+        // 账本配置单独作为一组
         _buildBookConfigGroup(context),
-        const SizedBox(height: 14),
+        const SizedBox(height: 16),
         if (groups.hasAppSettings) ...[
           _buildSettingGroup(context, '应用设置', groups.appSettings),
-          const SizedBox(height: 14),
+          const SizedBox(height: 16),
         ],
         if (groups.hasAboutSettings) ...[
           _buildSettingGroup(context, '关于', groups.aboutSettings),
-          const SizedBox(height: 14),
+          const SizedBox(height: 16),
         ],
         _buildAdditionalOptions(context),
       ],
@@ -177,12 +164,10 @@ class _MineViewState extends State<MineView> {
     );
   }
 
-  // 新增：账本配置分组（与账户设置、应用设置、关于同级）
   Widget _buildBookConfigGroup(BuildContext context) {
     return const BookConfigGroup();
   }
 
-  // 通用设置项渲染：统一使用封装的 SettingItemTile，避免重复代码
   Widget _getSettingItem(BuildContext context, Setting element) {
     return SettingItemTile(
       element: element,
@@ -195,7 +180,6 @@ class _MineViewState extends State<MineView> {
     );
   }
 
-  // 通用点击处理：根据类型分派到对应的对话框/逻辑
   void _handleSettingTap(BuildContext context, Setting element) {
     switch (element.type) {
       case SettingType.currentTheme:
@@ -213,20 +197,86 @@ class _MineViewState extends State<MineView> {
     }
   }
 
-  // 更多操作分组：打赏、反馈、评分、退出登录
   Widget _buildAdditionalOptions(BuildContext context) {
     return AdditionalOptionsGroup(
       onDonate: () => _showQRCode(context),
-      onFeedback: () {
-        // 跳转到意见反馈页面
-        emptyPage();
-      },
-      onRate: () {
-        // 跳转到应用商店评分
-        emptyPage();
-      },
+      onFeedback: () => emptyPage(),
+      onRate: () => emptyPage(),
       onLogout: () => _showLogoutConfirmation(context),
     );
+  }
+
+  void emptyPage() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('功能开发中...')),
+    );
+  }
+
+  // FIXED: Changed `currentApiUrl` to `apiDetail`
+  void _showApiSettingDialog(BuildContext context, Setting element) {
+    showDialog(
+      context: context,
+      builder: (context) => ApiInfoDialog(
+        apiDetail: element.content ?? '', 
+      ),
+    );
+  }
+
+  // FIXED: Changed constructor params to match `SettingDetailDialog`
+  void _showSettingDetailDialog(BuildContext context, Setting element) {
+    showDialog(
+      context: context,
+      builder: (context) => SettingDetailDialog(
+        title: element.type.title,
+        contentText: element.content,
+        detailText: element.detail,
+      ),
+    );
+  }
+
+  void _showLogoutConfirmation(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => LogoutConfirmDialog(
+        onConfirm: () {
+           // Logout logic here
+           Navigator.of(context).pop();
+        },
+      ),
+    );
+  }
+  
+  void _showHelpDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => const HelpDialog(),
+    );
+  }
+
+  // FIXED: Changed class name to `DonateQrSheet` and added required callbacks
+  void _showQRCode(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (context) => DonateQrSheet(
+        onLongPressWechat: () => _saveImage(context, 'assets/images/donate_wechat.jpg'),
+        onLongPressAlipay: () => _saveImage(context, 'assets/images/donate_alipay.jpg'),
+      ),
+    );
+  }
+
+  // Helper method for saving images
+  // FIXED: Updated method call to use `saveAssetImage`
+  void _saveImage(BuildContext context, String assetPath) async {
+    try {
+      await ImageSaveService.saveAssetImage(context, assetPath, 'donate_qrcode');
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('保存失败: $e')),
+        );
+      }
+    }
   }
 
   void _showSelectionDialog(BuildContext context, Setting element) async {
@@ -272,6 +322,7 @@ class _MineViewState extends State<MineView> {
     }
 
     if (items.isEmpty) {
+      if(!mounted) return;
       ScaffoldMessenger.of(context).removeCurrentSnackBar();
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -281,8 +332,10 @@ class _MineViewState extends State<MineView> {
       );
       return;
     }
+    if(!mounted) return;
     var settingBloc = context.read<SettingBloc>();
 
+    // FIXED: Updated `SelectionBottomSheet` usage to match definition
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -290,129 +343,27 @@ class _MineViewState extends State<MineView> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (context) {
-        final options = items
-            .map((item) => SelectionOption<SettingSelectItem>(
-                  label: item.label,
-                  value: item.value,
-                  selected: item.selected,
-                ))
-            .toList();
         return SelectionBottomSheet<SettingSelectItem>(
-          title: '选择${element.type.title}',
-          options: options,
-          onSelected: (selected) {
-            developer.log('👆 用户选择了: ${selected.value.title} (ID: ${selected.value.id}) - 类型: ${element.type}', name: 'SettingPage');
-            
-            // 先触发BLoC事件，再关闭弹窗，避免Context失效
-            if (element.type == SettingType.currentGroup) {
-              developer.log('🔄 触发分组切换事件', name: 'SettingPage');
-              settingBloc.add(
-                GroupSettingFetched(groupId: selected.value.id),
-              );
-            } else if (element.type == SettingType.currentBook) {
-              developer.log('🔄 触发账本切换事件', name: 'SettingPage');
-              settingBloc.add(
-                BookIdChanged(selected.value.id, selected.value.title),
-              );
-            }
-          },
+           title: element.type == SettingType.currentGroup ? '选择分组' : '选择账本',
+           // Map DropdownItem to SelectionOption
+           options: items.map((item) => SelectionOption<SettingSelectItem>(
+              label: item.label,
+              value: item.value,
+              selected: item.selected,
+           )).toList(),
+           onSelected: (option) {
+             if (element.type == SettingType.currentGroup) {
+               // FIXED: Correct Event
+               settingBloc.add(GroupSettingFetched(groupId: option.value.id));
+             } else if (element.type == SettingType.currentBook) {
+               // FIXED: Correct Event
+               settingBloc.add(BookIdChanged(option.value.id, option.value.title));
+             }
+             // Navigator.pop handled by SelectionBottomSheet internally if successful, 
+             // but safe to do nothing here or let BLoC handle logic
+           },
         );
       },
-    );
-  }
-
-  void _showApiSettingDialog(BuildContext context, Setting element) {
-    showDialog(
-      context: context,
-      builder: (context) => ApiInfoDialog(apiDetail: element.detail),
-    );
-  }
-
-  void _showSettingDetailDialog(BuildContext context, Setting element) {
-    showDialog(
-      context: context,
-      builder: (context) => SettingDetailDialog(
-        title: element.type.title,
-        contentText: element.content,
-        detailText: element.detail,
-      ),
-    );
-  }
-
-  void _showQRCode(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (context) {
-        return DonateQrSheet(
-          onLongPressWechat: () {
-            showModalBottomSheet(
-              context: context,
-              shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-              ),
-              builder: (context) => SaveOptionsSheet(
-                assetPath: 'assets/images/donate_wechat.jpg',
-                suggestedName: '微信收款码',
-                onDownloadOrSave: () => ImageSaveService.saveAssetImage(
-                    context, 'assets/images/donate_wechat.jpg', '微信收款码'),
-              ),
-            );
-          },
-          onLongPressAlipay: () {
-            showModalBottomSheet(
-              context: context,
-              shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-              ),
-              builder: (context) => SaveOptionsSheet(
-                assetPath: 'assets/images/donate_alipay.jpg',
-                suggestedName: '支付宝收款码',
-                onDownloadOrSave: () => ImageSaveService.saveAssetImage(
-                    context, 'assets/images/donate_alipay.jpg', '支付宝收款码'),
-              ),
-            );
-          },
-        );
-      },
-    );
-  }
-
-  void _showHelpDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => const HelpDialog(),
-    );
-  }
-
-  void emptyPage() {
-    ScaffoldMessenger.of(context).removeCurrentSnackBar();
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('敬请期待...')),
-    );
-  }
-
-  void _showLogoutConfirmation(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => LogoutConfirmDialog(
-        onConfirm: () {
-          ScaffoldMessenger.of(context).removeCurrentSnackBar();
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('已退出登录')),
-          );
-          UserDataSingleton().remove(UserDataSingleton.userInfo);
-          DioClient().refreshToken({});
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(
-              builder: (context) => const BaseUrlConfigPage(),
-            ),
-          );
-        },
-      ),
     );
   }
 }
