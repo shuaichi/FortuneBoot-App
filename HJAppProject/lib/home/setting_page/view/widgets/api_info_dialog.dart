@@ -83,7 +83,7 @@ class ApiInfoDialog extends StatelessWidget {
                   },
                   style: TextButton.styleFrom(
                     foregroundColor: theme.primaryColor,
-                    fontWeight: FontWeight.bold,
+                    textStyle: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                   child: const Text('复制'),
                 ),

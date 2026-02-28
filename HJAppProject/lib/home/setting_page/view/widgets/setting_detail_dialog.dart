@@ -72,7 +72,7 @@ class SettingDetailDialog extends StatelessWidget {
                 onPressed: () => Navigator.pop(context),
                 style: TextButton.styleFrom(
                   foregroundColor: Theme.of(context).primaryColor,
-                  fontWeight: FontWeight.bold,
+                  textStyle: const TextStyle(fontWeight: FontWeight.bold),
                 ),
                 child: const Text('确定'),
               ),

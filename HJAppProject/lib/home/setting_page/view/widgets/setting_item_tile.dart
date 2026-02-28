@@ -86,31 +86,34 @@ class SettingItemTile extends StatelessWidget {
               const SizedBox(width: 16),
               
               // Title
-              Expanded(
-                child: Text(
-                  title,
-                  style: const TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.black87, // Token: Primary Text
-                  ),
+              Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black87, // Token: Primary Text
                 ),
               ),
 
+              if (subtitle == null || subtitle.isEmpty) const Spacer(),
+
+              const SizedBox(width: 16),
+
               // Subtitle & Trailing
-              if (subtitle != null && subtitle.isNotEmpty) ...[
-                const SizedBox(width: 8),
-                Text(
-                  subtitle,
-                  style: TextStyle(
-                    fontSize: 13,
-                    color: Colors.grey[500], // Token: Hint Text
+              if (subtitle != null && subtitle.isNotEmpty)
+                Expanded(
+                  child: Text(
+                    subtitle,
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: Colors.grey[500], // Token: Hint Text
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.end,
                   ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
                 ),
-                const SizedBox(width: 8),
-              ],
+              if (subtitle != null && subtitle.isNotEmpty) const SizedBox(width: 8),
               
               const Icon(
                 Icons.arrow_forward_ios,

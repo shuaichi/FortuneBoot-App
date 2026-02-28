@@ -217,7 +217,7 @@ class _MineViewState extends State<MineView> {
     showDialog(
       context: context,
       builder: (context) => ApiInfoDialog(
-        apiDetail: element.content ?? '', 
+        apiDetail: element.detail ?? '',
       ),
     );
   }

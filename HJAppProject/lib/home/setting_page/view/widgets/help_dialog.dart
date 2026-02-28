@@ -47,7 +47,7 @@ class HelpDialog extends StatelessWidget {
                 onPressed: () => Navigator.pop(context),
                 style: TextButton.styleFrom(
                   foregroundColor: Colors.blue,
-                  fontWeight: FontWeight.bold,
+                  textStyle: const TextStyle(fontWeight: FontWeight.bold),
                 ),
                 child: const Text('我知道了'),
               ),
