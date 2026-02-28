@@ -33,7 +33,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "dont_worry_be_happy": MessageLookupByLibrary.simpleMessage("别难过，这种事经常发生。"),
     "editTodoAddAppBarTitle": MessageLookupByLibrary.simpleMessage("新建账单明细"),
     "editTodoDescriptionLabel": MessageLookupByLibrary.simpleMessage("描述"),
-    "editTodoEditAppBarTitle": MessageLookupByLibrary.simpleMessage("编辑账单明细"),
+    "editTodoEditAppBarTitle": MessageLookupByLibrary.simpleMessage("修改账单明细"),
     "editTodoSaveButtonTooltip": MessageLookupByLibrary.simpleMessage("保存修改"),
     "editTodoTitleLabel": MessageLookupByLibrary.simpleMessage("标题"),
     "email_auth": MessageLookupByLibrary.simpleMessage("需要包含@，且用.com结尾"),
@@ -95,7 +95,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "todoDetailsDeleteButtonTooltip": MessageLookupByLibrary.simpleMessage(
       "删除",
     ),
-    "todoDetailsEditButtonTooltip": MessageLookupByLibrary.simpleMessage("编辑"),
+    "todoDetailsEditButtonTooltip": MessageLookupByLibrary.simpleMessage("修改"),
     "todosOverviewAppBarTitle": MessageLookupByLibrary.simpleMessage("账单明细"),
     "todosOverviewClearCompletedButtonText":
         MessageLookupByLibrary.simpleMessage("清除已完成"),

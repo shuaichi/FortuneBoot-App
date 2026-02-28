@@ -128,13 +128,13 @@
 "@todoDetailsDeleteButtonTooltip": {
   "description": "账单明细详情页删除按钮的提示文本"
 },
-"todoDetailsEditButtonTooltip": "编辑",
+"todoDetailsEditButtonTooltip": "修改",
 "@todoDetailsEditButtonTooltip": {
-  "description": "账单明细情页编辑按钮的提示文本"
+  "description": "账单明细情页修改按钮的提示文本"
 },
-"editTodoEditAppBarTitle": "编辑账单明细",
+"editTodoEditAppBarTitle": "修改账单明细",
 "@editTodoEditAppBarTitle": {
-  "description": "编辑已有账单明细页面的 AppBar 标题文本"
+  "description": "修改已有账单明细页面的 AppBar 标题文本"
 },
 "editTodoAddAppBarTitle": "新建账单明细",
 "@editTodoAddAppBarTitle": {
@@ -142,15 +142,15 @@
 },
 "editTodoTitleLabel": "标题",
 "@editTodoTitleLabel": {
-  "description": "账单明细编辑页标题输入框的标签文本"
+  "description": "账单明细修改页标题输入框的标签文本"
 },
 "editTodoDescriptionLabel": "描述",
 "@editTodoDescriptionLabel": {
-  "description": "账单明细编辑页描述输入框的标签文本"
+  "description": "账单明细修改页描述输入框的标签文本"
 },
 "editTodoSaveButtonTooltip": "保存修改",
 "@editTodoSaveButtonTooltip": {
-  "description": "账单明细编辑页保存按钮的提示文本"
+  "description": "账单明细修改页保存按钮的提示文本"
 },
 "statsAppBarTitle": "统计概览",
 "@statsAppBarTitle": {

@@ -5,11 +5,12 @@ import 'package:hjproject/Home/account_manage/models/fortune_account.dart';
 import 'package:hjproject/Request/account_request.dart';
 import 'package:hjproject/Home/account_manage/constants/design_system.dart'
     as ds;
+import 'package:hjproject/Home/account_manage/view/widgets/number_keyboard.dart';
 
 /// 增强版修改账户页面
 /// 基于原有Sheet功能，改为Page形式展现，使用统一设计系统，提升UI/UX体验
-class EnhancedAccountEditPage extends StatefulWidget {
-  const EnhancedAccountEditPage({
+class AccountEditPage extends StatefulWidget {
+  const AccountEditPage({
     super.key,
     required this.account,
     required this.groupName,
@@ -19,11 +20,11 @@ class EnhancedAccountEditPage extends StatefulWidget {
   final String groupName;
 
   @override
-  State<EnhancedAccountEditPage> createState() =>
-      _EnhancedAccountEditPageState();
+  State<AccountEditPage> createState() =>
+      _AccountEditPageState();
 }
 
-class _EnhancedAccountEditPageState extends State<EnhancedAccountEditPage>
+class _AccountEditPageState extends State<AccountEditPage>
     with TickerProviderStateMixin {
   final AccountQueryService _service = AccountQueryService();
 
@@ -106,12 +107,12 @@ class _EnhancedAccountEditPageState extends State<EnhancedAccountEditPage>
     _balanceCtl.text = account.balance?.toString() ?? '';
     _remarkCtl.text = account.remark ?? '';
 
-    _include = account.include == 1;
-    _canExpense = account.canExpense == 1;
-    _canIncome = account.canIncome == 1;
-    _enable = account.enable == 1;
-    _canTransferOut = account.canTransferOut == 1;
-    _canTransferIn = account.canTransferIn == 1;
+    _include = account.include;
+    _canExpense = account.canExpense;
+    _canIncome = account.canIncome;
+    _enable = account.enable;
+    _canTransferOut = account.canTransferOut;
+    _canTransferIn = account.canTransferIn;
 
     _accountType = account.accountType ?? 1;
     _currencyCode = account.currencyCode ?? 'CNY';
@@ -508,6 +509,102 @@ class _EnhancedAccountEditPageState extends State<EnhancedAccountEditPage>
     }
   }
 
+  void _showNumberKeyboard(TextEditingController controller) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setModalState) {
+            return Container(
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.surface,
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // 顶部工具栏
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    height: 56,
+                    decoration: BoxDecoration(
+                      border: Border(
+                        bottom: BorderSide(
+                          color: Theme.of(context).colorScheme.outline.withOpacity(0.1),
+                        ),
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.close),
+                          onPressed: () => Navigator.pop(context),
+                        ),
+                        Text(
+                          '输入金额',
+                          style: ds.TextStyles.bodyMedium.copyWith(
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: const Text('确定'),
+                        ),
+                      ],
+                    ),
+                  ),
+                  // 金额展示
+                  AmountDisplay(
+                    amount: controller.text,
+                    currencySymbol: _currencyCode,
+                    isExpense: false,
+                  ),
+                  // 键盘
+                  NumberKeyboard(
+                    onTap: (val) {
+                      setModalState(() {
+                        if (val == '.') {
+                          if (!controller.text.contains('.')) {
+                            controller.text = controller.text.isEmpty ? '0.' : '${controller.text}.';
+                          }
+                        } else {
+                          // 简单验证
+                          if (controller.text.contains('.') &&
+                              controller.text.split('.')[1].length >= 2) return;
+                          
+                          if (controller.text == '0') {
+                            controller.text = val;
+                          } else {
+                            controller.text += val;
+                          }
+                        }
+                      });
+                      // 同步更新外部界面
+                      setState(() {});
+                    },
+                    onDelete: () {
+                      setModalState(() {
+                        if (controller.text.isNotEmpty) {
+                          controller.text = controller.text.substring(0, controller.text.length - 1);
+                        }
+                      });
+                      setState(() {});
+                    },
+                    onDone: () => Navigator.pop(context),
+                  ),
+                  SizedBox(height: MediaQuery.of(context).padding.bottom),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
   Future<void> _handleSubmit() async {
     if (_nameCtl.text.trim().isEmpty) {
       setState(() {
@@ -681,16 +778,13 @@ class _EnhancedAccountEditPageState extends State<EnhancedAccountEditPage>
                     SizedBox(height: ds.Spacing.md),
                     TextFormField(
                       controller: _balanceCtl,
+                      readOnly: true,
+                      onTap: () => _showNumberKeyboard(_balanceCtl),
                       decoration: _buildInputDecoration(
                         label: '当前余额',
-                        hint: '请输入当前余额',
+                        hint: '点击输入当前余额',
                         icon: Icons.account_balance,
                       ),
-                      keyboardType:
-                          const TextInputType.numberWithOptions(decimal: true),
-                      inputFormatters: [
-                        FilteringTextInputFormatter.allow(RegExp(r'[0-9.\-]'))
-                      ],
                       textAlign: TextAlign.end,
                     ),
                     SizedBox(height: ds.Spacing.md),

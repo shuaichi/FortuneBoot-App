@@ -3,8 +3,8 @@ import 'package:hjproject/Home/account_manage/constants/design_system.dart' as d
 
 /// 增强版移入回收站确认对话框
 /// 基于原有功能，使用统一设计系统，提升UI/UX体验
-class EnhancedAccountMoveToRecycleDialog extends StatefulWidget {
-  const EnhancedAccountMoveToRecycleDialog({
+class AccountMoveToRecycleDialog extends StatefulWidget {
+  const AccountMoveToRecycleDialog({
     super.key,
     required this.accountName,
     required this.onConfirm,
@@ -14,10 +14,10 @@ class EnhancedAccountMoveToRecycleDialog extends StatefulWidget {
   final Future<void> Function() onConfirm;
 
   @override
-  State<EnhancedAccountMoveToRecycleDialog> createState() => _EnhancedAccountMoveToRecycleDialogState();
+  State<AccountMoveToRecycleDialog> createState() => _AccountMoveToRecycleDialogState();
 }
 
-class _EnhancedAccountMoveToRecycleDialogState extends State<EnhancedAccountMoveToRecycleDialog>
+class _AccountMoveToRecycleDialogState extends State<AccountMoveToRecycleDialog>
     with TickerProviderStateMixin {
   bool _isLoading = false;
   
@@ -418,7 +418,7 @@ class _EnhancedAccountMoveToRecycleDialogState extends State<EnhancedAccountMove
     return showDialog<bool>(
       context: context,
       barrierDismissible: false,
-      builder: (context) => EnhancedAccountMoveToRecycleDialog(
+      builder: (context) => AccountMoveToRecycleDialog(
         accountName: accountName,
         onConfirm: onConfirm,
       ),

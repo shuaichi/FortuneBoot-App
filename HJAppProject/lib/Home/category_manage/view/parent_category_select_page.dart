@@ -7,7 +7,7 @@ import 'package:hjproject/home/edit_bill/models/edit_select_item.dart';
 class ParentCategorySelectPage extends StatefulWidget {
   final int categoryType; // 1: 支出, 2: 收入
   final int initialParentId; // -1 表示根分类
-  final int? currentCategoryId; // 当前编辑的分类ID（如果有），防止选自己为父类
+  final int? currentCategoryId; // 当前修改的分类ID（如果有），防止选自己为父类
 
   const ParentCategorySelectPage({
     Key? key,

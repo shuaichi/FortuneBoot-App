@@ -150,7 +150,7 @@ class _PayeeManagePageState extends State<PayeeManagePage> {
       if (!mounted) return;
       ScaffoldMessenger.of(context).removeCurrentSnackBar();
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('编辑成功')),
+        const SnackBar(content: Text('修改成功')),
       );
       await _load();
     }

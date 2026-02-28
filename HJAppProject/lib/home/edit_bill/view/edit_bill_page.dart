@@ -64,7 +64,7 @@ class EditBillView extends StatefulWidget {
 }
 
 class _EditBillViewState extends State<EditBillView> {
-  // 核心状态：当前正在编辑的金额字段索引
+  // 核心状态：当前正在修改的金额字段索引
   // -1 表示转账金额，>=0 表示多分类列表中的索引
   final ValueNotifier<int> _activeAmountIndex = ValueNotifier(0);
   // 控制键盘显隐，默认为 true
@@ -854,7 +854,7 @@ class _EditBillViewState extends State<EditBillView> {
     final idx = _activeAmountIndex.value;
     final state = context.read<EditBillBloc>().state;
 
-    // 获取当前正在编辑的值
+    // 获取当前正在修改的值
     double currentVal;
     if (idx == -1) {
       currentVal = state.editBill.data?.amount ?? 0;

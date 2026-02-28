@@ -116,7 +116,7 @@ class _AccountManagePageState extends State<AccountManagePage> {
       context: context,
       barrierDismissible: false,
       builder: (ctx) {
-        return EnhancedAccountMoveToRecycleDialog(
+        return AccountMoveToRecycleDialog(
           accountName: item.accountName ?? '未命名账户',
           onConfirm: () async {
             final int? groupId = context.read<BillsRepository>().groupId();
@@ -159,7 +159,7 @@ class _AccountManagePageState extends State<AccountManagePage> {
 
     final bool? ok = await Navigator.of(context).push<bool>(
       MaterialPageRoute(
-        builder: (context) => EnhancedAccountAddPage(
+        builder: (context) => AccountAddPage(
           groupId: groupId,
           accountType: _accountType,
         ),
@@ -323,7 +323,7 @@ class _AccountManagePageState extends State<AccountManagePage> {
               }
               
               final item = _rows[index - 1];
-              return EnhancedAccountCard(
+              return AccountCard(
                 account: item,
                 onTap: () {
                   // 可以添加账户详情页导航
@@ -367,7 +367,7 @@ class _AccountManagePageState extends State<AccountManagePage> {
                   delegate: SliverChildBuilderDelegate(
                     (context, index) {
                       final item = _rows[index];
-                      return EnhancedAccountCard(
+                      return AccountCard(
                         account: item,
                         onTap: () {
                           // 可以添加账户详情页导航
@@ -440,7 +440,7 @@ class _AccountManagePageState extends State<AccountManagePage> {
 
     final bool? ok = await Navigator.of(context).push<bool>(
       MaterialPageRoute(
-        builder: (context) => EnhancedAccountEditPage(
+        builder: (context) => AccountEditPage(
           account: item,
           groupName: groupName,
         ),
@@ -462,7 +462,7 @@ class _AccountManagePageState extends State<AccountManagePage> {
   Future<void> _onBalanceAdjustPressed(FortuneAccount item) async {
     final bool? ok = await Navigator.of(context).push<bool>(
       MaterialPageRoute(
-        builder: (context) => EnhancedAccountBalanceAdjustPage(
+        builder: (context) => AccountBalanceAdjustPage(
           account: item,
         ),
       ),

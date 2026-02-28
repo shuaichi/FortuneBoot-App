@@ -237,7 +237,7 @@ class _TagEditPageState extends State<TagEditPage> {
         backgroundColor: bgColor,
         appBar: AppBar(
           title: const Text(
-            '编辑标签',
+            '修改标签',
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
           ),
           centerTitle: true,

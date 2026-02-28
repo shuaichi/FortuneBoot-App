@@ -4,11 +4,12 @@ import 'package:hjproject/Request/account_request.dart';
 import 'package:hjproject/request/group_request.dart';
 import 'package:hjproject/Home/setting_page/view/widgets/selection_bottom_sheet.dart';
 import 'package:hjproject/Home/account_manage/constants/design_system.dart' as ds;
+import 'package:hjproject/Home/account_manage/view/widgets/number_keyboard.dart';
 
 /// 增强版新增账户页面
 /// 基于原有Sheet功能，改为Page形式展现，使用统一设计系统，提升UI/UX体验
-class EnhancedAccountAddPage extends StatefulWidget {
-  const EnhancedAccountAddPage({
+class AccountAddPage extends StatefulWidget {
+  const AccountAddPage({
     super.key,
     required this.groupId,
     required this.accountType,
@@ -18,10 +19,10 @@ class EnhancedAccountAddPage extends StatefulWidget {
   final int accountType;
 
   @override
-  State<EnhancedAccountAddPage> createState() => _EnhancedAccountAddPageState();
+  State<AccountAddPage> createState() => _AccountAddPageState();
 }
 
-class _EnhancedAccountAddPageState extends State<EnhancedAccountAddPage>
+class _AccountAddPageState extends State<AccountAddPage>
     with TickerProviderStateMixin {
   final AccountQueryService _service = AccountQueryService();
 
@@ -786,17 +787,14 @@ class _EnhancedAccountAddPageState extends State<EnhancedAccountAddPage>
                     SizedBox(height: ds.Spacing.md),
                     TextFormField(
                       controller: _balanceCtl,
+                      readOnly: true,
+                      onTap: () => _showNumberKeyboard(_balanceCtl),
                       decoration: _buildInputDecoration(
                         label: '余额',
-                        hint: '可留空',
+                        hint: '点击输入余额',
                         icon: Icons.account_balance,
                         hasError: _errorText?.contains('余额') == true,
                       ),
-                      keyboardType: const TextInputType.numberWithOptions(
-                          decimal: true),
-                      inputFormatters: [
-                        FilteringTextInputFormatter.allow(RegExp(r'[0-9.\-]'))
-                      ],
                       textAlign: TextAlign.end,
                     ),
                   ],
@@ -1135,6 +1133,102 @@ class _EnhancedAccountAddPageState extends State<EnhancedAccountAddPage>
         _repayDay = selected;
       });
     }
+  }
+
+  void _showNumberKeyboard(TextEditingController controller) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setModalState) {
+            return Container(
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.surface,
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // 顶部工具栏
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    height: 56,
+                    decoration: BoxDecoration(
+                      border: Border(
+                        bottom: BorderSide(
+                          color: Theme.of(context).colorScheme.outline.withOpacity(0.1),
+                        ),
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.close),
+                          onPressed: () => Navigator.pop(context),
+                        ),
+                        Text(
+                          '输入金额',
+                          style: ds.TextStyles.bodyMedium.copyWith(
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: const Text('确定'),
+                        ),
+                      ],
+                    ),
+                  ),
+                  // 金额展示
+                  AmountDisplay(
+                    amount: controller.text,
+                    currencySymbol: _selectedCurrencyCode ?? '',
+                    isExpense: false,
+                  ),
+                  // 键盘
+                  NumberKeyboard(
+                    onTap: (val) {
+                      setModalState(() {
+                        if (val == '.') {
+                          if (!controller.text.contains('.')) {
+                            controller.text = controller.text.isEmpty ? '0.' : '${controller.text}.';
+                          }
+                        } else {
+                          // 简单验证
+                          if (controller.text.contains('.') &&
+                              controller.text.split('.')[1].length >= 2) return;
+                          
+                          if (controller.text == '0') {
+                            controller.text = val;
+                          } else {
+                            controller.text += val;
+                          }
+                        }
+                      });
+                      // 同步更新外部界面
+                      setState(() {});
+                    },
+                    onDelete: () {
+                      setModalState(() {
+                        if (controller.text.isNotEmpty) {
+                          controller.text = controller.text.substring(0, controller.text.length - 1);
+                        }
+                      });
+                      setState(() {});
+                    },
+                    onDone: () => Navigator.pop(context),
+                  ),
+                  SizedBox(height: MediaQuery.of(context).padding.bottom),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
   }
 
   Widget _buildCurrencySelector() {

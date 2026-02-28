@@ -158,9 +158,9 @@ class _BillDetailContent extends StatelessWidget {
                               Navigator.pop(context);
                               Navigator.of(context).push(EditBillPage.route(
                                   initialBill: BillItemAdd.fromBillItem(bill)));
-                              // 跳转到编辑页面
+                              // 跳转到修改页面
                             },
-                            tooltip: '编辑',
+                            tooltip: '修改',
                             padding: EdgeInsets.zero,
                             constraints: const BoxConstraints(),
                           ),
@@ -333,7 +333,7 @@ class _BillDetailContent extends StatelessWidget {
                           Navigator.pop(context);
                           ScaffoldMessenger.of(context).removeCurrentSnackBar();
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('账单已复制，请编辑后保存')),
+                            const SnackBar(content: Text('账单已复制，请修改后保存')),
                           );
                           Navigator.of(context).push(EditBillPage.route(
                               initialBill: BillItemAdd.fromBillItem(bill),

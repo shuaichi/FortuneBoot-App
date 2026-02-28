@@ -4,8 +4,8 @@ import 'package:hjproject/Home/account_manage/models/fortune_account.dart';
 
 /// 增强版账户卡片组件
 /// 包含手势操作、动画效果和优化的视觉层次
-class EnhancedAccountCard extends StatefulWidget {
-  const EnhancedAccountCard({
+class AccountCard extends StatefulWidget {
+  const AccountCard({
     super.key,
     required this.account,
     required this.onTap,
@@ -21,10 +21,10 @@ class EnhancedAccountCard extends StatefulWidget {
   final VoidCallback onMoveToRecycle;
 
   @override
-  State<EnhancedAccountCard> createState() => _EnhancedAccountCardState();
+  State<AccountCard> createState() => _AccountCardState();
 }
 
-class _EnhancedAccountCardState extends State<EnhancedAccountCard>
+class _AccountCardState extends State<AccountCard>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _scaleAnimation;
@@ -220,7 +220,7 @@ class _EnhancedAccountCardState extends State<EnhancedAccountCard>
             children: [
               Icon(Icons.edit_outlined, color: typeColor, size: 18),
               SizedBox(width: ds.Spacing.sm),
-              Text('编辑账户', style: ds.TextStyles.remark),
+              Text('修改账户', style: ds.TextStyles.remark),
             ],
           ),
         ),

@@ -93,7 +93,7 @@ class PayeeListItem extends StatelessWidget {
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          onTap: onModify, // 点击整个卡片进入编辑
+          onTap: onModify, // 点击整个卡片进入修改
           borderRadius: BorderRadius.circular(cardRadius),
           child: Padding(
             padding: const EdgeInsets.all(16),

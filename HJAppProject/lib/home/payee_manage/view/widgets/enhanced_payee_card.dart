@@ -215,7 +215,7 @@ class _EnhancedPayeeCardState extends State<EnhancedPayeeCard>
             children: [
               Icon(Icons.edit_outlined, color: primaryColor, size: 18),
               SizedBox(width: ds.Spacing.sm),
-              Text('编辑', style: ds.PayeeTextStyles.remark),
+              Text('修改', style: ds.PayeeTextStyles.remark),
             ],
           ),
         ),

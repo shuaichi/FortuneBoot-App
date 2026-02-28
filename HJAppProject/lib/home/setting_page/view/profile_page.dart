@@ -287,7 +287,7 @@ class _ProfilePageState extends State<ProfilePage> {
       );
     }
 
-    // 编辑态：显示输入框与性别切换
+    //修改态：显示输入框与性别切换
     return Card(
       elevation: 1,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),

@@ -290,7 +290,7 @@ class _BillsOverviewViewState extends State<BillsOverviewView>
                                           // 余额调整账单不允许复制：直接提示并阻断
                                           if (bill.billType == BillType.adjust) {
                                             ScaffoldMessenger.of(context).showSnackBar(
-                                              const SnackBar(content: Text('余额调整账单不支持复制或编辑')),
+                                              const SnackBar(content: Text('余额调整账单不支持复制或修改')),
                                             );
                                             return;
                                           }
@@ -300,7 +300,7 @@ class _BillsOverviewViewState extends State<BillsOverviewView>
                                           ScaffoldMessenger.of(context)
                                               .showSnackBar(
                                             const SnackBar(
-                                                content: Text('账单已复制，请编辑后保存')),
+                                                content: Text('账单已复制，请修改后保存')),
                                           );
                                           Navigator.of(context).push(
                                               EditBillPage.route(

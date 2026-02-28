@@ -5,7 +5,7 @@ import 'package:hjproject/home/payee_manage/model/payee.dart';
 import 'package:hjproject/home/payee_manage/data/payee_service.dart';
 import 'package:hjproject/home/payee_manage/constants/design_system.dart' as ds;
 
-/// 增强版交易对象编辑页面
+/// 增强版交易对象修改页面
 /// 基于设计系统重构，提供现代化的用户体验和一致的视觉设计
 class EnhancedPayeeEditPage extends StatefulWidget {
   final Payee payee;
@@ -538,7 +538,7 @@ class _EnhancedPayeeEditPageState extends State<EnhancedPayeeEditPage>
           elevation: 0,
           scrolledUnderElevation: 1,
           title: Text(
-            '编辑交易对象',
+            '修改交易对象',
             style: ds.PayeeTextStyles.pageTitle.copyWith(
               color: theme.colorScheme.onSurface,
             ),

@@ -26,6 +26,7 @@ import 'package:hjproject/home/setting_page/view/widgets/setting_detail_dialog.d
 import 'package:hjproject/home/setting_page/view/widgets/logout_confirm_dialog.dart';
 import 'package:hjproject/home/setting_page/view/widgets/selection_bottom_sheet.dart';
 import 'package:hjproject/home/setting_page/utils/setting_filter.dart';
+import 'package:hjproject/Home/account_manage/view/account_manage_page.dart';
 
 class MinePage extends StatelessWidget {
   const MinePage({super.key});
@@ -190,6 +191,13 @@ class _MineViewState extends State<MineView> {
         break;
       case SettingType.api:
         _showApiSettingDialog(context, element);
+        break;
+      case SettingType.accountOverview:
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => const AccountManagePage(),
+          ),
+        );
         break;
       default:
         _showSettingDetailDialog(context, element);
