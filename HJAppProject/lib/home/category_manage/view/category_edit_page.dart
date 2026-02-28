@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:hjproject/Home/category_manage/data/category_service.dart';
+import 'parent_category_select_page.dart';
 
 class CategoryEditPage extends StatefulWidget {
   final int categoryId;
@@ -36,6 +37,7 @@ class _CategoryEditPageState extends State<CategoryEditPage> {
   late final TextEditingController _remarkController;
 
   late bool _enable;
+  late int _parentId;
 
   bool _saving = false;
   bool _dirty = false;
@@ -51,12 +53,14 @@ class _CategoryEditPageState extends State<CategoryEditPage> {
     _sortController = TextEditingController(text: widget.sort.toString());
     _remarkController = TextEditingController(text: widget.remark ?? '');
     _enable = widget.enable;
+    _parentId = widget.parentId;
 
     _initial = {
       'name': widget.name,
       'sort': widget.sort.toString(),
       'remark': widget.remark ?? '',
       'enable': widget.enable,
+      'parentId': widget.parentId,
     };
 
     void listener() => _computeDirty();
@@ -79,6 +83,7 @@ class _CategoryEditPageState extends State<CategoryEditPage> {
       'sort': _sortController.text,
       'remark': _remarkController.text,
       'enable': _enable,
+      'parentId': _parentId,
     };
     final changed = now.entries.any((e) => _initial[e.key] != e.value);
     if (_dirty != changed) {
@@ -140,7 +145,7 @@ class _CategoryEditPageState extends State<CategoryEditPage> {
         categoryName: _nameController.text.trim(),
         categoryType: widget.categoryType,
         bookId: widget.bookId,
-        parentId: widget.parentId,
+        parentId: _parentId,
         sort: _sortController.text.trim().isEmpty
             ? widget.sort
             : int.parse(_sortController.text.trim()),
@@ -245,23 +250,23 @@ class _CategoryEditPageState extends State<CategoryEditPage> {
                               style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87),
                             ),
                             const SizedBox(height: 12),
-                            FutureBuilder<String>(
-                              future: _loadParentName(widget.parentId, widget.categoryType),
-                              builder: (context, snapshot) {
-                                final text = snapshot.hasData ? snapshot.data! : '加载中...';
-                                return Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                                  decoration: BoxDecoration(
-                                    color: Colors.grey[100],
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  width: double.infinity,
-                                  child: Text(
-                                    text,
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                              decoration: BoxDecoration(
+                                color: Colors.grey[100], // Indicate read-only
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              width: double.infinity,
+                              child: FutureBuilder<String>(
+                                future: _loadParentName(_parentId, widget.categoryType),
+                                builder: (context, snapshot) {
+                                  final text = snapshot.hasData ? snapshot.data! : '加载中...';
+                                  return Text(
+                                    _parentId == -1 ? '根分类 (一级分类)' : text,
                                     style: const TextStyle(fontSize: 15, color: Colors.black54),
-                                  ),
-                                );
-                              },
+                                  );
+                                },
+                              ),
                             ),
                           ],
                         ),

@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hjproject/repository/repository/bills_repository.dart';
 import 'package:hjproject/Home/category_manage/data/category_service.dart';
+import 'parent_category_select_page.dart';
 
 class CategoryAddPage extends StatefulWidget {
   final int categoryType; // 1: 支出, 2: 收入
@@ -93,25 +94,6 @@ class _CategoryAddPageState extends State<CategoryAddPage> {
     return name ?? '未知';
   }
 
-  List<_ParentOption> _flattenToOptions(List<CategoryNode> nodes, {int depth = 0}) {
-    final List<_ParentOption> result = [];
-    for (final n in nodes) {
-      final prefix = depth > 0 ? '${'—' * depth} ' : '';
-      result.add(_ParentOption(id: n.id, label: '$prefix${n.categoryName}'));
-      result.addAll(_flattenToOptions(n.children, depth: depth + 1));
-    }
-    return result;
-  }
-
-  Future<List<_ParentOption>> _fetchParentOptions() async {
-    final bookId = context.read<BillsRepository>().bookId() ?? 1;
-    final roots = await _service.fetchList(
-      bookId: bookId,
-      categoryType: widget.categoryType,
-      recycleBin: false,
-    );
-    return _flattenToOptions(roots);
-  }
 
   Future<void> _onSave() async {
     if (!_isValid) {
@@ -235,46 +217,69 @@ class _CategoryAddPageState extends State<CategoryAddPage> {
                             ),
                             const SizedBox(height: 12),
                             widget.initialParentId != -1
-                                ? FutureBuilder<String>(
-                                    future: _loadParentName(widget.initialParentId, widget.categoryType),
-                                    builder: (context, snapshot) {
-                                      final text = snapshot.hasData ? snapshot.data! : '加载中...';
-                                      return Container(
-                                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                                        decoration: BoxDecoration(
-                                          color: Colors.grey[100],
-                                          borderRadius: BorderRadius.circular(10),
-                                        ),
-                                        width: double.infinity,
-                                        child: Text(
+                                ? Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey[100],
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    width: double.infinity,
+                                    child: FutureBuilder<String>(
+                                      future: _loadParentName(widget.initialParentId, widget.categoryType),
+                                      builder: (context, snapshot) {
+                                        final text = snapshot.hasData ? snapshot.data! : '加载中...';
+                                        return Text(
                                           text,
                                           style: const TextStyle(fontSize: 15, color: Colors.black54),
-                                        ),
-                                      );
-                                    },
+                                        );
+                                      },
+                                    ),
                                   )
-                                : FutureBuilder<List<_ParentOption>>(
-                                    future: _fetchParentOptions(),
-                                    builder: (context, snap) {
-                                      final items = (snap.data ?? const <_ParentOption>[])
-                                          .map((opt) => DropdownMenuItem<int>(
-                                                value: opt.id,
-                                                child: Text(opt.label),
-                                              ))
-                                          .toList();
-                                      return DropdownButtonFormField<int>(
-                                        value: _parentId == -1 ? null : _parentId,
-                                        items: items,
-                                        decoration: InputDecoration(
-                                          isDense: true,
-                                          contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: Colors.grey[300]!)),
-                                          enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: Colors.grey[300]!)),
-                                          hintText: '不选择则为一级分类',
+                                : InkWell(
+                                    onTap: () async {
+                                      if (_saving) return;
+                                      final result = await Navigator.push<int>(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (_) => ParentCategorySelectPage(
+                                            categoryType: widget.categoryType,
+                                            initialParentId: _parentId,
+                                            currentCategoryId: -1, // 新增时没有当前ID
+                                          ),
                                         ),
-                                        onChanged: _saving ? null : (v) => setState(() => _parentId = (v ?? -1)),
                                       );
+                                      if (result != null) {
+                                        setState(() {
+                                          _parentId = result;
+                                          _dirty = true;
+                                        });
+                                      }
                                     },
+                                    borderRadius: BorderRadius.circular(10),
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                                      decoration: BoxDecoration(
+                                        border: Border.all(color: Colors.grey[300]!),
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      child: Row(
+                                        children: [
+                                          Expanded(
+                                            child: FutureBuilder<String>(
+                                              future: _loadParentName(_parentId, widget.categoryType),
+                                              builder: (context, snapshot) {
+                                                final text = snapshot.hasData ? snapshot.data! : '加载中...';
+                                                return Text(
+                                                  _parentId == -1 ? '根分类 (一级分类)' : text,
+                                                  style: const TextStyle(fontSize: 15, color: Colors.black87),
+                                                );
+                                              },
+                                            ),
+                                          ),
+                                          const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
+                                        ],
+                                      ),
+                                    ),
                                   ),
                           ],
                         ),
@@ -429,10 +434,4 @@ class _CategoryAddPageState extends State<CategoryAddPage> {
       onChanged: (_) => setState(() {}),
     );
   }
-}
-
-class _ParentOption {
-  final int id;
-  final String label;
-  _ParentOption({required this.id, required this.label});
 }
