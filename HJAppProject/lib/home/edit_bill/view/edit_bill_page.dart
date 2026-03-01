@@ -82,6 +82,9 @@ class _EditBillViewState extends State<EditBillView> {
   final ValueNotifier<bool> _isSecondaryExpanded = ValueNotifier(false);
   final ScrollController _scrollController = ScrollController();
 
+  // Temporary string for amount input to support intermediate states (like "5.", "-0")
+  String? _tempAmountString;
+
   // 主题色配置 (Mock Settings)
   Color _getThemeColor(BillType type) {
     switch (type) {
@@ -112,6 +115,11 @@ class _EditBillViewState extends State<EditBillView> {
     // Listen to focus changes to hide custom keyboard when system keyboard is needed
     _titleFocusNode.addListener(_onTextFieldFocusChange);
     _remarkFocusNode.addListener(_onTextFieldFocusChange);
+
+    // Reset temp string when active amount field changes
+    _activeAmountIndex.addListener(() {
+      _tempAmountString = null;
+    });
   }
 
   void _onTextFieldFocusChange() {
@@ -332,13 +340,31 @@ class _EditBillViewState extends State<EditBillView> {
             builder: (_, activeIndex, __) {
               final isActive = activeIndex == -1;
               final amount = state.editBill.data?.amount ?? 0.0;
+              
+              String displayText;
+              if (isActive && _tempAmountString != null) {
+                displayText = _tempAmountString!;
+                if (displayText.isEmpty) displayText = '0.00';
+                else if (displayText == '-') displayText = '-0.00'; // Show negative zero placeholder
+                else if (displayText == '-0' || displayText == '-0.') displayText = '-0.00';
+              } else {
+                 // Regular display
+                 if (amount == 0) {
+                   // check negative zero
+                   if (amount.isNegative) displayText = '-0.00';
+                   else displayText = '0.00';
+                 } else {
+                   displayText = amount.toStringAsFixed(2);
+                 }
+              }
+
               return Container(
                 padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                 decoration: BoxDecoration(
                   border: isActive ? Border(bottom: BorderSide(color: themeColor, width: 2)) : null,
                 ),
                 child: Text(
-                  amount == 0 ? '0.00' : amount.toStringAsFixed(2),
+                  displayText,
                   style: TextStyle(
                     fontSize: 40,
                     fontWeight: FontWeight.bold,
@@ -482,14 +508,33 @@ class _EditBillViewState extends State<EditBillView> {
                   borderRadius: BorderRadius.circular(8),
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    child: Text(
-                      item.amount == 0 ? '0.00' : item.amount.toStringAsFixed(2),
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: isActive ? themeColor : Colors.black87,
-                        fontFamily: 'RobotoMono',
-                      ),
+                    child: Builder(
+                      builder: (context) {
+                        String displayText;
+                        if (isActive && _tempAmountString != null) {
+                          displayText = _tempAmountString!;
+                          if (displayText.isEmpty) displayText = '0.00';
+                          else if (displayText == '-') displayText = '-0.00';
+                          else if (displayText == '-0' || displayText == '-0.') displayText = '-0.00';
+                        } else {
+                          if (item.amount == 0) {
+                             if (item.amount.isNegative) displayText = '-0.00';
+                             else displayText = '0.00';
+                          } else {
+                             displayText = item.amount.toStringAsFixed(2);
+                          }
+                        }
+                        
+                        return Text(
+                          displayText,
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: isActive ? themeColor : Colors.black87,
+                            fontFamily: 'RobotoMono',
+                          ),
+                        );
+                      }
                     ),
                   ),
                 ),
@@ -819,41 +864,67 @@ class _EditBillViewState extends State<EditBillView> {
                 ],
               ),
             ),
-            Row(
-              children: [
-                Expanded(
-                  flex: 3,
-                  child: Column(
-                    children: [
-                      _buildKeyboardRow(['1', '2', '3']),
-                      _buildKeyboardRow(['4', '5', '6']),
-                      _buildKeyboardRow(['7', '8', '9']),
-                      _buildKeyboardRow(['.', '0', 'DEL']),
-                    ],
-                  ),
-                ),
-                Expanded(
-                  flex: 1,
-                  child: GestureDetector(
-                    onTap: () {
-                      _dismissAllKeyboards(); // Unfocus and dismiss when Done is pressed
-                    },
-                    child: Container(
-                      height: 50.0 * 4,
-                      decoration: BoxDecoration(
-                        color: themeColor,
-                        border: Border(left: BorderSide(color: Colors.grey[200]!)),
-                      ),
-                      alignment: Alignment.center,
-                      child: const Text('完成', style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white
-                      )),
+            SizedBox(
+              height: 200, // 4 * 50
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Expanded(
+                    flex: 3,
+                    child: Column(
+                      children: [
+                        _buildKeyboardRow(['1', '2', '3']),
+                        _buildKeyboardRow(['4', '5', '6']),
+                        _buildKeyboardRow(['7', '8', '9']),
+                        _buildKeyboardRow(['.', '0', 'DEL']),
+                      ],
                     ),
                   ),
-                ),
-              ],
+                  Expanded(
+                    flex: 1,
+                    child: Column(
+                      children: [
+                        // 负号按钮 (占据第1行高度)
+                        InkWell(
+                          onTap: () => _onKeyTap('-'),
+                          child: Container(
+                            height: 50,
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              border: Border(
+                                left: BorderSide(color: Colors.grey[100]!),
+                                bottom: BorderSide(color: Colors.grey[100]!),
+                              ),
+                            ),
+                            child: const Text('-', style: TextStyle(fontSize: 28, fontWeight: FontWeight.w500)),
+                          ),
+                        ),
+                        // 完成按钮 (占据剩余3行高度)
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () {
+                              _dismissAllKeyboards();
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: themeColor,
+                                border: Border(left: BorderSide(color: Colors.grey[200]!)),
+                              ),
+                              alignment: Alignment.center,
+                              child: const Text('完成', style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white
+                              )),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           ],
         ),
@@ -901,31 +972,87 @@ class _EditBillViewState extends State<EditBillView> {
       currentVal = _categoryAmountItems[idx].amount;
     }
 
-    String strVal = currentVal == 0 ? '' : currentVal.toString();
-    if (strVal.endsWith('.0')) strVal = strVal.substring(0, strVal.length - 2);
-
-    if (key == 'DEL') {
-      if (strVal.isNotEmpty) {
-        strVal = strVal.substring(0, strVal.length - 1);
-      }
-    } else if (key == '.') {
-      if (!strVal.contains('.')) {
-        strVal = strVal.isEmpty ? '0.' : '$strVal.';
-      }
-    } else {
-      // 数字
-      if (strVal.contains('.')) {
-        if (strVal.split('.')[1].length < 2) { // 限制2位小数
-          strVal += key;
-        }
+    // Initialize temp string if needed
+    if (_tempAmountString == null) {
+      // Check for negative zero: 1/-0.0 is -infinity
+      bool isNegativeZero = currentVal == 0 && (1 / currentVal).isNegative;
+      if (isNegativeZero) {
+        _tempAmountString = '-0';
       } else {
-        if (strVal.length < 9) { // 限制整数位数
-          strVal += key;
+        _tempAmountString = currentVal == 0 ? '' : currentVal.toString();
+        if (_tempAmountString!.endsWith('.0')) {
+          _tempAmountString = _tempAmountString!.substring(0, _tempAmountString!.length - 2);
         }
       }
     }
 
-    double newVal = double.tryParse(strVal) ?? 0;
+    String strVal = _tempAmountString!;
+
+    if (key == '-') {
+      // 切换正负号
+      if (strVal.startsWith('-')) {
+        strVal = strVal.substring(1);
+      } else {
+        strVal = strVal.isEmpty ? '-' : '-$strVal';
+      }
+      // If toggling sign on empty/zero, ensure proper handling
+      if (strVal == '-') strVal = '-0';
+      if (strVal == '-0' && currentVal != 0) {
+        // preserve the number but negated
+        // handled by '-$strVal' above if not empty
+      }
+    } else if (key == 'DEL') {
+      if (strVal.isNotEmpty) {
+        strVal = strVal.substring(0, strVal.length - 1);
+        if (strVal == '-') strVal = ''; // removing the number after - clears everything
+      }
+    } else if (key == '.') {
+      if (!strVal.contains('.')) {
+        if (strVal.isEmpty) {
+          strVal = '0.';
+        } else if (strVal == '-') {
+          strVal = '-0.';
+        } else {
+          strVal = '$strVal.';
+        }
+      }
+    } else {
+      // 数字输入
+      if (strVal == '-0') {
+         // replace 0 with number unless it's 0
+         if (key == '0') {
+           // -00 is not valid, keep -0
+         } else {
+           strVal = '-$key';
+         }
+      } else if (strVal == '0') {
+         strVal = key;
+      } else {
+        if (strVal.contains('.')) {
+          if (strVal.split('.')[1].length < 2) { // 限制2位小数
+            strVal += key;
+          }
+        } else {
+          // 限制整数位数
+          int maxLen = strVal.startsWith('-') ? 10 : 9;
+          if (strVal.length < maxLen) {
+            strVal += key;
+          }
+        }
+      }
+    }
+
+    _tempAmountString = strVal;
+    
+    // Parse
+    double newVal = 0;
+    if (strVal.isNotEmpty && strVal != '-' && strVal != '-0.') {
+       newVal = double.tryParse(strVal) ?? 0;
+    }
+    // Handle specific cases for parsing
+    if (strVal == '-0' || strVal == '-0.') {
+       newVal = -0.0; // Dart 2.x handles this correctly as negative zero
+    }
 
     // 更新状态
     setState(() {
