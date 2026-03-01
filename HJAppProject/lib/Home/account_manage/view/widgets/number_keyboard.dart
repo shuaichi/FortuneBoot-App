@@ -131,49 +131,86 @@ class NumberKeyboard extends StatelessWidget {
       padding: EdgeInsets.only(
         bottom: MediaQuery.of(context).padding.bottom,
       ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          _buildRow(['1', '2', '3']),
-          _buildRow(['4', '5', '6']),
-          _buildRow(['7', '8', '9']),
-          _buildBottomRow(context),
-        ],
+      child: SizedBox(
+        height: 240, // 4 * 60
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // Left Grid (Numbers)
+            Expanded(
+              flex: 3,
+              child: Column(
+                children: [
+                  _buildRow(['1', '2', '3']),
+                  _buildRow(['4', '5', '6']),
+                  _buildRow(['7', '8', '9']),
+                  _buildRow(['.', '0', '']), // Empty slot for balance
+                ],
+              ),
+            ),
+            // Right Column (Actions)
+            Expanded(
+              flex: 1,
+              child: Column(
+                children: [
+                  _buildDeleteKey(context),
+                  SizedBox(
+                    height: 60,
+                    child: _buildKey('-'),
+                  ),
+                  // Done Button (Expanded)
+                  Expanded(
+                    child: Material(
+                      color: theme.colorScheme.primaryContainer,
+                      child: InkWell(
+                        onTap: onDone,
+                        child: Center(
+                          child: showDone
+                            ? Text(
+                                '完成',
+                                style: TextStyle(
+                                  color: theme.colorScheme.onPrimaryContainer,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18
+                                )
+                              )
+                            : Icon(Icons.check, color: theme.colorScheme.onPrimaryContainer),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildRow(List<String> keys) {
-    return Row(
-      children: keys.map((key) => _buildKey(key)).toList(),
-    );
-  }
-
-  Widget _buildBottomRow(BuildContext context) {
-    return Row(
-      children: [
-        _buildKey('.'),
-        _buildKey('0'),
-        _buildDeleteKey(context),
-      ],
+    return Expanded(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: keys.map((key) {
+           if (key.isEmpty) return const Expanded(child: SizedBox());
+           return Expanded(child: _buildKey(key));
+        }).toList(),
+      ),
     );
   }
 
   Widget _buildKey(String text) {
-    return Expanded(
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: () => onTap(text),
-          child: Container(
-            height: 60,
-            alignment: Alignment.center,
-            child: Text(
-              text,
-              style: const TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.w500,
-              ),
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () => onTap(text),
+        child: Center(
+          child: Text(
+            text,
+            style: const TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.w500,
             ),
           ),
         ),
@@ -182,15 +219,14 @@ class NumberKeyboard extends StatelessWidget {
   }
 
   Widget _buildDeleteKey(BuildContext context) {
-    return Expanded(
+    return SizedBox(
+      height: 60,
       child: Material(
         color: Colors.transparent,
         child: InkWell(
           onTap: onDelete,
-          onLongPress: onDelete, // 长按也可以连续删除，这里简单处理为单次
-          child: Container(
-            height: 60,
-            alignment: Alignment.center,
+          onLongPress: onDelete,
+          child: Center(
             child: Icon(
               Icons.backspace_outlined,
               size: 24,

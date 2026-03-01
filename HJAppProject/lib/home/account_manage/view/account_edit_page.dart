@@ -566,7 +566,13 @@ class _AccountEditPageState extends State<AccountEditPage>
                   NumberKeyboard(
                     onTap: (val) {
                       setModalState(() {
-                        if (val == '.') {
+                        if (val == '-') {
+                          if (controller.text.startsWith('-')) {
+                            controller.text = controller.text.substring(1);
+                          } else {
+                            controller.text = '-${controller.text}';
+                          }
+                        } else if (val == '.') {
                           if (!controller.text.contains('.')) {
                             controller.text = controller.text.isEmpty ? '0.' : '${controller.text}.';
                           }
@@ -577,6 +583,8 @@ class _AccountEditPageState extends State<AccountEditPage>
                           
                           if (controller.text == '0') {
                             controller.text = val;
+                          } else if (controller.text == '-0') {
+                            if (val != '0') controller.text = '-$val';
                           } else {
                             controller.text += val;
                           }
@@ -589,6 +597,7 @@ class _AccountEditPageState extends State<AccountEditPage>
                       setModalState(() {
                         if (controller.text.isNotEmpty) {
                           controller.text = controller.text.substring(0, controller.text.length - 1);
+                          if (controller.text == '-') controller.text = '';
                         }
                       });
                       setState(() {});

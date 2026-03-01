@@ -134,7 +134,13 @@ class _AccountBalanceAdjustPageState
   // 键盘事件处理
   void _onKeyboardTap(String value) {
     setState(() {
-      if (value == '.') {
+      if (value == '-') {
+        if (_amountStr.startsWith('-')) {
+          _amountStr = _amountStr.substring(1);
+        } else {
+          _amountStr = '-$_amountStr';
+        }
+      } else if (value == '.') {
         if (!_amountStr.contains('.')) {
           _amountStr = _amountStr.isEmpty ? '0.' : '$_amountStr.';
         }
@@ -149,6 +155,13 @@ class _AccountBalanceAdjustPageState
         
         if (_amountStr == '0') {
           _amountStr = value;
+        } else if (_amountStr == '-0') {
+           // 特殊处理 -0
+           if (value == '0') {
+             // -00 无效，保持 -0
+           } else {
+             _amountStr = '-$value';
+           }
         } else {
           _amountStr += value;
         }
@@ -161,6 +174,7 @@ class _AccountBalanceAdjustPageState
     setState(() {
       if (_amountStr.isNotEmpty) {
         _amountStr = _amountStr.substring(0, _amountStr.length - 1);
+        if (_amountStr == '-') _amountStr = ''; // 删除后只剩负号时清空
       }
     });
   }
