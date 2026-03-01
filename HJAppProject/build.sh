@@ -2,7 +2,7 @@
 buildPlatform=$1
 echo build $buildPlatform
 # 定义主版本号
-MAJOR_VERSION="1.3.5"
+MAJOR_VERSION="1.3.6"
 
 # 动态生成构建号（日期+时间戳）
 BUILD_NUMBER=$(date +%Y%m%d%H)
