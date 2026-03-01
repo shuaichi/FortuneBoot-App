@@ -1256,14 +1256,14 @@ class _EditBillViewState extends State<EditBillView> {
         _showError('请选择账户'); return;
       }
     } else {
-      if (_categoryAmountItems.isEmpty || _categoryAmountItems.every((e) => e.amount <= 0)) {
+      if (_categoryAmountItems.isEmpty) {
         _showError('请输入金额'); return;
       }
       if (_categoryAmountItems.any((e) => e.categoryId == null)) {
         _showError('请选择分类'); return;
       }
-      if (state.editBill.data?.accountId == null) {
-        _showError('请选择账户'); return;
+      if (state.editBill.data?.title == null) {
+        _showError('请输入标题'); return;
       }
     }
 
