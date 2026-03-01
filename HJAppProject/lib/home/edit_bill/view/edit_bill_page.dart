@@ -70,6 +70,10 @@ class _EditBillViewState extends State<EditBillView> {
   // 控制键盘显隐，默认为 true
   final ValueNotifier<bool> _isKeyboardVisible = ValueNotifier(true);
 
+  // Focus Nodes for System Keyboard Inputs
+  final FocusNode _titleFocusNode = FocusNode();
+  final FocusNode _remarkFocusNode = FocusNode();
+
   // 核心状态：分类-金额组合列表
   late List<CategoryAmountItem> _categoryAmountItems;
 
@@ -104,6 +108,16 @@ class _EditBillViewState extends State<EditBillView> {
     if (state.editBill.data?.title != null) {
       _titleController.text = state.editBill.data!.title!;
     }
+
+    // Listen to focus changes to hide custom keyboard when system keyboard is needed
+    _titleFocusNode.addListener(_onTextFieldFocusChange);
+    _remarkFocusNode.addListener(_onTextFieldFocusChange);
+  }
+
+  void _onTextFieldFocusChange() {
+    if (_titleFocusNode.hasFocus || _remarkFocusNode.hasFocus) {
+      _isKeyboardVisible.value = false;
+    }
   }
 
   void _initCategoryAmountItems(EditBillState state) {
@@ -123,6 +137,11 @@ class _EditBillViewState extends State<EditBillView> {
 
   @override
   void dispose() {
+    _titleFocusNode.removeListener(_onTextFieldFocusChange);
+    _remarkFocusNode.removeListener(_onTextFieldFocusChange);
+    _titleFocusNode.dispose();
+    _remarkFocusNode.dispose();
+
     _activeAmountIndex.dispose();
     _isKeyboardVisible.dispose();
     _remarkController.dispose();
@@ -130,6 +149,12 @@ class _EditBillViewState extends State<EditBillView> {
     _isSecondaryExpanded.dispose();
     _scrollController.dispose();
     super.dispose();
+  }
+
+  // Dismiss all keyboards (system and custom)
+  void _dismissAllKeyboards() {
+    FocusScope.of(context).unfocus();
+    _isKeyboardVisible.value = false;
   }
 
   @override
@@ -152,7 +177,10 @@ class _EditBillViewState extends State<EditBillView> {
         centerTitle: true,
         actions: [
           TextButton(
-            onPressed: state.status.isLoadingOrInit ? null : () => _submit(state),
+            onPressed: state.status.isLoadingOrInit ? null : () {
+              _dismissAllKeyboards();
+              _submit(state);
+            },
             style: TextButton.styleFrom(
               foregroundColor: themeColor,
             ),
@@ -165,49 +193,53 @@ class _EditBillViewState extends State<EditBillView> {
       body: Column(
         children: [
           Expanded(
-            child: SingleChildScrollView(
-              controller: _scrollController,
-              padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
-              child: Column(
-                children: [
-                  // 1. 金额核心区 & 分类组合区 (主卡片)
-                  Card(
-                    elevation: 0,
-                    color: Colors.white,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                    child: Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: isTransfer
-                          ? _buildTransferAmountSection(state, themeColor)
-                          : _buildCategoryAmountList(state, themeColor),
+            child: GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              onTap: _dismissAllKeyboards, // Tap outside to dismiss both keyboards
+              child: SingleChildScrollView(
+                controller: _scrollController,
+                padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
+                child: Column(
+                  children: [
+                    // 1. 金额核心区 & 分类组合区 (主卡片)
+                    Card(
+                      elevation: 0,
+                      color: Colors.white,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: isTransfer
+                            ? _buildTransferAmountSection(state, themeColor)
+                            : _buildCategoryAmountList(state, themeColor),
+                      ),
                     ),
-                  ),
 
-                  const SizedBox(height: 16),
+                    const SizedBox(height: 16),
 
-                  // 2. 主要信息区 (主卡片)
-                  Card(
-                    elevation: 0,
-                    color: Colors.white,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                    child: Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: _buildMainInfoSection(state, isTransfer, themeColor),
+                    // 2. 主要信息区 (主卡片)
+                    Card(
+                      elevation: 0,
+                      color: Colors.white,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: _buildMainInfoSection(state, isTransfer, themeColor),
+                      ),
                     ),
-                  ),
 
-                  const SizedBox(height: 16),
+                    const SizedBox(height: 16),
 
-                  // 3. 次要信息区 (次卡片，默认折叠)
-                  Card(
-                    elevation: 0,
-                    color: Colors.white,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                    child: _buildSecondaryInfoSection(state, isTransfer, themeColor),
-                  ),
+                    // 3. 次要信息区 (次卡片，默认折叠)
+                    Card(
+                      elevation: 0,
+                      color: Colors.white,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                      child: _buildSecondaryInfoSection(state, isTransfer, themeColor),
+                    ),
 
-                  const SizedBox(height: 80), // 留白给键盘
-                ],
+                    const SizedBox(height: 80), // 留白给键盘
+                  ],
+                ),
               ),
             ),
           ),
@@ -252,6 +284,7 @@ class _EditBillViewState extends State<EditBillView> {
     final isSelected = type == currentType;
     return GestureDetector(
       onTap: isLoading ? null : () {
+        FocusScope.of(context).unfocus(); // Unfocus system fields when switching types
         if (!isSelected) {
           context.read<EditBillBloc>().add(EditBillTypeChange(type));
           setState(() {
@@ -290,8 +323,9 @@ class _EditBillViewState extends State<EditBillView> {
         const SizedBox(height: 12),
         GestureDetector(
           onTap: () {
+            FocusScope.of(context).unfocus(); // Dismiss system keyboard
             _activeAmountIndex.value = -1;
-            _isKeyboardVisible.value = true;
+            _isKeyboardVisible.value = true; // Show custom keyboard
           },
           child: ValueListenableBuilder<int>(
             valueListenable: _activeAmountIndex,
@@ -344,6 +378,7 @@ class _EditBillViewState extends State<EditBillView> {
             padding: const EdgeInsets.only(top: 16),
             child: TextButton.icon(
               onPressed: () {
+                FocusScope.of(context).unfocus(); // Dismiss system keyboard
                 setState(() {
                   _categoryAmountItems.add(CategoryAmountItem(amount: 0.0));
                   _activeAmountIndex.value = _categoryAmountItems.length - 1;
@@ -440,8 +475,9 @@ class _EditBillViewState extends State<EditBillView> {
                 // 金额显示 (点击展开键盘)
                 InkWell(
                   onTap: () {
+                    FocusScope.of(context).unfocus(); // Dismiss system keyboard
                     _activeAmountIndex.value = index;
-                    _isKeyboardVisible.value = true;
+                    _isKeyboardVisible.value = true; // Show custom keyboard
                   },
                   borderRadius: BorderRadius.circular(8),
                   child: Container(
@@ -469,9 +505,10 @@ class _EditBillViewState extends State<EditBillView> {
   Widget _buildMainInfoSection(EditBillState state, bool isTransfer, Color themeColor) {
     return Column(
       children: [
-        // 标题输入 (新增)
+        // 标题输入
         TextField(
           controller: _titleController,
+          focusNode: _titleFocusNode, // Added focus node
           decoration: InputDecoration(
             hintText: '请输入标题（必填）',
             border: InputBorder.none,
@@ -584,7 +621,10 @@ class _EditBillViewState extends State<EditBillView> {
           children: [
             // 标题栏（点击展开/折叠）
             InkWell(
-              onTap: () => _isSecondaryExpanded.value = !isExpanded,
+              onTap: () {
+                _dismissAllKeyboards(); // Dismiss keyboards when toggling section
+                _isSecondaryExpanded.value = !isExpanded;
+              },
               borderRadius: const BorderRadius.vertical(top: Radius.circular(16), bottom: Radius.circular(16)),
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -621,6 +661,7 @@ class _EditBillViewState extends State<EditBillView> {
                     // 备注
                     TextField(
                       controller: _remarkController,
+                      focusNode: _remarkFocusNode, // Added focus node
                       decoration: InputDecoration(
                         labelText: '备注',
                         hintText: '写点什么...',
@@ -795,9 +836,7 @@ class _EditBillViewState extends State<EditBillView> {
                   flex: 1,
                   child: GestureDetector(
                     onTap: () {
-                      FocusScope.of(context).unfocus();
-                      _isKeyboardVisible.value = false;
-                      // Optional: Add logic to check completeness
+                      _dismissAllKeyboards(); // Unfocus and dismiss when Done is pressed
                     },
                     child: Container(
                       height: 50.0 * 4,
@@ -941,6 +980,7 @@ class _EditBillViewState extends State<EditBillView> {
   // --- 底部弹窗 ---
 
   void _showCategorySelector(BuildContext context, EditBillState state, int index, Color themeColor) {
+    _dismissAllKeyboards(); // Dismiss keyboards before showing sheet
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -965,6 +1005,7 @@ class _EditBillViewState extends State<EditBillView> {
   }
 
   void _showTagSelector(BuildContext context, EditBillState state, Color themeColor) {
+    _dismissAllKeyboards(); // Dismiss keyboards before showing sheet
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -987,6 +1028,7 @@ class _EditBillViewState extends State<EditBillView> {
   }
 
   void _showAccountSelector(BuildContext context, EditBillState state, {required bool isSource}) {
+    _dismissAllKeyboards(); // Dismiss keyboards before showing sheet
     // 根据当前类型和是转出还是转入，确定列表
     final billType = BillType.fromValue(state.editBill.data?.billType ?? 1) ?? BillType.expenditure;
     List<DropdownItem<AccountSelectItem>> list = [];
@@ -1029,6 +1071,7 @@ class _EditBillViewState extends State<EditBillView> {
   }
 
   void _showTimeSelector(BuildContext context, EditBillState state) {
+    _dismissAllKeyboards(); // Dismiss keyboards before showing sheet
     DateTime initialDate = DateTime.now();
     try {
       initialDate = DateFormat('yyyy-MM-dd HH:mm:ss').parse(state.editBill.data?.tradeTime ?? '');
@@ -1053,6 +1096,7 @@ class _EditBillViewState extends State<EditBillView> {
   }
 
   void _showPayeeSelector(BuildContext context, EditBillState state) {
+    _dismissAllKeyboards(); // Dismiss keyboards before showing sheet
     showModalBottomSheet(
       context: context,
       builder: (_) => Container(
