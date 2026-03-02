@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../design_system/hjds_components.dart';
-import '../../../design_system/hjds_theme.dart';
+import 'package:hjproject/home/design_system/hjds_components.dart';
+import 'package:hjproject/home/design_system/hjds_theme.dart';
 
 class ThemeSelectionSheet extends StatelessWidget {
   final List<String> themes;
@@ -30,7 +30,7 @@ class ThemeSelectionSheet extends StatelessWidget {
                 itemBuilder: (context, index) {
                   final item = themes[index];
                   final selected = (current != null && current == item) || (current == null && item == '跟随系统');
-                  return HJListItem.value(
+                  return HJValueItem( // ← 修复此处
                     icon: Icons.color_lens_outlined,
                     title: item,
                     valueText: selected ? '当前' : null,

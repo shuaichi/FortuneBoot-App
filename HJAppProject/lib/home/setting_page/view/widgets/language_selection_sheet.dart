@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../design_system/hjds_components.dart';
-import '../../../design_system/hjds_theme.dart';
+import 'package:hjproject/home/design_system/hjds_components.dart';
+import 'package:hjproject/home/design_system/hjds_theme.dart';
 
 class LanguageSelectionSheet extends StatelessWidget {
   final List<String> languages;
@@ -30,7 +30,7 @@ class LanguageSelectionSheet extends StatelessWidget {
                 itemBuilder: (context, index) {
                   final item = languages[index];
                   final selected = (current != null && current == item) || (current == null && item.contains('简体中文'));
-                  return HJListItem.value(
+                  return HJValueItem( // ← 修复此处
                     icon: Icons.language,
                     title: item,
                     valueText: selected ? '当前' : null,

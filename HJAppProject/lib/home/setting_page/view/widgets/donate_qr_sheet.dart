@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hjproject/Home/design_system/hjds_components.dart';
+import 'package:hjproject/home/design_system/hjds_components.dart';
 
 class DonateQrSheet extends StatelessWidget {
   final VoidCallback onLongPressWechat;

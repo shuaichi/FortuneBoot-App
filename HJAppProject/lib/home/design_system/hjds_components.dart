@@ -123,25 +123,24 @@ class SectionCard extends StatelessWidget {
   }
 }
 
-/// 4. 列表项组件 (已完美修复 Flex 约束溢出 BUG)
-class HJListItem extends StatelessWidget {
+/// 4. 列表项组件 (已完美修复左对齐BUG：强制推向最右侧且防溢出)
+abstract class HJBaseListItem extends StatelessWidget {
   final IconData icon;
   final String title;
   final String? subtitle;
-  final String? valueText;
-  final Widget? trailing;
   final VoidCallback onTap;
   final double height;
-  final Color? valueColor;
 
-  const HJListItem.chevron({super.key, required this.icon, required this.title, required this.onTap})
-      : height = 56.0, trailing = const Icon(Icons.chevron_right, size: 16, color: Colors.grey), valueText = null, valueColor = null, subtitle = null;
+  const HJBaseListItem({
+    super.key,
+    required this.icon,
+    required this.title,
+    this.subtitle,
+    required this.onTap,
+    required this.height
+  });
 
-  const HJListItem.value({super.key, required this.icon, required this.title, required this.valueText, required this.onTap, this.valueColor})
-      : height = 56.0, subtitle = null, trailing = const Icon(Icons.chevron_right, size: 16, color: Colors.grey);
-
-  const HJListItem.account({super.key, required this.icon, required this.title, required this.subtitle, required this.onTap})
-      : height = 72.0, trailing = const Icon(Icons.chevron_right, size: 16, color: Colors.grey), valueText = null, valueColor = null;
+  Widget buildTrailing(BuildContext context);
 
   @override
   Widget build(BuildContext context) {
@@ -159,18 +158,16 @@ class HJListItem extends StatelessWidget {
             child: Row(
               children:[
                 Container(
-                  width: 32,
-                  height: 32,
+                  width: 32, height: 32,
                   decoration: BoxDecoration(color: Colors.grey[50], shape: BoxShape.circle),
                   child: Icon(icon, size: 18, color: Colors.black87),
                 ),
                 const SizedBox(width: HJSpacing.md),
-                // 【修复核心】：使用内部 Row + Expanded(flex:1) + Flexible(flex:2) 严格管控边界
                 Expanded(
                   child: Row(
                     children:[
+                      // 使用 Expanded 强制占据剩余空间，将后面的 Trailing 推向最右侧
                       Expanded(
-                        flex: 1, // 确保标题至少能占据1份空间，不会被挤成竖排
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -183,23 +180,11 @@ class HJListItem extends StatelessWidget {
                           ],
                         ),
                       ),
-                      if (valueText != null) ...[
-                        const SizedBox(width: HJSpacing.sm),
-                        Flexible(
-                          flex: 2, // 允许超长内容(如API URL)占据最多2份空间，超出则截断
-                          child: Text(
-                            valueText!,
-                            style: HJTypography.tabularBody.copyWith(color: valueColor ?? Colors.grey[500]),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            textAlign: TextAlign.right,
-                          ),
-                        ),
-                      ]
+                      const SizedBox(width: HJSpacing.sm), // 保证左右中间留有间距
+                      buildTrailing(context),
                     ],
                   ),
                 ),
-                if (trailing != null) ...[const SizedBox(width: HJSpacing.sm), trailing!]
               ],
             ),
           ),
@@ -209,7 +194,112 @@ class HJListItem extends StatelessWidget {
   }
 }
 
-/// 5. 按钮系统
+class HJChevronItem extends HJBaseListItem {
+  const HJChevronItem({super.key, required super.icon, required super.title, required super.onTap}) : super(height: 56.0);
+
+  @override
+  Widget buildTrailing(BuildContext context) {
+    return const Icon(Icons.chevron_right, size: 16, color: Colors.grey);
+  }
+}
+
+class HJValueItem extends HJBaseListItem {
+  final String? valueText;
+  final Color? valueColor;
+
+  const HJValueItem({super.key, required super.icon, required super.title, this.valueText, this.valueColor, required super.onTap}) : super(height: 56.0);
+
+  @override
+  Widget buildTrailing(BuildContext context) {
+    // 灵活收缩包裹右侧内容，不主动扩张
+    return Flexible(
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children:[
+          if (valueText != null)
+            Flexible(
+              child: Text(
+                valueText!,
+                style: HJTypography.tabularBody.copyWith(color: valueColor ?? Colors.grey[500]),
+                maxLines: 1, overflow: TextOverflow.ellipsis, textAlign: TextAlign.right,
+              ),
+            ),
+          const SizedBox(width: HJSpacing.sm),
+          const Icon(Icons.chevron_right, size: 16, color: Colors.grey),
+        ],
+      ),
+    );
+  }
+}
+
+class HJAccountItem extends HJBaseListItem {
+  const HJAccountItem({super.key, required super.icon, required super.title, required super.subtitle, required super.onTap}) : super(height: 72.0);
+
+  @override
+  Widget buildTrailing(BuildContext context) {
+    return const Icon(Icons.chevron_right, size: 16, color: Colors.grey);
+  }
+}
+
+/// 5. 通用对话框
+class HJDialog extends StatelessWidget {
+  final String title;
+  final Widget content;
+  final Widget primaryAction;
+  final Widget? secondaryAction;
+  final IconData? headerIcon;
+  final Color? headerIconColor;
+
+  const HJDialog({
+    super.key,
+    required this.title,
+    required this.content,
+    required this.primaryAction,
+    this.secondaryAction,
+    this.headerIcon,
+    this.headerIconColor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      backgroundColor: Colors.white,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children:[
+            Row(
+              children: [
+                if (headerIcon != null) ...[
+                  Icon(headerIcon, color: headerIconColor ?? Theme.of(context).primaryColor, size: 24),
+                  const SizedBox(width: 12),
+                ],
+                Text(title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black87)),
+              ],
+            ),
+            const SizedBox(height: 16),
+            content,
+            const SizedBox(height: 24),
+            Row(
+              children: [
+                if (secondaryAction != null) ...[
+                  Expanded(child: secondaryAction!),
+                  const SizedBox(width: 12),
+                ],
+                Expanded(child: primaryAction),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// 6. 按钮与头像系统
 class HJButton extends StatefulWidget {
   final String text;
   final VoidCallback onPressed;
@@ -226,7 +316,6 @@ class HJButton extends StatefulWidget {
 
 class _HJButtonState extends State<HJButton> {
   bool _isPressed = false;
-
   @override
   Widget build(BuildContext context) {
     final bgColor = widget.isCritical ? Colors.red : (widget.isSecondary ? Colors.grey[100] : Theme.of(context).primaryColor);
@@ -234,18 +323,12 @@ class _HJButtonState extends State<HJButton> {
 
     return GestureDetector(
       onTapDown: (_) => setState(() => _isPressed = true),
-      onTapUp: (_) {
-        setState(() => _isPressed = false);
-        HapticFeedback.lightImpact();
-        widget.onPressed();
-      },
+      onTapUp: (_) { setState(() => _isPressed = false); HapticFeedback.lightImpact(); widget.onPressed(); },
       onTapCancel: () => setState(() => _isPressed = false),
       child: AnimatedScale(
-        scale: _isPressed ? 0.96 : 1.0,
-        duration: const Duration(milliseconds: 100),
+        scale: _isPressed ? 0.96 : 1.0, duration: const Duration(milliseconds: 100),
         child: Container(
-          height: 50,
-          alignment: Alignment.center,
+          height: 50, alignment: Alignment.center,
           decoration: BoxDecoration(color: bgColor, borderRadius: BorderRadius.circular(12)),
           child: Text(widget.text, style: TextStyle(color: fgColor, fontSize: 16, fontWeight: FontWeight.bold)),
         ),
@@ -254,7 +337,6 @@ class _HJButtonState extends State<HJButton> {
   }
 }
 
-/// 6. 头像区域
 class HJAvatarSection extends StatelessWidget {
   final String name;
   final String role;
@@ -272,31 +354,9 @@ class HJAvatarSection extends StatelessWidget {
       decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16)),
       child: Row(
         children:[
-          CircleAvatar(
-            radius: 30,
-            backgroundColor: Theme.of(context).primaryColor.withOpacity(0.1),
-            child: Text(initials, style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Theme.of(context).primaryColor)),
-          ),
+          CircleAvatar(radius: 30, backgroundColor: Theme.of(context).primaryColor.withOpacity(0.1), child: Text(initials, style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Theme.of(context).primaryColor))),
           const SizedBox(width: HJSpacing.md),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children:[
-                Text(name, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black87)),
-                const SizedBox(height: 4),
-                GestureDetector(
-                  onTap: onViewProfile,
-                  child: Row(
-                    children:[
-                      Text('查看个人资料', style: TextStyle(fontSize: 13, color: Colors.grey[600])),
-                      const SizedBox(width: 4),
-                      Icon(Icons.arrow_forward_ios, size: 11, color: Colors.grey[400]),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
+          Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children:[Text(name, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black87)), const SizedBox(height: 4), GestureDetector(onTap: onViewProfile, child: Row(children:[Text('查看个人资料', style: TextStyle(fontSize: 13, color: Colors.grey[600])), const SizedBox(width: 4), Icon(Icons.arrow_forward_ios, size: 11, color: Colors.grey[400])]))])),
           IconButton(icon: Icon(Icons.qr_code, color: Colors.grey[600]), onPressed: onShowQRCode),
         ],
       ),
