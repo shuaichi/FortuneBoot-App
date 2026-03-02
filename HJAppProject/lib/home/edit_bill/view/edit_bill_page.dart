@@ -12,21 +12,24 @@ import 'package:hjproject/repository/repository/bills_repository.dart';
 import 'package:intl/intl.dart';
 import 'package:multi_dropdown/multi_dropdown.dart';
 
-void _showToast(BuildContext context, String msg, {bool isError = false}) {
-  ScaffoldMessenger.of(context)
-    ..hideCurrentSnackBar()
-    ..showSnackBar(SnackBar(
-      content: Text(msg, style: const TextStyle(color: Colors.white)),
-      backgroundColor: isError ? CupertinoColors.destructiveRed : CupertinoColors.activeGreen,
-      behavior: SnackBarBehavior.floating,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      margin: const EdgeInsets.all(16),
-    ));
-}
 // ==========================================
-// 1. PAGE & ENTRY VIEW
+// 🎨 Design System Constants
 // ==========================================
+class AppColors {
+  static const Color background = Color(0xFFF2F2F7);
+  static const Color surface = Color(0xFFFFFFFF);
+  static const Color textPrimary = Color(0xFF000000);
+  static const Color textSecondary = Color(0xFF8A8A8E);
+  static const Color divider = Color(0xFFE5E5EA);
 
+  static const Color expense = Color(0xFF34C759);
+  static const Color income = Color(0xFFFF3B30);
+  static const Color transfer = Color(0xFF007AFF);
+}
+
+// ==========================================
+// 🚀 Page Entry
+// ==========================================
 class EditBillPage extends StatelessWidget {
   const EditBillPage({super.key});
 
@@ -64,8 +67,24 @@ class EditBillPage extends StatelessWidget {
     );
   }
 
+  void _showToast(BuildContext context, String message, {bool isError = false}) {
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        SnackBar(
+          content: Text(message, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w500)),
+          backgroundColor: isError ? AppColors.income : const Color(0xFF323232),
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          margin: const EdgeInsets.all(16),
+        ),
+      );
+  }
 }
 
+// ==========================================
+// 📦 Main View
+// ==========================================
 class EditBillView extends StatefulWidget {
   const EditBillView({super.key});
 
@@ -74,34 +93,26 @@ class EditBillView extends StatefulWidget {
 }
 
 class _EditBillViewState extends State<EditBillView> {
-  // --- 核心状态 ---
   final ValueNotifier<int> _activeAmountIndex = ValueNotifier(0);
   final ValueNotifier<bool> _isKeyboardVisible = ValueNotifier(true);
+  final ValueNotifier<bool> _isSecondaryExpanded = ValueNotifier(false);
 
-  // Focus Nodes (系统键盘与自定义键盘互斥控制)
   final FocusNode _titleFocusNode = FocusNode();
   final FocusNode _remarkFocusNode = FocusNode();
-
-  late List<CategoryAmountItem> _categoryAmountItems;
+  final ScrollController _scrollController = ScrollController();
 
   final TextEditingController _remarkController = TextEditingController();
   final TextEditingController _titleController = TextEditingController();
-  final ValueNotifier<bool> _isSecondaryExpanded = ValueNotifier(false);
-  final ScrollController _scrollController = ScrollController();
 
+  late List<CategoryAmountItem> _categoryAmountItems;
   String? _tempAmountString;
 
-  // iOS Style Theme Colors
   Color _getThemeColor(BillType type) {
     switch (type) {
-      case BillType.expenditure:
-        return CupertinoColors.activeGreen;
-      case BillType.income:
-        return CupertinoColors.destructiveRed;
-      case BillType.transfer:
-        return CupertinoColors.activeBlue;
-      default:
-        return CupertinoColors.activeGreen;
+      case BillType.expenditure: return AppColors.expense;
+      case BillType.income: return AppColors.income;
+      case BillType.transfer: return AppColors.transfer;
+      default: return AppColors.expense;
     }
   }
 
@@ -111,12 +122,8 @@ class _EditBillViewState extends State<EditBillView> {
     final state = context.read<EditBillBloc>().state;
     _initCategoryAmountItems(state);
 
-    if (state.editBill.data?.remark != null) {
-      _remarkController.text = state.editBill.data!.remark!;
-    }
-    if (state.editBill.data?.title != null) {
-      _titleController.text = state.editBill.data!.title!;
-    }
+    if (state.editBill.data?.remark != null) _remarkController.text = state.editBill.data!.remark!;
+    if (state.editBill.data?.title != null) _titleController.text = state.editBill.data!.title!;
 
     _titleFocusNode.addListener(_onTextFieldFocusChange);
     _remarkFocusNode.addListener(_onTextFieldFocusChange);
@@ -172,65 +179,52 @@ class _EditBillViewState extends State<EditBillView> {
     final isTransfer = billType == BillType.transfer;
     final themeColor = _getThemeColor(billType);
 
-    // 浅灰背景提升 iOS 层级感
     return Scaffold(
-      backgroundColor: const Color(0xFFF2F2F7),
-      appBar: _buildAppBar(state, billType, themeColor),
+      backgroundColor: AppColors.background,
+      appBar: _buildCustomAppBar(state, billType, themeColor),
       body: Column(
         children:[
           Expanded(
             child: GestureDetector(
               behavior: HitTestBehavior.translucent,
               onTap: _dismissAllKeyboards,
-              child: CustomScrollView(
+              child: ListView(
                 controller: _scrollController,
-                physics: const AlwaysScrollableScrollPhysics(),
-                slivers:[
-                  SliverToBoxAdapter(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children:[
-                          // 1. 金额及分类区
-                          if (isTransfer)
-                            _buildTransferAmountSection(state, themeColor)
-                          else
-                            _buildCategoryAmountList(state, themeColor),
+                physics: const AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+                children:[
+                  // 1. 金额录入核心区
+                  _buildSectionContainer(
+                    child: isTransfer
+                        ? _buildTransferAmountSection(state, themeColor)
+                        : _buildCategoryAmountList(state, themeColor),
+                  ),
+                  const SizedBox(height: 20),
 
-                          const SizedBox(height: 24),
+                  // 2. 基础表单区
+                  _buildSectionContainer(
+                    child: _buildMainInfoSection(state, isTransfer, themeColor),
+                  ),
+                  const SizedBox(height: 20),
 
-                          // 2. 主表单区
-                          _buildMainInfoSection(state, isTransfer, themeColor),
-
-                          const SizedBox(height: 24),
-
-                          // 3. 次要信息区 (平滑折叠)
-                          _buildSecondaryInfoSection(state, isTransfer, themeColor),
-
-                          const SizedBox(height: 40),
-                        ],
-                      ),
-                    ),
-                  )
+                  // 3. 高级选项折叠区
+                  _buildSectionContainer(
+                    child: _buildSecondaryInfoSection(state, isTransfer, themeColor),
+                  ),
+                  const SizedBox(height: 100), // 为键盘留出安全呼吸空间
                 ],
               ),
             ),
           ),
-
-          // 4. 自定义数字键盘
+          // 4. 定制数字键盘
           ValueListenableBuilder<bool>(
             valueListenable: _isKeyboardVisible,
             builder: (context, visible, child) {
               return AnimatedContainer(
                 duration: const Duration(milliseconds: 250),
                 curve: Curves.easeOutCubic,
-                height: visible ? 280 : 0, // 优化高度适配刘海屏
-                child: Wrap(
-                  children:[
-                    if (visible) _buildNumericKeyboard(themeColor),
-                  ],
-                ),
+                height: visible ? 280 + MediaQuery.of(context).padding.bottom : 0,
+                child: visible ? _buildNumericKeyboard(themeColor) : const SizedBox.shrink(),
               );
             },
           ),
@@ -239,356 +233,432 @@ class _EditBillViewState extends State<EditBillView> {
     );
   }
 
-  // ==========================================
-  // 2. UI WIDGETS
-  // ==========================================
-
-  AppBar _buildAppBar(EditBillState state, BillType currentType, Color themeColor) {
+  PreferredSizeWidget _buildCustomAppBar(EditBillState state, BillType billType, Color themeColor) {
     return AppBar(
-      backgroundColor: const Color(0xFFF2F2F7),
+      backgroundColor: AppColors.background,
       elevation: 0,
       scrolledUnderElevation: 0,
       leading: IconButton(
-        icon: const Icon(CupertinoIcons.clear, color: Colors.black87, size: 24),
+        icon: const Icon(Icons.close_rounded, color: AppColors.textPrimary),
         onPressed: () => Navigator.of(context).pop(),
       ),
-      title: _SegmentedTypeSwitcher(
-        currentType: currentType,
-        isLoading: state.status == EditBillStatus.loading,
-        themeColor: themeColor,
-        onChanged: (type) {
-          _dismissAllKeyboards();
-          context.read<EditBillBloc>().add(EditBillTypeChange(type));
-          setState(() {
-            _activeAmountIndex.value = type == BillType.transfer ? -1 : 0;
-            _categoryAmountItems =[CategoryAmountItem(amount: 0.0)];
-          });
-        },
-      ),
+      title: _buildSegmentedControl(billType, state.status == EditBillStatus.loading),
       centerTitle: true,
       actions:[
-        CupertinoButton(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          onPressed: state.status.isLoadingOrInit ? null : () {
-            _dismissAllKeyboards();
-            _submit(state);
-          },
-          child: state.status.isLoadingOrInit
-              ? const CupertinoActivityIndicator()
-              : Text('完成', style: TextStyle(color: themeColor, fontWeight: FontWeight.w600)),
+        Padding(
+          padding: const EdgeInsets.only(right: 8.0),
+          child: TextButton(
+            onPressed: state.status.isLoadingOrInit ? null : () {
+              _dismissAllKeyboards();
+              _submit(state);
+            },
+            style: TextButton.styleFrom(
+              foregroundColor: themeColor,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            ),
+            child: state.status.isLoadingOrInit
+                ? const CupertinoActivityIndicator()
+                : const Text('完成', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
+          ),
         )
       ],
     );
   }
 
-  // --- 转移金额区 (极简大字号) ---
-  Widget _buildTransferAmountSection(EditBillState state, Color themeColor) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children:[
-        const Text('转账金额', style: TextStyle(color: Colors.black54, fontSize: 13, fontWeight: FontWeight.w500)),
-        const SizedBox(height: 8),
-        GestureDetector(
-          onTap: () {
-            FocusScope.of(context).unfocus();
-            _activeAmountIndex.value = -1;
-            _isKeyboardVisible.value = true;
-          },
-          child: ValueListenableBuilder<int>(
-            valueListenable: _activeAmountIndex,
-            builder: (_, activeIndex, __) {
-              final isActive = activeIndex == -1;
-              final amount = state.editBill.data?.amount ?? 0.0;
-              final displayText = _formatAmountText(isActive, amount);
-
-              return AnimatedDefaultTextStyle(
-                duration: const Duration(milliseconds: 200),
-                style: TextStyle(
-                  fontSize: 56,
-                  fontWeight: FontWeight.w700,
-                  color: isActive ? themeColor : Colors.black87,
-                  fontFamily: 'HelveticaNeue', // iOS Standard Number Font
-                  letterSpacing: -1.5,
-                ),
-                child: Text(displayText),
-              );
-            },
-          ),
-        ),
-      ],
+  Widget _buildSectionContainer({required Widget child}) {
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow:[
+          BoxShadow(
+            color: Colors.black.withOpacity(0.02),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          )
+        ],
+      ),
+      child: child,
     );
   }
 
-  // --- 分类与金额明细列表 (可添加多条) ---
+  // --- Type Switcher (iOS Segmented Style) ---
+  Widget _buildSegmentedControl(BillType currentType, bool isLoading) {
+    return Container(
+      height: 36,
+      decoration: BoxDecoration(
+        color: const Color(0xFFE3E3E8), // iOS segmented background
+        borderRadius: BorderRadius.circular(8),
+      ),
+      padding: const EdgeInsets.all(2),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children:[
+          _segmentButton(BillType.expenditure, '支出', currentType, isLoading),
+          _segmentButton(BillType.income, '收入', currentType, isLoading),
+          _segmentButton(BillType.transfer, '转账', currentType, isLoading),
+        ],
+      ),
+    );
+  }
+
+  Widget _segmentButton(BillType type, String label, BillType currentType, bool isLoading) {
+    final isSelected = type == currentType;
+    return GestureDetector(
+      onTap: isLoading ? null : () {
+        FocusScope.of(context).unfocus();
+        if (!isSelected) {
+          context.read<EditBillBloc>().add(EditBillTypeChange(type));
+          setState(() {
+            _activeAmountIndex.value = type == BillType.transfer ? -1 : 0;
+            _categoryAmountItems =[CategoryAmountItem(amount: 0.0)];
+          });
+        }
+      },
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(horizontal: 18),
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: isSelected ? AppColors.surface : Colors.transparent,
+          borderRadius: BorderRadius.circular(6),
+          boxShadow: isSelected ?[
+            BoxShadow(color: Colors.black.withOpacity(0.12), blurRadius: 4, offset: const Offset(0, 1))
+          ] :[],
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            color: isSelected ? AppColors.textPrimary : AppColors.textSecondary,
+            fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+            fontSize: 14,
+          ),
+        ),
+      ),
+    );
+  }
+
+  // --- Transfer Amount ---
+  Widget _buildTransferAmountSection(EditBillState state, Color themeColor) {
+    return Padding(
+      padding: const EdgeInsets.all(24.0),
+      child: Column(
+        children:[
+          Text('转账金额', style: TextStyle(color: AppColors.textSecondary, fontSize: 14, fontWeight: FontWeight.w500)),
+          const SizedBox(height: 12),
+          GestureDetector(
+            onTap: () {
+              FocusScope.of(context).unfocus();
+              _activeAmountIndex.value = -1;
+              _isKeyboardVisible.value = true;
+            },
+            child: ValueListenableBuilder<int>(
+              valueListenable: _activeAmountIndex,
+              builder: (_, activeIndex, __) {
+                final isActive = activeIndex == -1;
+                final amount = state.editBill.data?.amount ?? 0.0;
+                String displayText = _formatAmountString(isActive, amount);
+
+                return AnimatedDefaultTextStyle(
+                  duration: const Duration(milliseconds: 200),
+                  style: TextStyle(
+                    fontSize: 48,
+                    fontWeight: FontWeight.w700,
+                    color: isActive ? themeColor : AppColors.textPrimary,
+                    fontFamily: 'RobotoMono',
+                    letterSpacing: -1,
+                  ),
+                  child: Text(displayText),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // --- Category Amount List ---
   Widget _buildCategoryAmountList(EditBillState state, Color themeColor) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children:[
-        ...List.generate(_categoryAmountItems.length, (index) {
-          final item = _categoryAmountItems[index];
-          final categoryName = _getCategoryName(state.categoryList, item.categoryId);
-
-          return Padding(
-            padding: const EdgeInsets.only(bottom: 12),
-            child: Dismissible(
-              key: item.key,
-              direction: _categoryAmountItems.length > 1 ? DismissDirection.endToStart : DismissDirection.none,
-              background: Container(
-                alignment: Alignment.centerRight,
-                padding: const EdgeInsets.only(right: 24),
-                decoration: BoxDecoration(
-                  color: CupertinoColors.destructiveRed,
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: const Icon(CupertinoIcons.delete, color: Colors.white),
-              ),
-              onDismissed: (_) {
-                setState(() {
-                  _categoryAmountItems.removeAt(index);
-                  if (_activeAmountIndex.value >= _categoryAmountItems.length) {
-                    _activeAmountIndex.value = _categoryAmountItems.length - 1;
-                  }
-                });
-                _syncCategoryAmountToState();
-              },
-              child: ValueListenableBuilder<int>(
-                valueListenable: _activeAmountIndex,
-                builder: (_, activeIndex, __) {
-                  final isActive = activeIndex == index;
-                  return GestureDetector(
-                    onTap: () {
-                      FocusScope.of(context).unfocus();
-                      _activeAmountIndex.value = index;
-                      _isKeyboardVisible.value = true;
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(
-                          color: isActive ? themeColor.withOpacity(0.5) : Colors.transparent,
-                          width: 1.5,
-                        ),
-                        boxShadow:[
-                          BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 10, offset: const Offset(0, 2))
-                        ],
-                      ),
-                      child: Row(
-                        children:[
-                          // 左侧：分类选择
-                          GestureDetector(
-                            onTap: () => _showCategorySelector(context, state, index, themeColor),
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                              decoration: BoxDecoration(
-                                color: const Color(0xFFF2F2F7),
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children:[
-                                  Icon(
-                                    categoryName.isEmpty ? CupertinoIcons.square_grid_2x2 : CupertinoIcons.tag_fill,
-                                    size: 16,
-                                    color: categoryName.isEmpty ? Colors.black45 : themeColor,
-                                  ),
-                                  const SizedBox(width: 6),
-                                  Text(
-                                    categoryName.isEmpty ? '选择分类' : categoryName.split(' > ').last,
-                                    style: TextStyle(
-                                      color: categoryName.isEmpty ? Colors.black45 : Colors.black87,
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 15,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          const Spacer(),
-                          // 右侧：大字号金额
-                          Text(
-                            _formatAmountText(isActive, item.amount),
-                            style: TextStyle(
-                              fontSize: 32,
-                              fontWeight: FontWeight.w600,
-                              color: isActive ? themeColor : Colors.black87,
-                              fontFamily: 'HelveticaNeue',
-                              letterSpacing: -0.5,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
-          );
-        }),
-
-        // 拆账按钮
+        ListView.separated(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: _categoryAmountItems.length,
+          separatorBuilder: (_, __) => const Divider(height: 1, color: AppColors.divider, indent: 16),
+          itemBuilder: (context, index) => _buildCategoryAmountItem(state, index, themeColor),
+        ),
         if (_categoryAmountItems.length < 5)
-          Align(
-            alignment: Alignment.center,
-            child: CupertinoButton(
-              padding: EdgeInsets.zero,
-              onPressed: () {
-                FocusScope.of(context).unfocus();
-                setState(() {
-                  _categoryAmountItems.add(CategoryAmountItem(amount: 0.0));
-                  _activeAmountIndex.value = _categoryAmountItems.length - 1;
-                  _isKeyboardVisible.value = true;
-                });
-                _syncCategoryAmountToState();
-              },
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children:[
-                  Icon(CupertinoIcons.add_circled_solid, size: 20, color: themeColor),
-                  const SizedBox(width: 6),
-                  Text('添加一笔明细', style: TextStyle(color: themeColor, fontSize: 14, fontWeight: FontWeight.w600)),
-                ],
-              ),
+          InkWell(
+            onTap: () {
+              FocusScope.of(context).unfocus();
+              setState(() {
+                _categoryAmountItems.add(CategoryAmountItem(amount: 0.0));
+                _activeAmountIndex.value = _categoryAmountItems.length - 1;
+                _isKeyboardVisible.value = true;
+              });
+              _syncCategoryAmountToState();
+            },
+            child: Container(
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              alignment: Alignment.center,
+              child: Text('+ 添加明细', style: TextStyle(color: themeColor, fontSize: 15, fontWeight: FontWeight.w600)),
             ),
           ),
       ],
     );
   }
 
-  // --- 主表单区 ---
-  Widget _buildMainInfoSection(EditBillState state, bool isTransfer, Color themeColor) {
-    return _CupertinoFormGroup(
-      children:[
-        // 标题输入
-        _FormRow(
-          icon: CupertinoIcons.pen,
-          label: '标题',
-          customChild: Expanded(
-            child: TextField(
-              controller: _titleController,
-              focusNode: _titleFocusNode,
-              textAlign: TextAlign.right,
-              decoration: const InputDecoration(
-                hintText: '必填',
-                border: InputBorder.none,
-                isDense: true,
-                contentPadding: EdgeInsets.zero,
-              ),
-              style: const TextStyle(fontSize: 16, color: Colors.black87),
-              onChanged: (v) => state.editBill.data?.title = v,
-            ),
-          ),
-        ),
+  Widget _buildCategoryAmountItem(EditBillState state, int index, Color themeColor) {
+    final item = _categoryAmountItems[index];
+    final categoryName = _getCategoryName(state.categoryList, item.categoryId);
 
-        // 账户 / 转出账户
-        _FormRow(
-          icon: isTransfer ? CupertinoIcons.arrow_up_right_circle : CupertinoIcons.creditcard,
+    return Dismissible(
+      key: item.key,
+      direction: _categoryAmountItems.length > 1 ? DismissDirection.endToStart : DismissDirection.none,
+      onDismissed: (_) {
+        setState(() {
+          _categoryAmountItems.removeAt(index);
+          if (_activeAmountIndex.value >= _categoryAmountItems.length) {
+            _activeAmountIndex.value = _categoryAmountItems.length - 1;
+          }
+        });
+        _syncCategoryAmountToState();
+      },
+      background: Container(
+        alignment: Alignment.centerRight,
+        padding: const EdgeInsets.only(right: 20),
+        color: AppColors.income,
+        child: const Icon(Icons.delete_sweep_rounded, color: Colors.white, size: 28),
+      ),
+      child: ValueListenableBuilder<int>(
+        valueListenable: _activeAmountIndex,
+        builder: (_, activeIndex, __) {
+          final isActive = activeIndex == index;
+          return Container(
+            color: isActive ? themeColor.withOpacity(0.04) : Colors.transparent,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            child: Row(
+              children:[
+                // Category Pill
+                InkWell(
+                  onTap: () => _showCategorySelector(context, state, index, themeColor),
+                  borderRadius: BorderRadius.circular(20),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: AppColors.background,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children:[
+                        Icon(Icons.grid_view_rounded, size: 18, color: categoryName.isEmpty ? AppColors.textSecondary : themeColor),
+                        const SizedBox(width: 6),
+                        ConstrainedBox(
+                          constraints: const BoxConstraints(maxWidth: 100),
+                          child: Text(
+                            categoryName.isEmpty ? '选择分类' : categoryName.split(' > ').last,
+                            style: TextStyle(
+                              color: categoryName.isEmpty ? AppColors.textSecondary : AppColors.textPrimary,
+                              fontWeight: FontWeight.w500,
+                              fontSize: 15,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const Spacer(),
+                // Amount Area
+                GestureDetector(
+                  onTap: () {
+                    FocusScope.of(context).unfocus();
+                    _activeAmountIndex.value = index;
+                    _isKeyboardVisible.value = true;
+                  },
+                  behavior: HitTestBehavior.opaque,
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 16, top: 8, bottom: 8),
+                    child: Text(
+                      _formatAmountString(isActive, item.amount),
+                      style: TextStyle(
+                        fontSize: 28,
+                        fontWeight: FontWeight.w600,
+                        color: isActive ? themeColor : AppColors.textPrimary,
+                        fontFamily: 'RobotoMono',
+                        letterSpacing: -0.5,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  String _formatAmountString(bool isActive, double amount) {
+    if (isActive && _tempAmountString != null) {
+      String str = _tempAmountString!;
+      if (str.isEmpty) return '0.00';
+      if (str == '-' || str == '-0' || str == '-0.') return '-0.00';
+      return str;
+    } else {
+      if (amount == 0) return amount.isNegative ? '-0.00' : '0.00';
+      return amount.toStringAsFixed(2);
+    }
+  }
+
+  // --- Main Form Area ---
+  Widget _buildMainInfoSection(EditBillState state, bool isTransfer, Color themeColor) {
+    return Column(
+      children:[
+        _buildTextFieldRow(
+          icon: Icons.title_rounded,
+          controller: _titleController,
+          focusNode: _titleFocusNode,
+          hintText: '请输入标题（必填）',
+          onChanged: (v) => state.editBill.data?.title = v,
+        ),
+        const Divider(height: 1, color: AppColors.divider, indent: 48),
+        _buildActionRow(
+          icon: Icons.account_balance_wallet_rounded,
+          iconColor: AppColors.textSecondary,
           label: isTransfer ? '转出账户' : '账户',
-          valueText: _getAccountName(state, state.editBill.data?.accountId),
-          placeholder: '请选择',
+          value: _getAccountName(state, state.editBill.data?.accountId),
+          placeholder: '选择账户',
           onTap: () => _showAccountSelector(context, state, isSource: true),
         ),
-
-        // 转入账户 (仅转账)
-        if (isTransfer)
-          _FormRow(
-            icon: CupertinoIcons.arrow_down_right_circle,
+        if (isTransfer) ...[
+          const Divider(height: 1, color: AppColors.divider, indent: 48),
+          _buildActionRow(
+            icon: Icons.account_balance_wallet_rounded,
+            iconColor: AppColors.transfer,
             label: '转入账户',
-            valueText: _getAccountName(state, state.editBill.data?.toAccountId),
-            placeholder: '请选择',
+            value: _getAccountName(state, state.editBill.data?.toAccountId),
+            placeholder: '选择账户',
             onTap: () => _showAccountSelector(context, state, isSource: false),
           ),
-
-        // 时间
-        _FormRow(
-          icon: CupertinoIcons.clock,
+        ],
+        const Divider(height: 1, color: AppColors.divider, indent: 48),
+        _buildActionRow(
+          icon: Icons.access_time_filled_rounded,
+          iconColor: AppColors.textSecondary,
           label: '时间',
-          valueText: state.editBill.data?.tradeTime ?? DateFormat('yyyy-MM-dd HH:mm').format(DateTime.now()),
+          value: state.editBill.data?.tradeTime ?? DateFormat('yyyy-MM-dd HH:mm').format(DateTime.now()),
+          placeholder: '选择时间',
           onTap: () => _showTimeSelector(context, state),
         ),
-
-        // 交易对象 (非转账)
-        if (!isTransfer)
-          _FormRow(
-            icon: CupertinoIcons.person,
+        if (!isTransfer) ...[
+          const Divider(height: 1, color: AppColors.divider, indent: 48),
+          _buildActionRow(
+            icon: Icons.person_rounded,
+            iconColor: AppColors.textSecondary,
             label: '交易对象',
-            valueText: _getPayeeName(state, state.editBill.data?.payeeId),
+            value: _getPayeeName(state, state.editBill.data?.payeeId),
             placeholder: '无',
             onTap: () => _showPayeeSelector(context, state),
           ),
+        ],
       ],
     );
   }
 
-  // --- 次要信息区 (包含动画展开) ---
+  // --- Advanced Options Area ---
   Widget _buildSecondaryInfoSection(EditBillState state, bool isTransfer, Color themeColor) {
     return ValueListenableBuilder<bool>(
       valueListenable: _isSecondaryExpanded,
       builder: (_, isExpanded, __) {
         return Column(
           children:[
-            GestureDetector(
+            InkWell(
               onTap: () {
                 _dismissAllKeyboards();
                 _isSecondaryExpanded.value = !isExpanded;
               },
-              child: Container(
-                color: Colors.transparent,
-                padding: const EdgeInsets.symmetric(vertical: 8),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
                   children:[
-                    Text(isExpanded ? '收起更多选项' : '展开更多选项',
-                        style: const TextStyle(color: Colors.black45, fontSize: 13, fontWeight: FontWeight.w500)),
-                    Icon(isExpanded ? CupertinoIcons.chevron_up : CupertinoIcons.chevron_down, size: 14, color: Colors.black45),
+                    Text('更多信息', style: TextStyle(fontWeight: FontWeight.w600, color: AppColors.textPrimary, fontSize: 15)),
+                    const Spacer(),
+                    if (!isExpanded) ...[
+                      if (state.editBill.data?.tagIdList?.isNotEmpty == true)
+                        Padding(padding: const EdgeInsets.only(right: 8), child: Icon(Icons.local_offer_rounded, size: 16, color: themeColor)),
+                      if (state.editBill.data?.remark?.isNotEmpty == true)
+                        Padding(padding: const EdgeInsets.only(right: 8), child: Icon(Icons.notes_rounded, size: 16, color: themeColor)),
+                      if (state.attachments.isNotEmpty)
+                        Padding(padding: const EdgeInsets.only(right: 8), child: Icon(Icons.attach_file_rounded, size: 16, color: themeColor)),
+                    ],
+                    AnimatedRotation(
+                      turns: isExpanded ? 0.5 : 0.0,
+                      duration: const Duration(milliseconds: 200),
+                      child: const Icon(Icons.keyboard_arrow_down_rounded, color: AppColors.textSecondary),
+                    ),
                   ],
                 ),
               ),
             ),
-            AnimatedSize(
-              duration: const Duration(milliseconds: 300),
-              curve: Curves.easeOutCubic,
-              alignment: Alignment.topCenter,
-              child: !isExpanded
-                  ? const SizedBox(width: double.infinity, height: 0)
-                  : Padding(
-                padding: const EdgeInsets.only(top: 8),
-                child: _CupertinoFormGroup(
-                  children:[
-                    _buildTagInfoRow(state, themeColor),
-                    _FormRow(
-                      icon: CupertinoIcons.text_justify,
-                      label: '备注',
-                      customChild: Expanded(
-                        child: TextField(
-                          controller: _remarkController,
-                          focusNode: _remarkFocusNode,
-                          textAlign: TextAlign.right,
-                          decoration: const InputDecoration(
-                            hintText: '选填',
-                            border: InputBorder.none,
-                            isDense: true,
-                            contentPadding: EdgeInsets.zero,
-                          ),
-                          style: const TextStyle(fontSize: 16),
-                          onChanged: (v) => state.editBill.data?.remark = v,
+            AnimatedCrossFade(
+              firstChild: const SizedBox(width: double.infinity, height: 0),
+              secondChild: Column(
+                children:[
+                  const Divider(height: 1, color: AppColors.divider),
+                  _buildActionRow(
+                    icon: Icons.local_offer_rounded,
+                    iconColor: AppColors.textSecondary,
+                    label: '标签',
+                    value: _getTagsDisplay(state),
+                    placeholder: '无',
+                    onTap: () => _showTagSelector(context, state, themeColor),
+                    isMultiline: true,
+                  ),
+                  const Divider(height: 1, color: AppColors.divider, indent: 48),
+                  _buildTextFieldRow(
+                    icon: Icons.notes_rounded,
+                    controller: _remarkController,
+                    focusNode: _remarkFocusNode,
+                    hintText: '写点备注...',
+                    onChanged: (v) => state.editBill.data?.remark = v,
+                  ),
+                  const Divider(height: 1, color: AppColors.divider, indent: 48),
+                  Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: AttachmentUploadWidget(
+                      initialAttachments: state.attachments,
+                      onAttachmentsChanged: (list) => context.read<EditBillBloc>().add(EditBillAttachmentsChanged(list)),
+                    ),
+                  ),
+                  const Divider(height: 1, color: AppColors.divider),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    child: Row(
+                      children:[
+                        Expanded(
+                          child: _buildSwitchTile('确认', state.editBill.data?.confirm ?? true, isTransfer ? null : (v) {
+                            setState(() => state.editBill.data?.confirm = v);
+                          }, themeColor),
                         ),
-                      ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: _buildSwitchTile('统计', state.editBill.data?.include ?? true, isTransfer ? null : (v) {
+                            setState(() => state.editBill.data?.include = v);
+                          }, themeColor),
+                        ),
+                      ],
                     ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                      child: AttachmentUploadWidget(
-                        initialAttachments: state.attachments,
-                        onAttachmentsChanged: (list) => context.read<EditBillBloc>().add(EditBillAttachmentsChanged(list)),
-                      ),
-                    ),
-                    _buildSwitchRow('计入收支统计', state.editBill.data?.include ?? true, isTransfer ? null : (v) => setState(() => state.editBill.data?.include = v), themeColor),
-                    _buildSwitchRow('已确认', state.editBill.data?.confirm ?? true, isTransfer ? null : (v) => setState(() => state.editBill.data?.confirm = v), themeColor),
-                  ],
-                ),
+                  ),
+                ],
               ),
+              crossFadeState: isExpanded ? CrossFadeState.showSecond : CrossFadeState.showFirst,
+              duration: const Duration(milliseconds: 200),
             ),
           ],
         );
@@ -596,132 +666,188 @@ class _EditBillViewState extends State<EditBillView> {
     );
   }
 
-  Widget _buildTagInfoRow(EditBillState state, Color themeColor) {
-    final hasTags = state.editBill.data?.tagIdList?.isNotEmpty ?? false;
+  // --- Form Helpers ---
+  Widget _buildTextFieldRow({
+    required IconData icon,
+    required TextEditingController controller,
+    required FocusNode focusNode,
+    required String hintText,
+    required ValueChanged<String> onChanged,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      child: Row(
+        children:[
+          Icon(icon, size: 22, color: AppColors.textSecondary),
+          const SizedBox(width: 16),
+          Expanded(
+            child: TextField(
+              controller: controller,
+              focusNode: focusNode,
+              style: const TextStyle(fontSize: 16, color: AppColors.textPrimary),
+              decoration: InputDecoration(
+                hintText: hintText,
+                hintStyle: const TextStyle(color: AppColors.textSecondary, fontSize: 16),
+                border: InputBorder.none,
+                isDense: true,
+              ),
+              onChanged: onChanged,
+            ),
+          ),
+          if (controller.text.isNotEmpty)
+            GestureDetector(
+              onTap: () {
+                controller.clear();
+                onChanged('');
+              },
+              child: const Icon(Icons.cancel, size: 18, color: AppColors.divider),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildActionRow({
+    required IconData icon,
+    required Color iconColor,
+    required String label,
+    required String value,
+    required String placeholder,
+    required VoidCallback onTap,
+    bool isMultiline = false,
+  }) {
     return InkWell(
-      onTap: () => _showTagSelector(context, state, themeColor),
+      onTap: onTap,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         child: Row(
+          crossAxisAlignment: isMultiline && value.isNotEmpty ? CrossAxisAlignment.start : CrossAxisAlignment.center,
           children:[
-            const Icon(CupertinoIcons.tag, size: 20, color: Colors.black54),
-            const SizedBox(width: 12),
-            const Text('标签', style: TextStyle(fontSize: 16, color: Colors.black87)),
-            const Spacer(),
-            if (hasTags)
-              Expanded(
-                child: Wrap(
-                  alignment: WrapAlignment.end,
-                  spacing: 4,
-                  children: state.editBill.data!.tagIdList!.map((id) {
-                    final tagName = _getTagName(state.tagList, id);
-                    return Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                      decoration: BoxDecoration(color: themeColor.withOpacity(0.1), borderRadius: BorderRadius.circular(4)),
-                      child: Text(tagName, style: TextStyle(fontSize: 12, color: themeColor)),
-                    );
-                  }).toList(),
+            Icon(icon, size: 22, color: iconColor),
+            const SizedBox(width: 16),
+            Text(label, style: const TextStyle(fontSize: 16, color: AppColors.textPrimary)),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Text(
+                value.isEmpty ? placeholder : value,
+                textAlign: TextAlign.right,
+                style: TextStyle(
+                  fontSize: 16,
+                  color: value.isEmpty ? AppColors.textSecondary : AppColors.textPrimary,
                 ),
-              )
-            else
-              const Text('无', style: TextStyle(color: Colors.black26, fontSize: 16)),
+              ),
+            ),
             const SizedBox(width: 4),
-            const Icon(CupertinoIcons.chevron_right, size: 16, color: Colors.black26),
+            const Icon(Icons.chevron_right_rounded, size: 20, color: AppColors.textSecondary),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildSwitchRow(String label, bool value, Function(bool)? onChanged, Color themeColor) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children:[
-          Text(label, style: const TextStyle(fontSize: 16, color: Colors.black87)),
-          CupertinoSwitch(
+  Widget _buildSwitchTile(String label, bool value, Function(bool)? onChanged, Color activeColor) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children:[
+        Text(label, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500)),
+        Transform.scale(
+          scale: 0.85,
+          child: CupertinoSwitch(
             value: value,
-            activeColor: themeColor,
             onChanged: onChanged,
+            activeColor: activeColor,
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
-  // --- 数字键盘 (重构为扁平无界风) ---
+  String _getTagsDisplay(EditBillState state) {
+    final ids = state.editBill.data?.tagIdList ??[];
+    if (ids.isEmpty) return '';
+    return ids.map((id) => TagSelectItem.getFullPathById(state.tagList, id)).join(', ');
+  }
+
+  // --- Keyboard (iOS Style) ---
   Widget _buildNumericKeyboard(Color themeColor) {
     return Container(
-      color: const Color(0xFFE5E5EA), // iOS Keyboard background
-      padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children:[
-          // 顶部收起条
-          GestureDetector(
-            onTap: () => _isKeyboardVisible.value = false,
-            child: Container(
-              height: 36,
-              color: Colors.transparent,
-              child: Center(
-                child: Container(width: 40, height: 4, decoration: BoxDecoration(color: Colors.black26, borderRadius: BorderRadius.circular(2))),
+      color: const Color(0xFFD1D5DB), // Keyboard border/divider color
+      child: SafeArea(
+        top: false,
+        child: Column(
+          children:[
+            Container(
+              height: 40,
+              color: AppColors.background,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children:[
+                  IconButton(
+                    icon: const Icon(Icons.keyboard_hide_rounded, color: AppColors.textSecondary),
+                    onPressed: () => _isKeyboardVisible.value = false,
+                  ),
+                ],
               ),
             ),
-          ),
-          // 键盘网格
-          Container(
-            padding: const EdgeInsets.fromLTRB(6, 0, 6, 6),
-            height: 240,
-            child: Row(
-              children:[
-                Expanded(
-                  flex: 3,
-                  child: Column(
-                    children: [
-                      _buildKeyRow(['1', '2', '3']),
-                      _buildKeyRow(['4', '5', '6']),
-                      _buildKeyRow(['7', '8', '9']),
-                      _buildKeyRow(['.', '0', '-']), // '-' 放到这里
-                    ],
+            Expanded(
+              child: Row(
+                children:[
+                  Expanded(
+                    flex: 3,
+                    child: Column(
+                      children:[
+                        _buildKeyboardRow(['1', '2', '3']),
+                        _buildKeyboardRow(['4', '5', '6']),
+                        _buildKeyboardRow(['7', '8', '9']),
+                        _buildKeyboardRow(['.', '0', 'DEL']),
+                      ],
+                    ),
                   ),
-                ),
-                Expanded(
-                  flex: 1,
-                  child: Column(
-                    children:[
-                      _buildActionKey('DEL', CupertinoIcons.delete_left),
-                      _buildConfirmKey(themeColor),
-                    ],
+                  Expanded(
+                    flex: 1,
+                    child: Column(
+                      children:[
+                        _buildKey('-', AppColors.surface, AppColors.textPrimary, flex: 1),
+                        _buildKey('完成', themeColor, Colors.white, flex: 3, isBold: true, onTap: _dismissAllKeyboards),
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildKeyRow(List<String> keys) {
+  Widget _buildKeyboardRow(List<String> keys) {
     return Expanded(
       child: Row(
-        children: keys.map((key) => _buildNumberKey(key)).toList(),
+        children: keys.map((key) => _buildKey(key, AppColors.surface, AppColors.textPrimary)).toList(),
       ),
     );
   }
 
-  Widget _buildNumberKey(String label) {
+  Widget _buildKey(String key, Color bgColor, Color textColor, {int flex = 1, bool isBold = false, VoidCallback? onTap}) {
     return Expanded(
-      child: Padding(
-        padding: const EdgeInsets.all(4.0),
-        child: InkWell(
-          onTap: () => _onKeyTap(label),
-          borderRadius: BorderRadius.circular(10),
-          child: Ink(
-            decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(10), boxShadow: const[BoxShadow(color: Colors.black12, offset: Offset(0, 1), blurRadius: 0)]),
-            child: Center(
-              child: Text(label, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w500, color: Colors.black87)),
+      flex: flex,
+      child: GestureDetector(
+        onTap: onTap ?? () => _onKeyTap(key),
+        behavior: HitTestBehavior.opaque,
+        child: Container(
+          margin: const EdgeInsets.only(top: 1, right: 1), // Creates crisp 1px borders
+          color: bgColor,
+          alignment: Alignment.center,
+          child: key == 'DEL'
+              ? Icon(Icons.backspace_rounded, size: 24, color: textColor)
+              : Text(
+            key,
+            style: TextStyle(
+              fontSize: key == '完成' ? 20 : 28,
+              fontWeight: isBold ? FontWeight.w600 : FontWeight.w400,
+              color: textColor,
+              fontFamily: key == '完成' ? null : 'RobotoMono',
             ),
           ),
         ),
@@ -729,65 +855,17 @@ class _EditBillViewState extends State<EditBillView> {
     );
   }
 
-  Widget _buildActionKey(String key, IconData icon) {
-    return Expanded(
-      child: Padding(
-        padding: const EdgeInsets.all(4.0),
-        child: InkWell(
-          onTap: () => _onKeyTap(key),
-          borderRadius: BorderRadius.circular(10),
-          child: Ink(
-            decoration: BoxDecoration(color: const Color(0xFFD1D1D6), borderRadius: BorderRadius.circular(10), boxShadow: const[BoxShadow(color: Colors.black12, offset: Offset(0, 1), blurRadius: 0)]),
-            child: Center(child: Icon(icon, color: Colors.black87, size: 24)),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildConfirmKey(Color themeColor) {
-    return Expanded(
-      flex: 3,
-      child: Padding(
-        padding: const EdgeInsets.all(4.0),
-        child: InkWell(
-          onTap: _dismissAllKeyboards,
-          borderRadius: BorderRadius.circular(10),
-          child: Ink(
-            decoration: BoxDecoration(color: themeColor, borderRadius: BorderRadius.circular(10), boxShadow: const[BoxShadow(color: Colors.black12, offset: Offset(0, 1), blurRadius: 0)]),
-            child: const Center(
-              child: Text('完成', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600, color: Colors.white)),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  // ==========================================
-  // 3. LOGIC & DATA HANDLING (Keep Intact)
-  // ==========================================
-
-  String _formatAmountText(bool isActive, double amount) {
-    if (isActive && _tempAmountString != null) {
-      String t = _tempAmountString!;
-      if (t.isEmpty) return '0.00';
-      if (t == '-') return '-0.00';
-      if (t == '-0' || t == '-0.') return '-0.00';
-      return t;
-    } else {
-      if (amount == 0) {
-        return amount.isNegative ? '-0.00' : '0.00';
-      }
-      return amount.toStringAsFixed(2);
-    }
-  }
-
+  // --- Strict Logic Keeping from Original ---
   void _onKeyTap(String key) {
     final idx = _activeAmountIndex.value;
     final state = context.read<EditBillBloc>().state;
 
-    double currentVal = idx == -1 ? (state.editBill.data?.amount ?? 0) : _categoryAmountItems[idx].amount;
+    double currentVal;
+    if (idx == -1) {
+      currentVal = state.editBill.data?.amount ?? 0;
+    } else {
+      currentVal = _categoryAmountItems[idx].amount;
+    }
 
     if (_tempAmountString == null) {
       bool isNegativeZero = currentVal == 0 && (1 / currentVal).isNegative;
@@ -817,9 +895,13 @@ class _EditBillViewState extends State<EditBillView> {
       }
     } else if (key == '.') {
       if (!strVal.contains('.')) {
-        if (strVal.isEmpty) strVal = '0.';
-        else if (strVal == '-') strVal = '-0.';
-        else strVal = '$strVal.';
+        if (strVal.isEmpty) {
+          strVal = '0.';
+        } else if (strVal == '-') {
+          strVal = '-0.';
+        } else {
+          strVal = '$strVal.';
+        }
       }
     } else {
       if (strVal == '-0') {
@@ -837,11 +919,14 @@ class _EditBillViewState extends State<EditBillView> {
     }
 
     _tempAmountString = strVal;
+
     double newVal = 0;
     if (strVal.isNotEmpty && strVal != '-' && strVal != '-0.') {
       newVal = double.tryParse(strVal) ?? 0;
     }
-    if (strVal == '-0' || strVal == '-0.') newVal = -0.0;
+    if (strVal == '-0' || strVal == '-0.') {
+      newVal = -0.0;
+    }
 
     setState(() {
       if (idx == -1) {
@@ -888,114 +973,124 @@ class _EditBillViewState extends State<EditBillView> {
     return '';
   }
 
-  String _getTagName(List<TagSelectItem> tags, int id) => TagSelectItem.getFullPathById(tags, id);
-
-  void _submit(EditBillState state) {
-    final billType = BillType.fromValue(state.editBill.data?.billType ?? 1);
-    if (billType == BillType.transfer) {
-      if ((state.editBill.data?.amount ?? 0) <= 0) {
-        _showToast(context, '请输入金额', isError: true); return;
-      }
-      if (state.editBill.data?.accountId == null || state.editBill.data?.toAccountId == null) {
-        _showToast(context, '请选择转账账户', isError: true); return;
-      }
-    } else {
-      if (_categoryAmountItems.isEmpty || _categoryAmountItems.every((e) => e.amount == 0)) {
-        _showToast(context, '请输入金额', isError: true); return;
-      }
-      if (_categoryAmountItems.any((e) => e.categoryId == null)) {
-        _showToast(context, '请完善分类选择', isError: true); return;
-      }
-      if (state.editBill.data?.title?.isEmpty ?? true) {
-        _showToast(context, '请输入标题', isError: true); return;
-      }
-    }
-    context.read<EditBillBloc>().add(EditBillSubmitted());
+  // --- Bottom Sheets ---
+  void _showBottomSheet({required BuildContext context, required Widget child}) {
+    _dismissAllKeyboards();
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: AppColors.surface,
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      builder: (_) => SafeArea(child: child),
+    );
   }
 
-  // ==========================================
-  // 4. BOTTOM SHEETS (Re-styled to iOS)
-  // ==========================================
-
   void _showCategorySelector(BuildContext context, EditBillState state, int index, Color themeColor) {
-    _dismissAllKeyboards();
-    _showNativeBottomSheet(
+    _showBottomSheet(
       context: context,
-      title: '选择分类',
-      child: TreeSelectorWidget<CategorySelectItem>(
-        items: state.categoryList,
-        isMultiSelect: false,
-        selectedIds: _categoryAmountItems[index].categoryId != null ? [_categoryAmountItems[index].categoryId!] :[],
-        activeColor: themeColor,
-        getId: (item) => item.id,
-        getTitle: (item) => item.title,
-        getChildren: (item) => item.children,
-        onChanged: (ids) {
-          if (ids.isNotEmpty) {
-            setState(() => _categoryAmountItems[index].categoryId = ids.first);
+      child: SizedBox(
+        height: MediaQuery.of(context).size.height * 0.7,
+        child: CategorySelectorSheet(
+          categories: state.categoryList,
+          activeColor: themeColor,
+          selectedId: _categoryAmountItems[index].categoryId,
+          onSelected: (id) {
+            setState(() => _categoryAmountItems[index].categoryId = id);
             _syncCategoryAmountToState();
             Navigator.pop(context);
-          }
-        },
+          },
+        ),
       ),
     );
   }
 
   void _showTagSelector(BuildContext context, EditBillState state, Color themeColor) {
-    _dismissAllKeyboards();
-    List<int> tempSelected = List.from(state.editBill.data?.tagIdList ??[]);
-    _showNativeBottomSheet(
+    _showBottomSheet(
       context: context,
-      title: '选择标签',
-      actionTitle: '确定',
-      actionColor: themeColor,
-      onAction: () {
-        setState(() => state.editBill.data?.tagIdList = tempSelected);
-        Navigator.pop(context);
-      },
-      child: StatefulBuilder(
-        builder: (context, setModalState) {
-          return TreeSelectorWidget<TagSelectItem>(
-            items: state.tagList,
-            isMultiSelect: true,
-            selectedIds: tempSelected,
-            activeColor: themeColor,
-            getId: (item) => item.id,
-            getTitle: (item) => item.title,
-            getChildren: (item) => item.children,
-            onChanged: (ids) => tempSelected = ids,
-          );
-        },
+      child: SizedBox(
+        height: MediaQuery.of(context).size.height * 0.7,
+        child: TagSelectorSheet(
+          tags: state.tagList,
+          activeColor: themeColor,
+          selectedIds: state.editBill.data?.tagIdList ??[],
+          onChanged: (ids) => setState(() => state.editBill.data?.tagIdList = ids),
+        ),
       ),
     );
   }
 
   void _showAccountSelector(BuildContext context, EditBillState state, {required bool isSource}) {
-    _dismissAllKeyboards();
     final billType = BillType.fromValue(state.editBill.data?.billType ?? 1) ?? BillType.expenditure;
-    List<DropdownItem<AccountSelectItem>> list = billType == BillType.transfer
-        ? (isSource ? state.transferOutAccountList : state.transferAccountList)
-        : (billType == BillType.income ? state.incomeAccountList : state.expenseAccountList);
+    List<DropdownItem<AccountSelectItem>> list =[];
 
-    _showNativeBottomSheet(
+    if (billType == BillType.transfer) {
+      list = isSource ? state.transferOutAccountList : state.transferAccountList;
+    } else if (billType == BillType.income) {
+      list = state.incomeAccountList;
+    } else {
+      list = state.expenseAccountList;
+    }
+
+    _showBottomSheet(
       context: context,
-      title: isSource ? '转出账户' : '转入账户',
-      child: ListView.separated(
-        shrinkWrap: true,
-        itemCount: list.length,
-        separatorBuilder: (_, __) => const Divider(height: 1, indent: 16),
-        itemBuilder: (_, i) => ListTile(
-          title: Text(list[i].label, style: const TextStyle(fontSize: 16)),
-          trailing: const Icon(CupertinoIcons.chevron_right, size: 16, color: Colors.black26),
-          onTap: () {
-            setState(() {
-              if (billType == BillType.transfer) {
-                if (isSource) state.editBill.data?.accountId = list[i].value.id;
-                else state.editBill.data?.toAccountId = list[i].value.id;
-              } else {
-                state.editBill.data?.accountId = list[i].value.id;
-              }
-            });
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children:[
+            Container(
+              margin: const EdgeInsets.symmetric(vertical: 8),
+              width: 40, height: 4,
+              decoration: BoxDecoration(color: Colors.grey[300], borderRadius: BorderRadius.circular(2)),
+            ),
+            const Text('选择账户', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
+            const SizedBox(height: 16),
+            Flexible(
+              child: ListView.separated(
+                shrinkWrap: true,
+                itemCount: list.length,
+                separatorBuilder: (_, __) => const Divider(height: 1, indent: 16),
+                itemBuilder: (_, i) => ListTile(
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
+                  title: Text(list[i].label, style: const TextStyle(fontSize: 16)),
+                  trailing: const Icon(Icons.chevron_right_rounded, color: AppColors.textSecondary),
+                  onTap: () {
+                    setState(() {
+                      if (billType == BillType.transfer) {
+                        if (isSource) {
+                          state.editBill.data?.accountId = list[i].value.id;
+                        } else {
+                          state.editBill.data?.toAccountId = list[i].value.id;
+                        }
+                      } else {
+                        state.editBill.data?.accountId = list[i].value.id;
+                      }
+                    });
+                    Navigator.pop(context);
+                  },
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showTimeSelector(BuildContext context, EditBillState state) {
+    DateTime initialDate = DateTime.now();
+    try {
+      initialDate = DateFormat('yyyy-MM-dd HH:mm:ss').parse(state.editBill.data?.tradeTime ?? '');
+    } catch(e) {}
+
+    _showBottomSheet(
+      context: context,
+      child: SizedBox(
+        height: 360,
+        child: CustomDateTimePicker(
+          initialDate: initialDate,
+          onDateTimeChanged: (dt) {
+            setState(() => state.editBill.data?.tradeTime = DateFormat('yyyy-MM-dd HH:mm:ss').format(dt));
             Navigator.pop(context);
           },
         ),
@@ -1004,108 +1099,78 @@ class _EditBillViewState extends State<EditBillView> {
   }
 
   void _showPayeeSelector(BuildContext context, EditBillState state) {
-    _dismissAllKeyboards();
-    _showNativeBottomSheet(
+    _showBottomSheet(
       context: context,
-      title: '选择交易对象',
-      child: ListView.separated(
-        shrinkWrap: true,
-        itemCount: state.payeeList.length,
-        separatorBuilder: (_, __) => const Divider(height: 1, indent: 16),
-        itemBuilder: (_, i) => ListTile(
-          title: Text(state.payeeList[i].label, style: const TextStyle(fontSize: 16)),
-          trailing: const Icon(CupertinoIcons.chevron_right, size: 16, color: Colors.black26),
-          onTap: () {
-            setState(() => state.editBill.data?.payeeId = state.payeeList[i].value.id);
-            Navigator.pop(context);
-          },
-        ),
-      ),
-    );
-  }
-
-  void _showTimeSelector(BuildContext context, EditBillState state) {
-    _dismissAllKeyboards();
-    DateTime initialDate = DateTime.now();
-    try {
-      initialDate = DateFormat('yyyy-MM-dd HH:mm:ss').parse(state.editBill.data?.tradeTime ?? '');
-    } catch (_) {}
-
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.white,
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
-      builder: (_) {
-        DateTime tempDate = initialDate;
-        return SafeArea(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children:[
-              Container(
-                height: 50,
-                decoration: const BoxDecoration(border: Border(bottom: BorderSide(color: Colors.black12))),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children:[
-                    CupertinoButton(child: const Text('取消', style: TextStyle(color: Colors.black54)), onPressed: () => Navigator.pop(context)),
-                    const Text('选择时间', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
-                    CupertinoButton(child: const Text('确定'), onPressed: () {
-                      setState(() => state.editBill.data?.tradeTime = DateFormat('yyyy-MM-dd HH:mm:ss').format(tempDate));
-                      Navigator.pop(context);
-                    }),
-                  ],
-                ),
-              ),
-              SizedBox(
-                height: 250,
-                child: CupertinoDatePicker(
-                  mode: CupertinoDatePickerMode.dateAndTime,
-                  initialDateTime: initialDate,
-                  onDateTimeChanged: (dt) => tempDate = dt,
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  void _showNativeBottomSheet({required BuildContext context, required String title, required Widget child, String? actionTitle, Color? actionColor, VoidCallback? onAction}) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.white,
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
-      builder: (_) => SizedBox(
-        height: MediaQuery.of(context).size.height * 0.65,
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 8),
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           children:[
             Container(
-              height: 56,
-              decoration: const BoxDecoration(border: Border(bottom: BorderSide(color: Colors.black12))),
-              child: Stack(
-                children:[
-                  Center(child: Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600))),
-                  if (actionTitle != null && onAction != null)
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: CupertinoButton(padding: const EdgeInsets.symmetric(horizontal: 16), onPressed: onAction, child: Text(actionTitle, style: TextStyle(color: actionColor, fontWeight: FontWeight.w600))),
-                    )
-                ],
+              margin: const EdgeInsets.symmetric(vertical: 8),
+              width: 40, height: 4,
+              decoration: BoxDecoration(color: Colors.grey[300], borderRadius: BorderRadius.circular(2)),
+            ),
+            const Text('选择交易对象', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
+            const SizedBox(height: 16),
+            Flexible(
+              child: ListView.separated(
+                shrinkWrap: true,
+                itemCount: state.payeeList.length,
+                separatorBuilder: (_, __) => const Divider(height: 1, indent: 16),
+                itemBuilder: (_, i) => ListTile(
+                  title: Text(state.payeeList[i].label, style: const TextStyle(fontSize: 16)),
+                  trailing: const Icon(Icons.chevron_right_rounded, color: AppColors.textSecondary),
+                  onTap: () {
+                    setState(() => state.editBill.data?.payeeId = state.payeeList[i].value.id);
+                    Navigator.pop(context);
+                  },
+                ),
               ),
             ),
-            Expanded(child: child),
           ],
         ),
       ),
     );
   }
-}
 
-// ==========================================
-// 5. REUSABLE UI COMPONENTS
-// ==========================================
+  void _submit(EditBillState state) {
+    final billType = BillType.fromValue(state.editBill.data?.billType ?? 1);
+
+    if (billType == BillType.transfer) {
+      if ((state.editBill.data?.amount ?? 0) <= 0) {
+        _showToast(context, '请输入转账金额', isError: true); return;
+      }
+      if (state.editBill.data?.accountId == null || state.editBill.data?.toAccountId == null) {
+        _showToast(context, '请完善转账账户', isError: true); return;
+      }
+    } else {
+      if (_categoryAmountItems.isEmpty) {
+        _showToast(context, '请输入金额', isError: true); return;
+      }
+      if (_categoryAmountItems.any((e) => e.categoryId == null)) {
+        _showToast(context, '请选择分类', isError: true); return;
+      }
+      if (state.editBill.data?.title == null || state.editBill.data!.title!.isEmpty) {
+        _showToast(context, '请输入标题', isError: true); return;
+      }
+    }
+
+    context.read<EditBillBloc>().add(EditBillSubmitted());
+  }
+
+  void _showToast(BuildContext context, String msg, {bool isError = false}) {
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(SnackBar(
+        content: Text(msg, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w500)),
+        backgroundColor: isError ? AppColors.income : const Color(0xFF323232),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        margin: const EdgeInsets.all(16),
+      ));
+  }
+}
 
 class CategoryAmountItem {
   int? categoryId;
@@ -1114,129 +1179,9 @@ class CategoryAmountItem {
   CategoryAmountItem({this.categoryId, required this.amount}) : key = UniqueKey();
 }
 
-/// 顶部 iOS 风格段控器
-class _SegmentedTypeSwitcher extends StatelessWidget {
-  final BillType currentType;
-  final bool isLoading;
-  final Color themeColor;
-  final ValueChanged<BillType> onChanged;
-
-  const _SegmentedTypeSwitcher({required this.currentType, required this.isLoading, required this.themeColor, required this.onChanged});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 200,
-      decoration: BoxDecoration(color: const Color(0xFFE5E5EA), borderRadius: BorderRadius.circular(8)),
-      padding: const EdgeInsets.all(2),
-      child: Row(
-        children:[
-          _buildSegment(BillType.expenditure, '支出'),
-          _buildSegment(BillType.income, '收入'),
-          _buildSegment(BillType.transfer, '转账'),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSegment(BillType type, String label) {
-    final isSelected = type == currentType;
-    return Expanded(
-      child: GestureDetector(
-        onTap: isLoading ? null : () => onChanged(type),
-        behavior: HitTestBehavior.opaque,
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 6),
-          decoration: BoxDecoration(
-            color: isSelected ? Colors.white : Colors.transparent,
-            borderRadius: BorderRadius.circular(6),
-            boxShadow: isSelected ?[const BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(0, 1))] : null,
-          ),
-          child: Text(
-            label,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 13,
-              fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-              color: isSelected ? Colors.black87 : Colors.black54,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-/// iOS 风格的表单组 (白色卡片包含多行)
-class _CupertinoFormGroup extends StatelessWidget {
-  final List<Widget> children;
-  const _CupertinoFormGroup({required this.children});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16)),
-      child: Column(
-        children: children.asMap().entries.map((entry) {
-          final index = entry.key;
-          final child = entry.value;
-          return Column(
-            children:[
-              child,
-              if (index < children.length - 1)
-                const Divider(height: 1, indent: 48, endIndent: 16, color: Color(0xFFE5E5EA)),
-            ],
-          );
-        }).toList(),
-      ),
-    );
-  }
-}
-
-/// 通用表单行
-class _FormRow extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final String? valueText;
-  final String? placeholder;
-  final Widget? customChild;
-  final VoidCallback? onTap;
-
-  const _FormRow({required this.icon, required this.label, this.valueText, this.placeholder, this.customChild, this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    final hasValue = valueText != null && valueText!.isNotEmpty;
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(16),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-        child: Row(
-          children:[
-            Icon(icon, size: 20, color: Colors.black54),
-            const SizedBox(width: 12),
-            Text(label, style: const TextStyle(fontSize: 16, color: Colors.black87)),
-            const SizedBox(width: 16),
-            if (customChild != null)
-              customChild!
-            else ...[
-              const Spacer(),
-              Text(
-                hasValue ? valueText! : (placeholder ?? ''),
-                style: TextStyle(fontSize: 16, color: hasValue ? Colors.black87 : Colors.black26),
-              ),
-              const SizedBox(width: 4),
-              const Icon(CupertinoIcons.chevron_right, size: 16, color: Colors.black26),
-            ]
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-// --- 高级树形选择器 (保持您原有算法，优化UI) ---
+// ==========================================
+// 🌲 Clean Tree Selector Components
+// ==========================================
 class TreeSelectorWidget<T> extends StatefulWidget {
   final List<T> items;
   final bool isMultiSelect;
@@ -1248,8 +1193,15 @@ class TreeSelectorWidget<T> extends StatefulWidget {
   final List<T>? Function(T) getChildren;
 
   const TreeSelectorWidget({
-    super.key, required this.items, required this.isMultiSelect, required this.selectedIds, required this.onChanged,
-    required this.activeColor, required this.getId, required this.getTitle, required this.getChildren,
+    super.key,
+    required this.items,
+    required this.isMultiSelect,
+    required this.selectedIds,
+    required this.onChanged,
+    required this.activeColor,
+    required this.getId,
+    required this.getTitle,
+    required this.getChildren,
   });
 
   @override
@@ -1267,12 +1219,21 @@ class _TreeSelectorWidgetState<T> extends State<TreeSelectorWidget<T>> {
     _selectedKeys = ValueNotifier(widget.selectedIds.toSet());
   }
 
+  @override
+  void dispose() {
+    _expandedKeys.dispose();
+    _selectedKeys.dispose();
+    super.dispose();
+  }
+
   void _handleToggle(int id) {
     final current = Set<int>.from(_selectedKeys.value);
     if (widget.isMultiSelect) {
-      if (current.contains(id)) current.remove(id); else current.add(id);
+      if (current.contains(id)) current.remove(id);
+      else current.add(id);
     } else {
-      current.clear(); current.add(id);
+      current.clear();
+      current.add(id);
     }
     _selectedKeys.value = current;
     widget.onChanged(current.toList());
@@ -1280,19 +1241,29 @@ class _TreeSelectorWidgetState<T> extends State<TreeSelectorWidget<T>> {
 
   void _handleExpand(int id) {
     final current = Set<int>.from(_expandedKeys.value);
-    if (current.contains(id)) current.remove(id); else current.add(id);
+    if (current.contains(id)) current.remove(id);
+    else current.add(id);
     _expandedKeys.value = current;
   }
 
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
+      physics: const BouncingScrollPhysics(),
       itemCount: widget.items.length,
       itemBuilder: (context, index) {
         return _TreeNode<T>(
-          item: widget.items[index], depth: 0, expandedKeys: _expandedKeys, selectedKeys: _selectedKeys,
-          onToggle: _handleToggle, onExpand: _handleExpand, isMultiSelect: widget.isMultiSelect,
-          activeColor: widget.activeColor, getId: widget.getId, getTitle: widget.getTitle, getChildren: widget.getChildren,
+          item: widget.items[index],
+          depth: 0,
+          expandedKeys: _expandedKeys,
+          selectedKeys: _selectedKeys,
+          onToggle: _handleToggle,
+          onExpand: _handleExpand,
+          isMultiSelect: widget.isMultiSelect,
+          activeColor: widget.activeColor,
+          getId: widget.getId,
+          getTitle: widget.getTitle,
+          getChildren: widget.getChildren,
         );
       },
     );
@@ -1300,13 +1271,24 @@ class _TreeSelectorWidgetState<T> extends State<TreeSelectorWidget<T>> {
 }
 
 class _TreeNode<T> extends StatelessWidget {
-  final T item; final int depth; final ValueNotifier<Set<int>> expandedKeys; final ValueNotifier<Set<int>> selectedKeys;
-  final Function(int) onToggle; final Function(int) onExpand; final bool isMultiSelect; final Color activeColor;
-  final int Function(T) getId; final String Function(T) getTitle; final List<T>? Function(T) getChildren;
+  final T item;
+  final int depth;
+  final ValueNotifier<Set<int>> expandedKeys;
+  final ValueNotifier<Set<int>> selectedKeys;
+  final Function(int) onToggle;
+  final Function(int) onExpand;
+  final bool isMultiSelect;
+  final Color activeColor;
+  final int Function(T) getId;
+  final String Function(T) getTitle;
+  final List<T>? Function(T) getChildren;
 
   const _TreeNode({
-    required this.item, required this.depth, required this.expandedKeys, required this.selectedKeys, required this.onToggle, required this.onExpand,
-    required this.isMultiSelect, required this.activeColor, required this.getId, required this.getTitle, required this.getChildren,
+    required this.item, required this.depth,
+    required this.expandedKeys, required this.selectedKeys,
+    required this.onToggle, required this.onExpand,
+    required this.isMultiSelect, required this.activeColor,
+    required this.getId, required this.getTitle, required this.getChildren,
   });
 
   @override
@@ -1323,31 +1305,47 @@ class _TreeNode<T> extends StatelessWidget {
           valueListenable: selectedKeys,
           builder: (context, selectedSet, _) {
             final isSelected = selectedSet.contains(id);
+
             return Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children:[
                 InkWell(
                   onTap: () => onToggle(id),
                   child: Padding(
-                    padding: EdgeInsets.only(left: 16 + depth * 24.0, right: 16, top: 14, bottom: 14),
+                    padding: EdgeInsets.only(left: 20 + depth * 24.0, right: 20, top: 16, bottom: 16),
                     child: Row(
                       children:[
                         if (isMultiSelect)
-                          Container(
-                            margin: const EdgeInsets.only(right: 12),
-                            width: 22, height: 22,
-                            decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: isSelected ? activeColor : Colors.black26, width: 2), color: isSelected ? activeColor : Colors.transparent),
-                            child: isSelected ? const Icon(Icons.check, size: 14, color: Colors.white) : null,
+                          Padding(
+                            padding: const EdgeInsets.only(right: 16),
+                            child: Icon(
+                              isSelected ? Icons.check_circle_rounded : Icons.radio_button_unchecked_rounded,
+                              color: isSelected ? activeColor : AppColors.textSecondary.withOpacity(0.5),
+                              size: 22,
+                            ),
                           ),
-                        Expanded(child: Text(getTitle(item), style: TextStyle(fontSize: 16, color: isSelected && !isMultiSelect ? activeColor : Colors.black87, fontWeight: isSelected && !isMultiSelect ? FontWeight.w600 : FontWeight.normal))),
-                        if (!isMultiSelect && isSelected) Icon(CupertinoIcons.checkmark_alt, size: 20, color: activeColor),
+                        Expanded(
+                          child: Text(
+                            getTitle(item),
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: isSelected && !isMultiSelect ? activeColor : AppColors.textPrimary,
+                              fontWeight: isSelected && !isMultiSelect ? FontWeight.w600 : FontWeight.w400,
+                            ),
+                          ),
+                        ),
+                        if (!isMultiSelect && isSelected)
+                          Icon(Icons.check_rounded, size: 24, color: activeColor),
                         if (hasChildren) ...[
                           const SizedBox(width: 16),
                           GestureDetector(
                             onTap: () => onExpand(id),
                             child: Container(
                               padding: const EdgeInsets.all(4),
-                              decoration: BoxDecoration(color: const Color(0xFFF2F2F7), borderRadius: BorderRadius.circular(6)),
-                              child: Icon(isExpanded ? CupertinoIcons.chevron_up : CupertinoIcons.chevron_down, size: 16, color: Colors.black54),
+                              decoration: BoxDecoration(color: AppColors.background, borderRadius: BorderRadius.circular(8)),
+                              child: Icon(isExpanded ? Icons.keyboard_arrow_up_rounded : Icons.keyboard_arrow_down_rounded,
+                                  size: 20, color: AppColors.textSecondary),
                             ),
                           ),
                         ],
@@ -1355,11 +1353,20 @@ class _TreeNode<T> extends StatelessWidget {
                     ),
                   ),
                 ),
-                if (depth == 0) const Divider(height: 1, indent: 16, color: Color(0xFFE5E5EA)),
+                if (depth == 0 && !isExpanded) const Divider(height: 1, indent: 20),
                 AnimatedSize(
-                  duration: const Duration(milliseconds: 200), curve: Curves.easeOutCubic, alignment: Alignment.topCenter,
+                  duration: const Duration(milliseconds: 250),
+                  curve: Curves.easeOutCubic,
+                  alignment: Alignment.topCenter,
                   child: isExpanded && hasChildren
-                      ? Column(children: children!.map((child) => _TreeNode<T>(item: child, depth: depth + 1, expandedKeys: expandedKeys, selectedKeys: selectedKeys, onToggle: onToggle, onExpand: onExpand, isMultiSelect: isMultiSelect, activeColor: activeColor, getId: getId, getTitle: getTitle, getChildren: getChildren)).toList())
+                      ? Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: children!.map((child) => _TreeNode<T>(
+                      item: child, depth: depth + 1, expandedKeys: expandedKeys, selectedKeys: selectedKeys,
+                      onToggle: onToggle, onExpand: onExpand, isMultiSelect: isMultiSelect,
+                      activeColor: activeColor, getId: getId, getTitle: getTitle, getChildren: getChildren,
+                    )).toList(),
+                  )
                       : const SizedBox(width: double.infinity, height: 0),
                 ),
               ],
@@ -1367,6 +1374,187 @@ class _TreeNode<T> extends StatelessWidget {
           },
         );
       },
+    );
+  }
+}
+
+class CategorySelectorSheet extends StatelessWidget {
+  final List<CategorySelectItem> categories;
+  final int? selectedId;
+  final Function(int) onSelected;
+  final Color activeColor;
+
+  const CategorySelectorSheet({super.key, required this.categories, this.selectedId, required this.onSelected, required this.activeColor});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children:[
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          alignment: Alignment.center,
+          child: Column(
+            children:[
+              Container(width: 40, height: 4, decoration: BoxDecoration(color: Colors.grey[300], borderRadius: BorderRadius.circular(2))),
+              const SizedBox(height: 12),
+              const Text('选择分类', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18)),
+            ],
+          ),
+        ),
+        const Divider(height: 1),
+        Expanded(
+          child: TreeSelectorWidget<CategorySelectItem>(
+            items: categories,
+            isMultiSelect: false,
+            selectedIds: selectedId != null ?[selectedId!] :[],
+            onChanged: (ids) { if (ids.isNotEmpty) onSelected(ids.first); },
+            activeColor: activeColor,
+            getId: (item) => item.id,
+            getTitle: (item) => item.title,
+            getChildren: (item) => item.children,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class TagSelectorSheet extends StatefulWidget {
+  final List<TagSelectItem> tags;
+  final List<int> selectedIds;
+  final Function(List<int>) onChanged;
+  final Color activeColor;
+
+  const TagSelectorSheet({super.key, required this.tags, required this.selectedIds, required this.onChanged, required this.activeColor});
+
+  @override
+  State<TagSelectorSheet> createState() => _TagSelectorSheetState();
+}
+
+class _TagSelectorSheetState extends State<TagSelectorSheet> {
+  late List<int> _currentSelectedIds;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentSelectedIds = List.from(widget.selectedIds);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children:[
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children:[
+              const SizedBox(width: 40), // Balance
+              const Text('选择标签', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
+              GestureDetector(
+                onTap: () {
+                  widget.onChanged(_currentSelectedIds);
+                  Navigator.pop(context);
+                },
+                child: Text('确定', style: TextStyle(color: widget.activeColor, fontWeight: FontWeight.w600, fontSize: 16)),
+              ),
+            ],
+          ),
+        ),
+        const Divider(height: 1),
+        Expanded(
+          child: TreeSelectorWidget<TagSelectItem>(
+            items: widget.tags,
+            isMultiSelect: true,
+            selectedIds: _currentSelectedIds,
+            onChanged: (ids) => setState(() => _currentSelectedIds = ids),
+            activeColor: widget.activeColor,
+            getId: (item) => item.id,
+            getTitle: (item) => item.title,
+            getChildren: (item) => item.children,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class CustomDateTimePicker extends StatefulWidget {
+  final DateTime initialDate;
+  final Function(DateTime) onDateTimeChanged;
+  const CustomDateTimePicker({super.key, required this.initialDate, required this.onDateTimeChanged});
+
+  @override
+  State<CustomDateTimePicker> createState() => _CustomDateTimePickerState();
+}
+
+class _CustomDateTimePickerState extends State<CustomDateTimePicker> {
+  late FixedExtentScrollController _yearController, _monthController, _dayController, _hourController, _minuteController;
+  late int selectedYear, selectedMonth, selectedDay, selectedHour, selectedMinute;
+  final int startYear = 2000;
+
+  @override
+  void initState() {
+    super.initState();
+    selectedYear = widget.initialDate.year; selectedMonth = widget.initialDate.month;
+    selectedDay = widget.initialDate.day; selectedHour = widget.initialDate.hour;
+    selectedMinute = widget.initialDate.minute;
+    _yearController = FixedExtentScrollController(initialItem: selectedYear - startYear);
+    _monthController = FixedExtentScrollController(initialItem: selectedMonth - 1);
+    _dayController = FixedExtentScrollController(initialItem: selectedDay - 1);
+    _hourController = FixedExtentScrollController(initialItem: selectedHour);
+    _minuteController = FixedExtentScrollController(initialItem: selectedMinute);
+  }
+
+  @override
+  void dispose() {
+    _yearController.dispose(); _monthController.dispose(); _dayController.dispose();
+    _hourController.dispose(); _minuteController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children:[
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children:[
+              GestureDetector(onTap: () => Navigator.pop(context), child: const Text('取消', style: TextStyle(color: AppColors.textSecondary, fontSize: 16))),
+              const Text('选择时间', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
+              GestureDetector(
+                  onTap: () => widget.onDateTimeChanged(DateTime(selectedYear, selectedMonth, selectedDay, selectedHour, selectedMinute)),
+                  child: const Text('确定', style: TextStyle(color: AppColors.expense, fontWeight: FontWeight.w600, fontSize: 16))
+              ),
+            ],
+          ),
+        ),
+        Expanded(
+          child: DefaultTextStyle(
+            style: const TextStyle(color: AppColors.textPrimary, fontSize: 16),
+            child: Row(
+              children:[
+                _buildPicker(_yearController, 50, (i) => setState(() => selectedYear = startYear + i), (i) => '${startYear + i}年'),
+                _buildPicker(_monthController, 12, (i) => setState(() => selectedMonth = i + 1), (i) => '${i + 1}月'),
+                _buildPicker(_dayController, 31, (i) => setState(() => selectedDay = i + 1), (i) => '${i + 1}日'),
+                _buildPicker(_hourController, 24, (i) => setState(() => selectedHour = i), (i) => '${i}时'),
+                _buildPicker(_minuteController, 60, (i) => setState(() => selectedMinute = i), (i) => '${i}分'),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPicker(FixedExtentScrollController controller, int count, ValueChanged<int> onChanged, String Function(int) label) {
+    return Expanded(
+      child: CupertinoPicker.builder(
+        scrollController: controller, itemExtent: 40, onSelectedItemChanged: onChanged,
+        itemBuilder: (context, index) => Center(child: Text(label(index))), childCount: count,
+      ),
     );
   }
 }
