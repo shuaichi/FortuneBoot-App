@@ -1421,6 +1421,7 @@ class _BottomSheetHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      width: double.infinity,
       height: 56,
       decoration: const BoxDecoration(
         border: Border(bottom: BorderSide(color: Colors.black12, width: 0.5)),
