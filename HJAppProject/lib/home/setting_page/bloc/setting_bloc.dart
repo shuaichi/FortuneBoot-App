@@ -161,11 +161,11 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
       final double totalAssets = accountData['totalAssets'] as double? ?? 0.0;
       final double totalLiabilities =
           accountData['totalLiabilities'] as double? ?? 0.0;
-      final double netAssets = accountData['netAssets'] as double? ?? 0.0;
       settings.add(
         Setting(
           SettingType.accountOverview,
-          detail: '资产：$totalAssets\r\n负债：$totalLiabilities\r\n净资产：$netAssets',
+          // \r\n净资产：$netAssets
+          detail: '资产：$totalAssets\r\n负债：$totalLiabilities',
           leadingWidget: const Icon(Icons.paid),
         ),
       );

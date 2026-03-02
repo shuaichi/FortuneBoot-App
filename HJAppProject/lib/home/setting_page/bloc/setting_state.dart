@@ -30,10 +30,5 @@ final class SettingState extends Equatable {
   }
 
   @override
-  String toString() {
-    return '''SettingState { status: $status, posts: ${settings.length} , remoteSettings: ${remoteSettings.length} , groupSettings: ${groupSettings.length} }''';
-  }
-
-  @override
   List<Object> get props => [status, settings, remoteSettings, groupSettings];
 }
