@@ -7,7 +7,11 @@ class ThemeSelectionSheet extends StatelessWidget {
   final String? current;
   final ValueChanged<String> onSelected;
 
-  const ThemeSelectionSheet({super.key, required this.themes, required this.onSelected, this.current});
+  const ThemeSelectionSheet(
+      {super.key,
+      required this.themes,
+      required this.onSelected,
+      this.current});
 
   @override
   Widget build(BuildContext context) {
@@ -17,10 +21,11 @@ class ThemeSelectionSheet extends StatelessWidget {
         padding: const EdgeInsets.only(bottom: HJSpacing.md),
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          children:[
+          children: [
             const Padding(
               padding: EdgeInsets.all(16),
-              child: Text('选择主题', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              child: Text('选择主题',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             ),
             Divider(height: 1, color: Colors.grey[200]),
             Flexible(
@@ -29,8 +34,10 @@ class ThemeSelectionSheet extends StatelessWidget {
                 itemCount: themes.length,
                 itemBuilder: (context, index) {
                   final item = themes[index];
-                  final selected = (current != null && current == item) || (current == null && item == '跟随系统');
-                  return HJValueItem( // ← 修复此处
+                  final selected = (current != null && current == item) ||
+                      (current == null && item == '跟随系统');
+                  return HJValueItem(
+                    // ← 修复此处
                     icon: Icons.color_lens_outlined,
                     title: item,
                     valueText: selected ? '当前' : null,

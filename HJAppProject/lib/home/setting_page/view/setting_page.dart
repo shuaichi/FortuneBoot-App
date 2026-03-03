@@ -265,7 +265,6 @@ class _MineViewState extends State<MineView> {
             DonateQrSheet(onLongPressWechat: () {}, onLongPressAlipay: () {}));
   }
 
-  /// 【修复 Issue 8】拆分 API 请求逻辑
   Future<List<SelectionOption<SettingSelectItem>>> _loadGroupOptions(
       Setting element) async {
     List<SelectionOption<SettingSelectItem>> items = [];
@@ -301,7 +300,6 @@ class _MineViewState extends State<MineView> {
     return items;
   }
 
-  /// 【修复 Issue 8】拆分 UI 渲染逻辑
   void _showSelectionSheet(BuildContext context, Setting element,
       List<SelectionOption<SettingSelectItem>> items) {
     if (items.isEmpty) {
@@ -331,15 +329,5 @@ class _MineViewState extends State<MineView> {
         );
       },
     );
-  }
-
-  /// 【修复 Issue 1 & 13】执行登出清理缓存并跳转
-  void _executeLogout(BuildContext context) async {
-    Navigator.pop(context); // 关闭 Dialog
-    // TODO: 替换为真实的清理逻辑 (例如 UserDataSingleton.getInstance().clear() 或 SharedPreferences.clear())
-    // 伪代码: await TokenManager.clearToken();
-    if (context.mounted) {
-      Navigator.of(context).pushNamedAndRemoveUntil('/login', (route) => false);
-    }
   }
 }

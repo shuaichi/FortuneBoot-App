@@ -5,7 +5,9 @@ class SelectionOption<T> {
   final String label;
   final T value;
   final bool selected;
-  const SelectionOption({required this.label, required this.value, this.selected = false});
+
+  const SelectionOption(
+      {required this.label, required this.value, this.selected = false});
 }
 
 class SelectionBottomSheet<T> extends StatelessWidget {
@@ -13,7 +15,11 @@ class SelectionBottomSheet<T> extends StatelessWidget {
   final List<SelectionOption<T>> options;
   final ValueChanged<SelectionOption<T>> onSelected;
 
-  const SelectionBottomSheet({super.key, required this.title, required this.options, required this.onSelected});
+  const SelectionBottomSheet(
+      {super.key,
+      required this.title,
+      required this.options,
+      required this.onSelected});
 
   @override
   Widget build(BuildContext context) {
@@ -23,10 +29,12 @@ class SelectionBottomSheet<T> extends StatelessWidget {
         padding: const EdgeInsets.only(bottom: HJSpacing.md),
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          children:[
+          children: [
             Padding(
               padding: const EdgeInsets.all(16),
-              child: Text(title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              child: Text(title,
+                  style: const TextStyle(
+                      fontSize: 18, fontWeight: FontWeight.bold)),
             ),
             Divider(height: 1, color: Colors.grey[200]),
             Flexible(
@@ -44,22 +52,31 @@ class SelectionBottomSheet<T> extends StatelessWidget {
                       });
                     },
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: HJSpacing.md, vertical: 16.0),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: HJSpacing.md, vertical: 16.0),
                       child: Row(
-                        children:[
+                        children: [
                           Icon(
-                            item.selected ? Icons.radio_button_checked : Icons.radio_button_unchecked,
-                            color: item.selected ? Colors.green : Colors.black87,
+                            item.selected
+                                ? Icons.radio_button_checked
+                                : Icons.radio_button_unchecked,
+                            color:
+                                item.selected ? Colors.green : Colors.black87,
                             size: 20,
                           ),
                           const SizedBox(width: HJSpacing.md),
                           Expanded(
-                            child: Text(item.label, style: const TextStyle(fontSize: 16, color: Colors.black87)),
+                            child: Text(item.label,
+                                style: const TextStyle(
+                                    fontSize: 16, color: Colors.black87)),
                           ),
                           if (item.selected)
-                            const Text('当前', style: TextStyle(color: Colors.green, fontSize: 14)),
+                            const Text('当前',
+                                style: TextStyle(
+                                    color: Colors.green, fontSize: 14)),
                           const SizedBox(width: HJSpacing.sm),
-                          const Icon(Icons.chevron_right, size: 16, color: Colors.grey),
+                          const Icon(Icons.chevron_right,
+                              size: 16, color: Colors.grey),
                         ],
                       ),
                     ),

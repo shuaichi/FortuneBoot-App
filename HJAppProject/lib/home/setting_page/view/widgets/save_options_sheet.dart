@@ -26,14 +26,16 @@ class SaveOptionsSheet extends StatelessWidget {
         padding: const EdgeInsets.only(bottom: HJSpacing.md),
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          children:[
+          children: [
             const Padding(
               padding: EdgeInsets.all(16),
-              child: Text('操作', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              child: Text('操作',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             ),
             Divider(height: 1, color: Colors.grey[200]),
             if (kIsWeb)
-              HJChevronItem( // ← 修复此处
+              HJChevronItem(
+                // ← 修复此处
                 icon: Icons.download,
                 title: '下载图片',
                 onTap: () async {
@@ -42,7 +44,8 @@ class SaveOptionsSheet extends StatelessWidget {
                 },
               )
             else ...[
-              HJChevronItem( // ← 修复此处
+              HJChevronItem(
+                // ← 修复此处
                 icon: Icons.save_alt,
                 title: '保存到相册',
                 onTap: () async {
@@ -50,24 +53,28 @@ class SaveOptionsSheet extends StatelessWidget {
                   await onDownloadOrSave();
                 },
               ),
-              HJValueItem( // ← 修复此处
+              HJValueItem(
+                // ← 修复此处
                 icon: Icons.info_outline,
                 title: '说明',
                 valueText: '如保存失败，请检查权限',
                 onTap: () => Navigator.pop(context),
               ),
             ],
-            HJChevronItem( // ← 修复此处
+            HJChevronItem(
+              // ← 修复此处
               icon: Icons.link,
               title: '复制资源路径',
               onTap: () {
                 Clipboard.setData(ClipboardData(text: assetPath));
                 Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('已复制')));
+                ScaffoldMessenger.of(context)
+                    .showSnackBar(const SnackBar(content: Text('已复制')));
               },
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: HJSpacing.md, vertical: HJSpacing.sm),
+              padding: const EdgeInsets.symmetric(
+                  horizontal: HJSpacing.md, vertical: HJSpacing.sm),
               child: SizedBox(
                 width: double.infinity,
                 child: HJButton.secondary(

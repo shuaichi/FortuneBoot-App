@@ -31,7 +31,12 @@ class FinanceTheme extends ThemeExtension<FinanceTheme> {
   });
 
   @override
-  FinanceTheme copyWith({Color? income, Color? expense, Color? transfer, Color? balance, Color? pending}) {
+  FinanceTheme copyWith(
+      {Color? income,
+      Color? expense,
+      Color? transfer,
+      Color? balance,
+      Color? pending}) {
     return FinanceTheme(
       income: income ?? this.income,
       expense: expense ?? this.expense,

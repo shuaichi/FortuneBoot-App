@@ -19,6 +19,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:stream_transform/stream_transform.dart';
 
 part 'setting_event.dart';
+
 part 'setting_state.dart';
 
 const throttleDuration = Duration(milliseconds: 100);
@@ -108,7 +109,8 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
     GroupSettingFetched event,
     Emitter<SettingState> emit,
   ) async {
-    developer.log('🔄 开始获取分组设置 - GroupId: ${event.groupId}', name: 'SettingBloc');
+    developer.log('🔄 开始获取分组设置 - GroupId: ${event.groupId}',
+        name: 'SettingBloc');
     var curSetting = state.settings;
     try {
       developer.log('📡 调用 _fetchGroupSettings...', name: 'SettingBloc');
@@ -121,8 +123,10 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
       final groupSettings = results[0];
       final remoteSettings = results[1];
 
-      developer.log('✅ 设置获取成功 - 分组设置: ${groupSettings.length}, 远程设置: ${remoteSettings.length}', name: 'SettingBloc');
-      
+      developer.log(
+          '✅ 设置获取成功 - 分组设置: ${groupSettings.length}, 远程设置: ${remoteSettings.length}',
+          name: 'SettingBloc');
+
       emit(
         state.copyWith(
             status: SettingStatus.success,
@@ -132,7 +136,8 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
       );
       developer.log('✅ 状态更新完成 - 新状态: ${state.status}', name: 'SettingBloc');
     } catch (error, stackTrace) {
-      developer.log('❌ 分组设置获取失败', error: error, stackTrace: stackTrace, name: 'SettingBloc');
+      developer.log('❌ 分组设置获取失败',
+          error: error, stackTrace: stackTrace, name: 'SettingBloc');
       emit(
         state.copyWith(status: SettingStatus.failure, settings: curSetting),
       );
@@ -161,11 +166,12 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
       final double totalAssets = accountData['totalAssets'] as double? ?? 0.0;
       final double totalLiabilities =
           accountData['totalLiabilities'] as double? ?? 0.0;
+      final double netAssets = accountData['netAssets'] as double? ?? 0.0;
       settings.add(
         Setting(
           SettingType.accountOverview,
-          // \r\n净资产：$netAssets
-          detail: '资产：$totalAssets\r\n负债：$totalLiabilities',
+          //
+          detail: '资产：$totalAssets\r\n负债：$totalLiabilities\r\n净资产：$netAssets',
           leadingWidget: const Icon(Icons.paid),
         ),
       );
@@ -178,12 +184,14 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
     developer.log('🔍 开始查询分组设置 - 输入GroupId: $groupId', name: 'SettingBloc');
     var settings = <Setting>[];
     int? findGroupId = groupId;
-    
+
     if (findGroupId == null) {
       developer.log('🔍 GroupId为空，查询默认分组...', name: 'SettingBloc');
       try {
-        final HJResponse defaultGroupIdResponse = await _groupService.getDefaultGroupId();
-        developer.log('📡 默认分组查询响应 - Code: ${defaultGroupIdResponse.code}', name: 'SettingBloc');
+        final HJResponse defaultGroupIdResponse =
+            await _groupService.getDefaultGroupId();
+        developer.log('📡 默认分组查询响应 - Code: ${defaultGroupIdResponse.code}',
+            name: 'SettingBloc');
         if (defaultGroupIdResponse.code == 0) {
           findGroupId = defaultGroupIdResponse.data as int? ?? 0;
           developer.log('✅ 获取到默认GroupId: $findGroupId', name: 'SettingBloc');
@@ -192,25 +200,29 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
         developer.log('❌ 查询默认分组失败', error: error, name: 'SettingBloc');
       }
     }
-    
+
     if (findGroupId == null) {
       developer.log('⚠️ 无法获取有效的GroupId，返回空设置', name: 'SettingBloc');
       return settings;
     }
-    
+
     try {
       developer.log('📡 查询分组详情 - GroupId: $findGroupId', name: 'SettingBloc');
-      final HJResponse accountInfo = await _groupService.getByGroupId(findGroupId);
-      developer.log('📡 分组详情响应 - Code: ${accountInfo.code}', name: 'SettingBloc');
-      
+      final HJResponse accountInfo =
+          await _groupService.getByGroupId(findGroupId);
+      developer.log('📡 分组详情响应 - Code: ${accountInfo.code}',
+          name: 'SettingBloc');
+
       if (accountInfo.code == 0) {
         var data = accountInfo.data as Map? ?? {};
         var groupName = data['groupName'] as String? ?? '';
         var defaultBookName = data['defaultBookName'] as String? ?? '默认账本';
         var defaultBookId = data['defaultBookId'] as int? ?? 1;
-        
-        developer.log('📊 分组数据 - Name: $groupName, BookName: $defaultBookName, BookId: $defaultBookId', name: 'SettingBloc');
-        
+
+        developer.log(
+            '📊 分组数据 - Name: $groupName, BookName: $defaultBookName, BookId: $defaultBookId',
+            name: 'SettingBloc');
+
         settings.add(Setting(SettingType.currentGroup,
             content: groupName,
             leadingWidget: const Icon(Icons.group),
@@ -219,34 +231,42 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
             content: defaultBookName,
             leadingWidget: const Icon(Icons.book_online_outlined),
             data: {"groupId": data['groupId'], "bookId": defaultBookId}));
-        
-        developer.log('🔄 更新Repository - GroupId: $findGroupId, BookId: $defaultBookId', name: 'SettingBloc');
+
+        developer.log(
+            '🔄 更新Repository - GroupId: $findGroupId, BookId: $defaultBookId',
+            name: 'SettingBloc');
         try {
-          _billsRepository.updateRemoteBill(groupId: findGroupId, bookId: defaultBookId);
+          _billsRepository.updateRemoteBill(
+              groupId: findGroupId, bookId: defaultBookId);
           developer.log('✅ Repository更新成功', name: 'SettingBloc');
         } catch (error) {
           developer.log('❌ Repository更新失败', error: error, name: 'SettingBloc');
         }
       } else {
-        developer.log('⚠️ 分组详情查询失败 - Code: ${accountInfo.code}', name: 'SettingBloc');
+        developer.log('⚠️ 分组详情查询失败 - Code: ${accountInfo.code}',
+            name: 'SettingBloc');
       }
     } catch (error) {
       developer.log('❌ 查询分组详情异常', error: error, name: 'SettingBloc');
     }
-    
-    developer.log('✅ 分组设置查询完成 - 设置项数量: ${settings.length}', name: 'SettingBloc');
+
+    developer.log('✅ 分组设置查询完成 - 设置项数量: ${settings.length}',
+        name: 'SettingBloc');
     return settings;
   }
 
   FutureOr<void> _onChangedBookId(
       BookIdChanged event, Emitter<SettingState> emit) async {
-    developer.log('🔄 开始切换账本 - BookId: ${event.bookId}, BookName: ${event.bookName}', name: 'SettingBloc');
-    
+    developer.log(
+        '🔄 开始切换账本 - BookId: ${event.bookId}, BookName: ${event.bookName}',
+        name: 'SettingBloc');
+
     try {
       final newGroup = <Setting>[];
-      
-      developer.log('📊 当前分组设置数量: ${state.groupSettings.length}', name: 'SettingBloc');
-      
+
+      developer.log('📊 当前分组设置数量: ${state.groupSettings.length}',
+          name: 'SettingBloc');
+
       // 使用更高效的方式查找和更新设置项
       for (final element in state.groupSettings) {
         if (element.type == SettingType.currentGroup) {
@@ -263,19 +283,22 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
             },
           );
           newGroup.add(newBookSetting);
-          developer.log('✅ 更新账本设置: ${event.bookName} (ID: ${event.bookId})', name: 'SettingBloc');
+          developer.log('✅ 更新账本设置: ${event.bookName} (ID: ${event.bookId})',
+              name: 'SettingBloc');
         }
       }
-      
+
       developer.log('🔄 更新Repository账本ID...', name: 'SettingBloc');
       try {
         _billsRepository.updateRemoteBill(bookId: event.bookId);
         developer.log('✅ Repository账本ID更新成功', name: 'SettingBloc');
       } catch (error) {
-        developer.log('❌ Repository账本ID更新失败', error: error, name: 'SettingBloc');
+        developer.log('❌ Repository账本ID更新失败',
+            error: error, name: 'SettingBloc');
       }
-      
-      developer.log('🔄 发射新状态 - 新分组设置数量: ${newGroup.length}', name: 'SettingBloc');
+
+      developer.log('🔄 发射新状态 - 新分组设置数量: ${newGroup.length}',
+          name: 'SettingBloc');
       emit(
         state.copyWith(
           status: SettingStatus.success,
@@ -283,9 +306,9 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
         ),
       );
       developer.log('✅ 账本切换完成', name: 'SettingBloc');
-      
     } catch (error, stackTrace) {
-      developer.log('❌ 账本切换异常', error: error, stackTrace: stackTrace, name: 'SettingBloc');
+      developer.log('❌ 账本切换异常',
+          error: error, stackTrace: stackTrace, name: 'SettingBloc');
       emit(
         state.copyWith(status: SettingStatus.failure),
       );

@@ -7,7 +7,11 @@ class LanguageSelectionSheet extends StatelessWidget {
   final String? current;
   final ValueChanged<String> onSelected;
 
-  const LanguageSelectionSheet({super.key, required this.languages, required this.onSelected, this.current});
+  const LanguageSelectionSheet(
+      {super.key,
+      required this.languages,
+      required this.onSelected,
+      this.current});
 
   @override
   Widget build(BuildContext context) {
@@ -17,10 +21,11 @@ class LanguageSelectionSheet extends StatelessWidget {
         padding: const EdgeInsets.only(bottom: HJSpacing.md),
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          children:[
+          children: [
             const Padding(
               padding: EdgeInsets.all(16),
-              child: Text('选择语言', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              child: Text('选择语言',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             ),
             Divider(height: 1, color: Colors.grey[200]),
             Flexible(
@@ -29,8 +34,10 @@ class LanguageSelectionSheet extends StatelessWidget {
                 itemCount: languages.length,
                 itemBuilder: (context, index) {
                   final item = languages[index];
-                  final selected = (current != null && current == item) || (current == null && item.contains('简体中文'));
-                  return HJValueItem( // ← 修复此处
+                  final selected = (current != null && current == item) ||
+                      (current == null && item.contains('简体中文'));
+                  return HJValueItem(
+                    // ← 修复此处
                     icon: Icons.language,
                     title: item,
                     valueText: selected ? '当前' : null,
