@@ -180,8 +180,8 @@ class _EditBillViewState extends State<EditBillView> {
   // Apple HIG 标准高质感色彩
   Color _getThemeColor(BillType type) {
     switch (type) {
-      case BillType.expenditure: return const Color(0xFFFF3B30); // iOS Red
-      case BillType.income: return const Color(0xFF34C759);      // iOS Green
+      case BillType.expenditure: return const Color(0xFF34C759);      // iOS Green
+      case BillType.income: return const Color(0xFFFF3B30); // iOS Red
       case BillType.transfer: return const Color(0xFF007AFF);    // iOS Blue
       default: return textPrimary;
     }
