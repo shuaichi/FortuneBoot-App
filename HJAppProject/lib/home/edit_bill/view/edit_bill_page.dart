@@ -52,7 +52,7 @@ class EditBillPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiBlocListener(
-      listeners: [
+      listeners:[
         BlocListener<EditBillBloc, EditBillState>(
           listenWhen: (prev, cur) => prev.status != cur.status,
           listener: (context, state) {
@@ -84,7 +84,7 @@ void _showSnack(BuildContext context, String message, {bool isError = false}) {
             fontWeight: FontWeight.w600, color: Colors.white, fontSize: 15),
       ),
       backgroundColor:
-          isError ? const Color(0xFFFF3B30) : const Color(0xFF34C759),
+      isError ? const Color(0xFFFF3B30) : const Color(0xFF34C759),
       behavior: SnackBarBehavior.floating,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       elevation: 6,
@@ -119,6 +119,9 @@ class _EditBillViewState extends State<EditBillView> {
   final FocusNode _titleFocusNode = FocusNode();
   final FocusNode _remarkFocusNode = FocusNode();
 
+  // 修复 Bug：增加一个空白占位焦点节点，用于彻底释放 TextField 的焦点记录
+  final FocusNode _unfocusNode = FocusNode();
+
   // 高级金融级配色系统
   static const Color bgColor = Color(0xFFF2F4F7); // 极其干净的蓝灰色背景
   static const Color cardColor = Colors.white;
@@ -131,10 +134,12 @@ class _EditBillViewState extends State<EditBillView> {
     final state = context.read<EditBillBloc>().state;
     _initCategoryAmountItems(state);
 
-    if (state.editBill.data?.remark != null)
+    if (state.editBill.data?.remark != null) {
       _remarkController.text = state.editBill.data!.remark!;
-    if (state.editBill.data?.title != null)
+    }
+    if (state.editBill.data?.title != null) {
       _titleController.text = state.editBill.data!.title!;
+    }
 
     _titleFocusNode.addListener(_onTextFieldFocusChange);
     _remarkFocusNode.addListener(_onTextFieldFocusChange);
@@ -146,7 +151,7 @@ class _EditBillViewState extends State<EditBillView> {
   }
 
   void _initCategoryAmountItems(EditBillState state) {
-    _categoryAmountItems = [];
+    _categoryAmountItems =[];
     final pairs = state.editBill.data?.categoryAmountPair;
     if (pairs != null && pairs.isNotEmpty) {
       for (var p in pairs) {
@@ -178,6 +183,7 @@ class _EditBillViewState extends State<EditBillView> {
     _isKeyboardVisible.dispose();
     _titleFocusNode.dispose();
     _remarkFocusNode.dispose();
+    _unfocusNode.dispose(); // 记得销毁节点
     super.dispose();
   }
 
@@ -240,199 +246,200 @@ class _EditBillViewState extends State<EditBillView> {
         ),
         body: SafeArea(
           bottom: false,
-          child: Column(
-            children: [
-              Expanded(
-                child: GestureDetector(
-                  behavior: HitTestBehavior.translucent,
-                  onTap: () {
-                    FocusScope.of(context).unfocus();
-                    _isKeyboardVisible.value = false;
-                  },
-                  child: CustomScrollView(
-                    physics: const AlwaysScrollableScrollPhysics(
-                        parent: BouncingScrollPhysics()),
-                    slivers: [
-                      SliverToBoxAdapter(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              const SizedBox(height: 8),
-                              // 1. 现代化分段控制器
-                              _buildModernSegmentControl(billType, themeColor),
-                              const SizedBox(height: 24),
+          child: Focus( // 包裹 Focus 辅助节点拦截未被捕获的焦点状态回退
+            focusNode: _unfocusNode,
+            child: Column(
+              children:[
+                Expanded(
+                  child: GestureDetector(
+                    behavior: HitTestBehavior.translucent,
+                    onTap: () {
+                      _dismissKeyboard(); // 采用新的 dismiss 方法
+                    },
+                    child: CustomScrollView(
+                      physics: const AlwaysScrollableScrollPhysics(
+                          parent: BouncingScrollPhysics()),
+                      slivers:[
+                        SliverToBoxAdapter(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children:[
+                                const SizedBox(height: 8),
+                                // 1. 现代化分段控制器
+                                _buildModernSegmentControl(billType, themeColor),
+                                const SizedBox(height: 24),
 
-                              // 2. 灵动的巨型金额显示区
-                              _buildDynamicAmountSection(
-                                  state, billType, themeColor),
-                              const SizedBox(height: 24),
+                                // 2. 灵动的巨型金额显示区
+                                _buildDynamicAmountSection(
+                                    state, billType, themeColor),
+                                const SizedBox(height: 24),
 
-                              // 3. 高级圆角卡片表单 (Glass/Card feel)
-                              _ModernCardGroup(
-                                children: [
-                                  _buildTitleInput(state, themeColor),
-                                  const _ModernDivider(),
-                                  _buildAccountSelector(
-                                      state, billType, themeColor),
-                                  const _ModernDivider(),
-                                  _buildTimeSelector(state, themeColor),
-                                  const _ModernDivider(),
-                                  _buildTagSelector(state, themeColor),
-                                ],
-                              ),
-                              const SizedBox(height: 16),
+                                // 3. 高级圆角卡片表单 (Glass/Card feel)
+                                _ModernCardGroup(
+                                  children:[
+                                    _buildTitleInput(state, themeColor),
+                                    const _ModernDivider(),
+                                    _buildAccountSelector(
+                                        state, billType, themeColor),
+                                    const _ModernDivider(),
+                                    _buildTimeSelector(state, themeColor),
+                                    const _ModernDivider(),
+                                    _buildTagSelector(state, themeColor),
+                                  ],
+                                ),
+                                const SizedBox(height: 16),
 
-                              // 4. 展开更多按钮
-                              Center(
-                                child: ValueListenableBuilder<bool>(
+                                // 4. 展开更多按钮
+                                Center(
+                                  child: ValueListenableBuilder<bool>(
+                                    valueListenable: _isMoreExpanded,
+                                    builder: (context, expanded, child) {
+                                      return TextButton.icon(
+                                        onPressed: () {
+                                          HapticFeedback.selectionClick();
+                                          _dismissKeyboard(); // 采用新的 dismiss 方法
+                                          _isMoreExpanded.value = !expanded;
+                                        },
+                                        icon: Icon(
+                                            expanded
+                                                ? Icons.keyboard_arrow_up_rounded
+                                                : Icons
+                                                .keyboard_arrow_down_rounded,
+                                            color: textSecondary,
+                                            size: 20),
+                                        label: Text(
+                                            expanded ? '收起更多选项' : '展开更多选项',
+                                            style: const TextStyle(
+                                                color: textSecondary,
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w500)),
+                                        style: TextButton.styleFrom(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 16, vertical: 8),
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                              BorderRadius.circular(20)),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+
+                                // 5. 次要表单信息
+                                ValueListenableBuilder<bool>(
                                   valueListenable: _isMoreExpanded,
                                   builder: (context, expanded, child) {
-                                    return TextButton.icon(
-                                      onPressed: () {
-                                        HapticFeedback.selectionClick();
-                                        FocusScope.of(context).unfocus();
-                                        _isKeyboardVisible.value = false;
-                                        _isMoreExpanded.value = !expanded;
-                                      },
-                                      icon: Icon(
-                                          expanded
-                                              ? Icons.keyboard_arrow_up_rounded
-                                              : Icons
-                                                  .keyboard_arrow_down_rounded,
-                                          color: textSecondary,
-                                          size: 20),
-                                      label: Text(
-                                          expanded ? '收起更多选项' : '展开更多选项',
-                                          style: const TextStyle(
-                                              color: textSecondary,
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w500)),
-                                      style: TextButton.styleFrom(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 16, vertical: 8),
-                                        shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(20)),
+                                    return AnimatedSize(
+                                      duration: const Duration(milliseconds: 300),
+                                      curve: Curves.easeOutCubic,
+                                      alignment: Alignment.topCenter,
+                                      child: !expanded
+                                          ? const SizedBox(width: double.infinity)
+                                          : Column(
+                                        children: [
+                                          _ModernCardGroup(
+                                            children:[
+                                              if (billType !=
+                                                  BillType.transfer) ...[
+                                                _buildPayeeSelector(
+                                                    state, themeColor),
+                                                const _ModernDivider(),
+                                              ],
+                                              _buildRemarkInput(
+                                                  state, themeColor),
+                                              const _ModernDivider(),
+                                              IntrinsicHeight(
+                                                child: Row(
+                                                  children:[
+                                                    Expanded(
+                                                        child: _buildModernSwitch(
+                                                            '确认入账',
+                                                            Icons
+                                                                .verified_rounded,
+                                                            Colors.orange,
+                                                            _confirm,
+                                                            state,
+                                                            billType,
+                                                            themeColor)),
+                                                    Container(
+                                                        width: 0.5,
+                                                        color: const Color(
+                                                            0xFFE5E5EA)),
+                                                    Expanded(
+                                                        child: _buildModernSwitch(
+                                                            '纳入统计',
+                                                            Icons
+                                                                .pie_chart_rounded,
+                                                            Colors.purple,
+                                                            _include,
+                                                            state,
+                                                            billType,
+                                                            themeColor)),
+                                                  ],
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          const SizedBox(height: 16),
+                                          _ModernCardGroup(
+                                            padding:
+                                            const EdgeInsets.all(16),
+                                            children:[
+                                              AttachmentUploadWidget(
+                                                initialAttachments:
+                                                state.attachments,
+                                                onAttachmentsChanged:
+                                                    (attachments) => context
+                                                    .read<
+                                                    EditBillBloc>()
+                                                    .add(EditBillAttachmentsChanged(
+                                                    attachments)),
+                                              ),
+                                            ],
+                                          ),
+                                          const SizedBox(height: 40),
+                                        ],
                                       ),
                                     );
                                   },
                                 ),
-                              ),
-                              const SizedBox(height: 8),
-
-                              // 5. 次要表单信息
-                              ValueListenableBuilder<bool>(
-                                valueListenable: _isMoreExpanded,
-                                builder: (context, expanded, child) {
-                                  return AnimatedSize(
-                                    duration: const Duration(milliseconds: 300),
-                                    curve: Curves.easeOutCubic,
-                                    alignment: Alignment.topCenter,
-                                    child: !expanded
-                                        ? const SizedBox(width: double.infinity)
-                                        : Column(
-                                            children: [
-                                              _ModernCardGroup(
-                                                children: [
-                                                  if (billType !=
-                                                      BillType.transfer) ...[
-                                                    _buildPayeeSelector(
-                                                        state, themeColor),
-                                                    const _ModernDivider(),
-                                                  ],
-                                                  _buildRemarkInput(
-                                                      state, themeColor),
-                                                  const _ModernDivider(),
-                                                  IntrinsicHeight(
-                                                    child: Row(
-                                                      children: [
-                                                        Expanded(
-                                                            child: _buildModernSwitch(
-                                                                '确认入账',
-                                                                Icons
-                                                                    .verified_rounded,
-                                                                Colors.orange,
-                                                                _confirm,
-                                                                state,
-                                                                billType,
-                                                                themeColor)),
-                                                        Container(
-                                                            width: 0.5,
-                                                            color: const Color(
-                                                                0xFFE5E5EA)),
-                                                        Expanded(
-                                                            child: _buildModernSwitch(
-                                                                '纳入统计',
-                                                                Icons
-                                                                    .pie_chart_rounded,
-                                                                Colors.purple,
-                                                                _include,
-                                                                state,
-                                                                billType,
-                                                                themeColor)),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              const SizedBox(height: 16),
-                                              _ModernCardGroup(
-                                                padding:
-                                                    const EdgeInsets.all(16),
-                                                children: [
-                                                  AttachmentUploadWidget(
-                                                    initialAttachments:
-                                                        state.attachments,
-                                                    onAttachmentsChanged:
-                                                        (attachments) => context
-                                                            .read<
-                                                                EditBillBloc>()
-                                                            .add(EditBillAttachmentsChanged(
-                                                                attachments)),
-                                                  ),
-                                                ],
-                                              ),
-                                              const SizedBox(height: 40),
-                                            ],
-                                          ),
-                                  );
-                                },
-                              ),
-                              const SizedBox(height: 60),
-                            ],
+                                const SizedBox(height: 60),
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
-              ),
 
-              // 底部按钮与自定义键盘区的无缝衔接
-              ValueListenableBuilder<bool>(
-                valueListenable: _isKeyboardVisible,
-                builder: (context, visible, child) {
-                  return Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      if (!visible) _buildSubmitButton(state, themeColor),
-                      AnimatedContainer(
-                        duration: const Duration(milliseconds: 250),
-                        curve: Curves.easeOutCubic,
-                        height: visible
-                            ? 290 + MediaQuery.of(context).padding.bottom
-                            : 0,
-                        child: visible
-                            ? _buildModernNumPad(themeColor)
-                            : const SizedBox.shrink(),
-                      ),
-                    ],
-                  );
-                },
-              ),
-            ],
+                // 底部按钮与自定义键盘区的无缝衔接
+                ValueListenableBuilder<bool>(
+                  valueListenable: _isKeyboardVisible,
+                  builder: (context, visible, child) {
+                    return Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children:[
+                        if (!visible) _buildSubmitButton(state, themeColor),
+                        AnimatedContainer(
+                          duration: const Duration(milliseconds: 250),
+                          curve: Curves.easeOutCubic,
+                          height: visible
+                              ? 290 + MediaQuery.of(context).padding.bottom
+                              : 0,
+                          child: visible
+                              ? _buildModernNumPad(themeColor)
+                              : const SizedBox.shrink(),
+                        ),
+                      ],
+                    );
+                  },
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -456,10 +463,12 @@ class _EditBillViewState extends State<EditBillView> {
       state.editBill.data!.confirm = true;
       state.editBill.data!.include = true;
     }
-    if (state.editBill.data?.remark != null && _remarkController.text.isEmpty)
+    if (state.editBill.data?.remark != null && _remarkController.text.isEmpty) {
       _remarkController.text = state.editBill.data!.remark!;
-    if (state.editBill.data?.title != null && _titleController.text.isEmpty)
+    }
+    if (state.editBill.data?.title != null && _titleController.text.isEmpty) {
       _titleController.text = state.editBill.data!.title!;
+    }
   }
 
   // ==========================================
@@ -481,7 +490,7 @@ class _EditBillViewState extends State<EditBillView> {
             borderRadius: BorderRadius.circular(10),
           ),
           child: Row(
-            children: [
+            children:[
               _buildSegmentPill(
                   '支出', BillType.expenditure, currentType, themeColor),
               _buildSegmentPill('收入', BillType.income, currentType, themeColor),
@@ -510,7 +519,7 @@ class _EditBillViewState extends State<EditBillView> {
           context.read<EditBillBloc>().add(EditBillTypeChange(type));
           setState(() {
             _activeAmountIndex.value = type == BillType.transfer ? -1 : 0;
-            _categoryAmountItems = [CategoryAmountItem(amount: 0.0)];
+            _categoryAmountItems =[CategoryAmountItem(amount: 0.0)];
             _tempAmountString = null;
           });
         },
@@ -522,13 +531,13 @@ class _EditBillViewState extends State<EditBillView> {
             color: isSelected ? Colors.white : Colors.transparent,
             borderRadius: BorderRadius.circular(8),
             boxShadow: isSelected
-                ? [
-                    BoxShadow(
-                        color: Colors.black.withOpacity(0.04),
-                        blurRadius: 4,
-                        offset: const Offset(0, 2))
-                  ]
-                : [],
+                ?[
+              BoxShadow(
+                  color: Colors.black.withOpacity(0.04),
+                  blurRadius: 4,
+                  offset: const Offset(0, 2))
+            ]
+                :[],
           ),
           alignment: Alignment.center,
           child: Text(
@@ -549,7 +558,7 @@ class _EditBillViewState extends State<EditBillView> {
     if (billType == BillType.transfer) {
       return GestureDetector(
         onTap: () {
-          FocusScope.of(context).unfocus();
+          _unfocusNode.requestFocus(); // 获取焦点到空白节点
           _activeAmountIndex.value = -1;
           _isKeyboardVisible.value = true;
         },
@@ -570,7 +579,7 @@ class _EditBillViewState extends State<EditBillView> {
     }
 
     return Column(
-      children: [
+      children:[
         ...List.generate(_categoryAmountItems.length, (index) {
           final item = _categoryAmountItems[index];
           final catName = _getCategoryName(state.categoryList, item.categoryId);
@@ -582,8 +591,9 @@ class _EditBillViewState extends State<EditBillView> {
             onDismissed: (_) {
               setState(() {
                 _categoryAmountItems.removeAt(index);
-                if (_activeAmountIndex.value >= _categoryAmountItems.length)
+                if (_activeAmountIndex.value >= _categoryAmountItems.length) {
                   _activeAmountIndex.value = _categoryAmountItems.length - 1;
+                }
               });
               _syncCategoryAmountToState();
             },
@@ -599,7 +609,7 @@ class _EditBillViewState extends State<EditBillView> {
             ),
             child: GestureDetector(
               onTap: () {
-                FocusScope.of(context).unfocus();
+                _unfocusNode.requestFocus(); // 获取焦点到空白节点
                 _activeAmountIndex.value = index;
                 _isKeyboardVisible.value = true;
               },
@@ -623,20 +633,20 @@ class _EditBillViewState extends State<EditBillView> {
                               : Colors.transparent,
                           width: 2),
                       boxShadow: isActive
-                          ? [
-                              BoxShadow(
-                                  color: themeColor.withOpacity(0.08),
-                                  blurRadius: 12,
-                                  offset: const Offset(0, 4))
-                            ]
-                          : [],
+                          ?[
+                        BoxShadow(
+                            color: themeColor.withOpacity(0.08),
+                            blurRadius: 12,
+                            offset: const Offset(0, 4))
+                      ]
+                          :[],
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
+                      children:[
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
+                          children:[
                             GestureDetector(
                               onTap: () {
                                 _dismissKeyboard();
@@ -653,7 +663,7 @@ class _EditBillViewState extends State<EditBillView> {
                                 ),
                                 child: Row(
                                   mainAxisSize: MainAxisSize.min,
-                                  children: [
+                                  children:[
                                     Icon(Icons.category_rounded,
                                         size: 16, color: themeColor),
                                     const SizedBox(width: 6),
@@ -693,6 +703,7 @@ class _EditBillViewState extends State<EditBillView> {
             child: TextButton.icon(
               onPressed: () {
                 HapticFeedback.lightImpact();
+                _unfocusNode.requestFocus(); // 确保输入新增金额前系统键盘也是关闭的
                 setState(() {
                   _categoryAmountItems.add(CategoryAmountItem(amount: 0.0));
                   _activeAmountIndex.value = _categoryAmountItems.length - 1;
@@ -758,7 +769,7 @@ class _EditBillViewState extends State<EditBillView> {
             border: InputBorder.none,
             hintText: '输入标题...',
             hintStyle:
-                TextStyle(color: textSecondary, fontWeight: FontWeight.w400),
+            TextStyle(color: textSecondary, fontWeight: FontWeight.w400),
             contentPadding: EdgeInsets.zero),
         onChanged: (val) => state.editBill.data?.title = val,
       ),
@@ -772,20 +783,20 @@ class _EditBillViewState extends State<EditBillView> {
       final outItems = state.transferOutAccountList;
       final outItem = outItems
           .where((i) =>
-              i.value.id ==
-              (state.editBill.data?.accountId ??
-                  state.defaultTransferOutAccountId))
+      i.value.id ==
+          (state.editBill.data?.accountId ??
+              state.defaultTransferOutAccountId))
           .firstOrNull
           ?.value;
       final inItem = inItems
           .where((i) =>
-              i.value.id ==
-              (state.editBill.data?.toAccountId ??
-                  state.defaultTransferInAccountId))
+      i.value.id ==
+          (state.editBill.data?.toAccountId ??
+              state.defaultTransferInAccountId))
           .firstOrNull
           ?.value;
       return Column(
-        children: [
+        children:[
           _ModernFormRow(
               icon: Icons.arrow_upward_rounded,
               iconColor: Colors.orange,
@@ -797,7 +808,7 @@ class _EditBillViewState extends State<EditBillView> {
                     '选择转出账户',
                     outItems,
                     outItem?.id,
-                    (val) =>
+                        (val) =>
                         setState(() => state.editBill.data?.accountId = val.id),
                     themeColor);
               }),
@@ -813,8 +824,8 @@ class _EditBillViewState extends State<EditBillView> {
                     '选择转入账户',
                     inItems,
                     inItem?.id,
-                    (val) => setState(
-                        () => state.editBill.data?.toAccountId = val.id),
+                        (val) => setState(
+                            () => state.editBill.data?.toAccountId = val.id),
                     themeColor);
               }),
         ],
@@ -825,11 +836,11 @@ class _EditBillViewState extends State<EditBillView> {
           : state.expenseAccountList;
       final accItem = items
           .where((i) =>
-              i.value.id ==
-              (state.editBill.data?.accountId ??
-                  (billType == BillType.income
-                      ? state.defaultIncomeAccountId
-                      : state.defaultExpenseAccountId)))
+      i.value.id ==
+          (state.editBill.data?.accountId ??
+              (billType == BillType.income
+                  ? state.defaultIncomeAccountId
+                  : state.defaultExpenseAccountId)))
           .firstOrNull
           ?.value;
       return _ModernFormRow(
@@ -843,7 +854,7 @@ class _EditBillViewState extends State<EditBillView> {
                 '选择账户',
                 items,
                 accItem?.id,
-                (val) =>
+                    (val) =>
                     setState(() => state.editBill.data?.accountId = val.id),
                 themeColor);
           });
@@ -871,7 +882,7 @@ class _EditBillViewState extends State<EditBillView> {
   }
 
   Widget _buildTagSelector(EditBillState state, Color themeColor) {
-    final ids = state.editBill.data?.tagIdList ?? [];
+    final ids = state.editBill.data?.tagIdList ??[];
     return _ModernFormRow(
         icon: Icons.local_offer_rounded,
         iconColor: Colors.green,
@@ -899,7 +910,7 @@ class _EditBillViewState extends State<EditBillView> {
               '选择交易对象',
               state.payeeList,
               payeeItem?.id,
-              (val) => setState(() => state.editBill.data?.payeeId = val.id),
+                  (val) => setState(() => state.editBill.data?.payeeId = val.id),
               themeColor);
         });
   }
@@ -943,16 +954,16 @@ class _EditBillViewState extends State<EditBillView> {
           onTap: isTransfer
               ? null
               : () {
-                  HapticFeedback.lightImpact();
-                  final next = !current;
-                  if (label == '确认入账') state.editBill.data?.confirm = next;
-                  if (label == '纳入统计') state.editBill.data?.include = next;
-                  notifier.value = next;
-                },
+            HapticFeedback.lightImpact();
+            final next = !current;
+            if (label == '确认入账') state.editBill.data?.confirm = next;
+            if (label == '纳入统计') state.editBill.data?.include = next;
+            notifier.value = next;
+          },
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             child: Row(
-              children: [
+              children:[
                 Container(
                     padding: const EdgeInsets.all(6),
                     decoration: BoxDecoration(
@@ -972,13 +983,15 @@ class _EditBillViewState extends State<EditBillView> {
                         onChanged: isTransfer
                             ? null
                             : (v) {
-                                HapticFeedback.lightImpact();
-                                if (label == '确认入账')
-                                  state.editBill.data?.confirm = v;
-                                if (label == '纳入统计')
-                                  state.editBill.data?.include = v;
-                                notifier.value = v;
-                              })),
+                          HapticFeedback.lightImpact();
+                          if (label == '确认入账') {
+                            state.editBill.data?.confirm = v;
+                          }
+                          if (label == '纳入统计') {
+                            state.editBill.data?.include = v;
+                          }
+                          notifier.value = v;
+                        })),
               ],
             ),
           ),
@@ -1000,23 +1013,22 @@ class _EditBillViewState extends State<EditBillView> {
             minimumSize: const Size(double.infinity, 54),
             elevation: 0,
             shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           ),
           onPressed: isLoading
               ? null
               : () {
-                  HapticFeedback.mediumImpact();
-                  FocusScope.of(context).unfocus();
-                  _isKeyboardVisible.value = false;
-                  _submitBill(state.editBill, state);
-                },
+            HapticFeedback.mediumImpact();
+            _dismissKeyboard(); // 触发焦点释放
+            _submitBill(state.editBill, state);
+          },
           child: isLoading
               ? const CupertinoActivityIndicator(color: Colors.white)
               : const Text('保存',
-                  style: TextStyle(
-                      fontSize: 17,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: 1.0)),
+              style: TextStyle(
+                  fontSize: 17,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 1.0)),
         ),
       ),
     );
@@ -1031,13 +1043,13 @@ class _EditBillViewState extends State<EditBillView> {
       child: SafeArea(
         top: false,
         child: Column(
-          children: [
+          children:[
             Container(
               height: 40,
               color: bgColor,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
-                children: [
+                children:[
                   IconButton(
                     icon: const Icon(Icons.keyboard_hide_rounded,
                         color: textSecondary),
@@ -1057,7 +1069,7 @@ class _EditBillViewState extends State<EditBillView> {
                     Expanded(
                       flex: 3,
                       child: Column(
-                        children: [
+                        children:[
                           _buildKeyboardRow(['1', '2', '3']),
                           _buildKeyboardRow(['4', '5', '6']),
                           _buildKeyboardRow(['7', '8', '9']),
@@ -1068,16 +1080,15 @@ class _EditBillViewState extends State<EditBillView> {
                     Expanded(
                       flex: 1,
                       child: Column(
-                        children: [
+                        children:[
                           _buildKey('-', flex: 1),
                           _buildKey('完成',
                               flex: 3,
                               bgColor: themeColor,
                               textColor: Colors.white, onTap: () {
-                            HapticFeedback.mediumImpact();
-                            FocusScope.of(context).unfocus();
-                            _isKeyboardVisible.value = false;
-                          }),
+                                HapticFeedback.mediumImpact();
+                                _dismissKeyboard(); // 触发焦点释放
+                              }),
                         ],
                       ),
                     ),
@@ -1111,25 +1122,25 @@ class _EditBillViewState extends State<EditBillView> {
           child: InkWell(
             borderRadius: BorderRadius.circular(10),
             onTap: onTap ??
-                () {
+                    () {
                   HapticFeedback.lightImpact();
                   _onKeyTap(key);
                 },
             child: Center(
               child: key == 'DEL'
                   ? const Icon(Icons.backspace_rounded,
-                      size: 24, color: textPrimary)
+                  size: 24, color: textPrimary)
                   : Text(
-                      key,
-                      style: TextStyle(
-                        fontSize: key == '完成' ? 18 : 26,
-                        fontWeight:
-                            isAction ? FontWeight.w600 : FontWeight.w400,
-                        color: textColor ?? textPrimary,
-                        fontFamily:
-                            isAction ? null : 'SF Pro Display', // 模拟苹果数字字体
-                      ),
-                    ),
+                key,
+                style: TextStyle(
+                  fontSize: key == '完成' ? 18 : 26,
+                  fontWeight:
+                  isAction ? FontWeight.w600 : FontWeight.w400,
+                  color: textColor ?? textPrimary,
+                  fontFamily:
+                  isAction ? null : 'SF Pro Display', // 模拟苹果数字字体
+                ),
+              ),
             ),
           ),
         ),
@@ -1149,8 +1160,8 @@ class _EditBillViewState extends State<EditBillView> {
       _tempAmountString = isNegativeZero
           ? '-0'
           : (currentVal == 0
-              ? ''
-              : currentVal.toString().replaceAll(RegExp(r'\.0$'), ''));
+          ? ''
+          : currentVal.toString().replaceAll(RegExp(r'\.0$'), ''));
     }
 
     String strVal = _tempAmountString!;
@@ -1165,14 +1176,15 @@ class _EditBillViewState extends State<EditBillView> {
         if (strVal == '-') strVal = '';
       }
     } else if (key == '.') {
-      if (!strVal.contains('.'))
+      if (!strVal.contains('.')) {
         strVal = strVal.isEmpty ? '0.' : (strVal == '-' ? '-0.' : '$strVal.');
+      }
     } else {
-      if (strVal == '-0')
+      if (strVal == '-0') {
         strVal = key != '0' ? '-$key' : '-0';
-      else if (strVal == '0')
+      } else if (strVal == '0') {
         strVal = key;
-      else if (strVal.contains('.')) {
+      } else if (strVal.contains('.')) {
         if (strVal.split('.')[1].length < 2) strVal += key;
       } else {
         if (strVal.length < (strVal.startsWith('-') ? 10 : 9)) strVal += key;
@@ -1186,9 +1198,9 @@ class _EditBillViewState extends State<EditBillView> {
     if (strVal == '-0' || strVal == '-0.') newVal = -0.0;
 
     setState(() {
-      if (idx == -1)
+      if (idx == -1) {
         state.editBill.data?.amount = newVal;
-      else {
+      } else {
         _categoryAmountItems[idx].amount = newVal;
         _syncCategoryAmountToState();
       }
@@ -1197,11 +1209,12 @@ class _EditBillViewState extends State<EditBillView> {
 
   void _syncCategoryAmountToState() {
     final state = context.read<EditBillBloc>().state;
-    List<Map<String, num>> pairs = [];
+    List<Map<String, num>> pairs =[];
     double total = 0;
     for (var item in _categoryAmountItems) {
-      if (item.categoryId != null)
+      if (item.categoryId != null) {
         pairs.add({'categoryId': item.categoryId!, 'amount': item.amount});
+      }
       total += item.amount;
     }
     state.editBill.data?.categoryAmountPair = pairs;
@@ -1226,7 +1239,7 @@ class _EditBillViewState extends State<EditBillView> {
       builder: (ctx) => SafeArea(
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          children: [
+          children:[
             _ModernSheetHeader(title: title),
             Flexible(
               child: ListView.separated(
@@ -1250,7 +1263,7 @@ class _EditBillViewState extends State<EditBillView> {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 24, vertical: 18),
                       child: Row(
-                        children: [
+                        children:[
                           Text(
                             item.label,
                             style: TextStyle(
@@ -1279,7 +1292,7 @@ class _EditBillViewState extends State<EditBillView> {
   }
 
   void _dismissKeyboard() {
-    FocusScope.of(context).unfocus();
+    _unfocusNode.requestFocus(); // 使用空白节点接收焦点，彻底切断系统键盘触发的源头
     _isKeyboardVisible.value = false;
   }
 
@@ -1295,7 +1308,7 @@ class _EditBillViewState extends State<EditBillView> {
         child: SizedBox(
           height: MediaQuery.of(context).size.height * 0.75,
           child: Column(
-            children: [
+            children:[
               const _ModernSheetHeader(title: '选择分类'),
               Expanded(
                 child: TreeSelectorWidget<CategorySelectItem>(
@@ -1303,12 +1316,12 @@ class _EditBillViewState extends State<EditBillView> {
                   isMultiSelect: false,
                   selectedIds: _categoryAmountItems[index].categoryId != null
                       ? [_categoryAmountItems[index].categoryId!]
-                      : [],
+                      :[],
                   onChanged: (ids) {
                     if (ids.isNotEmpty) {
                       HapticFeedback.selectionClick();
                       setState(() =>
-                          _categoryAmountItems[index].categoryId = ids.first);
+                      _categoryAmountItems[index].categoryId = ids.first);
                       _syncCategoryAmountToState();
                       Navigator.pop(context);
                     }
@@ -1338,7 +1351,7 @@ class _EditBillViewState extends State<EditBillView> {
         child: SizedBox(
           height: MediaQuery.of(context).size.height * 0.75,
           child: Column(
-            children: [
+            children:[
               const _ModernSheetHeader(title: '选择标签'),
               Expanded(
                 child: TagSelectorSheetContent(
@@ -1392,19 +1405,26 @@ class _EditBillViewState extends State<EditBillView> {
   }
 
   void _submitBill(BillItemAdd billItemAdd, EditBillState state) {
-    if (billItemAdd.data?.title?.trim().isEmpty ?? true)
-      return _showSnack(context, '请填写标题', isError: true);
+    if (billItemAdd.data?.title?.trim().isEmpty ?? true) {
+      // return _showSnack(context, '请填写标题', isError: true);
+      // TODO 暂时设置成默认值，后续改成配置的
+      billItemAdd.data?.title = '未命名账单';
+    }
     if (billItemAdd.data?.billType == BillType.transfer.value) {
-      if (billItemAdd.data?.amount == null || billItemAdd.data!.amount == 0)
+      if (billItemAdd.data?.amount == null || billItemAdd.data!.amount == 0) {
         return _showSnack(context, '请填入有效金额', isError: true);
+      }
       if (billItemAdd.data?.accountId == null ||
-          billItemAdd.data?.toAccountId == null)
+          billItemAdd.data?.toAccountId == null) {
         return _showSnack(context, '请选择完整的转入/转出账户', isError: true);
+      }
     } else {
-      if (_categoryAmountItems.isEmpty)
+      if (_categoryAmountItems.isEmpty) {
         return _showSnack(context, '请填入有效金额', isError: true);
-      if (_categoryAmountItems.any((e) => e.categoryId == null))
+      }
+      if (_categoryAmountItems.any((e) => e.categoryId == null)) {
         return _showSnack(context, '请为每笔金额选择分类', isError: true);
+      }
     }
     context.read<EditBillBloc>().add(EditBillSubmitted());
   }
@@ -1422,15 +1442,15 @@ class _AnimatedAmountTicker extends StatelessWidget {
 
   const _AnimatedAmountTicker(
       {required this.amountStr,
-      required this.isActive,
-      required this.themeColor,
-      this.isCompact = false});
+        required this.isActive,
+        required this.themeColor,
+        this.isCompact = false});
 
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
+      children:[
         if (!isCompact)
           Text('金额',
               style: TextStyle(
@@ -1439,7 +1459,7 @@ class _AnimatedAmountTicker extends StatelessWidget {
                   fontWeight: FontWeight.w500)),
         Row(
           crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
+          children:[
             Text('¥',
                 style: TextStyle(
                     fontSize: isCompact ? 28 : 36,
@@ -1492,7 +1512,7 @@ class _ModernCardGroup extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
-        boxShadow: [
+        boxShadow:[
           BoxShadow(
               color: Colors.black.withOpacity(0.02),
               blurRadius: 10,
@@ -1516,11 +1536,11 @@ class _ModernFormRow extends StatelessWidget {
 
   const _ModernFormRow(
       {required this.label,
-      required this.icon,
-      required this.iconColor,
-      this.valueText,
-      this.child,
-      this.onTap});
+        required this.icon,
+        required this.iconColor,
+        this.valueText,
+        this.child,
+        this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -1535,7 +1555,7 @@ class _ModernFormRow extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         child: Row(
-          children: [
+          children:[
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
@@ -1593,7 +1613,7 @@ class _ModernSheetHeader extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(24, 16, 24, 16),
       child: Column(
         mainAxisSize: MainAxisSize.min,
-        children: [
+        children:[
           Container(
               width: 36,
               height: 4,
@@ -1603,7 +1623,7 @@ class _ModernSheetHeader extends StatelessWidget {
           const SizedBox(height: 16),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
+            children:[
               const Text('取消', style: TextStyle(color: Colors.transparent)),
               Text(title,
                   style: const TextStyle(
@@ -1645,14 +1665,14 @@ class TreeSelectorWidget<T> extends StatefulWidget {
 
   const TreeSelectorWidget(
       {super.key,
-      required this.items,
-      required this.isMultiSelect,
-      required this.selectedIds,
-      required this.onChanged,
-      required this.activeColor,
-      required this.getId,
-      required this.getTitle,
-      required this.getChildren});
+        required this.items,
+        required this.isMultiSelect,
+        required this.selectedIds,
+        required this.onChanged,
+        required this.activeColor,
+        required this.getId,
+        required this.getTitle,
+        required this.getChildren});
 
   @override
   State<TreeSelectorWidget<T>> createState() => _TreeSelectorWidgetState<T>();
@@ -1727,16 +1747,16 @@ class _TreeNode<T> extends StatelessWidget {
 
   const _TreeNode(
       {required this.item,
-      required this.depth,
-      required this.expandedKeys,
-      required this.selectedKeys,
-      required this.onToggle,
-      required this.onExpand,
-      required this.isMultiSelect,
-      required this.activeColor,
-      required this.getId,
-      required this.getTitle,
-      required this.getChildren});
+        required this.depth,
+        required this.expandedKeys,
+        required this.selectedKeys,
+        required this.onToggle,
+        required this.onExpand,
+        required this.isMultiSelect,
+        required this.activeColor,
+        required this.getId,
+        required this.getTitle,
+        required this.getChildren});
 
   @override
   Widget build(BuildContext context) {
@@ -1753,7 +1773,7 @@ class _TreeNode<T> extends StatelessWidget {
             final isSelected = selectedSet.contains(id);
             return Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
+              children:[
                 InkWell(
                   onTap: () => onToggle(id),
                   child: Padding(
@@ -1763,7 +1783,7 @@ class _TreeNode<T> extends StatelessWidget {
                         top: 16,
                         bottom: 16),
                     child: Row(
-                      children: [
+                      children:[
                         if (isMultiSelect)
                           Icon(
                               isSelected
@@ -1772,7 +1792,7 @@ class _TreeNode<T> extends StatelessWidget {
                               color: isSelected
                                   ? activeColor
                                   : _EditBillViewState.textSecondary
-                                      .withOpacity(0.5),
+                                  .withOpacity(0.5),
                               size: 22),
                         if (isMultiSelect) const SizedBox(width: 12),
                         Expanded(
@@ -1817,17 +1837,17 @@ class _TreeNode<T> extends StatelessWidget {
                   Column(
                     children: children!
                         .map((child) => _TreeNode<T>(
-                            item: child,
-                            depth: depth + 1,
-                            expandedKeys: expandedKeys,
-                            selectedKeys: selectedKeys,
-                            onToggle: onToggle,
-                            onExpand: onExpand,
-                            isMultiSelect: isMultiSelect,
-                            activeColor: activeColor,
-                            getId: getId,
-                            getTitle: getTitle,
-                            getChildren: getChildren))
+                        item: child,
+                        depth: depth + 1,
+                        expandedKeys: expandedKeys,
+                        selectedKeys: selectedKeys,
+                        onToggle: onToggle,
+                        onExpand: onExpand,
+                        isMultiSelect: isMultiSelect,
+                        activeColor: activeColor,
+                        getId: getId,
+                        getTitle: getTitle,
+                        getChildren: getChildren))
                         .toList(),
                   )
               ],
@@ -1847,10 +1867,10 @@ class TagSelectorSheetContent extends StatefulWidget {
 
   const TagSelectorSheetContent(
       {super.key,
-      required this.tags,
-      required this.selectedIds,
-      required this.onChanged,
-      required this.activeColor});
+        required this.tags,
+        required this.selectedIds,
+        required this.onChanged,
+        required this.activeColor});
 
   @override
   State<TagSelectorSheetContent> createState() =>
@@ -1869,7 +1889,7 @@ class _TagSelectorSheetContentState extends State<TagSelectorSheetContent> {
   @override
   Widget build(BuildContext context) {
     return Column(
-      children: [
+      children:[
         Expanded(
           child: TreeSelectorWidget<TagSelectItem>(
               items: widget.tags,
@@ -1916,9 +1936,9 @@ class CustomDateTimePicker extends StatefulWidget {
 
   const CustomDateTimePicker(
       {super.key,
-      required this.initialDate,
-      required this.onDateTimeChanged,
-      required this.themeColor});
+        required this.initialDate,
+        required this.onDateTimeChanged,
+        required this.themeColor});
 
   @override
   State<CustomDateTimePicker> createState() => _CustomDateTimePickerState();
@@ -1947,7 +1967,7 @@ class _CustomDateTimePickerState extends State<CustomDateTimePicker> {
   @override
   Widget build(BuildContext context) {
     return Column(
-      children: [
+      children:[
         const _ModernSheetHeader(title: '选择时间'),
         Expanded(
           child: DefaultTextStyle(
@@ -1956,13 +1976,13 @@ class _CustomDateTimePickerState extends State<CustomDateTimePicker> {
                 fontSize: 16,
                 fontWeight: FontWeight.w500),
             child: Row(
-              children: [
+              children:[
                 _buildPicker(_y, 50, (i) => setState(() => sY = startYear + i),
-                    (i) => '${startYear + i}年'),
+                        (i) => '${startYear + i}年'),
                 _buildPicker(_m, 12, (i) => setState(() => sM = i + 1),
-                    (i) => '${i + 1}月'),
+                        (i) => '${i + 1}月'),
                 _buildPicker(_d, 31, (i) => setState(() => sD = i + 1),
-                    (i) => '${i + 1}日'),
+                        (i) => '${i + 1}日'),
                 _buildPicker(
                     _h, 24, (i) => setState(() => sH = i), (i) => '${i}时'),
                 _buildPicker(
