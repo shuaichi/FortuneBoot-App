@@ -1,167 +1,120 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:hjproject/home/design_system/hjds_components.dart';
+import 'package:hjproject/home/design_system/hjds_theme.dart';
 
-/// 打赏作者二维码底部弹窗组件 - Refactored for Design Skill
-/// - Surface: White BottomSheet (Radius Top 20)
-/// - Background: Colors.white
 class DonateQrSheet extends StatelessWidget {
   final VoidCallback onLongPressWechat;
   final VoidCallback onLongPressAlipay;
 
-  const DonateQrSheet({
-    super.key,
-    required this.onLongPressWechat,
-    required this.onLongPressAlipay,
-  });
+  const DonateQrSheet(
+      {super.key,
+      required this.onLongPressWechat,
+      required this.onLongPressAlipay});
 
   @override
   Widget build(BuildContext context) {
-    // Design Token: Background
     return Container(
       decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      padding: EdgeInsets.only(
-        bottom: MediaQuery.of(context).viewInsets.bottom,
-      ),
-      child: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const SizedBox(height: 8),
-            // Handle Bar (Visual Cue)
-            Container(
+          color: HJColors.surface,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
+      padding: const EdgeInsets.only(bottom: 32, left: 24, right: 24, top: 12),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: Colors.grey[300],
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
-            const SizedBox(height: 16),
-            const Text(
-              '给作者加个油',
+                  color: HJColors.divider,
+                  borderRadius: BorderRadius.circular(2))),
+          const SizedBox(height: 24),
+          const Text('给作者加个油',
               style: TextStyle(
-                fontSize: 18, 
-                fontWeight: FontWeight.bold,
-                color: Colors.black87,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: Text(
-                '如果这个开源项目对你有帮助，欢迎打赏一杯咖啡（10元），你的支持是我持续维护与迭代的最大动力。',
-                textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.grey[600], fontSize: 14, height: 1.4),
-              ),
-            ),
-            const SizedBox(height: 24),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Column(
-                      children: [
-                        _buildQrCard(
-                          context, 
-                          'assets/images/donate_wechat.jpg', 
-                          onLongPressWechat,
-                        ),
-                        const SizedBox(height: 12),
-                        const Text('微信收款码', style: TextStyle(fontSize: 13, color: Colors.grey)),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Column(
-                      children: [
-                        _buildQrCard(
-                          context, 
-                          'assets/images/donate_alipay.jpg', 
-                          onLongPressAlipay,
-                        ),
-                        const SizedBox(height: 12),
-                        const Text('支付宝收款码', style: TextStyle(fontSize: 13, color: Colors.grey)),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 24),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: Text(
-                '提示：长按二维码可保存，或直接打开微信/支付宝“扫一扫”。感谢你的每一份支持！',
-                textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.grey[500], fontSize: 12),
-              ),
-            ),
-            const SizedBox(height: 24),
-            SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: SizedBox(
-                  width: double.infinity,
-                  height: 48,
-                  child: TextButton(
-                    onPressed: () => Navigator.pop(context),
-                    style: TextButton.styleFrom(
-                      foregroundColor: Colors.grey[600],
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                    child: const Text('关闭'),
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(height: 12),
-          ],
-        ),
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: HJColors.textPrimary)),
+          const SizedBox(height: 12),
+          const Text('如果这个开源项目对你有帮助，欢迎打赏一杯咖啡。',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  color: HJColors.textSecondary, fontSize: 15, height: 1.5)),
+          const SizedBox(height: 32),
+          Row(
+            children: [
+              Expanded(
+                  child: _buildQrCard(
+                      context,
+                      'assets/images/donate_wechat.jpg',
+                      '微信收款码',
+                      onLongPressWechat,
+                      HJColors.income)),
+              const SizedBox(width: 16),
+              Expanded(
+                  child: _buildQrCard(
+                      context,
+                      'assets/images/donate_alipay.jpg',
+                      '支付宝收款码',
+                      onLongPressAlipay,
+                      HJColors.primary)),
+            ],
+          ),
+          const SizedBox(height: 32),
+          SizedBox(
+              width: double.infinity,
+              child: HJButton.secondary(
+                  text: '关闭', onPressed: () => Navigator.pop(context))),
+        ],
       ),
     );
   }
 
-  Widget _buildQrCard(BuildContext context, String assetPath, VoidCallback onLongPress) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: const Offset(0, 4)),
-        ],
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(12),
-        child: GestureDetector(
-          onLongPress: onLongPress,
-          child: Image.asset(
-            assetPath,
+  Widget _buildQrCard(BuildContext context, String assetPath, String label,
+      VoidCallback onLongPress, Color accentColor) {
+    return Column(
+      children: [
+        GestureDetector(
+          onLongPress: () {
+            HapticFeedback.lightImpact();
+            onLongPress();
+          },
+          child: Container(
             height: 160,
-            fit: BoxFit.cover,
-            errorBuilder: (context, error, stackTrace) {
-              return Container(
-                height: 160,
-                color: Colors.grey[100],
-                alignment: Alignment.center,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(Icons.broken_image_outlined, color: Colors.grey),
-                    const SizedBox(height: 8),
-                    Text('加载失败', style: TextStyle(color: Colors.grey[400], fontSize: 10)),
-                  ],
-                ),
-              );
-            },
+            decoration: BoxDecoration(
+                color: HJColors.background,
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                      color: accentColor.withOpacity(0.05),
+                      blurRadius: 20,
+                      offset: const Offset(0, 8))
+                ],
+                border:
+                    Border.all(color: accentColor.withOpacity(0.1), width: 1)),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(20),
+              child: Image.asset(assetPath,
+                  fit: BoxFit.cover,
+                  errorBuilder: (_, __, ___) => Center(
+                      child: Icon(Icons.qr_code_2,
+                          color: accentColor.withOpacity(0.5), size: 48))),
+            ),
           ),
         ),
-      ),
+        const SizedBox(height: 16),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          decoration: BoxDecoration(
+            color: accentColor.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Text(label,
+              style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: accentColor)),
+        ),
+      ],
     );
   }
 }

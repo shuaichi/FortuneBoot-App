@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:hjproject/home/design_system/hjds_components.dart';
+import 'package:hjproject/home/design_system/hjds_theme.dart';
 
-/// 通用“保存/下载”底部操作面板组件：
-/// - Web: 显示“下载图片”
-/// - 非Web: 显示“保存到相册”和简要说明
-/// - 通用: 显示“复制资源路径”和“取消”
 class SaveOptionsSheet extends StatelessWidget {
   final String assetPath;
   final String suggestedName;
-  final Future<void> Function() onDownloadOrSave; // 统一保存/下载动作
+  final Future<void> Function() onDownloadOrSave;
   final VoidCallback? onClose;
 
   const SaveOptionsSheet({
@@ -24,62 +22,86 @@ class SaveOptionsSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       top: false,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const SizedBox(height: 12),
-          const Text(
-            '操作',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-          ),
-          const Divider(height: 1),
-          if (kIsWeb)
-            ListTile(
-              leading: const Icon(Icons.download),
-              title: const Text('下载图片'),
-              onTap: () async {
+      child: Padding(
+        padding: const EdgeInsets.only(bottom: HJSpacing.md),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children:[
+            Center(
+              child: Container(
+                width: 40,
+                height: 4,
+                margin: const EdgeInsets.only(top: 12, bottom: 8),
+                decoration: BoxDecoration(
+                  color: HJColors.divider,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+            ),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+              child: Text('操作',
+                  style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: HJColors.textPrimary)),
+            ),
+            const Divider(height: 0.5, thickness: 0.5, color: HJColors.divider),
+            if (kIsWeb)
+              HJChevronItem(
+                icon: Icons.download,
+                iconColor: HJColors.primary,
+                title: '下载图片',
+                onTap: () async {
+                  Navigator.pop(context);
+                  await onDownloadOrSave();
+                },
+              )
+            else ...[
+              HJChevronItem(
+                icon: Icons.save_alt,
+                iconColor: HJColors.primary,
+                title: '保存到相册',
+                onTap: () async {
+                  Navigator.pop(context);
+                  await onDownloadOrSave();
+                },
+              ),
+              HJValueItem(
+                icon: Icons.info_outline,
+                iconColor: HJColors.textSecondary,
+                title: '说明',
+                valueText: '如保存失败，请检查权限',
+                onTap: () => Navigator.pop(context),
+              ),
+            ],
+            HJChevronItem(
+              icon: Icons.link,
+              iconColor: HJColors.primary,
+              title: '复制资源路径',
+              onTap: () {
+                Clipboard.setData(ClipboardData(text: assetPath));
                 Navigator.pop(context);
-                await onDownloadOrSave();
-              },
-            )
-          else ...[
-            ListTile(
-              leading: const Icon(Icons.save_alt),
-              title: const Text('保存到相册'),
-              onTap: () async {
-                Navigator.pop(context);
-                await onDownloadOrSave();
+                ScaffoldMessenger.of(context)
+                    .showSnackBar(const SnackBar(content: Text('已复制')));
               },
             ),
-            ListTile(
-              leading: const Icon(Icons.info_outline),
-              title: const Text('说明'),
-              subtitle: const Text('如保存失败，请尝试截图或检查系统权限设置'),
-              onTap: () => Navigator.pop(context),
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                  horizontal: HJSpacing.md, vertical: HJSpacing.md),
+              child: SizedBox(
+                width: double.infinity,
+                child: HJButton.secondary(
+                  text: '取消',
+                  onPressed: () {
+                    Navigator.pop(context);
+                    onClose?.call();
+                  },
+                ),
+              ),
             ),
           ],
-          ListTile(
-            leading: const Icon(Icons.link),
-            title: const Text('复制资源路径'),
-            subtitle: Text(assetPath),
-            onTap: () {
-              Clipboard.setData(ClipboardData(text: assetPath));
-              Navigator.pop(context);
-              ScaffoldMessenger.of(context).removeCurrentSnackBar();
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('已复制资源路径')),
-              );
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.close),
-            title: const Text('取消'),
-            onTap: () {
-              Navigator.pop(context);
-              onClose?.call();
-            },
-          ),
-        ],
+        ),
       ),
     );
   }
