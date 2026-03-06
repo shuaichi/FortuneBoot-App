@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:ui'; // 引入以使用 FontFeature
 
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart' show timeDilation;
@@ -21,7 +22,7 @@ import 'package:pointycastle/pointycastle.dart' as PC;
 class LoginScreen extends StatelessWidget {
   static const routeName = '/auth';
 
-  const LoginScreen({super.key, this.roles = const []});
+  const LoginScreen({super.key, this.roles = const[]});
 
   final List<Map<String, dynamic>> roles;
 
@@ -53,7 +54,7 @@ class LoginScreen extends StatelessWidget {
      */
     debugPrint('验证码：$capImgRes');
     Map<String, dynamic> capDic =
-        Map<String, dynamic>.from(capImgRes.data as Map);
+    Map<String, dynamic>.from(capImgRes.data as Map);
     bool isCaptchaOn = capDic['isCaptchaOn'] as bool;
     Map? userResDic = {};
     if (isCaptchaOn) {
@@ -74,7 +75,7 @@ class LoginScreen extends StatelessWidget {
       String formattedPublicKey = formatPublicKey(rsaKey.data as String);
       debugPrint('公钥: $formattedPublicKey');
       var publicKey =
-          RSAKeyParser().parse(formattedPublicKey) as PC.RSAPublicKey;
+      RSAKeyParser().parse(formattedPublicKey) as PC.RSAPublicKey;
       final encrypter = Encrypter(RSA(publicKey: publicKey));
       final encrypted = encrypter.encrypt(password).base64;
       debugPrint('加密结果: $encrypted');
@@ -89,13 +90,13 @@ class LoginScreen extends StatelessWidget {
         if (value.code == 0) {
           if (value.data is Map) {
             var responseData =
-                Map<String, dynamic>.from(value.data as Map? ?? {});
+            Map<String, dynamic>.from(value.data as Map? ?? {});
             var userInfo = Map<String, dynamic>.from(
                 responseData["currentUser"] as Map? ?? {});
             var token = responseData["token"] as String? ?? "";
             var userToken = {
               "Cookie":
-                  'authorized-token=${Uri.encodeComponent(jsonEncode(responseData))}}',
+              'authorized-token=${Uri.encodeComponent(jsonEncode(responseData))}}',
               "Authorization": "Bearer $token"
             };
             DioClient().refreshToken(userToken);
@@ -131,9 +132,9 @@ class LoginScreen extends StatelessWidget {
     String email = data.additionalSignupData!['email']!;
     String phoneNumber = data.additionalSignupData!['phone_number']!;
     int sex =
-        (data.additionalSignupData!['sex'] ?? S.current.male) == S.current.male
-            ? 1
-            : 0;
+    (data.additionalSignupData!['sex'] ?? S.current.male) == S.current.male
+        ? 1
+        : 0;
     String password = data.password!;
     final ResisterLogin post = ResisterLogin(
       userName,
@@ -161,13 +162,12 @@ class LoginScreen extends StatelessWidget {
   }
 
   Future<String?> _signupUser(SignupData data) async {
-    print('lxjtodo _signupConfirm');
     try {
       final loginService = LoginService();
       var registerRoles = await loginService.getAllowRegisterRoles();
       if (registerRoles.data is List<dynamic>) {
         final List<Map<String, dynamic>> roles =
-            List<Map<String, dynamic>>.from(
+        List<Map<String, dynamic>>.from(
           registerRoles.data as List<dynamic>,
         );
         if (roles.length == 1) {
@@ -176,14 +176,23 @@ class LoginScreen extends StatelessWidget {
         } else if (roles.length > 1) {
           final List<SimpleDialogOption> simpleDialogs = roles.map((role) {
             return SimpleDialogOption(
-              onPressed: () => _selectRole(data, role),
+              onPressed: () {
+                HapticFeedback.selectionClick();
+                _selectRole(data, role);
+              },
               child: Text(role['roleName'] as String? ?? ''),
             );
           }).toList();
           return showDialog<String?>(
             context: AppView.navigatorKey.currentContext!,
             builder: (context) => SimpleDialog(
-              title: Text("选择角色"),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20)),
+              title: const Text(
+                "选择角色",
+                style: TextStyle(
+                    fontWeight: FontWeight.w600, color: Color(0xFF1C1C1E)),
+              ),
               children: simpleDialogs,
             ),
           );
@@ -208,7 +217,6 @@ class LoginScreen extends StatelessWidget {
   }
 
   Future<String?> _signupConfirm(String error, LoginData data) {
-    print('lxjtodo _signupConfirm');
     return Future.delayed(loginTime).then((_) {
       return null;
     });
@@ -242,7 +250,7 @@ class LoginScreen extends StatelessWidget {
         }
       },
       loginAfterSignUp: false,
-      termsOfService: [
+      termsOfService:[
         TermOfService(
           id: 'general-term',
           mandatory: true,
@@ -271,7 +279,6 @@ class LoginScreen extends StatelessWidget {
         additionalSignUpFormDescription: S.of(context).fill_to_signup,
         additionalSignUpSubmitButton: S.of(context).sign_up_submit,
         signUpSuccess: S.of(context).sign_up_success,
-        // providersTitle: 'login with'
       ),
       theme: AppTheme.loginTheme(context),
       userValidator: (value) {
@@ -284,39 +291,19 @@ class LoginScreen extends StatelessWidget {
         if (value!.isEmpty) {
           return S.of(context).password_is_empty;
         }
-
-        // 使用指定的正则表达式进行密码校验
         final passwordRegExp = RegExp(
             r'^(?![0-9]+$)(?![a-z]+$)(?![A-Z]+$)(?!([^(0-9a-zA-Z)]|[()])+$)(?!^.*[\u4E00-\u9FA5].*$)([^(0-9a-zA-Z)]|[()]|[a-z]|[A-Z]|[0-9]){8,18}$');
-
         if (!passwordRegExp.hasMatch(value)) {
           return '密码必须包含字母、数字或特殊字符，长度8-18位，不能包含中文';
         }
-
         return null;
       },
       onLogin: (loginData) {
-        debugPrint('Login info');
-        debugPrint('Name: ${loginData.name}');
-        debugPrint('Password: ${loginData.password}');
+        HapticFeedback.mediumImpact(); // 登录按钮中等震动反馈
         return _loginUser(loginData);
       },
       onSignup: (signupData) {
-        debugPrint('Signup info');
-        debugPrint('Name: ${signupData.name}');
-        debugPrint('Password: ${signupData.password}');
-
-        signupData.additionalSignupData?.forEach((key, value) {
-          debugPrint('$key: $value');
-        });
-        if (signupData.termsOfService.isNotEmpty) {
-          debugPrint('Terms of service: ');
-          for (final element in signupData.termsOfService) {
-            debugPrint(
-              ' - ${element.term.id}: ${element.accepted == true ? 'accepted' : 'rejected'}',
-            );
-          }
-        }
+        HapticFeedback.mediumImpact();
         return _signupUser(signupData);
       },
       onSubmitAnimationCompleted: () {
@@ -327,17 +314,15 @@ class LoginScreen extends StatelessWidget {
         );
       },
       onRecoverPassword: (name) {
-        debugPrint('Recover password info');
-        debugPrint('Name: $name');
+        HapticFeedback.lightImpact();
         return _recoverPassword(name);
-        // Show new password dialog
       },
       headerWidget: const IntroWidget(),
     );
   }
 
   List<UserFormField> fetchUserForms(BuildContext context) {
-    return [
+    return[
       UserFormField(
         keyName: 'nickname',
         displayName: S.of(context).login_nickname,
@@ -373,27 +358,24 @@ class LoginScreen extends StatelessWidget {
         keyName: 'phone_number',
         displayName: S.of(context).phone_number,
         userType: LoginUserType.phone,
-        // 允许手机号为空
         fieldValidator: (value) {
-          // 允许手机号为空
           if (value == null || value.isEmpty) {
             return null;
           }
-
           final phoneRegExp = RegExp(r'^'
-              r'(?:' // 国际号码匹配组
-              r'\+1[ -]?(?:\(\d{3}\)|\d{3})[ -]?\d{3}[ -]?\d{4}' // 美国
-              r'|\+81[ -]?(?:0\d{1,4}[ -]?\d{1,4}[ -]?\d{4}|\d{1,4}[ -]?\d{1,4}[ -]?\d{4})' // 日本
-              r'|\+82[ -]?0?1[0-9]{1}[ -]?\d{3,4}[ -]?\d{4}' // 韩国
-              r'|\+33[ -]?(?:[1-9]\d{1}[ -]?){3}\d{2}' // 法国
-              r'|\+44[ -]?7(?:[0-9][ -]?){9}' // 英国
-              r'|\+7[ -]?[3489]\d{2}[ -]?\d{3}[ -]?\d{2}[ -]?\d{2}' // 俄罗斯
-              r'|\+91[ -]?[6-9]\d{4}[ -]?\d{5}' // 印度
-              r'|\+86[ -]?1[3-9]\d[ -]?\d{4}[ -]?\d{4}' // 中国国际格式
-              r')'
-              r'|' // 或中国国内简写格式
-              r'(?:1[3-9]\d[ -]?\d{4}[ -]?\d{4})' // 中国国内
-              r'$');
+          r'(?:'
+          r'\+1[ -]?(?:\(\d{3}\)|\d{3})[ -]?\d{3}[ -]?\d{4}'
+          r'|\+81[ -]?(?:0\d{1,4}[ -]?\d{1,4}[ -]?\d{4}|\d{1,4}[ -]?\d{1,4}[ -]?\d{4})'
+          r'|\+82[ -]?0?1[0-9]{1}[ -]?\d{3,4}[ -]?\d{4}'
+          r'|\+33[ -]?(?:[1-9]\d{1}[ -]?){3}\d{2}'
+          r'|\+44[ -]?7(?:[0-9][ -]?){9}'
+          r'|\+7[ -]?[3489]\d{2}[ -]?\d{3}[ -]?\d{2}[ -]?\d{2}'
+          r'|\+91[ -]?[6-9]\d{4}[ -]?\d{5}'
+          r'|\+86[ -]?1[3-9]\d[ -]?\d{4}[ -]?\d{4}'
+          r')'
+          r'|'
+          r'(?:1[3-9]\d[ -]?\d{4}[ -]?\d{4})'
+          r'$');
           if (!phoneRegExp.hasMatch(value)) {
             return S.of(context).valid_phone_number;
           }
@@ -404,137 +386,330 @@ class LoginScreen extends StatelessWidget {
   }
 }
 
+// 高级金融感：重写头部引导区
 class IntroWidget extends StatelessWidget {
   const IntroWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Text.rich(
-          TextSpan(
-            children: [
-              TextSpan(
-                text: S.of(context).login_message,
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+      child: Column(
+        children: [
+          Text.rich(
+            TextSpan(
+              children:[
+                TextSpan(
+                  text: S.of(context).login_message,
+                  style: const TextStyle(
+                      color: Color(0xFF8E8E93), // 次要信息降噪
+                      fontSize: 14,
+                      height: 1.5),
+                ),
+                TextSpan(
+                  text: ' ${S.of(context).login_host}',
+                  style: const TextStyle(
+                      color: Color(0xFF1C1C1E),
+                      fontWeight: FontWeight.w600,
+                      fontSize: 14,
+                      height: 1.5),
+                ),
+              ],
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 24),
+          Row(
+            children: <Widget>[
+              const Expanded(
+                child: Divider(
+                  thickness: 0.5,
+                  color: Color(0xFFC6C6C8),
+                ),
               ),
-              TextSpan(
-                text: S.of(context).login_host,
-                style: TextStyle(fontWeight: FontWeight.bold),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Text(
+                  S.of(context).authenticate,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                    color: Color(0xFF8E8E93),
+                    letterSpacing: 1.2,
+                  ),
+                ),
+              ),
+              const Expanded(
+                child: Divider(
+                  thickness: 0.5,
+                  color: Color(0xFFC6C6C8),
+                ),
               ),
             ],
           ),
-          textAlign: TextAlign.justify,
-        ),
-        Row(
-          children: <Widget>[
-            Expanded(child: Divider()),
-            Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Text(S.of(context).authenticate),
-            ),
-            Expanded(child: Divider()),
-          ],
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
 
-// 验证码弹窗组件
+// ----------------------------------------------------------------------
+// 极致金融级安全验证码弹窗 - Top-Tier Fintech Captcha Dialog
+// ----------------------------------------------------------------------
 Future<Map?> showCaptchaDialog(Map captchaDic) async {
   if (AppView.navigatorKey.currentContext == null) {
     return null;
   }
+
+  // 弹窗出现时的物理感知
+  HapticFeedback.selectionClick();
+
   final controller = TextEditingController();
   final focusNode = FocusNode();
   String captchaCode = captchaDic['captchaCodeImg'] as String;
   Map captchaData = captchaDic;
   final LoginService loginService = LoginService();
+  bool isLoading = false; // 刷新状态防抖
+
   return showDialog<Map?>(
     context: AppView.navigatorKey.currentContext!,
     barrierDismissible: false,
+    barrierColor: Colors.black.withOpacity(0.4), // 沉浸式背景层
     builder: (context) => StatefulBuilder(
       builder: (context, setState) {
+
+        Future<void> _refreshCaptcha() async {
+          if (isLoading) return;
+          HapticFeedback.lightImpact(); // 轻按反馈
+          setState(() => isLoading = true);
+          try {
+            final capImgRes = await loginService.captchaImage();
+            final Map<String, dynamic> capDic =
+            Map<String, dynamic>.from(capImgRes.data as Map);
+            setState(() {
+              captchaCode = capDic['captchaCodeImg'] as String;
+              captchaData = capDic;
+            });
+          } finally {
+            setState(() => isLoading = false);
+          }
+        }
+
         return Dialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppTheme.cardBorderRadius),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(AppTheme.spacing),
+          backgroundColor: Colors.transparent, // 穿透以渲染自定义卡片
+          elevation: 0,
+          insetPadding: const EdgeInsets.symmetric(horizontal: 32),
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(24), // 大圆角
+              boxShadow:[
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.04),
+                  blurRadius: 20,
+                  offset: const Offset(0, 10),
+                ),
+              ],
+            ),
+            padding: const EdgeInsets.all(24),
             child: Column(
               mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  '请输入验证码',
-                  style: Theme.of(context).textTheme.titleLarge,
-                ),
-                const SizedBox(height: AppTheme.spacing),
-                GestureDetector(
-                  onTap: () async {
-                    final capImgRes = await loginService.captchaImage();
-                    debugPrint('刷新验证码：$capImgRes');
-                    final Map<String, dynamic> capDic =
-                        Map<String, dynamic>.from(capImgRes.data as Map);
-                    final String resKey = capDic['captchaCodeImg'] as String;
-                    setState(() {
-                      captchaCode = resKey;
-                      captchaData = capDic;
-                    });
-                  },
-                  child: Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(color: AppTheme.dividerColor),
-                      borderRadius:
-                          BorderRadius.circular(AppTheme.borderRadius),
-                    ),
-                    child: Base64Image(base64String: captchaCode),
+              children:[
+                // 顶部图标 Affordance
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF007AFF).withOpacity(0.12), // iOS蓝态
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.shield_rounded, // 安全护盾图标传达信任感
+                    color: Color(0xFF007AFF),
+                    size: 28,
                   ),
                 ),
-                const SizedBox(height: AppTheme.spacing),
-                TextField(
+                const SizedBox(height: 16),
+                const Text(
+                  '请输入验证码',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF1C1C1E),
+                    letterSpacing: -0.5,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                const Text(
+                  '保障您的账户资金安全',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Color(0xFF8E8E93),
+                  ),
+                ),
+                const SizedBox(height: 24),
+
+                // 验证码图片与刷新按钮行
+                Row(
+                  children:[
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: _refreshCaptcha,
+                        child: Container(
+                          height: 54,
+                          clipBehavior: Clip.antiAlias,
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFF2F4F7),
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                                color: const Color(0xFFE5E5EA), width: 1),
+                          ),
+                          child: AnimatedSwitcher(
+                            duration: const Duration(milliseconds: 300),
+                            child: Base64Image(
+                              key: ValueKey<String>(captchaCode),
+                              base64String: captchaCode,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    GestureDetector(
+                      onTap: _refreshCaptcha,
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 200),
+                        padding: const EdgeInsets.all(14),
+                        decoration: BoxDecoration(
+                          color: isLoading
+                              ? const Color(0xFF007AFF).withOpacity(0.05)
+                              : const Color(0xFF007AFF).withOpacity(0.12),
+                          shape: BoxShape.circle,
+                        ),
+                        child: isLoading
+                            ? const SizedBox(
+                            width: 24,
+                            height: 24,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2.5,
+                              color: Color(0xFF007AFF),
+                            ))
+                            : const Icon(
+                          Icons.refresh_rounded,
+                          color: Color(0xFF007AFF),
+                          size: 24,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+
+                // 极致抛光的数字输入区
+                TextFormField(
                   controller: controller,
                   focusNode: focusNode,
                   autofocus: true,
                   maxLength: 4,
                   keyboardType: TextInputType.number,
+                  cursorColor: const Color(0xFF007AFF),
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    fontSize: 32,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF1C1C1E),
+                    letterSpacing: 24, // 增加字符间距营造高级感
+                    fontFeatures: [FontFeature.tabularFigures()],
+                  ),
+                  onChanged: (val) {
+                    HapticFeedback.lightImpact(); // 每次按键注入触觉反馈
+                  },
                   decoration: InputDecoration(
                     counterText: '',
-                    hintText: '请输入图片中的数字',
-                    suffixIcon: IconButton(
-                      icon: const Icon(Icons.refresh),
-                      onPressed: () async {
-                        final capImgRes = await loginService.captchaImage();
-                        debugPrint('刷新验证码：$capImgRes');
-                        final Map<String, dynamic> capDic =
-                            Map<String, dynamic>.from(capImgRes.data as Map);
-                        final String resKey =
-                            capDic['captchaCodeImg'] as String;
-                        setState(() {
-                          captchaCode = resKey;
-                          captchaData = capDic;
-                        });
-                      },
+                    filled: true,
+                    fillColor: const Color(0xFFF2F4F7),
+                    contentPadding: const EdgeInsets.symmetric(vertical: 16),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      borderSide: BorderSide.none,
+                    ),
+                    hintText: '· ·',
+                    hintStyle: TextStyle(
+                      fontSize: 32,
+                      fontWeight: FontWeight.w400,
+                      color: const Color(0xFF8E8E93).withOpacity(0.4),
+                      letterSpacing: 24,
                     ),
                   ),
                 ),
-                const SizedBox(height: AppTheme.spacing),
+                const SizedBox(height: 32),
+
+                // 底部操作区组
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    TextButton(
-                      onPressed: () => Navigator.pop(context),
-                      child: const Text('取消'),
+                  children:[
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () {
+                          HapticFeedback.lightImpact();
+                          Navigator.pop(context);
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFF2F4F7),
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          alignment: Alignment.center,
+                          child: const Text(
+                            '取消',
+                            style: TextStyle(
+                              color: Color(0xFF8E8E93),
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ),
                     ),
-                    const SizedBox(width: AppTheme.spacingSmall),
-                    ElevatedButton(
-                      onPressed: () {
-                        Map<String, dynamic> userDic = {};
-                        userDic['captchaUserInput'] = controller.text;
-                        userDic['captchaCodeKey'] =
-                            captchaData['captchaCodeKey'];
-                        Navigator.pop(context, userDic);
-                      },
-                      child: const Text('确认'),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () {
+                          if (controller.text.isEmpty) {
+                            // 错误态震动
+                            HapticFeedback.heavyImpact();
+                            return;
+                          }
+                          HapticFeedback.mediumImpact(); // 提交时震动反馈
+                          Map<String, dynamic> userDic = {};
+                          userDic['captchaUserInput'] = controller.text;
+                          userDic['captchaCodeKey'] =
+                          captchaData['captchaCodeKey'];
+                          Navigator.pop(context, userDic);
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF007AFF), // 核心提交色
+                            borderRadius: BorderRadius.circular(16),
+                            boxShadow:[
+                              BoxShadow(
+                                color: const Color(0xFF007AFF).withOpacity(0.2),
+                                blurRadius: 10,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                          alignment: Alignment.center,
+                          child: const Text(
+                            '确认',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ),
                     ),
                   ],
                 ),

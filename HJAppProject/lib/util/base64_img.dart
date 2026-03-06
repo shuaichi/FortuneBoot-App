@@ -7,6 +7,7 @@ class Base64Image extends StatelessWidget {
   final Widget? errorWidget;
 
   const Base64Image({
+    super.key,
     required this.base64String,
     this.fit = BoxFit.cover,
     this.errorWidget,
