@@ -11,7 +11,6 @@ import 'package:hjproject/home/bill_overview/models/bill_statistics.dart';
 import 'package:hjproject/repository/repository/bills_repository.dart';
 import '../../../generated/l10n.dart';
 import 'package:intl/intl.dart';
-import 'widgets/stats_icons.dart';
 
 class StatsPage extends StatelessWidget {
   const StatsPage({super.key});
@@ -20,11 +19,11 @@ class StatsPage extends StatelessWidget {
     return MaterialPageRoute(
         fullscreenDialog: true,
         builder: (context) => BlocProvider(
-              create: (context) => BillsStatsBloc(
-                billsRepository: context.read<BillsRepository>(),
-              )..add(BillsStatsRequested()),
-              child: const StatsView(),
-            ));
+          create: (context) => BillsStatsBloc(
+            billsRepository: context.read<BillsRepository>(),
+          )..add(BillsStatsRequested()),
+          child: const StatsView(),
+        ));
   }
 
   @override
@@ -120,16 +119,8 @@ class _StatsViewState extends State<StatsView>
   }
 
   Widget _buildTimeRangeSelector() {
-    return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const DashboardIcon(icon: StatsIcons.calendar, size: 20, color: Colors.grey),
-            const SizedBox(width: 4),
-            const Text('近6月'),
-          ],
-        ));
+    return const Padding(
+        padding: EdgeInsets.symmetric(horizontal: 16.0), child: Text('近6月'));
     // return Padding(
     //   padding: const EdgeInsets.symmetric(horizontal: 16.0),
     //   child: DropdownButton<int>(
@@ -176,8 +167,8 @@ class _StatsViewState extends State<StatsView>
           Text(
             '收支趋势图',
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+              fontWeight: FontWeight.bold,
+            ),
           ),
           const SizedBox(height: 8),
           _buildSimpleLineChart(context, incomeTrends, expenseTrends),
@@ -198,8 +189,8 @@ class _StatsViewState extends State<StatsView>
           Text(
             '收入分类占比',
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+              fontWeight: FontWeight.bold,
+            ),
           ),
           const SizedBox(height: 16),
           _buildSimplePieChart(
@@ -226,8 +217,8 @@ class _StatsViewState extends State<StatsView>
           Text(
             '支出分类占比',
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+              fontWeight: FontWeight.bold,
+            ),
           ),
           const SizedBox(height: 16),
           _buildSimplePieChart(
@@ -268,16 +259,16 @@ class _StatsViewState extends State<StatsView>
                   Text(
                     '净资产',
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          color: Colors.grey[700],
-                        ),
+                      color: Colors.grey[700],
+                    ),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     '¥${NumberFormat('#,##0.00').format(netWorth)}',
                     style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: netWorth >= 0 ? Colors.blue : Colors.red,
-                        ),
+                      fontWeight: FontWeight.bold,
+                      color: netWorth >= 0 ? Colors.blue : Colors.red,
+                    ),
                   ),
                   const SizedBox(height: 24),
                   _buildAssetLiabilityRow(
@@ -303,8 +294,8 @@ class _StatsViewState extends State<StatsView>
           Text(
             '资产分布',
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+              fontWeight: FontWeight.bold,
+            ),
           ),
           const SizedBox(height: 16),
           _buildAssetsList(context),
@@ -312,8 +303,8 @@ class _StatsViewState extends State<StatsView>
           Text(
             '负债分布',
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+              fontWeight: FontWeight.bold,
+            ),
           ),
           const SizedBox(height: 16),
           _buildLiabilitiesList(context),
@@ -341,8 +332,8 @@ class _StatsViewState extends State<StatsView>
             Text(
               '半年收支概览',
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+                fontWeight: FontWeight.bold,
+              ),
             ),
             const SizedBox(height: 16),
             Row(
@@ -366,38 +357,16 @@ class _StatsViewState extends State<StatsView>
 
   Widget _buildSummaryItem(
       BuildContext context, String label, double amount, Color color) {
-    IconData icon;
-    if (label == '收入') {
-      icon = StatsIcons.income;
-    } else if (label == '支出') {
-      icon = StatsIcons.expense;
-    } else {
-      icon = StatsIcons.balance;
-    }
-
     return Column(
       children: [
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            DashboardIcon(
-              icon: icon,
-              size: 16,
-              color: color,
-              isFilled: true,
-              backgroundColor: color.withOpacity(0.1),
-            ),
-            const SizedBox(width: 4),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.grey[600],
-              ),
-            ),
-          ],
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 14,
+            color: Colors.grey[600],
+          ),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 4),
         Text(
           '¥${NumberFormat('#,##0.00').format(amount)}',
           style: TextStyle(
@@ -526,7 +495,14 @@ class _StatsViewState extends State<StatsView>
             children: [
               Row(
                 children: [
-                  DashboardIcon(icon: StatsIcons.income, size: 12, color: Colors.green),
+                  Container(
+                    width: 12,
+                    height: 12,
+                    decoration: const BoxDecoration(
+                      color: Colors.green,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
                   const SizedBox(width: 4),
                   const Text('收入'),
                 ],
@@ -534,7 +510,14 @@ class _StatsViewState extends State<StatsView>
               const SizedBox(width: 24),
               Row(
                 children: [
-                  DashboardIcon(icon: StatsIcons.expense, size: 12, color: Colors.red),
+                  Container(
+                    width: 12,
+                    height: 12,
+                    decoration: const BoxDecoration(
+                      color: Colors.red,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
                   const SizedBox(width: 4),
                   const Text('支出'),
                 ],
@@ -560,9 +543,9 @@ class _StatsViewState extends State<StatsView>
             padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 2),
             decoration: highlighted
                 ? BoxDecoration(
-                    border: Border.all(color: Colors.black26),
-                    borderRadius: BorderRadius.circular(6),
-                  )
+              border: Border.all(color: Colors.black26),
+              borderRadius: BorderRadius.circular(6),
+            )
                 : null,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -575,7 +558,7 @@ class _StatsViewState extends State<StatsView>
                   decoration: BoxDecoration(
                     color: incomeColor,
                     borderRadius:
-                        const BorderRadius.vertical(top: Radius.circular(4)),
+                    const BorderRadius.vertical(top: Radius.circular(4)),
                   ),
                 ),
                 Container(
@@ -585,7 +568,7 @@ class _StatsViewState extends State<StatsView>
                   decoration: BoxDecoration(
                     color: expenseColor,
                     borderRadius:
-                        const BorderRadius.vertical(top: Radius.circular(4)),
+                    const BorderRadius.vertical(top: Radius.circular(4)),
                   ),
                 ),
               ],
@@ -730,11 +713,13 @@ class _StatsViewState extends State<StatsView>
                 return Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    DashboardIcon(
-                      icon: StatsIcons.categoryDefault,
-                      color: dotColor,
-                      size: 12,
-                      isFilled: true,
+                    Container(
+                      width: 12,
+                      height: 12,
+                      decoration: BoxDecoration(
+                        color: dotColor,
+                        shape: BoxShape.circle,
+                      ),
                     ),
                     const SizedBox(width: 4),
                     // 百分比显示兼容：支持小数(0..1)与百分比(0..100)，无percent时按value占比
@@ -782,11 +767,13 @@ class _StatsViewState extends State<StatsView>
             ),
             const SizedBox(height: 16),
             ListTile(
-              leading: const DashboardIcon(
-                icon: Icons.check_circle_rounded,
-                color: Colors.green,
-                size: 24,
-                isFilled: true,
+              leading: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.green.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Icon(Icons.check_rounded, color: Colors.green),
               ),
               title: Text(S.current.statsCompletedTodoCountLabel),
               trailing: Text(
@@ -798,11 +785,14 @@ class _StatsViewState extends State<StatsView>
               ),
             ),
             ListTile(
-              leading: const DashboardIcon(
-                icon: Icons.pending_rounded,
-                color: Colors.orange,
-                size: 24,
-                isFilled: true,
+              leading: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.orange.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Icon(Icons.radio_button_unchecked_rounded,
+                    color: Colors.orange),
               ),
               title: Text(S.current.statsActiveTodoCountLabel),
               trailing: Text(
@@ -827,11 +817,13 @@ class _StatsViewState extends State<StatsView>
         final category = entry.value;
         final dotColor = _resolveCategoryColor(i, category);
         return ListTile(
-          leading: DashboardIcon(
-            icon: StatsIcons.categoryDefault,
-            color: dotColor,
-            size: 24,
-            isFilled: true,
+          leading: Container(
+            width: 24,
+            height: 24,
+            decoration: BoxDecoration(
+              color: dotColor,
+              shape: BoxShape.circle,
+            ),
           ),
           title: Text(
             category.name ?? '',
@@ -868,11 +860,13 @@ class _StatsViewState extends State<StatsView>
       children: [
         Row(
           children: [
-            DashboardIcon(
-              icon: icon,
-              color: color,
-              size: 20,
-              isFilled: true,
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: color.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(icon, color: color, size: 20),
             ),
             const SizedBox(width: 12),
             Text(
@@ -884,9 +878,9 @@ class _StatsViewState extends State<StatsView>
         Text(
           '¥${NumberFormat('#,##0.00').format(amount)}',
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: color,
-              ),
+            fontWeight: FontWeight.bold,
+            color: color,
+          ),
         ),
       ],
     );
@@ -906,11 +900,13 @@ class _StatsViewState extends State<StatsView>
         return Card(
           margin: const EdgeInsets.only(bottom: 8),
           child: ListTile(
-            leading: DashboardIcon(
-              icon: asset['icon'] as IconData? ?? StatsIcons.categoryDefault,
-              color: Colors.green,
-              size: 24,
-              isFilled: true,
+            leading: Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: Colors.green.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(asset['icon'] as IconData?, color: Colors.green),
             ),
             title: Text(
               asset['name'] as String? ?? '',
@@ -942,11 +938,13 @@ class _StatsViewState extends State<StatsView>
         return Card(
           margin: const EdgeInsets.only(bottom: 8),
           child: ListTile(
-            leading: DashboardIcon(
-              icon: liability['icon'] as IconData? ?? StatsIcons.categoryDefault,
-              color: Colors.red,
-              size: 24,
-              isFilled: true,
+            leading: Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: Colors.red.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(liability['icon'] as IconData?, color: Colors.red),
             ),
             title: Text(
               liability['name'] as String? ?? '',
@@ -977,7 +975,7 @@ class SimplePieChartPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final center = Offset(size.width / 2, size.height / 2);
     final radius =
-        size.width < size.height ? size.width / 2 * 0.8 : size.height / 2 * 0.8;
+    size.width < size.height ? size.width / 2 * 0.8 : size.height / 2 * 0.8;
 
     double startAngle = 0;
 
