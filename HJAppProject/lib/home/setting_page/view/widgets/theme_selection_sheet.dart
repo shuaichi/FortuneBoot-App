@@ -9,9 +9,9 @@ class ThemeSelectionSheet extends StatelessWidget {
 
   const ThemeSelectionSheet(
       {super.key,
-      required this.themes,
-      required this.onSelected,
-      this.current});
+        required this.themes,
+        required this.onSelected,
+        this.current});
 
   @override
   Widget build(BuildContext context) {
@@ -21,13 +21,27 @@ class ThemeSelectionSheet extends StatelessWidget {
         padding: const EdgeInsets.only(bottom: HJSpacing.md),
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          children: [
-            const Padding(
-              padding: EdgeInsets.all(16),
-              child: Text('选择主题',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          children:[
+            Center(
+              child: Container(
+                width: 40,
+                height: 4,
+                margin: const EdgeInsets.only(top: 12, bottom: 8),
+                decoration: BoxDecoration(
+                  color: HJColors.divider,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
             ),
-            Divider(height: 1, color: Colors.grey[200]),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+              child: Text('选择主题',
+                  style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: HJColors.textPrimary)),
+            ),
+            const Divider(height: 0.5, thickness: 0.5, color: HJColors.divider),
             Flexible(
               child: ListView.builder(
                 shrinkWrap: true,
@@ -37,11 +51,14 @@ class ThemeSelectionSheet extends StatelessWidget {
                   final selected = (current != null && current == item) ||
                       (current == null && item == '跟随系统');
                   return HJValueItem(
-                    // ← 修复此处
-                    icon: Icons.color_lens_outlined,
+                    icon: selected
+                        ? Icons.radio_button_checked
+                        : Icons.radio_button_unchecked,
+                    iconColor:
+                    selected ? HJColors.primary : HJColors.textSecondary,
                     title: item,
                     valueText: selected ? '当前' : null,
-                    valueColor: selected ? Colors.green : null,
+                    valueColor: selected ? HJColors.primary : null,
                     onTap: () {
                       Navigator.pop(context);
                       onSelected(item);

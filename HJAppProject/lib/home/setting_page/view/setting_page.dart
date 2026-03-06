@@ -1,6 +1,7 @@
 import 'dart:developer' as developer;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:hjproject/home/setting_page/bloc/setting_bloc.dart';
@@ -38,8 +39,8 @@ class MinePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) =>
-          SettingBloc(billsRepository: context.read<BillsRepository>())
-            ..add(SettingInitDataLoaded()),
+      SettingBloc(billsRepository: context.read<BillsRepository>())
+        ..add(SettingInitDataLoaded()),
       child: const MineView(),
     );
   }
@@ -74,7 +75,7 @@ class _MineViewState extends State<MineView> {
   Widget build(BuildContext context) {
     final state = context.watch<SettingBloc>().state;
     final uiState = _mapToUIState(state.status);
-    final elements = [
+    final elements =[
       ...state.settings,
       ...state.remoteSettings,
       ...state.groupSettings
@@ -83,7 +84,7 @@ class _MineViewState extends State<MineView> {
     final groups = SettingFilter.groupSettings(elements);
 
     final usernameSetting = elements.firstWhere(
-        (e) => e.type == SettingType.username,
+            (e) => e.type == SettingType.username,
         orElse: () => const Setting(SettingType.username, content: '未登录用户'));
 
     return UIStateHandler(
@@ -97,18 +98,19 @@ class _MineViewState extends State<MineView> {
               context, MaterialPageRoute(builder: (_) => const ProfilePage())),
           onShowQRCode: () => _showQRCode(context),
         ),
-        sections: [
+        sections:[
           if (groups.hasAccountSettings)
             SectionCard(
               title: '账户概览',
               items:
-                  groups.accountSettings.map((e) => _buildListItem(e)).toList(),
+              groups.accountSettings.map((e) => _buildListItem(e)).toList(),
             ),
           SectionCard(
             title: '账本配置',
-            items: [
+            items:[
               HJChevronItem(
                   icon: Icons.category_outlined,
+                  iconColor: const Color(0xFFFF9500),
                   title: '分类管理',
                   onTap: () => Navigator.push(
                       context,
@@ -116,6 +118,7 @@ class _MineViewState extends State<MineView> {
                           builder: (_) => const CategoryManagePage()))),
               HJChevronItem(
                   icon: Icons.label_outline,
+                  iconColor: const Color(0xFFAF52DE),
                   title: '标签管理',
                   onTap: () => Navigator.push(
                       context,
@@ -123,6 +126,7 @@ class _MineViewState extends State<MineView> {
                           builder: (_) => const TagManagePage()))),
               HJChevronItem(
                   icon: Icons.people_outline,
+                  iconColor: const Color(0xFFFF2D55),
                   title: '交易对象',
                   onTap: () => Navigator.push(
                       context,
@@ -130,6 +134,7 @@ class _MineViewState extends State<MineView> {
                           builder: (_) => const PayeeManagePage()))),
               HJChevronItem(
                   icon: Icons.account_balance_outlined,
+                  iconColor: HJColors.primary,
                   title: '账户管理',
                   onTap: () => Navigator.push(
                       context,
@@ -146,17 +151,19 @@ class _MineViewState extends State<MineView> {
             SectionCard(
               title: '关于',
               items:
-                  groups.aboutSettings.map((e) => _buildListItem(e)).toList(),
+              groups.aboutSettings.map((e) => _buildListItem(e)).toList(),
             ),
           SectionCard(
             title: '更多',
-            items: [
+            items:[
               HJChevronItem(
                   icon: Icons.favorite_outline,
+                  iconColor: HJColors.expense,
                   title: '打赏作者',
                   onTap: () => _showQRCode(context)),
               HJChevronItem(
                   icon: Icons.help_outline,
+                  iconColor: HJColors.primary,
                   title: '帮助文档',
                   onTap: () => showDialog(
                       context: context, builder: (_) => const HelpDialog())),
@@ -168,20 +175,20 @@ class _MineViewState extends State<MineView> {
           onPressed: () => showDialog(
               context: context,
               builder: (_) => LogoutConfirmDialog(
-                    onConfirm: () {
-                      ScaffoldMessenger.of(context).removeCurrentSnackBar();
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('已退出登录')),
-                      );
-                      UserDataSingleton().remove(UserDataSingleton.userInfo);
-                      DioClient().refreshToken({});
-                      Navigator.of(context).pushReplacement(
-                        MaterialPageRoute(
-                          builder: (context) => const BaseUrlConfigPage(),
-                        ),
-                      );
-                    },
-                  )),
+                onConfirm: () {
+                  ScaffoldMessenger.of(context).removeCurrentSnackBar();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('已退出登录')),
+                  );
+                  UserDataSingleton().remove(UserDataSingleton.userInfo);
+                  DioClient().refreshToken({});
+                  Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(
+                      builder: (context) => const BaseUrlConfigPage(),
+                    ),
+                  );
+                },
+              )),
         ),
       ),
     );
@@ -191,22 +198,31 @@ class _MineViewState extends State<MineView> {
     if (element.type == SettingType.accountOverview) {
       return HJAccountItem(
         icon: Icons.account_balance_wallet,
+        iconColor: HJColors.primary,
         title: element.type.title,
         subtitle: element.detail?.replaceAll('\r\n', '   ') ?? '',
-        onTap: () => showDialog(
-            context: context,
-            builder: (_) => SettingDetailDialog(
-                title: element.type.title,
-                contentText: element.content,
-                detailText: element.detail)),
+        onTap: () {
+          HapticFeedback.selectionClick();
+          showDialog(
+              context: context,
+              builder: (_) => SettingDetailDialog(
+                  title: element.type.title,
+                  contentText: element.content,
+                  detailText: element.detail));
+        },
       );
     }
 
+    final iconInfo = _getIconInfoForType(element.type);
+
     return HJValueItem(
-      icon: _getIconForType(element.type),
+      icon: iconInfo.$1,
+      iconColor: iconInfo.$2,
       title: element.type.title,
       valueText: element.content ?? element.detail,
+      valueColor: HJColors.primary,
       onTap: () async {
+        HapticFeedback.selectionClick();
         switch (element.type) {
           case SettingType.currentTheme:
           case SettingType.currentLanguage:
@@ -236,30 +252,31 @@ class _MineViewState extends State<MineView> {
     );
   }
 
-  IconData _getIconForType(SettingType type) {
+  (IconData, Color) _getIconInfoForType(SettingType type) {
     switch (type) {
       case SettingType.currentGroup:
-        return Icons.group_work_outlined;
+        return (Icons.group_work_outlined, HJColors.primary);
       case SettingType.currentBook:
-        return Icons.book_outlined;
+        return (Icons.book_outlined, HJColors.income);
       case SettingType.currentTheme:
-        return Icons.color_lens_outlined;
+        return (Icons.color_lens_outlined, const Color(0xFFAF52DE));
       case SettingType.currentLanguage:
-        return Icons.language_outlined;
+        return (Icons.language_outlined, const Color(0xFFFF9500));
       case SettingType.api:
-        return Icons.api_outlined;
+        return (Icons.api_outlined, const Color(0xFF5856D6));
       case SettingType.currentVersion:
-        return Icons.info_outline;
+        return (Icons.info_outline, HJColors.textSecondary);
       case SettingType.apiVersion:
-        return Icons.cloud_outlined;
+        return (Icons.cloud_outlined, HJColors.textSecondary);
       default:
-        return Icons.settings;
+        return (Icons.settings, HJColors.textSecondary);
     }
   }
 
   void _showQRCode(BuildContext context) {
     showModalBottomSheet(
         backgroundColor: Colors.transparent,
+        isScrollControlled: true,
         context: context,
         builder: (_) =>
             DonateQrSheet(onLongPressWechat: () {}, onLongPressAlipay: () {}));
@@ -267,7 +284,7 @@ class _MineViewState extends State<MineView> {
 
   Future<List<SelectionOption<SettingSelectItem>>> _loadGroupOptions(
       Setting element) async {
-    List<SelectionOption<SettingSelectItem>> items = [];
+    List<SelectionOption<SettingSelectItem>> items =[];
     try {
       if (element.type == SettingType.currentGroup) {
         var res = await GroupService().getEnableList();
@@ -277,7 +294,7 @@ class _MineViewState extends State<MineView> {
             items.add(SelectionOption(
                 label: name,
                 value:
-                    SettingSelectItem(name, remoteItem['groupId'] as int? ?? 0),
+                SettingSelectItem(name, remoteItem['groupId'] as int? ?? 0),
                 selected: name == element.content));
           }
         }
@@ -312,19 +329,20 @@ class _MineViewState extends State<MineView> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.white,
+      backgroundColor: HJColors.surface,
       shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
       builder: (_) {
         return SelectionBottomSheet<SettingSelectItem>(
           title: element.type == SettingType.currentGroup ? '选择分组' : '选择账本',
           options: items,
           onSelected: (option) {
-            if (element.type == SettingType.currentGroup)
+            if (element.type == SettingType.currentGroup) {
               settingBloc.add(GroupSettingFetched(groupId: option.value.id));
-            else if (element.type == SettingType.currentBook)
+            } else if (element.type == SettingType.currentBook) {
               settingBloc
                   .add(BookIdChanged(option.value.id, option.value.title));
+            }
           },
         );
       },

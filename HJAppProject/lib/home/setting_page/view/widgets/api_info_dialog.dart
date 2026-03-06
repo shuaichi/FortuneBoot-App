@@ -13,18 +13,20 @@ class ApiInfoDialog extends StatelessWidget {
     final detail = apiDetail ?? '无内容';
     return HJDialog(
       title: 'API 配置信息',
+      headerIcon: Icons.api_rounded,
+      headerIconColor: HJColors.primary,
       content: Container(
         width: double.infinity,
         constraints: const BoxConstraints(maxHeight: 200),
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-            color: Colors.grey[50],
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: Colors.grey[200]!)),
+            color: HJColors.background,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: Colors.transparent)),
         child: SingleChildScrollView(
             child: SelectableText(detail,
                 style: HJTypography.tabularBody
-                    .copyWith(color: Colors.black87, height: 1.4))),
+                    .copyWith(color: HJColors.textPrimary, height: 1.4))),
       ),
       secondaryAction: HJButton.secondary(
           text: '关闭', onPressed: () => Navigator.pop(context)),

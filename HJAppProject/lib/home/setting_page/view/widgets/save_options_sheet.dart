@@ -26,17 +26,31 @@ class SaveOptionsSheet extends StatelessWidget {
         padding: const EdgeInsets.only(bottom: HJSpacing.md),
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          children: [
-            const Padding(
-              padding: EdgeInsets.all(16),
-              child: Text('操作',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          children:[
+            Center(
+              child: Container(
+                width: 40,
+                height: 4,
+                margin: const EdgeInsets.only(top: 12, bottom: 8),
+                decoration: BoxDecoration(
+                  color: HJColors.divider,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
             ),
-            Divider(height: 1, color: Colors.grey[200]),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+              child: Text('操作',
+                  style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: HJColors.textPrimary)),
+            ),
+            const Divider(height: 0.5, thickness: 0.5, color: HJColors.divider),
             if (kIsWeb)
               HJChevronItem(
-                // ← 修复此处
                 icon: Icons.download,
+                iconColor: HJColors.primary,
                 title: '下载图片',
                 onTap: () async {
                   Navigator.pop(context);
@@ -45,8 +59,8 @@ class SaveOptionsSheet extends StatelessWidget {
               )
             else ...[
               HJChevronItem(
-                // ← 修复此处
                 icon: Icons.save_alt,
+                iconColor: HJColors.primary,
                 title: '保存到相册',
                 onTap: () async {
                   Navigator.pop(context);
@@ -54,16 +68,16 @@ class SaveOptionsSheet extends StatelessWidget {
                 },
               ),
               HJValueItem(
-                // ← 修复此处
                 icon: Icons.info_outline,
+                iconColor: HJColors.textSecondary,
                 title: '说明',
                 valueText: '如保存失败，请检查权限',
                 onTap: () => Navigator.pop(context),
               ),
             ],
             HJChevronItem(
-              // ← 修复此处
               icon: Icons.link,
+              iconColor: HJColors.primary,
               title: '复制资源路径',
               onTap: () {
                 Clipboard.setData(ClipboardData(text: assetPath));
@@ -74,7 +88,7 @@ class SaveOptionsSheet extends StatelessWidget {
             ),
             Padding(
               padding: const EdgeInsets.symmetric(
-                  horizontal: HJSpacing.md, vertical: HJSpacing.sm),
+                  horizontal: HJSpacing.md, vertical: HJSpacing.md),
               child: SizedBox(
                 width: double.infinity,
                 child: HJButton.secondary(

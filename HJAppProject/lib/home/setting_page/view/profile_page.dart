@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:hjproject/util/dio_client.dart';
 import 'package:hjproject/home/design_system/hjds_theme.dart';
 import 'package:hjproject/home/design_system/hjds_components.dart';
@@ -12,7 +13,6 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  // 【修复 Issue 7】重命名为 _uiState 避免混淆
   UIState _uiState = UIState.loading;
   Map<String, dynamic> _user = {};
 
@@ -40,7 +40,7 @@ class _ProfilePageState extends State<ProfilePage> {
     setState(() => _uiState = UIState.loading);
     try {
       final res = await DioClient().dio.get('/system/user/profile');
-      if (!mounted) return; // 【修复 Issue 3】跨帧渲染异常检查
+      if (!mounted) return;
 
       final data = Map<String, dynamic>.from(res.data as Map);
       if (data['code'] == 0) {
@@ -60,7 +60,6 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
-  // 【修复 Issue 2】接收 BottomSheet 内的实际选择值，不依赖全局延迟同步
   Future<void> _saveProfile(
       BuildContext bottomSheetContext, int selectedSex) async {
     if (!_formKey.currentState!.validate()) return;
@@ -78,7 +77,6 @@ class _ProfilePageState extends State<ProfilePage> {
       _fetchProfile();
     } catch (e) {
       if (!mounted) return;
-      // 【修复 Issue 6】友好的错误提示翻译
       String errorMsg = '保存失败，请稍后重试';
       if (e.toString().contains('timeout') ||
           e.toString().contains('SocketException')) {
@@ -91,62 +89,168 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
+  InputDecoration _inputDecoration(String label, IconData icon) {
+    return InputDecoration(
+      labelText: label,
+      labelStyle: const TextStyle(color: HJColors.textSecondary),
+      prefixIcon: Icon(icon, color: HJColors.textSecondary, size: 20),
+      filled: true,
+      fillColor: HJColors.background,
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(16),
+        borderSide: BorderSide.none,
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(16),
+        borderSide: const BorderSide(color: HJColors.primary, width: 2),
+      ),
+      contentPadding: const EdgeInsets.symmetric(vertical: 18, horizontal: 16),
+    );
+  }
+
+  Widget _buildGenderToggle(int tempSex, StateSetter setSheetState) {
+    return Container(
+      height: 48,
+      decoration: BoxDecoration(
+        color: HJColors.background,
+        borderRadius: BorderRadius.circular(24),
+      ),
+      child: Row(
+        children:[
+          Expanded(
+            child: GestureDetector(
+              onTap: () {
+                HapticFeedback.lightImpact();
+                setSheetState(() => tempSex = 1);
+              },
+              child: Container(
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: tempSex == 1 ? HJColors.surface : Colors.transparent,
+                  borderRadius: BorderRadius.circular(24),
+                  boxShadow: tempSex == 1
+                      ?[
+                    BoxShadow(
+                        color: Colors.black.withOpacity(0.05),
+                        blurRadius: 10,
+                        offset: const Offset(0, 2))
+                  ]
+                      : null,
+                ),
+                child: Text('男',
+                    style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        color: tempSex == 1
+                            ? HJColors.textPrimary
+                            : HJColors.textSecondary)),
+              ),
+            ),
+          ),
+          Expanded(
+            child: GestureDetector(
+              onTap: () {
+                HapticFeedback.lightImpact();
+                setSheetState(() => tempSex = 2);
+              },
+              child: Container(
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: tempSex == 2 ? HJColors.surface : Colors.transparent,
+                  borderRadius: BorderRadius.circular(24),
+                  boxShadow: tempSex == 2
+                      ?[
+                    BoxShadow(
+                        color: Colors.black.withOpacity(0.05),
+                        blurRadius: 10,
+                        offset: const Offset(0, 2))
+                  ]
+                      : null,
+                ),
+                child: Text('女',
+                    style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        color: tempSex == 2
+                            ? HJColors.textPrimary
+                            : HJColors.textSecondary)),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   void _openEditSheet() {
-    int tempSex = _sex; // 面板内的局部状态
+    int tempSex = _sex;
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.white,
+      backgroundColor: HJColors.surface,
       shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
       builder: (sheetCtx) => StatefulBuilder(
         builder: (BuildContext context, StateSetter setSheetState) {
           return Padding(
             padding: EdgeInsets.only(
-              bottom: MediaQuery.of(sheetCtx).viewInsets.bottom,
-              left: HJSpacing.md,
-              right: HJSpacing.md,
-              top: HJSpacing.lg,
+              bottom: MediaQuery.of(sheetCtx).viewInsets.bottom + 24,
+              left: 24,
+              right: 24,
+              top: 12,
             ),
             child: Form(
               key: _formKey,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
+                children:[
+                  Center(
+                    child: Container(
+                      width: 40,
+                      height: 4,
+                      margin: const EdgeInsets.only(bottom: 24),
+                      decoration: BoxDecoration(
+                        color: HJColors.divider,
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                  ),
                   const Text('修改个人资料',
-                      style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                  const SizedBox(height: HJSpacing.lg),
+                      style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          color: HJColors.textPrimary)),
+                  const SizedBox(height: 24),
                   TextFormField(
                     controller: _nicknameCtrl,
-                    decoration: const InputDecoration(
-                        labelText: '昵称',
-                        prefixIcon: Icon(Icons.badge_outlined)),
+                    style: const TextStyle(
+                        fontWeight: FontWeight.w600,
+                        color: HJColors.textPrimary),
+                    decoration: _inputDecoration('昵称', Icons.badge_outlined),
                     validator: (v) =>
-                        (v == null || v.trim().isEmpty) ? '昵称不能为空' : null,
+                    (v == null || v.trim().isEmpty) ? '昵称不能为空' : null,
                   ),
-                  const SizedBox(height: HJSpacing.md),
+                  const SizedBox(height: 16),
                   TextFormField(
                     controller: _phoneCtrl,
                     keyboardType: TextInputType.phone,
-                    decoration: const InputDecoration(
-                        labelText: '手机号', prefixIcon: Icon(Icons.phone_iphone)),
-                    // 【修复 Issue 12】手机号正则校验
+                    style: const TextStyle(
+                        fontWeight: FontWeight.w600,
+                        color: HJColors.textPrimary),
+                    decoration: _inputDecoration('手机号', Icons.phone_iphone),
                     validator: (v) {
                       if (v == null || v.isEmpty) return null;
                       if (!RegExp(r'^1\d{10}$').hasMatch(v)) return '手机号格式不正确';
                       return null;
                     },
                   ),
-                  const SizedBox(height: HJSpacing.md),
+                  const SizedBox(height: 16),
                   TextFormField(
                     controller: _emailCtrl,
                     keyboardType: TextInputType.emailAddress,
-                    decoration: const InputDecoration(
-                        labelText: '邮箱',
-                        prefixIcon: Icon(Icons.email_outlined)),
-                    // 【修复 Issue 12】邮箱正则校验
+                    style: const TextStyle(
+                        fontWeight: FontWeight.w600,
+                        color: HJColors.textPrimary),
+                    decoration: _inputDecoration('邮箱', Icons.email_outlined),
                     validator: (v) {
                       if (v == null || v.isEmpty) return null;
                       if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
@@ -154,37 +258,36 @@ class _ProfilePageState extends State<ProfilePage> {
                       return null;
                     },
                   ),
-                  const SizedBox(height: HJSpacing.lg),
+                  const SizedBox(height: 24),
                   Row(
-                    children: [
-                      const Icon(Icons.wc_outlined, color: Colors.grey),
-                      const SizedBox(width: 12),
-                      const Text('性别', style: TextStyle(fontSize: 16)),
-                      const Spacer(),
-                      ToggleButtons(
-                        isSelected: [tempSex == 1, tempSex == 2],
-                        onPressed: (index) =>
-                            setSheetState(() => tempSex = index == 0 ? 1 : 2),
-                        borderRadius: BorderRadius.circular(8),
-                        children: const [
-                          Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 16),
-                              child: Text('男')),
-                          Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 16),
-                              child: Text('女')),
-                        ],
+                    children:[
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: HJColors.textSecondary.withOpacity(0.1),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(Icons.wc_outlined,
+                            color: HJColors.textSecondary, size: 20),
                       ),
+                      const SizedBox(width: 12),
+                      const Text('性别',
+                          style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: HJColors.textPrimary)),
+                      const Spacer(),
+                      Expanded(
+                          flex: 2,
+                          child: _buildGenderToggle(tempSex, setSheetState)),
                     ],
                   ),
-                  const SizedBox(height: HJSpacing.xl),
+                  const SizedBox(height: 32),
                   SizedBox(
                       width: double.infinity,
-                      // 【修复 Issue 2】直接将面板内的 tempSex 传给保存函数，彻底解耦全局 _sex
                       child: HJButton.primary(
                           text: '保存',
                           onPressed: () => _saveProfile(sheetCtx, tempSex))),
-                  const SizedBox(height: HJSpacing.xl),
                 ],
               ),
             ),
@@ -205,73 +308,100 @@ class _ProfilePageState extends State<ProfilePage> {
     final String loginDate = _user['loginDate']?.toString() ?? '';
     final String remark = _user['remark']?.toString() ?? '';
     final String initialChar =
-        username.isNotEmpty ? username.substring(0, 1).toUpperCase() : '?';
+    username.isNotEmpty ? username.substring(0, 1).toUpperCase() : '?';
 
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: HJColors.background,
       appBar: AppBar(
           title: const Text('个人资料',
-              style: TextStyle(color: Colors.black87, fontSize: 18)),
-          backgroundColor: Colors.grey[50],
+              style: TextStyle(
+                  color: HJColors.textPrimary,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold)),
+          backgroundColor: HJColors.background,
           elevation: 0,
-          iconTheme: const IconThemeData(color: Colors.black87)),
+          centerTitle: true,
+          iconTheme: const IconThemeData(color: HJColors.textPrimary)),
       body: UIStateHandler(
         state: _uiState,
         onRetry: _fetchProfile,
         child: SingleChildScrollView(
           padding: const EdgeInsets.only(bottom: HJSpacing.xl),
           child: Column(
-            children: [
+            children:[
               Container(
                 margin: const EdgeInsets.all(HJSpacing.md),
                 padding: const EdgeInsets.all(HJSpacing.lg),
                 decoration: BoxDecoration(
-                    color: Theme.of(context).primaryColor,
-                    borderRadius: BorderRadius.circular(16)),
+                    color: HJColors.surface,
+                    borderRadius: BorderRadius.circular(24),
+                    boxShadow:[
+                      BoxShadow(
+                          color: Colors.black.withOpacity(0.03),
+                          blurRadius: 20,
+                          offset: const Offset(0, 4))
+                    ]),
                 child: Row(
-                  children: [
+                  children:[
                     CircleAvatar(
                         radius: 36,
-                        backgroundColor: Colors.white,
+                        backgroundColor: HJColors.primary.withOpacity(0.12),
                         child: Text(initialChar,
-                            style: TextStyle(
+                            style: const TextStyle(
                                 fontSize: 28,
-                                color: Theme.of(context).primaryColor))),
+                                fontWeight: FontWeight.bold,
+                                color: HJColors.primary))),
                     const SizedBox(width: HJSpacing.md),
                     Expanded(
                         child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                          Text(nickname,
-                              style: const TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white)),
-                          const SizedBox(height: 4),
-                          Text(roleName,
-                              style: const TextStyle(color: Colors.white70))
-                        ])),
-                    IconButton(
-                        icon: const Icon(Icons.edit, color: Colors.white),
-                        onPressed: _openEditSheet),
+                            children:[
+                              Text(nickname,
+                                  style: const TextStyle(
+                                      fontSize: 22,
+                                      fontWeight: FontWeight.bold,
+                                      color: HJColors.textPrimary)),
+                              const SizedBox(height: 4),
+                              Text(roleName,
+                                  style: const TextStyle(
+                                      color: HJColors.textSecondary,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500))
+                            ])),
+                    Container(
+                      decoration: const BoxDecoration(
+                        color: HJColors.background,
+                        shape: BoxShape.circle,
+                      ),
+                      child: IconButton(
+                          icon: const Icon(Icons.edit_outlined,
+                              color: HJColors.textPrimary, size: 20),
+                          onPressed: () {
+                            HapticFeedback.selectionClick();
+                            _openEditSheet();
+                          }),
+                    ),
                   ],
                 ),
               ),
               SectionCard(
                 title: '详细信息',
-                items: [
+                items:[
                   HJValueItem(
                       icon: Icons.wc_outlined,
+                      iconColor: const Color(0xFFAF52DE),
                       title: '性别',
                       valueText: _sex == 1 ? '男' : (_sex == 2 ? '女' : '未知'),
                       onTap: () {}),
                   HJValueItem(
                       icon: Icons.phone_iphone,
+                      iconColor: const Color(0xFFFF9500),
                       title: '手机号',
                       valueText: phoneNumber,
                       onTap: () {}),
                   HJValueItem(
                       icon: Icons.email_outlined,
+                      iconColor: HJColors.primary,
                       title: '邮箱',
                       valueText: email,
                       onTap: () {}),
@@ -279,30 +409,35 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
               SectionCard(
                 title: '系统记录',
-                items: [
+                items:[
                   HJValueItem(
                       icon: Icons.person_outline,
+                      iconColor: const Color(0xFF5856D6),
                       title: '账号',
                       valueText: username,
                       onTap: () {}),
                   HJValueItem(
                       icon: Icons.verified_user_outlined,
+                      iconColor: HJColors.income,
                       title: '角色',
                       valueText: roleName,
                       onTap: () {}),
                   HJValueItem(
                       icon: Icons.language,
+                      iconColor: HJColors.primary,
                       title: '登录IP',
                       valueText: loginIp,
                       onTap: () {}),
                   HJValueItem(
                       icon: Icons.access_time,
+                      iconColor: const Color(0xFFFF2D55),
                       title: '登录时间',
                       valueText: loginDate,
                       onTap: () {}),
                   if (remark.isNotEmpty)
                     HJValueItem(
                         icon: Icons.note_outlined,
+                        iconColor: HJColors.textSecondary,
                         title: '备注',
                         valueText: remark,
                         onTap: () {}),

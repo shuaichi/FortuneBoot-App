@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:hjproject/home/design_system/hjds_theme.dart';
 
 class SelectionOption<T> {
@@ -17,9 +18,9 @@ class SelectionBottomSheet<T> extends StatelessWidget {
 
   const SelectionBottomSheet(
       {super.key,
-      required this.title,
-      required this.options,
-      required this.onSelected});
+        required this.title,
+        required this.options,
+        required this.onSelected});
 
   @override
   Widget build(BuildContext context) {
@@ -29,54 +30,74 @@ class SelectionBottomSheet<T> extends StatelessWidget {
         padding: const EdgeInsets.only(bottom: HJSpacing.md),
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          children: [
+          children:[
+            Center(
+              child: Container(
+                width: 40,
+                height: 4,
+                margin: const EdgeInsets.only(top: 12, bottom: 8),
+                decoration: BoxDecoration(
+                  color: HJColors.divider,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+            ),
             Padding(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.only(
+                  left: 24, right: 24, top: 8, bottom: 16),
               child: Text(title,
                   style: const TextStyle(
-                      fontSize: 18, fontWeight: FontWeight.bold)),
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: HJColors.textPrimary)),
             ),
-            Divider(height: 1, color: Colors.grey[200]),
+            const Divider(height: 0.5, thickness: 0.5, color: HJColors.divider),
             Flexible(
               child: ListView.builder(
                 shrinkWrap: true,
                 itemCount: options.length,
                 itemBuilder: (context, index) {
                   final item = options[index];
-                  // 【修复 Issue 4】重构底部的列表项以完美还原截图要求：左侧单选框，右侧“当前”加箭头
                   return InkWell(
                     onTap: () {
+                      HapticFeedback.selectionClick();
                       onSelected(item);
-                      Future.delayed(const Duration(milliseconds: 50), () {
+                      Future.delayed(const Duration(milliseconds: 150), () {
                         if (context.mounted) Navigator.pop(context);
                       });
                     },
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: HJSpacing.md, vertical: 16.0),
+                          horizontal: 24.0, vertical: 16.0),
                       child: Row(
-                        children: [
+                        children:[
                           Icon(
                             item.selected
                                 ? Icons.radio_button_checked
                                 : Icons.radio_button_unchecked,
-                            color:
-                                item.selected ? Colors.green : Colors.black87,
-                            size: 20,
+                            color: item.selected
+                                ? HJColors.primary
+                                : HJColors.textSecondary,
+                            size: 22,
                           ),
                           const SizedBox(width: HJSpacing.md),
                           Expanded(
                             child: Text(item.label,
-                                style: const TextStyle(
-                                    fontSize: 16, color: Colors.black87)),
+                                style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: item.selected
+                                        ? FontWeight.w600
+                                        : FontWeight.w500,
+                                    color: item.selected
+                                        ? HJColors.textPrimary
+                                        : HJColors.textSecondary)),
                           ),
                           if (item.selected)
                             const Text('当前',
                                 style: TextStyle(
-                                    color: Colors.green, fontSize: 14)),
-                          const SizedBox(width: HJSpacing.sm),
-                          const Icon(Icons.chevron_right,
-                              size: 16, color: Colors.grey),
+                                    color: HJColors.primary,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600)),
                         ],
                       ),
                     ),

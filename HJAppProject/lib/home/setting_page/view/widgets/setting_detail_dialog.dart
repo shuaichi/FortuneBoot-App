@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hjproject/home/design_system/hjds_components.dart';
+import 'package:hjproject/home/design_system/hjds_theme.dart';
 
 class SettingDetailDialog extends StatelessWidget {
   final String title;
@@ -16,30 +17,32 @@ class SettingDetailDialog extends StatelessWidget {
       content: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+        children:[
           if (contentText != null) ...[
             Text('当前选择: $contentText',
                 style: const TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.black87)),
-            const SizedBox(height: 8)
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: HJColors.textPrimary)),
+            const SizedBox(height: 12)
           ],
           if (detailText != null)
             Container(
                 width: double.infinity,
-                padding: const EdgeInsets.all(12),
+                padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                    color: Colors.grey[50],
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: Colors.grey[100]!)),
-                child: Text(detailText!,
-                    style: TextStyle(
-                        fontSize: 14, color: Colors.grey[700], height: 1.5))),
+                    color: HJColors.background,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: Colors.transparent)),
+                child: SelectableText(detailText!,
+                    style: const TextStyle(
+                        fontSize: 14,
+                        color: HJColors.textSecondary,
+                        height: 1.5))),
         ],
       ),
       primaryAction:
-          HJButton.primary(text: '确定', onPressed: () => Navigator.pop(context)),
+      HJButton.primary(text: '确定', onPressed: () => Navigator.pop(context)),
     );
   }
 }

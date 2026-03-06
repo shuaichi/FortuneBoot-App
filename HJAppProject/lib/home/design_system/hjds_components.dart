@@ -15,25 +15,49 @@ class UIStateHandler extends StatelessWidget {
   Widget build(BuildContext context) {
     switch (state) {
       case UIState.loading:
-        return const Center(child: CircularProgressIndicator(strokeWidth: 2));
+        return const Center(
+            child: SizedBox(
+                width: 32,
+                height: 32,
+                child: CircularProgressIndicator(
+                    strokeWidth: 3,
+                    valueColor: AlwaysStoppedAnimation(HJColors.primary))));
       case UIState.error:
         return Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(Icons.error_outline, color: Colors.red, size: 48),
+            children:[
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: HJColors.expense.withOpacity(0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.error_outline,
+                    color: HJColors.expense, size: 36),
+              ),
               const SizedBox(height: HJSpacing.md),
-              const Text('加载失败'),
+              const Text('加载失败',
+                  style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: HJColors.textPrimary)),
               if (onRetry != null) ...[
-                const SizedBox(height: HJSpacing.md),
-                HJButton.secondary(text: '重试', onPressed: onRetry!),
+                const SizedBox(height: HJSpacing.lg),
+                SizedBox(
+                  width: 120,
+                  child: HJButton.secondary(text: '重试', onPressed: onRetry!),
+                )
               ]
             ],
           ),
         );
       case UIState.empty:
         return const Center(
-            child: Text('暂无数据', style: TextStyle(color: Colors.grey)));
+            child: Text('暂无数据',
+                style: TextStyle(
+                    color: HJColors.textSecondary,
+                    fontWeight: FontWeight.w500)));
       case UIState.success:
       case UIState.disabled:
         return IgnorePointer(
@@ -53,25 +77,25 @@ class HJSettingsTemplate extends StatelessWidget {
 
   const HJSettingsTemplate(
       {super.key,
-      required this.header,
-      required this.sections,
-      required this.footer});
+        required this.header,
+        required this.sections,
+        required this.footer});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: HJColors.background,
       body: CustomScrollView(
         physics: const AlwaysScrollableScrollPhysics(
             parent: BouncingScrollPhysics()),
-        slivers: [
-          SliverAppBar(
-            backgroundColor: Colors.grey[50],
+        slivers:[
+          const SliverAppBar(
+            backgroundColor: HJColors.background,
             elevation: 0,
             pinned: true,
-            title: const Text('我的',
+            title: Text('我的',
                 style: TextStyle(
-                    color: Colors.black87,
+                    color: HJColors.textPrimary,
                     fontSize: 18,
                     fontWeight: FontWeight.bold)),
             centerTitle: true,
@@ -81,7 +105,7 @@ class HJSettingsTemplate extends StatelessWidget {
             padding: const EdgeInsets.symmetric(vertical: HJSpacing.md),
             sliver: SliverList(
               delegate: SliverChildBuilderDelegate(
-                  (context, index) => sections[index],
+                      (context, index) => sections[index],
                   childCount: sections.length),
             ),
           ),
@@ -95,7 +119,7 @@ class HJSettingsTemplate extends StatelessWidget {
   }
 }
 
-/// 3. 分组卡片容器
+/// 3. 分组卡片容器 (高斯/白卡系统)
 class SectionCard extends StatelessWidget {
   final String title;
   final List<Widget> items;
@@ -110,30 +134,41 @@ class SectionCard extends StatelessWidget {
           horizontal: HJSpacing.md, vertical: HJSpacing.sm),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+        children:[
           Padding(
             padding:
-                const EdgeInsets.only(left: HJSpacing.sm, bottom: HJSpacing.sm),
-            child: Text(title,
-                style: TextStyle(
+            const EdgeInsets.only(left: HJSpacing.sm, bottom: HJSpacing.sm),
+            child: Text(title.toUpperCase(),
+                style: const TextStyle(
                     fontSize: 13,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.grey[600])),
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 0.5,
+                    color: HJColors.textSecondary)),
           ),
           Container(
             decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: Colors.grey.withOpacity(0.1)),
+              color: HJColors.surface,
+              borderRadius: BorderRadius.circular(20),
+              boxShadow:[
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.02),
+                  blurRadius: 15,
+                  offset: const Offset(0, 4),
+                )
+              ],
             ),
             child: Column(
               children: items.asMap().entries.map((entry) {
                 final isLast = entry.key == items.length - 1;
                 return Column(
-                  children: [
+                  children:[
                     entry.value,
                     if (!isLast)
-                      Divider(height: 1, indent: 56, color: Colors.grey[100]),
+                      const Divider(
+                          height: 0.5,
+                          thickness: 0.5,
+                          indent: 64,
+                          color: HJColors.divider),
                   ],
                 );
               }).toList(),
@@ -145,9 +180,10 @@ class SectionCard extends StatelessWidget {
   }
 }
 
-/// 4. 列表项组件 (已完美修复左对齐BUG：强制推向最右侧且防溢出)
+/// 4. 列表项组件 (Fintech 规范优化)
 abstract class HJBaseListItem extends StatelessWidget {
   final IconData icon;
+  final Color iconColor;
   final String title;
   final String? subtitle;
   final VoidCallback onTap;
@@ -155,13 +191,13 @@ abstract class HJBaseListItem extends StatelessWidget {
 
   const HJBaseListItem(
       {super.key,
-      required this.icon,
-      required this.title,
-      this.subtitle,
-      required this.onTap,
-      required this.height});
+        required this.icon,
+        this.iconColor = HJColors.primary,
+        required this.title,
+        this.subtitle,
+        required this.onTap,
+        required this.height});
 
-  // 增加动态扩充属性，由子类根据自身需要决定是否展开占满剩余空间
   bool get expandLeft => false;
 
   Widget buildTrailing(BuildContext context);
@@ -171,18 +207,18 @@ abstract class HJBaseListItem extends StatelessWidget {
     Widget leftContent = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.center,
-      children: [
+      children:[
         Text(title,
             style: const TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.w500,
-                color: Colors.black87),
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: HJColors.textPrimary),
             maxLines: 1,
             overflow: TextOverflow.ellipsis),
         if (subtitle != null) ...[
           const SizedBox(height: 4),
           Text(subtitle!,
-              style: TextStyle(fontSize: 13, color: Colors.grey[500]),
+              style: const TextStyle(fontSize: 14, color: HJColors.textSecondary),
               maxLines: 1,
               overflow: TextOverflow.ellipsis),
         ],
@@ -200,33 +236,28 @@ abstract class HJBaseListItem extends StatelessWidget {
           constraints: BoxConstraints(minHeight: height),
           child: Padding(
             padding: const EdgeInsets.symmetric(
-                horizontal: HJSpacing.md, vertical: HJSpacing.sm),
+                horizontal: HJSpacing.md, vertical: 12.0),
             child: Row(
-              children: [
+              children:[
                 Container(
-                  width: 32,
-                  height: 32,
+                  width: 36,
+                  height: 36,
                   decoration: BoxDecoration(
-                      color: Colors.grey[50], shape: BoxShape.circle),
-                  child: Icon(icon, size: 18, color: Colors.black87),
+                      color: iconColor.withOpacity(0.12),
+                      shape: BoxShape.circle),
+                  child: Icon(icon, size: 20, color: iconColor),
                 ),
                 const SizedBox(width: HJSpacing.md),
                 Expanded(
                   child: Row(
-                    children: [
-                      // 【修改重点 1】根据子类属性判断：
-                      // 1. 对于不需要右侧长文本的组件（如账户、分类），使用 Expanded 填满空隙，将 > 符号挤到最右侧，
-                      //    并允许左侧的子标题一直往后显示直到最大长度再显示省略号。
-                      // 2. 对于需要显示右侧值的组件（如当前账本），仍保持 ConstrainedBox 防止左侧过度侵占右侧的长文本空间。
+                    children:[
                       expandLeft
                           ? Expanded(child: leftContent)
                           : ConstrainedBox(
-                              constraints: const BoxConstraints(maxWidth: 160),
-                              child: leftContent,
-                            ),
+                        constraints: const BoxConstraints(maxWidth: 160),
+                        child: leftContent,
+                      ),
                       const SizedBox(width: HJSpacing.sm),
-                      // 保证左右中间留有间距
-                      // 【修改重点 2】右侧组件
                       buildTrailing(context),
                     ],
                   ),
@@ -243,9 +274,10 @@ abstract class HJBaseListItem extends StatelessWidget {
 class HJChevronItem extends HJBaseListItem {
   const HJChevronItem(
       {super.key,
-      required super.icon,
-      required super.title,
-      required super.onTap})
+        required super.icon,
+        super.iconColor = HJColors.primary,
+        required super.title,
+        required super.onTap})
       : super(height: 56.0);
 
   @override
@@ -253,7 +285,7 @@ class HJChevronItem extends HJBaseListItem {
 
   @override
   Widget buildTrailing(BuildContext context) {
-    return const Icon(Icons.chevron_right, size: 16, color: Colors.grey);
+    return const Icon(Icons.chevron_right, size: 16, color: HJColors.textSecondary);
   }
 }
 
@@ -263,37 +295,33 @@ class HJValueItem extends HJBaseListItem {
 
   const HJValueItem(
       {super.key,
-      required super.icon,
-      required super.title,
-      this.valueText,
-      this.valueColor,
-      required super.onTap})
+        required super.icon,
+        super.iconColor = HJColors.primary,
+        required super.title,
+        this.valueText,
+        this.valueColor,
+        required super.onTap})
       : super(height: 56.0);
-
-  // expandLeft 默认为 false，维持原样
 
   @override
   Widget buildTrailing(BuildContext context) {
-    // 外层 Expanded 强制吃掉左侧剩余的所有宽度
     return Expanded(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
-        children: [
+        children:[
           if (valueText != null)
             Expanded(
-              // 内层使用 Expanded 让文本容器占据所有可用区域
               child: Text(
                 valueText!,
                 style: HJTypography.tabularBody
-                    .copyWith(color: valueColor ?? Colors.grey[500]),
+                    .copyWith(color: valueColor ?? HJColors.textSecondary),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                // 靠右对齐：当文本较短时(如 1.4.5)，会在最右侧；当文本极长时(如 API链接)，它会向左填满直到“API”字符后面。
                 textAlign: TextAlign.right,
               ),
             ),
           const SizedBox(width: HJSpacing.sm),
-          const Icon(Icons.chevron_right, size: 16, color: Colors.grey),
+          const Icon(Icons.chevron_right, size: 16, color: HJColors.textSecondary),
         ],
       ),
     );
@@ -303,10 +331,11 @@ class HJValueItem extends HJBaseListItem {
 class HJAccountItem extends HJBaseListItem {
   const HJAccountItem(
       {super.key,
-      required super.icon,
-      required super.title,
-      required super.subtitle,
-      required super.onTap})
+        required super.icon,
+        super.iconColor = HJColors.primary,
+        required super.title,
+        required super.subtitle,
+        required super.onTap})
       : super(height: 72.0);
 
   @override
@@ -314,11 +343,11 @@ class HJAccountItem extends HJBaseListItem {
 
   @override
   Widget buildTrailing(BuildContext context) {
-    return const Icon(Icons.chevron_right, size: 16, color: Colors.grey);
+    return const Icon(Icons.chevron_right, size: 16, color: HJColors.textSecondary);
   }
 }
 
-/// 5. 通用对话框
+/// 5. 通用对话框 (圆角化及空间扩展)
 class HJDialog extends StatelessWidget {
   final String title;
   final Widget content;
@@ -340,34 +369,44 @@ class HJDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      backgroundColor: Colors.white,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      backgroundColor: HJColors.surface,
+      elevation: 0,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
       child: Padding(
         padding: const EdgeInsets.all(24),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
+          children:[
             Row(
               children: [
                 if (headerIcon != null) ...[
-                  Icon(headerIcon,
-                      color: headerIconColor ?? Theme.of(context).primaryColor,
-                      size: 24),
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: (headerIconColor ?? HJColors.primary)
+                          .withOpacity(0.12),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(headerIcon,
+                        color: headerIconColor ?? HJColors.primary, size: 24),
+                  ),
                   const SizedBox(width: 12),
                 ],
-                Text(title,
-                    style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black87)),
+                Expanded(
+                  child: Text(title,
+                      style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: HJColors.textPrimary)),
+                ),
               ],
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 20),
             content,
-            const SizedBox(height: 24),
+            const SizedBox(height: 28),
             Row(
-              children: [
+              children:[
                 if (secondaryAction != null) ...[
                   Expanded(child: secondaryAction!),
                   const SizedBox(width: 12),
@@ -414,30 +453,29 @@ class _HJButtonState extends State<HJButton> {
   @override
   Widget build(BuildContext context) {
     final bgColor = widget.isCritical
-        ? Colors.red
-        : (widget.isSecondary
-            ? Colors.grey[100]
-            : Theme.of(context).primaryColor);
+        ? HJColors.expense
+        : (widget.isSecondary ? HJColors.background : HJColors.primary);
     final fgColor = widget.isCritical
         ? Colors.white
-        : (widget.isSecondary ? Colors.black87 : Colors.white);
+        : (widget.isSecondary ? HJColors.textPrimary : Colors.white);
 
     return GestureDetector(
       onTapDown: (_) => setState(() => _isPressed = true),
       onTapUp: (_) {
         setState(() => _isPressed = false);
-        HapticFeedback.lightImpact();
+        HapticFeedback.mediumImpact();
         widget.onPressed();
       },
       onTapCancel: () => setState(() => _isPressed = false),
       child: AnimatedScale(
         scale: _isPressed ? 0.96 : 1.0,
         duration: const Duration(milliseconds: 100),
+        curve: Curves.easeOutCubic,
         child: Container(
-          height: 50,
+          height: 56,
           alignment: Alignment.center,
           decoration: BoxDecoration(
-              color: bgColor, borderRadius: BorderRadius.circular(12)),
+              color: bgColor, borderRadius: BorderRadius.circular(16)),
           child: Text(widget.text,
               style: TextStyle(
                   color: fgColor, fontSize: 16, fontWeight: FontWeight.bold)),
@@ -455,10 +493,10 @@ class HJAvatarSection extends StatelessWidget {
 
   const HJAvatarSection(
       {super.key,
-      required this.name,
-      required this.role,
-      required this.onViewProfile,
-      required this.onShowQRCode});
+        required this.name,
+        required this.role,
+        required this.onViewProfile,
+        required this.onShowQRCode});
 
   @override
   Widget build(BuildContext context) {
@@ -467,42 +505,58 @@ class HJAvatarSection extends StatelessWidget {
       margin: const EdgeInsets.symmetric(horizontal: HJSpacing.md),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-          color: Colors.white, borderRadius: BorderRadius.circular(16)),
+          color: HJColors.surface,
+          borderRadius: BorderRadius.circular(20),
+          boxShadow:[
+            BoxShadow(
+              color: Colors.black.withOpacity(0.03),
+              blurRadius: 20,
+              offset: const Offset(0, 4),
+            )
+          ]),
       child: Row(
-        children: [
+        children:[
           CircleAvatar(
-              radius: 30,
-              backgroundColor: Theme.of(context).primaryColor.withOpacity(0.1),
+              radius: 32,
+              backgroundColor: HJColors.primary.withOpacity(0.12),
               child: Text(initials,
-                  style: TextStyle(
+                  style: const TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
-                      color: Theme.of(context).primaryColor))),
+                      color: HJColors.primary))),
           const SizedBox(width: HJSpacing.md),
           Expanded(
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                Text(name,
-                    style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black87)),
-                const SizedBox(height: 4),
-                GestureDetector(
-                    onTap: onViewProfile,
-                    child: Row(children: [
-                      Text('查看个人资料',
-                          style:
-                              TextStyle(fontSize: 13, color: Colors.grey[600])),
-                      const SizedBox(width: 4),
-                      Icon(Icons.arrow_forward_ios,
-                          size: 11, color: Colors.grey[400])
-                    ]))
-              ])),
+                  children:[
+                    Text(name,
+                        style: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: HJColors.textPrimary)),
+                    const SizedBox(height: 4),
+                    GestureDetector(
+                        onTap: () {
+                          HapticFeedback.selectionClick();
+                          onViewProfile();
+                        },
+                        child: Row(children:[
+                          const Text('查看个人资料',
+                              style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                  color: HJColors.textSecondary)),
+                          const SizedBox(width: 4),
+                          const Icon(Icons.arrow_forward_ios,
+                              size: 12, color: HJColors.textSecondary)
+                        ]))
+                  ])),
           IconButton(
-              icon: Icon(Icons.qr_code, color: Colors.grey[600]),
-              onPressed: onShowQRCode),
+              icon: const Icon(Icons.qr_code, color: HJColors.textSecondary),
+              onPressed: () {
+                HapticFeedback.lightImpact();
+                onShowQRCode();
+              }),
         ],
       ),
     );
