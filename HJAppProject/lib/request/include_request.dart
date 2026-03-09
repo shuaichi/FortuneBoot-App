@@ -1,82 +1,68 @@
-import 'package:dio/dio.dart';
 import 'package:hjproject/login/model/login_model.dart';
-import 'package:hjproject/request/base_request.dart';
-import 'package:hjproject/util/dio_client.dart';
 import 'package:retrofit/retrofit.dart';
+import 'package:dio/dio.dart';
+// 替换为您实际的路径
 
-part 'include_request.g.dart'; // 代码生成文件
+part 'include_request.g.dart'; // 保持和您原来一样
 
-// 使用下面命令自动生成代码
-// flutter pub run build_runner build
-
-// 统计 统计各种指标的接口
-@RestApi()
+@RestApi(baseUrl: "/fortune/include")
 abstract class IncludeService {
-  factory IncludeService({
-    String? baseUrl,
-  }) {
-    Dio dio = DioClient().dio;
-    return _IncludeService(dio,
-        baseUrl: baseUrl ?? dio.options.baseUrl,
-        errorLogger: AccountErrorReport());
-  }
+  factory IncludeService(Dio dio, {String baseUrl}) = _IncludeService;
 
-  @GET('/fortune/include/{groupId}/getTotalLiabilities')
-  Future<HJResponse> getTotalLiabilities(@Path('groupId') int groupId);
+  @GET("/{groupId}/getTotalLiabilities")
+  Future<HJResponse> getTotalLiabilities(@Path("groupId") int groupId);
 
-  @GET('/fortune/include/{groupId}/getFortuneAssetsLiabilities')
-  Future<HJResponse> getFortuneAssetsLiabilities(@Path('groupId') int groupId);
+  @GET("/{groupId}/getFortuneAssetsLiabilities")
+  Future<HJResponse> getFortuneAssetsLiabilities(@Path("groupId") int groupId);
 
-  @GET('/fortune/include/getBillStatistics')
+  // 注意：参数名保持了您原有的 tradeTimeStartTime 和 tradeTimeEndTime
+  @GET("/getBillStatistics")
   Future<HJResponse> getBillStatistics(
-    @Query('bookId') int bookId,
-    @Query('tradeTimeStartTime') String tradeTimeStartTime,
-    @Query('tradeTimeEndTime') String tradeTimeEndTime,
-  );
+      @Query("bookId") int bookId,
+      @Query("tradeTimeStartTime") String tradeTimeStartTime,
+      @Query("tradeTimeEndTime") String tradeTimeEndTime,
+      );
 
-  /// 收入类型分析
-  @GET('/fortune/include/getCategoryIncome')
+  @GET("/getCategoryIncome")
   Future<HJResponse> getCategoryIncome(
-    @Query('bookId') int bookId,
-    @Query('startDate') String startDate,
-    @Query('endDate') String endDate,
-  );
+      @Query("bookId") int bookId,
+      @Query("startDate") String startDate,
+      @Query("endDate") String endDate,
+      );
 
-  /// 支出类型分析
-  /// [
-  ///      {
-  ///          "value": 492.0000,
-  ///          "name": "维持类-1",
-  ///          "percent": 0.04853905
-  ///      },
-  /// ]
-  @GET('/fortune/include/getCategoryExpense')
+  @GET("/getCategoryExpense")
   Future<HJResponse> getCategoryExpense(
-    @Query('bookId') int bookId,
-    @Query('startDate') String startDate,
-    @Query('endDate') String endDate,
-  );
+      @Query("bookId") int bookId,
+      @Query("startDate") String startDate,
+      @Query("endDate") String endDate,
+      );
 
-  /// 收入折线图
-  @GET('/fortune/include/getIncomeTrends')
+  @GET("/getIncomeTrends")
   Future<HJResponse> getIncomeTrends(
-    @Query('bookId') int bookId,
-    @Query('timeGranularity') int timeGranularity, // 1，日 2，月 3，年
-    @Query('timePoint') String timePoint,
-  );
+      @Query("bookId") int bookId,
+      @Query("timeGranularity") int timeGranularity,
+      @Query("timePoint") String timePoint,
+      );
 
-  ///
-  /// 支出折线图
-  /// data: [
-  ///   {
-  ///   name: 2025-09-09,
-  ///   value: 199.0000
-  ///   }
-  /// ]
-  @GET('/fortune/include/getExpenseTrends')
+  @GET("/getExpenseTrends")
   Future<HJResponse> getExpenseTrends(
-    @Query('bookId') int bookId,
-    @Query('timeGranularity') int timeGranularity, // 1，日 2，月 3，年
-    @Query('timePoint') String timePoint,
-  );
+      @Query("bookId") int bookId,
+      @Query("timeGranularity") int timeGranularity,
+      @Query("timePoint") String timePoint,
+      );
+
+  // === 以下为看板新引入的标签接口，请添加到您的类中 ===
+  @GET("/getTagExpense")
+  Future<HJResponse> getTagExpense(
+      @Query("bookId") int bookId,
+      @Query("startDate") String startDate,
+      @Query("endDate") String endDate,
+      );
+
+  @GET("/getTagIncome")
+  Future<HJResponse> getTagIncome(
+      @Query("bookId") int bookId,
+      @Query("startDate") String startDate,
+      @Query("endDate") String endDate,
+      );
 }

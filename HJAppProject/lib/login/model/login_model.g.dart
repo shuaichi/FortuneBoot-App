@@ -12,13 +12,13 @@ ResisterLogin _$ResisterLoginFromJson(Map<String, dynamic> json) =>
       json['nickname'] as String,
       json['email'] as String,
       json['phoneNumber'] as String,
-      json['sex'] as int,
+      (json['sex'] as num).toInt(),
       json['avatar'] as String,
       json['password'] as String,
-      json['status'] as int,
-      json['roleId'] as int,
+      (json['status'] as num).toInt(),
+      (json['roleId'] as num).toInt(),
       json['remark'] as String,
-      json['source'] as int,
+      (json['source'] as num).toInt(),
     );
 
 Map<String, dynamic> _$ResisterLoginToJson(ResisterLogin instance) =>
@@ -51,7 +51,7 @@ Map<String, dynamic> _$LoginToJson(Login instance) => <String, dynamic>{
     };
 
 HJResponse _$HJResponseFromJson(Map<String, dynamic> json) => HJResponse(
-      json['code'] as int,
+      (json['code'] as num).toInt(),
       json['msg'] as String,
       json['data'],
     );

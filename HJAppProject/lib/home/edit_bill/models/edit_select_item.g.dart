@@ -9,7 +9,7 @@ part of 'edit_select_item.dart';
 CategorySelectItem _$CategorySelectItemFromJson(Map<String, dynamic> json) =>
     CategorySelectItem(
       json['categoryName'] as String,
-      json['categoryId'] as int,
+      (json['categoryId'] as num).toInt(),
       children: (json['children'] as List<dynamic>?)
           ?.map((e) => CategorySelectItem.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -25,7 +25,7 @@ Map<String, dynamic> _$CategorySelectItemToJson(CategorySelectItem instance) =>
 TagSelectItem _$TagSelectItemFromJson(Map<String, dynamic> json) =>
     TagSelectItem(
       json['tagName'] as String,
-      json['tagId'] as int,
+      (json['tagId'] as num).toInt(),
       children: (json['children'] as List<dynamic>?)
           ?.map((e) => TagSelectItem.fromJson(e as Map<String, dynamic>))
           .toList(),

@@ -11,6 +11,7 @@ import 'package:meta/meta.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
+import 'package:dio/dio.dart';
 
 /// {@template local_storage_todos_api}
 /// A Flutter implementation of the [TodosApi] that uses local storage.
@@ -25,7 +26,7 @@ class LocalStorageBillsApi extends BillsApi {
 
   final SharedPreferences _plugin;
   final BillService _billService = BillService();
-  final IncludeService _includeService = IncludeService();
+  final IncludeService _includeService = IncludeService(Dio());
   int pageNum = 1;
   int pageSize = 20;
   late final _billStreamController = BehaviorSubject<List<BillItem>>.seeded(

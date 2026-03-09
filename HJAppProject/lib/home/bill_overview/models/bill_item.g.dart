@@ -7,22 +7,22 @@ part of 'bill_item.dart';
 // **************************************************************************
 
 BillItem _$BillItemFromJson(Map<String, dynamic> json) => BillItem(
-      billId: json['billId'] as int?,
-      bookId: json['bookId'] as int?,
+      billId: (json['billId'] as num?)?.toInt(),
+      bookId: (json['bookId'] as num?)?.toInt(),
       bookName: json['bookName'] as String?,
       title: json['title'] as String?,
       tradeTime: json['tradeTime'] == null
           ? null
           : DateTime.parse(json['tradeTime'] as String),
-      accountId: json['accountId'] as int?,
+      accountId: (json['accountId'] as num?)?.toInt(),
       accountName: json['accountName'] as String?,
       amount: (json['amount'] as num?)?.toDouble(),
       currencyCode: json['currencyCode'] as String?,
       convertedAmount: (json['convertedAmount'] as num?)?.toDouble(),
-      payeeId: json['payeeId'] as int?,
+      payeeId: (json['payeeId'] as num?)?.toInt(),
       payeeName: json['payeeName'] as String?,
       billType: $enumDecodeNullable(_$BillTypeEnumMap, json['billType']),
-      toAccountId: json['toAccountId'] as int?,
+      toAccountId: (json['toAccountId'] as num?)?.toInt(),
       toAccountName: json['toAccountName'] as String?,
       confirm: json['confirm'] as bool?,
       include: json['include'] as bool?,
@@ -73,7 +73,7 @@ const _$BillTypeEnumMap = {
 
 CategoryAmountPair _$CategoryAmountPairFromJson(Map<String, dynamic> json) =>
     CategoryAmountPair(
-      categoryId: json['categoryId'] as int?,
+      categoryId: (json['categoryId'] as num?)?.toInt(),
       categoryName: json['categoryName'] as String?,
       amount: (json['amount'] as num?)?.toDouble(),
     );
@@ -87,17 +87,17 @@ Map<String, dynamic> _$CategoryAmountPairToJson(CategoryAmountPair instance) =>
 
 TagList _$TagListFromJson(Map<String, dynamic> json) => TagList(
       children: json['children'] as List<dynamic>?,
-      tagId: json['tagId'] as int?,
+      tagId: (json['tagId'] as num?)?.toInt(),
       tagName: json['tagName'] as String?,
-      bookId: json['bookId'] as int?,
-      parentId: json['parentId'] as int?,
+      bookId: (json['bookId'] as num?)?.toInt(),
+      parentId: (json['parentId'] as num?)?.toInt(),
       canExpense: json['canExpense'] as bool?,
       canIncome: json['canIncome'] as bool?,
       canTransfer: json['canTransfer'] as bool?,
       enable: json['enable'] as bool?,
-      sort: json['sort'] as int?,
+      sort: (json['sort'] as num?)?.toInt(),
       remark: json['remark'] as String?,
-      id: json['id'] as int?,
+      id: (json['id'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$TagListToJson(TagList instance) => <String, dynamic>{
