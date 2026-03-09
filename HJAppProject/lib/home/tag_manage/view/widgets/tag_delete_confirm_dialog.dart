@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:hjproject/home/design_system/hjds_theme.dart';
+import 'package:hjproject/home/design_system/hjds_components.dart';
 
 class TagDeleteConfirmDialog extends StatefulWidget {
   final String tagName;
@@ -19,52 +21,22 @@ class _TagDeleteConfirmDialogState extends State<TagDeleteConfirmDialog> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    
-    return AlertDialog(
-      icon: Icon(
-        Icons.warning_amber_rounded,
-        color: theme.colorScheme.error,
-        size: 32,
+    return HJDialog(
+      title: '确认移入回收站？',
+      headerIcon: Icons.warning_rounded,
+      headerIconColor: HJColors.expense,
+      content: Text(
+        '您确定要将标签 "${widget.tagName}" 移入回收站吗？\n此操作可以在回收站中撤销。',
+        style: const TextStyle(color: HJColors.textSecondary, fontSize: 15, height: 1.5),
       ),
-      title: const Text('确认删除'),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text('您确定要将标签 "${widget.tagName}" 移入回收站吗？'),
-          const SizedBox(height: 8),
-          Text(
-            '此操作可以撤销，您可以在回收站中恢复。',
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: theme.colorScheme.onSurfaceVariant,
-            ),
-          ),
-        ],
+      secondaryAction: HJButton.secondary(
+          text: '取消',
+          onPressed: _isLoading ? () {} : () => Navigator.of(context).pop(false)
       ),
-      actions: [
-        TextButton(
-          onPressed: _isLoading ? null : () => Navigator.of(context).pop(false),
-          child: const Text('取消'),
-        ),
-        FilledButton(
-          onPressed: _isLoading ? null : _handleConfirm,
-          style: FilledButton.styleFrom(
-            backgroundColor: theme.colorScheme.error,
-            foregroundColor: theme.colorScheme.onError,
-          ),
-          child: _isLoading
-              ? SizedBox(
-                  width: 16,
-                  height: 16,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    color: theme.colorScheme.onError,
-                  ),
-                )
-              : const Text('移入回收站'),
-        ),
-      ],
+      // 复用刚刚新加的 HJSubmitButton 能够携带 loading 态，如果不使用带 Loading 的可直接用 HJButton.critical
+      primaryAction: _isLoading
+          ? HJSubmitButton(text: '处理中...', isLoading: true, onPressed: (){})
+          : HJButton.critical(text: '移入回收站', onPressed: _handleConfirm),
     );
   }
 
@@ -72,22 +44,13 @@ class _TagDeleteConfirmDialogState extends State<TagDeleteConfirmDialog> {
     setState(() => _isLoading = true);
     try {
       await widget.onConfirm();
-      if (mounted) {
-        Navigator.of(context).pop(true);
-      }
+      if (mounted) Navigator.of(context).pop(true);
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('删除失败: ${e.toString()}'),
-            backgroundColor: Theme.of(context).colorScheme.error,
-          ),
-        );
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('删除失败: ${e.toString()}'), backgroundColor: HJColors.expense));
       }
     } finally {
-      if (mounted) {
-        setState(() => _isLoading = false);
-      }
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 }

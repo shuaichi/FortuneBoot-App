@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:hjproject/home/design_system/hjds_theme.dart';
+
 import 'tag_summary_bar.dart';
 import 'tag_pager.dart';
 import 'tag_empty_state.dart';
@@ -32,21 +34,18 @@ class TagListView<T> extends StatelessWidget {
     required this.hasPrev,
     required this.hasNext,
     required this.onPrev,
-    required this.onNext
+    required this.onNext,
   });
 
   final bool loading;
   final String? error;
   final VoidCallback onRetry;
-
-  final String typeText; // '标签'
+  final String typeText;
   final int total;
   final int currentPage;
-
   final List<T> roots;
   final Set<int> expandedNodeIds;
 
-  // Adapters
   final List<T> Function(T) childrenOf;
   final String Function(T) nameOf;
   final String? Function(T) remarkOf;
@@ -56,13 +55,11 @@ class TagListView<T> extends StatelessWidget {
   final bool Function(T) canIncomeOf;
   final bool Function(T) canTransferOf;
 
-  // Actions
   final void Function(T node, bool expanded) onToggleNode;
   final void Function(T node) onModify;
   final void Function(T node) onMoveToRecycle;
   final void Function(T node) onAddChild;
 
-  // Pager
   final bool hasPrev;
   final bool hasNext;
   final VoidCallback onPrev;
@@ -70,44 +67,36 @@ class TagListView<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Breakpoint-based horizontal padding aligned with CategoryListView
-    double _horizontalPadding() {
-      final width = MediaQuery.of(context).size.width;
-      if (width < 600) return 20; // Increased base padding for cleaner look
-      if (width < 1024) return 24;
-      return 32;
-    }
-
-    // List or Empty State Builder
-    Widget _buildListOrEmpty() {
-      final double hPadding = _horizontalPadding();
-      
-      // Vertical padding for the list
-      const EdgeInsets listPadding = EdgeInsets.only(top: 8, bottom: 24);
+    Widget buildListOrEmpty() {
+      const EdgeInsets listPadding = EdgeInsets.only(
+        left: HJSpacing.md,
+        right: HJSpacing.md,
+        top: HJSpacing.sm,
+        bottom: HJSpacing.xl,
+      );
 
       if (roots.isEmpty) {
-        return ListView(
-          padding: EdgeInsets.symmetric(horizontal: hPadding).add(listPadding),
-          children: [
-            TagSummaryBar(typeText: typeText, total: total, currentPage: currentPage),
-            const SizedBox(height: 80),
-            const TagEmptyState(),
-            const SizedBox(height: 16),
-            TagPager(
-              total: total,
-              hasPrev: hasPrev,
-              hasNext: hasNext,
-              onPrev: onPrev,
-              onNext: onNext,
+        return CustomScrollView(
+          physics: const AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
+          slivers:[
+            SliverPadding(
+              padding: listPadding,
+              sliver: SliverList(
+                delegate: SliverChildListDelegate([
+                  TagSummaryBar(typeText: typeText, total: total, currentPage: currentPage),
+                  const SizedBox(height: 80),
+                  const TagEmptyState(),
+                ]),
+              ),
             ),
           ],
         );
       }
-      return ListView.separated(
-        physics: const AlwaysScrollableScrollPhysics(),
-        padding: EdgeInsets.symmetric(horizontal: hPadding).add(listPadding),
-        itemCount: roots.length + 2, // Summary + Roots + Pager
-        separatorBuilder: (context, index) => const SizedBox(height: 12),
+
+      return ListView.builder(
+        physics: const AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
+        padding: listPadding,
+        itemCount: roots.length + 2,
         itemBuilder: (context, index) {
           if (index == 0) {
             return TagSummaryBar(typeText: typeText, total: total, currentPage: currentPage);
@@ -143,7 +132,6 @@ class TagListView<T> extends StatelessWidget {
       );
     }
 
-    // 统一状态切换：AnimatedSwitcher（fade + size）
     Widget currentChild;
     Key stateKey;
 
@@ -151,20 +139,25 @@ class TagListView<T> extends StatelessWidget {
       currentChild = const TagLoadingIndicator();
       stateKey = const ValueKey('state-loading');
     } else if (error != null) {
-      currentChild = TagErrorView(message: error ?? '加载失败', onRetry: onRetry);
+      currentChild = TagErrorView(message: error!, onRetry: onRetry);
       stateKey = const ValueKey('state-error');
     } else {
-      currentChild = _buildListOrEmpty();
+      currentChild = buildListOrEmpty();
       stateKey = ValueKey(roots.isEmpty ? 'state-empty' : 'state-list');
     }
 
     return AnimatedSwitcher(
-      duration: const Duration(milliseconds: 250),
-      switchInCurve: Curves.easeInOut,
-      switchOutCurve: Curves.easeInOut,
-      transitionBuilder: (Widget child, Animation<double> animation) {
-        final fade = FadeTransition(opacity: animation, child: child);
-        return SizeTransition(sizeFactor: animation, axisAlignment: -1.0, child: fade);
+      duration: const Duration(milliseconds: 300),
+      switchInCurve: Curves.easeOutCubic,
+      switchOutCurve: Curves.easeInCubic,
+      transitionBuilder: (child, animation) {
+        return FadeTransition(
+          opacity: animation,
+          child: ScaleTransition(
+            scale: Tween<double>(begin: 0.98, end: 1.0).animate(animation),
+            child: child,
+          ),
+        );
       },
       child: KeyedSubtree(key: stateKey, child: currentChild),
     );

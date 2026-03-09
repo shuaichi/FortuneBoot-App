@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:hjproject/home/design_system/hjds_theme.dart';
+import 'package:hjproject/home/design_system/hjds_components.dart';
 
 class TagErrorView extends StatelessWidget {
   final String message;
@@ -12,51 +15,51 @@ class TagErrorView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(32),
+        padding: const EdgeInsets.all(HJSpacing.xl),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [
+          children:[
             Container(
-              width: 120,
-              height: 120,
+              padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: theme.colorScheme.errorContainer.withOpacity(0.3),
+                color: HJColors.expense.withOpacity(0.1),
                 shape: BoxShape.circle,
               ),
-              child: Icon(
-                Icons.error_outline,
-                size: 48,
-                color: theme.colorScheme.error,
+              child: const Icon(
+                Icons.error_outline_rounded,
+                color: HJColors.expense,
+                size: 36,
               ),
             ),
-            const SizedBox(height: 24),
-            Text(
+            const SizedBox(height: HJSpacing.md),
+            const Text(
               '加载失败',
-              style: theme.textTheme.headlineSmall?.copyWith(
-                color: theme.colorScheme.onSurface,
-                fontWeight: FontWeight.w600,
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+                color: HJColors.textPrimary,
               ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: HJSpacing.xs),
             Text(
               message,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurfaceVariant,
+              style: const TextStyle(
+                fontSize: 14,
+                color: HJColors.textSecondary,
               ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 32),
-            FilledButton.icon(
-              onPressed: onRetry,
-              icon: const Icon(Icons.refresh),
-              label: const Text('重新加载'),
-              style: FilledButton.styleFrom(
-                backgroundColor: theme.colorScheme.primary,
-                foregroundColor: theme.colorScheme.onPrimary,
+            const SizedBox(height: HJSpacing.lg),
+            SizedBox(
+              width: 120,
+              child: HJButton.secondary(
+                text: '重试',
+                onPressed: () {
+                  HapticFeedback.lightImpact();
+                  onRetry();
+                },
               ),
             ),
           ],

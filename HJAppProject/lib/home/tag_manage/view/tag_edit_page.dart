@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hjproject/repository/repository/bills_repository.dart';
+import 'package:hjproject/home/design_system/hjds_theme.dart';
+import 'package:hjproject/home/design_system/hjds_components.dart';
+
 import '../data/tag_service.dart';
 import '../model/tag_node.dart';
 
@@ -53,8 +55,8 @@ class _TagEditPageState extends State<TagEditPage> {
 
   bool _saving = false;
   bool _dirty = false;
-
-  late final Map<String, dynamic> _initial;
+  String _parentNameDisplay = '加载中...';
+  bool _showAdvancedOptions = false;
 
   final TagPageService _service = TagPageService();
 
@@ -64,27 +66,28 @@ class _TagEditPageState extends State<TagEditPage> {
     _nameController = TextEditingController(text: widget.name);
     _sortController = TextEditingController(text: widget.sort.toString());
     _remarkController = TextEditingController(text: widget.remark ?? '');
-    
+
     _enable = widget.enable;
     _canExpense = widget.canExpense;
     _canIncome = widget.canIncome;
     _canTransfer = widget.canTransfer;
     _parentId = widget.parentId;
 
-    _initial = {
-      'name': widget.name,
-      'sort': widget.sort.toString(),
-      'remark': widget.remark ?? '',
-      'enable': widget.enable,
-      'canExpense': widget.canExpense,
-      'canIncome': widget.canIncome,
-      'canTransfer': widget.canTransfer,
-    };
-
     void listener() => _computeDirty();
     _nameController.addListener(listener);
     _sortController.addListener(listener);
     _remarkController.addListener(listener);
+
+    _initParentName();
+  }
+
+  Future<void> _initParentName() async {
+    try {
+      final name = await _loadParentName(_parentId);
+      if (mounted) setState(() => _parentNameDisplay = name);
+    } catch (e) {
+      if (mounted) setState(() => _parentNameDisplay = '未知');
+    }
   }
 
   @override
@@ -96,20 +99,16 @@ class _TagEditPageState extends State<TagEditPage> {
   }
 
   void _computeDirty() {
-    final now = {
-      'name': _nameController.text,
-      'sort': _sortController.text,
-      'remark': _remarkController.text,
-      'enable': _enable,
-      'canExpense': _canExpense,
-      'canIncome': _canIncome,
-      'canTransfer': _canTransfer,
-    };
-    final changed = now.entries.any((e) => _initial[e.key] != e.value);
+    final changed = _nameController.text != widget.name ||
+        _sortController.text != widget.sort.toString() ||
+        _remarkController.text != (widget.remark ?? '') ||
+        _enable != widget.enable ||
+        _canExpense != widget.canExpense ||
+        _canIncome != widget.canIncome ||
+        _canTransfer != widget.canTransfer;
+
     if (_dirty != changed) {
-      setState(() {
-        _dirty = changed;
-      });
+      setState(() => _dirty = changed);
     }
   }
 
@@ -128,37 +127,29 @@ class _TagEditPageState extends State<TagEditPage> {
 
   Future<String> _loadParentName(int parentId) async {
     if (parentId == -1) return '根标签 (一级标签)';
-    
-    // Use widget's parentName if available and matching ID, to avoid fetch
     if (widget.parentId == parentId && widget.parentName != null) {
       return widget.parentName!;
     }
-    
     final bookId = context.read<BillsRepository>().bookId() ?? 1;
-    final roots = await _service.fetchList(
-      bookId: bookId,
-      recycleBin: false,
-    );
+    final roots = await _service.fetchList(bookId: bookId, recycleBin: false);
 
-    String? _findNameById(List<TagNode> nodes, int id) {
+    String? findNameById(List<TagNode> nodes, int id) {
       for (final n in nodes) {
         if (n.id == id) return n.tagName;
-        final found = _findNameById(n.children, id);
+        final found = findNameById(n.children, id);
         if (found != null) return found;
       }
       return null;
     }
-
-    final name = _findNameById(roots, parentId);
-    return name ?? '未知';
+    return findNameById(roots, parentId) ?? '未知';
   }
 
   Future<void> _onSave() async {
     if (!_isValid) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text('请检查表单填写是否正确'),
-          backgroundColor: Theme.of(context).colorScheme.error,
+        const SnackBar(
+          content: Text('请检查表单填写是否正确'),
+          backgroundColor: HJColors.expense,
           behavior: SnackBarBehavior.floating,
         ),
       );
@@ -180,7 +171,11 @@ class _TagEditPageState extends State<TagEditPage> {
       );
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('保存成功'), behavior: SnackBarBehavior.floating),
+        const SnackBar(
+            content: Text('保存成功'),
+            behavior: SnackBarBehavior.floating,
+            backgroundColor: HJColors.income
+        ),
       );
       setState(() => _dirty = false);
       Navigator.of(context).pop(true);
@@ -190,7 +185,7 @@ class _TagEditPageState extends State<TagEditPage> {
         SnackBar(
           content: Text(e.toString()),
           behavior: SnackBarBehavior.floating,
-          backgroundColor: Theme.of(context).colorScheme.error,
+          backgroundColor: HJColors.expense,
         ),
       );
     } finally {
@@ -200,25 +195,19 @@ class _TagEditPageState extends State<TagEditPage> {
 
   Future<bool> _confirmLeave() async {
     if (!_dirty || _saving) return true;
-    final theme = Theme.of(context);
-    final cs = theme.colorScheme;
+    HapticFeedback.lightImpact();
     final result = await showDialog<bool>(
       context: context,
-      builder: (ctx) => AlertDialog(
-        backgroundColor: Colors.white,
-        title: const Text('放弃更改？'),
-        content: const Text('当前页面存在未保存的更改，确定要离开并丢弃这些更改吗？'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('取消'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, true),
-            style: TextButton.styleFrom(foregroundColor: cs.error),
-            child: const Text('离开'),
-          ),
-        ],
+      builder: (ctx) => HJDialog(
+        title: '放弃更改？',
+        headerIcon: Icons.warning_amber_rounded,
+        headerIconColor: HJColors.expense,
+        content: const Text(
+            '当前页面存在未保存的更改，确定要离开吗？',
+            style: TextStyle(color: HJColors.textSecondary, height: 1.5)
+        ),
+        secondaryAction: HJButton.secondary(text: '取消', onPressed: () => Navigator.pop(ctx, false)),
+        primaryAction: HJButton.critical(text: '离开', onPressed: () => Navigator.pop(ctx, true)),
       ),
     );
     return result ?? false;
@@ -226,338 +215,166 @@ class _TagEditPageState extends State<TagEditPage> {
 
   @override
   Widget build(BuildContext context) {
-    // Design Tokens
-    const Color bgColor = Color(0xFFFAFAFA);
-    const double hPadding = 16.0;
-    const double cardRadius = 16.0;
-
-    return WillPopScope(
-      onWillPop: _confirmLeave,
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (didPop) async {
+        if (didPop) return;
+        final shouldLeave = await _confirmLeave();
+        if (shouldLeave && mounted) {
+          Navigator.of(context).pop();
+        }
+      },
       child: Scaffold(
-        backgroundColor: bgColor,
+        backgroundColor: HJColors.background,
         appBar: AppBar(
-          title: const Text(
-            '修改标签',
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-          ),
+          title: const Text('修改标签', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18, color: HJColors.textPrimary)),
           centerTitle: true,
           elevation: 0,
-          scrolledUnderElevation: 0,
-          backgroundColor: bgColor,
+          backgroundColor: HJColors.background,
+          iconTheme: const IconThemeData(color: HJColors.textPrimary),
         ),
         body: Column(
-          children: [
+          children:[
             Expanded(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.all(hPadding),
+                physics: const AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
+                padding: const EdgeInsets.symmetric(horizontal: HJSpacing.md, vertical: HJSpacing.sm),
                 child: Form(
                   key: _formKey,
                   child: Column(
-                    children: [
-                      // Parent Info Card (Read Only)
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(cardRadius),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.02),
-                              blurRadius: 8,
-                              offset: const Offset(0, 2),
-                            ),
-                          ],
-                        ),
-                        padding: const EdgeInsets.all(16),
+                    children:[
+                      HJPremiumCard(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              '父级标签',
-                              style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87),
-                            ),
-                            const SizedBox(height: 12),
+                          children:[
+                            const Text('层级关系 (只读)', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: HJColors.textSecondary)),
+                            const SizedBox(height: HJSpacing.sm),
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                              decoration: BoxDecoration(
-                                color: Colors.grey[100], // Indicate read-only
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              width: double.infinity,
-                              child: FutureBuilder<String>(
-                                future: _loadParentName(_parentId),
-                                builder: (context, snapshot) {
-                                  final text = snapshot.hasData ? snapshot.data! : '加载中...';
-                                  return Text(
-                                    _parentId == -1 ? '根标签 (一级标签)' : text,
-                                    style: const TextStyle(fontSize: 15, color: Colors.black54),
-                                  );
-                                },
+                              padding: const EdgeInsets.symmetric(horizontal: HJSpacing.md, vertical: 14),
+                              decoration: BoxDecoration(color: HJColors.background, borderRadius: BorderRadius.circular(16)),
+                              child: Row(
+                                children:[
+                                  const Icon(Icons.lock_outline, size: 18, color: HJColors.textSecondary),
+                                  const SizedBox(width: HJSpacing.sm),
+                                  Expanded(
+                                    child: Text(
+                                      _parentId == -1 ? '根标签 (一级标签)' : _parentNameDisplay,
+                                      style: const TextStyle(fontSize: 16, color: HJColors.textSecondary, fontWeight: FontWeight.w600),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-
-                      // Basic Info Card
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(cardRadius),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.02),
-                              blurRadius: 8,
-                              offset: const Offset(0, 2),
-                            ),
-                          ],
-                        ),
-                        padding: const EdgeInsets.all(16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              '基本信息',
-                              style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87),
-                            ),
-                            const SizedBox(height: 16),
-                            _buildTextField(
+                            const Padding(padding: EdgeInsets.symmetric(vertical: HJSpacing.md), child: Divider(height: 1, thickness: 0.5, color: HJColors.divider)),
+                            const Text('标签名称', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: HJColors.textSecondary)),
+                            const SizedBox(height: HJSpacing.sm),
+                            HJCustomTextField(
                               controller: _nameController,
-                              label: '标签名称',
-                              hint: '请输入标签名称',
+                              hint: '例如：餐饮、交通...',
                               maxLength: 32,
                             ),
-                            const SizedBox(height: 16),
-                            _buildTextField(
-                              controller: _sortController,
-                              label: '排序',
-                              hint: '数字越小越靠前',
-                              keyboardType: TextInputType.number,
-                              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                            ),
                           ],
                         ),
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: HJSpacing.md),
 
-                      // Tag Settings Card
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(cardRadius),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.02),
-                              blurRadius: 8,
-                              offset: const Offset(0, 2),
-                            ),
-                          ],
-                        ),
-                        padding: const EdgeInsets.all(16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              '标签设置',
-                              style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87),
-                            ),
-                            const SizedBox(height: 8),
-                            _buildSwitchTile(
-                              title: '启用',
-                              value: _enable,
-                              onChanged: (v) {
-                                setState(() => _enable = v);
-                                _computeDirty();
-                              },
-                            ),
-                            const Divider(height: 1),
-                            _buildSwitchTile(
-                              title: '可支出',
-                              value: _canExpense,
-                              onChanged: (v) {
-                                setState(() => _canExpense = v);
-                                _computeDirty();
-                              },
-                            ),
-                            const Divider(height: 1),
-                            _buildSwitchTile(
-                              title: '可收入',
-                              value: _canIncome,
-                              onChanged: (v) {
-                                setState(() => _canIncome = v);
-                                _computeDirty();
-                              },
-                            ),
-                            const Divider(height: 1),
-                            _buildSwitchTile(
-                              title: '可转账',
-                              value: _canTransfer,
-                              onChanged: (v) {
-                                setState(() => _canTransfer = v);
-                                _computeDirty();
-                              },
-                            ),
-                          ],
+                      GestureDetector(
+                        onTap: () {
+                          HapticFeedback.selectionClick();
+                          setState(() => _showAdvancedOptions = !_showAdvancedOptions);
+                        },
+                        behavior: HitTestBehavior.opaque,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: HJSpacing.sm),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children:[
+                              Text(
+                                _showAdvancedOptions ? '收起高级设置' : '展开高级设置',
+                                style: const TextStyle(color: HJColors.primary, fontWeight: FontWeight.w600, fontSize: 14),
+                              ),
+                              const SizedBox(width: HJSpacing.xs),
+                              AnimatedRotation(
+                                turns: _showAdvancedOptions ? 0.5 : 0.0,
+                                duration: const Duration(milliseconds: 300),
+                                child: const Icon(Icons.keyboard_arrow_down, color: HJColors.primary, size: 18),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                      const SizedBox(height: 16),
 
-                      // Remark Card
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(cardRadius),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.02),
-                              blurRadius: 8,
-                              offset: const Offset(0, 2),
+                      AnimatedSize(
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.easeOutCubic,
+                        child: !_showAdvancedOptions ? const SizedBox.shrink() : Column(
+                          children:[
+                            const SizedBox(height: HJSpacing.sm),
+                            HJPremiumCard(
+                              child: Column(
+                                children:[
+                                  HJSwitchRow(title: '启用此标签', value: _enable, onChanged: (v) { setState(() => _enable = v); _computeDirty(); }),
+                                  const Divider(height: 1, thickness: 0.5, color: HJColors.divider),
+                                  HJSwitchRow(title: '允许作为支出', value: _canExpense, activeColor: HJColors.expense, onChanged: (v) { setState(() => _canExpense = v); _computeDirty(); }),
+                                  const Divider(height: 1, thickness: 0.5, color: HJColors.divider),
+                                  HJSwitchRow(title: '允许作为收入', value: _canIncome, activeColor: HJColors.income, onChanged: (v) { setState(() => _canIncome = v); _computeDirty(); }),
+                                  const Divider(height: 1, thickness: 0.5, color: HJColors.divider),
+                                  HJSwitchRow(title: '允许作为转账', value: _canTransfer, activeColor: HJColors.primary, onChanged: (v) { setState(() => _canTransfer = v); _computeDirty(); }),
+                                ],
+                              ),
                             ),
-                          ],
-                        ),
-                        padding: const EdgeInsets.all(16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              '备注',
-                              style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87),
-                            ),
-                            const SizedBox(height: 12),
-                            TextFormField(
-                              controller: _remarkController,
-                              maxLines: 3,
-                              maxLength: 200,
-                              decoration: InputDecoration(
-                                hintText: '选填，备注信息',
-                                hintStyle: const TextStyle(fontSize: 15, color: Colors.black26),
-                                contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                  borderSide: BorderSide(color: Colors.grey[300]!),
-                                ),
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                  borderSide: BorderSide(color: Colors.grey[300]!),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                  borderSide: BorderSide(color: Theme.of(context).primaryColor),
-                                ),
-                                filled: true,
-                                fillColor: Colors.grey[50],
+                            const SizedBox(height: HJSpacing.md),
+                            HJPremiumCard(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children:[
+                                  const Text('排序权重', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: HJColors.textSecondary)),
+                                  const SizedBox(height: HJSpacing.sm),
+                                  HJCustomTextField(
+                                    controller: _sortController,
+                                    hint: '数字越小越靠前',
+                                    keyboardType: TextInputType.number,
+                                    inputFormatters:[FilteringTextInputFormatter.digitsOnly],
+                                  ),
+                                  const SizedBox(height: HJSpacing.md),
+                                  const Text('备注信息', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: HJColors.textSecondary)),
+                                  const SizedBox(height: HJSpacing.sm),
+                                  HJCustomTextField(
+                                    controller: _remarkController,
+                                    hint: '选填，输入详细备注',
+                                    maxLines: 3,
+                                    maxLength: 200,
+                                  ),
+                                ],
                               ),
                             ),
                           ],
                         ),
                       ),
-                      const SizedBox(height: 32),
+                      const SizedBox(height: HJSpacing.xl),
                     ],
                   ),
                 ),
               ),
             ),
 
-            // Bottom Save Button Area
             Container(
-              padding: EdgeInsets.fromLTRB(16, 16, 16, 16 + MediaQuery.of(context).padding.bottom),
+              padding: EdgeInsets.fromLTRB(HJSpacing.md, HJSpacing.md, HJSpacing.md, HJSpacing.md + MediaQuery.of(context).padding.bottom),
               decoration: BoxDecoration(
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
-                    offset: const Offset(0, -4),
-                    blurRadius: 16,
-                  ),
+                color: HJColors.surface,
+                boxShadow:[
+                  BoxShadow(color: Colors.black.withOpacity(0.03), offset: const Offset(0, -4), blurRadius: 16),
                 ],
               ),
-              child: SizedBox(
-                width: double.infinity,
-                height: 50,
-                child: ElevatedButton(
-                  onPressed: _saving ? null : _onSave,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Theme.of(context).primaryColor,
-                    foregroundColor: Colors.white,
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  child: _saving
-                      ? const SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
-                        )
-                      : const Text(
-                          '保存',
-                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                        ),
-                ),
+              child: HJSubmitButton(
+                text: '保存修改',
+                isLoading: _saving,
+                onPressed: _onSave,
               ),
             ),
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildTextField({
-    required TextEditingController controller,
-    required String label,
-    required String hint,
-    TextInputType? keyboardType,
-    List<TextInputFormatter>? inputFormatters,
-    int? maxLength,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(label, style: const TextStyle(fontSize: 14, color: Colors.black54)),
-        const SizedBox(height: 8),
-        TextFormField(
-          controller: controller,
-          keyboardType: keyboardType,
-          inputFormatters: inputFormatters,
-          maxLength: maxLength,
-          decoration: InputDecoration(
-            hintText: hint,
-            hintStyle: const TextStyle(fontSize: 15, color: Colors.black26),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
-              borderSide: BorderSide(color: Colors.grey[300]!),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
-              borderSide: BorderSide(color: Colors.grey[300]!),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
-              borderSide: BorderSide(color: Theme.of(context).primaryColor),
-            ),
-            filled: true,
-            fillColor: Colors.grey[50],
-            counterText: "",
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildSwitchTile({
-    required String title,
-    required bool value,
-    required ValueChanged<bool> onChanged,
-  }) {
-    return SwitchListTile(
-      title: Text(title, style: const TextStyle(fontSize: 15, color: Colors.black87)),
-      value: value,
-      onChanged: onChanged,
-      activeColor: Theme.of(context).primaryColor,
-      contentPadding: EdgeInsets.zero,
-      dense: true,
     );
   }
 }

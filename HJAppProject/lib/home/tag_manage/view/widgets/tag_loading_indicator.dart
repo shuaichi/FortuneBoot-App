@@ -1,24 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:hjproject/home/design_system/hjds_theme.dart';
 
 class TagLoadingIndicator extends StatelessWidget {
   const TagLoadingIndicator({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    
-    return Center(
+    return const Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          CircularProgressIndicator(
-            color: theme.colorScheme.primary,
+        children:[
+          SizedBox(
+            width: 32,
+            height: 32,
+            child: CircularProgressIndicator(
+              strokeWidth: 3,
+              valueColor: AlwaysStoppedAnimation(HJColors.primary),
+            ),
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: HJSpacing.md),
           Text(
             '正在加载标签...',
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: theme.colorScheme.onSurfaceVariant,
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+              color: HJColors.textSecondary,
             ),
           ),
         ],

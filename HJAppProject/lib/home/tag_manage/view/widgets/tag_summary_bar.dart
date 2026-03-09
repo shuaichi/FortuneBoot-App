@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hjproject/home/design_system/hjds_theme.dart';
 
 class TagSummaryBar extends StatelessWidget {
   final String typeText;
@@ -14,44 +15,35 @@ class TagSummaryBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     return Container(
-      padding: const EdgeInsets.all(16),
-      margin: const EdgeInsets.only(bottom: 8),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceVariant.withOpacity(0.3),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: theme.colorScheme.outline.withOpacity(0.2),
-        ),
-      ),
+      padding: const EdgeInsets.symmetric(vertical: HJSpacing.sm, horizontal: HJSpacing.sm),
+      margin: const EdgeInsets.only(bottom: HJSpacing.md),
       child: Row(
-        children: [
-          Icon(
-            Icons.label_outline,
-            size: 20,
-            color: theme.colorScheme.primary,
-          ),
-          const SizedBox(width: 8),
+        crossAxisAlignment: CrossAxisAlignment.baseline,
+        textBaseline: TextBaseline.alphabetic,
+        children:[
           Text(
             '$typeText管理',
-            style: theme.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.w600,
-              color: theme.colorScheme.onSurface,
+            style: const TextStyle(
+              fontSize: 28,
+              fontWeight: FontWeight.w800,
+              letterSpacing: -0.5,
+              color: HJColors.textPrimary,
             ),
           ),
           const Spacer(),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
             decoration: BoxDecoration(
-              color: theme.colorScheme.primary.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(8),
+              color: HJColors.primary.withOpacity(0.12),
+              borderRadius: BorderRadius.circular(10),
             ),
             child: Text(
-              '共 $total 项',
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.primary,
-                fontWeight: FontWeight.w500,
+              '$total 项',
+              style: const TextStyle(
+                color: HJColors.primary,
+                fontWeight: FontWeight.w700,
+                fontSize: 13,
               ),
             ),
           ),

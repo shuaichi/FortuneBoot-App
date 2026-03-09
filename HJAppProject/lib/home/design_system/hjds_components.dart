@@ -562,3 +562,220 @@ class HJAvatarSection extends StatelessWidget {
     );
   }
 }
+// ==========================================
+// 以下为基于 Fintech 规范新增的 HJDS 表单与卡片系统
+// ==========================================
+
+/// 7. 高级纯白柔和阴影卡片 (用于表单和内容包裹)
+class HJPremiumCard extends StatelessWidget {
+  final Widget child;
+  final EdgeInsetsGeometry padding;
+
+  const HJPremiumCard({
+    super.key,
+    required this.child,
+    this.padding = const EdgeInsets.all(HJSpacing.md),
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: padding,
+      decoration: BoxDecoration(
+        color: HJColors.surface,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow:[
+          BoxShadow(
+            color: Colors.black.withOpacity(0.02),
+            blurRadius: 15,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: child,
+    );
+  }
+}
+
+/// 8. 金融级无边框输入框
+class HJCustomTextField extends StatelessWidget {
+  final TextEditingController controller;
+  final String hint;
+  final TextInputType? keyboardType;
+  final List<TextInputFormatter>? inputFormatters;
+  final int? maxLength;
+  final int maxLines;
+  final bool autoFocus;
+
+  const HJCustomTextField({
+    super.key,
+    required this.controller,
+    required this.hint,
+    this.keyboardType,
+    this.inputFormatters,
+    this.maxLength,
+    this.maxLines = 1,
+    this.autoFocus = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+      controller: controller,
+      keyboardType: keyboardType,
+      inputFormatters: inputFormatters,
+      maxLength: maxLength,
+      maxLines: maxLines,
+      autofocus: autoFocus,
+      style: const TextStyle(
+        fontSize: 16,
+        fontWeight: FontWeight.w600,
+        color: HJColors.textPrimary,
+      ),
+      decoration: InputDecoration(
+        hintText: hint,
+        hintStyle: const TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.w400,
+          color: HJColors.textSecondary,
+        ),
+        contentPadding: const EdgeInsets.symmetric(
+            horizontal: HJSpacing.md, vertical: HJSpacing.md),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: BorderSide.none,
+        ),
+        filled: true,
+        fillColor: HJColors.background, // 与底色融为一体
+        counterText: "",
+      ),
+    );
+  }
+}
+
+/// 9. 动态点缀色开关行 (支持触觉反馈)
+class HJSwitchRow extends StatelessWidget {
+  final String title;
+  final bool value;
+  final ValueChanged<bool> onChanged;
+  final Color? activeColor;
+
+  const HJSwitchRow({
+    super.key,
+    required this.title,
+    required this.value,
+    required this.onChanged,
+    this.activeColor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: HJSpacing.xs),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children:[
+          Text(
+            title,
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+              color: HJColors.textPrimary,
+            ),
+          ),
+          Switch.adaptive(
+            value: value,
+            activeColor: activeColor ?? HJColors.primary,
+            onChanged: (v) {
+              HapticFeedback.lightImpact();
+              onChanged(v);
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// 10. 柔和背景图标
+class HJSoftIcon extends StatelessWidget {
+  final IconData icon;
+  final Color color;
+  final double size;
+
+  const HJSoftIcon({
+    super.key,
+    required this.icon,
+    required this.color,
+    this.size = 20,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: size * 2,
+      height: size * 2,
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.12),
+        shape: BoxShape.circle,
+      ),
+      child: Icon(icon, size: size, color: color),
+    );
+  }
+}
+
+/// 11. 支持 Loading 状态的表单提交按钮
+class HJSubmitButton extends StatelessWidget {
+  final String text;
+  final VoidCallback? onPressed;
+  final bool isLoading;
+
+  const HJSubmitButton({
+    super.key,
+    required this.text,
+    required this.onPressed,
+    this.isLoading = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: double.infinity,
+      height: 56,
+      child: FilledButton(
+        onPressed: isLoading ? null : () {
+          if (onPressed != null) {
+            HapticFeedback.mediumImpact();
+            onPressed!();
+          }
+        },
+        style: FilledButton.styleFrom(
+          backgroundColor: HJColors.primary,
+          disabledBackgroundColor: HJColors.primary.withOpacity(0.5),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          elevation: 0,
+        ),
+        child: isLoading
+            ? const SizedBox(
+          width: 24,
+          height: 24,
+          child: CircularProgressIndicator(
+            color: Colors.white,
+            strokeWidth: 2.5,
+          ),
+        )
+            : Text(
+          text,
+          style: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 1.0,
+            color: Colors.white,
+          ),
+        ),
+      ),
+    );
+  }
+}
