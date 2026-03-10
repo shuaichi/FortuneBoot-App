@@ -17,7 +17,6 @@ import 'package:hjproject/util/dio_client.dart';
 import 'package:intl/intl.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:stream_transform/stream_transform.dart';
-import 'package:dio/dio.dart';
 
 part 'setting_event.dart';
 
@@ -33,7 +32,7 @@ EventTransformer<E> throttleDroppable<E>(Duration duration) {
 
 class SettingBloc extends Bloc<SettingEvent, SettingState> {
   final LoginService _loginService = LoginService();
-  final IncludeService _accountService = IncludeService(Dio());
+  final IncludeService _accountService = IncludeService();
   final GroupService _groupService = GroupService();
   final BookService _bookService = BookService();
 

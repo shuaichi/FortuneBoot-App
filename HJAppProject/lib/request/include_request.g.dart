@@ -11,9 +11,7 @@ part of 'include_request.dart';
 // ignore_for_file: unnecessary_brace_in_string_interps,no_leading_underscores_for_local_identifiers,unused_element,unnecessary_string_interpolations,unused_element_parameter
 
 class _IncludeService implements IncludeService {
-  _IncludeService(this._dio, {this.baseUrl, this.errorLogger}) {
-    baseUrl ??= '/fortune/include';
-  }
+  _IncludeService(this._dio, {this.baseUrl, this.errorLogger});
 
   final Dio _dio;
 
@@ -31,7 +29,7 @@ class _IncludeService implements IncludeService {
       Options(method: 'GET', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            '/${groupId}/getTotalLiabilities',
+            '/fortune/include/${groupId}/getTotalLiabilities',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -58,7 +56,7 @@ class _IncludeService implements IncludeService {
       Options(method: 'GET', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            '/${groupId}/getFortuneAssetsLiabilities',
+            '/fortune/include/${groupId}/getFortuneAssetsLiabilities',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -93,7 +91,7 @@ class _IncludeService implements IncludeService {
       Options(method: 'GET', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            '/getBillStatistics',
+            '/fortune/include/getBillStatistics',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -128,7 +126,7 @@ class _IncludeService implements IncludeService {
       Options(method: 'GET', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            '/getCategoryIncome',
+            '/fortune/include/getCategoryIncome',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -163,7 +161,7 @@ class _IncludeService implements IncludeService {
       Options(method: 'GET', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            '/getCategoryExpense',
+            '/fortune/include/getCategoryExpense',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -198,7 +196,7 @@ class _IncludeService implements IncludeService {
       Options(method: 'GET', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            '/getIncomeTrends',
+            '/fortune/include/getIncomeTrends',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -233,7 +231,7 @@ class _IncludeService implements IncludeService {
       Options(method: 'GET', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            '/getExpenseTrends',
+            '/fortune/include/getExpenseTrends',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -268,7 +266,7 @@ class _IncludeService implements IncludeService {
       Options(method: 'GET', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            '/getTagExpense',
+            '/fortune/include/getTagExpense',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -303,7 +301,7 @@ class _IncludeService implements IncludeService {
       Options(method: 'GET', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            '/getTagIncome',
+            '/fortune/include/getTagIncome',
             queryParameters: queryParameters,
             data: _data,
           )

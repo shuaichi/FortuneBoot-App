@@ -1,50 +1,58 @@
 import 'package:hjproject/login/model/login_model.dart';
+import 'package:hjproject/request/base_request.dart';
+import 'package:hjproject/util/dio_client.dart';
 import 'package:retrofit/retrofit.dart';
 import 'package:dio/dio.dart';
 // 替换为您实际的路径
 
 part 'include_request.g.dart'; // 保持和您原来一样
 
-@RestApi(baseUrl: "/fortune/include")
+@RestApi()
 abstract class IncludeService {
-  factory IncludeService(Dio dio, {String baseUrl}) = _IncludeService;
-
-  @GET("/{groupId}/getTotalLiabilities")
+  factory IncludeService({
+    String? baseUrl,
+  }) {
+    Dio dio = DioClient().dio;
+    return _IncludeService(dio,
+        baseUrl: baseUrl ?? dio.options.baseUrl,
+        errorLogger: AccountErrorReport());
+  }
+  @GET("/fortune/include/{groupId}/getTotalLiabilities")
   Future<HJResponse> getTotalLiabilities(@Path("groupId") int groupId);
 
-  @GET("/{groupId}/getFortuneAssetsLiabilities")
+  @GET("/fortune/include/{groupId}/getFortuneAssetsLiabilities")
   Future<HJResponse> getFortuneAssetsLiabilities(@Path("groupId") int groupId);
 
   // 注意：参数名保持了您原有的 tradeTimeStartTime 和 tradeTimeEndTime
-  @GET("/getBillStatistics")
+  @GET("/fortune/include/getBillStatistics")
   Future<HJResponse> getBillStatistics(
       @Query("bookId") int bookId,
       @Query("tradeTimeStartTime") String tradeTimeStartTime,
       @Query("tradeTimeEndTime") String tradeTimeEndTime,
       );
 
-  @GET("/getCategoryIncome")
+  @GET("/fortune/include/getCategoryIncome")
   Future<HJResponse> getCategoryIncome(
       @Query("bookId") int bookId,
       @Query("startDate") String startDate,
       @Query("endDate") String endDate,
       );
 
-  @GET("/getCategoryExpense")
+  @GET("/fortune/include/getCategoryExpense")
   Future<HJResponse> getCategoryExpense(
       @Query("bookId") int bookId,
       @Query("startDate") String startDate,
       @Query("endDate") String endDate,
       );
 
-  @GET("/getIncomeTrends")
+  @GET("/fortune/include/getIncomeTrends")
   Future<HJResponse> getIncomeTrends(
       @Query("bookId") int bookId,
       @Query("timeGranularity") int timeGranularity,
       @Query("timePoint") String timePoint,
       );
 
-  @GET("/getExpenseTrends")
+  @GET("/fortune/include/getExpenseTrends")
   Future<HJResponse> getExpenseTrends(
       @Query("bookId") int bookId,
       @Query("timeGranularity") int timeGranularity,
@@ -52,14 +60,14 @@ abstract class IncludeService {
       );
 
   // === 以下为看板新引入的标签接口，请添加到您的类中 ===
-  @GET("/getTagExpense")
+  @GET("/fortune/include/getTagExpense")
   Future<HJResponse> getTagExpense(
       @Query("bookId") int bookId,
       @Query("startDate") String startDate,
       @Query("endDate") String endDate,
       );
 
-  @GET("/getTagIncome")
+  @GET("/fortune/include/getTagIncome")
   Future<HJResponse> getTagIncome(
       @Query("bookId") int bookId,
       @Query("startDate") String startDate,

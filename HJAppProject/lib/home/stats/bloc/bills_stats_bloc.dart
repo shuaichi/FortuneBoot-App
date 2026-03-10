@@ -100,17 +100,23 @@ class BillsStatsBloc extends Bloc<BillsStatsEvent, BillsStatsState> {
     on<BillsStatsRequested>(_onSubscriptionRequested);
   }
 
+  /// 安全提取 Data
   dynamic _extractData(HJResponse response) {
+    // 假设您的后端成功 code 是 0
     if (response.code == 0 && response.data != null) {
       return response.data;
     }
     return null;
   }
 
+  /// 极限安全的 List 解析器：过滤一切非 Map 脏数据
   List<T> _parseList<T>(dynamic data, T Function(Map<String, dynamic>) fromJson) {
     if (data == null || data is! List) return[];
-    // 修复：增加了 as Map 进行安全强转
-    return data.map((e) => fromJson(Map<String, dynamic>.from(e as Map))).toList();
+
+    // 重点防崩：使用 whereType<Map>() 过滤掉后端可能返回的脏数据（比如 ["" , null]）
+    return data.whereType<Map>().map((e) {
+      return fromJson(Map<String, dynamic>.from(e));
+    }).toList();
   }
 
   Future<void> _onSubscriptionRequested(BillsStatsRequested event, Emitter<BillsStatsState> emit) async {
@@ -124,6 +130,7 @@ class BillsStatsBloc extends Bloc<BillsStatsEvent, BillsStatsState> {
       final endStr = dateFormater.format(event.endDate);
       final timePointStr = timePointFormater.format(event.endDate);
 
+      // 并发请求
       final results = await Future.wait([
         includeService.getBillStatistics(event.bookId, startStr, endStr),
         includeService.getFortuneAssetsLiabilities(event.groupId),
@@ -139,12 +146,12 @@ class BillsStatsBloc extends Bloc<BillsStatsEvent, BillsStatsState> {
 
       emit(state.copyWith(
         status: BillsStatsStatus.success,
-        // 修复：增加了 as Map 进行安全强转
-        statistics: statData != null
-            ? BillStatisticsVo.fromJson(Map<String, dynamic>.from(statData as Map))
+        // 重点防崩：不再使用 as Map 强转，而是先判断 is Map，如果后端瞎返回空数组[] 就使用默认空对象
+        statistics: (statData is Map)
+            ? BillStatisticsVo.fromJson(Map<String, dynamic>.from(statData))
             : const BillStatisticsVo(),
-        assetsLiabilities: assetData != null
-            ? FortuneAssetsLiabilitiesVo.fromJson(Map<String, dynamic>.from(assetData as Map))
+        assetsLiabilities: (assetData is Map)
+            ? FortuneAssetsLiabilitiesVo.fromJson(Map<String, dynamic>.from(assetData))
             : const FortuneAssetsLiabilitiesVo(),
         incomeTrends: _parseList(_extractData(results[2]), FortuneLineVo.fromJson),
         expenseTrends: _parseList(_extractData(results[3]), FortuneLineVo.fromJson),
@@ -152,8 +159,12 @@ class BillsStatsBloc extends Bloc<BillsStatsEvent, BillsStatsState> {
         categoryExpense: _parseList(_extractData(results[5]), FortunePieVo.fromJson),
         tagExpense: _parseList(_extractData(results[6]), FortuneBarVo.fromJson),
       ));
-    } catch (e) {
-      print('加载失败: $e');
+    } catch (e, stackTrace) {
+      // 在控制台打印出最真实的错误原因
+      print('================ 解析或网络请求异常 ================');
+      print('异常详情: $e');
+      print('堆栈跟踪: $stackTrace');
+      print('==================================================');
       emit(state.copyWith(status: BillsStatsStatus.failure));
     }
   }

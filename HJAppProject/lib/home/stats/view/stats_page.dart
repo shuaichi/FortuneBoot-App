@@ -4,7 +4,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import 'package:dio/dio.dart';
 
 // 正确引入 BLoC 和 Model
 import '../bloc/bills_stats_bloc.dart';
@@ -43,7 +42,7 @@ class StatsPage extends StatelessWidget {
         final endDate = DateTime.now();
         final startDate = endDate.subtract(const Duration(days: 180));
 
-        final includeService = IncludeService(Dio());
+        final includeService = IncludeService();
 
         return BlocProvider(
           create: (context) => BillsStatsBloc(includeService: includeService)
@@ -65,7 +64,7 @@ class StatsPage extends StatelessWidget {
     final bookId = billsRepo.bookId() ?? 1;
     final endDate = DateTime.now();
     final startDate = endDate.subtract(const Duration(days: 180));
-    final includeService = IncludeService(Dio());
+    final includeService = IncludeService();
 
     return BlocProvider(
       create: (context) => BillsStatsBloc(includeService: includeService)

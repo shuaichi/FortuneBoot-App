@@ -24,8 +24,28 @@ class DioClient {
       contentType: Headers.jsonContentType,
     ));
 
-    // // 添加拦截器
+    // 添加拦截器
     dio.interceptors.addAll([
+      // 响应拦截器：检测非 JSON 响应
+      InterceptorsWrapper(
+        onResponse: (response, handler) {
+          // 检查响应是否为 HTML（服务端错误页面或重定向）
+          final data = response.data;
+          if (data is String && data.toString().trim().startsWith('<!DOCTYPE') ||
+              data is String && data.toString().trim().startsWith('<html')) {
+            _logger.e('服务端返回了 HTML 而非 JSON，可能是 baseUrl 未配置或请求地址错误');
+            return handler.reject(
+              DioException(
+                requestOptions: response.requestOptions,
+                response: response,
+                type: DioExceptionType.badResponse,
+                message: '服务端返回了 HTML 而非 JSON 数据，请检查 baseUrl 是否正确配置',
+              ),
+            );
+          }
+          return handler.next(response);
+        },
+      ),
       // 日志拦截器
       LogInterceptor(
         request: true,
