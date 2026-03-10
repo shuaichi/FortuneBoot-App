@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:dio/dio.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hjproject/util/dio_client.dart';
 import 'package:hjproject/repository/repository/bills_repository.dart';
+import 'package:hjproject/home/design_system/hjds_theme.dart';
 
 import '../data/tag_service.dart';
 import '../model/tag_node.dart';
@@ -25,7 +25,7 @@ class _TagManagePageState extends State<TagManagePage> {
   int _lastPageSize = 0;
   bool _loading = true;
   String? _error;
-  List<TagNode> _roots = [];
+  List<TagNode> _roots =[];
   final Set<int> _expandedNodeIds = {};
 
   final TagPageService _service = TagPageService();
@@ -44,16 +44,20 @@ class _TagManagePageState extends State<TagManagePage> {
         bookId: bookId,
         pageNum: _currentPage,
       );
-      setState(() {
-        _total = data.total;
-        _roots = data.rows;
-        _lastPageSize = data.rows.length;
-        _error = null;
-      });
+      if (mounted) {
+        setState(() {
+          _total = data.total;
+          _roots = data.rows;
+          _lastPageSize = data.rows.length;
+          _error = null;
+        });
+      }
     } catch (e) {
-      setState(() {
-        _error = e.toString();
-      });
+      if (mounted) {
+        setState(() {
+          _error = e.toString();
+        });
+      }
     } finally {
       if (mounted) {
         setState(() => _loading = false);
@@ -70,20 +74,23 @@ class _TagManagePageState extends State<TagManagePage> {
 
   @override
   Widget build(BuildContext context) {
-    final double width = MediaQuery.of(context).size.width;
-    final double gap = width < 600 ? 8 : 12;
-    // Design Token: Background #FAFAFA
     return Scaffold(
-      backgroundColor: const Color(0xFFFAFAFA),
+      backgroundColor: HJColors.background,
       appBar: TagManageAppBar(
-        onAddPressed: () => _openAddPage(initialParentId: -1),
+        onAddPressed: () {
+          HapticFeedback.lightImpact();
+          _openAddPage(initialParentId: -1);
+        },
       ),
       body: Column(
-        children: [
-          SizedBox(height: gap),
+        children:[
+          const SizedBox(height: HJSpacing.sm),
           Expanded(
             child: RefreshIndicator(
+              color: HJColors.primary,
+              backgroundColor: HJColors.surface,
               onRefresh: () async {
+                HapticFeedback.mediumImpact();
                 _currentPage = 1;
                 await _load();
               },
@@ -156,15 +163,20 @@ class _TagManagePageState extends State<TagManagePage> {
     );
     if (confirmed == true) {
       if (!mounted) return;
+      HapticFeedback.mediumImpact();
       ScaffoldMessenger.of(context).removeCurrentSnackBar();
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('已移入回收站')),
+        const SnackBar(
+          content: Text('已成功移入回收站', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600)),
+          backgroundColor: HJColors.textSecondary,
+          behavior: SnackBarBehavior.floating,
+        ),
       );
       await _load();
     }
   }
 
-String? _findTagNameById(int id) {
+  String? _findTagNameById(int id) {
     if (id == -1) return null;
     String? result;
     void dfs(List<TagNode> nodes) {
@@ -182,6 +194,7 @@ String? _findTagNameById(int id) {
     dfs(_roots);
     return result;
   }
+
   Future<void> _openEditPage(TagNode node) async {
     final int bookId = context.read<BillsRepository>().bookId() ?? 1;
     final bool? ok = await Navigator.of(context).push<bool>(

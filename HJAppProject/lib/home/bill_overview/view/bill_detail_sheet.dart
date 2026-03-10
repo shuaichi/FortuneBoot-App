@@ -1,8 +1,8 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hjproject/home/edit_bill/view/edit_bill_page.dart';
-import 'package:hjproject/home/theme/theme.dart';
-import 'package:hjproject/home/bill_overview/bloc/bills_overview_bloc.dart';
 import 'package:hjproject/home/bill_overview/bloc/detail_bloc/bill_detail_bloc.dart';
 import 'package:hjproject/home/bill_overview/models/bill_item.dart';
 import 'package:hjproject/home/bill_overview/models/bill_item_add.dart';
@@ -10,8 +10,9 @@ import 'package:intl/intl.dart';
 
 class BillDetailSheet extends StatelessWidget {
   BillDetailSheet({super.key, required this.billItem, this.deleteBk});
-  BillItem billItem;
-  VoidCallback? deleteBk;
+
+  final BillItem billItem;
+  final VoidCallback? deleteBk;
 
   @override
   Widget build(BuildContext context) {
@@ -26,77 +27,37 @@ class BillDetailSheet extends StatelessWidget {
 
 class _BillDetailContent extends StatelessWidget {
   _BillDetailContent(this.deleteBk);
-  VoidCallback? deleteBk;
+
+  final VoidCallback? deleteBk;
+
   @override
   Widget build(BuildContext context) {
-    // ✅ 正确监听状态变化
     return BlocBuilder<BillDetailBloc, BillDetailState>(
       builder: (context, state) {
-        return detailBillSheet(context, state);
+        return _buildModernDetailSheet(context, state);
       },
     );
   }
 
-  Container detailBillSheet(BuildContext context, BillDetailState state) {
-    // 根据账单类型设置颜色和图标
-    Color billColor;
-    IconData billIcon;
+  Widget _buildModernDetailSheet(BuildContext context, BillDetailState state) {
     BillItem bill = state.initialBill;
 
-    switch (bill.billType) {
-      case BillType.expenditure:
-        billColor =
-            Theme.of(context).extension<CustomColors>()!.expenseTextColor ??
-                Colors.red;
-        billIcon = Icons.arrow_upward;
-        break;
-      case BillType.income:
-        billColor =
-            Theme.of(context).extension<CustomColors>()!.incomeTextColor ??
-                Colors.green;
-        billIcon = Icons.arrow_downward;
-        break;
-      case BillType.transfer:
-        billColor =
-            Theme.of(context).extension<CustomColors>()!.transferTextColor ??
-                Colors.blue;
-        billIcon = Icons.swap_horiz;
-        break;
-      case BillType.adjust:
-        billColor =
-            Theme.of(context).extension<CustomColors>()!.adjustTextColor ??
-                Colors.orange;
-        billIcon = Icons.settings;
-        break;
-      case BillType.advance:
-        billColor = Colors.purple;
-        billIcon = Icons.payment;
-        break;
-      case BillType.reimburse:
-        billColor = Colors.teal;
-        billIcon = Icons.receipt;
-        break;
+    // 获取同步后的色彩体系
+    Color billColor = _getBillColor(bill.billType);
+    IconData billIcon = _getBillIcon(bill.billType);
 
-      default:
-        billColor = Colors.grey;
-        billIcon = Icons.help_outline;
-        break;
-    }
-
-    // 格式化金额，确保显示两位小数
-    String amountText = '¥${(bill.convertedAmount ?? 0).toStringAsFixed(2)}';
+    // 金额千分位格式化
+    final formatter = NumberFormat('#,##0.00', 'en_US');
+    String amountText = formatter.format(bill.convertedAmount ?? 0);
     if (bill.billType == BillType.expenditure) {
       amountText = '-$amountText';
     } else if (bill.billType == BillType.income) {
       amountText = '+$amountText';
     }
 
-    // 获取分类名称
     String categoryName = _getCategoryNames(bill);
-
-    // 格式化时间
-    String formattedDate = DateFormat('yyyy年MM月dd日 HH:mm')
-        .format(bill.tradeTime ?? DateTime.now());
+    String formattedDate =
+        DateFormat('yyyy-MM-dd HH:mm').format(bill.tradeTime ?? DateTime.now());
     String weekday = [
       '周日',
       '周一',
@@ -106,314 +67,375 @@ class _BillDetailContent extends StatelessWidget {
       '周五',
       '周六'
     ][(bill.tradeTime?.weekday ?? 7) % 7];
+
     return Container(
       height: MediaQuery.of(context).size.height * 0.85,
       decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        color: Color(0xFFF2F2F7), // 更柔和的 iOS 系统底灰
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // 顶部拖动条
-          Center(
-            child: Container(
-              margin: const EdgeInsets.only(top: 8),
-              width: 40,
-              height: 4,
-              decoration: BoxDecoration(
-                color: Colors.grey[300],
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
-          ),
-
-          // 金额和类型区域
+          // 顶部 Handle 条 与 动作栏
           Container(
-            padding: const EdgeInsets.fromLTRB(20, 20, 20, 30),
-            decoration: BoxDecoration(
-              color: billColor.withOpacity(0.1),
-              borderRadius:
-                  const BorderRadius.vertical(bottom: Radius.circular(20)),
+            padding: const EdgeInsets.only(top: 12, bottom: 8),
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
             ),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // 关闭按钮和更多操作
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.close),
-                      onPressed: () => Navigator.pop(context),
-                      padding: EdgeInsets.zero,
-                      constraints: const BoxConstraints(),
-                    ),
-                    Row(
-                      children: [
-                        if (bill.billType != BillType.adjust) ...[
-                          IconButton(
-                            icon: const Icon(Icons.edit),
-                            onPressed: () {
-                              Navigator.pop(context);
-                              Navigator.of(context).push(EditBillPage.route(
-                                  initialBill: BillItemAdd.fromBillItem(bill)));
-                              // 跳转到修改页面
-                            },
-                            tooltip: '修改',
-                            padding: EdgeInsets.zero,
-                            constraints: const BoxConstraints(),
-                          ),
-                          const SizedBox(width: 16),
-                        ],
-                        IconButton(
-                          icon: const Icon(Icons.delete_outline,
-                              color: Colors.red),
-                          onPressed: () {
-                            if (deleteBk != null) {
-                              deleteBk?.call();
-                            }
-                          },
-                          tooltip: '删除',
-                          padding: EdgeInsets.zero,
-                          constraints: const BoxConstraints(),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-
-                const SizedBox(height: 20),
-
-                // 金额
-                Text(
-                  amountText,
-                  style: TextStyle(
-                    fontSize: 32,
-                    fontWeight: FontWeight.bold,
-                    color: billColor,
+                Container(
+                  width: 36,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFE5E5EA),
+                    borderRadius: BorderRadius.circular(2),
                   ),
                 ),
-
-                const SizedBox(height: 16),
-
-                // 类型和分类
-                Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: billColor.withOpacity(0.2),
-                        borderRadius: BorderRadius.circular(4),
+                const SizedBox(height: 12),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          HapticFeedback.lightImpact();
+                          Navigator.pop(context);
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: const BoxDecoration(
+                              color: Color(0xFFF2F2F7), shape: BoxShape.circle),
+                          child: const Icon(Icons.close_rounded,
+                              size: 20, color: Color(0xFF8E8E93)),
+                        ),
                       ),
-                      child: Row(
+                      Row(
                         children: [
-                          Icon(billIcon, size: 14, color: billColor),
-                          const SizedBox(width: 4),
-                          Text(
-                            bill.billType?.title ?? '未知',
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.bold,
-                              color: billColor,
+                          if (bill.billType != BillType.adjust) ...[
+                            GestureDetector(
+                              onTap: () {
+                                HapticFeedback.lightImpact();
+                                Navigator.pop(context);
+                                Navigator.of(context).push(EditBillPage.route(
+                                    initialBill:
+                                        BillItemAdd.fromBillItem(bill)));
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 16, vertical: 8),
+                                decoration: BoxDecoration(
+                                    color: billColor.withOpacity(0.1),
+                                    borderRadius: BorderRadius.circular(16)),
+                                child: Text('编辑',
+                                    style: TextStyle(
+                                        color: billColor,
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 14)),
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                          ],
+                          GestureDetector(
+                            onTap: () {
+                              HapticFeedback.lightImpact();
+                              deleteBk?.call();
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                  color:
+                                      const Color(0xFFFF3B30).withOpacity(0.1),
+                                  shape: BoxShape.circle),
+                              child: const Icon(Icons.delete_outline_rounded,
+                                  size: 20, color: Color(0xFFFF3B30)),
                             ),
                           ),
                         ],
                       ),
-                    ),
-                    if (categoryName.isNotEmpty) ...[
-                      const SizedBox(width: 8),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 8, vertical: 4),
-                        decoration: BoxDecoration(
-                          color: Colors.grey[200],
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                        child: Text(
-                          categoryName,
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.grey[800],
-                          ),
-                        ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          // 核心巨型金额区
+          Container(
+            color: Colors.white,
+            padding:
+                const EdgeInsets.only(top: 16, bottom: 32, left: 24, right: 24),
+            child: Column(
+              children: [
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: billColor.withOpacity(0.12),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(billIcon, size: 16, color: billColor),
+                      const SizedBox(width: 6),
+                      Text(
+                        categoryName.isNotEmpty
+                            ? categoryName
+                            : (bill.billType?.title ?? '未知'),
+                        style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: billColor),
                       ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 16),
+                FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    amountText,
+                    style: TextStyle(
+                      fontSize: 48,
+                      fontWeight: FontWeight.w700,
+                      color: billColor,
+                      fontFeatures: const [FontFeature.tabularFigures()],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          // 详细信息滚动区
+          Expanded(
+            child: ListView(
+              physics: const AlwaysScrollableScrollPhysics(
+                  parent: BouncingScrollPhysics()),
+              padding: const EdgeInsets.all(16),
+              children: [
+                // 卡片组 1：基础信息
+                _buildModernCardGroup(
+                  children: [
+                    if (bill.title != null && bill.title!.isNotEmpty) ...[
+                      const _ModernDivider(),
+                      _buildModernRow('标题', bill.title!,
+                          Icons.edit_note_rounded, const Color(0xFFAF52DE)),
+                    ],
+                    _buildModernRow(
+                        '账户',
+                        bill.accountName ?? '未知',
+                        Icons.account_balance_wallet_rounded,
+                        const Color(0xFF007AFF)),
+                    if (bill.billType == BillType.transfer) ...[
+                      const _ModernDivider(),
+                      _buildModernRow(
+                          '转入账户',
+                          bill.toAccountName ?? '未知',
+                          Icons.arrow_downward_rounded,
+                          const Color(0xFF34C759)),
+                    ],
+                    const _ModernDivider(),
+                    _buildModernRow('时间', '$formattedDate  $weekday',
+                        Icons.access_time_rounded, const Color(0xFF5856D6)),
+                    // 新增：交易对象展示
+                    if (bill.payeeName != null &&
+                        bill.payeeName!.isNotEmpty) ...[
+                      const _ModernDivider(),
+                      _buildModernRow('交易对象', bill.payeeName!,
+                          Icons.storefront_rounded, const Color(0xFFFF9500)),
+                    ],
+                    if (bill.remark != null && bill.remark!.isNotEmpty) ...[
+                      const _ModernDivider(),
+                      _buildModernRow(
+                          '备注',
+                          bill.remark!,
+                          Icons.chat_bubble_outline_rounded,
+                          const Color(0xFF8E8E93)),
                     ],
                   ],
                 ),
-              ],
-            ),
-          ),
 
-          // 详细信息
-          Expanded(
-            child: ListView(
-              padding: const EdgeInsets.all(20),
-              children: [
-                _buildDetailItem(
-                  context,
-                  bill.billType == BillType.transfer ? '转出账户' : '账户',
-                  bill.accountName ?? '未知',
-                  icon: Icons.account_balance_wallet,
-                ),
-                if (bill.billType == BillType.transfer)
-                  _buildDetailItem(
-                    context,
-                    '转入账户',
-                    bill.toAccountName ?? '未知',
-                    icon: Icons.arrow_forward,
-                  ),
-                _buildDetailItem(
-                  context,
-                  '时间',
-                  '$formattedDate $weekday',
-                  icon: Icons.access_time,
-                ),
-                if (bill.title != null && bill.title!.isNotEmpty)
-                  _buildDetailItem(
-                    context,
-                    '标题',
-                    bill.title!,
-                    icon: Icons.title,
-                  ),
-                if (bill.remark != null && bill.remark!.isNotEmpty)
-                  _buildDetailItem(
-                    context,
-                    '备注',
-                    bill.remark!,
-                    icon: Icons.comment,
-                  ),
-                // 展示图片
-                if (bill.fileList?.isNotEmpty == true)
-                  _buildDetailItem(context, '附件', '',
-                      icon: Icons.image, customWidget: _buildImageList(bill)),
-                // 添加更多详情项...
-                const SizedBox(height: 20),
-
-                // 标签区域
-                if (bill.tagList != null && bill.tagList!.isNotEmpty) ...[
-                  const Text(
-                    '标签',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: bill.tagList!
-                        .map((tag) => Chip(
-                              label: Text(
-                                tag.tagName ?? '',
-                                style: const TextStyle(fontSize: 12),
+                // 标签与附件区域
+                if ((bill.tagList?.isNotEmpty ?? false) ||
+                    (bill.fileList?.isNotEmpty ?? false)) ...[
+                  const SizedBox(height: 16),
+                  _buildModernCardGroup(
+                    children: [
+                      if (bill.tagList?.isNotEmpty ?? false)
+                        Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: const [
+                                  Icon(Icons.local_offer_rounded,
+                                      size: 18, color: Color(0xFF8E8E93)),
+                                  SizedBox(width: 8),
+                                  Text('标签',
+                                      style: TextStyle(
+                                          fontSize: 15,
+                                          color: Color(0xFF8E8E93))),
+                                ],
                               ),
-                              backgroundColor: Colors.grey[200],
-                            ))
-                        .toList(),
+                              const SizedBox(height: 12),
+                              Wrap(
+                                spacing: 8,
+                                runSpacing: 8,
+                                children: bill.tagList!
+                                    .map((tag) => Container(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 12, vertical: 6),
+                                          decoration: BoxDecoration(
+                                              color: const Color(0xFFF2F4F7),
+                                              borderRadius:
+                                                  BorderRadius.circular(8)),
+                                          child: Text(tag.tagName ?? '',
+                                              style: const TextStyle(
+                                                  fontSize: 13,
+                                                  color: Color(0xFF1C1C1E))),
+                                        ))
+                                    .toList(),
+                              ),
+                            ],
+                          ),
+                        ),
+                      if ((bill.tagList?.isNotEmpty ?? false) &&
+                          (bill.fileList?.isNotEmpty ?? false))
+                        const _ModernDivider(),
+                      if (bill.fileList?.isNotEmpty ?? false)
+                        Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: const [
+                                  Icon(Icons.image_rounded,
+                                      size: 18, color: Color(0xFF8E8E93)),
+                                  SizedBox(width: 8),
+                                  Text('附件',
+                                      style: TextStyle(
+                                          fontSize: 15,
+                                          color: Color(0xFF8E8E93))),
+                                ],
+                              ),
+                              const SizedBox(height: 12),
+                              _buildImageList(bill),
+                            ],
+                          ),
+                        ),
+                    ],
                   ),
-                ],
+                ]
               ],
             ),
           ),
 
-          // 底部按钮
-          SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Row(
-                children: [
-                  if (bill.billType != BillType.adjust)
-                    Expanded(
-                      child: OutlinedButton(
-                        onPressed: () {
-                          // 复制账单
-                          Navigator.pop(context);
-                          ScaffoldMessenger.of(context).removeCurrentSnackBar();
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('账单已复制，请修改后保存')),
-                          );
-                          Navigator.of(context).push(EditBillPage.route(
-                              initialBill: BillItemAdd.fromBillItem(bill),
-                              isCopyBill: true));
-                        },
-                        style: OutlinedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                        ),
-                        child: const Text('复制账单'),
-                      ),
-                  ),
-                  // const SizedBox(width: 16),
-                  // Expanded(
-                  //   child: ElevatedButton(
-                  //     onPressed: () {
-                  //       // 添加相似账单
-                  //       Navigator.pop(context);
-                  //     },
-                  //     style: ElevatedButton.styleFrom(
-                  //       backgroundColor: Theme.of(context).primaryColor,
-                  //       foregroundColor: Colors.white,
-                  //       padding: const EdgeInsets.symmetric(vertical: 12),
-                  //     ),
-                  //     child: const Text('添加相似'),
-                  //   ),
-                  // ),
-                ],
+          // 底部操作区
+          if (bill.billType != BillType.adjust)
+            Container(
+              color: const Color(0xFFF2F2F7),
+              padding: EdgeInsets.fromLTRB(
+                  16, 12, 16, MediaQuery.of(context).padding.bottom + 12),
+              child: ElevatedButton.icon(
+                icon: const Icon(Icons.copy_rounded, size: 18),
+                label: const Text('复制此账单',
+                    style:
+                        TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  foregroundColor: const Color(0xFF1C1C1E),
+                  elevation: 0,
+                  minimumSize: const Size(double.infinity, 54),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16)),
+                ),
+                onPressed: () {
+                  HapticFeedback.mediumImpact();
+                  Navigator.pop(context);
+                  ScaffoldMessenger.of(context).removeCurrentSnackBar();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: const Text('已复制，请修改后保存',
+                          style: TextStyle(fontWeight: FontWeight.w600)),
+                      behavior: SnackBarBehavior.floating,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12)),
+                      backgroundColor: const Color(0xFF34C759),
+                    ),
+                  );
+                  Navigator.of(context).push(EditBillPage.route(
+                      initialBill: BillItemAdd.fromBillItem(bill),
+                      isCopyBill: true));
+                },
               ),
             ),
-          ),
         ],
       ),
     );
   }
 
-  // 构建详情项
-  Widget _buildDetailItem(BuildContext context, String label, String value,
-      {IconData? icon, Widget? customWidget}) {
+  Widget _buildModernCardGroup({required List<Widget> children}) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.02),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          )
+        ],
+      ),
+      child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch, children: children),
+    );
+  }
+
+  Widget _buildModernRow(
+      String label, String value, IconData icon, Color iconColor) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 12.0),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (icon != null) ...[
-            Icon(
-              icon,
-              size: 18,
-              color: Colors.grey[600],
-            ),
-            const SizedBox(width: 8),
-          ],
-          SizedBox(
-            width: 60,
-            child: Text(
-              label,
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.grey[600],
-              ),
-            ),
+          Container(
+            padding: const EdgeInsets.all(6),
+            decoration: BoxDecoration(
+                color: iconColor.withOpacity(0.12), shape: BoxShape.circle),
+            child: Icon(icon, size: 16, color: iconColor),
           ),
+          const SizedBox(width: 12),
+          Text(label,
+              style: const TextStyle(
+                  fontSize: 15, color: Color(0xFF8E8E93), height: 1.4)),
+          const SizedBox(width: 24),
           Expanded(
-            child: customWidget ??
-                Text(
-                  value,
-                  style: const TextStyle(
-                    fontSize: 15,
-                  ),
-                ),
+            child: Text(
+              value,
+              textAlign: TextAlign.right,
+              style: const TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w500,
+                  color: Color(0xFF1C1C1E),
+                  height: 1.4),
+            ),
           ),
         ],
       ),
     );
   }
 
-  // 获取分类名称
   String _getCategoryNames(BillItem bill) {
-    if (bill.categoryAmountPair == null || bill.categoryAmountPair!.isEmpty) {
-      return '未分类';
-    }
+    if (bill.categoryAmountPair == null || bill.categoryAmountPair!.isEmpty)
+      return '';
     return bill.categoryAmountPair!
         .map((cat) => cat.categoryName)
         .where((name) => name != null && name.isNotEmpty)
@@ -423,12 +445,69 @@ class _BillDetailContent extends StatelessWidget {
   Widget _buildImageList(BillItem bill) {
     return SizedBox(
       height: 80,
-      child: ListView(
+      child: ListView.separated(
         scrollDirection: Axis.horizontal,
-        children: bill.fileList!.map((element) {
-          return element.buildBase64Image(element.fileData!);
-        }).toList(),
+        itemCount: bill.fileList!.length,
+        separatorBuilder: (_, __) => const SizedBox(width: 12),
+        itemBuilder: (context, index) {
+          final element = bill.fileList![index];
+          return ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: element.buildBase64Image(element.fileData!),
+          );
+        },
       ),
     );
   }
+
+  // 同步概览页的最新色彩体系
+  Color _getBillColor(BillType? type) {
+    switch (type) {
+      case BillType.expenditure:
+        return const Color(0xFF34C759); // 绿色 = 支出
+      case BillType.income:
+        return const Color(0xFFFF3B30); // 红色 = 收入
+      case BillType.transfer:
+        return const Color(0xFF007AFF); // 蓝色 = 转账
+      case BillType.reimburse:
+        return const Color(0xFF32ADE6); // 青色 = 报销
+      case BillType.advance:
+        return const Color(0xFFAF52DE); // 紫色 = 垫付
+      case BillType.adjust:
+        return const Color(0xFFFF9500); // 橙色 = 余额调整
+      default:
+        return const Color(0xFF1C1C1E);
+    }
+  }
+
+  IconData _getBillIcon(BillType? type) {
+    switch (type) {
+      case BillType.expenditure:
+        return Icons.arrow_upward_rounded;
+      case BillType.income:
+        return Icons.arrow_downward_rounded;
+      case BillType.transfer:
+        return Icons.swap_horiz_rounded;
+      case BillType.adjust:
+        return Icons.tune_rounded;
+      case BillType.advance:
+        return Icons.payment_rounded;
+      case BillType.reimburse:
+        return Icons.receipt_rounded;
+      default:
+        return Icons.help_outline_rounded;
+    }
+  }
+}
+
+class _ModernDivider extends StatelessWidget {
+  const _ModernDivider();
+
+  @override
+  Widget build(BuildContext context) => const Divider(
+        height: 1,
+        thickness: 0.5,
+        indent: 48,
+        color: Color(0xFFE5E5EA),
+      );
 }

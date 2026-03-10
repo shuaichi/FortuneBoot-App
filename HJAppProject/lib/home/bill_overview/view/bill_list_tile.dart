@@ -1,7 +1,355 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:hjproject/home/theme/theme.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:hjproject/home/bill_overview/models/bill_item.dart';
 import 'package:intl/intl.dart';
+
+import 'bills_overview_page.dart';
+
+// ==========================================
+// 智能图标与色彩匹配引擎
+// ==========================================
+class CategoryIconHelper {
+  static final List<Map<String, dynamic>> _rules = [
+    // --- 🛒 购物与服饰 (紫色系) ---
+    {
+      'keywords': ['衣服', '裤子', '鞋', '服饰', '包', '帽', '袜', '外套', '内衣', '打扮'],
+      'icon': Icons.checkroom_rounded,
+      'color': Color(0xFFAF52DE)
+    },
+    {
+      'keywords': ['化妆', '护肤', '美妆', '香水', '口红', '面膜', '美容'],
+      'icon': Icons.face_retouching_natural_rounded,
+      'color': Color(0xFFFF2D55)
+    },
+    {
+      'keywords': ['淘宝', '京东', '拼多多', '快递', '网购', '邮费'],
+      'icon': Icons.shopping_cart_rounded,
+      'color': Color(0xFFFF9500)
+    },
+    {
+      'keywords': ['超市', '便利店', '杂货', '纸巾', '沐浴', '洗发', '日用品', '买菜'],
+      'icon': Icons.local_grocery_store_rounded,
+      'color': Color(0xFF32ADE6)
+    },
+    {
+      'keywords': ['购物', '买', '消费', '商场', '百货'],
+      'icon': Icons.local_mall_rounded,
+      'color': Color(0xFFAF52DE)
+    },
+
+    // --- 🍔 餐饮美食 (橙/咖色系) ---
+    {
+      'keywords': ['咖啡', '星巴克', '瑞幸', '饮品', '奶茶', '喜茶', '水', '饮料'],
+      'icon': Icons.local_cafe_rounded,
+      'color': Color(0xFFA2845E)
+    },
+    {
+      'keywords': ['早餐', '包子', '油条', '面包', '烘焙', '蛋糕', '甜品'],
+      'icon': Icons.bakery_dining_rounded,
+      'color': Color(0xFFFFCC00)
+    },
+    {
+      'keywords': ['酒', '酒吧', '啤酒', 'KTV', '派对'],
+      'icon': Icons.local_bar_rounded,
+      'color': Color(0xFF5856D6)
+    },
+    {
+      'keywords': ['外卖', '美团', '饿了么', '快餐', '肯德基', '麦当劳', 'KFC'],
+      'icon': Icons.delivery_dining_rounded,
+      'color': Color(0xFFFF9500)
+    },
+    {
+      'keywords': [
+        '餐饮',
+        '餐',
+        '吃',
+        '食',
+        '饭',
+        '肉',
+        '菜',
+        '午餐',
+        '晚餐',
+        '夜宵',
+        '零食',
+        '烧烤',
+        '火锅',
+        '海鲜',
+        '请客',
+        '聚餐'
+      ],
+      'icon': Icons.restaurant_rounded,
+      'color': Color(0xFFFF9500)
+    },
+
+    // --- 🚗 交通出行 (蓝色系) ---
+    {
+      'keywords': ['公交', '地铁', '巴士', '乘车'],
+      'icon': Icons.directions_bus_rounded,
+      'color': Color(0xFF32ADE6)
+    },
+    {
+      'keywords': ['高铁', '火车', '动车', '铁路'],
+      'icon': Icons.train_rounded,
+      'color': Color(0xFF007AFF)
+    },
+    {
+      'keywords': ['飞机', '航班', '机票', '航空', '机场'],
+      'icon': Icons.flight_rounded,
+      'color': Color(0xFF30B0C7)
+    },
+    {
+      'keywords': ['打车', '出租', '滴滴', '网约车', '高德', '打车费'],
+      'icon': Icons.local_taxi_rounded,
+      'color': Color(0xFFFFCC00)
+    },
+    {
+      'keywords': ['油费', '加油', '油'],
+      'icon': Icons.local_gas_station_rounded,
+      'color': Color(0xFFFF3B30)
+    },
+    {
+      'keywords': ['单车', '自行车', '骑行', '哈啰', '美团单车'],
+      'icon': Icons.directions_bike_rounded,
+      'color': Color(0xFF34C759)
+    },
+    {
+      'keywords': ['停车', '违章', '保养', '洗车', '维修', 'ETC', '过路费', '高速', '车险'],
+      'icon': Icons.car_repair_rounded,
+      'color': Color(0xFF8E8E93)
+    },
+    {
+      'keywords': ['交通', '车', '行', '出行', '路', '费'],
+      'icon': Icons.directions_car_rounded,
+      'color': Color(0xFF007AFF)
+    },
+
+    // --- 🏠 居住水电 (棕/灰系) ---
+    {
+      'keywords': ['水费', '电费', '燃气', '煤气', '水电'],
+      'icon': Icons.lightbulb_rounded,
+      'color': Color(0xFFFFCC00)
+    },
+    {
+      'keywords': ['网费', '话费', '宽带', '电信', '联通', '移动', '充值'],
+      'icon': Icons.wifi_rounded,
+      'color': Color(0xFF32ADE6)
+    },
+    {
+      'keywords': ['装修', '家具', '家电', '床', '五金', '修理', '家政', '保洁'],
+      'icon': Icons.handyman_rounded,
+      'color': Color(0xFF8E8E93)
+    },
+    {
+      'keywords': ['房', '住', '租', '物业', '住宿', '酒店', '旅馆', '民宿'],
+      'icon': Icons.home_rounded,
+      'color': Color(0xFFA2845E)
+    },
+
+    // --- 🎮 娱乐休闲 (粉/紫系) ---
+    {
+      'keywords': ['游戏', '玩', '充值', '皮肤', '点券', 'Steam', 'Switch', 'PS5', '网吧'],
+      'icon': Icons.sports_esports_rounded,
+      'color': Color(0xFFFF2D55)
+    },
+    {
+      'keywords': ['电影', '影', '剧', '视频', '爱奇艺', '腾讯', '优酷', 'B站', '大会员', '会员'],
+      'icon': Icons.movie_rounded,
+      'color': Color(0xFFAF52DE)
+    },
+    {
+      'keywords': ['唱', '音乐', '演唱会', 'QQ音乐', '网易云', 'Live'],
+      'icon': Icons.music_note_rounded,
+      'color': Color(0xFFFF3B30)
+    },
+    {
+      'keywords': ['游', '旅游', '门票', '景点', '度假', '露营', '公园'],
+      'icon': Icons.landscape_rounded,
+      'color': Color(0xFF34C759)
+    },
+    {
+      'keywords': ['运动', '健身', '瑜伽', '游泳', '球', '私教', '体育', '跑步'],
+      'icon': Icons.fitness_center_rounded,
+      'color': Color(0xFF007AFF)
+    },
+    {
+      'keywords': ['娱乐', '休闲', '玩乐', '密室', '剧本杀'],
+      'icon': Icons.celebration_rounded,
+      'color': Color(0xFFFF9500)
+    },
+
+    // --- 💊 医疗健康 (红/青系) ---
+    {
+      'keywords': ['药', '买药', '药店', '感冒', '维生素', '保健'],
+      'icon': Icons.medication_rounded,
+      'color': Color(0xFF32ADE6)
+    },
+    {
+      'keywords': ['医', '病', '挂号', '体检', '牙', '住院', '诊所', '疫苗', '核酸', '医保'],
+      'icon': Icons.medical_services_rounded,
+      'color': Color(0xFFFF3B30)
+    },
+    {
+      'keywords': ['理疗', '养生', '按摩', '洗浴', '足疗'],
+      'icon': Icons.spa_rounded,
+      'color': Color(0xFFAF52DE)
+    },
+
+    // --- 📚 教育学习 (靛青系) ---
+    {
+      'keywords': ['书', '资料', '文具', '笔', '本', '绘本', '阅读', '买书'],
+      'icon': Icons.menu_book_rounded,
+      'color': Color(0xFFA2845E)
+    },
+    {
+      'keywords': ['学', '教', '考', '培训', '课', '补习', '班', '学费', '报名费'],
+      'icon': Icons.school_rounded,
+      'color': Color(0xFF5856D6)
+    },
+
+    // --- 🎁 人情与家庭 (粉/黄系) ---
+    {
+      'keywords': ['人情', '礼', '红包', '份子', '结婚', '压岁钱', '捐', '慈善', '孝敬'],
+      'icon': Icons.card_giftcard_rounded,
+      'color': Color(0xFFFF3B30)
+    },
+    {
+      'keywords': ['孩', '婴', '奶粉', '尿不湿', '育儿', '玩具', '宝贝', '儿子', '女儿'],
+      'icon': Icons.child_care_rounded,
+      'color': Color(0xFFFF9500)
+    },
+    {
+      'keywords': ['宠', '猫', '狗', '粮', '兽医', '驱虫', '宠物'],
+      'icon': Icons.pets_rounded,
+      'color': Color(0xFFA2845E)
+    },
+
+    // --- 💰 金融理财 (绿/红系) ---
+    {
+      'keywords': ['理财', '基金', '股', '投资', '收益'],
+      'icon': Icons.trending_up_rounded,
+      'color': Color(0xFFFF3B30)
+    }, // 投资收益红色
+    {
+      'keywords': ['保险', '寿险', '重疾'],
+      'icon': Icons.shield_rounded,
+      'color': Color(0xFF34C759)
+    },
+    {
+      'keywords': [
+        '贷款',
+        '还款',
+        '信用',
+        '借',
+        '欠',
+        '赔',
+        '押金',
+        '罚',
+        '税',
+        '手续费',
+        '分期',
+        '房贷',
+        '车贷',
+        '息',
+        '利息'
+      ],
+      'icon': Icons.account_balance_rounded,
+      'color': Color(0xFF8E8E93)
+    },
+
+    // --- 💸 收入相关 (红色系) ---
+    {
+      'keywords': ['工资', '薪水', '奖金', '分红', '兼职', '外快', '收入', '发钱', '生活费'],
+      'icon': Icons.payments_rounded,
+      'color': Color(0xFFFF3B30)
+    },
+    {
+      'keywords': ['退款', '报销', '补贴', '理赔', '公积金'],
+      'icon': Icons.price_check_rounded,
+      'color': Color(0xFF32ADE6)
+    },
+    {
+      'keywords': ['二手', '闲鱼', '卖', '转让'],
+      'icon': Icons.storefront_rounded,
+      'color': Color(0xFFFF9500)
+    },
+
+    // --- 📱 数码与个人护理 ---
+    {
+      'keywords': [
+        '手机',
+        '电脑',
+        '平板',
+        '外设',
+        '耳机',
+        '键盘',
+        '鼠标',
+        '数据线',
+        '数码',
+        '苹果',
+        '华为'
+      ],
+      'icon': Icons.devices_rounded,
+      'color': Color(0xFF8E8E93)
+    },
+    {
+      'keywords': ['理发', '剪', '头发', '美甲', '护发'],
+      'icon': Icons.content_cut_rounded,
+      'color': Color(0xFF5856D6)
+    },
+  ];
+
+  static Map<String, dynamic> match(String categoryName, BillType? billType) {
+    if (categoryName.isNotEmpty) {
+      for (var rule in _rules) {
+        List<String> keywords = rule['keywords'];
+        for (var kw in keywords) {
+          if (categoryName.contains(kw)) {
+            return {'icon': rule['icon'], 'color': rule['color']};
+          }
+        }
+      }
+    }
+
+    // 无分类或无匹配时的极简后备方案
+    if (billType == BillType.income)
+      return {
+        'icon': Icons.savings_rounded,
+        'color': FintechTheme.getBillColor(BillType.income)
+      };
+    if (billType == BillType.expenditure)
+      return {
+        'icon': Icons.receipt_rounded,
+        'color': FintechTheme.getBillColor(BillType.expenditure)
+      };
+    if (billType == BillType.transfer)
+      return {
+        'icon': Icons.sync_alt_rounded,
+        'color': FintechTheme.getBillColor(BillType.transfer)
+      };
+    if (billType == BillType.adjust)
+      return {
+        'icon': Icons.tune_rounded,
+        'color': FintechTheme.getBillColor(BillType.adjust)
+      };
+    if (billType == BillType.advance)
+      return {
+        'icon': Icons.payment_rounded,
+        'color': FintechTheme.getBillColor(BillType.advance)
+      };
+    if (billType == BillType.reimburse)
+      return {
+        'icon': Icons.assignment_return_rounded,
+        'color': FintechTheme.getBillColor(BillType.reimburse)
+      };
+
+    return {
+      'icon': Icons.receipt_long_rounded,
+      'color': const Color(0xFF8E8E93)
+    };
+  }
+}
 
 class BillListTile extends StatelessWidget {
   const BillListTile({
@@ -21,9 +369,7 @@ class BillListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    // 获取分类名称
+    // 提取分类名
     String categoryName = '';
     if (bill.categoryAmountPair != null &&
         bill.categoryAmountPair!.isNotEmpty) {
@@ -33,129 +379,64 @@ class BillListTile extends StatelessWidget {
           .join(', ');
     }
 
-    // 构建标题
     String title = bill.title ?? '';
     if (title.isEmpty && categoryName.isNotEmpty) {
       title = categoryName;
-    } else if (categoryName.isNotEmpty) {
-      title = '$categoryName - $title';
+    } else if (categoryName.isNotEmpty && title != categoryName) {
+      title = title;
+    } else if (title.isEmpty) {
+      title = '未命名记录';
     }
 
-    // 格式化时间（只显示小时和分钟，更符合中国用户习惯）
     DateFormat formatter = DateFormat('HH:mm');
     String formattedTime = formatter.format(bill.tradeTime ?? DateTime.now());
 
-    // 根据账单类型设置颜色和图标
-    Color? billColor;
-    IconData? billIcon;
-    Map<String, dynamic>? categoryIcon;
+    // 🚀 核心：调用智能引擎获取专属图标与色彩
+    final matchedConfig = CategoryIconHelper.match(categoryName, bill.billType);
+    final IconData iconData = matchedConfig['icon'];
+    final Color iconBgColor = matchedConfig['color'];
 
-    // 设置账单类型颜色和图标
-    switch (bill.billType) {
-      case BillType.expenditure:
-        billColor =
-            Theme.of(context).extension<CustomColors>()!.expenseTextColor ??
-                Colors.red;
-        billIcon = Icons.arrow_upward;
-        break;
-      case BillType.income:
-        billColor =
-            Theme.of(context).extension<CustomColors>()!.incomeTextColor ??
-                Colors.green;
-        billIcon = Icons.arrow_downward;
-        break;
-      case BillType.transfer:
-        billColor =
-            Theme.of(context).extension<CustomColors>()!.transferTextColor ??
-                Colors.blue;
-        billIcon = Icons.swap_horiz;
-        break;
-      case BillType.adjust:
-        billColor =
-            Theme.of(context).extension<CustomColors>()!.adjustTextColor ??
-                Colors.orange;
-        billIcon = Icons.settings;
-        break;
-      case BillType.advance:
-        billColor = Colors.purple;
-        billIcon = Icons.payment;
-        break;
-      case BillType.reimburse:
-        billColor = Colors.teal;
-        billIcon = Icons.receipt;
-        break;
+    // 金额文本与颜色处理 (依据国内习惯：收入红，支出绿)
+    String amountText = FintechTheme.formatAmount(bill.convertedAmount ?? 0);
+    Color amountColor = (bill.billType == BillType.income)
+        ? FintechTheme.getBillColor(BillType.income)
+        : FintechTheme.textPrimary; // 支出保持沉稳的黑色
 
-      case null:
-        billColor = Colors.grey;
-        billIcon = Icons.help_outline;
-        break;
+    // 副标题拼接
+    List<String> subItems = [];
+    if (bill.accountName != null && bill.accountName!.isNotEmpty) {
+      subItems.add(bill.accountName!);
     }
+    subItems.add(formattedTime);
+    String subtitle = subItems.join('  •  ');
 
-    // 根据分类设置图标（这里使用一些常见的中国消费分类图标）
-    if (categoryName.isNotEmpty) {
-      if (categoryName.contains('餐饮') ||
-          categoryName.contains('吃') ||
-          categoryName.contains('食品')) {
-        categoryIcon = {'icon': Icons.restaurant, 'color': Colors.orange};
-      } else if (categoryName.contains('交通') || categoryName.contains('车')) {
-        categoryIcon = {'icon': Icons.directions_car, 'color': Colors.blue};
-      } else if (categoryName.contains('购物') || categoryName.contains('服装')) {
-        categoryIcon = {'icon': Icons.shopping_bag, 'color': Colors.purple};
-      } else if (categoryName.contains('娱乐') || categoryName.contains('电影')) {
-        categoryIcon = {'icon': Icons.movie, 'color': Colors.pink};
-      } else if (categoryName.contains('住房') || categoryName.contains('房租')) {
-        categoryIcon = {'icon': Icons.home, 'color': Colors.brown};
-      } else if (categoryName.contains('工资') || categoryName.contains('收入')) {
-        categoryIcon = {
-          'icon': Icons.account_balance_wallet,
-          'color': Colors.green
-        };
-      } else if (categoryName.contains('医疗') || categoryName.contains('药')) {
-        categoryIcon = {'icon': Icons.local_hospital, 'color': Colors.red};
-      } else if (categoryName.contains('教育') || categoryName.contains('学习')) {
-        categoryIcon = {'icon': Icons.school, 'color': Colors.indigo};
-      }
-    }
-
-    // 格式化金额，确保显示两位小数
-    String amountText = '¥${(bill.convertedAmount ?? 0).toStringAsFixed(2)}';
-    // if (bill.billType == BillType.expenditure) {
-    //   amountText = '-$amountText';
-    // } else if (bill.billType == BillType.income) {
-    //   amountText = '+$amountText';
-    // }
-
-    // 构建卡片
-    var card = Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12.0),
-      ),
-      elevation: 1.0,
-      margin: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+    final card = Material(
+      color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(12.0),
         child: Padding(
-          padding: const EdgeInsets.all(12.0),
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
           child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // 左侧图标
+              // 🍎 iOS 设置页经典呈现方式：饱满色彩圆角方块 + 纯白 Icon
               Container(
-                width: 40,
-                height: 40,
+                width: 36,
+                height: 36,
                 decoration: BoxDecoration(
-                  color: (categoryIcon?['color'] as Color? ?? billColor)
-                      ?.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(8.0),
+                  color: iconBgColor,
+                  borderRadius: BorderRadius.circular(10),
+                  boxShadow: [
+                    BoxShadow(
+                        color: iconBgColor.withOpacity(0.25),
+                        blurRadius: 6,
+                        offset: const Offset(0, 2))
+                  ],
                 ),
-                child: Icon(
-                  categoryIcon?['icon'] as IconData? ?? billIcon,
-                  color: categoryIcon?['color'] as Color? ?? billColor,
-                  size: 20,
-                ),
+                child: Icon(iconData, color: Colors.white, size: 20),
               ),
-              const SizedBox(width: 12),
-              // 中间内容
+              const SizedBox(width: 14),
+              // 中间文字描述
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -164,70 +445,44 @@ class BillListTile extends StatelessWidget {
                       title,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        color: FintechTheme.textPrimary,
+                        letterSpacing: 0.2,
+                      ),
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: 3),
                     Row(
                       children: [
-                        // 账户名称
-                        if (bill.accountName != null &&
-                            bill.accountName!.isNotEmpty) ...[
-                          Icon(
-                            Icons.account_balance,
-                            size: 12,
-                            color: Colors.grey[600],
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            bill.accountName!,
-                            style: TextStyle(
-                              color: Colors.grey[600],
-                              fontSize: 12,
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                        ],
-                        // 账单类型
                         Text(
-                          bill.billType?.title ?? '',
-                          style: TextStyle(
-                            color: billColor,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
+                          subtitle,
+                          style: const TextStyle(
+                            color: FintechTheme.textSecondary,
+                            fontSize: 13,
+                            fontWeight: FontWeight.w400,
                           ),
                         ),
-                        const SizedBox(width: 8),
-                        // 时间
-                        Text(
-                          formattedTime,
-                          style: TextStyle(
-                            color: Colors.grey[600],
-                            fontSize: 12,
-                          ),
-                        ),
-                        // 备注图标
                         if (bill.remark != null && bill.remark!.isNotEmpty) ...[
-                          const SizedBox(width: 8),
-                          Icon(
-                            Icons.comment,
-                            size: 12,
-                            color: Colors.grey[600],
-                          ),
+                          const SizedBox(width: 6),
+                          const Icon(CupertinoIcons.chat_bubble_text,
+                              size: 12, color: Color(0xFFC7C7CC)),
                         ],
                       ],
                     ),
                   ],
                 ),
               ),
-              // 右侧金额
+              const SizedBox(width: 8),
+              // 金额
               Text(
                 amountText,
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      color: billColor,
-                      fontWeight: FontWeight.bold,
-                    ),
+                style: TextStyle(
+                  fontSize: 17,
+                  fontWeight: FontWeight.w600,
+                  color: amountColor,
+                  fontFeatures: const [FontFeature.tabularFigures()],
+                ),
               ),
             ],
           ),
@@ -235,29 +490,30 @@ class BillListTile extends StatelessWidget {
       ),
     );
 
-    // 启用左滑删除功能
     return Dismissible(
       key: Key('billListTile_dismissible_${bill.billId}'),
       onDismissed: onDismissed,
       direction: DismissDirection.horizontal,
       confirmDismiss: (direction) async {
-        // 添加确认对话框，防止误删
+        HapticFeedback.lightImpact();
         if (direction == DismissDirection.endToStart) {
           if (onDismissed != null) {
-            return await showDialog<bool>(
+            return await showCupertinoDialog<bool>(
                   context: context,
-                  builder: (context) => AlertDialog(
+                  builder: (context) => CupertinoAlertDialog(
                     title: const Text('确认删除'),
-                    content: const Text('确定要删除这条账单记录吗？'),
+                    content: const Text('确定要删除这条记录吗？'),
                     actions: [
-                      TextButton(
+                      CupertinoDialogAction(
+                        child: const Text('取消',
+                            style:
+                                TextStyle(color: FintechTheme.textSecondary)),
                         onPressed: () => Navigator.of(context).pop(false),
-                        child: const Text('取消'),
                       ),
-                      TextButton(
+                      CupertinoDialogAction(
+                        isDestructiveAction: true,
                         onPressed: () => Navigator.of(context).pop(true),
-                        child: const Text('删除',
-                            style: TextStyle(color: Colors.red)),
+                        child: const Text('删除'),
                       ),
                     ],
                   ),
@@ -265,55 +521,57 @@ class BillListTile extends StatelessWidget {
                 false;
           }
         } else if (direction == DismissDirection.startToEnd) {
-          // 余额调整账单不允许复制：直接提示并阻断
           if (bill.billType == BillType.adjust) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('余额调整账单不支持复制或修改')),
-            );
+            HapticFeedback.mediumImpact();
+            ScaffoldMessenger.of(context)
+                .showSnackBar(const SnackBar(content: Text('余额调整账单不支持复制')));
             return false;
           }
-          await showDialog<bool>(
+          final confirmed = await showCupertinoDialog<bool>(
             context: context,
-            builder: (context) => AlertDialog(
+            builder: (context) => CupertinoAlertDialog(
               title: const Text('是否复制'),
-              content: const Text('确定要复制这条账单记录吗？'),
+              content: const Text('确定要复制这条记录吗？'),
               actions: [
-                TextButton(
+                CupertinoDialogAction(
+                  child: const Text('取消',
+                      style: TextStyle(color: FintechTheme.textSecondary)),
                   onPressed: () => Navigator.of(context).pop(false),
-                  child: const Text('取消'),
                 ),
-                TextButton(
-                  onPressed: () {
-                    onCopy?.call();
-                  },
-                  child: const Text('复制', style: TextStyle(color: Colors.blue)),
+                CupertinoDialogAction(
+                  child: Text('复制',
+                      style: TextStyle(
+                          color: FintechTheme.getBillColor(BillType.transfer))),
+                  onPressed: () => Navigator.of(context).pop(true),
                 ),
               ],
             ),
           );
+          if (confirmed == true) onCopy?.call();
           return false;
         }
         return false;
       },
-      background: Container(
-        alignment: Alignment.centerLeft,
-        color: theme.colorScheme.inversePrimary,
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: const Icon(
-          Icons.copy,
-          color: Colors.white,
-        ),
-      ),
-      secondaryBackground: Container(
-        alignment: Alignment.centerRight,
-        color: theme.colorScheme.error,
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: const Icon(
-          Icons.delete,
-          color: Colors.white,
-        ),
-      ),
+      background: _buildDismissBackground(true),
+      secondaryBackground: _buildDismissBackground(false),
       child: card,
+    );
+  }
+
+  Widget _buildDismissBackground(bool isPrimary) {
+    return Container(
+      color: isPrimary
+          ? FintechTheme.getBillColor(BillType.transfer)
+          : FintechTheme.getBillColor(BillType.income),
+      alignment: isPrimary ? Alignment.centerLeft : Alignment.centerRight,
+      padding: const EdgeInsets.symmetric(horizontal: 24.0),
+      child: Icon(
+        isPrimary
+            ? CupertinoIcons.doc_on_clipboard_fill
+            : CupertinoIcons.delete_solid,
+        color: Colors.white,
+        size: 24,
+      ),
     );
   }
 }
