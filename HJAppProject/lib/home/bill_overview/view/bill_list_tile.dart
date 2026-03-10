@@ -8,6 +8,16 @@ import 'package:intl/intl.dart';
 import 'bills_overview_page.dart';
 
 // ==========================================
+// 辅助类：用于封装匹配结果，消除 dynamic 告警
+// ==========================================
+class CategoryMatch {
+  final IconData icon;
+  final Color color;
+
+  CategoryMatch({required this.icon, required this.color});
+}
+
+// ==========================================
 // 智能图标与色彩匹配引擎
 // ==========================================
 class CategoryIconHelper {
@@ -16,49 +26,49 @@ class CategoryIconHelper {
     {
       'keywords': ['衣服', '裤子', '鞋', '服饰', '包', '帽', '袜', '外套', '内衣', '打扮'],
       'icon': Icons.checkroom_rounded,
-      'color': Color(0xFFAF52DE)
+      'color': const Color(0xFFAF52DE)
     },
     {
       'keywords': ['化妆', '护肤', '美妆', '香水', '口红', '面膜', '美容'],
       'icon': Icons.face_retouching_natural_rounded,
-      'color': Color(0xFFFF2D55)
+      'color': const Color(0xFFFF2D55)
     },
     {
       'keywords': ['淘宝', '京东', '拼多多', '快递', '网购', '邮费'],
       'icon': Icons.shopping_cart_rounded,
-      'color': Color(0xFFFF9500)
+      'color': const Color(0xFFFF9500)
     },
     {
       'keywords': ['超市', '便利店', '杂货', '纸巾', '沐浴', '洗发', '日用品', '买菜'],
       'icon': Icons.local_grocery_store_rounded,
-      'color': Color(0xFF32ADE6)
+      'color': const Color(0xFF32ADE6)
     },
     {
       'keywords': ['购物', '买', '消费', '商场', '百货'],
       'icon': Icons.local_mall_rounded,
-      'color': Color(0xFFAF52DE)
+      'color': const Color(0xFFAF52DE)
     },
 
     // --- 🍔 餐饮美食 (橙/咖色系) ---
     {
       'keywords': ['咖啡', '星巴克', '瑞幸', '饮品', '奶茶', '喜茶', '水', '饮料'],
       'icon': Icons.local_cafe_rounded,
-      'color': Color(0xFFA2845E)
+      'color': const Color(0xFFA2845E)
     },
     {
       'keywords': ['早餐', '包子', '油条', '面包', '烘焙', '蛋糕', '甜品'],
       'icon': Icons.bakery_dining_rounded,
-      'color': Color(0xFFFFCC00)
+      'color': const Color(0xFFFFCC00)
     },
     {
       'keywords': ['酒', '酒吧', '啤酒', 'KTV', '派对'],
       'icon': Icons.local_bar_rounded,
-      'color': Color(0xFF5856D6)
+      'color': const Color(0xFF5856D6)
     },
     {
       'keywords': ['外卖', '美团', '饿了么', '快餐', '肯德基', '麦当劳', 'KFC'],
       'icon': Icons.delivery_dining_rounded,
-      'color': Color(0xFFFF9500)
+      'color': const Color(0xFFFF9500)
     },
     {
       'keywords': [
@@ -80,161 +90,161 @@ class CategoryIconHelper {
         '聚餐'
       ],
       'icon': Icons.restaurant_rounded,
-      'color': Color(0xFFFF9500)
+      'color': const Color(0xFFFF9500)
     },
 
     // --- 🚗 交通出行 (蓝色系) ---
     {
       'keywords': ['公交', '地铁', '巴士', '乘车'],
       'icon': Icons.directions_bus_rounded,
-      'color': Color(0xFF32ADE6)
+      'color': const Color(0xFF32ADE6)
     },
     {
       'keywords': ['高铁', '火车', '动车', '铁路'],
       'icon': Icons.train_rounded,
-      'color': Color(0xFF007AFF)
+      'color': const Color(0xFF007AFF)
     },
     {
       'keywords': ['飞机', '航班', '机票', '航空', '机场'],
       'icon': Icons.flight_rounded,
-      'color': Color(0xFF30B0C7)
+      'color': const Color(0xFF30B0C7)
     },
     {
       'keywords': ['打车', '出租', '滴滴', '网约车', '高德', '打车费'],
       'icon': Icons.local_taxi_rounded,
-      'color': Color(0xFFFFCC00)
+      'color': const Color(0xFFFFCC00)
     },
     {
       'keywords': ['油费', '加油', '油'],
       'icon': Icons.local_gas_station_rounded,
-      'color': Color(0xFFFF3B30)
+      'color': const Color(0xFFFF3B30)
     },
     {
       'keywords': ['单车', '自行车', '骑行', '哈啰', '美团单车'],
       'icon': Icons.directions_bike_rounded,
-      'color': Color(0xFF34C759)
+      'color': const Color(0xFF34C759)
     },
     {
       'keywords': ['停车', '违章', '保养', '洗车', '维修', 'ETC', '过路费', '高速', '车险'],
       'icon': Icons.car_repair_rounded,
-      'color': Color(0xFF8E8E93)
+      'color': const Color(0xFF8E8E93)
     },
     {
       'keywords': ['交通', '车', '行', '出行', '路', '费'],
       'icon': Icons.directions_car_rounded,
-      'color': Color(0xFF007AFF)
+      'color': const Color(0xFF007AFF)
     },
 
     // --- 🏠 居住水电 (棕/灰系) ---
     {
       'keywords': ['水费', '电费', '燃气', '煤气', '水电'],
       'icon': Icons.lightbulb_rounded,
-      'color': Color(0xFFFFCC00)
+      'color': const Color(0xFFFFCC00)
     },
     {
       'keywords': ['网费', '话费', '宽带', '电信', '联通', '移动', '充值'],
       'icon': Icons.wifi_rounded,
-      'color': Color(0xFF32ADE6)
+      'color': const Color(0xFF32ADE6)
     },
     {
       'keywords': ['装修', '家具', '家电', '床', '五金', '修理', '家政', '保洁'],
       'icon': Icons.handyman_rounded,
-      'color': Color(0xFF8E8E93)
+      'color': const Color(0xFF8E8E93)
     },
     {
       'keywords': ['房', '住', '租', '物业', '住宿', '酒店', '旅馆', '民宿'],
       'icon': Icons.home_rounded,
-      'color': Color(0xFFA2845E)
+      'color': const Color(0xFFA2845E)
     },
 
     // --- 🎮 娱乐休闲 (粉/紫系) ---
     {
       'keywords': ['游戏', '玩', '充值', '皮肤', '点券', 'Steam', 'Switch', 'PS5', '网吧'],
       'icon': Icons.sports_esports_rounded,
-      'color': Color(0xFFFF2D55)
+      'color': const Color(0xFFFF2D55)
     },
     {
       'keywords': ['电影', '影', '剧', '视频', '爱奇艺', '腾讯', '优酷', 'B站', '大会员', '会员'],
       'icon': Icons.movie_rounded,
-      'color': Color(0xFFAF52DE)
+      'color': const Color(0xFFAF52DE)
     },
     {
       'keywords': ['唱', '音乐', '演唱会', 'QQ音乐', '网易云', 'Live'],
       'icon': Icons.music_note_rounded,
-      'color': Color(0xFFFF3B30)
+      'color': const Color(0xFFFF3B30)
     },
     {
       'keywords': ['游', '旅游', '门票', '景点', '度假', '露营', '公园'],
       'icon': Icons.landscape_rounded,
-      'color': Color(0xFF34C759)
+      'color': const Color(0xFF34C759)
     },
     {
       'keywords': ['运动', '健身', '瑜伽', '游泳', '球', '私教', '体育', '跑步'],
       'icon': Icons.fitness_center_rounded,
-      'color': Color(0xFF007AFF)
+      'color': const Color(0xFF007AFF)
     },
     {
       'keywords': ['娱乐', '休闲', '玩乐', '密室', '剧本杀'],
       'icon': Icons.celebration_rounded,
-      'color': Color(0xFFFF9500)
+      'color': const Color(0xFFFF9500)
     },
 
     // --- 💊 医疗健康 (红/青系) ---
     {
       'keywords': ['药', '买药', '药店', '感冒', '维生素', '保健'],
       'icon': Icons.medication_rounded,
-      'color': Color(0xFF32ADE6)
+      'color': const Color(0xFF32ADE6)
     },
     {
       'keywords': ['医', '病', '挂号', '体检', '牙', '住院', '诊所', '疫苗', '核酸', '医保'],
       'icon': Icons.medical_services_rounded,
-      'color': Color(0xFFFF3B30)
+      'color': const Color(0xFFFF3B30)
     },
     {
       'keywords': ['理疗', '养生', '按摩', '洗浴', '足疗'],
       'icon': Icons.spa_rounded,
-      'color': Color(0xFFAF52DE)
+      'color': const Color(0xFFAF52DE)
     },
 
     // --- 📚 教育学习 (靛青系) ---
     {
       'keywords': ['书', '资料', '文具', '笔', '本', '绘本', '阅读', '买书'],
       'icon': Icons.menu_book_rounded,
-      'color': Color(0xFFA2845E)
+      'color': const Color(0xFFA2845E)
     },
     {
       'keywords': ['学', '教', '考', '培训', '课', '补习', '班', '学费', '报名费'],
       'icon': Icons.school_rounded,
-      'color': Color(0xFF5856D6)
+      'color': const Color(0xFF5856D6)
     },
 
     // --- 🎁 人情与家庭 (粉/黄系) ---
     {
       'keywords': ['人情', '礼', '红包', '份子', '结婚', '压岁钱', '捐', '慈善', '孝敬'],
       'icon': Icons.card_giftcard_rounded,
-      'color': Color(0xFFFF3B30)
+      'color': const Color(0xFFFF3B30)
     },
     {
       'keywords': ['孩', '婴', '奶粉', '尿不湿', '育儿', '玩具', '宝贝', '儿子', '女儿'],
       'icon': Icons.child_care_rounded,
-      'color': Color(0xFFFF9500)
+      'color': const Color(0xFFFF9500)
     },
     {
       'keywords': ['宠', '猫', '狗', '粮', '兽医', '驱虫', '宠物'],
       'icon': Icons.pets_rounded,
-      'color': Color(0xFFA2845E)
+      'color': const Color(0xFFA2845E)
     },
 
     // --- 💰 金融理财 (绿/红系) ---
     {
       'keywords': ['理财', '基金', '股', '投资', '收益'],
       'icon': Icons.trending_up_rounded,
-      'color': Color(0xFFFF3B30)
+      'color': const Color(0xFFFF3B30)
     }, // 投资收益红色
     {
       'keywords': ['保险', '寿险', '重疾'],
       'icon': Icons.shield_rounded,
-      'color': Color(0xFF34C759)
+      'color': const Color(0xFF34C759)
     },
     {
       'keywords': [
@@ -255,24 +265,24 @@ class CategoryIconHelper {
         '利息'
       ],
       'icon': Icons.account_balance_rounded,
-      'color': Color(0xFF8E8E93)
+      'color': const Color(0xFF8E8E93)
     },
 
     // --- 💸 收入相关 (红色系) ---
     {
       'keywords': ['工资', '薪水', '奖金', '分红', '兼职', '外快', '收入', '发钱', '生活费'],
       'icon': Icons.payments_rounded,
-      'color': Color(0xFFFF3B30)
+      'color': const Color(0xFFFF3B30)
     },
     {
       'keywords': ['退款', '报销', '补贴', '理赔', '公积金'],
       'icon': Icons.price_check_rounded,
-      'color': Color(0xFF32ADE6)
+      'color': const Color(0xFF32ADE6)
     },
     {
       'keywords': ['二手', '闲鱼', '卖', '转让'],
       'icon': Icons.storefront_rounded,
-      'color': Color(0xFFFF9500)
+      'color': const Color(0xFFFF9500)
     },
 
     // --- 📱 数码与个人护理 ---
@@ -291,63 +301,66 @@ class CategoryIconHelper {
         '华为'
       ],
       'icon': Icons.devices_rounded,
-      'color': Color(0xFF8E8E93)
+      'color': const Color(0xFF8E8E93)
     },
     {
       'keywords': ['理发', '剪', '头发', '美甲', '护发'],
       'icon': Icons.content_cut_rounded,
-      'color': Color(0xFF5856D6)
+      'color': const Color(0xFF5856D6)
     },
   ];
 
-  static Map<String, dynamic> match(String categoryName, BillType? billType) {
+  static CategoryMatch match(String categoryName, BillType? billType) {
     if (categoryName.isNotEmpty) {
       for (var rule in _rules) {
-        List<String> keywords = rule['keywords'];
+        // 核心修改：先强转为 List，这样它就变成了 Iterable
+        final List keywords = rule['keywords'] as List;
+
         for (var kw in keywords) {
-          if (categoryName.contains(kw)) {
-            return {'icon': rule['icon'], 'color': rule['color']};
+          // 确保 kw 被当作 String 处理
+          if (categoryName.contains(kw.toString())) {
+            return CategoryMatch(
+              icon: rule['icon'] as IconData,
+              color: rule['color'] as Color,
+            );
           }
         }
       }
     }
+    // 后备方案
+    if (billType == BillType.income) {
+      return CategoryMatch(
+          icon: Icons.savings_rounded,
+          color: FintechTheme.getBillColor(BillType.income));
+    }
+    if (billType == BillType.expenditure) {
+      return CategoryMatch(
+          icon: Icons.receipt_rounded,
+          color: FintechTheme.getBillColor(BillType.expenditure));
+    }
+    if (billType == BillType.transfer) {
+      return CategoryMatch(
+          icon: Icons.sync_alt_rounded,
+          color: FintechTheme.getBillColor(BillType.transfer));
+    }
+    if (billType == BillType.adjust) {
+      return CategoryMatch(
+          icon: Icons.tune_rounded,
+          color: FintechTheme.getBillColor(BillType.adjust));
+    }
+    if (billType == BillType.advance) {
+      return CategoryMatch(
+          icon: Icons.payment_rounded,
+          color: FintechTheme.getBillColor(BillType.advance));
+    }
+    if (billType == BillType.reimburse) {
+      return CategoryMatch(
+          icon: Icons.assignment_return_rounded,
+          color: FintechTheme.getBillColor(BillType.reimburse));
+    }
 
-    // 无分类或无匹配时的极简后备方案
-    if (billType == BillType.income)
-      return {
-        'icon': Icons.savings_rounded,
-        'color': FintechTheme.getBillColor(BillType.income)
-      };
-    if (billType == BillType.expenditure)
-      return {
-        'icon': Icons.receipt_rounded,
-        'color': FintechTheme.getBillColor(BillType.expenditure)
-      };
-    if (billType == BillType.transfer)
-      return {
-        'icon': Icons.sync_alt_rounded,
-        'color': FintechTheme.getBillColor(BillType.transfer)
-      };
-    if (billType == BillType.adjust)
-      return {
-        'icon': Icons.tune_rounded,
-        'color': FintechTheme.getBillColor(BillType.adjust)
-      };
-    if (billType == BillType.advance)
-      return {
-        'icon': Icons.payment_rounded,
-        'color': FintechTheme.getBillColor(BillType.advance)
-      };
-    if (billType == BillType.reimburse)
-      return {
-        'icon': Icons.assignment_return_rounded,
-        'color': FintechTheme.getBillColor(BillType.reimburse)
-      };
-
-    return {
-      'icon': Icons.receipt_long_rounded,
-      'color': const Color(0xFF8E8E93)
-    };
+    return CategoryMatch(
+        icon: Icons.receipt_long_rounded, color: const Color(0xFF8E8E93));
   }
 }
 
@@ -393,8 +406,8 @@ class BillListTile extends StatelessWidget {
 
     // 🚀 核心：调用智能引擎获取专属图标与色彩
     final matchedConfig = CategoryIconHelper.match(categoryName, bill.billType);
-    final IconData iconData = matchedConfig['icon'];
-    final Color iconBgColor = matchedConfig['color'];
+    final IconData iconData = matchedConfig.icon;
+    final Color iconBgColor = matchedConfig.color;
 
     // 金额文本与颜色处理 (依据国内习惯：收入红，支出绿)
     String amountText = FintechTheme.formatAmount(bill.convertedAmount ?? 0);
