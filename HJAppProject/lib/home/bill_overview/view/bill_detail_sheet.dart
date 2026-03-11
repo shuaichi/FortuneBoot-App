@@ -2,7 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hjproject/Home/bill_overview/view/bill_list_tile.dart';
+import 'package:hjproject/home/bill_overview/view/bill_list_tile.dart';
 import 'package:hjproject/home/edit_bill/view/edit_bill_page.dart';
 import 'package:hjproject/home/bill_overview/bloc/detail_bloc/bill_detail_bloc.dart';
 import 'package:hjproject/home/bill_overview/models/bill_item.dart';
@@ -44,9 +44,9 @@ class _BillDetailContent extends StatelessWidget {
     BillItem bill = state.initialBill;
 
     // 🚀 核心优化：接入全新的高级权重匹配引擎
-    final matchedConfig = CategoryIconHelper.match(bill);
-    Color billColor = matchedConfig.color;
-    IconData billIcon = matchedConfig.icon;
+    final matchedConfig = SmartCategoryEngine.match(bill);
+    final IconData billIcon = matchedConfig.icon;
+    final Color billColor = matchedConfig.color;
 
     // 金额千分位格式化
     final formatter = NumberFormat('#,##0.00', 'en_US');
