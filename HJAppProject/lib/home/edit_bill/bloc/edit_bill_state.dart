@@ -47,6 +47,14 @@ final class EditBillState extends Equatable {
   }) {
     if (initialBill != null) {
       editBill = initialBill!.copyWith();
+      // 复制账单时（isNewBill=true 且 initialBill 存在），重置交易日期为今天
+      if (isNewBill) {
+        editBill = editBill.copyWith(
+          data: editBill.data?.copyWith(
+            tradeTime: DateFormat("yyyy-MM-dd HH:mm:ss").format(DateTime.now()),
+          ),
+        );
+      }
       if (initialBill!.files != null) {
         attachments = initialBill!.files!.map((fileItem) {
           return AttachmentItem(
