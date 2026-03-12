@@ -235,7 +235,6 @@ class _BillsOverviewViewState extends State<BillsOverviewView>
                                                   return;
                                                 }
                                                 HapticFeedback.mediumImpact();
-                                                Navigator.pop(context);
                                                 _showModernSnack(context,
                                                     '账单已复制，请修改后保存', false);
                                                 Navigator.of(context).push(
