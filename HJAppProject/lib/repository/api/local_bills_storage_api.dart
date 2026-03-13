@@ -4,6 +4,7 @@ import 'dart:developer' as developer;
 
 import 'package:hjproject/home/bill_overview/models/bill_item.dart';
 import 'package:hjproject/home/bill_overview/models/bill_statistics.dart';
+import 'package:hjproject/home/bill_overview/models/fortune_bill_query.dart';
 import 'package:hjproject/request/bill_request.dart';
 import 'package:hjproject/repository/api/bills_api.dart';
 import 'package:hjproject/request/include_request.dart';
@@ -206,6 +207,22 @@ class LocalStorageBillsApi extends BillsApi {
         pageNum: pageNum,
         pageSize: pageSize,
         bookId: '$bookId',
+        // ---------------- [新增] 拼接筛选条件 ----------------
+        accountId: filterQuery?.accountId?.toString(),
+        billType: filterQuery?.billType?.toString(),
+        payeeId: filterQuery?.payeeId?.toString(),
+        title: filterQuery?.title,
+        remark: filterQuery?.remark,
+        tradeTimeStartTime: filterQuery?.tradeTimeStartTime,
+        tradeTimeEndTime: filterQuery?.tradeTimeEndTime,
+        amountMin: filterQuery?.amountMin?.toInt(),
+        amountMax: filterQuery?.amountMax?.toInt(),
+        categoryIds: filterQuery?.categoryIds,
+        tagIds: filterQuery?.tagIds,
+        confirm: filterQuery?.confirm,
+        include: filterQuery?.include,
+        orderDirection: filterQuery?.orderColumn,
+        // ---------------------------------------------------
       );
       print('🔍 DEBUG: API响应 - code: ${billResponse.code}, data: ${billResponse.data != null ? "有数据" : "无数据"}');
       try {
@@ -378,5 +395,11 @@ class LocalStorageBillsApi extends BillsApi {
     refreshCaculatorStatisticsDuration(caculatorTime);
     await refreshStatic(startTime, endTime);
     return;
+  }
+
+  @override
+  void setFilterQuery(FortuneBillQuery? query) {
+    // 将查询条件保存到本地变量
+    filterQuery = query;
   }
 }

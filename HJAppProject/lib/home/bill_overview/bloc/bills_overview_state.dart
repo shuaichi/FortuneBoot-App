@@ -10,12 +10,14 @@ final class BillsOverviewState extends Equatable {
     this.hasMore = true,
     this.isLoadingMore = false,
     this.statistics,
+    this.query,
   });
 
   final BillsOverviewStatus status;
   final BillItem? lastDeletedBill;
   final List<BillItem>? bills;
   final BillStatistics? statistics;
+  final FortuneBillQuery? query; // 查询参数状态
 
   // 分页相关
   final bool hasMore; // 是否还有更多数据
@@ -28,6 +30,7 @@ final class BillsOverviewState extends Equatable {
     bool? hasMore,
     bool? isLoadingMore,
     BillStatistics? statistics,
+    FortuneBillQuery? Function()? query,
   }) {
     return BillsOverviewState(
       status: status != null ? status() : this.status,
@@ -37,6 +40,7 @@ final class BillsOverviewState extends Equatable {
       hasMore: hasMore ?? this.hasMore,
       isLoadingMore: isLoadingMore ?? this.isLoadingMore,
       statistics: statistics ?? this.statistics,
+      query: query != null ? query() : this.query,
     );
   }
 
@@ -49,5 +53,6 @@ final class BillsOverviewState extends Equatable {
         hasMore,
         isLoadingMore,
         statistics,
+        query,
       ];
 }

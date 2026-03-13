@@ -3,6 +3,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hjproject/home/bill_overview/models/fortune_bill_query.dart';
+import 'package:hjproject/home/bill_overview/view/bill_filter_sheet.dart';
 import 'package:intl/intl.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
@@ -91,9 +93,35 @@ class _BillsOverviewViewState extends State<BillsOverviewView>
           toolbarHeight: 44,
           scrolledUnderElevation: 0,
           actions: [
+            // ---------------- 筛选按钮 ----------------
+            BlocBuilder<BillsOverviewBloc, BillsOverviewState>(
+              buildWhen: (prev, cur) => prev.query != cur.query,
+              builder: (context, state) {
+                final hasFilter = state.query != null && !state.query!.isEmpty;
+                return IconButton(
+                  icon: Icon(
+                    hasFilter ? CupertinoIcons.line_horizontal_3_decrease_circle_fill : CupertinoIcons.line_horizontal_3_decrease,
+                    color: hasFilter ? const Color(0xFF007AFF) : FintechTheme.textPrimary,
+                    size: 24,
+                  ),
+                  onPressed: () async {
+                    HapticFeedback.lightImpact();
+                    final newQuery = await showModalBottomSheet<FortuneBillQuery>(
+                      context: context,
+                      isScrollControlled: true,
+                      backgroundColor: Colors.transparent,
+                      builder: (ctx) => BillFilterSheet(initialQuery: state.query),
+                    );
+                    if (newQuery != null && context.mounted) {
+                      context.read<BillsOverviewBloc>().add(BillsOverviewFilterChanged(newQuery));
+                    }
+                  },
+                );
+              },
+            ),
+            // ------------------------------------------------
             IconButton(
-              icon: const Icon(CupertinoIcons.chart_pie,
-                  color: FintechTheme.textPrimary, size: 24),
+              icon: const Icon(CupertinoIcons.chart_pie, color: FintechTheme.textPrimary, size: 24),
               onPressed: () {
                 HapticFeedback.lightImpact();
                 Navigator.of(context).push(StatsPage.route());

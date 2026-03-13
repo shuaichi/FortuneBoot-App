@@ -1,5 +1,6 @@
 import 'package:hjproject/home/bill_overview/models/bill_item.dart';
 import 'package:hjproject/home/bill_overview/models/bill_statistics.dart';
+import 'package:hjproject/home/bill_overview/models/fortune_bill_query.dart';
 import 'package:hjproject/repository/api/bills_api.dart';
 
 class BillsRepository {
@@ -11,6 +12,13 @@ class BillsRepository {
   static String maxApiVersion = '2.0.0';
 
   final BillsApi _billsApi;
+
+  // =====================================
+  // 供 Bloc 调用的透传方法
+  // =====================================
+  void setFilterQuery(FortuneBillQuery? query) {
+    _billsApi.setFilterQuery(query);
+  }
 
   int? groupId() => _billsApi.groupId;
 

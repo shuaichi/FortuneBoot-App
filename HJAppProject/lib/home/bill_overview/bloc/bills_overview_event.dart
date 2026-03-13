@@ -44,3 +44,13 @@ class BillsOverviewRefreshStatisticsDayChanged extends BillsOverviewEvent {
   @override
   List<Object> get props => [day];
 }
+
+class BillsOverviewFilterChanged extends BillsOverviewEvent {
+  final FortuneBillQuery? query;
+
+  const BillsOverviewFilterChanged(this.query);
+
+  @override
+  // 修复报错：将 List<Object?> 改为 List<Object>
+  List<Object> get props => query != null ? [query!] :[];
+}

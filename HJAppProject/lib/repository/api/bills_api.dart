@@ -1,5 +1,6 @@
 import 'package:hjproject/home/bill_overview/models/bill_item.dart';
 import 'package:hjproject/home/bill_overview/models/bill_statistics.dart';
+import 'package:hjproject/home/bill_overview/models/fortune_bill_query.dart';
 
 abstract class BillsApi {
   bool hasMore = true;
@@ -14,12 +15,18 @@ abstract class BillsApi {
 
   late int billStatisticsDay;
 
+  /// [新增] 用于保存当前的查询/筛选条件
+  FortuneBillQuery? filterQuery;
+
   /// {@macro todos_api}
   BillsApi();
 
   int? groupId;
 
   int? bookId;
+
+  /// [新增] 设置筛选条件的方法约束
+  void setFilterQuery(FortuneBillQuery? query);
 
   /// Provides a [Stream] of all todos.
   Stream<List<BillItem>> getBills();

@@ -4,6 +4,7 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:hjproject/home/bill_overview/models/bill_item.dart';
 import 'package:hjproject/home/bill_overview/models/bill_statistics.dart';
+import 'package:hjproject/home/bill_overview/models/fortune_bill_query.dart';
 import 'package:hjproject/request/bill_request.dart';
 import 'package:hjproject/repository/repository/bills_repository.dart';
 
@@ -22,6 +23,7 @@ class BillsOverviewBloc extends Bloc<BillsOverviewEvent, BillsOverviewState> {
     on<BillsOverviewLoadLastRequested>(_onLoadLastRequested);
     on<BillsOverviewRefreshStatisticsRequested>(_onLoadStatisticsRequested);
     on<BillsOverviewRefreshStatisticsDayChanged>(_onStatisticsDayChanged);
+    on<BillsOverviewFilterChanged>(_onFilterChanged);
   }
   final BillService _billService = BillService();
 
@@ -118,5 +120,19 @@ class BillsOverviewBloc extends Bloc<BillsOverviewEvent, BillsOverviewState> {
       Emitter<BillsOverviewState> emit) async {
     await _billsRepository.statisticsDayChanged(event.day);
     emit(state.copyWith(statistics: _billsRepository.getStatistics()));
+  }
+  Future<void> _onFilterChanged(
+      BillsOverviewFilterChanged event,
+      Emitter<BillsOverviewState> emit,
+      ) async {
+    // 1. 更新筛选条件状态
+    emit(state.copyWith(query: () => event.query, status: () => BillsOverviewStatus.loading));
+
+    // 2. 将查询参数传递给 Repository 
+    // 【注意】这需要在您的 BillsRepository 中增加 setFilterQuery 方法，并在 getBills() 请求时附带该参数
+    _billsRepository.setFilterQuery(event.query);
+
+    // 3. 清空列表并重新拉取
+    _billsRepository.refreshBills(clear: true);
   }
 }
