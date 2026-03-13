@@ -59,42 +59,63 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
   static int curId = 0;
 
   Future<void> _onInitData(
-    SettingInitDataLoaded event,
-    Emitter<SettingState> emit,
-  ) async {
-    final elements = await _fetchStaticSettings();
+      SettingInitDataLoaded event,
+      Emitter<SettingState> emit,
+      ) async {
+    // 1. 第一次先下发本地/静态设置，让界面先有东西显示，避免白屏
+    final initialSettings = await _fetchStaticSettings();
     emit(
-      state.copyWith(status: SettingStatus.initial, settings: elements),
+      state.copyWith(status: SettingStatus.initial, settings: initialSettings),
     );
-    var settings = await _fetchStaticSettings();
+
+    // 2. 获取远程/网络配置 (这里可能会耗时)
     var remoteSetting = await _fetchSettings();
+
+    // 3. 再次读取本地配置，防止在等待网络请求期间，本地缓存刚刚就绪(解决冷启动读取慢的问题)
+    final updatedSettings = await _fetchStaticSettings();
+
+    // 4. 发射最终成功的状态
     emit(
       state.copyWith(
           status: SettingStatus.success,
-          settings: settings,
+          settings: updatedSettings,
           remoteSettings: remoteSetting),
     );
   }
 
   Future<List<Setting>> _fetchStaticSettings() async {
     final user = UserDataSingleton();
-    final List<Setting> elements = [];
-    final userInfo = await user.getMap(UserDataSingleton.userInfo) ?? {};
+    final List<Setting> elements =[];
+
+    // 1. 获取完整的缓存 Map
+    final curUser = await user.getMap(UserDataSingleton.userInfo) ?? {};
+    // 2. 深入一层解析 userInfo
+    final userInfo = Map<String, dynamic>.from(curUser['userInfo'] as Map? ?? {});
+    // 3. 获取 nickname
     final nickName = userInfo['nickname'] as String? ?? '';
+
+    // 4. 如果没拿到名字，给个友好的默认文案，防止页面空缺
+    final displayName = nickName.isNotEmpty ? nickName : '未登录';
+
     elements.add(Setting(SettingType.username,
-        content: nickName,
+        content: displayName,
         leadingWidget: const Icon(Icons.face_retouching_natural)));
+
     elements.add(const Setting(SettingType.currentTheme,
         content: '跟随系统', leadingWidget: Icon(Icons.dark_mode))); // todo：主题
+
     final String currentLocale =
-        (Intl.defaultLocale ?? 'en') == 'en' ? '🇺🇸 English' : '🇨🇳 简体中文';
+    (Intl.defaultLocale ?? 'en') == 'en' ? '🇺🇸 English' : '🇨🇳 简体中文';
     elements.add(Setting(SettingType.currentLanguage,
         content: currentLocale, leadingWidget: Icon(Icons.translate)));
+
     elements.add(Setting(SettingType.api,
         detail: DioClient().dio.options.baseUrl,
         leadingWidget: const Icon(Icons.edit_note)));
+
     elements.add(Setting(SettingType.currentVersion,
         content: await getBuildVersion(), leadingWidget: Icon(Icons.abc)));
+
     return elements;
   }
 
@@ -104,9 +125,9 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
   }
 
   Future<void> _onFetchedGroup(
-    GroupSettingFetched event,
-    Emitter<SettingState> emit,
-  ) async {
+      GroupSettingFetched event,
+      Emitter<SettingState> emit,
+      ) async {
     developer.log('🔄 开始获取分组设置 - GroupId: ${event.groupId}',
         name: 'SettingBloc');
     var curSetting = state.settings;
@@ -146,7 +167,7 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
     final targetGroupId = groupId ?? _billsRepository.groupId() ?? 1;
     final HJResponse apiResponse = await _loginService.apiVersion();
     final HJResponse accountResponse =
-        await _accountService.getFortuneAssetsLiabilities(targetGroupId);
+    await _accountService.getFortuneAssetsLiabilities(targetGroupId);
     var settings = <Setting>[];
     if (apiResponse.code == 0) {
       final String apiVersion = apiResponse.data as String? ?? '';
@@ -160,7 +181,7 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
     }
     if (accountResponse.code == 0) {
       final Map<String, dynamic> accountData =
-          Map<String, dynamic>.from(accountResponse.data as Map? ?? {});
+      Map<String, dynamic>.from(accountResponse.data as Map? ?? {});
       final double totalAssets = accountData['totalAssets'] as double? ?? 0.0;
       final double totalLiabilities =
           accountData['totalLiabilities'] as double? ?? 0.0;
@@ -187,7 +208,7 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
       developer.log('🔍 GroupId为空，查询默认分组...', name: 'SettingBloc');
       try {
         final HJResponse defaultGroupIdResponse =
-            await _groupService.getDefaultGroupId();
+        await _groupService.getDefaultGroupId();
         developer.log('📡 默认分组查询响应 - Code: ${defaultGroupIdResponse.code}',
             name: 'SettingBloc');
         if (defaultGroupIdResponse.code == 0) {
@@ -207,7 +228,7 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
     try {
       developer.log('📡 查询分组详情 - GroupId: $findGroupId', name: 'SettingBloc');
       final HJResponse accountInfo =
-          await _groupService.getByGroupId(findGroupId);
+      await _groupService.getByGroupId(findGroupId);
       developer.log('📡 分组详情响应 - Code: ${accountInfo.code}',
           name: 'SettingBloc');
 
@@ -261,7 +282,6 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
 
     try {
       final newGroup = <Setting>[];
-
       developer.log('📊 当前分组设置数量: ${state.groupSettings.length}',
           name: 'SettingBloc');
 
