@@ -100,27 +100,32 @@ class EditBillBloc extends Bloc<EditBillEvent, EditBillState> {
     final groupId = _billRepository.groupId();
     final bookId = _billRepository.bookId();
     final billType = type.value;
+
+    // 1. 获取账本列表并提取当前账本的默认账户设置
     BookService bookService = BookService();
     final bookResponse =
-        await bookService.getEnableList(groupId ?? 1, type: type.value);
+    await bookService.getEnableList(groupId ?? 1, type: type.value);
+
     List<DropdownItem<BookSelectItem>>? books;
     int? defaultExpenseAccountId;
     int? defaultIncomeAccountId;
     int? defaultTransferOutAccountId;
     int? defaultTransferInAccountId;
+
     if (bookResponse.code == 0) {
       books = (bookResponse.data as List? ?? []).map((element) {
         final name = element['bookName'] as String? ?? '';
         final id = element['bookId'] as int? ?? 0;
+        // 如果是当前选中的账本，记录其默认账户配置
         if (id == bookId) {
           defaultExpenseAccountId =
-              element['defaultExpenseAccountId'] as int? ?? 0;
+          element['defaultExpenseAccountId'] as int?;
           defaultIncomeAccountId =
-              element['defaultIncomeAccountId'] as int? ?? 0;
+          element['defaultIncomeAccountId'] as int?;
           defaultTransferOutAccountId =
-              element['defaultTransferOutAccountId'] as int? ?? 0;
+          element['defaultTransferOutAccountId'] as int?;
           defaultTransferInAccountId =
-              element['defaultTransferInAccountId'] as int? ?? 0;
+          element['defaultTransferInAccountId'] as int?;
         }
         return DropdownItem<BookSelectItem>(
           label: name,
@@ -128,12 +133,15 @@ class EditBillBloc extends Bloc<EditBillEvent, EditBillState> {
         );
       }).toList();
     }
+
+    // 2. 获取账户列表并分类
     final AccountService service = AccountService();
     final accountRes = await service.getEnableList(groupId ?? 0);
     final List<DropdownItem<AccountSelectItem>> expenseAccountList = [];
     final List<DropdownItem<AccountSelectItem>> incomeAccountList = [];
     final List<DropdownItem<AccountSelectItem>> transferAccountList = [];
     final List<DropdownItem<AccountSelectItem>> transferOutAccountList = [];
+
     if (accountRes.code == 0) {
       accountRes.data?.forEach((element) {
         final String accountName = element['accountName'] as String? ?? '';
@@ -155,9 +163,42 @@ class EditBillBloc extends Bloc<EditBillEvent, EditBillState> {
         }
       });
     }
+
+    // 3. 获取其他基础数据（收款人、分类、标签）
     final payees = await payeeItems(PayeeService(), id: bookId, type: billType);
     final categories = await categoryFutureItems(type, bookId ?? 1);
     final tags = await tagFutureItems(type, bookId ?? 1);
+
+    // --- 【关键修复：Bug 1 & Bug 2】 ---
+    // 逻辑：只有在“纯新增”账单（initialBill 为空）时，才自动将默认账户写入模型。
+    // 如果是“复制”出来的账单（initialBill 不为空，但 isNewBill 为 true），则不进入此逻辑。
+
+    BillItemAdd updatedEditBill = state.editBill;
+
+    if (state.initialBill == null) {
+      int? autoAccountId;
+      int? autoToAccountId;
+
+      // 根据当前账单类型，匹配对应的默认账户
+      if (type == BillType.expenditure) {
+        autoAccountId = defaultExpenseAccountId;
+      } else if (type == BillType.income) {
+        autoAccountId = defaultIncomeAccountId;
+      } else if (type == BillType.transfer) {
+        autoAccountId = defaultTransferOutAccountId;
+        autoToAccountId = defaultTransferInAccountId;
+      }
+
+      // 将默认值同步到数据模型中，确保提交时有效
+      updatedEditBill = updatedEditBill.copyWith(
+        data: updatedEditBill.data?.copyWith(
+          accountId: autoAccountId,
+          toAccountId: autoToAccountId,
+        ),
+      );
+    }
+
+    // 4. 更新状态
     emit(state.copyWith(
       bookList: books,
       payeeList: payees,
@@ -171,6 +212,7 @@ class EditBillBloc extends Bloc<EditBillEvent, EditBillState> {
       defaultTransferInAccountId: defaultTransferInAccountId,
       categoryList: categories,
       tagList: tags,
+      editBill: updatedEditBill, // 必须更新 editBill 以同步默认账户到模型
       status: EditBillStatus.success,
       isNewBill: state.isNewBill,
     ));

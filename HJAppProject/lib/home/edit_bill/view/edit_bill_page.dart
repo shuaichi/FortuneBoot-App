@@ -776,40 +776,35 @@ class _EditBillViewState extends State<EditBillView> {
     );
   }
 
-  Widget _buildAccountSelector(
-      EditBillState state, BillType billType, Color themeColor) {
+  // 修改 _buildAccountSelector 方法
+
+  Widget _buildAccountSelector(EditBillState state, BillType billType, Color themeColor) {
     if (billType == BillType.transfer) {
       final inItems = state.transferAccountList;
       final outItems = state.transferOutAccountList;
+
+      // 【修复 Bug 1 & 2】直接取模型值，不再使用 ?? default...
       final outItem = outItems
-          .where((i) =>
-      i.value.id ==
-          (state.editBill.data?.accountId ??
-              state.defaultTransferOutAccountId))
-          .firstOrNull
-          ?.value;
+          .where((i) => i.value.id == state.editBill.data?.accountId)
+          .firstOrNull?.value;
       final inItem = inItems
-          .where((i) =>
-      i.value.id ==
-          (state.editBill.data?.toAccountId ??
-              state.defaultTransferInAccountId))
-          .firstOrNull
-          ?.value;
+          .where((i) => i.value.id == state.editBill.data?.toAccountId)
+          .firstOrNull?.value;
+
       return Column(
-        children:[
+        children: [
           _ModernFormRow(
               icon: Icons.arrow_upward_rounded,
               iconColor: Colors.orange,
               label: '转出账户',
-              valueText: outItem?.title ?? '请选择',
+              valueText: outItem?.title ?? '请选择', // 如果没值就显示请选择
               onTap: () {
                 _dismissKeyboard();
                 _showPickerBottomSheet(
                     '选择转出账户',
                     outItems,
                     outItem?.id,
-                        (val) =>
-                        setState(() => state.editBill.data?.accountId = val.id),
+                        (val) => setState(() => state.editBill.data?.accountId = val?.id), // 注意这里允许 val 为 null
                     themeColor);
               }),
           const _ModernDivider(),
@@ -824,25 +819,19 @@ class _EditBillViewState extends State<EditBillView> {
                     '选择转入账户',
                     inItems,
                     inItem?.id,
-                        (val) => setState(
-                            () => state.editBill.data?.toAccountId = val.id),
+                        (val) => setState(() => state.editBill.data?.toAccountId = val?.id),
                     themeColor);
               }),
         ],
       );
     } else {
-      final items = billType == BillType.income
-          ? state.incomeAccountList
-          : state.expenseAccountList;
+      final items = billType == BillType.income ? state.incomeAccountList : state.expenseAccountList;
+
+      // 【修复 Bug 1 & 2】直接取模型值
       final accItem = items
-          .where((i) =>
-      i.value.id ==
-          (state.editBill.data?.accountId ??
-              (billType == BillType.income
-                  ? state.defaultIncomeAccountId
-                  : state.defaultExpenseAccountId)))
-          .firstOrNull
-          ?.value;
+          .where((i) => i.value.id == state.editBill.data?.accountId)
+          .firstOrNull?.value;
+
       return _ModernFormRow(
           icon: Icons.account_balance_wallet_rounded,
           iconColor: Colors.blue,
@@ -854,8 +843,7 @@ class _EditBillViewState extends State<EditBillView> {
                 '选择账户',
                 items,
                 accItem?.id,
-                    (val) =>
-                    setState(() => state.editBill.data?.accountId = val.id),
+                    (val) => setState(() => state.editBill.data?.accountId = val?.id),
                 themeColor);
           });
     }
@@ -910,7 +898,7 @@ class _EditBillViewState extends State<EditBillView> {
               '选择交易对象',
               state.payeeList,
               payeeItem?.id,
-                  (val) => setState(() => state.editBill.data?.payeeId = val.id),
+                  (val) => setState(() => state.editBill.data?.payeeId = val?.id),
               themeColor);
         });
   }
@@ -1228,9 +1216,9 @@ class _EditBillViewState extends State<EditBillView> {
       String title,
       List<DropdownItem<T>> items,
       int? currentId,
-      Function(T) onSelected,
+      Function(T?) onSelected, // 改为接收可选的 T
       Color themeColor) {
-    if (items.isEmpty) return _showSnack(context, '暂无可选数据');
+
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.white,
@@ -1239,49 +1227,69 @@ class _EditBillViewState extends State<EditBillView> {
       builder: (ctx) => SafeArea(
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          children:[
+          children: [
             _ModernSheetHeader(title: title),
             Flexible(
-              child: ListView.separated(
+              child: ListView(
                 shrinkWrap: true,
-                itemCount: items.length,
-                separatorBuilder: (_, __) => const Divider(
-                    height: 1,
-                    indent: 24,
-                    endIndent: 24,
-                    color: Color(0xFFF2F2F7)),
-                itemBuilder: (ctx, index) {
-                  final item = items[index];
-                  final isSelected = currentId == item.value.id;
-                  return InkWell(
-                    onTap: () {
-                      HapticFeedback.selectionClick();
-                      Navigator.pop(ctx);
-                      onSelected(item.value);
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 24, vertical: 18),
-                      child: Row(
-                        children:[
-                          Text(
-                            item.label,
-                            style: TextStyle(
-                                fontSize: 16,
-                                color: isSelected ? themeColor : textPrimary,
-                                fontWeight: isSelected
-                                    ? FontWeight.w600
-                                    : FontWeight.w400),
-                          ),
-                          const Spacer(),
-                          if (isSelected)
-                            Icon(Icons.check_circle_rounded,
-                                color: themeColor, size: 22),
-                        ],
+                children: [
+                  // 【修复 Bug 3】添加“清除选择”选项
+                  if (currentId != null)
+                    InkWell(
+                      onTap: () {
+                        HapticFeedback.selectionClick();
+                        Navigator.pop(ctx);
+                        onSelected(null); // 传回 null
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.block, color: Colors.redAccent, size: 20),
+                            const SizedBox(width: 12),
+                            const Text('不选择 / 清除',
+                                style: TextStyle(fontSize: 16, color: Colors.redAccent)),
+                          ],
+                        ),
                       ),
                     ),
-                  );
-                },
+                  if (currentId != null) const _ModernDivider(),
+
+                  // 原有的列表项
+                  ...items.map((item) {
+                    final isSelected = currentId == item.value.id;
+                    return Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        InkWell(
+                          onTap: () {
+                            HapticFeedback.selectionClick();
+                            Navigator.pop(ctx);
+                            onSelected(item.value);
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
+                            child: Row(
+                              children: [
+                                Text(
+                                  item.label,
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      color: isSelected ? themeColor : textPrimary,
+                                      fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400),
+                                ),
+                                const Spacer(),
+                                if (isSelected)
+                                  Icon(Icons.check_circle_rounded, color: themeColor, size: 22),
+                              ],
+                            ),
+                          ),
+                        ),
+                        const Divider(height: 1, indent: 24, endIndent: 24, color: Color(0xFFF2F2F7)),
+                      ],
+                    );
+                  }).toList(),
+                ],
               ),
             ),
             const SizedBox(height: 16),
