@@ -167,7 +167,10 @@ class _EditBillViewState extends State<EditBillView> {
 
   void _onTextFieldFocusChange() {
     if (_titleFocusNode.hasFocus || _remarkFocusNode.hasFocus) {
+      // 只要系统输入框获取了焦点，自定义键盘必须消失
       _isKeyboardVisible.value = false;
+      // 同时取消金额区域的选中高亮，避免用户混淆
+      _activeAmountIndex.value = -99;
     }
   }
 
@@ -558,9 +561,15 @@ class _EditBillViewState extends State<EditBillView> {
     if (billType == BillType.transfer) {
       return GestureDetector(
         onTap: () {
-          _unfocusNode.requestFocus(); // 获取焦点到空白节点
-          _activeAmountIndex.value = -1;
-          _isKeyboardVisible.value = true;
+          // 第一步：先彻底关闭系统键盘
+          FocusScope.of(context).unfocus();
+
+          // 第二步：给系统一点点时间（毫秒级）来处理键盘收起逻辑
+          // 这样可以避免自定义键盘弹出时，系统键盘还在占位的视觉闪烁
+          Future.delayed(const Duration(milliseconds: 10), () {
+            _activeAmountIndex.value = -1;
+            _isKeyboardVisible.value = true;
+          });
         },
         behavior: HitTestBehavior.opaque,
         child: ValueListenableBuilder<int>(
@@ -609,9 +618,13 @@ class _EditBillViewState extends State<EditBillView> {
             ),
             child: GestureDetector(
               onTap: () {
-                _unfocusNode.requestFocus(); // 获取焦点到空白节点
-                _activeAmountIndex.value = index;
-                _isKeyboardVisible.value = true;
+                // 强制收回系统键盘
+                FocusScope.of(context).unfocus();
+                // 延迟 10-50ms 确保系统键盘开始收起动作后再显示自定义键盘
+                Future.delayed(const Duration(milliseconds: 10), () {
+                  _activeAmountIndex.value = index;
+                  _isKeyboardVisible.value = true;
+                });
               },
               child: ValueListenableBuilder<int>(
                 valueListenable: _activeAmountIndex,
@@ -649,10 +662,15 @@ class _EditBillViewState extends State<EditBillView> {
                           children:[
                             GestureDetector(
                               onTap: () {
-                                _dismissKeyboard();
-                                HapticFeedback.lightImpact();
-                                _showCategorySelector(
-                                    context, state, index, themeColor);
+                                // 第一步：先彻底关闭系统键盘
+                                FocusScope.of(context).unfocus();
+
+                                // 第二步：给系统一点点时间（毫秒级）来处理键盘收起逻辑
+                                // 这样可以避免自定义键盘弹出时，系统键盘还在占位的视觉闪烁
+                                Future.delayed(const Duration(milliseconds: 10), () {
+                                  _activeAmountIndex.value = index;
+                                  _isKeyboardVisible.value = true;
+                                });
                               },
                               child: Container(
                                 padding: const EdgeInsets.symmetric(
@@ -703,13 +721,15 @@ class _EditBillViewState extends State<EditBillView> {
             child: TextButton.icon(
               onPressed: () {
                 HapticFeedback.lightImpact();
-                _unfocusNode.requestFocus(); // 确保输入新增金额前系统键盘也是关闭的
-                setState(() {
-                  _categoryAmountItems.add(CategoryAmountItem(amount: 0.0));
-                  _activeAmountIndex.value = _categoryAmountItems.length - 1;
-                  _isKeyboardVisible.value = true;
+                FocusScope.of(context).unfocus();
+                Future.delayed(const Duration(milliseconds: 10), () {
+                  setState(() {
+                    _categoryAmountItems.add(CategoryAmountItem(amount: 0.0));
+                    _activeAmountIndex.value = _categoryAmountItems.length - 1;
+                    _isKeyboardVisible.value = true;
+                  });
+                  _syncCategoryAmountToState();
                 });
-                _syncCategoryAmountToState();
               },
               icon: Icon(Icons.add_circle_rounded, color: themeColor),
               label: Text('添加多分类明细',
@@ -761,6 +781,12 @@ class _EditBillViewState extends State<EditBillView> {
       child: TextField(
         controller: _titleController,
         focusNode: _titleFocusNode,
+        onTap: () {
+          // 【关键】一旦点击系统输入框，立即隐藏自定义键盘
+          _isKeyboardVisible.value = false;
+          // 重置金额的高亮状态
+          _activeAmountIndex.value = -99;
+        },
         style: const TextStyle(
             fontSize: 16, color: textPrimary, fontWeight: FontWeight.w500),
         textAlign: TextAlign.right,
@@ -911,6 +937,12 @@ class _EditBillViewState extends State<EditBillView> {
       child: TextField(
         controller: _remarkController,
         focusNode: _remarkFocusNode,
+        onTap: () {
+          // 【关键】一旦点击系统输入框，立即隐藏自定义键盘
+          _isKeyboardVisible.value = false;
+          // 重置金额的高亮状态
+          _activeAmountIndex.value = -99;
+        },
         style: const TextStyle(fontSize: 16, color: textPrimary),
         textAlign: TextAlign.right,
         maxLines: null,
@@ -1300,7 +1332,11 @@ class _EditBillViewState extends State<EditBillView> {
   }
 
   void _dismissKeyboard() {
-    _unfocusNode.requestFocus(); // 使用空白节点接收焦点，彻底切断系统键盘触发的源头
+    // 1. 强制系统键盘收起（这是最彻底的方法）
+    FocusScope.of(context).unfocus();
+    // 2. 确保没有任何节点保持焦点
+    FocusManager.instance.primaryFocus?.unfocus();
+    // 3. 隐藏自定义键盘
     _isKeyboardVisible.value = false;
   }
 
