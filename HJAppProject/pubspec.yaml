@@ -68,10 +68,13 @@ dev_dependencies:
 
 # flutter pub run flutter_launcher_icons
 flutter_icons:
-  image_path: "assets/logo.png"  # 源图标路径（建议 1024x1024）
+  image_path: "assets/images/LOGO.png"  # 源图标路径（建议 1024x1024）
   remove_alpha_ios: true
   android: true
   ios: true
+  # 鸿蒙平台需要手动配置图标
+  # 图标位置: ohos/AppScope/resources/base/media/app_icon.png
+  # 图标位置: ohos/entry/src/main/resources/base/media/icon.png
 
 flutter_intl:
     enabled: true
