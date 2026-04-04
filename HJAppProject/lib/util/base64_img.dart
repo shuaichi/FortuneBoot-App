@@ -16,8 +16,15 @@ class Base64Image extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     try {
+      String pureBase64 = base64String;
+      
+      // 处理 Data URL 格式 (data:image/xxx;base64,xxxxx)
+      if (base64String.contains(',')) {
+        pureBase64 = base64String.split(',')[1];
+      }
+      
       return Image.memory(
-        base64Decode(base64String),
+        base64Decode(pureBase64),
         fit: fit,
         errorBuilder: (_, __, ___) => errorWidget ?? const Icon(Icons.error),
       );
