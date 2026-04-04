@@ -5,13 +5,13 @@
         "name": "default",
         "type": "HarmonyOS",
         "material": {
-          "certpath": "/Users/lixuejian04/.ohos/config/default_ohos_GhzYFCN3AE3x5qLlu2hPTDRTmqjEe0Z9HAP723eYWJ0=.cer",
+          "certpath": "./signing/default_ohos_RLf0jpMFwoh3HktiII2jkf33t5o6X4VZwmkR09i8jmI=.cer",
           "keyAlias": "debugKey",
-          "keyPassword": "0000001BA61E842C3CE6B56A38174586598848780694FA0A78A28096752B21C35285ACDE5E921C543C0E91",
-          "profile": "/Users/lixuejian04/.ohos/config/default_ohos_GhzYFCN3AE3x5qLlu2hPTDRTmqjEe0Z9HAP723eYWJ0=.p7b",
+          "keyPassword": "0000001BFB64065B5F5F6BB8BF9AEF1911C24E9996C6CEC0414E39CEF21F0E4183D683D5961E3115A2D971",
+          "profile": "./signing/default_ohos_RLf0jpMFwoh3HktiII2jkf33t5o6X4VZwmkR09i8jmI=.p7b",
           "signAlg": "SHA256withECDSA",
-          "storeFile": "/Users/lixuejian04/.ohos/config/default_ohos_GhzYFCN3AE3x5qLlu2hPTDRTmqjEe0Z9HAP723eYWJ0=.p12",
-          "storePassword": "0000001B5CB3D781238738E8B9B9A3164A5B1E0FE1C7E1C2C944740F4B50458E6F6D6995F68EEEB62F17BE"
+          "storeFile": "./signing/default_ohos_RLf0jpMFwoh3HktiII2jkf33t5o6X4VZwmkR09i8jmI=.p12",
+          "storePassword": "0000001BCBE0D90A140B2C97FC0A6962FCF62FC150A859666B6C52F648AE9A9742E838655270B6DC2E17E4"
         }
       }
     ],
