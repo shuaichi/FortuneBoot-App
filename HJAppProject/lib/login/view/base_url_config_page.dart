@@ -12,6 +12,7 @@ import 'package:hjproject/theme/app_theme.dart';
 import 'package:dio/dio.dart';
 import 'package:hjproject/util/dio_client.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:hjproject/utils/platform_logger.dart';
 
 enum AuthMode {
   loading,
@@ -38,58 +39,85 @@ class _BaseUrlConfigPageState extends State<BaseUrlConfigPage> {
   final TextEditingController _portController =
   TextEditingController(text: '443');
 
-  // 新增：用于接管网络请求时的动态 Loading 状态
+  // 新增:用于接管网络请求时的动态 Loading 状态
   bool _isConnecting = false;
 
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    super.initState();
+    // 添加延迟确保 Flutter 引擎完全初始化
+    Future.delayed(const Duration(milliseconds: 100), () {
       _checkTokenValid();
     });
-    super.initState();
   }
 
   Future<void> _checkTokenValid() async {
-    var baseUrlDomain =
-    await UserDataSingleton().getStr(UserDataSingleton.baseUrlDomain);
-    var baseUrlPort =
-    await UserDataSingleton().getStr(UserDataSingleton.baseUrlPort);
-    var baseProtocol =
-    await UserDataSingleton().getStr(UserDataSingleton.baseUrlProtocol);
+    PlatformLogger.info('📋 开始检查 Token 有效性');
+    
+    try {
+      var baseUrlDomain =
+          await UserDataSingleton().getStr(UserDataSingleton.baseUrlDomain);
+      var baseUrlPort =
+          await UserDataSingleton().getStr(UserDataSingleton.baseUrlPort);
+      var baseProtocol =
+          await UserDataSingleton().getStr(UserDataSingleton.baseUrlProtocol);
 
-    if (baseUrlDomain?.isNotEmpty == true &&
-        baseUrlPort?.isNotEmpty == true &&
-        baseProtocol?.isNotEmpty == true) {
-      _domainController.text = baseUrlDomain!;
-      _portController.text = baseUrlPort!;
-      _protocol = baseProtocol!;
-    }
-    var userInfo = await UserDataSingleton().getMap(UserDataSingleton.userInfo);
-    var userToken = await UserDataSingleton().getMap(UserDataSingleton.userToken);
+      PlatformLogger.debug('已保存的配置 - Domain: $baseUrlDomain, Port: $baseUrlPort, Protocol: $baseProtocol');
 
-    if ((userInfo?.isNotEmpty == true) &&
-        (userToken?.isNotEmpty == true) &&
-        (baseUrlDomain?.isNotEmpty == true) &&
-        (baseUrlPort?.isNotEmpty == true) &&
-        (baseProtocol?.isNotEmpty == true)) {
-      // 跳登录页
-      final baseUrl = '$baseProtocol://$baseUrlDomain:$baseUrlPort';
-      DioClient().updateBaseUrl('$baseUrl/prod-api');
-      if (!(await checkApiVersion())) {
-        _showErrorDialog(S.current.serverConnectionFailed);
-        _authMode.value = AuthMode.signIn;
-        return;
+      if (baseUrlDomain?.isNotEmpty == true &&
+          baseUrlPort?.isNotEmpty == true &&
+          baseProtocol?.isNotEmpty == true) {
+        _domainController.text = baseUrlDomain!;
+        _portController.text = baseUrlPort!;
+        _protocol = baseProtocol!;
       }
-      DioClient().refreshToken(userToken!);
-      if (!mounted) return;
-      Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(
-          builder: (context) => const HomePage(),
-        ),
-            (route) => false,
-      );
-    } else {
-      _authMode.value = AuthMode.signIn;
+      
+      var userInfo = await UserDataSingleton().getMap(UserDataSingleton.userInfo);
+      var userToken = await UserDataSingleton().getMap(UserDataSingleton.userToken);
+
+      PlatformLogger.debug('用户信息: ${userInfo?.isNotEmpty}, Token: ${userToken?.isNotEmpty}');
+
+      if ((userInfo?.isNotEmpty == true) &&
+          (userToken?.isNotEmpty == true) &&
+          (baseUrlDomain?.isNotEmpty == true) &&
+          (baseUrlPort?.isNotEmpty == true) &&
+          (baseProtocol?.isNotEmpty == true)) {
+        // 跳转首页
+        PlatformLogger.info('🔄 检测到已登录用户,尝试自动登录');
+        final baseUrl = '$baseProtocol://$baseUrlDomain:$baseUrlPort';
+        DioClient().updateBaseUrl('$baseUrl/prod-api');
+        
+        if (!mounted) return;
+        
+        if (!(await checkApiVersion())) {
+          if (!mounted) return;
+          PlatformLogger.warning('❌ API 版本检查失败');
+          _showErrorDialog(S.of(context).serverConnectionFailed);
+          _authMode.value = AuthMode.signIn;
+          return;
+        }
+        
+        PlatformLogger.info('✅ API 版本检查通过,刷新 Token');
+        DioClient().refreshToken(userToken!);
+        if (!mounted) return;
+        
+        PlatformLogger.info('🎯 跳转到首页');
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(
+            builder: (context) => const HomePage(),
+          ),
+          (route) => false,
+        );
+      } else {
+        PlatformLogger.info('ℹ️ 未检测到有效登录信息,显示配置页面');
+        _authMode.value = AuthMode.signIn;
+      }
+    } catch (e, stackTrace) {
+      // 异常处理:确保状态更新为 signIn,避免白屏
+      PlatformLogger.error('检查 Token 有效性时发生错误', e, stackTrace);
+      if (mounted) {
+        _authMode.value = AuthMode.signIn;
+      }
     }
   }
 
@@ -477,7 +505,7 @@ class _BaseUrlConfigPageState extends State<BaseUrlConfigPage> {
     return 0;
   }
 
-  // --- 4. 摒弃原生系统警告，重写高端金融级报错弹窗 ---
+  // --- 4. 摒弃原生系统警告,重写高端金融级报错弹窗 ---
   void _showErrorDialog(String message) {
     HapticFeedback.heavyImpact(); // 错误发生时强震动警告
     showDialog(

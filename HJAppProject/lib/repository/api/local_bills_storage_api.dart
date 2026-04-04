@@ -19,12 +19,12 @@ import 'package:intl/intl.dart';
 class LocalStorageBillsApi extends BillsApi {
   /// {@macro local_storage_todos_api}
   LocalStorageBillsApi({
-    required SharedPreferences plugin,
+    SharedPreferences? plugin,
   }) : _plugin = plugin {
     _init();
   }
 
-  final SharedPreferences _plugin;
+  final SharedPreferences? _plugin;
   final BillService _billService = BillService();
   final IncludeService _includeService = IncludeService();
   int pageNum = 1;
@@ -40,8 +40,11 @@ class LocalStorageBillsApi extends BillsApi {
   @visibleForTesting
   static const kBillsCollectionKey = '__bills_collection_key__';
 
-  Future<void> _setValue(String key, String value) =>
-      _plugin.setString(key, value);
+  Future<void> _setValue(String key, String value) async {
+    if (_plugin != null) {
+      await _plugin!.setString(key, value);
+    }
+  }
 
   DateTime addOneMonth(DateTime date) {
     int newYear = date.year;
@@ -131,9 +134,9 @@ class LocalStorageBillsApi extends BillsApi {
   }
 
   void _init() {
-    billStatisticsDay = _plugin.getInt("billStatisticsDay") ?? 1;
-    groupId = _plugin.getInt("groupId");
-    bookId = _plugin.getInt("bookId");
+    billStatisticsDay = _plugin?.getInt("billStatisticsDay") ?? 1;
+    groupId = _plugin?.getInt("groupId");
+    bookId = _plugin?.getInt("bookId");
     refreshCaculatorStatisticsDuration(DateTime.now(), forceRefresh: true);
     if (bookId != null) {
       queryNewBills();
@@ -330,16 +333,16 @@ class LocalStorageBillsApi extends BillsApi {
         this.groupId = groupId ?? this.groupId;
         this.bookId = bookId ?? this.bookId;
         if (this.groupId != null) {
-          _plugin.setInt("groupId", this.groupId!);
+          await _plugin?.setInt("groupId", this.groupId!);
         }
         if (this.bookId != null) {
-          _plugin.setInt("bookId", this.bookId!);
+          await _plugin?.setInt("bookId", this.bookId!);
         }
         developer.log('📝 ID更新完成 - 新GroupId: ${this.groupId}, 新BookId: ${this.bookId}', name: 'BillsApi');
         developer.log('📝 变更对比 - GroupId: $oldGroupId → ${this.groupId}, BookId: $oldBookId → ${this.bookId}', name: 'BillsApi');
 
         pageNum = 1;
-        developer.log('🔄 重置页码为1，清空Stream数据...', name: 'BillsApi');
+        developer.log('🔄 重置页码为1,清空Stream数据...', name: 'BillsApi');
 
         _billStreamController.add([]);
         developer.log('✅ Stream已清空，当前数据量: ${_billStreamController.value.length}', name: 'BillsApi');
@@ -391,7 +394,7 @@ class LocalStorageBillsApi extends BillsApi {
   @override
   Future<void> statisticsDayChanged(int day) async {
     billStatisticsDay = day;
-    _plugin.setInt("billStatisticsDay", day);
+    await _plugin?.setInt("billStatisticsDay", day);
     refreshCaculatorStatisticsDuration(caculatorTime);
     await refreshStatic(startTime, endTime);
     return;
