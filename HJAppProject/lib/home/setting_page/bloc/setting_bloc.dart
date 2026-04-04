@@ -62,39 +62,55 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
       SettingInitDataLoaded event,
       Emitter<SettingState> emit,
       ) async {
-    // 1. 第一次先下发本地/静态设置，让界面先有东西显示，避免白屏
-    final initialSettings = await _fetchStaticSettings();
-    emit(
-      state.copyWith(status: SettingStatus.initial, settings: initialSettings),
-    );
+    try {
+      // 1. 先下发本地/静态设置，让界面先有东西显示
+      final initialSettings = await _fetchStaticSettings();
+      emit(
+        state.copyWith(status: SettingStatus.success, settings: initialSettings),
+      );
 
-    // 2. 获取远程/网络配置 (这里可能会耗时)
-    var remoteSetting = await _fetchSettings();
+      // 2. 获取远程/网络配置，用 try-catch 保护，网络失败不影响页面
+      try {
+        var remoteSetting = await _fetchSettings();
+        final updatedSettings = await _fetchStaticSettings();
+        emit(
+          state.copyWith(
+              status: SettingStatus.success,
+              settings: updatedSettings,
+              remoteSettings: remoteSetting),
+        );
+      } catch (e) {
+        developer.log('❌ 远程设置获取失败', error: e, name: 'SettingBloc');
+      }
 
-    // 3. 再次读取本地配置，防止在等待网络请求期间，本地缓存刚刚就绪(解决冷启动读取慢的问题)
-    final updatedSettings = await _fetchStaticSettings();
-
-    // 4. 发射最终成功的状态
-    emit(
-      state.copyWith(
-          status: SettingStatus.success,
-          settings: updatedSettings,
-          remoteSettings: remoteSetting),
-    );
+      // 3. 初始化完成后再触发分组设置加载
+      add(GroupSettingFetched());
+    } catch (e, stackTrace) {
+      developer.log('❌ _onInitData 异常', error: e, stackTrace: stackTrace, name: 'SettingBloc');
+      emit(state.copyWith(status: SettingStatus.success));
+      add(GroupSettingFetched());
+    }
   }
 
   Future<List<Setting>> _fetchStaticSettings() async {
     final user = UserDataSingleton();
     final List<Setting> elements =[];
 
-    // 1. 获取完整的缓存 Map
-    final curUser = await user.getMap(UserDataSingleton.userInfo) ?? {};
-    // 2. 深入一层解析 userInfo
-    final userInfo = Map<String, dynamic>.from(curUser['userInfo'] as Map? ?? {});
-    // 3. 获取 nickname
-    final nickName = userInfo['nickname'] as String? ?? '';
+    // 缓存结构: {permissions, roleKey, userInfo: {nickname, ...}}
+    final currentUser = await user.getMap(UserDataSingleton.userInfo) ?? {};
 
-    // 4. 如果没拿到名字，给个友好的默认文案，防止页面空缺
+    // 从 currentUser.userInfo.nickname 获取昵称
+    String nickName = '';
+    if (currentUser['userInfo'] is Map) {
+      final userDetail = Map<String, dynamic>.from(currentUser['userInfo'] as Map);
+      nickName = userDetail['nickname'] as String? ?? '';
+    }
+    // 兜底：直接取顶层 nickname（兼容旧数据结构）
+    if (nickName.isEmpty) {
+      nickName = currentUser['nickname'] as String? ?? '';
+    }
+
+    // 如果没拿到名字，给个友好的默认文案，防止页面空缺
     final displayName = nickName.isNotEmpty ? nickName : '未登录';
 
     elements.add(Setting(SettingType.username,
@@ -120,8 +136,12 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
   }
 
   Future<String> getBuildVersion() async {
-    final packageInfo = await PackageInfo.fromPlatform();
-    return '${packageInfo.version}(${packageInfo.buildNumber})'; // 格式与 pubspec.yaml 的 version 一致[3,4](@ref)
+    try {
+      final packageInfo = await PackageInfo.fromPlatform();
+      return '${packageInfo.version}(${packageInfo.buildNumber})';
+    } catch (_) {
+      return '未知版本';
+    }
   }
 
   Future<void> _onFetchedGroup(

@@ -57,7 +57,7 @@ class _MineViewState extends State<MineView> {
   @override
   void initState() {
     super.initState();
-    context.read<SettingBloc>().add(GroupSettingFetched());
+    // GroupSettingFetched 已由 _onInitData 完成后自动触发，避免竞态
   }
 
   UIState _mapToUIState(SettingStatus status) {
