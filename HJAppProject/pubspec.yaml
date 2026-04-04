@@ -22,6 +22,12 @@ dependencies:
   logger: ^2.5.0
   retrofit: 4.7.2
   shared_preferences: ^2.5.3
+  # 鸿蒙平台 SharedPreferences 支持
+  shared_preferences_ohos:
+    git:
+      url: https://gitee.com/openharmony-sig/flutter_packages.git
+      path: packages/shared_preferences/shared_preferences_ohos
+      ref: master
   flutter_bloc: ^9.1.0
   sticky_grouped_list: ^3.1.0
   bloc_concurrency: ^0.3.0

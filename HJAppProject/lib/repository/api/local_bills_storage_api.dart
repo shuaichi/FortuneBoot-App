@@ -19,12 +19,12 @@ import 'package:intl/intl.dart';
 class LocalStorageBillsApi extends BillsApi {
   /// {@macro local_storage_todos_api}
   LocalStorageBillsApi({
-    SharedPreferences? plugin,
+    required SharedPreferences plugin,
   }) : _plugin = plugin {
     _init();
   }
 
-  final SharedPreferences? _plugin;
+  final SharedPreferences _plugin;
   final BillService _billService = BillService();
   final IncludeService _includeService = IncludeService();
   int pageNum = 1;
@@ -40,11 +40,8 @@ class LocalStorageBillsApi extends BillsApi {
   @visibleForTesting
   static const kBillsCollectionKey = '__bills_collection_key__';
 
-  Future<void> _setValue(String key, String value) async {
-    if (_plugin != null) {
-      await _plugin!.setString(key, value);
-    }
-  }
+  Future<void> _setValue(String key, String value) =>
+      _plugin.setString(key, value);
 
   DateTime addOneMonth(DateTime date) {
     int newYear = date.year;
@@ -134,9 +131,9 @@ class LocalStorageBillsApi extends BillsApi {
   }
 
   void _init() {
-    billStatisticsDay = _plugin?.getInt("billStatisticsDay") ?? 1;
-    groupId = _plugin?.getInt("groupId");
-    bookId = _plugin?.getInt("bookId");
+    billStatisticsDay = _plugin.getInt("billStatisticsDay") ?? 1;
+    groupId = _plugin.getInt("groupId");
+    bookId = _plugin.getInt("bookId");
     refreshCaculatorStatisticsDuration(DateTime.now(), forceRefresh: true);
     if (bookId != null) {
       queryNewBills();
@@ -234,77 +231,77 @@ class LocalStorageBillsApi extends BillsApi {
         print('❌ ERROR: 刷新统计数据失败: $e');
       }
       if (billResponse.code == 0) {
-      print('🔍 DEBUG: 开始解析API响应数据...');
+        print('🔍 DEBUG: 开始解析API响应数据...');
 
-      // 检查 billResponse.data 是否存在
-      if (billResponse.data == null) {
-        print('❌ ERROR: billResponse.data为null');
-        isLoadingMore = false;
-        return;
-      }
+        // 检查 billResponse.data 是否存在
+        if (billResponse.data == null) {
+          print('❌ ERROR: billResponse.data为null');
+          isLoadingMore = false;
+          return;
+        }
 
-      print('🔍 DEBUG: billResponse.data类型: ${billResponse.data.runtimeType}');
-      print('🔍 DEBUG: billResponse.data内容: ${billResponse.data}');
+        print('🔍 DEBUG: billResponse.data类型: ${billResponse.data.runtimeType}');
+        print('🔍 DEBUG: billResponse.data内容: ${billResponse.data}');
 
-      // 检查 rows 字段是否存在
-      if (billResponse.data['rows'] == null) {
-        print('❌ ERROR: billResponse.data[\'rows\']为null');
-        isLoadingMore = false;
-        return;
-      }
+        // 检查 rows 字段是否存在
+        if (billResponse.data['rows'] == null) {
+          print('❌ ERROR: billResponse.data[\'rows\']为null');
+          isLoadingMore = false;
+          return;
+        }
 
-      final billList = billResponse.data['rows'] as List? ?? [];
-      print('🔍 DEBUG: API返回的原始数据行数: ${billList.length}');
-      print('🔍 DEBUG: billList类型: ${billList.runtimeType}');
+        final billList = billResponse.data['rows'] as List? ?? [];
+        print('🔍 DEBUG: API返回的原始数据行数: ${billList.length}');
+        print('🔍 DEBUG: billList类型: ${billList.runtimeType}');
 
-      if (billList.isEmpty) {
-        print('⚠️ WARNING: billList为空，没有数据需要解析');
-        isLoadingMore = false;
-        return;
-      }
+        if (billList.isEmpty) {
+          print('⚠️ WARNING: billList为空，没有数据需要解析');
+          isLoadingMore = false;
+          return;
+        }
 
-      print('🔍 DEBUG: 开始逐个解析BillItem...');
-      final List<BillItem> remoteItems = [];
+        print('🔍 DEBUG: 开始逐个解析BillItem...');
+        final List<BillItem> remoteItems = [];
 
-      for (int i = 0; i < billList.length; i++) {
-        try {
-          print('🔍 DEBUG: 解析第${i + 1}个数据项...');
-          final ele = billList[i];
-          print('🔍 DEBUG: 第${i + 1}项原始数据类型: ${ele.runtimeType}');
-          print('🔍 DEBUG: 第${i + 1}项原始数据: $ele');
+        for (int i = 0; i < billList.length; i++) {
+          try {
+            print('🔍 DEBUG: 解析第${i + 1}个数据项...');
+            final ele = billList[i];
+            print('🔍 DEBUG: 第${i + 1}项原始数据类型: ${ele.runtimeType}');
+            print('🔍 DEBUG: 第${i + 1}项原始数据: $ele');
 
-          if (ele == null) {
-            print('❌ ERROR: 第${i + 1}项数据为null，跳过');
+            if (ele == null) {
+              print('❌ ERROR: 第${i + 1}项数据为null，跳过');
+              continue;
+            }
+
+            final Map<String, dynamic> itemMap = Map<String, dynamic>.from(ele as Map? ?? {});
+            print('🔍 DEBUG: 第${i + 1}项转换后的Map: $itemMap');
+
+            final billItem = BillItem.fromJson(itemMap);
+            remoteItems.add(billItem);
+            print('✅ SUCCESS: 第${i + 1}项解析成功，BillItem ID: ${billItem.billId}');
+
+          } catch (e, stackTrace) {
+            print('❌ ERROR: 解析第${i + 1}项时发生异常: $e');
+            print('❌ ERROR: 异常堆栈: $stackTrace');
             continue;
           }
-
-          final Map<String, dynamic> itemMap = Map<String, dynamic>.from(ele as Map? ?? {});
-          print('🔍 DEBUG: 第${i + 1}项转换后的Map: $itemMap');
-
-          final billItem = BillItem.fromJson(itemMap);
-          remoteItems.add(billItem);
-          print('✅ SUCCESS: 第${i + 1}项解析成功，BillItem ID: ${billItem.billId}');
-
-        } catch (e, stackTrace) {
-          print('❌ ERROR: 解析第${i + 1}项时发生异常: $e');
-          print('❌ ERROR: 异常堆栈: $stackTrace');
-          continue;
         }
-      }
-      print('🔍 DEBUG: 解析完成！成功解析的BillItem数量: ${remoteItems.length}');
+        print('🔍 DEBUG: 解析完成！成功解析的BillItem数量: ${remoteItems.length}');
 
-      if (clear) {
-        items.addAll(remoteItems);
-      } else {
-        items = remoteItems;
-      }
-      final allBillsCount = billResponse.data['total'] as int? ?? 20;
-      hasMore = items.length < allBillsCount;
-      isLoadingMore = false;
-      print('🔍 DEBUG: 最终添加到Stream的items数量: ${items.length}');
-      print('🔍 DEBUG: hasMore: $hasMore, total: $allBillsCount');
-      _billStreamController.add(items);
-      // _setValue(kBillsCollectionKey, json.encode(items));
+        if (clear) {
+          items.addAll(remoteItems);
+        } else {
+          items = remoteItems;
+        }
+        final allBillsCount = billResponse.data['total'] as int? ?? 20;
+        hasMore = items.length < allBillsCount;
+        isLoadingMore = false;
+        print('🔍 DEBUG: 最终添加到Stream的items数量: ${items.length}');
+        print('🔍 DEBUG: hasMore: $hasMore, total: $allBillsCount');
+        _billStreamController.add(items);
+        // _setValue(kBillsCollectionKey, json.encode(items));
       } else {
         print('❌ ERROR: API响应失败 - code: ${billResponse.code}, message: ');
       }
@@ -333,16 +330,16 @@ class LocalStorageBillsApi extends BillsApi {
         this.groupId = groupId ?? this.groupId;
         this.bookId = bookId ?? this.bookId;
         if (this.groupId != null) {
-          await _plugin?.setInt("groupId", this.groupId!);
+          _plugin.setInt("groupId", this.groupId!);
         }
         if (this.bookId != null) {
-          await _plugin?.setInt("bookId", this.bookId!);
+          _plugin.setInt("bookId", this.bookId!);
         }
         developer.log('📝 ID更新完成 - 新GroupId: ${this.groupId}, 新BookId: ${this.bookId}', name: 'BillsApi');
         developer.log('📝 变更对比 - GroupId: $oldGroupId → ${this.groupId}, BookId: $oldBookId → ${this.bookId}', name: 'BillsApi');
 
         pageNum = 1;
-        developer.log('🔄 重置页码为1,清空Stream数据...', name: 'BillsApi');
+        developer.log('🔄 重置页码为1，清空Stream数据...', name: 'BillsApi');
 
         _billStreamController.add([]);
         developer.log('✅ Stream已清空，当前数据量: ${_billStreamController.value.length}', name: 'BillsApi');
@@ -394,7 +391,7 @@ class LocalStorageBillsApi extends BillsApi {
   @override
   Future<void> statisticsDayChanged(int day) async {
     billStatisticsDay = day;
-    await _plugin?.setInt("billStatisticsDay", day);
+    _plugin.setInt("billStatisticsDay", day);
     refreshCaculatorStatisticsDuration(caculatorTime);
     await refreshStatic(startTime, endTime);
     return;
