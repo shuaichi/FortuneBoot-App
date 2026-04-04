@@ -1516,9 +1516,12 @@ class _EditBillViewState extends State<EditBillView> {
 
   void _submitBill(BillItemAdd billItemAdd, EditBillState state) {
     if (billItemAdd.data?.title?.trim().isEmpty ?? true) {
-      // return _showSnack(context, '请填写标题', isError: true);
-      // TODO 暂时设置成默认值，后续改成配置的
-      billItemAdd.data?.title = '未命名账单';
+      // 使用分类名称作为默认标题，多个分类用逗号分隔
+      billItemAdd.data?.title = _categoryAmountItems
+          .where((item) => item.categoryId != null)
+          .map((item) => _getCategoryName(state.categoryList, item.categoryId))
+          .where((name) => name.isNotEmpty)
+          .join('、');
     }
     if (billItemAdd.data?.billType == BillType.transfer.value) {
       if (billItemAdd.data?.amount == null || billItemAdd.data!.amount == 0) {
