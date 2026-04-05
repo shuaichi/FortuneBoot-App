@@ -2,7 +2,7 @@
 buildPlatform=$1
 echo build $buildPlatform
 # 定义主版本号
-MAJOR_VERSION="1.3.13"
+MAJOR_VERSION="1.3.14"
 
 # 动态生成构建号（日期+时间戳）
 BUILD_NUMBER=$(date +%Y%m%d%H)
@@ -20,7 +20,10 @@ if [[ $buildPlatform == "android" ]]; then
 elif [[ $buildPlatform == "ios" ]]; then
     echo "✅ 构建 iOS 版本"
     flutter build ios --release --no-codesign
+elif [[ $buildPlatform == "harmony" ]]; then
+    echo "✅ 构建鸿蒙版本"
+    fvm flutter build hap --release
 else
-    echo "❌ 错误：未知平台 '$buildPlatform'，仅支持 android/ios"
+    echo "❌ 错误：未知平台 '$buildPlatform'，仅支持 android/ios/harmony"
     exit 1
 fi
