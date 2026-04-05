@@ -568,6 +568,7 @@ Future<Map?> showCaptchaDialog(Map captchaDic) async {
                             child: Base64Image(
                               key: ValueKey<String>(captchaCode),
                               base64String: captchaCode,
+                              fit: BoxFit.contain,
                             ),
                           ),
                         ),
