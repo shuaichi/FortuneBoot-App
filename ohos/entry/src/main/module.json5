@@ -1,4 +1,3 @@
-
 {
   "module": {
     "name": "entry",
@@ -34,7 +33,29 @@
       }
     ],
     "requestPermissions": [
-      {"name" :  "ohos.permission.INTERNET"},
+      {
+        "name": "ohos.permission.INTERNET"
+      },
+      {
+        "name": "ohos.permission.READ_IMAGEVIDEO",
+        "reason": "$string:perm_reason_read_media",
+        "usedScene": {
+          "abilities": [
+            "EntryAbility"
+          ],
+          "when": "inuse"
+        }
+      },
+      {
+        "name": "ohos.permission.SHORT_TERM_WRITE_IMAGEVIDEO",
+        "reason": "$string:perm_reason_write_media",
+        "usedScene": {
+          "abilities": [
+            "EntryAbility"
+          ],
+          "when": "inuse"
+        }
+      }
     ]
   }
 }

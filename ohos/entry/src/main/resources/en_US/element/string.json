@@ -11,6 +11,14 @@
     {
       "name": "EntryAbility_label",
       "value": "FortuneBoot"
+    },
+    {
+      "name": "perm_reason_read_media",
+      "value": "Used for reading images and videos"
+    },
+    {
+      "name": "perm_reason_write_media",
+      "value": "Used for saving images and videos"
     }
   ]
 }

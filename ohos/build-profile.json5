@@ -5,20 +5,13 @@
         "name": "FortuneBoot",
         "type": "HarmonyOS",
         "material": {
-          // 密钥别名(从项目负责人处获取)
-          "keyAlias": "PeLfpgUf20z0D7BF",
-          // 签名算法(通常不需要修改)
-          "signAlg": "SHA256withECDSA",
-          // 证书文件路径(相对路径)
-          "certpath": "./signing/FortuneBoot_release.cer",
-          // 密钥密码(从项目负责人处获取)
-          "keyPassword": "XNl3a5GBIho4hBD8O7EXcsWIi2pKoDPwWfPRrnm2niYRdRFu4kfUpMNyuci9ZNDXI",
-          // 配置文件路径(相对路径)
-          "profile": "./signing/FortuneBoot_release.p7b",
-          // 密钥库文件路径(相对路径)
           "storeFile": "./signing/FortuneBoot_release.p12",
-          // 密钥库密码(从项目负责人处获取)
-          "storePassword": "XNl3a5GBIho4hBD8O7EXcsWIi2pKoDPwWfPRrnm2niYRdRFu4kfUpMNyuci9ZNDXI"
+          "storePassword": "000000502787BCB962D772C378A25313CA1484CCD36DA47C94601F714474700ED05063323A747B2C3BB0455B75745221AD53CBF1351C0160E42BD554468E8B0EE94DAF647FBA1EB4A0317DAD0F167B220CCFFAFBFF27EB9CE51B5F58863E84C5",
+          "keyAlias": "PeLfpgUf20z0D7BF",
+          "keyPassword": "00000050235EC58A75CC64297F939F23E127B954CAE0D8DA3A2B339ED29532B6E0EF8D7083FA277B4E2E03A38A966F4A7DC97AE26F5F39820A8477AE850DC074C43A87195B272859EF02170448A3D38FB7F36060C4BEDDE9FE9D1D312701B45B",
+          "signAlg": "SHA256withECDSA",
+          "profile": "./signing/FortuneBoot_release.p7b",
+          "certpath": "./signing/FortuneBoot_release.cer"
         }
       }
     ],

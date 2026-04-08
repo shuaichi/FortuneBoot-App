@@ -11,6 +11,14 @@
     {
       "name": "EntryAbility_label",
       "value": "好记"
+    },
+    {
+      "name": "perm_reason_read_media",
+      "value": "用于读取图片和视频"
+    },
+    {
+      "name": "perm_reason_write_media",
+      "value": "用于保存图片和视频"
     }
   ]
 }
