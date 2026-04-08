@@ -1,0 +1,60 @@
+{
+  "app": {
+    "signingConfigs": [
+      {
+        "name": "FortuneBoot",
+        "type": "HarmonyOS",
+        "material": {
+          // 密钥别名(从项目负责人处获取)
+          "keyAlias": "PeLfpgUf20z0D7BF",
+          // 签名算法(通常不需要修改)
+          "signAlg": "SHA256withECDSA",
+          // 证书文件路径(相对路径)
+          "certpath": "./signing/FortuneBoot_release.cer",
+          // 密钥密码(从项目负责人处获取)
+          "keyPassword": "XNl3a5GBIho4hBD8O7EXcsWIi2pKoDPwWfPRrnm2niYRdRFu4kfUpMNyuci9ZNDXI",
+          // 配置文件路径(相对路径)
+          "profile": "./signing/FortuneBoot_release.p7b",
+          // 密钥库文件路径(相对路径)
+          "storeFile": "./signing/FortuneBoot_release.p12",
+          // 密钥库密码(从项目负责人处获取)
+          "storePassword": "XNl3a5GBIho4hBD8O7EXcsWIi2pKoDPwWfPRrnm2niYRdRFu4kfUpMNyuci9ZNDXI"
+        }
+      }
+    ],
+    "products": [
+      {
+        "name": "default",
+        "signingConfig": "FortuneBoot",
+        "compatibleSdkVersion": "6.0.0(20)",
+        "runtimeOS": "HarmonyOS",
+        "targetSdkVersion": "6.0.0(20)"
+      }
+    ],
+    "buildModeSet": [
+      {
+        "name": "debug"
+      },
+      {
+        "name": "profile"
+      },
+      {
+        "name": "release"
+      }
+    ]
+  },
+  "modules": [
+    {
+      "name": "entry",
+      "srcPath": "./entry",
+      "targets": [
+        {
+          "name": "default",
+          "applyToProducts": [
+            "default"
+          ]
+        }
+      ]
+    }
+  ]
+}
