@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:hjproject/login/view/login_screen.dart';
+import 'package:fortuneboot/login/view/login_screen.dart';
 
 class FadePageRoute<T> extends MaterialPageRoute<T> {
   FadePageRoute({

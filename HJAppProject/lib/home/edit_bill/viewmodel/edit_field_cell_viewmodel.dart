@@ -1,5 +1,5 @@
-import 'package:hjproject/home/edit_bill/models/edit_select_item.dart';
-import 'package:hjproject/request/base_request.dart';
+import 'package:fortuneboot/home/edit_bill/models/edit_select_item.dart';
+import 'package:fortuneboot/request/base_request.dart';
 import 'package:multi_dropdown/multi_dropdown.dart';
 
 typedef ItemMapper<T> = T Function(String name, int id);

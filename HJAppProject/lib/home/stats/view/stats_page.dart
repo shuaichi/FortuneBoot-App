@@ -8,8 +8,8 @@ import 'package:intl/intl.dart';
 // 正确引入 BLoC 和 Model
 import '../bloc/bills_stats_bloc.dart';
 import '../models/stats_models.dart';
-import 'package:hjproject/request/include_request.dart';
-import 'package:hjproject/repository/repository/bills_repository.dart';
+import 'package:fortuneboot/request/include_request.dart';
+import 'package:fortuneboot/repository/repository/bills_repository.dart';
 
 class FintechColors {
   static const Color primaryText = Color(0xFF1C1C1E);

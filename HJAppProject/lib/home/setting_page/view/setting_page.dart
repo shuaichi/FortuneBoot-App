@@ -4,33 +4,33 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:hjproject/home/setting_page/bloc/setting_bloc.dart';
-import 'package:hjproject/home/setting_page/models/mine_setting.dart';
-import 'package:hjproject/home/setting_page/models/setting_select_item.dart';
-import 'package:hjproject/home/setting_page/utils/setting_filter.dart';
-import 'package:hjproject/login/model/users.dart';
-import 'package:hjproject/login/view/base_url_config_page.dart';
-import 'package:hjproject/repository/repository/bills_repository.dart';
+import 'package:fortuneboot/home/setting_page/bloc/setting_bloc.dart';
+import 'package:fortuneboot/home/setting_page/models/mine_setting.dart';
+import 'package:fortuneboot/home/setting_page/models/setting_select_item.dart';
+import 'package:fortuneboot/home/setting_page/utils/setting_filter.dart';
+import 'package:fortuneboot/login/model/users.dart';
+import 'package:fortuneboot/login/view/base_url_config_page.dart';
+import 'package:fortuneboot/repository/repository/bills_repository.dart';
 
-import 'package:hjproject/request/group_request.dart';
-import 'package:hjproject/request/book_request.dart';
+import 'package:fortuneboot/request/group_request.dart';
+import 'package:fortuneboot/request/book_request.dart';
 
-import 'package:hjproject/home/setting_page/view/profile_page.dart';
-import 'package:hjproject/home/account_manage/view/account_manage_page.dart';
-import 'package:hjproject/home/category_manage/view/category_manage_page.dart';
-import 'package:hjproject/home/tag_manage/view/tag_manage_page.dart';
-import 'package:hjproject/home/payee_manage/view/payee_manage_page.dart';
+import 'package:fortuneboot/home/setting_page/view/profile_page.dart';
+import 'package:fortuneboot/home/account_manage/view/account_manage_page.dart';
+import 'package:fortuneboot/home/category_manage/view/category_manage_page.dart';
+import 'package:fortuneboot/home/tag_manage/view/tag_manage_page.dart';
+import 'package:fortuneboot/home/payee_manage/view/payee_manage_page.dart';
 
-import 'package:hjproject/home/design_system/hjds_theme.dart';
-import 'package:hjproject/home/design_system/hjds_components.dart';
+import 'package:fortuneboot/home/design_system/hjds_theme.dart';
+import 'package:fortuneboot/home/design_system/hjds_components.dart';
 
-import 'package:hjproject/home/setting_page/view/widgets/donate_qr_sheet.dart';
-import 'package:hjproject/home/setting_page/view/widgets/help_dialog.dart';
-import 'package:hjproject/home/setting_page/view/widgets/api_info_dialog.dart';
-import 'package:hjproject/home/setting_page/view/widgets/setting_detail_dialog.dart';
-import 'package:hjproject/home/setting_page/view/widgets/logout_confirm_dialog.dart';
-import 'package:hjproject/home/setting_page/view/widgets/selection_bottom_sheet.dart';
-import 'package:hjproject/util/dio_client.dart';
+import 'package:fortuneboot/home/setting_page/view/widgets/donate_qr_sheet.dart';
+import 'package:fortuneboot/home/setting_page/view/widgets/help_dialog.dart';
+import 'package:fortuneboot/home/setting_page/view/widgets/api_info_dialog.dart';
+import 'package:fortuneboot/home/setting_page/view/widgets/setting_detail_dialog.dart';
+import 'package:fortuneboot/home/setting_page/view/widgets/logout_confirm_dialog.dart';
+import 'package:fortuneboot/home/setting_page/view/widgets/selection_bottom_sheet.dart';
+import 'package:fortuneboot/util/dio_client.dart';
 
 class MinePage extends StatelessWidget {
   const MinePage({super.key});

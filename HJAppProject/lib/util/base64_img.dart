@@ -2,10 +2,10 @@ import 'dart:convert';
 import 'dart:typed_data';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
-import 'package:hjproject/util/svg_painter.dart';
+import 'package:fortuneboot/util/svg_painter.dart';
 
-import 'package:hjproject/util/base64_svg_native.dart'
-    if (dart.library.html) 'package:hjproject/util/base64_svg_web.dart'
+import 'package:fortuneboot/util/base64_svg_native.dart'
+    if (dart.library.html) 'package:fortuneboot/util/base64_svg_web.dart'
     as svg_platform;
 
 class Base64Image extends StatelessWidget {

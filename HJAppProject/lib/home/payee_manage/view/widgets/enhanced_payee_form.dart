@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:hjproject/home/payee_manage/constants/design_system.dart' as ds;
+import 'package:fortuneboot/home/payee_manage/constants/design_system.dart' as ds;
 
 /// 增强版交易对象表单组件
 /// 基于设计系统重构，提供现代化的表单体验

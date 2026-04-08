@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:hjproject/home/payee_manage/constants/design_system.dart' as ds;
-import 'package:hjproject/home/payee_manage/model/payee.dart';
+import 'package:fortuneboot/home/payee_manage/constants/design_system.dart' as ds;
+import 'package:fortuneboot/home/payee_manage/model/payee.dart';
 
 /// 增强版交易对象移入回收站确认对话框
 /// 基于账户管理对话框设计，使用交易对象专用设计系统

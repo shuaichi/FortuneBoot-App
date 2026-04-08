@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hjproject/home/payee_manage/view/widgets/enhanced_payee_type_selector.dart'; // Import for enum
+import 'package:fortuneboot/home/payee_manage/view/widgets/enhanced_payee_type_selector.dart'; // Import for enum
 
 class PayeeFilterBar extends StatelessWidget {
   const PayeeFilterBar({

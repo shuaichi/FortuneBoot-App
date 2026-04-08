@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:hjproject/home/payee_manage/model/payee.dart';
-import 'package:hjproject/home/payee_manage/view/widgets/payee_list_item.dart';
-import 'package:hjproject/Home/category_manage/view/widgets/category_summary_bar.dart';
-import 'package:hjproject/Home/tag_manage/view/widgets/tag_pager.dart';
-import 'package:hjproject/Home/category_manage/view/widgets/category_empty_state.dart';
-import 'package:hjproject/Home/category_manage/view/widgets/category_loading_indicator.dart';
-import 'package:hjproject/Home/category_manage/view/widgets/category_error_view.dart';
+import 'package:fortuneboot/home/payee_manage/model/payee.dart';
+import 'package:fortuneboot/home/payee_manage/view/widgets/payee_list_item.dart';
+import 'package:fortuneboot/Home/category_manage/view/widgets/category_summary_bar.dart';
+import 'package:fortuneboot/Home/tag_manage/view/widgets/tag_pager.dart';
+import 'package:fortuneboot/Home/category_manage/view/widgets/category_empty_state.dart';
+import 'package:fortuneboot/Home/category_manage/view/widgets/category_loading_indicator.dart';
+import 'package:fortuneboot/Home/category_manage/view/widgets/category_error_view.dart';
 
 class PayeeListView extends StatelessWidget {
   const PayeeListView({

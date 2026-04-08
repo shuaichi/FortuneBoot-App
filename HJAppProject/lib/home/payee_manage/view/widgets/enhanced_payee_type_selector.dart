@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hjproject/home/payee_manage/constants/design_system.dart' as ds;
+import 'package:fortuneboot/home/payee_manage/constants/design_system.dart' as ds;
 
 /// 增强版交易对象类型选择器
 /// 支持响应式布局和优化的交互体验

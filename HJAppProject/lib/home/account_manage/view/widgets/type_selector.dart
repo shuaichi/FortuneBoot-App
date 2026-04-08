@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hjproject/Home/account_manage/constants/design_system.dart' as ds;
+import 'package:fortuneboot/Home/account_manage/constants/design_system.dart' as ds;
 
 /// 增强版账户类型选择器
 /// 支持响应式布局和优化的交互体验

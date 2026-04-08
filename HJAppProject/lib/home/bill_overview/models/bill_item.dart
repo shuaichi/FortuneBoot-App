@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hjproject/home/bill_overview/models/bill_file_item.dart';
+import 'package:fortuneboot/home/bill_overview/models/bill_file_item.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:equatable/equatable.dart';
 import 'package:intl/intl.dart';

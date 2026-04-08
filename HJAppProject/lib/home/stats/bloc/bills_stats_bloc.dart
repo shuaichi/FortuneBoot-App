@@ -1,9 +1,9 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:hjproject/login/model/login_model.dart';
+import 'package:fortuneboot/login/model/login_model.dart';
 import 'package:intl/intl.dart';
 
-import 'package:hjproject/request/include_request.dart';
+import 'package:fortuneboot/request/include_request.dart';
 import '../models/stats_models.dart';
 
 /// --- EVENTS ---

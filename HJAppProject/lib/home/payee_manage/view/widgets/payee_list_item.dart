@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hjproject/home/payee_manage/model/payee.dart';
+import 'package:fortuneboot/home/payee_manage/model/payee.dart';
 
 class PayeeListItem extends StatelessWidget {
   const PayeeListItem({

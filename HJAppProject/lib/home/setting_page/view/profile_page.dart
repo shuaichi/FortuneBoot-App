@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:hjproject/util/dio_client.dart';
-import 'package:hjproject/home/design_system/hjds_theme.dart';
-import 'package:hjproject/home/design_system/hjds_components.dart';
+import 'package:fortuneboot/util/dio_client.dart';
+import 'package:fortuneboot/home/design_system/hjds_theme.dart';
+import 'package:fortuneboot/home/design_system/hjds_components.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});

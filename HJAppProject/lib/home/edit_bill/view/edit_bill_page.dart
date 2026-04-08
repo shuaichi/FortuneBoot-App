@@ -6,13 +6,13 @@ import 'package:intl/intl.dart';
 import 'package:multi_dropdown/multi_dropdown.dart';
 
 // --- 原有导入 ---
-import 'package:hjproject/home/edit_bill/bloc/edit_bill_bloc.dart';
-import 'package:hjproject/home/edit_bill/models/edit_select_item.dart';
-import 'package:hjproject/home/edit_bill/widgets/attachment_upload_widget.dart';
-import 'package:hjproject/home/bill_overview/models/bill_item.dart';
-import 'package:hjproject/home/bill_overview/models/bill_item_add.dart';
-import 'package:hjproject/generated/l10n.dart';
-import 'package:hjproject/repository/repository/bills_repository.dart';
+import 'package:fortuneboot/home/edit_bill/bloc/edit_bill_bloc.dart';
+import 'package:fortuneboot/home/edit_bill/models/edit_select_item.dart';
+import 'package:fortuneboot/home/edit_bill/widgets/attachment_upload_widget.dart';
+import 'package:fortuneboot/home/bill_overview/models/bill_item.dart';
+import 'package:fortuneboot/home/bill_overview/models/bill_item_add.dart';
+import 'package:fortuneboot/generated/l10n.dart';
+import 'package:fortuneboot/repository/repository/bills_repository.dart';
 
 // ==========================================
 // 数据模型

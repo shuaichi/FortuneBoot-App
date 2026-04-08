@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
-import 'package:hjproject/home/payee_manage/model/payee.dart';
-import 'package:hjproject/home/payee_manage/data/payee_service.dart';
-import 'package:hjproject/home/payee_manage/constants/design_system.dart' as ds;
+import 'package:fortuneboot/home/payee_manage/model/payee.dart';
+import 'package:fortuneboot/home/payee_manage/data/payee_service.dart';
+import 'package:fortuneboot/home/payee_manage/constants/design_system.dart' as ds;
 
 /// 增强版交易对象修改页面
 /// 基于设计系统重构，提供现代化的用户体验和一致的视觉设计

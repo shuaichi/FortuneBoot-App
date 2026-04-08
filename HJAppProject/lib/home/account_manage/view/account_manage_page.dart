@@ -1,25 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hjproject/Home/account_manage/models/fortune_account.dart';
-import 'package:hjproject/repository/repository/bills_repository.dart';
-import 'package:hjproject/Request/account_request.dart';
-import 'package:hjproject/Home/category_manage/view/widgets/category_summary_bar.dart';
-import 'package:hjproject/Home/tag_manage/view/widgets/tag_pager.dart';
+import 'package:fortuneboot/Home/account_manage/models/fortune_account.dart';
+import 'package:fortuneboot/repository/repository/bills_repository.dart';
+import 'package:fortuneboot/Request/account_request.dart';
+import 'package:fortuneboot/Home/category_manage/view/widgets/category_summary_bar.dart';
+import 'package:fortuneboot/Home/tag_manage/view/widgets/tag_pager.dart';
 
-import 'package:hjproject/request/group_request.dart';
+import 'package:fortuneboot/request/group_request.dart';
 
 // 导入新的Page版本
-import 'package:hjproject/Home/account_manage/view/account_add_page.dart';
-import 'package:hjproject/Home/account_manage/view/account_edit_page.dart';
-import 'package:hjproject/Home/account_manage/view/account_balance_adjust_page.dart';
+import 'package:fortuneboot/Home/account_manage/view/account_add_page.dart';
+import 'package:fortuneboot/Home/account_manage/view/account_edit_page.dart';
+import 'package:fortuneboot/Home/account_manage/view/account_balance_adjust_page.dart';
 
 // 导入增强版组件
-import 'package:hjproject/Home/account_manage/constants/design_system.dart' as ds;
-import 'package:hjproject/Home/account_manage/view/widgets/account_card.dart';
-import 'package:hjproject/Home/account_manage/view/widgets/empty_state.dart';
-import 'package:hjproject/Home/account_manage/view/widgets/loading_state.dart';
-import 'package:hjproject/Home/account_manage/view/widgets/type_selector.dart';
-import 'package:hjproject/Home/account_manage/view/widgets/account_move_to_recycle_dialog.dart';
+import 'package:fortuneboot/Home/account_manage/constants/design_system.dart' as ds;
+import 'package:fortuneboot/Home/account_manage/view/widgets/account_card.dart';
+import 'package:fortuneboot/Home/account_manage/view/widgets/empty_state.dart';
+import 'package:fortuneboot/Home/account_manage/view/widgets/loading_state.dart';
+import 'package:fortuneboot/Home/account_manage/view/widgets/type_selector.dart';
+import 'package:fortuneboot/Home/account_manage/view/widgets/account_move_to_recycle_dialog.dart';
 
 class AccountManagePage extends StatefulWidget {
   const AccountManagePage({Key? key}) : super(key: key);

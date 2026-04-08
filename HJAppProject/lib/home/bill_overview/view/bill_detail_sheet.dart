@@ -2,11 +2,11 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hjproject/home/bill_overview/view/bill_list_tile.dart';
-import 'package:hjproject/home/edit_bill/view/edit_bill_page.dart';
-import 'package:hjproject/home/bill_overview/bloc/detail_bloc/bill_detail_bloc.dart';
-import 'package:hjproject/home/bill_overview/models/bill_item.dart';
-import 'package:hjproject/home/bill_overview/models/bill_item_add.dart';
+import 'package:fortuneboot/home/bill_overview/view/bill_list_tile.dart';
+import 'package:fortuneboot/home/edit_bill/view/edit_bill_page.dart';
+import 'package:fortuneboot/home/bill_overview/bloc/detail_bloc/bill_detail_bloc.dart';
+import 'package:fortuneboot/home/bill_overview/models/bill_item.dart';
+import 'package:fortuneboot/home/bill_overview/models/bill_item_add.dart';
 import 'package:intl/intl.dart';
 
 class BillDetailSheet extends StatelessWidget {

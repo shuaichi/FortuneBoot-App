@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hjproject/Home/account_manage/constants/design_system.dart' as ds;
+import 'package:fortuneboot/Home/account_manage/constants/design_system.dart' as ds;
 import 'package:intl/intl.dart';
 
 /// 金额显示组件

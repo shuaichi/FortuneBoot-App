@@ -3,8 +3,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:hjproject/home/edit_bill/models/attachment_item.dart';
-import 'package:hjproject/home/edit_bill/services/attachment_service.dart';
+import 'package:fortuneboot/home/edit_bill/models/attachment_item.dart';
+import 'package:fortuneboot/home/edit_bill/services/attachment_service.dart';
 
 /// 附件上传组件
 class AttachmentUploadWidget extends StatefulWidget {

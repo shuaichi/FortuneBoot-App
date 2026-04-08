@@ -1,4 +1,4 @@
-import 'package:hjproject/util/currency_symbol.dart';
+import 'package:fortuneboot/util/currency_symbol.dart';
 import 'package:intl/intl.dart';
 
 class FortuneAccount {

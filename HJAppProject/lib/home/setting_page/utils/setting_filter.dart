@@ -1,4 +1,4 @@
-import 'package:hjproject/home/setting_page/models/mine_setting.dart';
+import 'package:fortuneboot/home/setting_page/models/mine_setting.dart';
 
 /// 设置项过滤工具类
 /// 提供高效的设置项分组和过滤功能

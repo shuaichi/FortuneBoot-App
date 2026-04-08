@@ -2,7 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:hjproject/home/bill_overview/models/bill_item.dart';
+import 'package:fortuneboot/home/bill_overview/models/bill_item.dart';
 import 'package:intl/intl.dart';
 
 import 'bills_overview_page.dart';

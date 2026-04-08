@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hjproject/home/edit_bill/view/edit_bill_page.dart';
-import 'package:hjproject/home/home/cubit/home_cubit.dart';
-import 'package:hjproject/home/setting_page/view/setting_page.dart';
-import 'package:hjproject/home/stats/view/stats_page.dart';
-import 'package:hjproject/home/bill_overview/view/bills_overview_page.dart';
+import 'package:fortuneboot/home/edit_bill/view/edit_bill_page.dart';
+import 'package:fortuneboot/home/home/cubit/home_cubit.dart';
+import 'package:fortuneboot/home/setting_page/view/setting_page.dart';
+import 'package:fortuneboot/home/stats/view/stats_page.dart';
+import 'package:fortuneboot/home/bill_overview/view/bills_overview_page.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});

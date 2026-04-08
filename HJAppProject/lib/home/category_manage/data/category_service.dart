@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:hjproject/util/dio_client.dart';
+import 'package:fortuneboot/util/dio_client.dart';
 
 class CategoryPageService {
   final Dio _dio = DioClient().dio;

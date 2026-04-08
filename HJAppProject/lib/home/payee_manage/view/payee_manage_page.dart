@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hjproject/repository/repository/bills_repository.dart';
-import 'package:hjproject/home/payee_manage/data/payee_service.dart';
-import 'package:hjproject/home/payee_manage/model/payee.dart';
-import 'package:hjproject/home/payee_manage/view/payee_add_page.dart';
-import 'package:hjproject/home/payee_manage/view/payee_edit_page.dart';
-import 'package:hjproject/home/payee_manage/view/widgets/enhanced_payee_type_selector.dart'; // For enum PayeeFilterType
+import 'package:fortuneboot/repository/repository/bills_repository.dart';
+import 'package:fortuneboot/home/payee_manage/data/payee_service.dart';
+import 'package:fortuneboot/home/payee_manage/model/payee.dart';
+import 'package:fortuneboot/home/payee_manage/view/payee_add_page.dart';
+import 'package:fortuneboot/home/payee_manage/view/payee_edit_page.dart';
+import 'package:fortuneboot/home/payee_manage/view/widgets/enhanced_payee_type_selector.dart'; // For enum PayeeFilterType
 
 // New Standard Components
-import 'package:hjproject/home/payee_manage/view/widgets/payee_manage_appbar.dart';
-import 'package:hjproject/home/payee_manage/view/widgets/payee_filter_bar.dart';
-import 'package:hjproject/home/payee_manage/view/widgets/payee_list_view.dart';
-import 'package:hjproject/Home/category_manage/view/widgets/category_delete_confirm_dialog.dart'; // Reuse dialog style
+import 'package:fortuneboot/home/payee_manage/view/widgets/payee_manage_appbar.dart';
+import 'package:fortuneboot/home/payee_manage/view/widgets/payee_filter_bar.dart';
+import 'package:fortuneboot/home/payee_manage/view/widgets/payee_list_view.dart';
+import 'package:fortuneboot/Home/category_manage/view/widgets/category_delete_confirm_dialog.dart'; // Reuse dialog style
 
 /// 交易对象管理页面 (Refactored to match CategoryManagePage)
 class PayeeManagePage extends StatefulWidget {

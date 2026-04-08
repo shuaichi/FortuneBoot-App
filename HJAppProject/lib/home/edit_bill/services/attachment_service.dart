@@ -5,8 +5,8 @@ import 'package:flutter/foundation.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mime/mime.dart';
 import 'package:path/path.dart' as path;
-import 'package:hjproject/home/edit_bill/models/attachment_item.dart';
-import 'package:hjproject/home/edit_bill/services/permission_helper.dart';
+import 'package:fortuneboot/home/edit_bill/models/attachment_item.dart';
+import 'package:fortuneboot/home/edit_bill/services/permission_helper.dart';
 
 // https://pub.dev/packages/permission_handler
 enum PermissionType {

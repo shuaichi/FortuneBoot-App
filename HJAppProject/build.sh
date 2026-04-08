@@ -22,7 +22,7 @@ elif [[ $buildPlatform == "ios" ]]; then
     flutter build ios --release --no-codesign
 elif [[ $buildPlatform == "harmony" ]]; then
     echo "✅ 构建鸿蒙版本"
-    fvm flutter build hap --release
+    fvm flutter build app --release
 else
     echo "❌ 错误：未知平台 '$buildPlatform'，仅支持 android/ios/harmony"
     exit 1

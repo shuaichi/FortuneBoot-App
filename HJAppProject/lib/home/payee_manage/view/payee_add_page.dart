@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hjproject/repository/repository/bills_repository.dart';
-import 'package:hjproject/home/payee_manage/data/payee_service.dart';
+import 'package:fortuneboot/repository/repository/bills_repository.dart';
+import 'package:fortuneboot/home/payee_manage/data/payee_service.dart';
 
 class PayeeAddPage extends StatefulWidget {
   const PayeeAddPage({Key? key}) : super(key: key);

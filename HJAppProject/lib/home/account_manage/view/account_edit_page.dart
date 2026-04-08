@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
-import 'package:hjproject/Home/account_manage/models/fortune_account.dart';
-import 'package:hjproject/Request/account_request.dart';
-import 'package:hjproject/Home/account_manage/constants/design_system.dart'
+import 'package:fortuneboot/Home/account_manage/models/fortune_account.dart';
+import 'package:fortuneboot/Request/account_request.dart';
+import 'package:fortuneboot/Home/account_manage/constants/design_system.dart'
     as ds;
-import 'package:hjproject/Home/account_manage/view/widgets/number_keyboard.dart';
+import 'package:fortuneboot/Home/account_manage/view/widgets/number_keyboard.dart';
 
 /// 增强版修改账户页面
 /// 基于原有Sheet功能，改为Page形式展现，使用统一设计系统，提升UI/UX体验

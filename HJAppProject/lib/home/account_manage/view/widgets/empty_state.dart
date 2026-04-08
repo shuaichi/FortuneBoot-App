@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hjproject/Home/account_manage/constants/design_system.dart' as ds;
+import 'package:fortuneboot/Home/account_manage/constants/design_system.dart' as ds;
 
 /// 增强版空状态组件
 /// 提供更好的视觉引导和用户体验

@@ -2,12 +2,12 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:developer' as developer;
 
-import 'package:hjproject/home/bill_overview/models/bill_item.dart';
-import 'package:hjproject/home/bill_overview/models/bill_statistics.dart';
-import 'package:hjproject/home/bill_overview/models/fortune_bill_query.dart';
-import 'package:hjproject/request/bill_request.dart';
-import 'package:hjproject/repository/api/bills_api.dart';
-import 'package:hjproject/request/include_request.dart';
+import 'package:fortuneboot/home/bill_overview/models/bill_item.dart';
+import 'package:fortuneboot/home/bill_overview/models/bill_statistics.dart';
+import 'package:fortuneboot/home/bill_overview/models/fortune_bill_query.dart';
+import 'package:fortuneboot/request/bill_request.dart';
+import 'package:fortuneboot/repository/api/bills_api.dart';
+import 'package:fortuneboot/request/include_request.dart';
 import 'package:meta/meta.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:shared_preferences/shared_preferences.dart';

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hjproject/repository/repository/bills_repository.dart';
-import 'package:hjproject/Home/category_manage/data/category_service.dart';
-import 'package:hjproject/home/edit_bill/models/edit_select_item.dart';
+import 'package:fortuneboot/repository/repository/bills_repository.dart';
+import 'package:fortuneboot/Home/category_manage/data/category_service.dart';
+import 'package:fortuneboot/home/edit_bill/models/edit_select_item.dart';
 
 class ParentCategorySelectPage extends StatefulWidget {
   final int categoryType; // 1: 支出, 2: 收入

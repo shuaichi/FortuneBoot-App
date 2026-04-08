@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hjproject/home/design_system/hjds_theme.dart';
+import 'package:fortuneboot/home/design_system/hjds_theme.dart';
 
 class TagLoadingIndicator extends StatelessWidget {
   const TagLoadingIndicator({Key? key}) : super(key: key);

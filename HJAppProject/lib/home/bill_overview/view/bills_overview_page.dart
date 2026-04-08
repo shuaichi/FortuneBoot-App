@@ -3,19 +3,19 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hjproject/home/bill_overview/models/fortune_bill_query.dart';
-import 'package:hjproject/home/bill_overview/view/bill_filter_sheet.dart';
+import 'package:fortuneboot/home/bill_overview/models/fortune_bill_query.dart';
+import 'package:fortuneboot/home/bill_overview/view/bill_filter_sheet.dart';
 import 'package:intl/intl.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
-import 'package:hjproject/home/edit_bill/view/edit_bill_page.dart';
-import 'package:hjproject/home/stats/view/stats_page.dart';
-import 'package:hjproject/home/bill_overview/bloc/bills_overview_bloc.dart';
-import 'package:hjproject/home/bill_overview/models/bill_item.dart';
-import 'package:hjproject/home/bill_overview/models/bill_item_add.dart';
-import 'package:hjproject/home/bill_overview/view/bill_detail_sheet.dart';
-import 'package:hjproject/home/bill_overview/view/bill_list_tile.dart';
-import 'package:hjproject/repository/repository/bills_repository.dart';
+import 'package:fortuneboot/home/edit_bill/view/edit_bill_page.dart';
+import 'package:fortuneboot/home/stats/view/stats_page.dart';
+import 'package:fortuneboot/home/bill_overview/bloc/bills_overview_bloc.dart';
+import 'package:fortuneboot/home/bill_overview/models/bill_item.dart';
+import 'package:fortuneboot/home/bill_overview/models/bill_item_add.dart';
+import 'package:fortuneboot/home/bill_overview/view/bill_detail_sheet.dart';
+import 'package:fortuneboot/home/bill_overview/view/bill_list_tile.dart';
+import 'package:fortuneboot/repository/repository/bills_repository.dart';
 import '../../../generated/l10n.dart';
 
 // ==========================================

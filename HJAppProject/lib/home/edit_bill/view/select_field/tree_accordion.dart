@@ -1,7 +1,7 @@
 import 'package:accordion/accordion.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:hjproject/home/edit_bill/models/edit_select_item.dart';
+import 'package:fortuneboot/home/edit_bill/models/edit_select_item.dart';
 
 class TreeAccordion<T extends BaseTreeSelectItem<T>> extends StatefulWidget {
   TreeAccordion({super.key, this.children});

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
-import 'package:hjproject/home/design_system/hjds_components.dart';
-import 'package:hjproject/home/design_system/hjds_theme.dart';
+import 'package:fortuneboot/home/design_system/hjds_components.dart';
+import 'package:fortuneboot/home/design_system/hjds_theme.dart';
 
 class SaveOptionsSheet extends StatelessWidget {
   final String assetPath;

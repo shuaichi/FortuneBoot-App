@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/widgets.dart';
-import 'package:hjproject/util/dio_client.dart';
+import 'package:fortuneboot/util/dio_client.dart';
 import 'package:retrofit/retrofit.dart';
 import '../login/model/login_model.dart'; // 导入数据模型
 

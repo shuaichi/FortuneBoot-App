@@ -1,7 +1,7 @@
-import 'package:hjproject/home/bill_overview/models/bill_item.dart';
-import 'package:hjproject/home/bill_overview/models/bill_statistics.dart';
-import 'package:hjproject/home/bill_overview/models/fortune_bill_query.dart';
-import 'package:hjproject/repository/api/bills_api.dart';
+import 'package:fortuneboot/home/bill_overview/models/bill_item.dart';
+import 'package:fortuneboot/home/bill_overview/models/bill_statistics.dart';
+import 'package:fortuneboot/home/bill_overview/models/fortune_bill_query.dart';
+import 'package:fortuneboot/repository/api/bills_api.dart';
 
 class BillsRepository {
   BillsRepository({

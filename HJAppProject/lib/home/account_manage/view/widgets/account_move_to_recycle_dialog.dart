@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hjproject/Home/account_manage/constants/design_system.dart' as ds;
+import 'package:fortuneboot/Home/account_manage/constants/design_system.dart' as ds;
 
 /// 增强版移入回收站确认对话框
 /// 基于原有功能，使用统一设计系统，提升UI/UX体验

@@ -3,13 +3,13 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 // 引入震动反馈
 import 'package:flutter/services.dart';
-import 'package:hjproject/repository/repository/bills_repository.dart';
-import 'package:hjproject/request/login_request.dart';
-import 'package:hjproject/home/home/view/home_page.dart';
-import 'package:hjproject/login/model/users.dart';
-import 'package:hjproject/login/view/login_screen.dart';
-import 'package:hjproject/generated/l10n.dart';
-import 'package:hjproject/util/dio_client.dart';
+import 'package:fortuneboot/repository/repository/bills_repository.dart';
+import 'package:fortuneboot/request/login_request.dart';
+import 'package:fortuneboot/home/home/view/home_page.dart';
+import 'package:fortuneboot/login/model/users.dart';
+import 'package:fortuneboot/login/view/login_screen.dart';
+import 'package:fortuneboot/generated/l10n.dart';
+import 'package:fortuneboot/util/dio_client.dart';
 
 enum AuthMode {
   loading,

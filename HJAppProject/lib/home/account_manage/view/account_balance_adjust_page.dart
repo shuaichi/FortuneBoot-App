@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import 'package:hjproject/Home/account_manage/models/fortune_account.dart';
-import 'package:hjproject/Request/account_request.dart';
-import 'package:hjproject/repository/repository/bills_repository.dart';
-import 'package:hjproject/request/book_request.dart';
-import 'package:hjproject/Home/setting_page/view/widgets/selection_bottom_sheet.dart';
-import 'package:hjproject/Home/account_manage/constants/design_system.dart' as ds;
-import 'package:hjproject/Home/account_manage/view/widgets/number_keyboard.dart';
+import 'package:fortuneboot/Home/account_manage/models/fortune_account.dart';
+import 'package:fortuneboot/Request/account_request.dart';
+import 'package:fortuneboot/repository/repository/bills_repository.dart';
+import 'package:fortuneboot/request/book_request.dart';
+import 'package:fortuneboot/Home/setting_page/view/widgets/selection_bottom_sheet.dart';
+import 'package:fortuneboot/Home/account_manage/constants/design_system.dart' as ds;
+import 'package:fortuneboot/Home/account_manage/view/widgets/number_keyboard.dart';
 
 /// 增强版余额调整页面
 /// 遵循设计规范：大号金额输入、自定义数字键盘、清晰的资金流向反馈

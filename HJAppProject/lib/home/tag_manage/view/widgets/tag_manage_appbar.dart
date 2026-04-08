@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:hjproject/home/design_system/hjds_theme.dart';
+import 'package:fortuneboot/home/design_system/hjds_theme.dart';
 
 class TagManageAppBar extends StatelessWidget implements PreferredSizeWidget {
   final VoidCallback onAddPressed;

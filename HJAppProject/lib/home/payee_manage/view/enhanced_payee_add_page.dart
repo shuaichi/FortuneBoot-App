@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hjproject/repository/repository/bills_repository.dart';
-import 'package:hjproject/Home/payee_manage/data/payee_service.dart';
-import 'package:hjproject/home/payee_manage/constants/design_system.dart' as ds;
-import 'package:hjproject/home/payee_manage/view/widgets/enhanced_payee_form.dart';
+import 'package:fortuneboot/repository/repository/bills_repository.dart';
+import 'package:fortuneboot/Home/payee_manage/data/payee_service.dart';
+import 'package:fortuneboot/home/payee_manage/constants/design_system.dart' as ds;
+import 'package:fortuneboot/home/payee_manage/view/widgets/enhanced_payee_form.dart';
 
 /// 增强版交易对象添加页面
 /// 基于设计系统重构，提供现代化的用户体验和一致的视觉设计

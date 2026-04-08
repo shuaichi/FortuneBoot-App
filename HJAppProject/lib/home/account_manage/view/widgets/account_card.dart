@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:hjproject/Home/account_manage/constants/design_system.dart' as ds;
-import 'package:hjproject/Home/account_manage/models/fortune_account.dart';
+import 'package:fortuneboot/Home/account_manage/constants/design_system.dart' as ds;
+import 'package:fortuneboot/Home/account_manage/models/fortune_account.dart';
 
 /// 增强版账户卡片组件
 /// 包含手势操作、动画效果和优化的视觉层次

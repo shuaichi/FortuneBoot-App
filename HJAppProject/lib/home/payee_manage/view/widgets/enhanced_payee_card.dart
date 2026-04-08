@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:hjproject/home/payee_manage/constants/design_system.dart' as ds;
-import 'package:hjproject/home/payee_manage/model/payee.dart';
+import 'package:fortuneboot/home/payee_manage/constants/design_system.dart' as ds;
+import 'package:fortuneboot/home/payee_manage/model/payee.dart';
 
 /// 增强版交易对象卡片组件
 /// 包含手势操作、动画效果和优化的视觉层次

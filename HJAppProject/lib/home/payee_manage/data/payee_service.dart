@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:hjproject/util/dio_client.dart';
+import 'package:fortuneboot/util/dio_client.dart';
 import '../model/payee.dart';
 import '../view/widgets/enhanced_payee_type_selector.dart';
 

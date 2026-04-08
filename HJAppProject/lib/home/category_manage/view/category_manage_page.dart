@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hjproject/util/dio_client.dart';
-import 'package:hjproject/repository/repository/bills_repository.dart';
+import 'package:fortuneboot/util/dio_client.dart';
+import 'package:fortuneboot/repository/repository/bills_repository.dart';
 
 import 'widgets/category_delete_confirm_dialog.dart';
 import 'category_edit_page.dart';

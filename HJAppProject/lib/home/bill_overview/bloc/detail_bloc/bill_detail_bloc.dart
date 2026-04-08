@@ -2,11 +2,11 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:hjproject/home/bill_overview/models/bill_file_item.dart';
-import 'package:hjproject/home/bill_overview/models/bill_item.dart';
-import 'package:hjproject/login/model/login_model.dart';
-import 'package:hjproject/request/bill_request.dart';
-import 'package:hjproject/repository/repository/bills_repository.dart';
+import 'package:fortuneboot/home/bill_overview/models/bill_file_item.dart';
+import 'package:fortuneboot/home/bill_overview/models/bill_item.dart';
+import 'package:fortuneboot/login/model/login_model.dart';
+import 'package:fortuneboot/request/bill_request.dart';
+import 'package:fortuneboot/repository/repository/bills_repository.dart';
 
 part 'bill_detail_event.dart';
 

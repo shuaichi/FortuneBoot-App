@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hjproject/repository/repository/bills_repository.dart';
-import 'package:hjproject/home/design_system/hjds_theme.dart';
-import 'package:hjproject/home/design_system/hjds_components.dart';
+import 'package:fortuneboot/repository/repository/bills_repository.dart';
+import 'package:fortuneboot/home/design_system/hjds_theme.dart';
+import 'package:fortuneboot/home/design_system/hjds_components.dart';
 
 import '../data/tag_service.dart';
 import '../model/tag_node.dart';

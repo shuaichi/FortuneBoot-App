@@ -1,4 +1,4 @@
-import 'package:hjproject/home/bill_overview/models/bill_item.dart';
+import 'package:fortuneboot/home/bill_overview/models/bill_item.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'login_model.g.dart';

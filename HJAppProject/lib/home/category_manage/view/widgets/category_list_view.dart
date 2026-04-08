@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:hjproject/Home/category_manage/view/widgets/category_summary_bar.dart';
-import 'package:hjproject/Home/category_manage/view/widgets/category_pager.dart';
-import 'package:hjproject/Home/category_manage/view/widgets/category_empty_state.dart';
-import 'package:hjproject/Home/category_manage/view/widgets/category_loading_indicator.dart';
-import 'package:hjproject/Home/category_manage/view/widgets/category_error_view.dart';
-import 'package:hjproject/Home/category_manage/view/widgets/category_tree_node.dart';
+import 'package:fortuneboot/Home/category_manage/view/widgets/category_summary_bar.dart';
+import 'package:fortuneboot/Home/category_manage/view/widgets/category_pager.dart';
+import 'package:fortuneboot/Home/category_manage/view/widgets/category_empty_state.dart';
+import 'package:fortuneboot/Home/category_manage/view/widgets/category_loading_indicator.dart';
+import 'package:fortuneboot/Home/category_manage/view/widgets/category_error_view.dart';
+import 'package:fortuneboot/Home/category_manage/view/widgets/category_tree_node.dart';
 
 class CategoryListView<T> extends StatelessWidget {
   const CategoryListView({

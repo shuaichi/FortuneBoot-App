@@ -1,8 +1,8 @@
 import 'package:dio/dio.dart';
-import 'package:hjproject/Home/account_manage/models/fortune_account.dart';
-import 'package:hjproject/login/model/login_model.dart';
-import 'package:hjproject/request/base_request.dart';
-import 'package:hjproject/util/dio_client.dart';
+import 'package:fortuneboot/Home/account_manage/models/fortune_account.dart';
+import 'package:fortuneboot/login/model/login_model.dart';
+import 'package:fortuneboot/request/base_request.dart';
+import 'package:fortuneboot/util/dio_client.dart';
 import 'package:retrofit/retrofit.dart';
 import 'package:intl/intl.dart';
 

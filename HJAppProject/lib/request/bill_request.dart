@@ -3,9 +3,9 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
-import 'package:hjproject/login/model/login_model.dart';
-import 'package:hjproject/request/base_request.dart';
-import 'package:hjproject/util/dio_client.dart';
+import 'package:fortuneboot/login/model/login_model.dart';
+import 'package:fortuneboot/request/base_request.dart';
+import 'package:fortuneboot/util/dio_client.dart';
 import 'package:retrofit/retrofit.dart';
 import 'package:json_annotation/json_annotation.dart';
 
