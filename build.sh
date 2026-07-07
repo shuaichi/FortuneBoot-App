@@ -59,7 +59,7 @@ echo "🚀 开始构建 $buildPlatform 平台..."
 
 # 更新版本号（仅在指定时）
 if [ "$updateVersion" = true ]; then
-    MAJOR_VERSION="1.3.14"
+    MAJOR_VERSION="1.3.15"
     BUILD_NUMBER=$(date +%Y%m%d%H)
 
     line=$(grep -Eo "version: .*#😁😈" pubspec.yaml || true)
@@ -92,7 +92,7 @@ if [ "$skipGen" = false ]; then
     fi
 
     # 生成 JSON 序列化代码和 Retrofit API 代码
-    flutter pub run build_runner build --delete-conflicting-outputs
+    dart run build_runner build
 
     # 生成国际化文件
     flutter pub global run intl_utils:generate
