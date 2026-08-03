@@ -22,7 +22,7 @@ import 'package:pointycastle/pointycastle.dart' as PC;
 class LoginScreen extends StatelessWidget {
   static const routeName = '/auth';
 
-  const LoginScreen({super.key, this.roles = const[]});
+  const LoginScreen({super.key, this.roles = const []});
 
   final List<Map<String, dynamic>> roles;
 
@@ -52,9 +52,10 @@ class LoginScreen extends StatelessWidget {
      *  "captchaCodeImg": "string"
      *}
      */
-    debugPrint('验证码：$capImgRes');
-    Map<String, dynamic> capDic =
-    Map<String, dynamic>.from(capImgRes.data as Map);
+    debugPrint('验证码开关响应已返回');
+    Map<String, dynamic> capDic = Map<String, dynamic>.from(
+      capImgRes.data as Map,
+    );
     bool isCaptchaOn = capDic['isCaptchaOn'] as bool;
     Map? userResDic = {};
     if (isCaptchaOn) {
@@ -63,7 +64,7 @@ class LoginScreen extends StatelessWidget {
         return '验证码错误或未输入验证码';
       }
     }
-    debugPrint('userCode $userResDic');
+    debugPrint('验证码已提交');
     var rsaKey = await loginService.getRsaPublicKey();
     /**
      * "data": "string"
@@ -75,44 +76,50 @@ class LoginScreen extends StatelessWidget {
       String formattedPublicKey = formatPublicKey(rsaKey.data as String);
       debugPrint('公钥: $formattedPublicKey');
       var publicKey =
-      RSAKeyParser().parse(formattedPublicKey) as PC.RSAPublicKey;
+          RSAKeyParser().parse(formattedPublicKey) as PC.RSAPublicKey;
       final encrypter = Encrypter(RSA(publicKey: publicKey));
       final encrypted = encrypter.encrypt(password).base64;
-      debugPrint('加密结果: $encrypted');
       Login loginRequest = Login(
         userName,
         encrypted,
         userResDic['captchaUserInput'] as String? ?? "",
         userResDic['captchaCodeKey'] as String? ?? "",
       );
-      return loginService.login(loginRequest).then((value) {
-        debugPrint('登录: $value');
-        if (value.code == 0) {
-          if (value.data is Map) {
-            var responseData =
-            Map<String, dynamic>.from(value.data as Map? ?? {});
-            var userInfo = Map<String, dynamic>.from(
-                responseData["currentUser"] as Map? ?? {});
-            var token = responseData["token"] as String? ?? "";
-            var userToken = {
-              "Cookie":
-              'authorized-token=${Uri.encodeComponent(jsonEncode(responseData))}}',
-              "Authorization": "Bearer $token"
-            };
-            DioClient().refreshToken(userToken);
-            var user = UserDataSingleton();
-            user.setMap(UserDataSingleton.userInfo, userInfo);
-            user.setMap(UserDataSingleton.userToken, userToken);
-            debugPrint(
-                'lxjtodo $user ${user.getMap(UserDataSingleton.userInfo)}');
-          }
-          return null;
-        }
-        return value.msg ?? '注册失败';
-      }).catchError((err) {
-        debugPrint(err.toString());
-        return 'service error: $err';
-      });
+      return loginService
+          .login(loginRequest)
+          .then((value) {
+            debugPrint('登录响应码: ${value.code}');
+            if (value.code == 0) {
+              if (value.data is Map) {
+                var responseData = Map<String, dynamic>.from(
+                  value.data as Map? ?? {},
+                );
+                var userInfo = Map<String, dynamic>.from(
+                  responseData["currentUser"] as Map? ?? {},
+                );
+                var token = responseData["token"] as String? ?? "";
+                if (token.isEmpty) {
+                  return '登录失败：服务端未返回 token';
+                }
+                var userToken = {
+                  "Cookie":
+                      'authorized-token=${Uri.encodeComponent(jsonEncode(responseData))}',
+                  "Authorization": "Bearer $token",
+                };
+                DioClient().refreshToken(userToken);
+                var user = UserDataSingleton();
+                user.setMap(UserDataSingleton.userInfo, userInfo);
+                user.setMap(UserDataSingleton.userToken, userToken);
+                debugPrint('登录用户信息已保存: $user');
+              }
+              return null;
+            }
+            return value.msg ?? '注册失败';
+          })
+          .catchError((err) {
+            debugPrint(err.toString());
+            return 'service error: $err';
+          });
     } catch (e) {
       debugPrint(e.toString());
       return 'service error: $e';
@@ -132,7 +139,7 @@ class LoginScreen extends StatelessWidget {
     String email = data.additionalSignupData!['email']!;
     String phoneNumber = data.additionalSignupData!['phone_number']!;
     int sex =
-    (data.additionalSignupData!['sex'] ?? S.current.male) == S.current.male
+        (data.additionalSignupData!['sex'] ?? S.current.male) == S.current.male
         ? 1
         : 0;
     String password = data.password!;
@@ -149,16 +156,19 @@ class LoginScreen extends StatelessWidget {
       "",
       0,
     );
-    debugPrint(post.toString());
-    return loginService.loginRegister(post).then((value) {
-      if (value.code == 0) {
-        return null;
-      }
-      debugPrint(value.toString());
-      return value.msg ?? '注册失败';
-    }).catchError((err) {
-      return 'service error: $err';
-    });
+    debugPrint('注册请求已构造');
+    return loginService
+        .loginRegister(post)
+        .then((value) {
+          if (value.code == 0) {
+            return null;
+          }
+          debugPrint(value.toString());
+          return value.msg ?? '注册失败';
+        })
+        .catchError((err) {
+          return 'service error: $err';
+        });
   }
 
   Future<String?> _signupUser(SignupData data) async {
@@ -167,12 +177,14 @@ class LoginScreen extends StatelessWidget {
       var registerRoles = await loginService.getAllowRegisterRoles();
       if (registerRoles.data is List<dynamic>) {
         final List<Map<String, dynamic>> roles =
-        List<Map<String, dynamic>>.from(
-          registerRoles.data as List<dynamic>,
-        );
+            List<Map<String, dynamic>>.from(
+              registerRoles.data as List<dynamic>,
+            );
         if (roles.length == 1) {
           return _signupUserWithRole(
-              data, roles.first as Map<String, dynamic>? ?? {});
+            data,
+            roles.first as Map<String, dynamic>? ?? {},
+          );
         } else if (roles.length > 1) {
           final List<SimpleDialogOption> simpleDialogs = roles.map((role) {
             return SimpleDialogOption(
@@ -187,11 +199,14 @@ class LoginScreen extends StatelessWidget {
             context: AppView.navigatorKey.currentContext!,
             builder: (context) => SimpleDialog(
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20)),
+                borderRadius: BorderRadius.circular(20),
+              ),
               title: const Text(
                 "选择角色",
                 style: TextStyle(
-                    fontWeight: FontWeight.w600, color: Color(0xFF1C1C1E)),
+                  fontWeight: FontWeight.w600,
+                  color: Color(0xFF1C1C1E),
+                ),
               ),
               children: simpleDialogs,
             ),
@@ -250,7 +265,7 @@ class LoginScreen extends StatelessWidget {
         }
       },
       loginAfterSignUp: false,
-      termsOfService:[
+      termsOfService: [
         TermOfService(
           id: 'general-term',
           mandatory: true,
@@ -292,7 +307,8 @@ class LoginScreen extends StatelessWidget {
           return S.of(context).password_is_empty;
         }
         final passwordRegExp = RegExp(
-            r'^(?![0-9]+$)(?![a-z]+$)(?![A-Z]+$)(?!([^(0-9a-zA-Z)]|[()])+$)(?!^.*[\u4E00-\u9FA5].*$)([^(0-9a-zA-Z)]|[()]|[a-z]|[A-Z]|[0-9]){8,18}$');
+          r'^(?![0-9]+$)(?![a-z]+$)(?![A-Z]+$)(?!([^(0-9a-zA-Z)]|[()])+$)(?!^.*[\u4E00-\u9FA5].*$)([^(0-9a-zA-Z)]|[()]|[a-z]|[A-Z]|[0-9]){8,18}$',
+        );
         if (!passwordRegExp.hasMatch(value)) {
           return '密码必须包含字母、数字或特殊字符，长度8-18位，不能包含中文';
         }
@@ -308,9 +324,7 @@ class LoginScreen extends StatelessWidget {
       },
       onSubmitAnimationCompleted: () {
         Navigator.of(context).pushReplacement(
-          MaterialPageRoute(
-            builder: (context) => const HomePage(),
-          ),
+          MaterialPageRoute(builder: (context) => const HomePage()),
         );
       },
       onRecoverPassword: (name) {
@@ -322,7 +336,7 @@ class LoginScreen extends StatelessWidget {
   }
 
   List<UserFormField> fetchUserForms(BuildContext context) {
-    return[
+    return [
       UserFormField(
         keyName: 'nickname',
         displayName: S.of(context).login_nickname,
@@ -362,20 +376,22 @@ class LoginScreen extends StatelessWidget {
           if (value == null || value.isEmpty) {
             return null;
           }
-          final phoneRegExp = RegExp(r'^'
-          r'(?:'
-          r'\+1[ -]?(?:\(\d{3}\)|\d{3})[ -]?\d{3}[ -]?\d{4}'
-          r'|\+81[ -]?(?:0\d{1,4}[ -]?\d{1,4}[ -]?\d{4}|\d{1,4}[ -]?\d{1,4}[ -]?\d{4})'
-          r'|\+82[ -]?0?1[0-9]{1}[ -]?\d{3,4}[ -]?\d{4}'
-          r'|\+33[ -]?(?:[1-9]\d{1}[ -]?){3}\d{2}'
-          r'|\+44[ -]?7(?:[0-9][ -]?){9}'
-          r'|\+7[ -]?[3489]\d{2}[ -]?\d{3}[ -]?\d{2}[ -]?\d{2}'
-          r'|\+91[ -]?[6-9]\d{4}[ -]?\d{5}'
-          r'|\+86[ -]?1[3-9]\d[ -]?\d{4}[ -]?\d{4}'
-          r')'
-          r'|'
-          r'(?:1[3-9]\d[ -]?\d{4}[ -]?\d{4})'
-          r'$');
+          final phoneRegExp = RegExp(
+            r'^'
+            r'(?:'
+            r'\+1[ -]?(?:\(\d{3}\)|\d{3})[ -]?\d{3}[ -]?\d{4}'
+            r'|\+81[ -]?(?:0\d{1,4}[ -]?\d{1,4}[ -]?\d{4}|\d{1,4}[ -]?\d{1,4}[ -]?\d{4})'
+            r'|\+82[ -]?0?1[0-9]{1}[ -]?\d{3,4}[ -]?\d{4}'
+            r'|\+33[ -]?(?:[1-9]\d{1}[ -]?){3}\d{2}'
+            r'|\+44[ -]?7(?:[0-9][ -]?){9}'
+            r'|\+7[ -]?[3489]\d{2}[ -]?\d{3}[ -]?\d{2}[ -]?\d{2}'
+            r'|\+91[ -]?[6-9]\d{4}[ -]?\d{5}'
+            r'|\+86[ -]?1[3-9]\d[ -]?\d{4}[ -]?\d{4}'
+            r')'
+            r'|'
+            r'(?:1[3-9]\d[ -]?\d{4}[ -]?\d{4})'
+            r'$',
+          );
           if (!phoneRegExp.hasMatch(value)) {
             return S.of(context).valid_phone_number;
           }
@@ -398,21 +414,23 @@ class IntroWidget extends StatelessWidget {
         children: [
           Text.rich(
             TextSpan(
-              children:[
+              children: [
                 TextSpan(
                   text: S.of(context).login_message,
                   style: const TextStyle(
-                      color: Color(0xFF8E8E93), // 次要信息降噪
-                      fontSize: 14,
-                      height: 1.5),
+                    color: Color(0xFF8E8E93), // 次要信息降噪
+                    fontSize: 14,
+                    height: 1.5,
+                  ),
                 ),
                 TextSpan(
                   text: ' ${S.of(context).login_host}',
                   style: const TextStyle(
-                      color: Color(0xFF1C1C1E),
-                      fontWeight: FontWeight.w600,
-                      fontSize: 14,
-                      height: 1.5),
+                    color: Color(0xFF1C1C1E),
+                    fontWeight: FontWeight.w600,
+                    fontSize: 14,
+                    height: 1.5,
+                  ),
                 ),
               ],
             ),
@@ -422,10 +440,7 @@ class IntroWidget extends StatelessWidget {
           Row(
             children: <Widget>[
               const Expanded(
-                child: Divider(
-                  thickness: 0.5,
-                  color: Color(0xFFC6C6C8),
-                ),
+                child: Divider(thickness: 0.5, color: Color(0xFFC6C6C8)),
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -440,10 +455,7 @@ class IntroWidget extends StatelessWidget {
                 ),
               ),
               const Expanded(
-                child: Divider(
-                  thickness: 0.5,
-                  color: Color(0xFFC6C6C8),
-                ),
+                child: Divider(thickness: 0.5, color: Color(0xFFC6C6C8)),
               ),
             ],
           ),
@@ -477,15 +489,15 @@ Future<Map?> showCaptchaDialog(Map captchaDic) async {
     barrierColor: Colors.black.withOpacity(0.4), // 沉浸式背景层
     builder: (context) => StatefulBuilder(
       builder: (context, setState) {
-
         Future<void> _refreshCaptcha() async {
           if (isLoading) return;
           HapticFeedback.lightImpact(); // 轻按反馈
           setState(() => isLoading = true);
           try {
             final capImgRes = await loginService.captchaImage();
-            final Map<String, dynamic> capDic =
-            Map<String, dynamic>.from(capImgRes.data as Map);
+            final Map<String, dynamic> capDic = Map<String, dynamic>.from(
+              capImgRes.data as Map,
+            );
             setState(() {
               captchaCode = capDic['captchaCodeImg'] as String;
               captchaData = capDic;
@@ -503,7 +515,7 @@ Future<Map?> showCaptchaDialog(Map captchaDic) async {
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(24), // 大圆角
-              boxShadow:[
+              boxShadow: [
                 BoxShadow(
                   color: Colors.black.withOpacity(0.04),
                   blurRadius: 20,
@@ -514,7 +526,7 @@ Future<Map?> showCaptchaDialog(Map captchaDic) async {
             padding: const EdgeInsets.all(24),
             child: Column(
               mainAxisSize: MainAxisSize.min,
-              children:[
+              children: [
                 // 顶部图标 Affordance
                 Container(
                   padding: const EdgeInsets.all(12),
@@ -541,16 +553,13 @@ Future<Map?> showCaptchaDialog(Map captchaDic) async {
                 const SizedBox(height: 8),
                 const Text(
                   '保障您的账户资金安全',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Color(0xFF8E8E93),
-                  ),
+                  style: TextStyle(fontSize: 14, color: Color(0xFF8E8E93)),
                 ),
                 const SizedBox(height: 24),
 
                 // 验证码图片与刷新按钮行
                 Row(
-                  children:[
+                  children: [
                     Expanded(
                       child: GestureDetector(
                         onTap: _refreshCaptcha,
@@ -561,7 +570,9 @@ Future<Map?> showCaptchaDialog(Map captchaDic) async {
                             color: const Color(0xFFF2F4F7),
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
-                                color: const Color(0xFFE5E5EA), width: 1),
+                              color: const Color(0xFFE5E5EA),
+                              width: 1,
+                            ),
                           ),
                           child: AnimatedSwitcher(
                             duration: const Duration(milliseconds: 300),
@@ -588,17 +599,18 @@ Future<Map?> showCaptchaDialog(Map captchaDic) async {
                         ),
                         child: isLoading
                             ? const SizedBox(
-                            width: 24,
-                            height: 24,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2.5,
-                              color: Color(0xFF007AFF),
-                            ))
+                                width: 24,
+                                height: 24,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2.5,
+                                  color: Color(0xFF007AFF),
+                                ),
+                              )
                             : const Icon(
-                          Icons.refresh_rounded,
-                          color: Color(0xFF007AFF),
-                          size: 24,
-                        ),
+                                Icons.refresh_rounded,
+                                color: Color(0xFF007AFF),
+                                size: 24,
+                              ),
                       ),
                     ),
                   ],
@@ -646,7 +658,7 @@ Future<Map?> showCaptchaDialog(Map captchaDic) async {
 
                 // 底部操作区组
                 Row(
-                  children:[
+                  children: [
                     Expanded(
                       child: GestureDetector(
                         onTap: () {
@@ -684,7 +696,7 @@ Future<Map?> showCaptchaDialog(Map captchaDic) async {
                           Map<String, dynamic> userDic = {};
                           userDic['captchaUserInput'] = controller.text;
                           userDic['captchaCodeKey'] =
-                          captchaData['captchaCodeKey'];
+                              captchaData['captchaCodeKey'];
                           Navigator.pop(context, userDic);
                         },
                         child: Container(
@@ -692,7 +704,7 @@ Future<Map?> showCaptchaDialog(Map captchaDic) async {
                           decoration: BoxDecoration(
                             color: const Color(0xFF007AFF), // 核心提交色
                             borderRadius: BorderRadius.circular(16),
-                            boxShadow:[
+                            boxShadow: [
                               BoxShadow(
                                 color: const Color(0xFF007AFF).withOpacity(0.2),
                                 blurRadius: 10,

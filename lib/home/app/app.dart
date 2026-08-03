@@ -8,11 +8,10 @@ import 'package:fortuneboot/repository/repository/bills_repository.dart';
 import 'package:fortuneboot/generated/l10n.dart';
 import 'package:fortuneboot/login/view/login_screen.dart';
 import 'package:fortuneboot/home/theme/theme.dart';
+import 'package:fortuneboot/util/dio_client.dart';
 
 class App extends StatelessWidget {
-  const App(
-      {required this.createBillsRepository,
-      super.key});
+  const App({required this.createBillsRepository, super.key});
 
   final BillsRepository Function() createBillsRepository;
 
@@ -23,7 +22,7 @@ class App extends StatelessWidget {
         RepositoryProvider<BillsRepository>(
           create: (_) => createBillsRepository(),
           dispose: (repository) => repository.dispose(),
-        )
+        ),
       ],
       child: const AppView(),
     );
@@ -37,6 +36,13 @@ class AppView extends StatelessWidget {
   const AppView({super.key});
   @override
   Widget build(BuildContext context) {
+    DioClient().onAuthExpired = () {
+      final navigator = AppView.navigatorKey.currentState;
+      navigator?.pushNamedAndRemoveUntil(
+        LoginScreen.routeName,
+        (route) => false,
+      );
+    };
     log('lxjtodo ${S.delegate.supportedLocales}');
     return MaterialApp(
       navigatorKey: navigatorKey,
@@ -44,11 +50,11 @@ class AppView extends StatelessWidget {
       darkTheme: FlutterTodosTheme.dark,
       themeMode: ThemeMode.light,
       locale: const Locale('zh', 'CN'),
-    localizationsDelegates: const [
+      localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate, // 提供 Material 组件本地化资源
         GlobalWidgetsLocalizations.delegate, // 支持文本方向（如阿拉伯语右对齐）
         GlobalCupertinoLocalizations.delegate,
-        S.delegate
+        S.delegate,
       ],
       supportedLocales: S.delegate.supportedLocales,
       // home: const HomePage(),

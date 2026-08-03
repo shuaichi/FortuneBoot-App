@@ -11,10 +11,7 @@ import 'package:fortuneboot/login/view/login_screen.dart';
 import 'package:fortuneboot/generated/l10n.dart';
 import 'package:fortuneboot/util/dio_client.dart';
 
-enum AuthMode {
-  loading,
-  signIn,
-}
+enum AuthMode { loading, signIn }
 
 class BaseUrlConfigPage extends StatefulWidget {
   static const routeName = '/base_url_config';
@@ -27,14 +24,17 @@ class BaseUrlConfigPage extends StatefulWidget {
 
 class _BaseUrlConfigPageState extends State<BaseUrlConfigPage> {
   final _formKey = GlobalKey<FormState>();
-  final ValueNotifier<AuthMode> _authMode =
-  ValueNotifier<AuthMode>(AuthMode.loading);
+  final ValueNotifier<AuthMode> _authMode = ValueNotifier<AuthMode>(
+    AuthMode.loading,
+  );
 
   String _protocol = 'https';
-  final TextEditingController _domainController =
-  TextEditingController(text: 'demo.fortuneboot.com');
-  final TextEditingController _portController =
-  TextEditingController(text: '443');
+  final TextEditingController _domainController = TextEditingController(
+    text: 'demo.fortuneboot.com',
+  );
+  final TextEditingController _portController = TextEditingController(
+    text: '443',
+  );
 
   // 新增：用于接管网络请求时的动态 Loading 状态
   bool _isConnecting = false;
@@ -48,12 +48,15 @@ class _BaseUrlConfigPageState extends State<BaseUrlConfigPage> {
   }
 
   Future<void> _checkTokenValid() async {
-    var baseUrlDomain =
-    await UserDataSingleton().getStr(UserDataSingleton.baseUrlDomain);
-    var baseUrlPort =
-    await UserDataSingleton().getStr(UserDataSingleton.baseUrlPort);
-    var baseProtocol =
-    await UserDataSingleton().getStr(UserDataSingleton.baseUrlProtocol);
+    var baseUrlDomain = await UserDataSingleton().getStr(
+      UserDataSingleton.baseUrlDomain,
+    );
+    var baseUrlPort = await UserDataSingleton().getStr(
+      UserDataSingleton.baseUrlPort,
+    );
+    var baseProtocol = await UserDataSingleton().getStr(
+      UserDataSingleton.baseUrlProtocol,
+    );
 
     if (baseUrlDomain?.isNotEmpty == true &&
         baseUrlPort?.isNotEmpty == true &&
@@ -63,7 +66,9 @@ class _BaseUrlConfigPageState extends State<BaseUrlConfigPage> {
       _protocol = baseProtocol!;
     }
     var userInfo = await UserDataSingleton().getMap(UserDataSingleton.userInfo);
-    var userToken = await UserDataSingleton().getMap(UserDataSingleton.userToken);
+    var userToken = await UserDataSingleton().getMap(
+      UserDataSingleton.userToken,
+    );
 
     if ((userInfo?.isNotEmpty == true) &&
         (userToken?.isNotEmpty == true) &&
@@ -79,15 +84,33 @@ class _BaseUrlConfigPageState extends State<BaseUrlConfigPage> {
         return;
       }
       DioClient().refreshToken(userToken!);
+      if (!(await _checkLoginSessionValid())) {
+        UserDataSingleton().remove(UserDataSingleton.userInfo);
+        UserDataSingleton().remove(UserDataSingleton.userToken);
+        DioClient().refreshToken({});
+        _authMode.value = AuthMode.signIn;
+        return;
+      }
       if (!mounted) return;
       Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(
-          builder: (context) => const HomePage(),
-        ),
-            (route) => false,
+        MaterialPageRoute(builder: (context) => const HomePage()),
+        (route) => false,
       );
     } else {
       _authMode.value = AuthMode.signIn;
+    }
+  }
+
+  Future<bool> _checkLoginSessionValid() async {
+    try {
+      final response = await DioClient().dio.get('/system/user/profile');
+      final data = response.data;
+      if (data is Map) {
+        return data['code'] == 0;
+      }
+      return false;
+    } on Exception {
+      return false;
     }
   }
 
@@ -115,30 +138,34 @@ class _BaseUrlConfigPageState extends State<BaseUrlConfigPage> {
           ),
           body: mode == AuthMode.loading
               ? const Center(
-            child: CircularProgressIndicator(
-              color: Color(0xFF007AFF), // iOS经典蓝 (Neutral / Config Action)
-            ),
-          )
+                  child: CircularProgressIndicator(
+                    color: Color(
+                      0xFF007AFF,
+                    ), // iOS经典蓝 (Neutral / Config Action)
+                  ),
+                )
               : SafeArea(
-            child: SingleChildScrollView(
-              physics: const BouncingScrollPhysics(),
-              padding: const EdgeInsets.symmetric(
-                  horizontal: 20, vertical: 24),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children:[
-                    _buildHeader(),
-                    const SizedBox(height: 32),
-                    _buildConfigCard(),
-                    const SizedBox(height: 40),
-                    _buildSubmitButton(),
-                  ],
+                  child: SingleChildScrollView(
+                    physics: const BouncingScrollPhysics(),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 24,
+                    ),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _buildHeader(),
+                          const SizedBox(height: 32),
+                          _buildConfigCard(),
+                          const SizedBox(height: 40),
+                          _buildSubmitButton(),
+                        ],
+                      ),
+                    ),
+                  ),
                 ),
-              ),
-            ),
-          ),
         );
       },
     );
@@ -148,7 +175,7 @@ class _BaseUrlConfigPageState extends State<BaseUrlConfigPage> {
   Widget _buildHeader() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children:[
+      children: [
         Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
@@ -181,7 +208,7 @@ class _BaseUrlConfigPageState extends State<BaseUrlConfigPage> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
-        boxShadow:[
+        boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.02),
             blurRadius: 20,
@@ -190,7 +217,7 @@ class _BaseUrlConfigPageState extends State<BaseUrlConfigPage> {
         ],
       ),
       child: Column(
-        children:[
+        children: [
           _buildProtocolRow(),
           _buildDivider(),
           _buildTextFieldRow(
@@ -222,15 +249,18 @@ class _BaseUrlConfigPageState extends State<BaseUrlConfigPage> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
       child: Row(
-        children:[
+        children: [
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
               color: const Color(0xFF007AFF).withOpacity(0.12),
               shape: BoxShape.circle,
             ),
-            child: const Icon(Icons.security_rounded,
-                size: 20, color: Color(0xFF007AFF)),
+            child: const Icon(
+              Icons.security_rounded,
+              size: 20,
+              color: Color(0xFF007AFF),
+            ),
           ),
           const SizedBox(width: 16),
           Expanded(
@@ -246,8 +276,10 @@ class _BaseUrlConfigPageState extends State<BaseUrlConfigPage> {
           DropdownButtonHideUnderline(
             child: DropdownButton<String>(
               value: _protocol,
-              icon: const Icon(Icons.expand_more_rounded,
-                  color: Color(0xFF8E8E93)),
+              icon: const Icon(
+                Icons.expand_more_rounded,
+                color: Color(0xFF8E8E93),
+              ),
               style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
@@ -286,7 +318,7 @@ class _BaseUrlConfigPageState extends State<BaseUrlConfigPage> {
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
-        children:[
+        children: [
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
@@ -300,7 +332,7 @@ class _BaseUrlConfigPageState extends State<BaseUrlConfigPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
-              children:[
+              children: [
                 Text(
                   label,
                   style: const TextStyle(
@@ -344,10 +376,7 @@ class _BaseUrlConfigPageState extends State<BaseUrlConfigPage> {
   Widget _buildDivider() {
     return Padding(
       padding: const EdgeInsets.only(left: 60),
-      child: Container(
-        height: 0.5,
-        color: const Color(0xFFC6C6C8),
-      ),
+      child: Container(height: 0.5, color: const Color(0xFFC6C6C8)),
     );
   }
 
@@ -364,7 +393,7 @@ class _BaseUrlConfigPageState extends State<BaseUrlConfigPage> {
               ? const Color(0xFF007AFF).withOpacity(0.7)
               : const Color(0xFF007AFF),
           borderRadius: BorderRadius.circular(16),
-          boxShadow:[
+          boxShadow: [
             BoxShadow(
               color: const Color(0xFF007AFF).withOpacity(0.2),
               blurRadius: 10,
@@ -375,21 +404,21 @@ class _BaseUrlConfigPageState extends State<BaseUrlConfigPage> {
         alignment: Alignment.center,
         child: _isConnecting
             ? const SizedBox(
-          height: 20,
-          width: 20,
-          child: CircularProgressIndicator(
-            strokeWidth: 2,
-            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-          ),
-        )
+                height: 20,
+                width: 20,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                ),
+              )
             : Text(
-          S.of(context).confirm,
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 17,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
+                S.of(context).confirm,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 17,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
       ),
     );
   }
@@ -399,6 +428,7 @@ class _BaseUrlConfigPageState extends State<BaseUrlConfigPage> {
       HapticFeedback.mediumImpact(); // 提交时中等力度震动反馈
       setState(() => _isConnecting = true);
 
+      DioClient().refreshToken({});
       var baseUrl = '$_protocol://${_domainController.text}';
       if (_portController.text.isNotEmpty) {
         baseUrl += ':${_portController.text}';
@@ -406,18 +436,22 @@ class _BaseUrlConfigPageState extends State<BaseUrlConfigPage> {
       DioClient().updateBaseUrl('$baseUrl/prod-api');
       try {
         if (await checkApiVersion()) {
-          UserDataSingleton()
-              .setStr(UserDataSingleton.baseUrlDomain, _domainController.text);
-          UserDataSingleton()
-              .setStr(UserDataSingleton.baseUrlPort, _portController.text);
-          UserDataSingleton()
-              .setStr(UserDataSingleton.baseUrlProtocol, _protocol);
+          UserDataSingleton().setStr(
+            UserDataSingleton.baseUrlDomain,
+            _domainController.text,
+          );
+          UserDataSingleton().setStr(
+            UserDataSingleton.baseUrlPort,
+            _portController.text,
+          );
+          UserDataSingleton().setStr(
+            UserDataSingleton.baseUrlProtocol,
+            _protocol,
+          );
 
           if (!mounted) return;
           Navigator.of(context).pushReplacement(
-            MaterialPageRoute(
-              builder: (context) => LoginScreen(),
-            ),
+            MaterialPageRoute(builder: (context) => LoginScreen()),
           );
         } else {
           _showErrorDialog(S.current.serverConnectionFailed);
@@ -438,10 +472,14 @@ class _BaseUrlConfigPageState extends State<BaseUrlConfigPage> {
       if (apiResponse.code == 0) {
         final curVersionString = apiResponse.data as String? ?? '';
         if (curVersionString.isNotEmpty) {
-          final int maxRes =
-          compareVersion(curVersionString, BillsRepository.maxApiVersion);
-          final int minRes =
-          compareVersion(curVersionString, BillsRepository.minApiVersion);
+          final int maxRes = compareVersion(
+            curVersionString,
+            BillsRepository.maxApiVersion,
+          );
+          final int minRes = compareVersion(
+            curVersionString,
+            BillsRepository.minApiVersion,
+          );
           // 左闭右开
           print('lxjtodo: $maxRes $minRes');
           return maxRes < 0 && minRes >= 0;
@@ -488,11 +526,13 @@ class _BaseUrlConfigPageState extends State<BaseUrlConfigPage> {
           padding: const EdgeInsets.all(24.0),
           child: Column(
             mainAxisSize: MainAxisSize.min,
-            children:[
+            children: [
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFFF3B30).withOpacity(0.12), // iOS Red State
+                  color: const Color(
+                    0xFFFF3B30,
+                  ).withOpacity(0.12), // iOS Red State
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(
@@ -514,10 +554,7 @@ class _BaseUrlConfigPageState extends State<BaseUrlConfigPage> {
               Text(
                 message,
                 textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontSize: 15,
-                  color: Color(0xFF8E8E93),
-                ),
+                style: const TextStyle(fontSize: 15, color: Color(0xFF8E8E93)),
               ),
               const SizedBox(height: 24),
               GestureDetector(
