@@ -106,7 +106,7 @@ class LoginScreen extends StatelessWidget {
                       'authorized-token=${Uri.encodeComponent(jsonEncode(responseData))}',
                   "Authorization": "Bearer $token",
                 };
-                DioClient().refreshToken(userToken);
+                DioClient().setAuthHeader(userToken);
                 var user = UserDataSingleton();
                 user.setMap(UserDataSingleton.userInfo, userInfo);
                 user.setMap(UserDataSingleton.userToken, userToken);

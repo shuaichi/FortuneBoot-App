@@ -64,8 +64,9 @@ class UserDataSingleton {
     }
     prefs ??= await SharedPreferences.getInstance();
     String? localValue = prefs!.getString(key);
-    var localData =
-    Map<String, dynamic>.from(jsonDecode(localValue ?? '{}') as Map? ?? {});
+    var localData = Map<String, dynamic>.from(
+      jsonDecode(localValue ?? '{}') as Map? ?? {},
+    );
     if (localData.isNotEmpty) {
       _userData[key] = localData;
     }
@@ -97,4 +98,20 @@ class UserDataSingleton {
   }
 
   bool containsKey(String key) => _userData.containsKey(key);
+
+  Future<void> clearAuth() async {
+    _userData.remove(userInfo);
+    _userData.remove(userToken);
+    prefs ??= await SharedPreferences.getInstance();
+    await prefs!.remove(userInfo);
+    await prefs!.remove(userToken);
+  }
+
+  Map<String, dynamic> currentAuthHeader() {
+    final data = _userData[userToken];
+    if (data is Map) {
+      return Map<String, dynamic>.from(data);
+    }
+    return <String, dynamic>{};
+  }
 }

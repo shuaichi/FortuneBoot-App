@@ -83,11 +83,10 @@ class _BaseUrlConfigPageState extends State<BaseUrlConfigPage> {
         _authMode.value = AuthMode.signIn;
         return;
       }
-      DioClient().refreshToken(userToken!);
+      DioClient().setAuthHeader(userToken!);
       if (!(await _checkLoginSessionValid())) {
-        UserDataSingleton().remove(UserDataSingleton.userInfo);
-        UserDataSingleton().remove(UserDataSingleton.userToken);
-        DioClient().refreshToken({});
+        DioClient().clearAuthHeader();
+        await UserDataSingleton().clearAuth();
         _authMode.value = AuthMode.signIn;
         return;
       }
@@ -428,7 +427,7 @@ class _BaseUrlConfigPageState extends State<BaseUrlConfigPage> {
       HapticFeedback.mediumImpact(); // 提交时中等力度震动反馈
       setState(() => _isConnecting = true);
 
-      DioClient().refreshToken({});
+      DioClient().clearAuthHeader();
       var baseUrl = '$_protocol://${_domainController.text}';
       if (_portController.text.isNotEmpty) {
         baseUrl += ':${_portController.text}';

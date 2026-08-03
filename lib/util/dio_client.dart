@@ -96,11 +96,23 @@ class DioClient {
     dio.options.baseUrl = newUrl;
   }
 
-  // 保留历史命名，实际语义是更新当前认证请求头。
-  void refreshToken(Map<String, dynamic> header) {
+  void setAuthHeader(Map<String, dynamic> header) {
     _authHeaders = Map<String, dynamic>.from(header);
     if (_authHeaders.isNotEmpty) {
       _isHandlingAuthExpired = false;
+    }
+  }
+
+  void clearAuthHeader() {
+    _authHeaders = {};
+  }
+
+  // 保留历史命名，实际语义是更新当前认证请求头。
+  void refreshToken(Map<String, dynamic> header) {
+    if (header.isEmpty) {
+      clearAuthHeader();
+    } else {
+      setAuthHeader(header);
     }
   }
 
@@ -138,9 +150,8 @@ class DioClient {
   Future<void> _handleAuthExpired() async {
     if (_isHandlingAuthExpired) return;
     _isHandlingAuthExpired = true;
-    _authHeaders = {};
-    UserDataSingleton().remove(UserDataSingleton.userInfo);
-    UserDataSingleton().remove(UserDataSingleton.userToken);
+    clearAuthHeader();
+    await UserDataSingleton().clearAuth();
     onAuthExpired?.call();
   }
 }

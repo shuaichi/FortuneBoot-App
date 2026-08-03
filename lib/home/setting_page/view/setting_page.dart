@@ -188,14 +188,14 @@ class _MineViewState extends State<MineView> {
           onPressed: () => showDialog(
             context: context,
             builder: (_) => LogoutConfirmDialog(
-              onConfirm: () {
+              onConfirm: () async {
                 ScaffoldMessenger.of(context).removeCurrentSnackBar();
                 ScaffoldMessenger.of(
                   context,
                 ).showSnackBar(const SnackBar(content: Text('已退出登录')));
-                UserDataSingleton().remove(UserDataSingleton.userInfo);
-                UserDataSingleton().remove(UserDataSingleton.userToken);
-                DioClient().refreshToken({});
+                DioClient().clearAuthHeader();
+                await UserDataSingleton().clearAuth();
+                if (!context.mounted) return;
                 Navigator.of(context).pushNamedAndRemoveUntil(
                   LoginScreen.routeName,
                   (route) => false,
