@@ -13,6 +13,7 @@ import 'package:fortuneboot/features/tags/presentation/widgets/tag_tile.dart';
 import 'package:fortuneboot/fx/components/fx_sheet.dart';
 import 'package:fortuneboot/fx/components/fx_state_view.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
+import 'package:fortuneboot/generated/l10n.dart';
 
 /// 标签管理页（树形，Routes.tags）。
 class TagsPage extends StatefulWidget {
@@ -47,12 +48,12 @@ class _TagsPageState extends State<TagsPage> {
   Future<void> _openForm({FortuneTagVo? tag, int? presetParentId}) async {
     final bookId = _bookId;
     if (bookId == null) {
-      _showToast('请先选择账本');
+      _showToast(S.of(context).tagsSelectBookFirst);
       return;
     }
     final changed = await FxSheet.show<bool>(
       context,
-      title: tag == null ? '新增标签' : '编辑标签',
+      title: tag == null ? S.of(context).tagsAdd : S.of(context).tagsEdit,
       expand: true,
       child: TagFormSheet(
         service: _service,
@@ -93,9 +94,11 @@ class _TagsPageState extends State<TagsPage> {
     if (toRecycle) {
       final ok = await confirmManageAction(
         context,
-        title: '移入回收站',
-        message: '确定将「${node.tagName ?? '该标签'}」移入回收站吗？',
-        confirmLabel: '移入',
+        title: S.of(context).tagsMoveToRecycleBin,
+        message: S.of(context).tagsMoveToRecycleBinConfirm(
+          node.tagName ?? S.of(context).tagsThisTag,
+        ),
+        confirmLabel: S.of(context).tagsMove,
       );
       if (ok != true) return;
     }
@@ -116,9 +119,11 @@ class _TagsPageState extends State<TagsPage> {
     if (bookId == null || node.tagId == null) return;
     final ok = await confirmManageAction(
       context,
-      title: '彻底删除',
-      message: '确定彻底删除「${node.tagName ?? '该标签'}」吗？此操作不可撤销。',
-      confirmLabel: '删除',
+      title: S.of(context).tagsDeletePermanently,
+      message: S.of(context).tagsDeletePermanentlyConfirm(
+        node.tagName ?? S.of(context).tagsThisTag,
+      ),
+      confirmLabel: S.of(context).tagsDelete,
     );
     if (ok != true) return;
     try {
@@ -146,8 +151,8 @@ class _TagsPageState extends State<TagsPage> {
         },
         builder: (context, state) {
           return ManageScaffold(
-            title: '标签管理',
-            searchHint: '搜索标签名称',
+            title: S.of(context).tagsTitle,
+            searchHint: S.of(context).tagsSearchHint,
             onAdd: () => _openForm(),
             onSearch: (kw) => _bloc.add(TagsSearchChanged(kw)),
             tab: state.tab,
@@ -161,7 +166,7 @@ class _TagsPageState extends State<TagsPage> {
 
   Widget _buildBody(TagsState state, int? bookId) {
     if (bookId == null) {
-      return FxStateView.empty(message: '请先选择账本');
+      return FxStateView.empty(message: S.of(context).tagsSelectBookFirst);
     }
     switch (state.status) {
       case TagsStatus.initial:
@@ -182,7 +187,7 @@ class _TagsPageState extends State<TagsPage> {
     final roots = state.filtered;
     if (roots.isEmpty) {
       return FxStateView.empty(
-        message: '暂无标签，点击右上角 + 新增',
+        message: S.of(context).tagsEmpty,
         icon: Icons.sell_outlined,
       );
     }

@@ -3,8 +3,11 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 // 引入震动反馈
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fortuneboot/core/app_constants.dart';
 import 'package:fortuneboot/core/navigation/routes.dart';
+import 'package:fortuneboot/core/preferences/locale_preferences.dart';
+import 'package:fortuneboot/core/preferences/preferences_cubit.dart';
 import 'package:fortuneboot/request/login_request.dart';
 import 'package:fortuneboot/login/model/users.dart';
 import 'package:fortuneboot/login/view/login_screen.dart';
@@ -99,6 +102,36 @@ class _BaseUrlConfigPageState extends State<BaseUrlConfigPage> {
     }
   }
 
+  Widget _buildLanguageMenu(BuildContext context) {
+    final s = S.of(context);
+    final current = context.watch<PreferencesCubit>().state.locale.code;
+    return PopupMenuButton<String>(
+      icon: const Icon(Icons.language_rounded, color: Color(0xFF1C1C1E)),
+      tooltip: s.commonLanguage,
+      onSelected: (code) =>
+          context.read<PreferencesCubit>().setLocaleCode(code),
+      itemBuilder: (context) => [
+        _langItem(LocalePreferences.systemCode, s.commonFollowSystem, current),
+        _langItem('zh', s.commonChinese, current),
+        _langItem('en', s.commonEnglish, current),
+      ],
+    );
+  }
+
+  PopupMenuItem<String> _langItem(String code, String label, String current) {
+    return PopupMenuItem<String>(
+      value: code,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(label),
+          if (code == current)
+            const Icon(Icons.check_rounded, size: 18, color: Color(0xFF007AFF)),
+        ],
+      ),
+    );
+  }
+
   Future<bool> _checkLoginSessionValid() async {
     try {
       final response = await DioClient().dio.get('/system/user/profile');
@@ -133,6 +166,7 @@ class _BaseUrlConfigPageState extends State<BaseUrlConfigPage> {
               ),
             ),
             iconTheme: const IconThemeData(color: Color(0xFF1C1C1E)),
+            actions: [_buildLanguageMenu(context)],
           ),
           body: mode == AuthMode.loading
               ? const Center(

@@ -6,6 +6,7 @@ import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
+import 'package:fortuneboot/generated/l10n.dart';
 
 /// 归物卡片（网格项）：名称 + 价格 + 持有天数 + 日均成本 + 状态 + 过保。
 class GoodsCard extends StatelessWidget {
@@ -35,7 +36,7 @@ class GoodsCard extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              goods.goodsName ?? '未命名',
+              goods.goodsName ?? S.of(context).goodsUnnamed,
               style: FxTypography.bodyStrong,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
@@ -52,13 +53,13 @@ class GoodsCard extends StatelessWidget {
               _line(
                 context,
                 Icons.schedule_rounded,
-                '持有 ${goods.holdingTime} 天',
+                S.of(context).goodsHoldingDays('${goods.holdingTime}'),
               ),
             if (goods.dailyAverageCost != null)
               _line(
                 context,
                 Icons.trending_down_rounded,
-                '日均 ${_money(goods.dailyAverageCost!)}',
+                S.of(context).goodsDailyAvg(_money(goods.dailyAverageCost!)),
               ),
             const SizedBox(height: FxSpacing.sm),
             Wrap(
@@ -94,7 +95,9 @@ class GoodsCard extends StatelessWidget {
           Expanded(
             child: Text(
               text,
-              style: FxTypography.caption,
+              style: FxTypography.caption.copyWith(
+                color: FxPalette.of(context).textTertiary,
+              ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),

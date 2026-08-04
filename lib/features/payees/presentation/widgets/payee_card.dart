@@ -4,6 +4,7 @@ import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
+import 'package:fortuneboot/generated/l10n.dart';
 
 /// 交易对象列表项：名称 + 可支/可收状态点 + 排序 + ⋯ 菜单。
 class PayeeCard extends StatelessWidget {
@@ -54,7 +55,7 @@ class PayeeCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      payee.payeeName ?? '未命名',
+                      payee.payeeName ?? S.of(context).payeesUnnamed,
                       style: FxTypography.bodyStrong.copyWith(
                         color: payee.enable
                             ? palette.textPrimary
@@ -68,21 +69,21 @@ class PayeeCard extends StatelessWidget {
                       children: [
                         _capChip(
                           context,
-                          '可支',
+                          S.of(context).payeesCanExpenseShort,
                           payee.canExpense,
                           finance.expense,
                         ),
                         const SizedBox(width: FxSpacing.xs),
                         _capChip(
                           context,
-                          '可收',
+                          S.of(context).payeesCanIncomeShort,
                           payee.canIncome,
                           finance.income,
                         ),
                         if (payee.sort != null) ...[
                           const SizedBox(width: FxSpacing.sm),
                           Text(
-                            '排序 ${payee.sort}',
+                            S.of(context).payeesSortValue(payee.sort!),
                             style: FxTypography.caption.copyWith(
                               color: palette.textTertiary,
                             ),

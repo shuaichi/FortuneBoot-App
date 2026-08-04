@@ -7,6 +7,7 @@ import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
+import 'package:fortuneboot/generated/l10n.dart';
 
 /// 账本新增/编辑表单：名称 / 默认币种 / 账本模板（新增可选）/ 排序 / 备注 / 启用。
 class BookFormSheet extends StatefulWidget {
@@ -87,11 +88,11 @@ class _BookFormSheetState extends State<BookFormSheet> {
   Future<void> _submit() async {
     final name = _nameCtrl.text.trim();
     if (name.isEmpty) {
-      setState(() => _error = '请输入账本名称');
+      setState(() => _error = S.of(context).booksBookNameRequired);
       return;
     }
     if (_currency == null || _currency!.isEmpty) {
-      setState(() => _error = '请选择默认币种');
+      setState(() => _error = S.of(context).booksCurrencyRequired);
       return;
     }
     setState(() {
@@ -141,10 +142,13 @@ class _BookFormSheetState extends State<BookFormSheet> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          _label('账本名称'),
-          TextField(controller: _nameCtrl, decoration: _dec('如：日常开销')),
+          _label(S.of(context).booksBookName),
+          TextField(
+            controller: _nameCtrl,
+            decoration: _dec(S.of(context).booksBookNameHint),
+          ),
           const SizedBox(height: FxSpacing.md),
-          _label('默认币种'),
+          _label(S.of(context).booksDefaultCurrency),
           _chips(
             _currencies,
             _currency,
@@ -154,7 +158,7 @@ class _BookFormSheetState extends State<BookFormSheet> {
           ),
           if (!widget.isEdit && _templates.isNotEmpty) ...[
             const SizedBox(height: FxSpacing.md),
-            _label('账本模板（可选）'),
+            _label(S.of(context).booksBookTemplateOptional),
             _chips(
               _templates,
               _bookTemplate,
@@ -163,16 +167,21 @@ class _BookFormSheetState extends State<BookFormSheet> {
             ),
           ],
           const SizedBox(height: FxSpacing.md),
-          _label('排序（可选）'),
+          _label(S.of(context).booksSortOptional),
           TextField(
             controller: _sortCtrl,
             keyboardType: TextInputType.number,
-            decoration: _dec('数值越小越靠前'),
+            decoration: _dec(S.of(context).booksSortHint),
           ),
           const SizedBox(height: FxSpacing.md),
           Row(
             children: [
-              const Expanded(child: Text('启用', style: FxTypography.body)),
+              Expanded(
+                child: Text(
+                  S.of(context).booksEnabled,
+                  style: FxTypography.body,
+                ),
+              ),
               Switch.adaptive(
                 value: _enable,
                 activeColor: FxPalette.of(context).primary,
@@ -181,8 +190,11 @@ class _BookFormSheetState extends State<BookFormSheet> {
             ],
           ),
           const SizedBox(height: FxSpacing.sm),
-          _label('备注（可选）'),
-          TextField(controller: _remarkCtrl, decoration: _dec('备注')),
+          _label(S.of(context).booksRemarkOptional),
+          TextField(
+            controller: _remarkCtrl,
+            decoration: _dec(S.of(context).booksRemarkHint),
+          ),
           if (_error != null) ...[
             const SizedBox(height: FxSpacing.sm),
             Text(
@@ -194,7 +206,9 @@ class _BookFormSheetState extends State<BookFormSheet> {
           ],
           const SizedBox(height: FxSpacing.xl),
           FxButton(
-            label: widget.isEdit ? '保存修改' : '创建账本',
+            label: widget.isEdit
+                ? S.of(context).booksSaveChanges
+                : S.of(context).booksCreateBook,
             expand: true,
             loading: _submitting,
             onPressed: _submitting ? null : _submit,
@@ -251,7 +265,12 @@ class _BookFormSheetState extends State<BookFormSheet> {
 
   Widget _label(String text) => Padding(
     padding: const EdgeInsets.only(bottom: FxSpacing.xs),
-    child: Text(text, style: FxTypography.label),
+    child: Text(
+      text,
+      style: FxTypography.label.copyWith(
+        color: FxPalette.of(context).textSecondary,
+      ),
+    ),
   );
 
   InputDecoration _dec(String hint) => InputDecoration(

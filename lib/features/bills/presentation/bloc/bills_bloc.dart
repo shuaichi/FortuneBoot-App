@@ -159,7 +159,7 @@ class BillsBloc extends Bloc<BillsEvent, BillsState> {
     try {
       final page = await _service.getPage(_buildQuery(1));
       final stats = await _fetchStatistics();
-      final monthStats = await _fetchMonthStatistics(page.rows);
+      final monthStats = await _fetchMonthStatistics(page.rows, refresh: true);
       if (version != _loadVersion) return;
       _loadedPages = 1;
       emit(
@@ -242,11 +242,13 @@ class BillsBloc extends Bloc<BillsEvent, BillsState> {
         .where((b) => b.billId != event.billId)
         .toList();
     final stats = await _fetchStatistics();
+    final monthStats = await _fetchMonthStatistics(remaining, refresh: true);
     emit(
       state.copyWith(
         bills: remaining,
         total: (state.total - 1).clamp(0, 1 << 31),
         statistics: stats,
+        monthStatistics: monthStats,
       ),
     );
   }
@@ -264,7 +266,7 @@ class BillsBloc extends Bloc<BillsEvent, BillsState> {
     // 确认状态影响是否计入余额/统计，需重拉汇总并通知其它页刷新。
     final stats = await _fetchStatistics();
     BillMutations.bump();
-    _patchLocal(emit, event.billId, confirm: event.confirm, stats: stats);
+    await _patchLocal(emit, event.billId, confirm: event.confirm, stats: stats);
   }
 
   Future<void> _onIncludeToggled(
@@ -279,17 +281,17 @@ class BillsBloc extends Bloc<BillsEvent, BillsState> {
     }
     final stats = await _fetchStatistics();
     BillMutations.bump();
-    _patchLocal(emit, event.billId, include: event.include, stats: stats);
+    await _patchLocal(emit, event.billId, include: event.include, stats: stats);
   }
 
   /// 局部更新一条账单的状态字段（不重拉列表）。
-  void _patchLocal(
+  Future<void> _patchLocal(
     Emitter<BillsState> emit,
     int billId, {
     bool? confirm,
     bool? include,
     BillStatistics? stats,
-  }) {
+  }) async {
     final updated = state.bills
         .map(
           (b) => b.billId == billId
@@ -297,7 +299,14 @@ class BillsBloc extends Bloc<BillsEvent, BillsState> {
               : b,
         )
         .toList();
-    emit(state.copyWith(bills: updated, statistics: stats));
+    final monthStats = await _fetchMonthStatistics(updated, refresh: true);
+    emit(
+      state.copyWith(
+        bills: updated,
+        statistics: stats,
+        monthStatistics: monthStats,
+      ),
+    );
   }
 
   Future<BillStatistics?> _fetchStatistics() async {
@@ -316,11 +325,14 @@ class BillsBloc extends Bloc<BillsEvent, BillsState> {
   }
 
   Future<Map<DateTime, BillStatistics>> _fetchMonthStatistics(
-    List<FortuneBillVo> bills,
-  ) async {
+    List<FortuneBillVo> bills, {
+    bool refresh = false,
+  }) async {
     final bookId = _bookId;
     if (bookId == null || bills.isEmpty) return const {};
-    final result = Map<DateTime, BillStatistics>.of(state.monthStatistics);
+    final result = refresh
+        ? <DateTime, BillStatistics>{}
+        : Map<DateTime, BillStatistics>.of(state.monthStatistics);
     final anchors = <DateTime>{};
     for (final bill in bills) {
       final tradeTime = bill.tradeTime;

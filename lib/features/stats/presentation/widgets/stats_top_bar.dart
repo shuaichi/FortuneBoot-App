@@ -7,6 +7,7 @@ import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
+import 'package:fortuneboot/generated/l10n.dart';
 import 'package:intl/intl.dart';
 
 /// 统计页粘顶栏：时间区间选择（本周/本月/本年/自定义）+ 支出/收入分段。
@@ -31,25 +32,25 @@ class StatsTopBar extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('统计', style: FxTypography.titleLarge),
+          Text(S.of(context).statsTitle, style: FxTypography.titleLarge),
           const SizedBox(height: FxSpacing.md),
           Row(
             children: [
               _RangeChip(
-                label: '本周',
+                label: S.of(context).statsRangeWeek,
                 selected: state.range == StatsRange.week,
                 onTap: () => bloc.add(const StatsRangeChanged(StatsRange.week)),
               ),
               const SizedBox(width: FxSpacing.sm),
               _RangeChip(
-                label: '本账期',
+                label: S.of(context).statsRangePeriod,
                 selected: state.range == StatsRange.month,
                 onTap: () =>
                     bloc.add(const StatsRangeChanged(StatsRange.month)),
               ),
               const SizedBox(width: FxSpacing.sm),
               _RangeChip(
-                label: '本年',
+                label: S.of(context).statsRangeYear,
                 selected: state.range == StatsRange.year,
                 onTap: () => bloc.add(const StatsRangeChanged(StatsRange.year)),
               ),
@@ -60,7 +61,7 @@ class StatsTopBar extends StatelessWidget {
                         state.customStart != null &&
                         state.customEnd != null
                     ? '${_day.format(state.customStart!)}-${_day.format(state.customEnd!)}'
-                    : '自定义',
+                    : S.of(context).statsRangeCustom,
                 selected: state.range == StatsRange.custom,
                 onTap: () => _pickCustom(context, bloc),
               ),
@@ -69,9 +70,9 @@ class StatsTopBar extends StatelessWidget {
           const SizedBox(height: FxSpacing.md),
           FxSegmented<StatsType>(
             value: state.type,
-            segments: const [
-              FxSegment(StatsType.expense, '支出'),
-              FxSegment(StatsType.income, '收入'),
+            segments: [
+              FxSegment(StatsType.expense, S.of(context).statsExpense),
+              FxSegment(StatsType.income, S.of(context).statsIncome),
             ],
             onChanged: (t) => bloc.add(StatsTypeChanged(t)),
           ),

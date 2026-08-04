@@ -7,6 +7,7 @@ import 'package:fortuneboot/fx/components/fx_button.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
+import 'package:fortuneboot/generated/l10n.dart';
 
 /// 交易对象新增/编辑表单。字段：名称 / 排序 / 备注 / 启用
 /// + 开关 canExpense/canIncome。编辑模式开关即时 PATCH（乐观更新在 bloc）。
@@ -64,7 +65,7 @@ class _PayeeFormSheetState extends State<PayeeFormSheet> {
 
   Future<void> _submit() async {
     if (_nameCtrl.text.trim().isEmpty) {
-      setState(() => _error = '请输入交易对象名称');
+      setState(() => _error = S.of(context).payeesNameRequired);
       return;
     }
     setState(() {
@@ -114,23 +115,32 @@ class _PayeeFormSheetState extends State<PayeeFormSheet> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const ManageFieldLabel('交易对象名称'),
+          ManageFieldLabel(S.of(context).payeesNameLabel),
           TextField(
             controller: _nameCtrl,
-            decoration: manageInputDecoration(context, '如：肯德基'),
+            decoration: manageInputDecoration(
+              context,
+              S.of(context).payeesNameHint,
+            ),
           ),
           const SizedBox(height: FxSpacing.md),
-          const ManageFieldLabel('排序（可选）'),
+          ManageFieldLabel(S.of(context).payeesSortLabel),
           TextField(
             controller: _sortCtrl,
             keyboardType: TextInputType.number,
-            decoration: manageInputDecoration(context, '数字越小越靠前'),
+            decoration: manageInputDecoration(
+              context,
+              S.of(context).payeesSortHint,
+            ),
           ),
           const SizedBox(height: FxSpacing.md),
-          const ManageFieldLabel('备注（可选）'),
+          ManageFieldLabel(S.of(context).payeesRemarkLabel),
           TextField(
             controller: _remarkCtrl,
-            decoration: manageInputDecoration(context, '备注'),
+            decoration: manageInputDecoration(
+              context,
+              S.of(context).payeesRemarkHint,
+            ),
           ),
           const SizedBox(height: FxSpacing.lg),
           _switchRow(context, PayeeToggleField.canExpense, _canExpense, (v) {
@@ -151,7 +161,9 @@ class _PayeeFormSheetState extends State<PayeeFormSheet> {
           ],
           const SizedBox(height: FxSpacing.xl),
           FxButton(
-            label: widget.isEdit ? '保存修改' : '创建交易对象',
+            label: widget.isEdit
+                ? S.of(context).payeesSaveEdit
+                : S.of(context).payeesCreate,
             expand: true,
             loading: _submitting,
             onPressed: _submitting ? null : _submit,

@@ -14,6 +14,7 @@ import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
+import 'package:fortuneboot/generated/l10n.dart';
 
 /// 周期记账规则列表页（Routes.recurring）。
 class RecurringPage extends StatefulWidget {
@@ -41,7 +42,7 @@ class _RecurringPageState extends State<RecurringPage> {
     final bookId = _bookId;
     final groupId = _groupId;
     if (bookId == null || groupId == null) {
-      _showToast('请先选择账本');
+      _showToast(S.of(context).recurringSelectBookFirst);
       return;
     }
     final changed = await Navigator.of(context).push<bool>(
@@ -58,7 +59,7 @@ class _RecurringPageState extends State<RecurringPage> {
     if (bookId == null || rule.ruleId == null) return;
     await FxSheet.show<void>(
       context,
-      title: '执行日志 · ${rule.ruleName ?? ''}',
+      title: S.of(context).recurringLogsTitle(rule.ruleName ?? ''),
       child: RecurringLogSheet(
         service: _service,
         bookId: bookId,
@@ -73,19 +74,25 @@ class _RecurringPageState extends State<RecurringPage> {
     final ok = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('删除规则'),
-        content: Text('确定删除「${rule.ruleName ?? '该规则'}」吗？此操作不可撤销。'),
+        title: Text(S.of(context).recurringRemoveTitle),
+        content: Text(
+          S
+              .of(context)
+              .recurringRemoveMessage(
+                rule.ruleName ?? S.of(context).recurringThisRule,
+              ),
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
-            child: const Text('取消'),
+            child: Text(S.of(context).commonCancel),
           ),
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(true),
             style: TextButton.styleFrom(
               foregroundColor: FxPalette.of(ctx).danger,
             ),
-            child: const Text('删除'),
+            child: Text(S.of(context).recurringDelete),
           ),
         ],
       ),
@@ -149,7 +156,12 @@ class _RecurringPageState extends State<RecurringPage> {
               ),
             ),
           ),
-          const Expanded(child: Text('周期记账', style: FxTypography.title)),
+          Expanded(
+            child: Text(
+              S.of(context).recurringTitle,
+              style: FxTypography.title,
+            ),
+          ),
           InkResponse(
             onTap: () => _openEditor(),
             radius: 22,
@@ -169,7 +181,7 @@ class _RecurringPageState extends State<RecurringPage> {
 
   Widget _buildBody(RecurringState state) {
     if (_bookId == null) {
-      return FxStateView.empty(message: '请先选择账本');
+      return FxStateView.empty(message: S.of(context).recurringSelectBookFirst);
     }
     switch (state.status) {
       case RecurringStatus.initial:
@@ -188,7 +200,7 @@ class _RecurringPageState extends State<RecurringPage> {
               SizedBox(
                 height: MediaQuery.of(context).size.height * 0.5,
                 child: FxStateView.empty(
-                  message: '暂无周期规则，点击右上角 + 新增',
+                  message: S.of(context).recurringEmpty,
                   icon: Icons.autorenew_rounded,
                 ),
               ),
@@ -228,7 +240,7 @@ class _RecurringPageState extends State<RecurringPage> {
                 const SizedBox(width: FxSpacing.xs),
                 Expanded(
                   child: Text(
-                    rule.ruleName ?? '未命名规则',
+                    rule.ruleName ?? S.of(context).recurringUnnamedRule,
                     style: FxTypography.bodyStrong,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -263,8 +275,22 @@ class _RecurringPageState extends State<RecurringPage> {
             const SizedBox(height: FxSpacing.sm),
             Row(
               children: [
-                Expanded(child: _meta('下次执行', rule.nextExecutionTime ?? '-')),
-                Expanded(child: _meta('已执行', '${rule.executedCount ?? 0} 次')),
+                Expanded(
+                  child: _meta(
+                    context,
+                    S.of(context).recurringNextExecution,
+                    rule.nextExecutionTime ?? '-',
+                  ),
+                ),
+                Expanded(
+                  child: _meta(
+                    context,
+                    S.of(context).recurringExecutedLabel,
+                    S
+                        .of(context)
+                        .recurringExecutedCount(rule.executedCount ?? 0),
+                  ),
+                ),
               ],
             ),
           ],
@@ -273,15 +299,22 @@ class _RecurringPageState extends State<RecurringPage> {
     );
   }
 
-  Widget _meta(String label, String value) {
+  Widget _meta(BuildContext context, String label, String value) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: FxTypography.caption),
+        Text(
+          label,
+          style: FxTypography.caption.copyWith(
+            color: FxPalette.of(context).textTertiary,
+          ),
+        ),
         const SizedBox(height: 2),
         Text(
           value,
-          style: FxTypography.label,
+          style: FxTypography.label.copyWith(
+            color: FxPalette.of(context).textSecondary,
+          ),
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
         ),
@@ -304,11 +337,14 @@ class _RecurringPageState extends State<RecurringPage> {
         }
       },
       itemBuilder: (context) => [
-        const PopupMenuItem(value: 'edit', child: Text('编辑')),
-        const PopupMenuItem(value: 'logs', child: Text('执行日志')),
+        PopupMenuItem(value: 'edit', child: Text(S.of(context).recurringEdit)),
+        PopupMenuItem(value: 'logs', child: Text(S.of(context).recurringLogs)),
         PopupMenuItem(
           value: 'remove',
-          child: Text('删除', style: TextStyle(color: palette.danger)),
+          child: Text(
+            S.of(context).recurringDelete,
+            style: TextStyle(color: palette.danger),
+          ),
         ),
       ],
     );

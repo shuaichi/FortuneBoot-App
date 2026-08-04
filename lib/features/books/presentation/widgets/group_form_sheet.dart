@@ -7,6 +7,7 @@ import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
+import 'package:fortuneboot/generated/l10n.dart';
 
 /// 分组新增/编辑表单：名称 / 默认币种（getCurrencyTemplate 下拉）/ 备注 / 启用。
 class GroupFormSheet extends StatefulWidget {
@@ -66,11 +67,11 @@ class _GroupFormSheetState extends State<GroupFormSheet> {
   Future<void> _submit() async {
     final name = _nameCtrl.text.trim();
     if (name.isEmpty) {
-      setState(() => _error = '请输入分组名称');
+      setState(() => _error = S.of(context).booksGroupNameRequired);
       return;
     }
     if (_currency == null || _currency!.isEmpty) {
-      setState(() => _error = '请选择默认币种');
+      setState(() => _error = S.of(context).booksCurrencyRequired);
       return;
     }
     setState(() {
@@ -114,15 +115,23 @@ class _GroupFormSheetState extends State<GroupFormSheet> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          _label('分组名称'),
-          TextField(controller: _nameCtrl, decoration: _dec('如：家庭账')),
+          _label(S.of(context).booksGroupName),
+          TextField(
+            controller: _nameCtrl,
+            decoration: _dec(S.of(context).booksGroupNameHint),
+          ),
           const SizedBox(height: FxSpacing.md),
-          _label('默认币种'),
+          _label(S.of(context).booksDefaultCurrency),
           _currencyPicker(),
           const SizedBox(height: FxSpacing.md),
           Row(
             children: [
-              const Expanded(child: Text('启用', style: FxTypography.body)),
+              Expanded(
+                child: Text(
+                  S.of(context).booksEnabled,
+                  style: FxTypography.body,
+                ),
+              ),
               Switch.adaptive(
                 value: _enable,
                 activeColor: FxPalette.of(context).primary,
@@ -131,8 +140,11 @@ class _GroupFormSheetState extends State<GroupFormSheet> {
             ],
           ),
           const SizedBox(height: FxSpacing.sm),
-          _label('备注（可选）'),
-          TextField(controller: _remarkCtrl, decoration: _dec('备注')),
+          _label(S.of(context).booksRemarkOptional),
+          TextField(
+            controller: _remarkCtrl,
+            decoration: _dec(S.of(context).booksRemarkHint),
+          ),
           if (_error != null) ...[
             const SizedBox(height: FxSpacing.sm),
             Text(
@@ -144,7 +156,9 @@ class _GroupFormSheetState extends State<GroupFormSheet> {
           ],
           const SizedBox(height: FxSpacing.xl),
           FxButton(
-            label: widget.isEdit ? '保存修改' : '创建分组',
+            label: widget.isEdit
+                ? S.of(context).booksSaveChanges
+                : S.of(context).booksCreateGroup,
             expand: true,
             loading: _submitting,
             onPressed: _submitting ? null : _submit,
@@ -197,7 +211,12 @@ class _GroupFormSheetState extends State<GroupFormSheet> {
 
   Widget _label(String text) => Padding(
     padding: const EdgeInsets.only(bottom: FxSpacing.xs),
-    child: Text(text, style: FxTypography.label),
+    child: Text(
+      text,
+      style: FxTypography.label.copyWith(
+        color: FxPalette.of(context).textSecondary,
+      ),
+    ),
   );
 
   InputDecoration _dec(String hint) => InputDecoration(

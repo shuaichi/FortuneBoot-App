@@ -24,10 +24,37 @@ import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
 import 'package:fortuneboot/fx/tree/fx_tree_picker.dart';
+import 'package:fortuneboot/generated/l10n.dart';
 
 /// BillEditor 记账表单页。
 class BillEditorPage extends StatelessWidget {
   const BillEditorPage({super.key});
+
+  String _validationMessage(BuildContext context, BillValidationError e) {
+    final s = S.of(context);
+    switch (e) {
+      case BillValidationError.transferAmountRequired:
+        return s.billEditorValidateTransferAmount;
+      case BillValidationError.transferFromRequired:
+        return s.billEditorValidateTransferFrom;
+      case BillValidationError.transferToRequired:
+        return s.billEditorValidateTransferTo;
+      case BillValidationError.transferSameAccount:
+        return s.billEditorValidateTransferSame;
+      case BillValidationError.categoryRequired:
+        return s.billEditorValidateCategoryRequired;
+      case BillValidationError.categorySelectRequired:
+        return s.billEditorValidateCategorySelect;
+      case BillValidationError.categoryAmountPositive:
+        return s.billEditorValidateCategoryAmount;
+      case BillValidationError.accountRequired:
+        return s.billEditorValidateAccount;
+      case BillValidationError.orderRequired:
+        return s.billEditorValidateOrder;
+      case BillValidationError.titleRequired:
+        return s.billEditorValidateTitle;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,11 +64,15 @@ class BillEditorPage extends StatelessWidget {
         if (state.submitStatus == SubmitStatus.success) {
           BillMutations.bump();
           Navigator.of(context).pop(true);
-        } else if (state.submitStatus == SubmitStatus.failure &&
-            state.submitError != null) {
-          ScaffoldMessenger.of(context)
-            ..hideCurrentSnackBar()
-            ..showSnackBar(SnackBar(content: Text(state.submitError!)));
+        } else if (state.submitStatus == SubmitStatus.failure) {
+          final message = state.validationFailure != null
+              ? _validationMessage(context, state.validationFailure!)
+              : state.submitError;
+          if (message != null) {
+            ScaffoldMessenger.of(context)
+              ..hideCurrentSnackBar()
+              ..showSnackBar(SnackBar(content: Text(message)));
+          }
         }
       },
       builder: (context, state) {
@@ -53,7 +84,9 @@ class BillEditorPage extends StatelessWidget {
             elevation: 0,
             scrolledUnderElevation: 0.5,
             title: Text(
-              state.mode == 'edit' ? '编辑账单' : '记一笔',
+              state.mode == 'edit'
+                  ? S.of(context).billEditorEditTitle
+                  : S.of(context).billEditorNewTitle,
               style: FxTypography.title,
             ),
             leading: IconButton(
@@ -105,7 +138,7 @@ class _EditorBody extends StatelessWidget {
               value: state.billType,
               onChanged: (t) => bloc.add(BillTypeChanged(t)),
               segments: FxBillType.selectable
-                  .map((t) => FxSegment(t, t.label))
+                  .map((t) => FxSegment(t, t.localizedLabel(context)))
                   .toList(),
             ),
           ),
@@ -201,7 +234,7 @@ class _AmountArea extends StatelessWidget {
     if (state.isTransfer) {
       return FxCard(
         child: AmountField(
-          label: '转账金额',
+          label: S.of(context).billEditorTransferAmount,
           value: state.transferAmount,
           currencyCode: currency,
           tint: tint,
@@ -215,14 +248,26 @@ class _AmountArea extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('${state.billType.label}金额', style: FxTypography.label),
+          Text(
+            S.of(context).billEditorAmountOf(
+              state.billType.localizedLabel(context),
+            ),
+            style: FxTypography.label.copyWith(
+              color: FxPalette.of(context).textSecondary,
+            ),
+          ),
           const SizedBox(height: FxSpacing.sm),
           Text(
             '${currency.isEmpty ? '' : '$currency '}${state.categoryTotal.toStringAsFixed(2)}',
             style: FxTypography.display.copyWith(color: tint),
           ),
           const SizedBox(height: FxSpacing.xs),
-          const Text('金额按下方分类拆分累加', style: FxTypography.caption),
+          Text(
+            S.of(context).billEditorAmountHint,
+            style: FxTypography.caption.copyWith(
+              color: FxPalette.of(context).textTertiary,
+            ),
+          ),
         ],
       ),
     );
@@ -244,13 +289,13 @@ class _AccountRow extends StatelessWidget {
     }).toList();
 
     return _PickerRow(
-      label: '账户',
+      label: S.of(context).billEditorAccount,
       value: state.accountName,
-      placeholder: '请选择账户',
+      placeholder: S.of(context).billEditorSelectAccountHint,
       onTap: () async {
         final picked = await showOptionPicker<AccountOption>(
           context,
-          title: '选择账户',
+          title: S.of(context).billEditorSelectAccount,
           options: accounts,
           labelOf: (a) => a.accountName ?? '',
           selectedId: state.accountId,
@@ -279,13 +324,19 @@ class _TransferAccountRow extends StatelessWidget {
     final selectedId = isOut ? state.accountId : state.toAccountId;
 
     return _PickerRow(
-      label: isOut ? '转出账户' : '转入账户',
+      label: isOut
+          ? S.of(context).billEditorTransferOutAccount
+          : S.of(context).billEditorTransferInAccount,
       value: value,
-      placeholder: isOut ? '请选择转出账户' : '请选择转入账户',
+      placeholder: isOut
+          ? S.of(context).billEditorSelectTransferOutHint
+          : S.of(context).billEditorSelectTransferInHint,
       onTap: () async {
         final picked = await showOptionPicker<AccountOption>(
           context,
-          title: isOut ? '选择转出账户' : '选择转入账户',
+          title: isOut
+              ? S.of(context).billEditorSelectTransferOut
+              : S.of(context).billEditorSelectTransferIn,
           options: accounts,
           labelOf: (a) => a.accountName ?? '',
           selectedId: selectedId,
@@ -316,13 +367,13 @@ class _PayeeRow extends StatelessWidget {
     }).toList();
 
     return _PickerRow(
-      label: '交易对象',
+      label: S.of(context).billEditorPayee,
       value: state.payeeName,
-      placeholder: '可选',
+      placeholder: S.of(context).billEditorOptional,
       onTap: () async {
         final picked = await showOptionPicker<PayeeOption>(
           context,
-          title: '选择交易对象',
+          title: S.of(context).billEditorSelectPayee,
           options: payees,
           labelOf: (p) => p.payeeName ?? '',
           selectedId: state.payeeId,
@@ -343,14 +394,14 @@ class _OrderRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final bloc = context.read<BillEditorBloc>();
     return _PickerRow(
-      label: '关联单据',
+      label: S.of(context).billEditorOrder,
       value: state.orderTitle,
-      placeholder: '必选',
+      placeholder: S.of(context).billEditorRequired,
       required: true,
       onTap: () async {
         final picked = await showOptionPicker<OrderOption>(
           context,
-          title: '选择使用中单据',
+          title: S.of(context).billEditorSelectOrder,
           options: state.options.orders,
           labelOf: (o) => [
             o.title,
@@ -376,7 +427,7 @@ class _TradeTimeRow extends StatelessWidget {
     final bloc = context.read<BillEditorBloc>();
     final text = BillService.dateTimeFormat.format(state.tradeTime);
     return _PickerRow(
-      label: '时间',
+      label: S.of(context).billEditorTime,
       value: text,
       onTap: () async {
         final picked = await showFxDateTimePicker(
@@ -384,7 +435,7 @@ class _TradeTimeRow extends StatelessWidget {
           initial: state.tradeTime,
           firstDate: DateTime(2000),
           lastDate: DateTime(2100),
-          title: '交易时间',
+          title: S.of(context).billEditorTradeTime,
         );
         if (picked != null) {
           bloc.add(TradeTimeChanged(picked));
@@ -441,7 +492,7 @@ class _TagsRow extends StatelessWidget {
           idOf: (t) => t.tagId,
           initialSelected: state.tagIds.map((e) => e as Object).toSet(),
           multiSelect: true,
-          title: '选择标签',
+          title: S.of(context).billEditorSelectTags,
         );
         if (result != null) {
           bloc.add(
@@ -460,14 +511,19 @@ class _TagsRow extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(
+            SizedBox(
               width: 72,
-              child: Text('标签', style: FxTypography.label),
+              child: Text(
+                S.of(context).billEditorTags,
+                style: FxTypography.label.copyWith(
+                  color: palette.textSecondary,
+                ),
+              ),
             ),
             Expanded(
               child: state.tagNames.isEmpty
                   ? Text(
-                      '添加标签',
+                      S.of(context).billEditorAddTags,
                       style: FxTypography.body.copyWith(
                         color: palette.textTertiary,
                       ),
@@ -499,13 +555,13 @@ class _MembersRow extends StatelessWidget {
         .where((m) => m.memberId != null)
         .toList();
     return _PickerRow(
-      label: '成员',
+      label: S.of(context).billEditorMembers,
       value: state.memberNames.isEmpty ? null : state.memberNames.join('、'),
-      placeholder: '可选',
+      placeholder: S.of(context).billEditorOptional,
       onTap: () async {
         final result = await showMultiSelect<MemberOption>(
           context,
-          title: '选择成员',
+          title: S.of(context).billEditorSelectMembers,
           options: members,
           labelOf: (m) => m.memberName ?? '',
           idOf: (m) => m.memberId!,
@@ -529,14 +585,14 @@ class _PickerRow extends StatelessWidget {
   const _PickerRow({
     required this.label,
     this.value,
-    this.placeholder = '请选择',
+    this.placeholder,
     this.required = false,
     required this.onTap,
   });
 
   final String label;
   final String? value;
-  final String placeholder;
+  final String? placeholder;
   final bool required;
   final VoidCallback onTap;
 
@@ -544,6 +600,7 @@ class _PickerRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final palette = FxPalette.of(context);
     final hasValue = value != null && value!.isNotEmpty;
+    final placeholderText = placeholder ?? S.of(context).commonPleaseSelect;
     return InkWell(
       onTap: () {
         HapticFeedback.selectionClick();
@@ -560,7 +617,12 @@ class _PickerRow extends StatelessWidget {
               width: 72,
               child: Row(
                 children: [
-                  Text(label, style: FxTypography.label),
+                  Text(
+                    label,
+                    style: FxTypography.label.copyWith(
+                      color: palette.textSecondary,
+                    ),
+                  ),
                   if (required)
                     Text(
                       ' *',
@@ -571,7 +633,7 @@ class _PickerRow extends StatelessWidget {
             ),
             Expanded(
               child: Text(
-                hasValue ? value! : placeholder,
+                hasValue ? value! : placeholderText,
                 textAlign: TextAlign.right,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
@@ -657,7 +719,10 @@ class _TitleRemarkCardState extends State<_TitleRemarkCard> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('标题', style: FxTypography.label),
+          Text(
+            S.of(context).billEditorTitle,
+            style: FxTypography.label.copyWith(color: palette.textSecondary),
+          ),
           const SizedBox(height: FxSpacing.xs),
           TextField(
             controller: _title,
@@ -666,8 +731,10 @@ class _TitleRemarkCardState extends State<_TitleRemarkCard> {
               isDense: true,
               border: InputBorder.none,
               hintText: widget.state.firstCategoryName.isEmpty
-                  ? '请输入标题'
-                  : '默认「${widget.state.firstCategoryName}」',
+                  ? S.of(context).billEditorTitleHint
+                  : S.of(context).billEditorTitleDefault(
+                      widget.state.firstCategoryName,
+                    ),
               hintStyle: FxTypography.body.copyWith(
                 color: palette.textTertiary,
               ),
@@ -675,7 +742,10 @@ class _TitleRemarkCardState extends State<_TitleRemarkCard> {
             onChanged: (v) => bloc.add(TitleChanged(v)),
           ),
           Divider(height: FxSpacing.lg, color: palette.border),
-          const Text('备注', style: FxTypography.label),
+          Text(
+            S.of(context).billEditorRemark,
+            style: FxTypography.label.copyWith(color: palette.textSecondary),
+          ),
           const SizedBox(height: FxSpacing.xs),
           TextField(
             controller: _remark,
@@ -685,7 +755,7 @@ class _TitleRemarkCardState extends State<_TitleRemarkCard> {
             decoration: InputDecoration(
               isDense: true,
               border: InputBorder.none,
-              hintText: '添加备注…',
+              hintText: S.of(context).billEditorRemarkHint,
               hintStyle: FxTypography.body.copyWith(
                 color: palette.textTertiary,
               ),
@@ -715,8 +785,16 @@ class _TogglesCard extends StatelessWidget {
           SwitchListTile.adaptive(
             contentPadding: EdgeInsets.zero,
             activeColor: palette.primary,
-            title: const Text('已确认', style: FxTypography.bodyStrong),
-            subtitle: const Text('未确认账单不计入余额', style: FxTypography.caption),
+            title: Text(
+              S.of(context).billEditorConfirmed,
+              style: FxTypography.bodyStrong,
+            ),
+            subtitle: Text(
+              S.of(context).billEditorConfirmedSubtitle,
+              style: FxTypography.caption.copyWith(
+                color: palette.textTertiary,
+              ),
+            ),
             value: state.confirm,
             onChanged: (v) => bloc.add(ConfirmToggled(v)),
           ),
@@ -724,8 +802,16 @@ class _TogglesCard extends StatelessWidget {
           SwitchListTile.adaptive(
             contentPadding: EdgeInsets.zero,
             activeColor: palette.primary,
-            title: const Text('计入统计', style: FxTypography.bodyStrong),
-            subtitle: const Text('关闭后不参与收支统计', style: FxTypography.caption),
+            title: Text(
+              S.of(context).billEditorInclude,
+              style: FxTypography.bodyStrong,
+            ),
+            subtitle: Text(
+              S.of(context).billEditorIncludeSubtitle,
+              style: FxTypography.caption.copyWith(
+                color: palette.textTertiary,
+              ),
+            ),
             value: state.include,
             onChanged: (v) => bloc.add(IncludeToggled(v)),
           ),
@@ -754,7 +840,9 @@ class _SubmitBar extends StatelessWidget {
         FxSpacing.md + MediaQuery.of(context).padding.bottom,
       ),
       child: FxButton(
-        label: state.mode == 'edit' ? '保存修改' : '保存账单',
+        label: state.mode == 'edit'
+            ? S.of(context).billEditorSaveEdit
+            : S.of(context).billEditorSaveNew,
         expand: true,
         loading: submitting,
         onPressed: submitting

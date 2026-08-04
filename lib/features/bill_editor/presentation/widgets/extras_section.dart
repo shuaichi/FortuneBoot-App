@@ -8,6 +8,7 @@ import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
+import 'package:fortuneboot/generated/l10n.dart';
 
 /// 附加费用区（仅支出/转账）：手续费1/优惠2 + 金额 + 方向(转账时)。
 class ExtrasSection extends StatelessWidget {
@@ -29,14 +30,19 @@ class ExtrasSection extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const Padding(
-            padding: EdgeInsets.fromLTRB(
+          Padding(
+            padding: const EdgeInsets.fromLTRB(
               FxSpacing.lg,
               FxSpacing.md,
               FxSpacing.lg,
               FxSpacing.sm,
             ),
-            child: Text('附加费用', style: FxTypography.label),
+            child: Text(
+              S.of(context).billEditorExtras,
+              style: FxTypography.label.copyWith(
+                color: palette.textSecondary,
+              ),
+            ),
           ),
           for (int i = 0; i < state.extras.length; i++)
             _ExtraRowEditor(
@@ -65,7 +71,7 @@ class ExtrasSection extends StatelessWidget {
                     Icon(Icons.add_rounded, size: 18, color: palette.primary),
                     const SizedBox(width: FxSpacing.xs),
                     Text(
-                      '添加手续费/优惠',
+                      S.of(context).billEditorAddExtra,
                       style: FxTypography.bodyStrong.copyWith(
                         color: palette.primary,
                       ),
@@ -114,7 +120,10 @@ class _ExtraRowEditor extends StatelessWidget {
                 child: FxSegmented<int>(
                   value: row.extraType,
                   onChanged: (v) => onChanged(row.copyWith(extraType: v)),
-                  segments: const [FxSegment(1, '手续费'), FxSegment(2, '优惠')],
+                  segments: [
+                    FxSegment(1, S.of(context).billEditorFee),
+                    FxSegment(2, S.of(context).billEditorDiscount),
+                  ],
                 ),
               ),
               IconButton(
@@ -140,7 +149,10 @@ class _ExtraRowEditor extends StatelessWidget {
             FxSegmented<int>(
               value: row.accountSide,
               onChanged: (v) => onChanged(row.copyWith(accountSide: v)),
-              segments: const [FxSegment(1, '转出账户'), FxSegment(2, '转入账户')],
+              segments: [
+                FxSegment(1, S.of(context).billEditorTransferOutAccount),
+                FxSegment(2, S.of(context).billEditorTransferInAccount),
+              ],
             ),
           ],
           Divider(height: FxSpacing.lg, color: palette.border),

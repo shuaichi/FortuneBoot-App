@@ -15,6 +15,7 @@ import 'package:fortuneboot/fx/components/fx_state_view.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
+import 'package:fortuneboot/generated/l10n.dart';
 
 /// 分类管理页（树形，支出/收入两大组，Routes.categories）。
 class CategoriesPage extends StatefulWidget {
@@ -43,12 +44,14 @@ class _CategoriesPageState extends State<CategoriesPage> {
   }) async {
     final bookId = _bookId;
     if (bookId == null) {
-      _showToast('请先选择账本');
+      _showToast(S.of(context).categoriesSelectBookFirst);
       return;
     }
     final changed = await FxSheet.show<bool>(
       context,
-      title: category == null ? '新增分类' : '编辑分类',
+      title: category == null
+          ? S.of(context).categoriesAdd
+          : S.of(context).categoriesEdit,
       expand: true,
       child: CategoryFormSheet(
         service: _service,
@@ -85,9 +88,11 @@ class _CategoriesPageState extends State<CategoriesPage> {
     if (toRecycle) {
       final ok = await confirmManageAction(
         context,
-        title: '移入回收站',
-        message: '确定将「${node.categoryName ?? '该分类'}」移入回收站吗？',
-        confirmLabel: '移入',
+        title: S.of(context).categoriesMoveToRecycleBin,
+        message: S.of(context).categoriesMoveToRecycleBinConfirm(
+          node.categoryName ?? S.of(context).categoriesThisCategory,
+        ),
+        confirmLabel: S.of(context).categoriesMove,
       );
       if (ok != true) return;
     }
@@ -111,9 +116,11 @@ class _CategoriesPageState extends State<CategoriesPage> {
     if (bookId == null || node.categoryId == null) return;
     final ok = await confirmManageAction(
       context,
-      title: '彻底删除',
-      message: '确定彻底删除「${node.categoryName ?? '该分类'}」吗？此操作不可撤销。',
-      confirmLabel: '删除',
+      title: S.of(context).categoriesDeletePermanently,
+      message: S.of(context).categoriesDeletePermanentlyConfirm(
+        node.categoryName ?? S.of(context).categoriesThisCategory,
+      ),
+      confirmLabel: S.of(context).categoriesDelete,
     );
     if (ok != true) return;
     try {
@@ -141,8 +148,8 @@ class _CategoriesPageState extends State<CategoriesPage> {
         },
         builder: (context, state) {
           return ManageScaffold(
-            title: '分类管理',
-            searchHint: '搜索分类名称',
+            title: S.of(context).categoriesTitle,
+            searchHint: S.of(context).categoriesSearchHint,
             onAdd: () => _openForm(),
             onSearch: (kw) => _bloc.add(CategoriesSearchChanged(kw)),
             tab: state.tab,
@@ -156,7 +163,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
 
   Widget _buildBody(CategoriesState state, int? bookId) {
     if (bookId == null) {
-      return FxStateView.empty(message: '请先选择账本');
+      return FxStateView.empty(message: S.of(context).categoriesSelectBookFirst);
     }
     switch (state.status) {
       case CategoriesStatus.initial:
@@ -178,7 +185,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
     final income = state.incomeRoots;
     if (expense.isEmpty && income.isEmpty) {
       return FxStateView.empty(
-        message: '暂无分类，点击右上角 + 新增',
+        message: S.of(context).categoriesEmpty,
         icon: Icons.category_outlined,
       );
     }
@@ -196,9 +203,21 @@ class _CategoriesPageState extends State<CategoriesPage> {
         ),
         children: [
           if (expense.isNotEmpty)
-            _section('支出分类', finance.expense, expense, 1, inRecycle),
+            _section(
+              S.of(context).categoriesExpenseSection,
+              finance.expense,
+              expense,
+              1,
+              inRecycle,
+            ),
           if (income.isNotEmpty)
-            _section('收入分类', finance.income, income, 2, inRecycle),
+            _section(
+              S.of(context).categoriesIncomeSection,
+              finance.income,
+              income,
+              2,
+              inRecycle,
+            ),
         ],
       ),
     );
@@ -232,7 +251,12 @@ class _CategoriesPageState extends State<CategoriesPage> {
                 ),
               ),
               const SizedBox(width: FxSpacing.sm),
-              Text(title, style: FxTypography.label),
+              Text(
+                title,
+                style: FxTypography.label.copyWith(
+                  color: FxPalette.of(context).textSecondary,
+                ),
+              ),
             ],
           ),
         ),

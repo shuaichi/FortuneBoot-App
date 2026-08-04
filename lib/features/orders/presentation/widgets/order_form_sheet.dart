@@ -7,6 +7,7 @@ import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
+import 'package:fortuneboot/generated/l10n.dart';
 
 /// 单据新增/编辑表单（标题 / 类型 / 备注）。
 class OrderFormSheet extends StatefulWidget {
@@ -57,7 +58,7 @@ class _OrderFormSheetState extends State<OrderFormSheet> {
   Future<void> _submit() async {
     final title = _titleCtrl.text.trim();
     if (title.isEmpty) {
-      setState(() => _error = '请输入单据标题');
+      setState(() => _error = S.of(context).ordersTitleRequired);
       return;
     }
     setState(() {
@@ -106,13 +107,13 @@ class _OrderFormSheetState extends State<OrderFormSheet> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          _label('单据标题'),
+          _label(S.of(context).ordersOrderTitle),
           TextField(
             controller: _titleCtrl,
-            decoration: _dec(context, '如：8月差旅垫付'),
+            decoration: _dec(context, S.of(context).ordersTitleHint),
           ),
           const SizedBox(height: FxSpacing.md),
-          _label('类型'),
+          _label(S.of(context).ordersType),
           Wrap(
             spacing: FxSpacing.sm,
             children: FinanceOrderType.values.map((t) {
@@ -152,8 +153,11 @@ class _OrderFormSheetState extends State<OrderFormSheet> {
             ),
           ),
           const SizedBox(height: FxSpacing.md),
-          _label('备注（可选）'),
-          TextField(controller: _remarkCtrl, decoration: _dec(context, '备注')),
+          _label(S.of(context).ordersRemarkOptional),
+          TextField(
+            controller: _remarkCtrl,
+            decoration: _dec(context, S.of(context).ordersRemarkHint),
+          ),
           if (_error != null) ...[
             const SizedBox(height: FxSpacing.sm),
             Text(
@@ -163,7 +167,9 @@ class _OrderFormSheetState extends State<OrderFormSheet> {
           ],
           const SizedBox(height: FxSpacing.xl),
           FxButton(
-            label: widget.isEdit ? '保存修改' : '创建单据',
+            label: widget.isEdit
+                ? S.of(context).ordersSaveChanges
+                : S.of(context).ordersCreateOrder,
             expand: true,
             loading: _submitting,
             onPressed: _submitting ? null : _submit,
@@ -175,7 +181,12 @@ class _OrderFormSheetState extends State<OrderFormSheet> {
 
   Widget _label(String text) => Padding(
     padding: const EdgeInsets.only(bottom: FxSpacing.xs),
-    child: Text(text, style: FxTypography.label),
+    child: Text(
+      text,
+      style: FxTypography.label.copyWith(
+        color: FxPalette.of(context).textSecondary,
+      ),
+    ),
   );
 
   InputDecoration _dec(BuildContext context, String hint) => InputDecoration(

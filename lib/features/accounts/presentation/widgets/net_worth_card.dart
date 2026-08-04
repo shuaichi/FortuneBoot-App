@@ -6,6 +6,7 @@ import 'package:fortuneboot/fx/components/fx_progress_bar.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
+import 'package:fortuneboot/generated/l10n.dart';
 
 /// 净资产总览大卡：净资产大数字 + 资产(绿)/负债(红)双进度条。
 class NetWorthCard extends StatelessWidget {
@@ -26,7 +27,7 @@ class NetWorthCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const FxCardLabel('净资产'),
+          FxCardLabel(S.of(context).accountsNetWorth),
           const SizedBox(height: FxSpacing.sm),
           FxMoneyText(
             amount: assets.netAssets,
@@ -36,15 +37,33 @@ class NetWorthCard extends StatelessWidget {
             color: palette.textPrimary,
           ),
           const SizedBox(height: FxSpacing.lg),
-          _bar('资产', assets.totalAssets, assetRatio, finance.income),
+          _bar(
+            context,
+            S.of(context).accountsAssets,
+            assets.totalAssets,
+            assetRatio,
+            finance.income,
+          ),
           const SizedBox(height: FxSpacing.md),
-          _bar('负债', assets.totalLiabilities, liabRatio, finance.expense),
+          _bar(
+            context,
+            S.of(context).accountsLiabilities,
+            assets.totalLiabilities,
+            liabRatio,
+            finance.expense,
+          ),
         ],
       ),
     );
   }
 
-  Widget _bar(String label, double amount, double ratio, Color color) {
+  Widget _bar(
+    BuildContext context,
+    String label,
+    double amount,
+    double ratio,
+    Color color,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -62,7 +81,12 @@ class NetWorthCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: FxSpacing.sm),
-                Text(label, style: FxTypography.label),
+                Text(
+                  label,
+                  style: FxTypography.label.copyWith(
+                    color: FxPalette.of(context).textSecondary,
+                  ),
+                ),
               ],
             ),
             FxMoneyText(

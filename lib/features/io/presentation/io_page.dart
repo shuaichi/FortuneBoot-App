@@ -16,6 +16,7 @@ import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
+import 'package:fortuneboot/generated/l10n.dart';
 import 'package:fortuneboot/util/web_download_stub.dart'
     if (dart.library.html) 'package:fortuneboot/util/web_download.dart'
     as webdl;
@@ -47,34 +48,36 @@ class _IoPageState extends State<IoPage> {
   /// 保存字节流：Web 触发下载；移动端存临时目录并返回路径。
   Future<String?> _saveBytes(BytesResult res) async {
     if (res.bytes.isEmpty) return null;
+    final s = S.of(context);
     if (kIsWeb) {
       final ok = await webdl.downloadBytes(
         res.filename,
         Uint8List.fromList(res.bytes),
         IoService.xlsxMime,
       );
-      return ok ? '已开始下载 ${res.filename}' : null;
+      return ok ? s.ioDownloadStarted(res.filename) : null;
     }
     final dir = await getTemporaryDirectory();
     final path = '${dir.path}/${res.filename}';
     final file = File(path);
     await file.writeAsBytes(res.bytes, flush: true);
-    return '已保存到：$path';
+    return s.ioSavedTo(path);
   }
 
   Future<void> _export() async {
     final bookId = _bookId;
     if (bookId == null) {
-      _showToast('请先选择账本');
+      _showToast(S.of(context).ioSelectBookFirst);
       return;
     }
+    final noDataMsg = S.of(context).ioExportFailedNoData;
     setState(() => _exporting = true);
     try {
       // 最简筛选：仅 bookId。可扩展为携带当前 Bills 页筛选条件。
       final res = await _service.exportBills({'bookId': bookId});
       final msg = await _saveBytes(res);
       if (!mounted) return;
-      _showToast(msg ?? '导出失败：无数据');
+      _showToast(msg ?? noDataMsg);
     } on Object catch (e) {
       if (mounted) _showToast(_err(e));
     } finally {
@@ -85,15 +88,16 @@ class _IoPageState extends State<IoPage> {
   Future<void> _downloadTemplate() async {
     final bookId = _bookId;
     if (bookId == null) {
-      _showToast('请先选择账本');
+      _showToast(S.of(context).ioSelectBookFirst);
       return;
     }
+    final failedMsg = S.of(context).ioDownloadFailed;
     setState(() => _downloadingTemplate = true);
     try {
       final res = await _service.downloadTemplate(bookId);
       final msg = await _saveBytes(res);
       if (!mounted) return;
-      _showToast(msg ?? '下载失败');
+      _showToast(msg ?? failedMsg);
     } on Object catch (e) {
       if (mounted) _showToast(_err(e));
     } finally {
@@ -104,9 +108,10 @@ class _IoPageState extends State<IoPage> {
   Future<void> _import() async {
     final bookId = _bookId;
     if (bookId == null) {
-      _showToast('请先选择账本');
+      _showToast(S.of(context).ioSelectBookFirst);
       return;
     }
+    final readFailedMsg = S.of(context).ioReadFileFailed;
     final picked = await FilePicker.platform.pickFiles(
       type: FileType.custom,
       allowedExtensions: const ['xlsx', 'xls'],
@@ -118,7 +123,7 @@ class _IoPageState extends State<IoPage> {
         file.bytes ??
         (file.path != null ? await File(file.path!).readAsBytes() : null);
     if (bytes == null) {
-      _showToast('读取文件失败');
+      _showToast(readFailedMsg);
       return;
     }
 
@@ -139,14 +144,15 @@ class _IoPageState extends State<IoPage> {
   }
 
   Future<void> _showImportResult(ImportOutcome outcome) async {
+    final downloadFailedMsg = S.of(context).ioDownloadFailed;
     await FxSheet.show<void>(
       context,
-      title: '导入结果',
+      title: S.of(context).ioImportResult,
       child: _ImportResultBody(
         outcome: outcome,
         onDownloadError: (res) async {
           final msg = await _saveBytes(res);
-          if (mounted) _showToast(msg ?? '下载失败');
+          if (mounted) _showToast(msg ?? downloadFailedMsg);
         },
       ),
     );
@@ -168,7 +174,7 @@ class _IoPageState extends State<IoPage> {
             _buildHeader(context),
             Expanded(
               child: bookId == null
-                  ? FxStateView.empty(message: '请先选择账本')
+                  ? FxStateView.empty(message: S.of(context).ioSelectBookFirst)
                   : _buildBody(),
             ),
           ],
@@ -200,7 +206,12 @@ class _IoPageState extends State<IoPage> {
               ),
             ),
           ),
-          const Expanded(child: Text('导入导出', style: FxTypography.title)),
+          Expanded(
+            child: Text(
+              S.of(context).ioTitle,
+              style: FxTypography.title,
+            ),
+          ),
         ],
       ),
     );
@@ -215,9 +226,9 @@ class _IoPageState extends State<IoPage> {
         _actionCard(
           icon: Icons.file_download_outlined,
           tint: finance.income,
-          title: '导出账单 Excel',
-          subtitle: '导出当前账本账单（含筛选，最大 10000 条）',
-          buttonLabel: '导出',
+          title: S.of(context).ioExportBillsTitle,
+          subtitle: S.of(context).ioExportBillsSubtitle,
+          buttonLabel: S.of(context).ioExport,
           loading: _exporting,
           onTap: _export,
         ),
@@ -225,9 +236,9 @@ class _IoPageState extends State<IoPage> {
         _actionCard(
           icon: Icons.description_outlined,
           tint: palette.info,
-          title: '下载导入模板',
-          subtitle: '获取标准 Excel 模板，按格式填写后导入',
-          buttonLabel: '下载模板',
+          title: S.of(context).ioDownloadTemplateTitle,
+          subtitle: S.of(context).ioDownloadTemplateSubtitle,
+          buttonLabel: S.of(context).ioDownloadTemplate,
           loading: _downloadingTemplate,
           onTap: _downloadTemplate,
         ),
@@ -235,9 +246,9 @@ class _IoPageState extends State<IoPage> {
         _actionCard(
           icon: Icons.file_upload_outlined,
           tint: palette.primary,
-          title: '导入账单 Excel',
-          subtitle: '选择 .xlsx 文件上传，导入完成后展示结果',
-          buttonLabel: '选择文件导入',
+          title: S.of(context).ioImportBillsTitle,
+          subtitle: S.of(context).ioImportBillsSubtitle,
+          buttonLabel: S.of(context).ioSelectFileImport,
           loading: _importing,
           onTap: _import,
         ),
@@ -276,7 +287,12 @@ class _IoPageState extends State<IoPage> {
                   children: [
                     Text(title, style: FxTypography.bodyStrong),
                     const SizedBox(height: 2),
-                    Text(subtitle, style: FxTypography.caption),
+                    Text(
+                      subtitle,
+                      style: FxTypography.caption.copyWith(
+                        color: FxPalette.of(context).textTertiary,
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -324,9 +340,24 @@ class _ImportResultBody extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                _stat('成功', result.successCount, palette.success),
-                _stat('失败', result.failCount, palette.danger),
-                _stat('共', result.total, palette.textPrimary),
+                _stat(
+                  context,
+                  S.of(context).ioSuccess,
+                  result.successCount,
+                  palette.success,
+                ),
+                _stat(
+                  context,
+                  S.of(context).ioFail,
+                  result.failCount,
+                  palette.danger,
+                ),
+                _stat(
+                  context,
+                  S.of(context).ioTotal,
+                  result.total,
+                  palette.textPrimary,
+                ),
               ],
             ),
             if ((result.message ?? '').isNotEmpty) ...[
@@ -334,13 +365,13 @@ class _ImportResultBody extends StatelessWidget {
               Text(result.message!, style: FxTypography.body),
             ],
           ] else ...[
-            const Text(
-              '导入失败，存在错误行。可下载错误明细 Excel 查看具体原因。',
+            Text(
+              S.of(context).ioImportFailedWithErrors,
               style: FxTypography.body,
             ),
             const SizedBox(height: FxSpacing.lg),
             FxButton(
-              label: '下载错误明细',
+              label: S.of(context).ioDownloadErrorDetails,
               expand: true,
               icon: Icons.download_rounded,
               onPressed: () {
@@ -351,7 +382,7 @@ class _ImportResultBody extends StatelessWidget {
           ],
           const SizedBox(height: FxSpacing.lg),
           FxButton.tonal(
-            label: '完成',
+            label: S.of(context).ioDone,
             expand: true,
             onPressed: () => Navigator.of(context).maybePop(),
           ),
@@ -360,12 +391,17 @@ class _ImportResultBody extends StatelessWidget {
     );
   }
 
-  Widget _stat(String label, int value, Color color) {
+  Widget _stat(BuildContext context, String label, int value, Color color) {
     return Column(
       children: [
         Text('$value', style: FxTypography.title.copyWith(color: color)),
         const SizedBox(height: FxSpacing.xs),
-        Text(label, style: FxTypography.caption),
+        Text(
+          label,
+          style: FxTypography.caption.copyWith(
+            color: FxPalette.of(context).textTertiary,
+          ),
+        ),
       ],
     );
   }

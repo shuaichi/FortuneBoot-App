@@ -7,6 +7,7 @@ import 'package:fortuneboot/fx/components/fx_button.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
+import 'package:fortuneboot/generated/l10n.dart';
 
 /// 成员新增/编辑表单。字段：名称 / 排序 / 备注 / 启用。
 class MemberFormSheet extends StatefulWidget {
@@ -56,7 +57,7 @@ class _MemberFormSheetState extends State<MemberFormSheet> {
 
   Future<void> _submit() async {
     if (_nameCtrl.text.trim().isEmpty) {
-      setState(() => _error = '请输入成员名称');
+      setState(() => _error = S.of(context).membersNameRequired);
       return;
     }
     setState(() {
@@ -104,27 +105,36 @@ class _MemberFormSheetState extends State<MemberFormSheet> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const ManageFieldLabel('成员名称'),
+          ManageFieldLabel(S.of(context).membersNameLabel),
           TextField(
             controller: _nameCtrl,
-            decoration: manageInputDecoration(context, '如：张三'),
+            decoration: manageInputDecoration(
+              context,
+              S.of(context).membersNameHint,
+            ),
           ),
           const SizedBox(height: FxSpacing.md),
-          const ManageFieldLabel('排序（可选）'),
+          ManageFieldLabel(S.of(context).membersSortLabel),
           TextField(
             controller: _sortCtrl,
             keyboardType: TextInputType.number,
-            decoration: manageInputDecoration(context, '数字越小越靠前'),
+            decoration: manageInputDecoration(
+              context,
+              S.of(context).membersSortHint,
+            ),
           ),
           const SizedBox(height: FxSpacing.md),
-          const ManageFieldLabel('备注（可选）'),
+          ManageFieldLabel(S.of(context).membersRemarkLabel),
           TextField(
             controller: _remarkCtrl,
-            decoration: manageInputDecoration(context, '备注'),
+            decoration: manageInputDecoration(
+              context,
+              S.of(context).membersRemarkHint,
+            ),
           ),
           const SizedBox(height: FxSpacing.md),
           ManageSwitchRow(
-            label: '启用',
+            label: S.of(context).membersEnable,
             value: _enable,
             onChanged: (v) => setState(() => _enable = v),
           ),
@@ -137,7 +147,9 @@ class _MemberFormSheetState extends State<MemberFormSheet> {
           ],
           const SizedBox(height: FxSpacing.xl),
           FxButton(
-            label: widget.isEdit ? '保存修改' : '创建成员',
+            label: widget.isEdit
+                ? S.of(context).membersSaveEdit
+                : S.of(context).membersCreate,
             expand: true,
             loading: _submitting,
             onPressed: _submitting ? null : _submit,

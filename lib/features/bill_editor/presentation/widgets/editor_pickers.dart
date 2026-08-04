@@ -4,6 +4,7 @@ import 'package:fortuneboot/fx/components/fx_sheet.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
+import 'package:fortuneboot/generated/l10n.dart';
 
 /// 单选选项弹窗。返回所选项（可清除时返回 null 表示清空）。
 Future<T?> showOptionPicker<T>(
@@ -21,9 +22,9 @@ Future<T?> showOptionPicker<T>(
     title: title,
     expand: options.length > 8,
     child: options.isEmpty
-        ? const Padding(
-            padding: EdgeInsets.all(FxSpacing.xxxl),
-            child: Center(child: Text('暂无可选项')),
+        ? Padding(
+            padding: const EdgeInsets.all(FxSpacing.xxxl),
+            child: Center(child: Text(S.of(context).billEditorNoOptions)),
           )
         : ListView(
             shrinkWrap: true,
@@ -32,7 +33,7 @@ Future<T?> showOptionPicker<T>(
               if (allowClear)
                 ListTile(
                   title: Text(
-                    '不选择',
+                    S.of(context).billEditorNoSelection,
                     style: FxTypography.body.copyWith(
                       color: palette.textSecondary,
                     ),
@@ -110,9 +111,9 @@ class _MultiSelectBodyState<T> extends State<_MultiSelectBody<T>> {
   @override
   Widget build(BuildContext context) {
     if (widget.options.isEmpty) {
-      return const Padding(
-        padding: EdgeInsets.all(FxSpacing.xxxl),
-        child: Center(child: Text('暂无可选项')),
+      return Padding(
+        padding: const EdgeInsets.all(FxSpacing.xxxl),
+        child: Center(child: Text(S.of(context).billEditorNoOptions)),
       );
     }
     return Column(
@@ -143,7 +144,7 @@ class _MultiSelectBodyState<T> extends State<_MultiSelectBody<T>> {
         Padding(
           padding: const EdgeInsets.all(FxSpacing.lg),
           child: FxButton(
-            label: '确定',
+            label: S.of(context).ok,
             expand: true,
             onPressed: () {
               final result = widget.options

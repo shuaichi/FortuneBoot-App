@@ -4,6 +4,7 @@ import 'package:fortuneboot/fx/components/fx_card.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
+import 'package:fortuneboot/generated/l10n.dart';
 
 /// 卡片内区块状态包装：loading→紧凑转圈，error→紧凑重试，ready→交给 [builder]。
 /// 统一承载在 [FxCard] 内。使用紧凑态以适配 Bento 小格,避免溢出。
@@ -34,7 +35,7 @@ class DashboardCardShell<T> extends StatelessWidget {
           ),
         ),
         SectionStatus.error => _CompactError(
-          message: section.error ?? '加载失败',
+          message: section.error ?? S.of(context).dashboardLoadFailed,
           onRetry: onRetry,
         ),
         SectionStatus.ready => builder(section.data as T),
@@ -59,7 +60,9 @@ class _CompactError extends StatelessWidget {
           const SizedBox(height: FxSpacing.xs),
           Text(
             message,
-            style: FxTypography.caption,
+            style: FxTypography.caption.copyWith(
+              color: FxPalette.of(context).textTertiary,
+            ),
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
             textAlign: TextAlign.center,
@@ -68,7 +71,7 @@ class _CompactError extends StatelessWidget {
           GestureDetector(
             onTap: onRetry,
             child: Text(
-              '重试',
+              S.of(context).commonRetry,
               style: FxTypography.caption.copyWith(
                 color: palette.primary,
                 fontWeight: FontWeight.w600,

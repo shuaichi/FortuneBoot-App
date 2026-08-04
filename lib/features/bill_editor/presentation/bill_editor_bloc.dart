@@ -411,7 +411,10 @@ class BillEditorBloc extends Bloc<BillEditorEvent, BillEditorState> {
     final error = state.validationError;
     if (error != null) {
       emit(
-        state.copyWith(submitStatus: SubmitStatus.failure, submitError: error),
+        state.copyWith(
+          submitStatus: SubmitStatus.failure,
+          validationFailure: error,
+        ),
       );
       return;
     }

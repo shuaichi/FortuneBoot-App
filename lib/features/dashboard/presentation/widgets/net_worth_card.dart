@@ -12,6 +12,7 @@ import 'package:fortuneboot/fx/components/fx_progress_bar.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
+import 'package:fortuneboot/generated/l10n.dart';
 
 /// ① 净资产大卡（跨2列、2行高）：大号净资产 + 资产(绿)/负债(红)双进度条。
 /// 新用户空态：引导"开始记第一笔 →"。
@@ -44,14 +45,14 @@ class NetWorthCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const FxCardLabel('净资产'),
+            FxCardLabel(S.of(context).dashboardNetWorth),
             const Spacer(),
-            const Text('还没有记录', style: FxTypography.title),
+            Text(S.of(context).dashboardNoRecordsYet, style: FxTypography.title),
             const SizedBox(height: FxSpacing.xs),
             Row(
               children: [
                 Text(
-                  '开始记第一笔',
+                  S.of(context).dashboardStartFirstBill,
                   style: FxTypography.body.copyWith(
                     color: palette.primary,
                     fontWeight: FontWeight.w600,
@@ -81,7 +82,7 @@ class NetWorthCard extends StatelessWidget {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const FxCardLabel('净资产'),
+            FxCardLabel(S.of(context).dashboardNetWorth),
             const SizedBox(height: FxSpacing.sm),
             FxMoneyText(
               amount: data.netAssets,
@@ -93,7 +94,8 @@ class NetWorthCard extends StatelessWidget {
             ),
             const Spacer(),
             _bar(
-              '资产',
+              context,
+              S.of(context).dashboardAssets,
               data.totalAssets,
               assetRatio,
               palette.success,
@@ -101,7 +103,8 @@ class NetWorthCard extends StatelessWidget {
             ),
             const SizedBox(height: FxSpacing.md),
             _bar(
-              '负债',
+              context,
+              S.of(context).dashboardLiabilities,
               data.totalLiabilities,
               liabRatio,
               palette.danger,
@@ -114,6 +117,7 @@ class NetWorthCard extends StatelessWidget {
   }
 
   Widget _bar(
+    BuildContext context,
     String label,
     double amount,
     double ratio,
@@ -126,7 +130,12 @@ class NetWorthCard extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(label, style: FxTypography.caption),
+            Text(
+              label,
+              style: FxTypography.caption.copyWith(
+                color: FxPalette.of(context).textTertiary,
+              ),
+            ),
             FxMoneyText(
               amount: amount,
               currencyCode: currencyCode,

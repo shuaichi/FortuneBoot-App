@@ -7,6 +7,7 @@ import 'package:fortuneboot/fx/components/fx_tag_chip.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
+import 'package:fortuneboot/generated/l10n.dart';
 import 'package:intl/intl.dart';
 
 /// 单条账单行：左图标徽标 + 标题/副行，右金额/时间/附件/标签。
@@ -32,12 +33,13 @@ class BillTile extends StatelessWidget {
     toAccountId: bill.toAccountId,
   );
 
-  String get _title {
+  String _titleOf(BuildContext context) {
     final t = bill.title;
     if (t != null && t.isNotEmpty) return t;
     final cat = bill.primaryCategoryName;
     if (cat.isNotEmpty) return cat;
-    return FxBillType.fromValue(bill.billType)?.label ?? '账单';
+    return FxBillType.fromValue(bill.billType)?.localizedLabel(context) ??
+        S.of(context).billTypeFallback;
   }
 
   /// 副行：转账显"转出 → 转入",其余显账户名(+ 主分类)。
@@ -83,7 +85,7 @@ class BillTile extends StatelessWidget {
                     children: [
                       Flexible(
                         child: Text(
-                          _title,
+                          _titleOf(context),
                           style: FxTypography.bodyStrong,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -99,7 +101,7 @@ class BillTile extends StatelessWidget {
                       ],
                       if (!bill.confirm) ...[
                         const SizedBox(width: FxSpacing.xs),
-                        _flagDot('待确认', palette.warning),
+                        _flagDot(S.of(context).billsPendingConfirm, palette.warning),
                       ],
                     ],
                   ),
@@ -107,7 +109,9 @@ class BillTile extends StatelessWidget {
                     const SizedBox(height: 2),
                     Text(
                       _subtitle,
-                      style: FxTypography.caption,
+                      style: FxTypography.caption.copyWith(
+                        color: FxPalette.of(context).textTertiary,
+                      ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -140,7 +144,9 @@ class BillTile extends StatelessWidget {
                   const SizedBox(height: 2),
                   Text(
                     _timeFormat.format(bill.tradeTime!),
-                    style: FxTypography.caption,
+                    style: FxTypography.caption.copyWith(
+                      color: FxPalette.of(context).textTertiary,
+                    ),
                   ),
                 ],
               ],

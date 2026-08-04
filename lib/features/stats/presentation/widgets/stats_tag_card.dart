@@ -6,6 +6,7 @@ import 'package:fortuneboot/features/stats/presentation/widgets/stats_card_shell
 import 'package:fortuneboot/features/stats/presentation/widgets/stats_palette.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
+import 'package:fortuneboot/generated/l10n.dart';
 import 'package:intl/intl.dart';
 
 /// ③ 标签柱图：横向柱状，Top N（默认 10）。
@@ -20,15 +21,20 @@ class StatsTagCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StatsCardShell<List<BarItem>>(
-      label: '标签',
+      label: S.of(context).statsTags,
       section: section,
       onRetry: onRetry,
       height: 260,
       builder: (items) {
         final positive = items.where((e) => e.value > 0).take(_topN).toList();
         if (positive.isEmpty) {
-          return const Center(
-            child: Text('本期暂无记录', style: FxTypography.caption),
+          return Center(
+            child: Text(
+              S.of(context).statsNoRecordsThisPeriod,
+              style: FxTypography.caption.copyWith(
+                color: FxPalette.of(context).textTertiary,
+              ),
+            ),
           );
         }
         return _Bars(items: positive);
@@ -75,8 +81,12 @@ class _Bars extends StatelessWidget {
                   child: SizedBox(
                     width: 48,
                     child: Text(
-                      items[i].name.isEmpty ? '未命名' : items[i].name,
-                      style: FxTypography.caption,
+                      items[i].name.isEmpty
+                          ? S.of(context).statsUnnamed
+                          : items[i].name,
+                      style: FxTypography.caption.copyWith(
+                        color: palette.textTertiary,
+                      ),
                       textAlign: TextAlign.center,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,

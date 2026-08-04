@@ -13,6 +13,7 @@ import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
+import 'package:fortuneboot/generated/l10n.dart';
 
 /// 分组协作成员管理页（Routes.groupUsers）。
 ///
@@ -58,17 +59,17 @@ class _GroupUsersPageState extends State<GroupUsersPage> {
   Future<void> _invite() async {
     final groupId = _groupId;
     if (groupId == null) {
-      _showToast('请先选择分组');
+      _showToast(S.of(context).groupUsersSelectGroupFirst);
       return;
     }
     final ok = await FxSheet.show<bool>(
       context,
-      title: '邀请用户',
+      title: S.of(context).groupUsersInviteTitle,
       child: InviteUserSheet(service: _service, groupId: groupId),
     );
     if (ok == true && mounted) {
       _bloc.add(const GroupUsersMutated());
-      _showToast('邀请已发送');
+      _showToast(S.of(context).groupUsersInviteSent);
     }
   }
 
@@ -78,19 +79,21 @@ class _GroupUsersPageState extends State<GroupUsersPage> {
     final ok = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('移除成员'),
-        content: Text('确定将「${user.displayName}」移出该分组吗？'),
+        title: Text(S.of(ctx).groupUsersRemoveTitle),
+        content: Text(
+          S.of(ctx).groupUsersRemoveConfirm(user.displayName),
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
-            child: const Text('取消'),
+            child: Text(S.of(ctx).commonCancel),
           ),
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(true),
             style: TextButton.styleFrom(
               foregroundColor: FxPalette.of(ctx).danger,
             ),
-            child: const Text('移除'),
+            child: Text(S.of(ctx).groupUsersRemove),
           ),
         ],
       ),
@@ -155,7 +158,9 @@ class _GroupUsersPageState extends State<GroupUsersPage> {
           ),
           Expanded(
             child: Text(
-              groupName == null ? '成员管理' : '成员管理 · $groupName',
+              groupName == null
+                  ? S.of(context).groupUsersTitle
+                  : S.of(context).groupUsersTitleWithName(groupName),
               style: FxTypography.title,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
@@ -163,7 +168,7 @@ class _GroupUsersPageState extends State<GroupUsersPage> {
           ),
           if (isOwner)
             FxButton.text(
-              label: '邀请',
+              label: S.of(context).groupUsersInvite,
               icon: Icons.person_add_alt_1_rounded,
               onPressed: _invite,
             ),
@@ -174,7 +179,7 @@ class _GroupUsersPageState extends State<GroupUsersPage> {
 
   Widget _buildBody(GroupUsersState state, bool isOwner) {
     if (_groupId == null) {
-      return FxStateView.empty(message: '请先选择分组');
+      return FxStateView.empty(message: S.of(context).groupUsersSelectGroupFirst);
     }
     switch (state.status) {
       case GroupUsersStatus.initial:
@@ -187,7 +192,7 @@ class _GroupUsersPageState extends State<GroupUsersPage> {
         );
       case GroupUsersStatus.empty:
         return FxStateView.empty(
-          message: '该分组暂无成员',
+          message: S.of(context).groupUsersEmpty,
           icon: Icons.group_outlined,
         );
       case GroupUsersStatus.loaded:
@@ -236,7 +241,9 @@ class _GroupUsersPageState extends State<GroupUsersPage> {
                     const SizedBox(height: 2),
                     Text(
                       '@${user.username}',
-                      style: FxTypography.caption,
+                      style: FxTypography.caption.copyWith(
+                        color: palette.textTertiary,
+                      ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),

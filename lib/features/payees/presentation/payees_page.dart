@@ -13,6 +13,7 @@ import 'package:fortuneboot/features/payees/presentation/widgets/payee_form_shee
 import 'package:fortuneboot/fx/components/fx_sheet.dart';
 import 'package:fortuneboot/fx/components/fx_state_view.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
+import 'package:fortuneboot/generated/l10n.dart';
 
 /// 交易对象管理页（扁平列表，Routes.payees）。
 class PayeesPage extends StatefulWidget {
@@ -37,12 +38,12 @@ class _PayeesPageState extends State<PayeesPage> {
   Future<void> _openForm({FortunePayeeVo? payee}) async {
     final bookId = _bookId;
     if (bookId == null) {
-      _showToast('请先选择账本');
+      _showToast(S.of(context).payeesSelectBookFirst);
       return;
     }
     final changed = await FxSheet.show<bool>(
       context,
-      title: payee == null ? '新增交易对象' : '编辑交易对象',
+      title: payee == null ? S.of(context).payeesAdd : S.of(context).payeesEdit,
       expand: true,
       child: PayeeFormSheet(
         service: _service,
@@ -81,9 +82,11 @@ class _PayeesPageState extends State<PayeesPage> {
     if (toRecycle) {
       final ok = await confirmManageAction(
         context,
-        title: '移入回收站',
-        message: '确定将「${payee.payeeName ?? '该交易对象'}」移入回收站吗？',
-        confirmLabel: '移入',
+        title: S.of(context).payeesMoveToRecycleBin,
+        message: S.of(context).payeesMoveToRecycleBinConfirm(
+          payee.payeeName ?? S.of(context).payeesThisPayee,
+        ),
+        confirmLabel: S.of(context).payeesMove,
       );
       if (ok != true) return;
     }
@@ -107,9 +110,11 @@ class _PayeesPageState extends State<PayeesPage> {
     if (bookId == null || payee.payeeId == null) return;
     final ok = await confirmManageAction(
       context,
-      title: '彻底删除',
-      message: '确定彻底删除「${payee.payeeName ?? '该交易对象'}」吗？此操作不可撤销。',
-      confirmLabel: '删除',
+      title: S.of(context).payeesDeletePermanently,
+      message: S.of(context).payeesDeletePermanentlyConfirm(
+        payee.payeeName ?? S.of(context).payeesThisPayee,
+      ),
+      confirmLabel: S.of(context).payeesDelete,
     );
     if (ok != true) return;
     try {
@@ -137,8 +142,8 @@ class _PayeesPageState extends State<PayeesPage> {
         },
         builder: (context, state) {
           return ManageScaffold(
-            title: '交易对象',
-            searchHint: '搜索交易对象名称',
+            title: S.of(context).payeesTitle,
+            searchHint: S.of(context).payeesSearchHint,
             onAdd: () => _openForm(),
             onSearch: (kw) => _bloc.add(PayeesSearchChanged(kw)),
             tab: state.tab,
@@ -152,7 +157,7 @@ class _PayeesPageState extends State<PayeesPage> {
 
   Widget _buildBody(PayeesState state, int? bookId) {
     if (bookId == null) {
-      return FxStateView.empty(message: '请先选择账本');
+      return FxStateView.empty(message: S.of(context).payeesSelectBookFirst);
     }
     switch (state.status) {
       case PayeesStatus.initial:
@@ -173,7 +178,7 @@ class _PayeesPageState extends State<PayeesPage> {
     final list = state.filtered;
     if (list.isEmpty) {
       return FxStateView.empty(
-        message: '暂无交易对象，点击右上角 + 新增',
+        message: S.of(context).payeesEmpty,
         icon: Icons.storefront_outlined,
       );
     }

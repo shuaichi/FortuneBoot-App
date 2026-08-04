@@ -6,6 +6,7 @@ import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
+import 'package:fortuneboot/generated/l10n.dart';
 
 /// 账单颜色自定义编辑器：为每个语义色提供预设色板选择 + 恢复默认。
 class FinanceColorEditor extends StatefulWidget {
@@ -39,6 +40,7 @@ class _FinanceColorEditorState extends State<FinanceColorEditor> {
   }
 
   Future<void> _save() async {
+    final saveFailedMsg = S.of(context).profileSaveFailedRetry;
     setState(() => _saving = true);
     final ok = await widget.cubit.setFinanceColors(_draft);
     if (!mounted) return;
@@ -48,7 +50,7 @@ class _FinanceColorEditorState extends State<FinanceColorEditor> {
     } else {
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
-        ..showSnackBar(const SnackBar(content: Text('保存失败，请重试')));
+        ..showSnackBar(SnackBar(content: Text(saveFailedMsg)));
     }
   }
 
@@ -65,25 +67,33 @@ class _FinanceColorEditorState extends State<FinanceColorEditor> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
         children: [
-          _row('收入', _draft.income, (c) => _update(_draft.copyWith(income: c))),
           _row(
-            '支出',
+            S.of(context).profileColorIncome,
+            _draft.income,
+            (c) => _update(_draft.copyWith(income: c)),
+          ),
+          _row(
+            S.of(context).profileColorExpense,
             _draft.expense,
             (c) => _update(_draft.copyWith(expense: c)),
           ),
           _row(
-            '转账',
+            S.of(context).profileColorTransfer,
             _draft.transfer,
             (c) => _update(_draft.copyWith(transfer: c)),
           ),
-          _row('调整', _draft.adjust, (c) => _update(_draft.copyWith(adjust: c))),
           _row(
-            '垫付',
+            S.of(context).profileColorAdjust,
+            _draft.adjust,
+            (c) => _update(_draft.copyWith(adjust: c)),
+          ),
+          _row(
+            S.of(context).profileColorAdvance,
             _draft.advance,
             (c) => _update(_draft.copyWith(advance: c)),
           ),
           _row(
-            '报销',
+            S.of(context).profileColorReimburse,
             _draft.reimburse,
             (c) => _update(_draft.copyWith(reimburse: c)),
           ),
@@ -92,7 +102,7 @@ class _FinanceColorEditorState extends State<FinanceColorEditor> {
             children: [
               Expanded(
                 child: FxButton.text(
-                  label: '恢复默认',
+                  label: S.of(context).profileRestoreDefault,
                   expand: true,
                   onPressed: _saving
                       ? null
@@ -102,7 +112,7 @@ class _FinanceColorEditorState extends State<FinanceColorEditor> {
               const SizedBox(width: FxSpacing.md),
               Expanded(
                 child: FxButton(
-                  label: '保存',
+                  label: S.of(context).commonSave,
                   expand: true,
                   loading: _saving,
                   onPressed: _saving ? null : _save,

@@ -9,6 +9,7 @@ import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
+import 'package:fortuneboot/generated/l10n.dart';
 
 /// 多分类拆分区：可增删的「分类 + 金额」行，底部实时总额。
 class CategorySplitSection extends StatelessWidget {
@@ -45,10 +46,17 @@ class CategorySplitSection extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text('分类拆分', style: FxTypography.label),
                 Text(
-                  '共 ${state.categoryRows.length} 项',
-                  style: FxTypography.caption,
+                  S.of(context).billEditorCategorySplit,
+                  style: FxTypography.label.copyWith(
+                    color: palette.textSecondary,
+                  ),
+                ),
+                Text(
+                  S.of(context).billEditorItemCount(state.categoryRows.length),
+                  style: FxTypography.caption.copyWith(
+                    color: palette.textTertiary,
+                  ),
                 ),
               ],
             ),
@@ -70,7 +78,7 @@ class CategorySplitSection extends StatelessWidget {
                       ? const {}
                       : {state.categoryRows[i].categoryId! as Object},
                   leafOnly: true,
-                  title: '选择分类',
+                  title: S.of(context).billEditorSelectCategory,
                 );
                 if (picked != null && picked.isNotEmpty) {
                   final c = picked.first;
@@ -100,7 +108,7 @@ class CategorySplitSection extends StatelessWidget {
                     Icon(Icons.add_rounded, size: 18, color: palette.primary),
                     const SizedBox(width: FxSpacing.xs),
                     Text(
-                      '添加分类',
+                      S.of(context).billEditorAddCategory,
                       style: FxTypography.bodyStrong.copyWith(
                         color: palette.primary,
                       ),
@@ -164,7 +172,9 @@ class _CategoryRow extends StatelessWidget {
                   children: [
                     Expanded(
                       child: Text(
-                        hasCat ? row.categoryName! : '选择分类',
+                        hasCat
+                            ? row.categoryName!
+                            : S.of(context).billEditorSelectCategory,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: FxTypography.body.copyWith(

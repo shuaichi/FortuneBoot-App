@@ -9,6 +9,7 @@ import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
+import 'package:fortuneboot/generated/l10n.dart';
 
 /// 回收站：列出 recycleBin=true 的账户，可 putBack / remove。
 /// 有任一变更时 pop(true) 让页面刷新主列表。
@@ -80,9 +81,11 @@ class _RecycleBinSheetState extends State<RecycleBinSheet> {
     if (a.accountId == null) return;
     final ok = await confirmDangerAction(
       context,
-      title: '彻底删除',
-      message: '确定彻底删除「${a.accountName ?? '该账户'}」吗？此操作不可撤销。',
-      confirmLabel: '删除',
+      title: S.of(context).accountsDeletePermanently,
+      message: S.of(context).accountsDeleteConfirm(
+        a.accountName ?? S.of(context).accountsDefaultName,
+      ),
+      confirmLabel: S.of(context).accountsDelete,
     );
     if (ok != true) return;
     try {
@@ -118,7 +121,7 @@ class _RecycleBinSheetState extends State<RecycleBinSheet> {
     }
     if (_accounts.isEmpty) {
       return FxStateView.empty(
-        message: '回收站为空',
+        message: S.of(context).accountsRecycleBinEmpty,
         icon: Icons.delete_outline_rounded,
       );
     }
@@ -148,7 +151,7 @@ class _RecycleBinSheetState extends State<RecycleBinSheet> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  a.accountName ?? '未命名账户',
+                  a.accountName ?? S.of(context).accountsUnnamed,
                   style: FxTypography.bodyStrong,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -163,7 +166,10 @@ class _RecycleBinSheetState extends State<RecycleBinSheet> {
               ],
             ),
           ),
-          TextButton(onPressed: () => _putBack(a), child: const Text('移出')),
+          TextButton(
+            onPressed: () => _putBack(a),
+            child: Text(S.of(context).accountsRestore),
+          ),
           IconButton(
             onPressed: () => _remove(a),
             icon: Icon(Icons.delete_forever_rounded, color: palette.danger),

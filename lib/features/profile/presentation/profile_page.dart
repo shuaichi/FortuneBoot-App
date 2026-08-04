@@ -110,7 +110,7 @@ class _ProfileView extends StatelessWidget {
     if (state.status == ProfileStatus.error && state.profile == null) {
       return FxCard(
         child: FxStateView.error(
-          message: state.errorMessage ?? '资料加载失败',
+          message: state.errorMessage ?? S.of(context).profileLoadFailed,
           onRetry: () => context.read<ProfileBloc>().add(const ProfileLoaded()),
         ),
       );
@@ -148,7 +148,7 @@ class _ProfileView extends StatelessWidget {
                 Text(
                   profile.nickname?.isNotEmpty == true
                       ? profile.nickname!
-                      : (profile.username ?? '未登录'),
+                      : (profile.username ?? S.of(context).profileNotLoggedIn),
                   style: FxTypography.titleLarge,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -198,9 +198,11 @@ class _ProfileView extends StatelessWidget {
       builder: (context, session) {
         final palette = FxPalette.of(context);
         final finance = FxFinanceColors.of(context);
-        final groupName = session.currentGroup?.groupName ?? '未选择';
-        final bookName = session.currentBook?.bookName ?? '未选择';
-        return _sectionCard(S.of(context).profileBookGroup, [
+        final groupName =
+            session.currentGroup?.groupName ?? S.of(context).profileNotSelected;
+        final bookName =
+            session.currentBook?.bookName ?? S.of(context).profileNotSelected;
+        return _sectionCard(context, S.of(context).profileBookGroup, [
           FxListItem(
             leading: _tileIcon(Icons.swap_horiz_rounded, palette.primary),
             title: S.of(context).profileCurrentGroupBook,
@@ -243,7 +245,7 @@ class _ProfileView extends StatelessWidget {
   Widget _billingSection(BuildContext context) {
     final palette = FxPalette.of(context);
     final finance = FxFinanceColors.of(context);
-    return _sectionCard(S.of(context).profileBillingManage, [
+    return _sectionCard(context, S.of(context).profileBillingManage, [
       _navItem(
         context,
         Icons.category_rounded,
@@ -291,7 +293,7 @@ class _ProfileView extends StatelessWidget {
   Widget _toolboxSection(BuildContext context) {
     final palette = FxPalette.of(context);
     final finance = FxFinanceColors.of(context);
-    return _sectionCard(S.of(context).profileToolbox, [
+    return _sectionCard(context, S.of(context).profileToolbox, [
       _navItem(
         context,
         Icons.inventory_2_rounded,
@@ -337,7 +339,7 @@ class _ProfileView extends StatelessWidget {
         final localeCode = preferences.locale.code;
         final langLabel = switch (localeCode) {
           'en' => 'English',
-          'zh' => '中文',
+          'zh' => S.of(context).commonChinese,
           _ => S.of(context).commonFollowSystem,
         };
         final themeLabel = switch (preferences.theme.mode) {
@@ -345,7 +347,7 @@ class _ProfileView extends StatelessWidget {
           ThemeMode.dark => S.of(context).profileThemeDark,
           ThemeMode.system => S.of(context).commonFollowSystem,
         };
-        return _sectionCard(S.of(context).profilePreferences, [
+        return _sectionCard(context, S.of(context).profilePreferences, [
           FxListItem(
             leading: _tileIcon(Icons.language_rounded, palette.primary),
             title: S.of(context).profileLanguage,
@@ -376,7 +378,7 @@ class _ProfileView extends StatelessWidget {
             leading: _tileIcon(Icons.calendar_month_rounded, palette.info),
             title: S.of(context).profileMonthStartDay,
             trailing: Text(
-              '每月 $startDay 日',
+              S.of(context).profileMonthStartDayValue(startDay),
               style: FxTypography.caption.copyWith(
                 color: palette.textSecondary,
               ),
@@ -389,7 +391,7 @@ class _ProfileView extends StatelessWidget {
             leading: _tileIcon(Icons.currency_exchange_rounded, finance.income),
             title: S.of(context).profileCurrencyRefresh,
             trailing: Text(
-              '刷新',
+              S.of(context).profileRefresh,
               style: FxTypography.caption.copyWith(color: palette.primary),
             ),
             onTap: () => _refreshCurrency(context),
@@ -406,7 +408,7 @@ class _ProfileView extends StatelessWidget {
                     .read<PreferencesCubit>()
                     .setHideAmounts(hide);
                 if (!context.mounted || ok) return;
-                _toast(context, '保存失败，请重试');
+                _toast(context, S.of(context).profileSaveFailedRetry);
               },
             ),
           ),
@@ -463,7 +465,7 @@ class _ProfileView extends StatelessWidget {
                 if (ok) {
                   Navigator.of(context).pop();
                 } else {
-                  _toast(context, '保存失败，请重试');
+                  _toast(context, S.of(context).profileSaveFailedRetry);
                 }
               },
             ),
@@ -495,8 +497,10 @@ class _ProfileView extends StatelessWidget {
             final day = index + 1;
             return FxListItem(
               leading: _tileIcon(Icons.event_rounded, palette.info),
-              title: '每月 $day 日',
-              subtitle: day > 28 ? '短月份自动使用当月最后一天' : null,
+              title: S.of(context).profileMonthStartDayValue(day),
+              subtitle: day > 28
+                  ? S.of(context).profileMonthStartDayHint
+                  : null,
               trailing: currentDay == day
                   ? Icon(Icons.check_rounded, color: palette.primary)
                   : null,
@@ -508,7 +512,7 @@ class _ProfileView extends StatelessWidget {
                 if (saved) {
                   Navigator.of(context).pop();
                 } else {
-                  _toast(context, '保存失败，请重试');
+                  _toast(context, S.of(context).profileSaveFailedRetry);
                 }
               },
             );
@@ -534,7 +538,7 @@ class _ProfileView extends StatelessWidget {
               S.of(context).commonFollowSystem,
               Icons.language_rounded,
             ),
-            ('zh', '中文', Icons.translate_rounded),
+            ('zh', S.of(context).commonChinese, Icons.translate_rounded),
             ('en', 'English', Icons.translate_rounded),
           ])
             FxListItem(
@@ -549,7 +553,7 @@ class _ProfileView extends StatelessWidget {
                 if (ok) {
                   Navigator.of(context).pop();
                 } else {
-                  _toast(context, '保存失败，请重试');
+                  _toast(context, S.of(context).profileSaveFailedRetry);
                 }
               },
             ),
@@ -559,13 +563,16 @@ class _ProfileView extends StatelessWidget {
   }
 
   Future<void> _refreshCurrency(BuildContext context) async {
+    final s = S.of(context);
     HapticFeedback.selectionClick();
-    _toast(context, '正在刷新汇率…');
+    _toast(context, s.profileCurrencyRefreshing);
     try {
       await ProfileService().refreshCurrency();
-      if (context.mounted) _toast(context, '汇率已刷新');
+      if (context.mounted) _toast(context, s.profileCurrencyRefreshed);
     } on Object catch (e) {
-      if (context.mounted) _toast(context, '刷新失败：$e');
+      if (context.mounted) {
+        _toast(context, s.profileCurrencyRefreshFailed(e.toString()));
+      }
     }
   }
 
@@ -575,10 +582,10 @@ class _ProfileView extends StatelessWidget {
     final palette = FxPalette.of(context);
     final finance = FxFinanceColors.of(context);
     final version = about.appVersion.isEmpty ? '' : 'v${about.appVersion}';
-    return _sectionCard(S.of(context).profileAbout, [
+    return _sectionCard(context, S.of(context).profileAbout, [
       FxListItem(
         leading: _tileIcon(Icons.info_outline_rounded, palette.primary),
-        title: '关于好记',
+        title: S.of(context).profileAboutApp,
         trailing: Text(
           version,
           style: FxTypography.caption.copyWith(color: palette.textSecondary),
@@ -606,7 +613,7 @@ class _ProfileView extends StatelessWidget {
   Future<void> _openAbout(BuildContext context, AppAbout about) async {
     await FxSheet.show<void>(
       context,
-      title: '关于好记',
+      title: S.of(context).profileAboutApp,
       child: Padding(
         padding: const EdgeInsets.fromLTRB(
           FxSpacing.lg,
@@ -619,24 +626,33 @@ class _ProfileView extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             _aboutRow(
-              '应用版本',
+              context,
+              S.of(context).profileAppVersion,
               about.appVersion.isEmpty ? '-' : 'v${about.appVersion}',
             ),
-            _aboutRow('API 版本', about.apiVersion ?? '-'),
-            _aboutRow('ICP 备案', about.icp ?? '-'),
+            _aboutRow(context, S.of(context).profileApiVersion, about.apiVersion ?? '-'),
+            _aboutRow(context, S.of(context).profileIcp, about.icp ?? '-'),
           ],
         ),
       ),
     );
   }
 
-  Widget _aboutRow(String label, String value) {
+  Widget _aboutRow(BuildContext context, String label, String value) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: FxSpacing.sm),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(width: 88, child: Text(label, style: FxTypography.label)),
+          SizedBox(
+            width: 88,
+            child: Text(
+              label,
+              style: FxTypography.label.copyWith(
+                color: FxPalette.of(context).textSecondary,
+              ),
+            ),
+          ),
           Expanded(child: Text(value, style: FxTypography.body)),
         ],
       ),
@@ -647,18 +663,15 @@ class _ProfileView extends StatelessWidget {
     await FxSheet.show<void>(
       context,
       title: S.of(context).profileHelp,
-      child: const Padding(
-        padding: EdgeInsets.fromLTRB(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(
           FxSpacing.lg,
           0,
           FxSpacing.lg,
           FxSpacing.xl,
         ),
         child: Text(
-          '好记是一款多分组、多账本的记账应用。\n\n'
-          '· 在首页快速记一笔，或在账单页查看明细。\n'
-          '· 通过"我的"进入分类、标签、账户、成员等管理。\n'
-          '· 遇到问题可联系管理员或查看项目文档。',
+          S.of(context).profileHelpContent,
           style: FxTypography.body,
         ),
       ),
@@ -669,7 +682,7 @@ class _ProfileView extends StatelessWidget {
     final finance = FxFinanceColors.of(context);
     await FxSheet.show<void>(
       context,
-      title: '捐赠支持',
+      title: S.of(context).profileDonate,
       child: Padding(
         padding: const EdgeInsets.fromLTRB(
           FxSpacing.lg,
@@ -682,8 +695,8 @@ class _ProfileView extends StatelessWidget {
           children: [
             Icon(Icons.favorite_rounded, size: 48, color: finance.expense),
             const SizedBox(height: FxSpacing.md),
-            const Text(
-              '感谢你的支持！\n如愿意赞助开发，可通过项目主页获取捐赠方式。',
+            Text(
+              S.of(context).profileDonateContent,
               style: FxTypography.body,
               textAlign: TextAlign.center,
             ),
@@ -712,8 +725,8 @@ class _ProfileView extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const Text(
-              '确定要退出当前账号吗？',
+            Text(
+              S.of(context).profileLogoutConfirm,
               style: FxTypography.body,
               textAlign: TextAlign.center,
             ),
@@ -746,7 +759,11 @@ class _ProfileView extends StatelessWidget {
 
   // ---------------- 复用小组件 ----------------
 
-  Widget _sectionCard(String title, List<Widget> children) {
+  Widget _sectionCard(
+    BuildContext context,
+    String title,
+    List<Widget> children,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -755,7 +772,12 @@ class _ProfileView extends StatelessWidget {
             left: FxSpacing.xs,
             bottom: FxSpacing.sm,
           ),
-          child: Text(title, style: FxTypography.label),
+          child: Text(
+            title,
+            style: FxTypography.label.copyWith(
+              color: FxPalette.of(context).textSecondary,
+            ),
+          ),
         ),
         FxCard(
           padding: const EdgeInsets.symmetric(vertical: FxSpacing.xs),

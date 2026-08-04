@@ -8,6 +8,7 @@ import 'package:fortuneboot/fx/components/fx_card.dart';
 import 'package:fortuneboot/fx/components/fx_money_text.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
+import 'package:fortuneboot/generated/l10n.dart';
 
 /// ② 本账期支出 / ③ 本账期收入（各 1 格）。支出红、收入绿。
 class MonthStatCard extends StatelessWidget {
@@ -26,7 +27,9 @@ class MonthStatCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final label = isExpense ? '本账期支出' : '本账期收入';
+    final label = isExpense
+        ? S.of(context).dashboardPeriodExpense
+        : S.of(context).dashboardPeriodIncome;
     final finance = FxFinanceColors.of(context);
     final color = isExpense ? finance.expense : finance.income;
     final hideAmounts = context

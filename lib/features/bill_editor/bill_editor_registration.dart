@@ -7,6 +7,7 @@ import 'package:fortuneboot/features/bill_editor/presentation/bill_editor_args.d
 import 'package:fortuneboot/features/bill_editor/presentation/bill_editor_bloc.dart';
 import 'package:fortuneboot/features/bill_editor/presentation/bill_editor_page.dart';
 import 'package:fortuneboot/fx/components/fx_state_view.dart';
+import 'package:fortuneboot/generated/l10n.dart';
 
 /// 注册 BillEditor 路由。由 main.dart 统一调用。
 void registerBillEditorFeature() {
@@ -21,7 +22,9 @@ void registerBillEditorFeature() {
         if (bookId == null || groupId == null) {
           return Scaffold(
             appBar: AppBar(),
-            body: FxStateView.empty(message: '请先选择一个账本后再记账'),
+            body: FxStateView.empty(
+              message: S.of(context).billEditorSelectBookFirst,
+            ),
           );
         }
         return BlocProvider(

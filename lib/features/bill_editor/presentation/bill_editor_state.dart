@@ -4,6 +4,20 @@ enum EditorStatus { loading, ready, error }
 
 enum SubmitStatus { idle, submitting, success, failure }
 
+/// 账单编辑校验错误（语义枚举；文案在展示层本地化）。
+enum BillValidationError {
+  transferAmountRequired,
+  transferFromRequired,
+  transferToRequired,
+  transferSameAccount,
+  categoryRequired,
+  categorySelectRequired,
+  categoryAmountPositive,
+  accountRequired,
+  orderRequired,
+  titleRequired,
+}
+
 class BillEditorState extends Equatable {
   final EditorStatus status;
   final String? loadError;
@@ -51,7 +65,12 @@ class BillEditorState extends Equatable {
   final EditorOptions options;
 
   final SubmitStatus submitStatus;
+
+  /// 后端/异常错误文案（已是最终展示串）。
   final String? submitError;
+
+  /// 本地校验失败（语义枚举，展示层本地化）。
+  final BillValidationError? validationFailure;
 
   const BillEditorState({
     this.status = EditorStatus.loading,
@@ -85,6 +104,7 @@ class BillEditorState extends Equatable {
     this.options = const EditorOptions(),
     this.submitStatus = SubmitStatus.idle,
     this.submitError,
+    this.validationFailure,
   });
 
   // ---- 派生 ----
@@ -119,24 +139,32 @@ class BillEditorState extends Equatable {
     return '';
   }
 
-  /// 校验：可提交则返回 null，否则返回错误信息。
-  String? get validationError {
+  /// 校验：可提交则返回 null，否则返回语义化错误（展示层本地化文案）。
+  BillValidationError? get validationError {
     if (isTransfer) {
-      if (transferAmount <= 0) return '请输入转账金额';
-      if (accountId == null) return '请选择转出账户';
-      if (toAccountId == null) return '请选择转入账户';
-      if (accountId == toAccountId) return '转出与转入账户不能相同';
-    } else {
-      if (categoryRows.isEmpty) return '请添加分类';
-      for (final r in categoryRows) {
-        if (r.categoryId == null) return '请选择分类';
-        if (r.amount <= 0) return '分类金额需大于 0';
+      if (transferAmount <= 0) {
+        return BillValidationError.transferAmountRequired;
       }
-      if (accountId == null) return '请选择账户';
-      if (showOrder && orderId == null) return '请选择关联单据';
+      if (accountId == null) return BillValidationError.transferFromRequired;
+      if (toAccountId == null) return BillValidationError.transferToRequired;
+      if (accountId == toAccountId) {
+        return BillValidationError.transferSameAccount;
+      }
+    } else {
+      if (categoryRows.isEmpty) return BillValidationError.categoryRequired;
+      for (final r in categoryRows) {
+        if (r.categoryId == null) {
+          return BillValidationError.categorySelectRequired;
+        }
+        if (r.amount <= 0) return BillValidationError.categoryAmountPositive;
+      }
+      if (accountId == null) return BillValidationError.accountRequired;
+      if (showOrder && orderId == null) {
+        return BillValidationError.orderRequired;
+      }
     }
     final t = effectiveTitle;
-    if (t.isEmpty) return '请填写标题';
+    if (t.isEmpty) return BillValidationError.titleRequired;
     return null;
   }
 
@@ -188,6 +216,7 @@ class BillEditorState extends Equatable {
     EditorOptions? options,
     SubmitStatus? submitStatus,
     String? submitError,
+    BillValidationError? validationFailure,
   }) {
     return BillEditorState(
       status: status ?? this.status,
@@ -223,6 +252,7 @@ class BillEditorState extends Equatable {
       options: options ?? this.options,
       submitStatus: submitStatus ?? this.submitStatus,
       submitError: submitError,
+      validationFailure: validationFailure,
     );
   }
 
@@ -259,5 +289,6 @@ class BillEditorState extends Equatable {
     options,
     submitStatus,
     submitError,
+    validationFailure,
   ];
 }

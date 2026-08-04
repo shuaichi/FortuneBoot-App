@@ -12,6 +12,7 @@ import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
+import 'package:fortuneboot/generated/l10n.dart';
 import 'package:intl/intl.dart';
 
 /// 归物新增/编辑表单（FxSheet 内滚动）。multipart（data + files）提交。
@@ -167,16 +168,16 @@ class _GoodsFormSheetState extends State<GoodsFormSheet> {
 
   Future<void> _submit() async {
     if (_nameCtrl.text.trim().isEmpty) {
-      setState(() => _error = '请输入物品名称');
+      setState(() => _error = S.of(context).goodsErrNameRequired);
       return;
     }
     final price = double.tryParse(_priceCtrl.text.trim());
     if (price == null || price < 0) {
-      setState(() => _error = '请输入有效价格');
+      setState(() => _error = S.of(context).goodsErrInvalidPrice);
       return;
     }
     if (_statusForSubmit == null) {
-      setState(() => _error = '请选择物品状态');
+      setState(() => _error = S.of(context).goodsErrStatusRequired);
       return;
     }
     setState(() {
@@ -210,7 +211,7 @@ class _GoodsFormSheetState extends State<GoodsFormSheet> {
       initial: current ?? now,
       firstDate: DateTime(2000),
       lastDate: DateTime(now.year + 20),
-      title: '选择日期',
+      title: S.of(context).goodsPickDate,
     );
     if (picked != null) onPicked(picked);
   }
@@ -243,12 +244,12 @@ class _GoodsFormSheetState extends State<GoodsFormSheet> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                _sectionTitle('基础信息'),
+                _sectionTitle(S.of(context).goodsSectionBasic),
                 const SizedBox(height: FxSpacing.md),
-                _label('物品名称'),
+                _label(S.of(context).goodsLabelName),
                 TextField(
                   controller: _nameCtrl,
-                  decoration: _dec('如：iPhone 15'),
+                  decoration: _dec(S.of(context).goodsHintName),
                 ),
                 const SizedBox(height: FxSpacing.md),
                 Row(
@@ -257,7 +258,7 @@ class _GoodsFormSheetState extends State<GoodsFormSheet> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          _label('购买价格'),
+                          _label(S.of(context).goodsLabelPrice),
                           TextField(
                             controller: _priceCtrl,
                             keyboardType: const TextInputType.numberWithOptions(
@@ -273,7 +274,7 @@ class _GoodsFormSheetState extends State<GoodsFormSheet> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          _label('购买日期'),
+                          _label(S.of(context).goodsFieldPurchaseDate),
                           _dateField(
                             _purchaseDate,
                             () => _pickDate(
@@ -295,22 +296,22 @@ class _GoodsFormSheetState extends State<GoodsFormSheet> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                _sectionTitle('分类与标签'),
+                _sectionTitle(S.of(context).goodsSectionCategoryTag),
                 const SizedBox(height: FxSpacing.md),
-                _label('分类（可选）'),
+                _label(S.of(context).goodsLabelCategoryOptional),
                 _optionSelector(
                   _categories,
                   _categoryId,
                   (id) => setState(() => _categoryId = id),
-                  empty: '无分类',
+                  empty: S.of(context).goodsEmptyCategory,
                 ),
                 const SizedBox(height: FxSpacing.md),
-                _label('标签（可选）'),
+                _label(S.of(context).goodsLabelTagOptional),
                 _optionSelector(
                   _tags,
                   _tagId,
                   (id) => setState(() => _tagId = id),
-                  empty: '无标签',
+                  empty: S.of(context).goodsEmptyTag,
                 ),
               ],
             ),
@@ -321,29 +322,33 @@ class _GoodsFormSheetState extends State<GoodsFormSheet> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                _sectionTitle('保修与状态'),
+                _sectionTitle(S.of(context).goodsSectionWarrantyStatus),
                 const SizedBox(height: FxSpacing.md),
-                _label('保修日期（可选）'),
+                _label(S.of(context).goodsLabelWarrantyOptional),
                 _dateField(
                   _warrantyDate,
                   () => _pickDate(
                     _warrantyDate,
                     (d) => setState(() => _warrantyDate = d),
                   ),
-                  hint: '未设置',
+                  hint: S.of(context).goodsNotSet,
                   onClear: _warrantyDate == null
                       ? null
                       : () => setState(() => _warrantyDate = null),
                 ),
                 const SizedBox(height: FxSpacing.md),
-                _label('状态'),
+                _label(S.of(context).goodsFieldStatus),
                 _statusSelector(),
                 if (widget.isEdit && _status == null)
                   Padding(
                     padding: const EdgeInsets.only(top: FxSpacing.xs),
                     child: Text(
-                      '当前状态「${widget.goods?.statusDesc ?? '未知'}」暂不可识别，'
-                      '如需修改请重新选择；不选则保留原状态。',
+                      S
+                          .of(context)
+                          .goodsStatusUnrecognized(
+                            widget.goods?.statusDesc ??
+                                S.of(context).goodsUnknown,
+                          ),
                       style: FxTypography.caption.copyWith(
                         color: palette.textTertiary,
                       ),
@@ -352,8 +357,11 @@ class _GoodsFormSheetState extends State<GoodsFormSheet> {
                 const SizedBox(height: FxSpacing.sm),
                 Row(
                   children: [
-                    const Expanded(
-                      child: Text('按次使用', style: FxTypography.body),
+                    Expanded(
+                      child: Text(
+                        S.of(context).goodsUseByTimes,
+                        style: FxTypography.body,
+                      ),
                     ),
                     Switch.adaptive(
                       value: _useByTimes,
@@ -364,11 +372,11 @@ class _GoodsFormSheetState extends State<GoodsFormSheet> {
                 ),
                 if (_useByTimes) ...[
                   const SizedBox(height: FxSpacing.sm),
-                  _label('使用次数'),
+                  _label(S.of(context).goodsFieldUsageCount),
                   TextField(
                     controller: _usageNumCtrl,
                     keyboardType: TextInputType.number,
-                    decoration: _dec('如：120'),
+                    decoration: _dec(S.of(context).goodsHintUsageNum),
                   ),
                 ],
               ],
@@ -381,23 +389,23 @@ class _GoodsFormSheetState extends State<GoodsFormSheet> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  _sectionTitle('处置'),
+                  _sectionTitle(S.of(context).goodsSectionDisposal),
                   const SizedBox(height: FxSpacing.md),
-                  _label('退役日期'),
+                  _label(S.of(context).goodsFieldRetiredDate),
                   _dateField(
                     _retiredDate,
                     () => _pickDate(
                       _retiredDate,
                       (d) => setState(() => _retiredDate = d),
                     ),
-                    hint: '未设置',
+                    hint: S.of(context).goodsNotSet,
                     onClear: _retiredDate == null
                         ? null
                         : () => setState(() => _retiredDate = null),
                   ),
                   if (_isSold) ...[
                     const SizedBox(height: FxSpacing.md),
-                    _label('出售价格'),
+                    _label(S.of(context).goodsFieldSoldPrice),
                     TextField(
                       controller: _soldPriceCtrl,
                       keyboardType: const TextInputType.numberWithOptions(
@@ -416,10 +424,13 @@ class _GoodsFormSheetState extends State<GoodsFormSheet> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                _sectionTitle('备注与附件'),
+                _sectionTitle(S.of(context).goodsSectionRemarkAttach),
                 const SizedBox(height: FxSpacing.md),
-                _label('备注（可选）'),
-                TextField(controller: _remarkCtrl, decoration: _dec('备注')),
+                _label(S.of(context).goodsLabelRemarkOptional),
+                TextField(
+                  controller: _remarkCtrl,
+                  decoration: _dec(S.of(context).goodsFieldRemark),
+                ),
                 const SizedBox(height: FxSpacing.md),
                 _attachments(),
               ],
@@ -434,7 +445,9 @@ class _GoodsFormSheetState extends State<GoodsFormSheet> {
           ],
           const SizedBox(height: FxSpacing.xl),
           FxButton(
-            label: widget.isEdit ? '保存修改' : '添加物品',
+            label: widget.isEdit
+                ? S.of(context).goodsSaveChanges
+                : S.of(context).goodsAddTitle,
             expand: true,
             loading: _submitting,
             onPressed: _submitting ? null : _submit,
@@ -480,7 +493,9 @@ class _GoodsFormSheetState extends State<GoodsFormSheet> {
             const SizedBox(width: FxSpacing.sm),
             Expanded(
               child: Text(
-                value == null ? (hint ?? '选择日期') : _day.format(value),
+                value == null
+                    ? (hint ?? S.of(context).goodsPickDate)
+                    : _day.format(value),
                 style: FxTypography.body.copyWith(
                   color: value == null
                       ? palette.textTertiary
@@ -511,7 +526,7 @@ class _GoodsFormSheetState extends State<GoodsFormSheet> {
   }) {
     if (options.isEmpty) {
       return Text(
-        '$empty（无可选项）',
+        S.of(context).goodsNoOptions(empty),
         style: FxTypography.caption.copyWith(
           color: FxPalette.of(context).textTertiary,
         ),
@@ -521,7 +536,7 @@ class _GoodsFormSheetState extends State<GoodsFormSheet> {
       spacing: FxSpacing.sm,
       runSpacing: FxSpacing.sm,
       children: [
-        _chip('不选', selected == null, () => onChanged(null)),
+        _chip(S.of(context).goodsNone, selected == null, () => onChanged(null)),
         for (final o in options)
           _chip(o.name, selected == o.id, () => onChanged(o.id)),
       ],
@@ -573,7 +588,7 @@ class _GoodsFormSheetState extends State<GoodsFormSheet> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _label('附件（可选）'),
+        _label(S.of(context).goodsLabelAttachOptional),
         Wrap(
           spacing: FxSpacing.sm,
           runSpacing: FxSpacing.sm,
@@ -655,7 +670,12 @@ class _GoodsFormSheetState extends State<GoodsFormSheet> {
 
   Widget _label(String text) => Padding(
     padding: const EdgeInsets.only(bottom: FxSpacing.xs),
-    child: Text(text, style: FxTypography.label),
+    child: Text(
+      text,
+      style: FxTypography.label.copyWith(
+        color: FxPalette.of(context).textSecondary,
+      ),
+    ),
   );
 
   InputDecoration _dec(String hint) => InputDecoration(

@@ -7,6 +7,7 @@ import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
+import 'package:fortuneboot/generated/l10n.dart';
 import 'package:intl/intl.dart';
 
 /// 余额调整表单：输入调整后金额 + 时间 + 标题 + 备注 → PATCH balanceAdjust。
@@ -74,7 +75,7 @@ class _BalanceAdjustSheetState extends State<BalanceAdjustSheet> {
   Future<void> _submit() async {
     final balance = double.tryParse(_amountCtrl.text.trim());
     if (balance == null) {
-      setState(() => _error = '请输入有效金额');
+      setState(() => _error = S.of(context).accountsInvalidAmount);
       return;
     }
     setState(() {
@@ -116,21 +117,23 @@ class _BalanceAdjustSheetState extends State<BalanceAdjustSheet> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            '当前余额 ${widget.account.balance.toStringAsFixed(2)}',
-            style: FxTypography.caption,
+            S.of(context).accountsCurrentBalance(
+              widget.account.balance.toStringAsFixed(2),
+            ),
+            style: FxTypography.caption.copyWith(color: palette.textTertiary),
           ),
           const SizedBox(height: FxSpacing.md),
-          _label('调整后金额'),
+          _label(S.of(context).accountsAdjustedAmount),
           TextField(
             controller: _amountCtrl,
             keyboardType: const TextInputType.numberWithOptions(
               decimal: true,
               signed: true,
             ),
-            decoration: _decoration('调整后的实际金额'),
+            decoration: _decoration(S.of(context).accountsAdjustedAmountHint),
           ),
           const SizedBox(height: FxSpacing.md),
-          _label('发生时间'),
+          _label(S.of(context).accountsOccurredTime),
           InkWell(
             borderRadius: FxRadius.tileBorder,
             onTap: _pickTime,
@@ -157,11 +160,17 @@ class _BalanceAdjustSheetState extends State<BalanceAdjustSheet> {
             ),
           ),
           const SizedBox(height: FxSpacing.md),
-          _label('标题（可选）'),
-          TextField(controller: _titleCtrl, decoration: _decoration('余额调整')),
+          _label(S.of(context).accountsTitleOptional),
+          TextField(
+            controller: _titleCtrl,
+            decoration: _decoration(S.of(context).accountsBalanceAdjustHint),
+          ),
           const SizedBox(height: FxSpacing.md),
-          _label('备注（可选）'),
-          TextField(controller: _remarkCtrl, decoration: _decoration('备注')),
+          _label(S.of(context).accountsRemarkOptional),
+          TextField(
+            controller: _remarkCtrl,
+            decoration: _decoration(S.of(context).accountsRemarkHint),
+          ),
           if (_error != null) ...[
             const SizedBox(height: FxSpacing.sm),
             Text(
@@ -171,7 +180,7 @@ class _BalanceAdjustSheetState extends State<BalanceAdjustSheet> {
           ],
           const SizedBox(height: FxSpacing.xl),
           FxButton(
-            label: '确认调整',
+            label: S.of(context).accountsConfirmAdjust,
             expand: true,
             loading: _submitting,
             onPressed: _submitting ? null : _submit,
@@ -183,7 +192,12 @@ class _BalanceAdjustSheetState extends State<BalanceAdjustSheet> {
 
   Widget _label(String text) => Padding(
     padding: const EdgeInsets.only(bottom: FxSpacing.xs),
-    child: Text(text, style: FxTypography.label),
+    child: Text(
+      text,
+      style: FxTypography.label.copyWith(
+        color: FxPalette.of(context).textSecondary,
+      ),
+    ),
   );
 
   InputDecoration _decoration(String hint) => InputDecoration(

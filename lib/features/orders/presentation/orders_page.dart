@@ -15,6 +15,7 @@ import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
+import 'package:fortuneboot/generated/l10n.dart';
 
 /// 单据列表页（Routes.orders）。状态机按钮随状态显隐。
 class OrdersPage extends StatefulWidget {
@@ -40,12 +41,14 @@ class _OrdersPageState extends State<OrdersPage> {
   Future<void> _openForm({FortuneFinanceOrderVo? order}) async {
     final bookId = _bookId;
     if (bookId == null) {
-      _showToast('请先选择账本');
+      _showToast(S.of(context).ordersSelectBookFirst);
       return;
     }
     final changed = await FxSheet.show<bool>(
       context,
-      title: order == null ? '新增单据' : '编辑单据',
+      title: order == null
+          ? S.of(context).ordersAddTitle
+          : S.of(context).ordersEditTitle,
       expand: true,
       child: OrderFormSheet(service: _service, bookId: bookId, order: order),
     );
@@ -59,17 +62,23 @@ class _OrdersPageState extends State<OrdersPage> {
     final ok = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('删除单据'),
-        content: Text('确定删除「${order.title ?? '该单据'}」吗？'),
+        title: Text(S.of(context).ordersRemoveTitle),
+        content: Text(
+          S
+              .of(context)
+              .ordersRemoveMessage(
+                order.title ?? S.of(context).ordersThisOrder,
+              ),
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
-            child: const Text('取消'),
+            child: Text(S.of(context).commonCancel),
           ),
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(true),
             child: Text(
-              '删除',
+              S.of(context).ordersDelete,
               style: TextStyle(color: FxPalette.of(ctx).danger),
             ),
           ),
@@ -140,7 +149,9 @@ class _OrdersPageState extends State<OrdersPage> {
               ),
             ),
           ),
-          const Expanded(child: Text('单据', style: FxTypography.title)),
+          Expanded(
+            child: Text(S.of(context).ordersTitle, style: FxTypography.title),
+          ),
           InkResponse(
             onTap: () => _openForm(),
             radius: 22,
@@ -160,7 +171,7 @@ class _OrdersPageState extends State<OrdersPage> {
 
   Widget _buildBody(OrdersState state, int? bookId) {
     if (bookId == null) {
-      return FxStateView.empty(message: '请先选择账本');
+      return FxStateView.empty(message: S.of(context).ordersSelectBookFirst);
     }
     switch (state.status) {
       case OrdersStatus.initial:
@@ -179,7 +190,7 @@ class _OrdersPageState extends State<OrdersPage> {
               SizedBox(
                 height: MediaQuery.of(context).size.height * 0.5,
                 child: FxStateView.empty(
-                  message: '暂无单据，点击右上角 + 新增',
+                  message: S.of(context).ordersEmpty,
                   icon: Icons.receipt_long_outlined,
                 ),
               ),
@@ -222,7 +233,7 @@ class _OrdersPageState extends State<OrdersPage> {
               const SizedBox(width: FxSpacing.sm),
               Expanded(
                 child: Text(
-                  order.title ?? '未命名单据',
+                  order.title ?? S.of(context).ordersUnnamedOrder,
                   style: FxTypography.bodyStrong,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -235,7 +246,12 @@ class _OrdersPageState extends State<OrdersPage> {
           const SizedBox(height: FxSpacing.sm),
           Row(
             children: [
-              const Text('支出 ', style: FxTypography.caption),
+              Text(
+                S.of(context).ordersOutLabel,
+                style: FxTypography.caption.copyWith(
+                  color: palette.textTertiary,
+                ),
+              ),
               FxMoneyText(
                 amount: order.outAmount ?? 0,
                 currencyCode: _currency,
@@ -243,7 +259,12 @@ class _OrdersPageState extends State<OrdersPage> {
                 color: finance.expense,
               ),
               const SizedBox(width: FxSpacing.md),
-              const Text('转入 ', style: FxTypography.caption),
+              Text(
+                S.of(context).ordersInLabel,
+                style: FxTypography.caption.copyWith(
+                  color: palette.textTertiary,
+                ),
+              ),
               FxMoneyText(
                 amount: order.inAmount ?? 0,
                 currencyCode: _currency,
@@ -263,8 +284,10 @@ class _OrdersPageState extends State<OrdersPage> {
             children: [
               Expanded(
                 child: Text(
-                  _timeLine(order),
-                  style: FxTypography.caption,
+                  _timeLine(context, order),
+                  style: FxTypography.caption.copyWith(
+                    color: palette.textTertiary,
+                  ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -277,13 +300,13 @@ class _OrdersPageState extends State<OrdersPage> {
     );
   }
 
-  String _timeLine(FortuneFinanceOrderVo order) {
+  String _timeLine(BuildContext context, FortuneFinanceOrderVo order) {
     final parts = <String>[];
     if ((order.submitTime ?? '').isNotEmpty) {
-      parts.add('提交 ${order.submitTime}');
+      parts.add(S.of(context).ordersSubmitTime(order.submitTime!));
     }
     if ((order.closeTime ?? '').isNotEmpty) {
-      parts.add('关闭 ${order.closeTime}');
+      parts.add(S.of(context).ordersCloseTime(order.closeTime!));
     }
     return parts.join(' · ');
   }
@@ -296,7 +319,7 @@ class _OrdersPageState extends State<OrdersPage> {
     final buttons = <Widget>[];
     if (order.isUsing) {
       buttons.add(
-        _miniButton(context, '关闭', () {
+        _miniButton(context, S.of(context).ordersClose, () {
           HapticFeedback.selectionClick();
           _bloc.add(OrderTransitioned(order: order, action: 'close'));
         }),
@@ -304,7 +327,7 @@ class _OrdersPageState extends State<OrdersPage> {
       buttons.add(const SizedBox(width: FxSpacing.sm));
     } else if (order.isClosed) {
       buttons.add(
-        _miniButton(context, '重开', () {
+        _miniButton(context, S.of(context).ordersReopen, () {
           HapticFeedback.selectionClick();
           _bloc.add(OrderTransitioned(order: order, action: 'reopen'));
         }),
@@ -312,7 +335,14 @@ class _OrdersPageState extends State<OrdersPage> {
       buttons.add(const SizedBox(width: FxSpacing.sm));
     }
     // 未知/无法识别的状态：不猜测流转按钮，仅保留删除，避免对已关闭单据非法流转。
-    buttons.add(_miniButton(context, '删除', () => _remove(order), danger: true));
+    buttons.add(
+      _miniButton(
+        context,
+        S.of(context).ordersDelete,
+        () => _remove(order),
+        danger: true,
+      ),
+    );
     return buttons;
   }
 

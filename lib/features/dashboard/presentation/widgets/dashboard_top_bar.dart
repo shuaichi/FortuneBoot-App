@@ -6,6 +6,7 @@ import 'package:fortuneboot/core/session/widgets/session_switcher_sheet.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
+import 'package:fortuneboot/generated/l10n.dart';
 
 /// 看板粘顶栏：左侧 分组·账本 切换器（点击弹 FxSheet），右侧头像（点击可空）。
 class DashboardTopBar extends StatelessWidget {
@@ -16,8 +17,10 @@ class DashboardTopBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final session = context.watch<SessionCubit>().state;
     final palette = FxPalette.of(context);
-    final groupName = session.currentGroup?.groupName ?? '选择分组';
-    final bookName = session.currentBook?.bookName ?? '选择账本';
+    final groupName =
+        session.currentGroup?.groupName ?? S.of(context).dashboardSelectGroup;
+    final bookName =
+        session.currentBook?.bookName ?? S.of(context).dashboardSelectBook;
 
     return Container(
       color: palette.canvas,
@@ -43,7 +46,9 @@ class DashboardTopBar extends StatelessWidget {
                       children: [
                         Text(
                           groupName,
-                          style: FxTypography.caption,
+                          style: FxTypography.caption.copyWith(
+                            color: FxPalette.of(context).textTertiary,
+                          ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),

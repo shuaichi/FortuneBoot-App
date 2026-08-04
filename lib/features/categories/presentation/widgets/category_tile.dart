@@ -4,6 +4,7 @@ import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
+import 'package:fortuneboot/generated/l10n.dart';
 
 /// 分类树节点（自绘 accordion：有子节点可展开/收起）。
 class CategoryTile extends StatefulWidget {
@@ -84,7 +85,7 @@ class _CategoryTileState extends State<CategoryTile> {
                     const SizedBox(width: FxSpacing.sm),
                     Expanded(
                       child: Text(
-                        node.categoryName ?? '未命名',
+                        node.categoryName ?? S.of(context).categoriesUnnamed,
                         style: FxTypography.body.copyWith(
                           color: node.enable
                               ? palette.textPrimary

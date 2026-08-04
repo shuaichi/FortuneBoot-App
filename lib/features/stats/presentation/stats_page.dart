@@ -12,6 +12,7 @@ import 'package:fortuneboot/features/stats/presentation/widgets/stats_trend_card
 import 'package:fortuneboot/fx/components/fx_state_view.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
+import 'package:fortuneboot/generated/l10n.dart';
 
 /// 统计图表页：时间区间 + 支/收分段（全页联动）+ 概览条 + 4 图表卡。
 /// 订阅 SessionCubit 切账本重拉，并监听 BillMutations 在记账/编辑后刷新。
@@ -77,7 +78,9 @@ class _Body extends StatelessWidget {
     return BlocBuilder<StatsBloc, StatsState>(
       builder: (context, state) {
         if (!state.hasBook) {
-          return FxStateView.empty(message: '请先选择一个账本');
+          return FxStateView.empty(
+            message: S.of(context).statsSelectBookFirst,
+          );
         }
 
         final bloc = context.read<StatsBloc>();
@@ -104,7 +107,7 @@ class _Body extends StatelessWidget {
               ),
               const SizedBox(height: FxSpacing.md),
               StatsPieCard(
-                label: '分类占比',
+                label: S.of(context).statsCategoryShare,
                 section: state.categories,
                 currencyCode: currency,
                 onRetry: retry,
@@ -113,7 +116,7 @@ class _Body extends StatelessWidget {
               StatsTagCard(section: state.tags, onRetry: retry),
               const SizedBox(height: FxSpacing.md),
               StatsPieCard(
-                label: '交易对象',
+                label: S.of(context).statsPayees,
                 section: state.payees,
                 currencyCode: currency,
                 onRetry: retry,

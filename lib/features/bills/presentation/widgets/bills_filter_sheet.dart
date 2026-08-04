@@ -7,6 +7,7 @@ import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
+import 'package:fortuneboot/generated/l10n.dart';
 
 /// 账单筛选表单（本轮：类型多选 / 金额区间 / 确认 / 统计）。
 /// 分类/标签/账户/交易对象候选依赖未落地的管理模块 service，本轮留 TODO。
@@ -90,14 +91,14 @@ class _BillsFilterSheetState extends State<BillsFilterSheet> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _label('账单类型'),
+          _label(S.of(context).billsFilterBillType),
           Wrap(
             spacing: FxSpacing.sm,
             runSpacing: FxSpacing.sm,
             children: FxBillType.selectable.map((t) {
               final selected = _billTypes.contains(t.value);
               return FxTagChip(
-                label: t.label,
+                label: t.localizedLabel(context),
                 selected: selected,
                 onTap: () => setState(() {
                   if (selected) {
@@ -110,43 +111,67 @@ class _BillsFilterSheetState extends State<BillsFilterSheet> {
             }).toList(),
           ),
           const SizedBox(height: FxSpacing.lg),
-          _label('金额区间'),
+          _label(S.of(context).billsFilterAmountRange),
           Row(
             children: [
-              Expanded(child: _amountField(context, _minCtrl, '最小')),
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: FxSpacing.sm),
-                child: Text('—', style: FxTypography.label),
+              Expanded(
+                child: _amountField(
+                  context,
+                  _minCtrl,
+                  S.of(context).billsFilterMin,
+                ),
               ),
-              Expanded(child: _amountField(context, _maxCtrl, '最大')),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: FxSpacing.sm),
+                child: Text(
+                  '—',
+                  style: FxTypography.label.copyWith(
+                    color: FxPalette.of(context).textSecondary,
+                  ),
+                ),
+              ),
+              Expanded(
+                child: _amountField(
+                  context,
+                  _maxCtrl,
+                  S.of(context).billsFilterMax,
+                ),
+              ),
             ],
           ),
           const SizedBox(height: FxSpacing.lg),
-          _label('确认状态'),
+          _label(S.of(context).billsFilterConfirmStatus),
           _tristate(
             current: _confirm,
-            trueLabel: '已确认',
-            falseLabel: '未确认',
+            trueLabel: S.of(context).billsFilterConfirmed,
+            falseLabel: S.of(context).billsFilterUnconfirmed,
             onChanged: (v) => setState(() => _confirm = v),
           ),
           const SizedBox(height: FxSpacing.lg),
-          _label('是否统计'),
+          _label(S.of(context).billsFilterIncludeStatus),
           _tristate(
             current: _include,
-            trueLabel: '计入统计',
-            falseLabel: '不计入',
+            trueLabel: S.of(context).billsFilterIncluded,
+            falseLabel: S.of(context).billsFilterExcluded,
             onChanged: (v) => setState(() => _include = v),
           ),
           const SizedBox(height: FxSpacing.xl),
           Row(
             children: [
               Expanded(
-                child: FxButton.text(label: '重置', onPressed: _reset),
+                child: FxButton.text(
+                  label: S.of(context).billsReset,
+                  onPressed: _reset,
+                ),
               ),
               const SizedBox(width: FxSpacing.md),
               Expanded(
                 flex: 2,
-                child: FxButton(label: '应用', expand: true, onPressed: _apply),
+                child: FxButton(
+                  label: S.of(context).billsApply,
+                  expand: true,
+                  onPressed: _apply,
+                ),
               ),
             ],
           ),
@@ -157,7 +182,12 @@ class _BillsFilterSheetState extends State<BillsFilterSheet> {
 
   Widget _label(String text) => Padding(
     padding: const EdgeInsets.only(bottom: FxSpacing.sm),
-    child: Text(text, style: FxTypography.label),
+    child: Text(
+      text,
+      style: FxTypography.label.copyWith(
+        color: FxPalette.of(context).textSecondary,
+      ),
+    ),
   );
 
   Widget _amountField(
@@ -172,7 +202,9 @@ class _BillsFilterSheetState extends State<BillsFilterSheet> {
       style: FxTypography.body,
       decoration: InputDecoration(
         hintText: hint,
-        hintStyle: FxTypography.caption,
+        hintStyle: FxTypography.caption.copyWith(
+          color: palette.textTertiary,
+        ),
         isDense: true,
         contentPadding: const EdgeInsets.symmetric(
           horizontal: FxSpacing.md,
@@ -199,7 +231,7 @@ class _BillsFilterSheetState extends State<BillsFilterSheet> {
       spacing: FxSpacing.sm,
       children: [
         FxTagChip(
-          label: '不限',
+          label: S.of(context).billsFilterAny,
           selected: current == null,
           onTap: () => onChanged(null),
         ),

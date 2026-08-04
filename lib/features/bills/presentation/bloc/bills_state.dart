@@ -107,6 +107,15 @@ class BillsState extends Equatable {
     ];
   }
 
+  /// 指定账期锚点的汇总（供顶部条随滚动定位当前可见账期）。
+  BillStatistics summaryForAnchor(DateTime anchor, int monthStartDay) {
+    final key = MonthWindowResolver.resolveForAnchor(
+      anchor,
+      monthStartDay,
+    ).anchorMonth;
+    return monthStatistics[key] ?? statistics ?? const BillStatistics();
+  }
+
   List<BillDayGroup> _dayGroupsFor(
     List<FortuneBillVo> source,
     DateTime anchor,

@@ -10,6 +10,7 @@ import 'package:fortuneboot/fx/components/fx_progress_bar.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
+import 'package:fortuneboot/generated/l10n.dart';
 
 /// ⑧ 分类 Top3 支出洞察（跨满）：分类名 + 金额 + 占比进度条。
 /// 无数据时整卡由父层隐藏,此处仅在 ready 且非空时渲染。
@@ -51,10 +52,11 @@ class CategoryTopCard extends StatelessWidget {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const FxCardLabel('本月支出分类 Top3'),
+            FxCardLabel(S.of(context).dashboardTopCategories),
             const SizedBox(height: FxSpacing.md),
             for (var i = 0; i < slices.length; i++) ...[
               _row(
+                context,
                 slices[i],
                 sliceColors[i % sliceColors.length],
                 maxValue,
@@ -70,6 +72,7 @@ class CategoryTopCard extends StatelessWidget {
   }
 
   Widget _row(
+    BuildContext context,
     CategorySlice slice,
     Color color,
     double maxValue,
@@ -87,7 +90,7 @@ class CategoryTopCard extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              slice.name.isEmpty ? '未分类' : slice.name,
+              slice.name.isEmpty ? S.of(context).dashboardUncategorized : slice.name,
               style: FxTypography.bodyStrong,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,

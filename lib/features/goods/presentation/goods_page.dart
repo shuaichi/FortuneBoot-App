@@ -17,6 +17,7 @@ import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
+import 'package:fortuneboot/generated/l10n.dart';
 
 /// 归物列表页（Routes.goods）。顶部统计条 + 卡片网格。
 class GoodsPage extends StatefulWidget {
@@ -42,12 +43,14 @@ class _GoodsPageState extends State<GoodsPage> {
   Future<void> _openForm({FortuneGoodsKeeperVo? goods}) async {
     final bookId = _bookId;
     if (bookId == null) {
-      _showToast('请先选择账本');
+      _showToast(S.of(context).goodsSelectBookFirst);
       return;
     }
     final changed = await FxSheet.show<bool>(
       context,
-      title: goods == null ? '添加物品' : '编辑物品',
+      title: goods == null
+          ? S.of(context).goodsAddTitle
+          : S.of(context).goodsEditTitle,
       expand: true,
       child: GoodsFormSheet(service: _service, bookId: bookId, goods: goods),
     );
@@ -57,7 +60,7 @@ class _GoodsPageState extends State<GoodsPage> {
   Future<void> _openDetail(FortuneGoodsKeeperVo goods) async {
     await FxSheet.show<void>(
       context,
-      title: goods.goodsName ?? '物品详情',
+      title: goods.goodsName ?? S.of(context).goodsDetailTitle,
       expand: true,
       child: GoodsDetailSheet(goods: goods, currencyCode: _currency),
     );
@@ -76,12 +79,22 @@ class _GoodsPageState extends State<GoodsPage> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            _menuItem(ctx, Icons.info_outline_rounded, '查看详情', 'detail'),
-            _menuItem(ctx, Icons.edit_outlined, '编辑', 'edit'),
+            _menuItem(
+              ctx,
+              Icons.info_outline_rounded,
+              S.of(ctx).goodsMenuDetail,
+              'detail',
+            ),
+            _menuItem(
+              ctx,
+              Icons.edit_outlined,
+              S.of(ctx).goodsMenuEdit,
+              'edit',
+            ),
             _menuItem(
               ctx,
               Icons.delete_outline_rounded,
-              '删除',
+              S.of(ctx).goodsMenuDelete,
               'remove',
               danger: true,
             ),
@@ -121,8 +134,10 @@ class _GoodsPageState extends State<GoodsPage> {
     final keeperId = goods.goodsKeeperId;
     if (bookId == null || keeperId == null) return;
     final ok = await _confirm(
-      title: '删除物品',
-      message: '确定删除「${goods.goodsName ?? '该物品'}」吗？此操作不可撤销。',
+      title: S.of(context).goodsRemoveTitle,
+      message: S
+          .of(context)
+          .goodsRemoveConfirm(goods.goodsName ?? S.of(context).goodsThisItem),
     );
     if (ok != true) return;
     try {
@@ -142,12 +157,12 @@ class _GoodsPageState extends State<GoodsPage> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
-            child: const Text('取消'),
+            child: Text(S.of(ctx).commonCancel),
           ),
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(true),
             child: Text(
-              '删除',
+              S.of(ctx).goodsMenuDelete,
               style: TextStyle(color: FxPalette.of(ctx).danger),
             ),
           ),
@@ -202,7 +217,9 @@ class _GoodsPageState extends State<GoodsPage> {
             Icons.chevron_left_rounded,
             () => Navigator.of(context).maybePop(),
           ),
-          const Expanded(child: Text('归物', style: FxTypography.title)),
+          Expanded(
+            child: Text(S.of(context).goodsTitle, style: FxTypography.title),
+          ),
           _iconButton(Icons.add_rounded, () => _openForm()),
         ],
       ),
@@ -222,7 +239,7 @@ class _GoodsPageState extends State<GoodsPage> {
 
   Widget _buildBody(GoodsState state, int? bookId) {
     if (bookId == null) {
-      return FxStateView.empty(message: '请先选择账本');
+      return FxStateView.empty(message: S.of(context).goodsSelectBookFirst);
     }
     switch (state.status) {
       case GoodsViewStatus.initial:
@@ -248,7 +265,7 @@ class _GoodsPageState extends State<GoodsPage> {
               SizedBox(
                 height: MediaQuery.of(context).size.height * 0.3,
                 child: FxStateView.empty(
-                  message: '暂无物品，点击右上角 + 添加',
+                  message: S.of(context).goodsEmptyHint,
                   icon: Icons.inventory_2_outlined,
                 ),
               ),
@@ -326,13 +343,23 @@ class _StatBar extends StatelessWidget {
     return FxCard(
       child: Row(
         children: [
-          _cell(context, '全部成本', stats.allPrice, palette.textPrimary),
-          _divider(context),
-          _cell(context, '在役成本', stats.activePrice, palette.primary),
+          _cell(
+            context,
+            S.of(context).goodsStatAllCost,
+            stats.allPrice,
+            palette.textPrimary,
+          ),
           _divider(context),
           _cell(
             context,
-            '日均成本',
+            S.of(context).goodsStatActiveCost,
+            stats.activePrice,
+            palette.primary,
+          ),
+          _divider(context),
+          _cell(
+            context,
+            S.of(context).goodsStatDailyCost,
             stats.allDailyPrice,
             FxFinanceColors.of(context).income,
           ),
@@ -348,7 +375,12 @@ class _StatBar extends StatelessWidget {
     return Expanded(
       child: Column(
         children: [
-          Text(label, style: FxTypography.caption),
+          Text(
+            label,
+            style: FxTypography.caption.copyWith(
+              color: FxPalette.of(context).textTertiary,
+            ),
+          ),
           const SizedBox(height: FxSpacing.xs),
           FxMoneyText(
             amount: amount,

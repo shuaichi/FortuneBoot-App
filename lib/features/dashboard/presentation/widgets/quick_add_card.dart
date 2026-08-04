@@ -6,6 +6,7 @@ import 'package:fortuneboot/fx/components/fx_card.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
+import 'package:fortuneboot/generated/l10n.dart';
 
 /// ⑥ 快捷记账卡：大 "+"，点击跳记账表单。[enlarged] 时用于空态引导放大。
 class QuickAddCard extends StatelessWidget {
@@ -31,7 +32,7 @@ class QuickAddCard extends StatelessWidget {
             ),
             const SizedBox(height: FxSpacing.xs),
             Text(
-              '记一笔',
+              S.of(context).dashboardQuickAdd,
               style: FxTypography.bodyStrong.copyWith(color: Colors.white),
             ),
           ],

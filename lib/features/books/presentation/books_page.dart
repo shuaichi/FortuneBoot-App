@@ -17,6 +17,7 @@ import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
+import 'package:fortuneboot/generated/l10n.dart';
 
 /// 账本与分组管理页（Routes.books）。
 ///
@@ -48,7 +49,9 @@ class _BooksPageState extends State<BooksPage> {
   Future<void> _editGroup({FortuneGroupVo? group}) async {
     final changed = await FxSheet.show<bool>(
       context,
-      title: group == null ? '新增分组' : '编辑分组',
+      title: group == null
+          ? S.of(context).booksAddGroup
+          : S.of(context).booksEditGroup,
       expand: true,
       child: GroupFormSheet(service: _service, group: group),
     );
@@ -61,9 +64,12 @@ class _BooksPageState extends State<BooksPage> {
   Future<void> _removeGroup(FortuneGroupVo group) async {
     if (group.groupId == null) return;
     final ok = await _confirm(
-      '删除分组',
-      '确定删除「${group.groupName ?? '该分组'}」吗？'
-          '该分组下账本也将无法访问。',
+      S.of(context).booksRemoveGroupTitle,
+      S
+          .of(context)
+          .booksRemoveGroupMessage(
+            group.groupName ?? S.of(context).booksThisGroup,
+          ),
     );
     if (ok != true) return;
     await _run(() => _service.removeGroup(group.groupId!), reloadSession: true);
@@ -88,7 +94,7 @@ class _BooksPageState extends State<BooksPage> {
   /// 切换当前会话分组（不改默认，仅本地选中查看）。
   void _switchSessionGroup(FortuneGroupVo group) {
     _session.switchGroup(group);
-    _showToast('已切换到「${group.groupName ?? ''}」');
+    _showToast(S.of(context).booksSwitchedToGroup(group.groupName ?? ''));
   }
 
   // ---- 账本操作 ----
@@ -96,7 +102,9 @@ class _BooksPageState extends State<BooksPage> {
   Future<void> _editBook(int groupId, {FortuneBookVo? book}) async {
     final changed = await FxSheet.show<bool>(
       context,
-      title: book == null ? '新增账本' : '编辑账本',
+      title: book == null
+          ? S.of(context).booksAddBook
+          : S.of(context).booksEditBook,
       expand: true,
       child: BookFormSheet(
         service: _service,
@@ -126,9 +134,10 @@ class _BooksPageState extends State<BooksPage> {
   Future<void> _removeBook(FortuneBookVo book) async {
     if (book.bookId == null) return;
     final ok = await _confirm(
-      '彻底删除账本',
-      '确定彻底删除「${book.bookName ?? '该账本'}」吗？'
-          '此操作不可撤销。',
+      S.of(context).booksRemoveBookTitle,
+      S
+          .of(context)
+          .booksRemoveBookMessage(book.bookName ?? S.of(context).booksThisBook),
     );
     if (ok != true) return;
     await _run(() => _service.removeBook(book.bookId!), reloadSession: true);
@@ -176,14 +185,14 @@ class _BooksPageState extends State<BooksPage> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
-            child: const Text('取消'),
+            child: Text(S.of(context).commonCancel),
           ),
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(true),
             style: TextButton.styleFrom(
               foregroundColor: FxPalette.of(context).danger,
             ),
-            child: const Text('确定'),
+            child: Text(S.of(context).commonConfirm),
           ),
         ],
       ),
@@ -209,9 +218,9 @@ class _BooksPageState extends State<BooksPage> {
               child: FxSegmented<_Tab>(
                 value: _tab,
                 onChanged: (v) => setState(() => _tab = v),
-                segments: const [
-                  FxSegment(_Tab.groups, '分组管理'),
-                  FxSegment(_Tab.books, '账本管理'),
+                segments: [
+                  FxSegment(_Tab.groups, S.of(context).booksTabGroups),
+                  FxSegment(_Tab.books, S.of(context).booksTabBooks),
                 ],
               ),
             ),
@@ -227,7 +236,9 @@ class _BooksPageState extends State<BooksPage> {
   }
 
   Widget _buildHeader() {
-    final title = _tab == _Tab.groups ? '分组管理' : '账本管理';
+    final title = _tab == _Tab.groups
+        ? S.of(context).booksTabGroups
+        : S.of(context).booksTabBooks;
     return Padding(
       padding: const EdgeInsets.fromLTRB(
         FxSpacing.sm,
@@ -253,7 +264,7 @@ class _BooksPageState extends State<BooksPage> {
     } else {
       final groupId = _bloc.state.selectedGroupId;
       if (groupId == null) {
-        _showToast('请先创建分组');
+        _showToast(S.of(context).booksCreateGroupFirst);
         return;
       }
       _editBook(groupId);
@@ -291,7 +302,7 @@ class _BooksPageState extends State<BooksPage> {
   Widget _buildGroups(BooksState state) {
     if (state.groups.isEmpty) {
       return FxStateView.empty(
-        message: '暂无分组，点击右上角 + 新增',
+        message: S.of(context).booksEmptyGroups,
         icon: Icons.folder_outlined,
       );
     }
@@ -321,7 +332,7 @@ class _BooksPageState extends State<BooksPage> {
                     children: [
                       Expanded(
                         child: Text(
-                          g.groupName ?? '未命名分组',
+                          g.groupName ?? S.of(context).booksUnnamedGroup,
                           style: FxTypography.bodyStrong,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -329,13 +340,13 @@ class _BooksPageState extends State<BooksPage> {
                       ),
                       if (isCurrent)
                         FxTagChip(
-                          label: '当前',
+                          label: S.of(context).booksCurrent,
                           dotColor: FxPalette.of(context).primary,
                         ),
                       _menu(
                         onEdit: () => _editGroup(group: g),
                         onDefault: () => _setDefaultGroup(g),
-                        defaultLabel: '设为默认分组',
+                        defaultLabel: S.of(context).booksSetDefaultGroup,
                         onToggle: () => _toggleGroup(g, !g.enable),
                         enabled: g.enable,
                         onRemove: () => _removeGroup(g),
@@ -355,11 +366,16 @@ class _BooksPageState extends State<BooksPage> {
                           tint: FxPalette.of(context).info,
                         ),
                       if (!g.enable)
-                        _pill('已停用', tint: FxPalette.of(context).textTertiary),
+                        _pill(
+                          S.of(context).booksDisabled,
+                          tint: FxPalette.of(context).textTertiary,
+                        ),
                       if (g.defaultBookName != null)
                         Text(
-                          '默认账本：${g.defaultBookName}',
-                          style: FxTypography.caption,
+                          S.of(context).booksDefaultBook(g.defaultBookName!),
+                          style: FxTypography.caption.copyWith(
+                            color: FxPalette.of(context).textTertiary,
+                          ),
                         ),
                     ],
                   ),
@@ -378,7 +394,7 @@ class _BooksPageState extends State<BooksPage> {
     final groupId = state.selectedGroupId;
     final currentBookId = _session.state.currentBookId;
     if (groupId == null) {
-      return FxStateView.empty(message: '请先选择分组');
+      return FxStateView.empty(message: S.of(context).booksSelectGroupFirst);
     }
     return Column(
       children: [
@@ -410,7 +426,7 @@ class _BooksPageState extends State<BooksPage> {
                       SizedBox(
                         height: MediaQuery.of(context).size.height * 0.4,
                         child: FxStateView.empty(
-                          message: '该分组暂无账本，点击右上角 + 新增',
+                          message: S.of(context).booksEmptyBooks,
                           icon: Icons.menu_book_outlined,
                         ),
                       ),
@@ -428,7 +444,12 @@ class _BooksPageState extends State<BooksPage> {
                         _bookTile(b, groupId, currentBookId, recycled: false),
                       if (state.recycledBooks.isNotEmpty) ...[
                         const SizedBox(height: FxSpacing.md),
-                        const Text('回收站', style: FxTypography.label),
+                        Text(
+                          S.of(context).booksRecycleBin,
+                          style: FxTypography.label.copyWith(
+                            color: FxPalette.of(context).textSecondary,
+                          ),
+                        ),
                         const SizedBox(height: FxSpacing.xs),
                         for (final b in state.recycledBooks)
                           _bookTile(b, groupId, currentBookId, recycled: true),
@@ -464,7 +485,7 @@ class _BooksPageState extends State<BooksPage> {
                     children: [
                       Flexible(
                         child: Text(
-                          b.bookName ?? '未命名账本',
+                          b.bookName ?? S.of(context).booksUnnamedBook,
                           style: FxTypography.bodyStrong,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -473,7 +494,7 @@ class _BooksPageState extends State<BooksPage> {
                       if (isCurrent) ...[
                         const SizedBox(width: FxSpacing.sm),
                         FxTagChip(
-                          label: '当前',
+                          label: S.of(context).booksCurrent,
                           dotColor: FxPalette.of(context).primary,
                         ),
                       ],
@@ -486,7 +507,10 @@ class _BooksPageState extends State<BooksPage> {
                     children: [
                       _pill(b.defaultCurrency ?? '-'),
                       if (!b.enable)
-                        _pill('已停用', tint: FxPalette.of(context).textTertiary),
+                        _pill(
+                          S.of(context).booksDisabled,
+                          tint: FxPalette.of(context).textTertiary,
+                        ),
                     ],
                   ),
                 ],
@@ -498,7 +522,7 @@ class _BooksPageState extends State<BooksPage> {
                 children: [
                   TextButton(
                     onPressed: () => _bookAction(b, 'putBack'),
-                    child: const Text('移出'),
+                    child: Text(S.of(context).booksPutBack),
                   ),
                   IconButton(
                     onPressed: () => _removeBook(b),
@@ -513,7 +537,7 @@ class _BooksPageState extends State<BooksPage> {
               _menu(
                 onEdit: () => _editBook(groupId, book: b),
                 onDefault: () => _setDefaultBook(b),
-                defaultLabel: '设为默认账本',
+                defaultLabel: S.of(context).booksSetDefaultBook,
                 onToggle: () => _bookAction(
                   b,
                   b.enable ? 'disable' : 'enable',
@@ -574,16 +598,24 @@ class _BooksPageState extends State<BooksPage> {
         }
       },
       itemBuilder: (context) => [
-        const PopupMenuItem(value: 'edit', child: Text('编辑')),
+        PopupMenuItem(value: 'edit', child: Text(S.of(context).booksEdit)),
         PopupMenuItem(value: 'default', child: Text(defaultLabel)),
-        PopupMenuItem(value: 'toggle', child: Text(enabled ? '停用' : '启用')),
+        PopupMenuItem(
+          value: 'toggle',
+          child: Text(
+            enabled ? S.of(context).booksDisable : S.of(context).booksEnable,
+          ),
+        ),
         if (onRecycle != null)
-          const PopupMenuItem(value: 'recycle', child: Text('移入回收站')),
+          PopupMenuItem(
+            value: 'recycle',
+            child: Text(S.of(context).booksMoveToRecycle),
+          ),
         if (onRemove != null)
           PopupMenuItem(
             value: 'remove',
             child: Text(
-              '删除',
+              S.of(context).booksDelete,
               style: TextStyle(color: FxPalette.of(context).danger),
             ),
           ),

@@ -5,6 +5,7 @@ import 'package:fortuneboot/features/stats/presentation/bloc/stats_bloc.dart';
 import 'package:fortuneboot/features/stats/presentation/widgets/stats_card_shell.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
+import 'package:fortuneboot/generated/l10n.dart';
 import 'package:intl/intl.dart';
 
 /// ① 收支趋势折线：X 时间，Y 金额。支出红线 / 收入绿线（按当前类型）。
@@ -23,7 +24,9 @@ class StatsTrendCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StatsCardShell<List<TrendPoint>>(
-      label: type == StatsType.expense ? '支出趋势' : '收入趋势',
+      label: type == StatsType.expense
+          ? S.of(context).statsExpenseTrend
+          : S.of(context).statsIncomeTrend,
       section: section,
       onRetry: onRetry,
       builder: (points) {
@@ -46,7 +49,14 @@ class _EmptyAxis extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(child: Text('本期暂无记录', style: FxTypography.caption));
+    return Center(
+      child: Text(
+        S.of(context).statsNoRecordsThisPeriod,
+        style: FxTypography.caption.copyWith(
+          color: FxPalette.of(context).textTertiary,
+        ),
+      ),
+    );
   }
 }
 
@@ -89,7 +99,12 @@ class _Line extends StatelessWidget {
                 if (value == meta.max || value == meta.min) {
                   return const SizedBox.shrink();
                 }
-                return Text(_compact(value), style: FxTypography.caption);
+                return Text(
+                  _compact(value),
+                  style: FxTypography.caption.copyWith(
+                    color: palette.textTertiary,
+                  ),
+                );
               },
             ),
           ),
@@ -105,7 +120,9 @@ class _Line extends StatelessWidget {
                   padding: const EdgeInsets.only(top: 6),
                   child: Text(
                     _shortLabel(points[i].name),
-                    style: FxTypography.caption,
+                    style: FxTypography.caption.copyWith(
+                      color: palette.textTertiary,
+                    ),
                   ),
                 );
               },

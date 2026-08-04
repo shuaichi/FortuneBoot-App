@@ -8,6 +8,7 @@ import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
+import 'package:fortuneboot/generated/l10n.dart';
 
 /// 标签新增/编辑表单。字段：名称 / 父级 / 排序 / 备注 / 启用
 /// + 开关集合 canExpense/canIncome/canTransfer。
@@ -101,7 +102,7 @@ class _TagFormSheetState extends State<TagFormSheet> {
 
   Future<void> _submit() async {
     if (_nameCtrl.text.trim().isEmpty) {
-      setState(() => _error = '请输入标签名称');
+      setState(() => _error = S.of(context).tagsNameRequired);
       return;
     }
     setState(() {
@@ -152,26 +153,35 @@ class _TagFormSheetState extends State<TagFormSheet> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const ManageFieldLabel('标签名称'),
+          ManageFieldLabel(S.of(context).tagsNameLabel),
           TextField(
             controller: _nameCtrl,
-            decoration: manageInputDecoration(context, '如：聚餐'),
+            decoration: manageInputDecoration(
+              context,
+              S.of(context).tagsNameHint,
+            ),
           ),
           const SizedBox(height: FxSpacing.md),
-          const ManageFieldLabel('父级标签（可选）'),
+          ManageFieldLabel(S.of(context).tagsParentLabel),
           _parentSelector(),
           const SizedBox(height: FxSpacing.md),
-          const ManageFieldLabel('排序（可选）'),
+          ManageFieldLabel(S.of(context).tagsSortLabel),
           TextField(
             controller: _sortCtrl,
             keyboardType: TextInputType.number,
-            decoration: manageInputDecoration(context, '数字越小越靠前'),
+            decoration: manageInputDecoration(
+              context,
+              S.of(context).tagsSortHint,
+            ),
           ),
           const SizedBox(height: FxSpacing.md),
-          const ManageFieldLabel('备注（可选）'),
+          ManageFieldLabel(S.of(context).tagsRemarkLabel),
           TextField(
             controller: _remarkCtrl,
-            decoration: manageInputDecoration(context, '备注'),
+            decoration: manageInputDecoration(
+              context,
+              S.of(context).tagsRemarkHint,
+            ),
           ),
           const SizedBox(height: FxSpacing.lg),
           _switchRow(TagToggleField.canExpense, _canExpense, (v) {
@@ -197,7 +207,9 @@ class _TagFormSheetState extends State<TagFormSheet> {
           ],
           const SizedBox(height: FxSpacing.xl),
           FxButton(
-            label: widget.isEdit ? '保存修改' : '创建标签',
+            label: widget.isEdit
+                ? S.of(context).tagsSaveEdit
+                : S.of(context).tagsCreate,
             expand: true,
             loading: _submitting,
             onPressed: _submitting ? null : _submit,
@@ -242,13 +254,15 @@ class _TagFormSheetState extends State<TagFormSheet> {
         child: DropdownButton<int?>(
           isExpanded: true,
           value: options.any((o) => o.tagId == _parentId) ? _parentId : null,
-          hint: const Text('无（顶级标签）'),
+          hint: Text(S.of(context).tagsParentNone),
           items: [
-            const DropdownMenuItem<int?>(child: Text('无（顶级标签）')),
+            DropdownMenuItem<int?>(
+              child: Text(S.of(context).tagsParentNone),
+            ),
             ...options.map(
               (o) => DropdownMenuItem<int?>(
                 value: o.tagId,
-                child: Text(o.tagName ?? '未命名'),
+                child: Text(o.tagName ?? S.of(context).tagsUnnamed),
               ),
             ),
           ],

@@ -13,6 +13,7 @@ import 'package:fortuneboot/features/members/presentation/widgets/member_form_sh
 import 'package:fortuneboot/fx/components/fx_sheet.dart';
 import 'package:fortuneboot/fx/components/fx_state_view.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
+import 'package:fortuneboot/generated/l10n.dart';
 
 /// 成员管理页（扁平列表，Routes.members）。
 class MembersPage extends StatefulWidget {
@@ -37,12 +38,14 @@ class _MembersPageState extends State<MembersPage> {
   Future<void> _openForm({FortuneMemberVo? member}) async {
     final bookId = _bookId;
     if (bookId == null) {
-      _showToast('请先选择账本');
+      _showToast(S.of(context).membersSelectBookFirst);
       return;
     }
     final changed = await FxSheet.show<bool>(
       context,
-      title: member == null ? '新增成员' : '编辑成员',
+      title: member == null
+          ? S.of(context).membersAdd
+          : S.of(context).membersEdit,
       expand: true,
       child: MemberFormSheet(service: _service, bookId: bookId, member: member),
     );
@@ -72,9 +75,11 @@ class _MembersPageState extends State<MembersPage> {
     if (toRecycle) {
       final ok = await confirmManageAction(
         context,
-        title: '移入回收站',
-        message: '确定将「${member.memberName ?? '该成员'}」移入回收站吗？',
-        confirmLabel: '移入',
+        title: S.of(context).membersMoveToRecycleBin,
+        message: S.of(context).membersMoveToRecycleBinConfirm(
+          member.memberName ?? S.of(context).membersThisMember,
+        ),
+        confirmLabel: S.of(context).membersMove,
       );
       if (ok != true) return;
     }
@@ -98,9 +103,11 @@ class _MembersPageState extends State<MembersPage> {
     if (bookId == null || member.memberId == null) return;
     final ok = await confirmManageAction(
       context,
-      title: '彻底删除',
-      message: '确定彻底删除「${member.memberName ?? '该成员'}」吗？此操作不可撤销。',
-      confirmLabel: '删除',
+      title: S.of(context).membersDeletePermanently,
+      message: S.of(context).membersDeletePermanentlyConfirm(
+        member.memberName ?? S.of(context).membersThisMember,
+      ),
+      confirmLabel: S.of(context).membersDelete,
     );
     if (ok != true) return;
     try {
@@ -128,8 +135,8 @@ class _MembersPageState extends State<MembersPage> {
         },
         builder: (context, state) {
           return ManageScaffold(
-            title: '成员管理',
-            searchHint: '搜索成员名称',
+            title: S.of(context).membersTitle,
+            searchHint: S.of(context).membersSearchHint,
             onAdd: () => _openForm(),
             onSearch: (kw) => _bloc.add(MembersSearchChanged(kw)),
             tab: state.tab,
@@ -143,7 +150,7 @@ class _MembersPageState extends State<MembersPage> {
 
   Widget _buildBody(MembersState state, int? bookId) {
     if (bookId == null) {
-      return FxStateView.empty(message: '请先选择账本');
+      return FxStateView.empty(message: S.of(context).membersSelectBookFirst);
     }
     switch (state.status) {
       case MembersStatus.initial:
@@ -164,7 +171,7 @@ class _MembersPageState extends State<MembersPage> {
     final list = state.filtered;
     if (list.isEmpty) {
       return FxStateView.empty(
-        message: '暂无成员，点击右上角 + 新增',
+        message: S.of(context).membersEmpty,
         icon: Icons.people_outline_rounded,
       );
     }

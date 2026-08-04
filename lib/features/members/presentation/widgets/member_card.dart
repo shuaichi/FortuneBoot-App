@@ -4,6 +4,7 @@ import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
+import 'package:fortuneboot/generated/l10n.dart';
 
 /// 成员列表项：头像图标 + 名称 + 启用状态 + 排序 + ⋯ 菜单。
 class MemberCard extends StatelessWidget {
@@ -50,7 +51,7 @@ class MemberCard extends StatelessWidget {
               const SizedBox(width: FxSpacing.md),
               Expanded(
                 child: Text(
-                  member.memberName ?? '未命名',
+                  member.memberName ?? S.of(context).membersUnnamed,
                   style: FxTypography.bodyStrong.copyWith(
                     color: member.enable
                         ? palette.textPrimary
@@ -91,7 +92,9 @@ class MemberCard extends StatelessWidget {
         borderRadius: FxRadius.pillBorder,
       ),
       child: Text(
-        enable ? '启用' : '停用',
+        enable
+            ? S.of(context).membersStatusEnabled
+            : S.of(context).membersStatusDisabled,
         style: FxTypography.caption.copyWith(color: color),
       ),
     );

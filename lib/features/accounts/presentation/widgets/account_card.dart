@@ -6,6 +6,7 @@ import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
+import 'package:fortuneboot/generated/l10n.dart';
 
 /// 账户卡：账户名 + 卡号末四位 + 类型图标 + 余额 + 信用卡额度/账单日/还款日
 /// + 可支收转4状态点 + 计入净产标记 + 停用置灰。
@@ -98,7 +99,7 @@ class AccountCard extends StatelessWidget {
                 children: [
                   Flexible(
                     child: Text(
-                      account.accountName ?? '未命名账户',
+                      account.accountName ?? S.of(context).accountsUnnamed,
                       style: FxTypography.bodyStrong,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -106,12 +107,22 @@ class AccountCard extends StatelessWidget {
                   ),
                   if (account.lastFour != null) ...[
                     const SizedBox(width: FxSpacing.sm),
-                    Text('···${account.lastFour}', style: FxTypography.caption),
+                    Text(
+                      '···${account.lastFour}',
+                      style: FxTypography.caption.copyWith(
+                        color: palette.textTertiary,
+                      ),
+                    ),
                   ],
                 ],
               ),
               const SizedBox(height: 2),
-              Text(meta.name, style: FxTypography.caption),
+              Text(
+                meta.localizedName(context),
+                style: FxTypography.caption.copyWith(
+                  color: palette.textTertiary,
+                ),
+              ),
             ],
           ),
         ),
@@ -138,7 +149,12 @@ class AccountCard extends StatelessWidget {
                       color: palette.success,
                     ),
                     const SizedBox(width: 2),
-                    const Text('计入净产', style: FxTypography.caption),
+                    Text(
+                      S.of(context).accountsIncludedInNetWorth,
+                      style: FxTypography.caption.copyWith(
+                        color: palette.textTertiary,
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -174,7 +190,12 @@ class AccountCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              const Text('额度', style: FxTypography.caption),
+              Text(
+                S.of(context).accountsCreditLimit,
+                style: FxTypography.caption.copyWith(
+                  color: palette.textTertiary,
+                ),
+              ),
               const SizedBox(width: FxSpacing.xs),
               FxMoneyText(
                 amount: limit,
@@ -183,7 +204,12 @@ class AccountCard extends StatelessWidget {
                 color: palette.textSecondary,
               ),
               const Spacer(),
-              const Text('已用', style: FxTypography.caption),
+              Text(
+                S.of(context).accountsUsed,
+                style: FxTypography.caption.copyWith(
+                  color: palette.textTertiary,
+                ),
+              ),
               const SizedBox(width: FxSpacing.xs),
               FxMoneyText(
                 amount: used,
@@ -203,10 +229,15 @@ class AccountCard extends StatelessWidget {
   /// 账单日/还款日/利率 chip。独立于额度渲染——信用卡未设额度时也应显示日期。
   Widget _creditDatesRow(BuildContext context) {
     final chips = <Widget>[
-      if (account.billDay != null) _metaChip(context, '账单日 ${account.billDay}'),
+      if (account.billDay != null)
+        _metaChip(context, S.of(context).accountsBillDayChip(account.billDay!)),
       if (account.repayDay != null)
-        _metaChip(context, '还款日 ${account.repayDay}'),
-      if (account.apr != null) _metaChip(context, '利率 ${account.apr}'),
+        _metaChip(
+          context,
+          S.of(context).accountsRepayDayChip(account.repayDay!),
+        ),
+      if (account.apr != null)
+        _metaChip(context, S.of(context).accountsAprChip('${account.apr}')),
     ];
     if (chips.isEmpty) return const SizedBox.shrink();
     return Padding(
@@ -226,7 +257,12 @@ class AccountCard extends StatelessWidget {
         color: FxPalette.of(context).surfaceMuted,
         borderRadius: FxRadius.pillBorder,
       ),
-      child: Text(text, style: FxTypography.caption),
+      child: Text(
+        text,
+        style: FxTypography.caption.copyWith(
+          color: FxPalette.of(context).textTertiary,
+        ),
+      ),
     );
   }
 
@@ -235,10 +271,30 @@ class AccountCard extends StatelessWidget {
     final finance = FxFinanceColors.of(context);
     return Row(
       children: [
-        _statusDot(context, '支', account.canExpense, finance.expense),
-        _statusDot(context, '收', account.canIncome, finance.income),
-        _statusDot(context, '转出', account.canTransferOut, finance.transfer),
-        _statusDot(context, '转入', account.canTransferIn, finance.transfer),
+        _statusDot(
+          context,
+          S.of(context).accountsDotExpense,
+          account.canExpense,
+          finance.expense,
+        ),
+        _statusDot(
+          context,
+          S.of(context).accountsDotIncome,
+          account.canIncome,
+          finance.income,
+        ),
+        _statusDot(
+          context,
+          S.of(context).accountsDotTransferOut,
+          account.canTransferOut,
+          finance.transfer,
+        ),
+        _statusDot(
+          context,
+          S.of(context).accountsDotTransferIn,
+          account.canTransferIn,
+          finance.transfer,
+        ),
         const Spacer(),
         if (onAdjustBalance != null)
           InkResponse(
@@ -254,7 +310,7 @@ class AccountCard extends StatelessWidget {
                 borderRadius: FxRadius.pillBorder,
               ),
               child: Text(
-                '调整余额',
+                S.of(context).accountsAdjustBalance,
                 style: FxTypography.caption.copyWith(
                   color: palette.primary,
                   fontWeight: FontWeight.w600,

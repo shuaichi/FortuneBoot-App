@@ -4,6 +4,7 @@ import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
+import 'package:fortuneboot/generated/l10n.dart';
 
 /// 标签树节点（自绘 accordion）。展示 #名称 + 可支/收/转 状态点。
 class TagTile extends StatefulWidget {
@@ -67,7 +68,7 @@ class _TagTileState extends State<TagTile> {
                     const SizedBox(width: FxSpacing.xs),
                     Expanded(
                       child: Text(
-                        '#${node.tagName ?? '未命名'}',
+                        '#${node.tagName ?? S.of(context).tagsUnnamed}',
                         style: FxTypography.body.copyWith(
                           color: node.enable
                               ? palette.textPrimary

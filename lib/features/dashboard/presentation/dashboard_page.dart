@@ -15,6 +15,7 @@ import 'package:fortuneboot/features/dashboard/presentation/widgets/trend_card.d
 import 'package:fortuneboot/fx/components/fx_state_view.dart';
 import 'package:fortuneboot/fx/layout/fx_bento_grid.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
+import 'package:fortuneboot/generated/l10n.dart';
 
 /// 看板首页：粘顶栏 + Bento 卡片网格。订阅 SessionCubit 切账本重拉。
 class DashboardPage extends StatelessWidget {
@@ -97,7 +98,9 @@ class _Body extends StatelessWidget {
     return BlocBuilder<DashboardBloc, DashboardState>(
       builder: (context, state) {
         if (!state.hasBook) {
-          return FxStateView.empty(message: '请先选择一个账本');
+          return FxStateView.empty(
+            message: S.of(context).dashboardSelectBookFirst,
+          );
         }
 
         final bloc = context.read<DashboardBloc>();
@@ -157,9 +160,11 @@ class _Body extends StatelessWidget {
               child: TrendCard(section: state.trends, onRetry: retry),
             ),
           );
-          // ⑤ 资产负债环
+          // ⑤ 资产负债环（整宽横条，金额大也不溢出）
           tiles.add(
             FxBentoTile(
+              colSpan: FxBentoTile.fullSpan,
+              rowSpan: 2,
               child: AssetsDonutCard(
                 section: state.assets,
                 currencyCode: currency,
@@ -168,7 +173,12 @@ class _Body extends StatelessWidget {
             ),
           );
           // ⑥ 快捷记账
-          tiles.add(const FxBentoTile(child: QuickAddCard()));
+          tiles.add(
+            const FxBentoTile(
+              colSpan: FxBentoTile.fullSpan,
+              child: QuickAddCard(),
+            ),
+          );
         }
 
         // ⑦ 最近账单(跨满)

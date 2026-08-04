@@ -11,6 +11,7 @@ import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
+import 'package:fortuneboot/generated/l10n.dart';
 import 'package:fortuneboot/util/rsa_util.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -80,8 +81,9 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
 
   Future<void> _pickAvatar() async {
     final userId = _userId;
+    final s = S.of(context);
     if (userId == null) {
-      _toast('缺少用户信息，无法上传');
+      _toast(s.profileMissingUserInfoUpload);
       return;
     }
     final XFile? picked = await _picker.pickImage(
@@ -99,7 +101,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
         _uploadingAvatar = false;
         _dirty = true;
       });
-      _toast('头像已更新');
+      _toast(s.profileAvatarUpdated);
     } on FxApiException catch (e) {
       if (!mounted) return;
       setState(() => _uploadingAvatar = false);
@@ -107,19 +109,20 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
     } on Object catch (e) {
       if (!mounted) return;
       setState(() => _uploadingAvatar = false);
-      _toast('上传失败：$e');
+      _toast(s.profileUploadFailed(e.toString()));
     }
   }
 
   Future<void> _save() async {
     final userId = _userId;
+    final s = S.of(context);
     if (userId == null) {
-      _toast('缺少用户信息，无法保存');
+      _toast(s.profileMissingUserInfoSave);
       return;
     }
     final nickname = _nicknameCtrl.text.trim();
     if (nickname.isEmpty) {
-      _toast('昵称不能为空');
+      _toast(s.profileNicknameRequired);
       return;
     }
     setState(() => _saving = true);
@@ -136,7 +139,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
         _saving = false;
         _dirty = true;
       });
-      _toast('资料已保存');
+      _toast(s.profileSaved);
       Navigator.of(context).pop(true);
     } on FxApiException catch (e) {
       if (!mounted) return;
@@ -145,19 +148,19 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
     } on Object catch (e) {
       if (!mounted) return;
       setState(() => _saving = false);
-      _toast('保存失败：$e');
+      _toast(s.profileSaveFailed(e.toString()));
     }
   }
 
   Future<void> _openPasswordSheet() async {
     final userId = _userId;
     if (userId == null) {
-      _toast('缺少用户信息，无法修改密码');
+      _toast(S.of(context).profileMissingUserInfoPassword);
       return;
     }
     await FxSheet.show<void>(
       context,
-      title: '修改密码',
+      title: S.of(context).profileChangePassword,
       child: _PasswordSheet(service: _service, userId: userId),
     );
   }
@@ -177,7 +180,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
           backgroundColor: palette.surface,
           surfaceTintColor: Colors.transparent,
           elevation: 0,
-          title: const Text('编辑资料', style: FxTypography.title),
+          title: Text(S.of(context).profileEditTitle, style: FxTypography.title),
           leading: IconButton(
             icon: Icon(Icons.arrow_back_rounded, color: palette.textPrimary),
             onPressed: () => Navigator.of(context).pop(_dirty),
@@ -192,21 +195,25 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  _labeledField('昵称', _nicknameCtrl, hint: '请输入昵称'),
+                  _labeledField(
+                    S.of(context).profileNickname,
+                    _nicknameCtrl,
+                    hint: S.of(context).profileNicknameHint,
+                  ),
                   const SizedBox(height: FxSpacing.lg),
                   _sexField(),
                   const SizedBox(height: FxSpacing.lg),
                   _labeledField(
-                    '电话',
+                    S.of(context).profilePhone,
                     _phoneCtrl,
-                    hint: '请输入手机号',
+                    hint: S.of(context).profilePhoneHint,
                     keyboardType: TextInputType.phone,
                   ),
                   const SizedBox(height: FxSpacing.lg),
                   _labeledField(
-                    '邮箱',
+                    S.of(context).profileEmail,
                     _emailCtrl,
-                    hint: '请输入邮箱',
+                    hint: S.of(context).profileEmailHint,
                     keyboardType: TextInputType.emailAddress,
                   ),
                 ],
@@ -227,8 +234,11 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                         color: palette.textSecondary,
                       ),
                       const SizedBox(width: FxSpacing.md),
-                      const Expanded(
-                        child: Text('修改密码', style: FxTypography.bodyStrong),
+                      Expanded(
+                        child: Text(
+                          S.of(context).profileChangePassword,
+                          style: FxTypography.bodyStrong,
+                        ),
                       ),
                       Icon(
                         Icons.chevron_right_rounded,
@@ -241,7 +251,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
             ),
             const SizedBox(height: FxSpacing.xxl),
             FxButton(
-              label: '保存',
+              label: S.of(context).commonSave,
               expand: true,
               loading: _saving,
               onPressed: _saving ? null : _save,
@@ -313,7 +323,12 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
             ),
           ),
           const SizedBox(height: FxSpacing.sm),
-          const Text('点击更换头像', style: FxTypography.caption),
+          Text(
+            S.of(context).profileTapToChangeAvatar,
+            style: FxTypography.caption.copyWith(
+              color: FxPalette.of(context).textTertiary,
+            ),
+          ),
         ],
       ),
     );
@@ -328,7 +343,12 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: FxTypography.label),
+        Text(
+          label,
+          style: FxTypography.label.copyWith(
+            color: FxPalette.of(context).textSecondary,
+          ),
+        ),
         const SizedBox(height: FxSpacing.sm),
         TextField(
           controller: controller,
@@ -344,13 +364,18 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('性别', style: FxTypography.label),
+        Text(
+          S.of(context).profileSex,
+          style: FxTypography.label.copyWith(
+            color: FxPalette.of(context).textSecondary,
+          ),
+        ),
         const SizedBox(height: FxSpacing.sm),
         Row(
           children: [
-            _sexChip('男', 1),
+            _sexChip(S.of(context).profileSexMale, 1),
             const SizedBox(width: FxSpacing.md),
-            _sexChip('女', 0),
+            _sexChip(S.of(context).profileSexFemale, 0),
           ],
         ),
       ],
@@ -438,19 +463,20 @@ class _PasswordSheetState extends State<_PasswordSheet> {
   }
 
   Future<void> _submit() async {
+    final s = S.of(context);
     final oldPwd = _oldCtrl.text;
     final newPwd = _newCtrl.text;
     final confirm = _confirmCtrl.text;
     if (oldPwd.isEmpty || newPwd.isEmpty) {
-      setState(() => _error = '请填写旧密码和新密码');
+      setState(() => _error = s.profilePasswordFillOldNew);
       return;
     }
     if (newPwd.length < 6) {
-      setState(() => _error = '新密码至少 6 位');
+      setState(() => _error = s.profilePasswordMinLength);
       return;
     }
     if (newPwd != confirm) {
-      setState(() => _error = '两次输入的新密码不一致');
+      setState(() => _error = s.profilePasswordMismatch);
       return;
     }
     setState(() {
@@ -473,7 +499,7 @@ class _PasswordSheetState extends State<_PasswordSheet> {
       Navigator.of(context).pop();
       messenger
         ..hideCurrentSnackBar()
-        ..showSnackBar(const SnackBar(content: Text('密码修改成功')));
+        ..showSnackBar(SnackBar(content: Text(s.profilePasswordChanged)));
     } on FxApiException catch (e) {
       if (!mounted) return;
       setState(() {
@@ -484,7 +510,7 @@ class _PasswordSheetState extends State<_PasswordSheet> {
       if (!mounted) return;
       setState(() {
         _submitting = false;
-        _error = '修改失败：$e';
+        _error = s.profilePasswordChangeFailed(e.toString());
       });
     }
   }
@@ -503,11 +529,11 @@ class _PasswordSheetState extends State<_PasswordSheet> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          _field('旧密码', _oldCtrl),
+          _field(S.of(context).profileOldPassword, _oldCtrl),
           const SizedBox(height: FxSpacing.md),
-          _field('新密码', _newCtrl),
+          _field(S.of(context).profileNewPassword, _newCtrl),
           const SizedBox(height: FxSpacing.md),
-          _field('确认新密码', _confirmCtrl),
+          _field(S.of(context).profileConfirmNewPassword, _confirmCtrl),
           if (_error != null) ...[
             const SizedBox(height: FxSpacing.md),
             Text(
@@ -517,7 +543,7 @@ class _PasswordSheetState extends State<_PasswordSheet> {
           ],
           const SizedBox(height: FxSpacing.lg),
           FxButton(
-            label: '确认修改',
+            label: S.of(context).profileConfirmChange,
             expand: true,
             loading: _submitting,
             onPressed: _submitting ? null : _submit,
@@ -535,7 +561,7 @@ class _PasswordSheetState extends State<_PasswordSheet> {
       style: FxTypography.body,
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: FxTypography.label,
+        labelStyle: FxTypography.label.copyWith(color: palette.textSecondary),
         filled: true,
         fillColor: palette.surfaceMuted,
         contentPadding: const EdgeInsets.symmetric(

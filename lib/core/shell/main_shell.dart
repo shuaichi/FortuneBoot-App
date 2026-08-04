@@ -6,6 +6,7 @@ import 'package:fortuneboot/core/navigation/routes.dart';
 import 'package:fortuneboot/core/session/session_cubit.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
+import 'package:fortuneboot/generated/l10n.dart';
 
 /// MainShell 的 tab 内容槽。各 feature 阶段落地后通过 [MainShellSlots.register] 注入
 /// 真实页面 builder；未注入时显示占位，保证骨架先编译可跑。
@@ -41,18 +42,28 @@ class _MainShellState extends State<MainShell> {
 
   Widget _slot(WidgetBuilder? builder, String label) {
     if (builder == null) {
-      return Center(child: Text('$label（开发中）', style: FxTypography.label));
+      return Builder(
+        builder: (context) => Center(
+          child: Text(
+            '$label（${S.of(context).navInDevelopment}）',
+            style: FxTypography.label.copyWith(
+              color: FxPalette.of(context).textSecondary,
+            ),
+          ),
+        ),
+      );
     }
     return Builder(builder: builder);
   }
 
   @override
   Widget build(BuildContext context) {
+    final s = S.of(context);
     final pages = [
-      _slot(MainShellSlots.dashboard, '仪表盘'),
-      _slot(MainShellSlots.bills, '账单'),
-      _slot(MainShellSlots.stats, '统计'),
-      _slot(MainShellSlots.profile, '我的'),
+      _slot(MainShellSlots.dashboard, s.navDashboard),
+      _slot(MainShellSlots.bills, s.navBills),
+      _slot(MainShellSlots.stats, s.navStats),
+      _slot(MainShellSlots.profile, s.navProfile),
     ];
 
     return Scaffold(
@@ -84,6 +95,7 @@ class _FxBottomBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final palette = FxPalette.of(context);
+    final s = S.of(context);
     return BottomAppBar(
       color: palette.surface,
       surfaceTintColor: Colors.transparent,
@@ -94,11 +106,11 @@ class _FxBottomBar extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          _item(context, 0, Icons.dashboard_rounded, '仪表盘'),
-          _item(context, 1, Icons.receipt_long_rounded, '账单'),
+          _item(context, 0, Icons.dashboard_rounded, s.navDashboard),
+          _item(context, 1, Icons.receipt_long_rounded, s.navBills),
           const SizedBox(width: 48), // FAB 缺口
-          _item(context, 2, Icons.bar_chart_rounded, '统计'),
-          _item(context, 3, Icons.person_rounded, '我的'),
+          _item(context, 2, Icons.bar_chart_rounded, s.navStats),
+          _item(context, 3, Icons.person_rounded, s.navProfile),
         ],
       ),
     );

@@ -9,6 +9,7 @@ import 'package:fortuneboot/fx/components/fx_card.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
+import 'package:fortuneboot/generated/l10n.dart';
 
 /// ④ 收支趋势迷你折线（本月每日支出）。无坐标轴，点击跳统计页。
 class TrendCard extends StatelessWidget {
@@ -27,12 +28,17 @@ class TrendCard extends StatelessWidget {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const FxCardLabel('支出趋势'),
+            FxCardLabel(S.of(context).dashboardExpenseTrend),
             const SizedBox(height: FxSpacing.sm),
             Expanded(
               child: points.length < 2
-                  ? const Center(
-                      child: Text('数据不足', style: FxTypography.caption),
+                  ? Center(
+                      child: Text(
+                        S.of(context).dashboardInsufficientData,
+                        style: FxTypography.caption.copyWith(
+                          color: FxPalette.of(context).textTertiary,
+                        ),
+                      ),
                     )
                   : _MiniLine(points: points),
             ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fortuneboot/core/network/fx_api.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
+import 'package:fortuneboot/generated/l10n.dart';
 
 /// 账户 VO（FortuneAccountVo）。金额 BigDecimal / id 雪花 Long 用 FxApi 宽松解析。
 /// billDay / repayDay 为 LocalDate（yyyy-MM-dd），保留原始字符串用于展示与编辑。
@@ -203,6 +204,23 @@ class AccountTypeMeta {
         return loan;
       default:
         return unknown;
+    }
+  }
+
+  /// 本地化类型名（展示用）。const [name] 仅作兜底/内部标识。
+  String localizedName(BuildContext context) {
+    final s = S.of(context);
+    switch (id) {
+      case 1:
+        return s.accountsTypeCash;
+      case 2:
+        return s.accountsTypeCredit;
+      case 3:
+        return s.accountsTypeAsset;
+      case 4:
+        return s.accountsTypeLoan;
+      default:
+        return s.accountsTypeOther;
     }
   }
 

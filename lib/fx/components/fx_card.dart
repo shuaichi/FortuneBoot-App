@@ -100,7 +100,12 @@ class FxCardLabel extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(text, style: FxTypography.label),
+        Text(
+          text,
+          style: FxTypography.label.copyWith(
+            color: FxPalette.of(context).textSecondary,
+          ),
+        ),
         if (trailing != null) trailing!,
       ],
     );

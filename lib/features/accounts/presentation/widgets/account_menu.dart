@@ -3,6 +3,7 @@ import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
+import 'package:fortuneboot/generated/l10n.dart';
 
 /// 账户 ⋯ 菜单动作。
 enum AccountMenuAction { edit, adjustBalance, moveToRecycleBin, remove }
@@ -37,24 +38,31 @@ Future<AccountMenuAction?> showAccountMenu(
               ),
             ),
             const SizedBox(height: FxSpacing.sm),
-            _item(ctx, Icons.edit_rounded, '编辑账户', AccountMenuAction.edit),
+            _item(
+              ctx,
+              Icons.edit_rounded,
+              S.of(ctx).accountsEditTitle,
+              AccountMenuAction.edit,
+            ),
             _item(
               ctx,
               Icons.tune_rounded,
-              canAdjust ? '调整余额' : '调整余额（需先选账本）',
+              canAdjust
+                  ? S.of(ctx).accountsAdjustBalance
+                  : S.of(ctx).accountsAdjustBalanceNeedBook,
               AccountMenuAction.adjustBalance,
               enabled: canAdjust,
             ),
             _item(
               ctx,
               Icons.delete_outline_rounded,
-              '移入回收站',
+              S.of(ctx).accountsMoveToRecycleBinTitle,
               AccountMenuAction.moveToRecycleBin,
             ),
             _item(
               ctx,
               Icons.delete_forever_rounded,
-              '彻底删除',
+              S.of(ctx).accountsDeletePermanently,
               AccountMenuAction.remove,
               danger: true,
             ),
@@ -116,7 +124,7 @@ Future<bool?> confirmDangerAction(
                 children: [
                   Expanded(
                     child: _btn(
-                      '取消',
+                      S.of(ctx).commonCancel,
                       onTap: () => Navigator.of(ctx).pop(false),
                       color: FxPalette.of(ctx).surfaceMuted,
                       fg: FxPalette.of(ctx).textSecondary,

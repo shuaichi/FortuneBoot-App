@@ -5,6 +5,7 @@ import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
+import 'package:fortuneboot/generated/l10n.dart';
 
 /// 附件缩略图网格：图片缩略图（可删）+ 添加按钮。
 class AttachmentGrid extends StatelessWidget {
@@ -29,9 +30,19 @@ class AttachmentGrid extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text('附件', style: FxTypography.label),
+            Text(
+              S.of(context).billEditorAttachments,
+              style: FxTypography.label.copyWith(
+                color: FxPalette.of(context).textSecondary,
+              ),
+            ),
             if (files.isNotEmpty)
-              Text('已选 ${files.length} 张', style: FxTypography.caption),
+              Text(
+                S.of(context).billEditorSelectedCount(files.length),
+                style: FxTypography.caption.copyWith(
+                  color: FxPalette.of(context).textTertiary,
+                ),
+              ),
           ],
         ),
         const SizedBox(height: FxSpacing.md),

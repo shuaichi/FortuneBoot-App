@@ -4,6 +4,7 @@ import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
+import 'package:fortuneboot/generated/l10n.dart';
 
 /// 管理类模块统一 tab：全部 / 启用 / 停用 / 回收站。
 ///
@@ -37,7 +38,7 @@ class ManageScaffold extends StatefulWidget {
   final String title;
   final VoidCallback onAdd;
   final ValueChanged<String> onSearch;
-  final String searchHint;
+  final String? searchHint;
   final ManageTab tab;
   final ValueChanged<ManageTab> onTabChanged;
   final Widget body;
@@ -50,7 +51,7 @@ class ManageScaffold extends StatefulWidget {
     required this.tab,
     required this.onTabChanged,
     required this.body,
-    this.searchHint = '搜索名称',
+    this.searchHint,
   });
 
   @override
@@ -96,11 +97,20 @@ class _ManageScaffoldState extends State<ManageScaffold> {
               child: FxSegmented<ManageTab>(
                 value: widget.tab,
                 onChanged: widget.onTabChanged,
-                segments: const [
-                  FxSegment(ManageTab.all, '全部'),
-                  FxSegment(ManageTab.enabled, '启用'),
-                  FxSegment(ManageTab.disabled, '停用'),
-                  FxSegment(ManageTab.recycleBin, '回收站'),
+                segments: [
+                  FxSegment(ManageTab.all, S.of(context).manageSharedTabAll),
+                  FxSegment(
+                    ManageTab.enabled,
+                    S.of(context).manageSharedTabEnabled,
+                  ),
+                  FxSegment(
+                    ManageTab.disabled,
+                    S.of(context).manageSharedTabDisabled,
+                  ),
+                  FxSegment(
+                    ManageTab.recycleBin,
+                    S.of(context).manageSharedTabRecycleBin,
+                  ),
                 ],
               ),
             ),
@@ -151,7 +161,7 @@ class _ManageScaffoldState extends State<ManageScaffold> {
         autofocus: true,
         onChanged: widget.onSearch,
         decoration: InputDecoration(
-          hintText: widget.searchHint,
+          hintText: widget.searchHint ?? S.of(context).manageSharedSearchHint,
           prefixIcon: const Icon(Icons.search_rounded, size: 20),
           filled: true,
           fillColor: palette.surfaceMuted,

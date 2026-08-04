@@ -19,6 +19,7 @@ import 'package:fortuneboot/fx/components/fx_state_view.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
+import 'package:fortuneboot/generated/l10n.dart';
 
 /// 账户管理 + 净资产页（独立页，Routes.accounts）。
 ///
@@ -66,12 +67,14 @@ class _AccountsPageState extends State<AccountsPage> {
   Future<void> _openForm({FortuneAccountVo? account}) async {
     final groupId = _groupId;
     if (groupId == null) {
-      _showToast('请先选择账本/分组');
+      _showToast(S.of(context).accountsSelectBookGroup);
       return;
     }
     final changed = await FxSheet.show<bool>(
       context,
-      title: account == null ? '新增账户' : '编辑账户',
+      title: account == null
+          ? S.of(context).accountsAddTitle
+          : S.of(context).accountsEditTitle,
       expand: true,
       child: AccountFormSheet(
         service: _service,
@@ -95,12 +98,12 @@ class _AccountsPageState extends State<AccountsPage> {
   Future<void> _openAdjust(FortuneAccountVo account) async {
     final bookId = _bookId;
     if (bookId == null) {
-      _showToast('请先选择账本后再调整余额');
+      _showToast(S.of(context).accountsSelectBookForAdjust);
       return;
     }
     final ok = await FxSheet.show<bool>(
       context,
-      title: '调整余额 · ${account.accountName ?? ''}',
+      title: S.of(context).accountsAdjustTitle(account.accountName ?? ''),
       child: BalanceAdjustSheet(
         service: _service,
         account: account,
@@ -111,19 +114,19 @@ class _AccountsPageState extends State<AccountsPage> {
       _bloc.add(const AccountsMutated());
       // 余额调整会在后端生成一笔调整账单，通知看板/账单流刷新。
       BillMutations.bump();
-      _showToast('余额已调整');
+      _showToast(S.of(context).accountsBalanceAdjusted);
     }
   }
 
   Future<void> _openRecycleBin() async {
     final groupId = _groupId;
     if (groupId == null) {
-      _showToast('请先选择账本/分组');
+      _showToast(S.of(context).accountsSelectBookGroup);
       return;
     }
     await FxSheet.show<void>(
       context,
-      title: '回收站',
+      title: S.of(context).accountsRecycleBin,
       child: RecycleBinSheet(service: _service, groupId: groupId),
     );
     if (mounted) _bloc.add(const AccountsMutated());
@@ -150,9 +153,11 @@ class _AccountsPageState extends State<AccountsPage> {
     if (groupId == null || account.accountId == null) return;
     final ok = await confirmDangerAction(
       context,
-      title: '移入回收站',
-      message: '确定将「${account.accountName ?? '该账户'}」移入回收站吗？',
-      confirmLabel: '移入',
+      title: S.of(context).accountsMoveToRecycleBinTitle,
+      message: S.of(context).accountsMoveToRecycleBinConfirm(
+        account.accountName ?? S.of(context).accountsDefaultName,
+      ),
+      confirmLabel: S.of(context).accountsMoveIn,
     );
     if (ok != true) return;
     try {
@@ -171,9 +176,11 @@ class _AccountsPageState extends State<AccountsPage> {
     if (groupId == null || account.accountId == null) return;
     final ok = await confirmDangerAction(
       context,
-      title: '彻底删除',
-      message: '确定彻底删除「${account.accountName ?? '该账户'}」吗？此操作不可撤销。',
-      confirmLabel: '删除',
+      title: S.of(context).accountsDeletePermanently,
+      message: S.of(context).accountsDeleteConfirm(
+        account.accountName ?? S.of(context).accountsDefaultName,
+      ),
+      confirmLabel: S.of(context).accountsDelete,
     );
     if (ok != true) return;
     try {
@@ -231,7 +238,12 @@ class _AccountsPageState extends State<AccountsPage> {
           _iconButton(Icons.chevron_left_rounded, () {
             Navigator.of(context).maybePop();
           }),
-          const Expanded(child: Text('账户管理', style: FxTypography.title)),
+          Expanded(
+            child: Text(
+              S.of(context).accountsTitle,
+              style: FxTypography.title,
+            ),
+          ),
           _iconButton(Icons.delete_outline_rounded, _openRecycleBin),
           const SizedBox(width: FxSpacing.xs),
           _iconButton(Icons.add_rounded, () => _openForm()),
@@ -253,7 +265,7 @@ class _AccountsPageState extends State<AccountsPage> {
 
   Widget _buildBody(AccountsState state, int? groupId) {
     if (groupId == null) {
-      return FxStateView.empty(message: '请先选择账本/分组');
+      return FxStateView.empty(message: S.of(context).accountsSelectBookGroup);
     }
     switch (state.status) {
       case AccountsStatus.initial:
@@ -279,7 +291,7 @@ class _AccountsPageState extends State<AccountsPage> {
               SizedBox(
                 height: MediaQuery.of(context).size.height * 0.3,
                 child: FxStateView.empty(
-                  message: '暂无账户，点击右上角 + 新增',
+                  message: S.of(context).accountsEmptyHint,
                   icon: Icons.account_balance_wallet_outlined,
                 ),
               ),
@@ -353,7 +365,12 @@ class _AccountsPageState extends State<AccountsPage> {
             ),
           ),
           const SizedBox(width: FxSpacing.sm),
-          Text(group.meta.name, style: FxTypography.label),
+          Text(
+            group.meta.localizedName(context),
+            style: FxTypography.label.copyWith(
+              color: palette.textSecondary,
+            ),
+          ),
           const Spacer(),
           FxMoneyText(
             amount: group.subtotal,

@@ -6,6 +6,7 @@ import 'package:fortuneboot/fx/components/fx_money_text.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
+import 'package:fortuneboot/generated/l10n.dart';
 
 /// 概览条：支出 / 收入 / 结余。无数据时显示 0（getBillStatistics）。
 class StatsOverviewBar extends StatelessWidget {
@@ -26,21 +27,36 @@ class StatsOverviewBar extends StatelessWidget {
     return FxCard(
       child: Row(
         children: [
-          _cell('支出', data.expense, finance.expense),
+          _cell(context, S.of(context).statsExpense, data.expense, finance.expense),
           _divider(palette),
-          _cell('收入', data.income, finance.income),
+          _cell(context, S.of(context).statsIncome, data.income, finance.income),
           _divider(palette),
-          _cell('结余', data.surplus, palette.textPrimary),
+          _cell(
+            context,
+            S.of(context).statsSurplus,
+            data.surplus,
+            palette.textPrimary,
+          ),
         ],
       ),
     );
   }
 
-  Widget _cell(String label, double amount, Color color) {
+  Widget _cell(
+    BuildContext context,
+    String label,
+    double amount,
+    Color color,
+  ) {
     return Expanded(
       child: Column(
         children: [
-          Text(label, style: FxTypography.caption),
+          Text(
+            label,
+            style: FxTypography.caption.copyWith(
+              color: FxPalette.of(context).textTertiary,
+            ),
+          ),
           const SizedBox(height: FxSpacing.xs),
           FxMoneyText(
             amount: amount,

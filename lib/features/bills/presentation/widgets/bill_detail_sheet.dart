@@ -13,6 +13,7 @@ import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
+import 'package:fortuneboot/generated/l10n.dart';
 import 'package:intl/intl.dart';
 
 /// 账单详情内容（放入 FxSheet.show 的 child）。
@@ -68,12 +69,13 @@ class _BillDetailSheetState extends State<BillDetailSheet> {
 
   bool get _isTransfer => _bill.billType == FxBillType.transfer.value;
 
-  String get _title {
+  String _titleOf(BuildContext context) {
     final t = _bill.title;
     if (t != null && t.isNotEmpty) return t;
     final cat = _bill.primaryCategoryName;
     if (cat.isNotEmpty) return cat;
-    return FxBillType.fromValue(_bill.billType)?.label ?? '账单';
+    return FxBillType.fromValue(_bill.billType)?.localizedLabel(context) ??
+        S.of(context).billTypeFallback;
   }
 
   @override
@@ -124,10 +126,15 @@ class _BillDetailSheetState extends State<BillDetailSheet> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(_title, style: FxTypography.titleLarge),
+              Text(_titleOf(context), style: FxTypography.titleLarge),
               if (catLine.isNotEmpty) ...[
                 const SizedBox(height: FxSpacing.xs),
-                Text(catLine.join(' · '), style: FxTypography.caption),
+                Text(
+                  catLine.join(' · '),
+                  style: FxTypography.caption.copyWith(
+                    color: FxPalette.of(context).textTertiary,
+                  ),
+                ),
               ],
             ],
           ),
@@ -151,11 +158,11 @@ class _BillDetailSheetState extends State<BillDetailSheet> {
 
     // 多分类拆分
     if (_bill.categoryAmountPair.length > 1) {
-      rows.add(_sectionLabel('分类明细'));
+      rows.add(_sectionLabel(S.of(context).billsCategoryDetail));
       for (final c in _bill.categoryAmountPair) {
         rows.add(
           _kv(
-            c.categoryName ?? '未分类',
+            c.categoryName ?? S.of(context).billsUncategorized,
             trailing: FxMoneyText(
               amount: c.amount,
               currencyCode: _bill.currencyCode,
@@ -169,12 +176,12 @@ class _BillDetailSheetState extends State<BillDetailSheet> {
 
     // 转账双账户
     if (_isTransfer) {
-      rows.add(_kv('转出账户', value: _bill.accountName ?? '-'));
-      rows.add(_kv('转入账户', value: _bill.toAccountName ?? '-'));
+      rows.add(_kv(S.of(context).billsTransferOutAccount, value: _bill.accountName ?? '-'));
+      rows.add(_kv(S.of(context).billsTransferInAccount, value: _bill.toAccountName ?? '-'));
       if (_bill.convertedAmount != null) {
         rows.add(
           _kv(
-            '到账金额',
+            S.of(context).billsReceivedAmount,
             trailing: FxMoneyText(
               amount: _bill.convertedAmount!,
               currencyCode: _bill.toCurrencyCode ?? _bill.currencyCode,
@@ -186,7 +193,7 @@ class _BillDetailSheetState extends State<BillDetailSheet> {
     }
 
     if (_bill.payeeName != null && _bill.payeeName!.isNotEmpty) {
-      rows.add(_kv('交易对象', value: _bill.payeeName));
+      rows.add(_kv(S.of(context).billsPayee, value: _bill.payeeName));
     }
 
     final tags = _bill.tagList
@@ -196,7 +203,7 @@ class _BillDetailSheetState extends State<BillDetailSheet> {
     if (tags.isNotEmpty) {
       rows.add(
         _kvWidget(
-          '标签',
+          S.of(context).billsTags,
           Wrap(
             alignment: WrapAlignment.end,
             spacing: FxSpacing.xs,
@@ -212,16 +219,16 @@ class _BillDetailSheetState extends State<BillDetailSheet> {
         .where((s) => s.isNotEmpty)
         .toList();
     if (members.isNotEmpty) {
-      rows.add(_kv('成员', value: members.join('、')));
+      rows.add(_kv(S.of(context).billsMembers, value: members.join('、')));
     }
 
     // 附加费用
     if (_bill.extras.isNotEmpty) {
-      rows.add(_sectionLabel('附加费用'));
+      rows.add(_sectionLabel(S.of(context).billsExtras));
       for (final e in _bill.extras) {
         rows.add(
           _kv(
-            _extraLabel(e),
+            _extraLabel(context, e),
             trailing: FxMoneyText(
               amount: e.amount,
               currencyCode: _bill.currencyCode,
@@ -233,34 +240,41 @@ class _BillDetailSheetState extends State<BillDetailSheet> {
     }
 
     if (_bill.remark != null && _bill.remark!.isNotEmpty) {
-      rows.add(_kv('备注', value: _bill.remark));
+      rows.add(_kv(S.of(context).billsRemark, value: _bill.remark));
     }
 
     if (_bill.hasFile) {
-      rows.add(_sectionLabel('附件'));
+      rows.add(_sectionLabel(S.of(context).billsAttachments));
       rows.add(_filesView());
     }
 
     return rows;
   }
 
-  String _extraLabel(BillExtra e) {
+  String _extraLabel(BuildContext context, BillExtra e) {
     final type = switch (e.extraType) {
-      1 => '手续费',
-      2 => '优惠',
-      _ => '费用',
+      1 => S.of(context).billsFee,
+      2 => S.of(context).billsDiscount,
+      _ => S.of(context).billsCharge,
     };
     final side = switch (e.accountSide) {
-      1 => '转出',
-      2 => '转入',
+      1 => S.of(context).billsSideOut,
+      2 => S.of(context).billsSideIn,
       _ => null,
     };
-    return side == null ? type : '$type（$side）';
+    return side == null
+        ? type
+        : S.of(context).billsExtraWithSide(type, side);
   }
 
   Widget _sectionLabel(String text) => Padding(
     padding: const EdgeInsets.only(top: FxSpacing.sm, bottom: FxSpacing.xs),
-    child: Text(text, style: FxTypography.label),
+    child: Text(
+      text,
+      style: FxTypography.label.copyWith(
+        color: FxPalette.of(context).textSecondary,
+      ),
+    ),
   );
 
   Widget _kv(String key, {String? value, Widget? trailing}) {
@@ -281,7 +295,15 @@ class _BillDetailSheetState extends State<BillDetailSheet> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(width: 72, child: Text(key, style: FxTypography.label)),
+          SizedBox(
+            width: 72,
+            child: Text(
+              key,
+              style: FxTypography.label.copyWith(
+                color: FxPalette.of(context).textSecondary,
+              ),
+            ),
+          ),
           const SizedBox(width: FxSpacing.md),
           Expanded(
             child: Align(alignment: Alignment.centerRight, child: trailing),
@@ -307,7 +329,12 @@ class _BillDetailSheetState extends State<BillDetailSheet> {
         }
         final files = snapshot.data ?? const <BillFileVo>[];
         if (files.isEmpty) {
-          return const Text('无附件', style: FxTypography.caption);
+          return Text(
+            S.of(context).billsNoAttachments,
+            style: FxTypography.caption.copyWith(
+              color: FxPalette.of(context).textTertiary,
+            ),
+          );
         }
         return Wrap(
           spacing: FxSpacing.sm,
@@ -366,7 +393,7 @@ class _BillDetailSheetState extends State<BillDetailSheet> {
             Padding(
               padding: const EdgeInsets.all(FxSpacing.sm),
               child: FxButton.text(
-                label: '关闭',
+                label: S.of(context).billsClose,
                 onPressed: () => Navigator.of(ctx).pop(),
               ),
             ),
@@ -381,7 +408,7 @@ class _BillDetailSheetState extends State<BillDetailSheet> {
       children: [
         Expanded(
           child: FxButton.tonal(
-            label: '编辑',
+            label: S.of(context).billsEdit,
             icon: Icons.edit_rounded,
             onPressed: widget.onEdit,
           ),
@@ -389,7 +416,9 @@ class _BillDetailSheetState extends State<BillDetailSheet> {
         const SizedBox(width: FxSpacing.sm),
         Expanded(
           child: FxButton(
-            label: _bill.confirm ? '取消确认' : '确认',
+            label: _bill.confirm
+                ? S.of(context).billsUnconfirm
+                : S.of(context).confirm,
             variant: FxButtonVariant.text,
             icon: _bill.confirm
                 ? Icons.remove_done_rounded
@@ -400,7 +429,7 @@ class _BillDetailSheetState extends State<BillDetailSheet> {
         const SizedBox(width: FxSpacing.sm),
         Expanded(
           child: FxButton.critical(
-            label: '删除',
+            label: S.of(context).billsDelete,
             icon: Icons.delete_outline_rounded,
             onPressed: widget.onDelete,
           ),

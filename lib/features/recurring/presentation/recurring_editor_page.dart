@@ -12,6 +12,7 @@ import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
+import 'package:fortuneboot/generated/l10n.dart';
 
 /// 周期记账规则编辑页（Routes.recurringEditor）。
 ///
@@ -223,19 +224,19 @@ class _RecurringEditorPageState extends State<RecurringEditorPage> {
 
   Future<void> _submit() async {
     if (_nameCtrl.text.trim().isEmpty) {
-      setState(() => _error = '请输入规则名称');
+      setState(() => _error = S.of(context).recurringRuleNameRequired);
       return;
     }
     if (_cronCtrl.text.trim().isEmpty) {
-      setState(() => _error = '请输入 cron 表达式');
+      setState(() => _error = S.of(context).recurringCronRequired);
       return;
     }
     if (_cronValid == false) {
-      setState(() => _error = 'cron 表达式无效，请修正');
+      setState(() => _error = S.of(context).recurringCronInvalidFix);
       return;
     }
     if (double.tryParse(_amountCtrl.text.trim()) == null) {
-      setState(() => _error = '请输入有效的模板金额');
+      setState(() => _error = S.of(context).recurringAmountRequired);
       return;
     }
     setState(() {
@@ -324,7 +325,9 @@ class _RecurringEditorPageState extends State<RecurringEditorPage> {
           ),
           Expanded(
             child: Text(
-              widget.isEdit ? '编辑周期规则' : '新增周期规则',
+              widget.isEdit
+                  ? S.of(context).recurringEditRule
+                  : S.of(context).recurringAddRule,
               style: FxTypography.title,
             ),
           ),
@@ -349,16 +352,19 @@ class _RecurringEditorPageState extends State<RecurringEditorPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          _sectionTitle('规则设置'),
-          _label('规则名称'),
-          TextField(controller: _nameCtrl, decoration: _dec(context, '如：每月房租')),
+          _sectionTitle(S.of(context).recurringSectionRule),
+          _label(context, S.of(context).recurringRuleName),
+          TextField(
+            controller: _nameCtrl,
+            decoration: _dec(context, S.of(context).recurringRuleNameHint),
+          ),
           const SizedBox(height: FxSpacing.md),
-          _label('cron 表达式'),
+          _label(context, S.of(context).recurringCron),
           TextField(
             controller: _cronCtrl,
             decoration: _dec(
               context,
-              '如：0 0 1 * * ?',
+              S.of(context).recurringCronHint,
             ).copyWith(suffixIcon: _cronSuffix(context)),
             onChanged: _onCronChanged,
           ),
@@ -370,7 +376,7 @@ class _RecurringEditorPageState extends State<RecurringEditorPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    _label('开始日期（可选）'),
+                    _label(context, S.of(context).recurringStartDateOptional),
                     TextField(
                       controller: _startCtrl,
                       decoration: _dec(context, 'yyyy-MM-dd'),
@@ -383,7 +389,7 @@ class _RecurringEditorPageState extends State<RecurringEditorPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    _label('结束日期（可选）'),
+                    _label(context, S.of(context).recurringEndDateOptional),
                     TextField(
                       controller: _endCtrl,
                       decoration: _dec(context, 'yyyy-MM-dd'),
@@ -394,21 +400,26 @@ class _RecurringEditorPageState extends State<RecurringEditorPage> {
             ],
           ),
           const SizedBox(height: FxSpacing.md),
-          _label('最大执行次数（可选）'),
+          _label(context, S.of(context).recurringMaxExecutionsOptional),
           TextField(
             controller: _maxCtrl,
             keyboardType: TextInputType.number,
-            decoration: _dec(context, '留空为不限'),
+            decoration: _dec(context, S.of(context).recurringMaxExecutionsHint),
           ),
           if (_strategies.isNotEmpty) ...[
             const SizedBox(height: FxSpacing.md),
-            _label('补偿策略'),
+            _label(context, S.of(context).recurringRecoveryStrategy),
             _strategyPicker(context),
           ],
           const SizedBox(height: FxSpacing.md),
           Row(
             children: [
-              const Expanded(child: Text('启用', style: FxTypography.body)),
+              Expanded(
+                child: Text(
+                  S.of(context).recurringEnabled,
+                  style: FxTypography.body,
+                ),
+              ),
               Switch.adaptive(
                 value: _enable,
                 activeColor: palette.primary,
@@ -417,21 +428,24 @@ class _RecurringEditorPageState extends State<RecurringEditorPage> {
             ],
           ),
           const SizedBox(height: FxSpacing.lg),
-          _sectionTitle('账单模板'),
-          _label('类型'),
+          _sectionTitle(S.of(context).recurringSectionTemplate),
+          _label(context, S.of(context).recurringType),
           _typeSelector(context),
           const SizedBox(height: FxSpacing.md),
-          _label('标题（可选）'),
-          TextField(controller: _titleCtrl, decoration: _dec(context, '账单标题')),
+          _label(context, S.of(context).recurringTitleOptional),
+          TextField(
+            controller: _titleCtrl,
+            decoration: _dec(context, S.of(context).recurringBillTitleHint),
+          ),
           const SizedBox(height: FxSpacing.md),
-          _label('金额'),
+          _label(context, S.of(context).recurringAmount),
           TextField(
             controller: _amountCtrl,
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
             decoration: _dec(context, '0.00'),
           ),
           const SizedBox(height: FxSpacing.md),
-          _label('分类'),
+          _label(context, S.of(context).recurringCategory),
           _optionChips(
             context,
             _currentCategories,
@@ -439,7 +453,7 @@ class _RecurringEditorPageState extends State<RecurringEditorPage> {
             (id) => setState(() => _categoryId = _categoryId == id ? null : id),
           ),
           const SizedBox(height: FxSpacing.md),
-          _label('账户'),
+          _label(context, S.of(context).recurringAccount),
           _optionChips(
             context,
             _options.accounts,
@@ -448,7 +462,7 @@ class _RecurringEditorPageState extends State<RecurringEditorPage> {
           ),
           if (_options.tags.isNotEmpty) ...[
             const SizedBox(height: FxSpacing.md),
-            _label('标签（可多选，可选）'),
+            _label(context, S.of(context).recurringTagsOptional),
             _tagChips(context),
           ],
           if (_error != null) ...[
@@ -460,7 +474,9 @@ class _RecurringEditorPageState extends State<RecurringEditorPage> {
           ],
           const SizedBox(height: FxSpacing.xl),
           FxButton(
-            label: widget.isEdit ? '保存修改' : '创建规则',
+            label: widget.isEdit
+                ? S.of(context).recurringSaveChanges
+                : S.of(context).recurringCreateRule,
             expand: true,
             loading: _submitting,
             onPressed: _submitting ? null : _submit,
@@ -498,7 +514,7 @@ class _RecurringEditorPageState extends State<RecurringEditorPage> {
       return Padding(
         padding: const EdgeInsets.only(top: FxSpacing.xs),
         child: Text(
-          'cron 表达式无效',
+          S.of(context).recurringCronInvalid,
           style: FxTypography.caption.copyWith(
             color: FxPalette.of(context).danger,
           ),
@@ -509,7 +525,7 @@ class _RecurringEditorPageState extends State<RecurringEditorPage> {
       return Padding(
         padding: const EdgeInsets.only(top: FxSpacing.xs),
         child: Text(
-          'cron 表达式有效',
+          S.of(context).recurringCronValid,
           style: FxTypography.caption.copyWith(
             color: FxPalette.of(context).success,
           ),
@@ -541,7 +557,7 @@ class _RecurringEditorPageState extends State<RecurringEditorPage> {
       runSpacing: FxSpacing.sm,
       children: FxBillType.selectable.map((t) {
         final selected = t == _billType;
-        return _chip(context, t.label, selected, () {
+        return _chip(context, t.localizedLabel(context), selected, () {
           setState(() {
             _billType = t;
             _categoryId = null; // 类型变化清空分类。
@@ -558,7 +574,12 @@ class _RecurringEditorPageState extends State<RecurringEditorPage> {
     ValueChanged<int> onTap,
   ) {
     if (items.isEmpty) {
-      return const Text('暂无可选项', style: FxTypography.caption);
+      return Text(
+        S.of(context).recurringNoOptions,
+        style: FxTypography.caption.copyWith(
+          color: FxPalette.of(context).textTertiary,
+        ),
+      );
     }
     return Wrap(
       spacing: FxSpacing.sm,
@@ -629,9 +650,14 @@ class _RecurringEditorPageState extends State<RecurringEditorPage> {
     child: Text(text, style: FxTypography.bodyStrong),
   );
 
-  Widget _label(String text) => Padding(
+  Widget _label(BuildContext context, String text) => Padding(
     padding: const EdgeInsets.only(bottom: FxSpacing.xs),
-    child: Text(text, style: FxTypography.label),
+    child: Text(
+      text,
+      style: FxTypography.label.copyWith(
+        color: FxPalette.of(context).textSecondary,
+      ),
+    ),
   );
 
   InputDecoration _dec(BuildContext context, String hint) => InputDecoration(

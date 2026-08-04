@@ -7,6 +7,7 @@ import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
+import 'package:fortuneboot/generated/l10n.dart';
 
 /// 账户新增/编辑表单（在 FxSheet 内滚动展示）。
 ///
@@ -148,11 +149,11 @@ class _AccountFormSheetState extends State<AccountFormSheet> {
 
   Future<void> _submit() async {
     if (_nameCtrl.text.trim().isEmpty) {
-      setState(() => _error = '请输入账户名称');
+      setState(() => _error = S.of(context).accountsNameRequired);
       return;
     }
     if (_currencyCtrl.text.trim().isEmpty) {
-      setState(() => _error = '请输入币种');
+      setState(() => _error = S.of(context).accountsCurrencyRequired);
       return;
     }
     setState(() {
@@ -189,10 +190,13 @@ class _AccountFormSheetState extends State<AccountFormSheet> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          _label('账户名称'),
-          TextField(controller: _nameCtrl, decoration: _dec('如：招行储蓄卡')),
+          _label(S.of(context).accountsFieldName),
+          TextField(
+            controller: _nameCtrl,
+            decoration: _dec(S.of(context).accountsFieldNameHint),
+          ),
           const SizedBox(height: FxSpacing.md),
-          _label('账户类型'),
+          _label(S.of(context).accountsFieldType),
           _typeSelector(),
           const SizedBox(height: FxSpacing.md),
           Row(
@@ -201,7 +205,11 @@ class _AccountFormSheetState extends State<AccountFormSheet> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    _label(widget.isEdit ? '余额' : '期初余额'),
+                    _label(
+                      widget.isEdit
+                          ? S.of(context).accountsFieldBalance
+                          : S.of(context).accountsFieldInitialBalance,
+                    ),
                     TextField(
                       controller: _balanceCtrl,
                       keyboardType: const TextInputType.numberWithOptions(
@@ -218,7 +226,7 @@ class _AccountFormSheetState extends State<AccountFormSheet> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    _label('币种'),
+                    _label(S.of(context).accountsFieldCurrency),
                     TextField(
                       controller: _currencyCtrl,
                       decoration: _dec('CNY'),
@@ -229,24 +237,24 @@ class _AccountFormSheetState extends State<AccountFormSheet> {
             ],
           ),
           const SizedBox(height: FxSpacing.md),
-          _label('卡号（可选）'),
+          _label(S.of(context).accountsFieldCardNo),
           TextField(
             controller: _cardNoCtrl,
             keyboardType: TextInputType.number,
-            decoration: _dec('用于展示末四位'),
+            decoration: _dec(S.of(context).accountsFieldCardNoHint),
           ),
           if (_isCredit || _isLoan) ...[
             const SizedBox(height: FxSpacing.md),
-            _label('信用/贷款额度'),
+            _label(S.of(context).accountsFieldCreditLimit),
             TextField(
               controller: _creditLimitCtrl,
               keyboardType: const TextInputType.numberWithOptions(
                 decimal: true,
               ),
-              decoration: _dec('如：50000'),
+              decoration: _dec(S.of(context).accountsFieldCreditLimitHint),
             ),
             const SizedBox(height: FxSpacing.md),
-            _label('还款日（yyyy-MM-dd）'),
+            _label(S.of(context).accountsFieldRepayDay),
             TextField(
               controller: _repayDayCtrl,
               decoration: _dec('2026-08-15'),
@@ -254,25 +262,28 @@ class _AccountFormSheetState extends State<AccountFormSheet> {
           ],
           if (_isCredit) ...[
             const SizedBox(height: FxSpacing.md),
-            _label('账单日（yyyy-MM-dd）'),
+            _label(S.of(context).accountsFieldBillDay),
             TextField(controller: _billDayCtrl, decoration: _dec('2026-08-01')),
           ],
           if (_isLoan) ...[
             const SizedBox(height: FxSpacing.md),
-            _label('年利率 APR'),
+            _label(S.of(context).accountsFieldApr),
             TextField(
               controller: _aprCtrl,
               keyboardType: const TextInputType.numberWithOptions(
                 decimal: true,
               ),
-              decoration: _dec('如：0.045'),
+              decoration: _dec(S.of(context).accountsFieldAprHint),
             ),
           ],
           const SizedBox(height: FxSpacing.lg),
           _switches(),
           const SizedBox(height: FxSpacing.md),
-          _label('备注（可选）'),
-          TextField(controller: _remarkCtrl, decoration: _dec('备注')),
+          _label(S.of(context).accountsRemarkOptional),
+          TextField(
+            controller: _remarkCtrl,
+            decoration: _dec(S.of(context).accountsRemarkHint),
+          ),
           if (_error != null) ...[
             const SizedBox(height: FxSpacing.sm),
             Text(
@@ -284,7 +295,9 @@ class _AccountFormSheetState extends State<AccountFormSheet> {
           ],
           const SizedBox(height: FxSpacing.xl),
           FxButton(
-            label: widget.isEdit ? '保存修改' : '创建账户',
+            label: widget.isEdit
+                ? S.of(context).accountsSaveChanges
+                : S.of(context).accountsCreateAccount,
             expand: true,
             loading: _submitting,
             onPressed: _submitting ? null : _submit,
@@ -324,7 +337,7 @@ class _AccountFormSheetState extends State<AccountFormSheet> {
                 ),
                 const SizedBox(width: FxSpacing.xs),
                 Text(
-                  meta.name,
+                  meta.localizedName(context),
                   style: FxTypography.label.copyWith(
                     color: selected ? palette.primary : palette.textSecondary,
                     fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
@@ -372,7 +385,9 @@ class _AccountFormSheetState extends State<AccountFormSheet> {
       padding: const EdgeInsets.symmetric(vertical: 2),
       child: Row(
         children: [
-          Expanded(child: Text(field.label, style: FxTypography.body)),
+          Expanded(
+            child: Text(_toggleLabel(field), style: FxTypography.body),
+          ),
           Switch.adaptive(
             value: value,
             activeColor: FxPalette.of(context).primary,
@@ -387,9 +402,32 @@ class _AccountFormSheetState extends State<AccountFormSheet> {
     );
   }
 
+  String _toggleLabel(AccountToggleField field) {
+    final s = S.of(context);
+    switch (field) {
+      case AccountToggleField.canExpense:
+        return s.accountsToggleCanExpense;
+      case AccountToggleField.canIncome:
+        return s.accountsToggleCanIncome;
+      case AccountToggleField.canTransferOut:
+        return s.accountsToggleCanTransferOut;
+      case AccountToggleField.canTransferIn:
+        return s.accountsToggleCanTransferIn;
+      case AccountToggleField.include:
+        return s.accountsToggleInclude;
+      case AccountToggleField.enable:
+        return s.accountsToggleEnable;
+    }
+  }
+
   Widget _label(String text) => Padding(
     padding: const EdgeInsets.only(bottom: FxSpacing.xs),
-    child: Text(text, style: FxTypography.label),
+    child: Text(
+      text,
+      style: FxTypography.label.copyWith(
+        color: FxPalette.of(context).textSecondary,
+      ),
+    ),
   );
 
   InputDecoration _dec(String hint) => InputDecoration(

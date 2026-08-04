@@ -73,7 +73,12 @@ class _AmountFieldState extends State<AmountField> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (widget.label != null) ...[
-          Text(widget.label!, style: FxTypography.label),
+          Text(
+            widget.label!,
+            style: FxTypography.label.copyWith(
+              color: palette.textSecondary,
+            ),
+          ),
           const SizedBox(height: FxSpacing.sm),
         ],
         Row(

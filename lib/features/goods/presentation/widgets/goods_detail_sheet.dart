@@ -4,6 +4,7 @@ import 'package:fortuneboot/fx/components/fx_money_text.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
+import 'package:fortuneboot/generated/l10n.dart';
 
 /// 归物详情（FxSheet 内）：持有天数 / 日均成本 / 过保 / 出售盈亏等。
 class GoodsDetailSheet extends StatelessWidget {
@@ -31,7 +32,7 @@ class GoodsDetailSheet extends StatelessWidget {
             children: [
               Expanded(
                 child: Text(
-                  goods.goodsName ?? '未命名',
+                  goods.goodsName ?? S.of(context).goodsUnnamed,
                   style: FxTypography.title,
                 ),
               ),
@@ -44,36 +45,72 @@ class GoodsDetailSheet extends StatelessWidget {
             ],
           ),
           const SizedBox(height: FxSpacing.lg),
-          _row(context, '购买日期', goods.purchaseDate ?? '-'),
+          _row(
+            context,
+            S.of(context).goodsFieldPurchaseDate,
+            goods.purchaseDate ?? '-',
+          ),
           if (goods.holdingTime != null)
-            _row(context, '持有天数', '${goods.holdingTime} 天'),
+            _row(
+              context,
+              S.of(context).goodsFieldHoldingTime,
+              S.of(context).goodsDaysValue('${goods.holdingTime}'),
+            ),
           if (goods.dailyAverageCost != null)
-            _row(context, '日均成本', goods.dailyAverageCost!.toStringAsFixed(2)),
+            _row(
+              context,
+              S.of(context).goodsStatDailyCost,
+              goods.dailyAverageCost!.toStringAsFixed(2),
+            ),
           if ((goods.categoryName ?? '').isNotEmpty)
-            _row(context, '分类', goods.categoryName!),
+            _row(
+              context,
+              S.of(context).goodsFieldCategory,
+              goods.categoryName!,
+            ),
           if ((goods.tagName ?? '').isNotEmpty)
-            _row(context, '标签', goods.tagName!),
+            _row(context, S.of(context).goodsFieldTag, goods.tagName!),
           if ((goods.warrantyDate ?? '').isNotEmpty)
-            _row(context, '保修日期', goods.warrantyDate!),
+            _row(
+              context,
+              S.of(context).goodsFieldWarrantyDate,
+              goods.warrantyDate!,
+            ),
           if ((goods.isOverWarranty ?? '').isNotEmpty)
-            _row(context, '保修状态', goods.isOverWarranty!),
+            _row(
+              context,
+              S.of(context).goodsFieldWarrantyStatus,
+              goods.isOverWarranty!,
+            ),
           if (goods.useByTimes && goods.usageNum != null)
-            _row(context, '使用次数', '${goods.usageNum}'),
+            _row(
+              context,
+              S.of(context).goodsFieldUsageCount,
+              '${goods.usageNum}',
+            ),
           if ((goods.statusDesc ?? '').isNotEmpty)
-            _row(context, '状态', goods.statusDesc!),
+            _row(context, S.of(context).goodsFieldStatus, goods.statusDesc!),
           if ((goods.retiredDate ?? '').isNotEmpty)
-            _row(context, '退役日期', goods.retiredDate!),
+            _row(
+              context,
+              S.of(context).goodsFieldRetiredDate,
+              goods.retiredDate!,
+            ),
           if (goods.soldPrice != null)
-            _row(context, '出售价格', goods.soldPrice!.toStringAsFixed(2)),
+            _row(
+              context,
+              S.of(context).goodsFieldSoldPrice,
+              goods.soldPrice!.toStringAsFixed(2),
+            ),
           if (profit != null)
             _row(
               context,
-              '出售盈亏',
+              S.of(context).goodsFieldProfit,
               '${profit >= 0 ? '+' : ''}${profit.toStringAsFixed(2)}',
               valueColor: profit >= 0 ? finance.income : finance.expense,
             ),
           if ((goods.remark ?? '').isNotEmpty)
-            _row(context, '备注', goods.remark!),
+            _row(context, S.of(context).goodsFieldRemark, goods.remark!),
         ],
       ),
     );
@@ -90,7 +127,15 @@ class GoodsDetailSheet extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(width: 84, child: Text(label, style: FxTypography.label)),
+          SizedBox(
+            width: 84,
+            child: Text(
+              label,
+              style: FxTypography.label.copyWith(
+                color: FxPalette.of(context).textSecondary,
+              ),
+            ),
+          ),
           const SizedBox(width: FxSpacing.md),
           Expanded(
             child: Text(

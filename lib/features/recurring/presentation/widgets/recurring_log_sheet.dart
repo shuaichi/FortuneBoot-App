@@ -7,6 +7,7 @@ import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
+import 'package:fortuneboot/generated/l10n.dart';
 
 /// 规则执行日志（在 FxSheet 内展示）。
 class RecurringLogSheet extends StatefulWidget {
@@ -76,7 +77,10 @@ class _RecurringLogSheetState extends State<RecurringLogSheet> {
       return FxStateView.error(message: _error, onRetry: _load);
     }
     if (_logs.isEmpty) {
-      return FxStateView.empty(message: '暂无执行记录', icon: Icons.history_rounded);
+      return FxStateView.empty(
+        message: S.of(context).recurringNoLogs,
+        icon: Icons.history_rounded,
+      );
     }
     return ListView.builder(
       padding: const EdgeInsets.symmetric(horizontal: FxSpacing.lg),
@@ -132,11 +136,18 @@ class _RecurringLogSheetState extends State<RecurringLogSheet> {
             spacing: FxSpacing.md,
             children: [
               if (log.billId != null)
-                Text('账单 #${log.billId}', style: FxTypography.caption),
+                Text(
+                  S.of(context).recurringLogBillId(log.billId!),
+                  style: FxTypography.caption.copyWith(
+                    color: palette.textTertiary,
+                  ),
+                ),
               if (log.executionDuration != null)
                 Text(
-                  '耗时 ${log.executionDuration}ms',
-                  style: FxTypography.caption,
+                  S.of(context).recurringLogDuration(log.executionDuration!),
+                  style: FxTypography.caption.copyWith(
+                    color: palette.textTertiary,
+                  ),
                 ),
             ],
           ),

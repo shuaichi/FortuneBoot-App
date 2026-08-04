@@ -8,6 +8,7 @@ import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
+import 'package:fortuneboot/generated/l10n.dart';
 
 /// 分类新增/编辑表单。字段：名称 / 类型（支出/收入）/ 父级 / 排序 / 备注 / 启用。
 class CategoryFormSheet extends StatefulWidget {
@@ -77,7 +78,7 @@ class _CategoryFormSheetState extends State<CategoryFormSheet> {
 
   Future<void> _submit() async {
     if (_nameCtrl.text.trim().isEmpty) {
-      setState(() => _error = '请输入分类名称');
+      setState(() => _error = S.of(context).categoriesNameRequired);
       return;
     }
     setState(() {
@@ -126,33 +127,42 @@ class _CategoryFormSheetState extends State<CategoryFormSheet> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const ManageFieldLabel('分类名称'),
+          ManageFieldLabel(S.of(context).categoriesNameLabel),
           TextField(
             controller: _nameCtrl,
-            decoration: manageInputDecoration(context, '如：餐饮'),
+            decoration: manageInputDecoration(
+              context,
+              S.of(context).categoriesNameHint,
+            ),
           ),
           const SizedBox(height: FxSpacing.md),
-          const ManageFieldLabel('分类类型'),
+          ManageFieldLabel(S.of(context).categoriesTypeLabel),
           _typeSelector(),
           const SizedBox(height: FxSpacing.md),
-          const ManageFieldLabel('父级分类（可选）'),
+          ManageFieldLabel(S.of(context).categoriesParentLabel),
           _parentSelector(),
           const SizedBox(height: FxSpacing.md),
-          const ManageFieldLabel('排序（可选）'),
+          ManageFieldLabel(S.of(context).categoriesSortLabel),
           TextField(
             controller: _sortCtrl,
             keyboardType: TextInputType.number,
-            decoration: manageInputDecoration(context, '数字越小越靠前'),
+            decoration: manageInputDecoration(
+              context,
+              S.of(context).categoriesSortHint,
+            ),
           ),
           const SizedBox(height: FxSpacing.md),
-          const ManageFieldLabel('备注（可选）'),
+          ManageFieldLabel(S.of(context).categoriesRemarkLabel),
           TextField(
             controller: _remarkCtrl,
-            decoration: manageInputDecoration(context, '备注'),
+            decoration: manageInputDecoration(
+              context,
+              S.of(context).categoriesRemarkHint,
+            ),
           ),
           const SizedBox(height: FxSpacing.md),
           ManageSwitchRow(
-            label: '启用',
+            label: S.of(context).categoriesEnable,
             value: _enable,
             onChanged: (v) => setState(() => _enable = v),
           ),
@@ -167,7 +177,9 @@ class _CategoryFormSheetState extends State<CategoryFormSheet> {
           ],
           const SizedBox(height: FxSpacing.xl),
           FxButton(
-            label: widget.isEdit ? '保存修改' : '创建分类',
+            label: widget.isEdit
+                ? S.of(context).categoriesSaveEdit
+                : S.of(context).categoriesCreate,
             expand: true,
             loading: _submitting,
             onPressed: _submitting ? null : _submit,
@@ -182,8 +194,8 @@ class _CategoryFormSheetState extends State<CategoryFormSheet> {
     return Wrap(
       spacing: FxSpacing.sm,
       children: [
-        _chip('支出', 1, finance.expense),
-        _chip('收入', 2, finance.income),
+        _chip(S.of(context).categoriesTypeExpense, 1, finance.expense),
+        _chip(S.of(context).categoriesTypeIncome, 2, finance.income),
       ],
     );
   }
@@ -238,13 +250,15 @@ class _CategoryFormSheetState extends State<CategoryFormSheet> {
           value: options.any((o) => o.categoryId == _parentId)
               ? _parentId
               : null,
-          hint: const Text('无（顶级分类）'),
+          hint: Text(S.of(context).categoriesParentNone),
           items: [
-            const DropdownMenuItem<int?>(child: Text('无（顶级分类）')),
+            DropdownMenuItem<int?>(
+              child: Text(S.of(context).categoriesParentNone),
+            ),
             ...options.map(
               (o) => DropdownMenuItem<int?>(
                 value: o.categoryId,
-                child: Text(o.categoryName ?? '未命名'),
+                child: Text(o.categoryName ?? S.of(context).categoriesUnnamed),
               ),
             ),
           ],

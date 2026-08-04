@@ -13,6 +13,7 @@ import 'package:fortuneboot/fx/components/fx_money_text.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
+import 'package:fortuneboot/generated/l10n.dart';
 import 'package:intl/intl.dart';
 
 /// ⑦ 最近账单卡（跨满）：最近 3 条 + "全部 >"。
@@ -46,14 +47,14 @@ class RecentBillsCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             FxCardLabel(
-              '最近账单',
+              S.of(context).dashboardRecentBills,
               trailing: GestureDetector(
                 onTap: () => AppRouter.push<void>(context, Routes.bills),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      '全部',
+                      S.of(context).dashboardViewAll,
                       style: FxTypography.caption.copyWith(
                         color: palette.primary,
                       ),
@@ -69,10 +70,15 @@ class RecentBillsCard extends StatelessWidget {
             ),
             const SizedBox(height: FxSpacing.sm),
             if (bills.isEmpty)
-              const Padding(
-                padding: EdgeInsets.symmetric(vertical: FxSpacing.lg),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: FxSpacing.lg),
                 child: Center(
-                  child: Text('还没有账单', style: FxTypography.caption),
+                  child: Text(
+                    S.of(context).dashboardNoBillsYet,
+                    style: FxTypography.caption.copyWith(
+                      color: palette.textTertiary,
+                    ),
+                  ),
                 ),
               )
             else
@@ -88,7 +94,7 @@ class RecentBillsCard extends StatelessWidget {
         ? bill.title!
         : (bill.primaryCategoryName.isNotEmpty
               ? bill.primaryCategoryName
-              : (bill.payeeName ?? '账单'));
+              : (bill.payeeName ?? S.of(context).dashboardBillFallback));
     final dateText = bill.tradeTime == null ? '' : _md.format(bill.tradeTime!);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: FxSpacing.xs),
@@ -119,7 +125,9 @@ class RecentBillsCard extends StatelessWidget {
                 if (bill.accountName?.isNotEmpty ?? false)
                   Text(
                     bill.accountName!,
-                    style: FxTypography.caption,
+                    style: FxTypography.caption.copyWith(
+                      color: FxPalette.of(context).textTertiary,
+                    ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -137,7 +145,12 @@ class RecentBillsCard extends StatelessWidget {
                 fontSize: 15,
                 masked: hideAmounts,
               ),
-              Text(dateText, style: FxTypography.caption),
+              Text(
+                dateText,
+                style: FxTypography.caption.copyWith(
+                  color: FxPalette.of(context).textTertiary,
+                ),
+              ),
             ],
           ),
         ],

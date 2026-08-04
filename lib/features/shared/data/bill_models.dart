@@ -1,4 +1,6 @@
+import 'package:flutter/widgets.dart';
 import 'package:fortuneboot/core/network/fx_api.dart';
+import 'package:fortuneboot/generated/l10n.dart';
 
 /// 账单类型：1支出 2收入 3转账 4余额调整 7垫付 8报销（后端跳号，无5/6）。
 enum FxBillType {
@@ -11,7 +13,28 @@ enum FxBillType {
 
   const FxBillType(this.value, this.label);
   final int value;
+
+  /// 中文默认标签（无 context 兜底 / 日志用）。UI 显示请用 [localizedLabel]。
   final String label;
+
+  /// 本地化标签（随语言切换）。
+  String localizedLabel(BuildContext context) {
+    final s = S.of(context);
+    switch (this) {
+      case FxBillType.expense:
+        return s.billTypeExpense;
+      case FxBillType.income:
+        return s.billTypeIncome;
+      case FxBillType.transfer:
+        return s.billTypeTransfer;
+      case FxBillType.adjust:
+        return s.billTypeAdjust;
+      case FxBillType.advance:
+        return s.billTypeAdvance;
+      case FxBillType.reimburse:
+        return s.billTypeReimburse;
+    }
+  }
 
   static FxBillType? fromValue(int? v) {
     for (final t in FxBillType.values) {

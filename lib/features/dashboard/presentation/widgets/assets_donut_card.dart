@@ -12,6 +12,7 @@ import 'package:fortuneboot/fx/components/fx_money_text.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
+import 'package:fortuneboot/generated/l10n.dart';
 
 /// ⑤ 资产负债环形图（资产 vs 负债），中心标净资产，点击跳账户页。
 class AssetsDonutCard extends StatelessWidget {
@@ -37,13 +38,18 @@ class AssetsDonutCard extends StatelessWidget {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const FxCardLabel('资产负债'),
+            FxCardLabel(S.of(context).dashboardAssetsLiabilities),
             const SizedBox(height: FxSpacing.sm),
             Expanded(
               child: hasData
                   ? _Donut(data: data, currencyCode: currencyCode)
-                  : const Center(
-                      child: Text('暂无数据', style: FxTypography.caption),
+                  : Center(
+                      child: Text(
+                        S.of(context).dashboardNoData,
+                        style: FxTypography.caption.copyWith(
+                          color: FxPalette.of(context).textTertiary,
+                        ),
+                      ),
                     ),
             ),
           ],
@@ -67,49 +73,102 @@ class _Donut extends StatelessWidget {
         .state
         .dashboard
         .hideAmounts;
-    return Stack(
-      alignment: Alignment.center,
+    return Row(
       children: [
-        PieChart(
-          PieChartData(
-            startDegreeOffset: -90,
-            sectionsSpace: 2,
-            centerSpaceRadius: 34,
-            sections: [
-              PieChartSectionData(
-                value: data.totalAssets <= 0 ? 0.001 : data.totalAssets,
-                color: finance.income,
-                radius: 12,
-                showTitle: false,
+        SizedBox(
+          width: 96,
+          child: PieChart(
+            PieChartData(
+              startDegreeOffset: -90,
+              sectionsSpace: 2,
+              centerSpaceRadius: 26,
+              sections: [
+                PieChartSectionData(
+                  value: data.totalAssets <= 0 ? 0.001 : data.totalAssets,
+                  color: finance.income,
+                  radius: 14,
+                  showTitle: false,
+                ),
+                PieChartSectionData(
+                  value: data.totalLiabilities <= 0
+                      ? 0.001
+                      : data.totalLiabilities,
+                  color: finance.expense,
+                  radius: 14,
+                  showTitle: false,
+                ),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(width: FxSpacing.lg),
+        Expanded(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                S.of(context).dashboardNetWorth,
+                style: FxTypography.caption.copyWith(
+                  color: palette.textTertiary,
+                ),
               ),
-              PieChartSectionData(
-                value: data.totalLiabilities <= 0
-                    ? 0.001
-                    : data.totalLiabilities,
+              const SizedBox(height: 2),
+              FxMoneyText(
+                amount: data.netAssets,
+                currencyCode: currencyCode,
+                fontSize: 22,
+                fontWeight: FontWeight.w700,
+                color: palette.textPrimary,
+                masked: hideAmounts,
+              ),
+              const SizedBox(height: FxSpacing.md),
+              _legendRow(
+                color: finance.income,
+                label: S.of(context).dashboardAssets,
+                amount: data.totalAssets,
+                hideAmounts: hideAmounts,
+              ),
+              const SizedBox(height: FxSpacing.sm),
+              _legendRow(
                 color: finance.expense,
-                radius: 12,
-                showTitle: false,
+                label: S.of(context).dashboardLiabilities,
+                amount: data.totalLiabilities,
+                hideAmounts: hideAmounts,
               ),
             ],
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: FxSpacing.md),
-          child: FittedBox(
-            fit: BoxFit.scaleDown,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Text('净资产', style: FxTypography.caption),
-                FxMoneyText(
-                  amount: data.netAssets,
-                  currencyCode: currencyCode,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w700,
-                  color: palette.textPrimary,
-                  masked: hideAmounts,
-                ),
-              ],
+      ],
+    );
+  }
+
+  Widget _legendRow({
+    required Color color,
+    required String label,
+    required double amount,
+    required bool hideAmounts,
+  }) {
+    return Row(
+      children: [
+        Container(
+          width: 8,
+          height: 8,
+          decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+        ),
+        const SizedBox(width: FxSpacing.sm),
+        Text(label, style: FxTypography.caption.copyWith(color: color)),
+        const SizedBox(width: FxSpacing.md),
+        Expanded(
+          child: Align(
+            alignment: Alignment.centerRight,
+            child: FxMoneyText(
+              amount: amount,
+              currencyCode: currencyCode,
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: color,
+              masked: hideAmounts,
             ),
           ),
         ),

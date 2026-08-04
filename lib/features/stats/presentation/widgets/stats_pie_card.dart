@@ -9,6 +9,7 @@ import 'package:fortuneboot/fx/components/fx_progress_bar.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
+import 'package:fortuneboot/generated/l10n.dart';
 
 /// 占比饼图卡（分类 / 交易对象通用）：环形饼图 + Top5 列表。
 class StatsPieCard extends StatelessWidget {
@@ -35,8 +36,13 @@ class StatsPieCard extends StatelessWidget {
       builder: (slices) {
         final positive = slices.where((s) => s.value > 0).toList();
         if (positive.isEmpty) {
-          return const Center(
-            child: Text('本期暂无记录', style: FxTypography.caption),
+          return Center(
+            child: Text(
+              S.of(context).statsNoRecordsThisPeriod,
+              style: FxTypography.caption.copyWith(
+                color: FxPalette.of(context).textTertiary,
+              ),
+            ),
           );
         }
         final top = positive.take(5).toList();
@@ -60,20 +66,23 @@ class _Donut extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return PieChart(
-      PieChartData(
-        startDegreeOffset: -90,
-        sectionsSpace: 2,
-        centerSpaceRadius: 34,
-        sections: [
-          for (var i = 0; i < slices.length; i++)
-            PieChartSectionData(
-              value: slices[i].value,
-              color: StatsPalette.colorAt(i),
-              radius: 18,
-              showTitle: false,
-            ),
-        ],
+    return AspectRatio(
+      aspectRatio: 1,
+      child: PieChart(
+        PieChartData(
+          startDegreeOffset: -90,
+          sectionsSpace: 2,
+          centerSpaceRadius: 34,
+          sections: [
+            for (var i = 0; i < slices.length; i++)
+              PieChartSectionData(
+                value: slices[i].value,
+                color: StatsPalette.colorAt(i),
+                radius: 18,
+                showTitle: false,
+              ),
+          ],
+        ),
       ),
     );
   }
@@ -92,14 +101,14 @@ class _TopList extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         for (var i = 0; i < top.length; i++) ...[
-          _row(i, top[i], palette),
+          _row(context, i, top[i], palette),
           if (i != top.length - 1) const SizedBox(height: FxSpacing.sm),
         ],
       ],
     );
   }
 
-  Widget _row(int index, PieSlice s, FxPalette palette) {
+  Widget _row(BuildContext context, int index, PieSlice s, FxPalette palette) {
     final color = StatsPalette.colorAt(index);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -114,18 +123,23 @@ class _TopList extends StatelessWidget {
             const SizedBox(width: FxSpacing.sm),
             Expanded(
               child: Text(
-                s.name.isEmpty ? '未分类' : s.name,
+                s.name.isEmpty ? S.of(context).statsUncategorized : s.name,
                 style: FxTypography.label.copyWith(color: palette.textPrimary),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
             ),
             const SizedBox(width: FxSpacing.sm),
-            FxMoneyText(
-              amount: s.value,
-              currencyCode: currencyCode,
-              color: palette.textPrimary,
-              fontSize: 12,
+            Flexible(
+              child: Align(
+                alignment: Alignment.centerRight,
+                child: FxMoneyText(
+                  amount: s.value,
+                  currencyCode: currencyCode,
+                  color: palette.textPrimary,
+                  fontSize: 12,
+                ),
+              ),
             ),
           ],
         ),
@@ -142,7 +156,7 @@ class _TopList extends StatelessWidget {
             const SizedBox(width: FxSpacing.sm),
             Text(
               '${s.percent.toStringAsFixed(0)}%',
-              style: FxTypography.caption,
+              style: FxTypography.caption.copyWith(color: palette.textTertiary),
             ),
           ],
         ),

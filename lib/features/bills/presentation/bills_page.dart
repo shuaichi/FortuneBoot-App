@@ -20,6 +20,7 @@ import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
+import 'package:fortuneboot/generated/l10n.dart';
 import 'package:intl/intl.dart';
 
 /// 账单列表页（MainShell 账单 tab）。
@@ -34,21 +35,33 @@ class _BillsPageState extends State<BillsPage> {
   final ScrollController _scrollController = ScrollController();
   final BillService _service = BillService();
 
+  /// 时间流当前可见账期锚点；null 时回退当前选择账期（state.month）。
+  final ValueNotifier<DateTime?> _visibleAnchor = ValueNotifier<DateTime?>(
+    null,
+  );
+
+  /// 每个账期分组顶部探针 key（零高标记，用于滚动定位当前可见账期）。
+  final Map<DateTime, GlobalKey> _monthKeys = {};
+
+  GlobalKey _monthKeyFor(DateTime anchor) =>
+      _monthKeys.putIfAbsent(anchor, () => GlobalKey());
+
   static final DateFormat _monthFormat = DateFormat('yyyy年M月');
   static final DateFormat _dayFormat = DateFormat('M月d日');
   static final DateFormat _rangeFormat = DateFormat('M月d日');
-  static const List<String> _weekdays = [
-    '周一',
-    '周二',
-    '周三',
-    '周四',
-    '周五',
-    '周六',
-    '周日',
+
+  List<String> _weekdays(BuildContext context) => [
+    S.of(context).billsWeekdayMon,
+    S.of(context).billsWeekdayTue,
+    S.of(context).billsWeekdayWed,
+    S.of(context).billsWeekdayThu,
+    S.of(context).billsWeekdayFri,
+    S.of(context).billsWeekdaySat,
+    S.of(context).billsWeekdaySun,
   ];
 
   String _dayLabel(DateTime day) {
-    final w = _weekdays[(day.weekday - 1) % 7];
+    final w = _weekdays(context)[(day.weekday - 1) % 7];
     return '${_dayFormat.format(day)} $w';
   }
 
@@ -62,6 +75,7 @@ class _BillsPageState extends State<BillsPage> {
   @override
   void dispose() {
     BillMutations.revision.removeListener(_onExternalMutation);
+    _visibleAnchor.dispose();
     _scrollController
       ..removeListener(_onScroll)
       ..dispose();
@@ -79,6 +93,43 @@ class _BillsPageState extends State<BillsPage> {
     if (position.pixels >= position.maxScrollExtent - 240) {
       context.read<BillsBloc>().add(const BillsNextPageRequested());
     }
+    _updateVisibleAnchor();
+  }
+
+  /// 根据各账期探针相对视口顶部的位置，选出"最后一个已越过顶部"的账期，
+  /// 即当前时间流顶部正在展示的账期，写入 [_visibleAnchor]。
+  void _updateVisibleAnchor() {
+    DateTime? current;
+    double bestTop = double.negativeInfinity;
+    for (final entry in _monthKeys.entries) {
+      final ctx = entry.value.currentContext;
+      if (ctx == null) continue;
+      final box = ctx.findRenderObject();
+      if (box is! RenderBox || !box.hasSize) continue;
+      final dy = box.localToGlobal(Offset.zero).dy;
+      // 探针已滚过顶部（dy<=阈值）且最靠近顶部者胜出。
+      if (dy <= _anchorThreshold && dy > bestTop) {
+        bestTop = dy;
+        current = entry.key;
+      }
+    }
+    // 尚无探针越过顶部时，取第一个（最新账期）。
+    current ??= _firstAnchor();
+    if (current != null && current != _visibleAnchor.value) {
+      _visibleAnchor.value = current;
+    }
+  }
+
+  /// 顶栏下沿的 y 阈值：探针 dy 小于它即视为"已进入顶部区域"。
+  double get _anchorThreshold {
+    final topPad = MediaQuery.of(context).padding.top;
+    return topPad + 120;
+  }
+
+  DateTime? _firstAnchor() {
+    if (_monthKeys.isEmpty) return null;
+    final keys = _monthKeys.keys.toList()..sort((a, b) => b.compareTo(a));
+    return keys.first;
   }
 
   BillsBloc get _bloc => context.read<BillsBloc>();
@@ -90,7 +141,7 @@ class _BillsPageState extends State<BillsPage> {
   void _openFilter(BillsState state) {
     FxSheet.show<void>(
       context,
-      title: '筛选',
+      title: S.of(context).billsFilterTitle,
       child: BillsFilterSheet(
         initial: state.filter,
         onApply: (filter) {
@@ -132,7 +183,7 @@ class _BillsPageState extends State<BillsPage> {
     final ok =
         await FxSheet.show<bool>(
           context,
-          title: '删除账单',
+          title: S.of(context).billsDeleteTitle,
           child: Padding(
             padding: const EdgeInsets.fromLTRB(
               FxSpacing.lg,
@@ -144,7 +195,9 @@ class _BillsPageState extends State<BillsPage> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Text(
-                  '确定删除「${bill.title ?? bill.primaryCategoryName}」吗？此操作不可撤销。',
+                  S.of(context).billsDeleteConfirm(
+                    bill.title ?? bill.primaryCategoryName,
+                  ),
                   style: FxTypography.body,
                 ),
                 const SizedBox(height: FxSpacing.xl),
@@ -152,7 +205,7 @@ class _BillsPageState extends State<BillsPage> {
                   children: [
                     Expanded(
                       child: _sheetButton(
-                        '取消',
+                        S.of(context).commonCancel,
                         onTap: () => Navigator.of(context).pop(false),
                         color: palette.surfaceMuted,
                         fg: palette.textSecondary,
@@ -161,7 +214,7 @@ class _BillsPageState extends State<BillsPage> {
                     const SizedBox(width: FxSpacing.md),
                     Expanded(
                       child: _sheetButton(
-                        '删除',
+                        S.of(context).billsDelete,
                         onTap: () => Navigator.of(context).pop(true),
                         color: palette.danger,
                         fg: Colors.white,
@@ -252,8 +305,18 @@ class _BillsPageState extends State<BillsPage> {
               builder: (context, state) {
                 return Column(
                   children: [
-                    _buildHeader(state),
-                    _buildSummaryBar(state),
+                    ValueListenableBuilder<DateTime?>(
+                      valueListenable: _visibleAnchor,
+                      builder: (context, anchor, _) {
+                        final effective = anchor ?? state.month;
+                        return Column(
+                          children: [
+                            _buildHeader(state, effective),
+                            _buildSummaryBar(state, effective),
+                          ],
+                        );
+                      },
+                    ),
                     Expanded(child: _buildBody(state, bookId)),
                   ],
                 );
@@ -265,7 +328,7 @@ class _BillsPageState extends State<BillsPage> {
     );
   }
 
-  Widget _buildHeader(BillsState state) {
+  Widget _buildHeader(BillsState state, DateTime anchor) {
     final palette = FxPalette.of(context);
     final activeCount = state.filter.activeCount;
     final monthStartDay = context
@@ -274,7 +337,7 @@ class _BillsPageState extends State<BillsPage> {
         .billing
         .monthStartDay;
     final window = MonthWindowResolver.resolveForAnchor(
-      state.month,
+      anchor,
       monthStartDay,
     );
     final rangeLabel =
@@ -291,6 +354,7 @@ class _BillsPageState extends State<BillsPage> {
         children: [
           _iconButton(Icons.chevron_left_rounded, () {
             HapticFeedback.selectionClick();
+            _visibleAnchor.value = null;
             _bloc.add(const BillsMonthChanged(-1));
           }),
           Expanded(
@@ -299,7 +363,7 @@ class _BillsPageState extends State<BillsPage> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    '${_monthFormat.format(state.month)}账期',
+                    S.of(context).billsBillingCycle(_monthFormat.format(anchor)),
                     style: FxTypography.title,
                   ),
                   const SizedBox(height: 2),
@@ -315,6 +379,7 @@ class _BillsPageState extends State<BillsPage> {
           ),
           _iconButton(Icons.chevron_right_rounded, () {
             HapticFeedback.selectionClick();
+            _visibleAnchor.value = null;
             _bloc.add(const BillsMonthChanged(1));
           }),
           const SizedBox(width: FxSpacing.sm),
@@ -380,10 +445,13 @@ class _BillsPageState extends State<BillsPage> {
     );
   }
 
-  Widget _buildSummaryBar(BillsState state) {
+  Widget _buildSummaryBar(BillsState state, DateTime anchor) {
     final palette = FxPalette.of(context);
     final finance = FxFinanceColors.of(context);
-    final stats = state.statistics;
+    final stats = state.summaryForAnchor(
+      anchor,
+      context.watch<PreferencesCubit>().state.billing.monthStartDay,
+    );
     return Container(
       margin: const EdgeInsets.fromLTRB(
         FxSpacing.lg,
@@ -408,11 +476,15 @@ class _BillsPageState extends State<BillsPage> {
       ),
       child: Row(
         children: [
-          _summaryItem('支出', stats?.expense ?? 0, finance.expense),
+          _summaryItem(S.of(context).billsExpense, stats.expense, finance.expense),
           _divider(),
-          _summaryItem('收入', stats?.income ?? 0, finance.income),
+          _summaryItem(S.of(context).billsIncome, stats.income, finance.income),
           _divider(),
-          _summaryItem('结余', stats?.surplus ?? 0, palette.textPrimary),
+          _summaryItem(
+            S.of(context).billsBalance,
+            stats.surplus,
+            palette.textPrimary,
+          ),
         ],
       ),
     );
@@ -422,7 +494,12 @@ class _BillsPageState extends State<BillsPage> {
     return Expanded(
       child: Column(
         children: [
-          Text(label, style: FxTypography.caption),
+          Text(
+            label,
+            style: FxTypography.caption.copyWith(
+              color: FxPalette.of(context).textTertiary,
+            ),
+          ),
           const SizedBox(height: FxSpacing.xs),
           FxMoneyText(
             amount: amount,
@@ -444,7 +521,7 @@ class _BillsPageState extends State<BillsPage> {
 
   Widget _buildBody(BillsState state, int? bookId) {
     if (bookId == null) {
-      return FxStateView.empty(message: '请先选择账本');
+      return FxStateView.empty(message: S.of(context).billsSelectBookFirst);
     }
     switch (state.status) {
       case BillsStatus.initial:
@@ -464,7 +541,7 @@ class _BillsPageState extends State<BillsPage> {
                 SizedBox(
                   height: MediaQuery.of(context).size.height * 0.5,
                   child: FxStateView.empty(
-                    message: '本账期暂无账单',
+                    message: S.of(context).billsEmpty,
                     icon: Icons.receipt_long_rounded,
                   ),
                 ),
@@ -483,15 +560,28 @@ class _BillsPageState extends State<BillsPage> {
         .billing
         .monthStartDay;
     final groups = state.monthGroups(monthStartDay);
+    // 重建探针 key 集合，仅保留当前分组锚点。
+    final anchors = groups.map((g) => g.window.anchorMonth).toSet();
+    _monthKeys.removeWhere((k, _) => !anchors.contains(k));
+    // 分组结构可能在本帧变化，下一帧重新定位可见账期。
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) _updateVisibleAnchor();
+    });
     return RefreshIndicator(
       onRefresh: _refresh,
       child: CustomScrollView(
         controller: _scrollController,
         physics: const AlwaysScrollableScrollPhysics(),
         slivers: [
-          for (final monthGroup in groups) ...[
-            SliverToBoxAdapter(child: _monthHeader(monthGroup)),
-            for (final group in monthGroup.dayGroups)
+          for (var i = 0; i < groups.length; i++) ...[
+            SliverToBoxAdapter(
+              child: SizedBox(
+                key: _monthKeyFor(groups[i].window.anchorMonth),
+                height: 0,
+              ),
+            ),
+            if (i > 0) SliverToBoxAdapter(child: _monthHeader(groups[i])),
+            for (final group in groups[i].dayGroups)
               SliverStickyGroup(
                 header: _dayHeader(group),
                 children: [
@@ -551,8 +641,12 @@ class _BillsPageState extends State<BillsPage> {
             Row(
               children: [
                 Text(
-                  '${_monthFormat.format(group.window.anchorMonth)}账期',
-                  style: FxTypography.label,
+                  S.of(context).billsBillingCycle(
+                    _monthFormat.format(group.window.anchorMonth),
+                  ),
+                  style: FxTypography.label.copyWith(
+                    color: FxPalette.of(context).textSecondary,
+                  ),
                 ),
                 const Spacer(),
                 Text(
@@ -567,9 +661,21 @@ class _BillsPageState extends State<BillsPage> {
               const SizedBox(height: FxSpacing.sm),
               Row(
                 children: [
-                  _miniSummary('支出', stats.expense, finance.expense),
-                  _miniSummary('收入', stats.income, finance.income),
-                  _miniSummary('结余', stats.surplus, palette.textPrimary),
+                  _miniSummary(
+                    S.of(context).billsExpense,
+                    stats.expense,
+                    finance.expense,
+                  ),
+                  _miniSummary(
+                    S.of(context).billsIncome,
+                    stats.income,
+                    finance.income,
+                  ),
+                  _miniSummary(
+                    S.of(context).billsBalance,
+                    stats.surplus,
+                    palette.textPrimary,
+                  ),
                 ],
               ),
             ],
@@ -584,7 +690,12 @@ class _BillsPageState extends State<BillsPage> {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text('$label ', style: FxTypography.caption),
+          Text(
+            '$label ',
+            style: FxTypography.caption.copyWith(
+              color: FxPalette.of(context).textTertiary,
+            ),
+          ),
           Flexible(
             child: FxMoneyText(
               amount: amount,
@@ -616,13 +727,28 @@ class _BillsPageState extends State<BillsPage> {
       ),
       child: Row(
         children: [
-          Text(_dayLabel(group.day), style: FxTypography.label),
+          Text(
+            _dayLabel(group.day),
+            style: FxTypography.label.copyWith(
+              color: FxPalette.of(context).textSecondary,
+            ),
+          ),
           const Spacer(),
           if (dayExpense > 0)
-            Text('支 ${_compact(dayExpense)}', style: FxTypography.caption),
+            Text(
+              S.of(context).billsDayExpense(_compact(dayExpense)),
+              style: FxTypography.caption.copyWith(
+                color: FxPalette.of(context).textTertiary,
+              ),
+            ),
           if (dayIncome > 0) ...[
             const SizedBox(width: FxSpacing.sm),
-            Text('收 ${_compact(dayIncome)}', style: FxTypography.caption),
+            Text(
+              S.of(context).billsDayIncome(_compact(dayIncome)),
+              style: FxTypography.caption.copyWith(
+                color: FxPalette.of(context).textTertiary,
+              ),
+            ),
           ],
         ],
       ),
@@ -668,13 +794,13 @@ class _BillsPageState extends State<BillsPage> {
         alignment: Alignment.centerLeft,
         color: palette.primary,
         icon: Icons.copy_rounded,
-        label: '复制',
+        label: S.of(context).billsCopy,
       ),
       secondaryBackground: _swipeBg(
         alignment: Alignment.centerRight,
         color: palette.danger,
         icon: Icons.delete_outline_rounded,
-        label: '删除',
+        label: S.of(context).billsDelete,
       ),
       confirmDismiss: (direction) async {
         if (direction == DismissDirection.startToEnd) {

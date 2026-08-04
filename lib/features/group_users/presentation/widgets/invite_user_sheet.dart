@@ -6,6 +6,7 @@ import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
+import 'package:fortuneboot/generated/l10n.dart';
 
 /// 邀请用户表单：输入用户名 + 选择角色（getRoleTypes 动态下拉）。
 class InviteUserSheet extends StatefulWidget {
@@ -65,11 +66,11 @@ class _InviteUserSheetState extends State<InviteUserSheet> {
   Future<void> _submit() async {
     final username = _usernameCtrl.text.trim();
     if (username.isEmpty) {
-      setState(() => _error = '请输入用户名');
+      setState(() => _error = S.of(context).groupUsersUsernameRequired);
       return;
     }
     if (_roleType == null) {
-      setState(() => _error = '请选择角色');
+      setState(() => _error = S.of(context).groupUsersRoleRequired);
       return;
     }
     setState(() {
@@ -106,13 +107,13 @@ class _InviteUserSheetState extends State<InviteUserSheet> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          _label('用户名'),
+          _label(S.of(context).groupUsersUsernameLabel),
           TextField(
             controller: _usernameCtrl,
-            decoration: _dec(context, '输入被邀请人的用户名'),
+            decoration: _dec(context, S.of(context).groupUsersUsernameHint),
           ),
           const SizedBox(height: FxSpacing.md),
-          _label('角色'),
+          _label(S.of(context).groupUsersRoleLabel),
           if (_loadingRoles)
             const Padding(
               padding: EdgeInsets.symmetric(vertical: FxSpacing.md),
@@ -135,7 +136,7 @@ class _InviteUserSheetState extends State<InviteUserSheet> {
           ],
           const SizedBox(height: FxSpacing.xl),
           FxButton(
-            label: '发送邀请',
+            label: S.of(context).groupUsersSendInvite,
             expand: true,
             loading: _submitting,
             onPressed: _submitting ? null : _submit,
@@ -181,7 +182,12 @@ class _InviteUserSheetState extends State<InviteUserSheet> {
 
   Widget _label(String text) => Padding(
     padding: const EdgeInsets.only(bottom: FxSpacing.xs),
-    child: Text(text, style: FxTypography.label),
+    child: Text(
+      text,
+      style: FxTypography.label.copyWith(
+        color: FxPalette.of(context).textSecondary,
+      ),
+    ),
   );
 
   InputDecoration _dec(BuildContext context, String hint) => InputDecoration(
