@@ -1,0 +1,153 @@
+import 'package:flutter/material.dart';
+import 'package:fortuneboot/core/network/fx_api.dart';
+import 'package:fortuneboot/features/recurring/data/recurring_models.dart';
+import 'package:fortuneboot/features/recurring/data/recurring_service.dart';
+import 'package:fortuneboot/fx/components/fx_state_view.dart';
+import 'package:fortuneboot/fx/tokens/fx_colors.dart';
+import 'package:fortuneboot/fx/tokens/fx_radius.dart';
+import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
+import 'package:fortuneboot/fx/tokens/fx_typography.dart';
+
+/// 规则执行日志（在 FxSheet 内展示）。
+class RecurringLogSheet extends StatefulWidget {
+  final RecurringService service;
+  final int bookId;
+  final int ruleId;
+
+  const RecurringLogSheet({
+    super.key,
+    required this.service,
+    required this.bookId,
+    required this.ruleId,
+  });
+
+  @override
+  State<RecurringLogSheet> createState() => _RecurringLogSheetState();
+}
+
+class _RecurringLogSheetState extends State<RecurringLogSheet> {
+  bool _loading = true;
+  String? _error;
+  List<RecurringLogVo> _logs = const [];
+
+  @override
+  void initState() {
+    super.initState();
+    _load();
+  }
+
+  Future<void> _load() async {
+    setState(() {
+      _loading = true;
+      _error = null;
+    });
+    try {
+      final logs = await widget.service.getLogs(
+        bookId: widget.bookId,
+        ruleId: widget.ruleId,
+      );
+      if (mounted) {
+        setState(() {
+          _logs = logs;
+          _loading = false;
+        });
+      }
+    } on Object catch (e) {
+      if (mounted) {
+        setState(() {
+          _loading = false;
+          _error = e is FxApiException ? e.message : e.toString();
+        });
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: MediaQuery.of(context).size.height * 0.6,
+      child: _buildBody(),
+    );
+  }
+
+  Widget _buildBody() {
+    if (_loading) return FxStateView.loading();
+    if (_error != null) {
+      return FxStateView.error(message: _error, onRetry: _load);
+    }
+    if (_logs.isEmpty) {
+      return FxStateView.empty(
+        message: '暂无执行记录',
+        icon: Icons.history_rounded,
+      );
+    }
+    return ListView.builder(
+      padding: const EdgeInsets.symmetric(horizontal: FxSpacing.lg),
+      itemCount: _logs.length,
+      itemBuilder: (context, i) => _tile(_logs[i]),
+    );
+  }
+
+  Widget _tile(RecurringLogVo log) {
+    final isError = (log.errorMsg != null && log.errorMsg!.isNotEmpty) ||
+        (log.status != null &&
+            (log.status!.toLowerCase().contains('fail') ||
+                log.status!.contains('失败')));
+    final statusColor = isError ? FxColors.danger : FxColors.success;
+    return Container(
+      margin: const EdgeInsets.only(bottom: FxSpacing.sm),
+      padding: const EdgeInsets.all(FxSpacing.md),
+      decoration: BoxDecoration(
+        color: FxColors.surfaceMuted,
+        borderRadius: FxRadius.tileBorder,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 8,
+                height: 8,
+                decoration: BoxDecoration(
+                  color: statusColor,
+                  shape: BoxShape.circle,
+                ),
+              ),
+              const SizedBox(width: FxSpacing.sm),
+              Expanded(
+                child: Text(
+                  log.executionTime ?? '-',
+                  style: FxTypography.bodyStrong,
+                ),
+              ),
+              if (log.status != null)
+                Text(
+                  log.status!,
+                  style: FxTypography.caption.copyWith(color: statusColor),
+                ),
+            ],
+          ),
+          const SizedBox(height: FxSpacing.xs),
+          Wrap(
+            spacing: FxSpacing.md,
+            children: [
+              if (log.billId != null)
+                Text('账单 #${log.billId}', style: FxTypography.caption),
+              if (log.executionDuration != null)
+                Text('耗时 ${log.executionDuration}ms',
+                    style: FxTypography.caption),
+            ],
+          ),
+          if (log.errorMsg != null && log.errorMsg!.isNotEmpty) ...[
+            const SizedBox(height: FxSpacing.xs),
+            Text(
+              log.errorMsg!,
+              style: FxTypography.caption.copyWith(color: FxColors.danger),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}

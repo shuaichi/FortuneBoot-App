@@ -1,0 +1,56 @@
+import 'package:flutter/material.dart';
+import 'package:fortuneboot/features/dashboard/presentation/bloc/dashboard_bloc.dart';
+import 'package:fortuneboot/features/dashboard/presentation/widgets/dashboard_card_shell.dart';
+import 'package:fortuneboot/features/shared/data/bill_service.dart';
+import 'package:fortuneboot/fx/components/fx_card.dart';
+import 'package:fortuneboot/fx/components/fx_money_text.dart';
+import 'package:fortuneboot/fx/tokens/fx_colors.dart';
+import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
+
+/// ② 本月支出 / ③ 本月收入（各 1 格）。支出红、收入绿。
+class MonthStatCard extends StatelessWidget {
+  final DashboardSection<BillStatistics> section;
+  final String? currencyCode;
+  final bool isExpense;
+  final VoidCallback onRetry;
+
+  const MonthStatCard({
+    super.key,
+    required this.section,
+    required this.currencyCode,
+    required this.isExpense,
+    required this.onRetry,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final label = isExpense ? '本月支出' : '本月收入';
+    final color = isExpense ? FxColors.expense : FxColors.income;
+    final icon = isExpense
+        ? Icons.trending_down_rounded
+        : Icons.trending_up_rounded;
+
+    return DashboardCardShell<BillStatistics>(
+      section: section,
+      onRetry: onRetry,
+      builder: (data) {
+        final amount = isExpense ? data.expense : data.income;
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            FxCardLabel(label, trailing: Icon(icon, size: 16, color: color)),
+            FxMoneyText(
+              amount: amount,
+              currencyCode: currencyCode,
+              fontSize: 20,
+              fontWeight: FontWeight.w700,
+              color: color,
+            ),
+            const SizedBox(height: FxSpacing.xs),
+          ],
+        );
+      },
+    );
+  }
+}

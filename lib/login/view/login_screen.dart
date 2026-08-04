@@ -8,8 +8,8 @@ import 'package:fortuneboot/login/model/login_model.dart';
 import 'package:fortuneboot/request/login_request.dart';
 import 'package:fortuneboot/util/constants.dart';
 import 'package:fortuneboot/theme/app_theme.dart';
-import 'package:fortuneboot/home/app/app.dart';
-import 'package:fortuneboot/home/home/view/home_page.dart';
+import 'package:fortuneboot/core/navigation/app_nav.dart';
+import 'package:fortuneboot/core/navigation/routes.dart';
 import 'package:fortuneboot/login/model/users.dart';
 import 'package:fortuneboot/util/base64_img.dart';
 import 'package:fortuneboot/util/dio_client.dart';
@@ -129,7 +129,7 @@ class LoginScreen extends StatelessWidget {
   void _selectRole(SignupData data, Map<String, dynamic> role) async {
     debugPrint("选择角色: $role");
     var str = await _signupUserWithRole(data, role);
-    AppView.navigatorKey.currentState?.pop(str);
+    appNavigatorKey.currentState?.pop(str);
   }
 
   Future<String?> _signupUserWithRole(SignupData data, Map role) async {
@@ -196,7 +196,7 @@ class LoginScreen extends StatelessWidget {
             );
           }).toList();
           return showDialog<String?>(
-            context: AppView.navigatorKey.currentContext!,
+            context: appNavigatorKey.currentContext!,
             builder: (context) => SimpleDialog(
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20),
@@ -323,8 +323,9 @@ class LoginScreen extends StatelessWidget {
         return _signupUser(signupData);
       },
       onSubmitAnimationCompleted: () {
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => const HomePage()),
+        Navigator.of(context).pushNamedAndRemoveUntil(
+          Routes.main,
+          (route) => false,
         );
       },
       onRecoverPassword: (name) {
@@ -469,7 +470,7 @@ class IntroWidget extends StatelessWidget {
 // 极致金融级安全验证码弹窗 - Top-Tier Fintech Captcha Dialog
 // ----------------------------------------------------------------------
 Future<Map?> showCaptchaDialog(Map captchaDic) async {
-  if (AppView.navigatorKey.currentContext == null) {
+  if (appNavigatorKey.currentContext == null) {
     return null;
   }
 
@@ -484,7 +485,7 @@ Future<Map?> showCaptchaDialog(Map captchaDic) async {
   bool isLoading = false; // 刷新状态防抖
 
   return showDialog<Map?>(
-    context: AppView.navigatorKey.currentContext!,
+    context: appNavigatorKey.currentContext!,
     barrierDismissible: false,
     barrierColor: Colors.black.withOpacity(0.4), // 沉浸式背景层
     builder: (context) => StatefulBuilder(

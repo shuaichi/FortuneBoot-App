@@ -3,9 +3,9 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 // 引入震动反馈
 import 'package:flutter/services.dart';
-import 'package:fortuneboot/repository/repository/bills_repository.dart';
+import 'package:fortuneboot/core/app_constants.dart';
+import 'package:fortuneboot/core/navigation/routes.dart';
 import 'package:fortuneboot/request/login_request.dart';
-import 'package:fortuneboot/home/home/view/home_page.dart';
 import 'package:fortuneboot/login/model/users.dart';
 import 'package:fortuneboot/login/view/login_screen.dart';
 import 'package:fortuneboot/generated/l10n.dart';
@@ -91,8 +91,8 @@ class _BaseUrlConfigPageState extends State<BaseUrlConfigPage> {
         return;
       }
       if (!mounted) return;
-      Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (context) => const HomePage()),
+      Navigator.of(context).pushNamedAndRemoveUntil(
+        Routes.main,
         (route) => false,
       );
     } else {
@@ -473,11 +473,11 @@ class _BaseUrlConfigPageState extends State<BaseUrlConfigPage> {
         if (curVersionString.isNotEmpty) {
           final int maxRes = compareVersion(
             curVersionString,
-            BillsRepository.maxApiVersion,
+            AppConstants.maxApiVersion,
           );
           final int minRes = compareVersion(
             curVersionString,
-            BillsRepository.minApiVersion,
+            AppConstants.minApiVersion,
           );
           // 左闭右开
           print('lxjtodo: $maxRes $minRes');
