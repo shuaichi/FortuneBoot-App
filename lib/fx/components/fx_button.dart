@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:fortuneboot/fx/tokens/fx_colors.dart';
+import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
 
@@ -54,26 +54,27 @@ class FxButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = FxPalette.of(context);
     final Color bg;
     final Color fg;
     switch (variant) {
       case FxButtonVariant.filled:
-        bg = FxColors.primary;
-        fg = FxColors.onPrimary;
+        bg = palette.primary;
+        fg = palette.onPrimary;
       case FxButtonVariant.tonal:
-        bg = FxColors.primaryContainer;
-        fg = FxColors.primary;
+        bg = palette.primaryContainer;
+        fg = palette.primary;
       case FxButtonVariant.text:
         bg = Colors.transparent;
-        fg = FxColors.primary;
+        fg = palette.primary;
       case FxButtonVariant.critical:
-        bg = FxColors.danger;
+        bg = palette.danger;
         fg = Colors.white;
     }
 
     final disabled = onPressed == null || loading;
 
-    Widget child = loading
+    final Widget child = loading
         ? SizedBox(
             width: 18,
             height: 18,
@@ -87,10 +88,7 @@ class FxButton extends StatelessWidget {
                 Icon(icon, size: 18, color: fg),
                 const SizedBox(width: 8),
               ],
-              Text(
-                label,
-                style: FxTypography.bodyStrong.copyWith(color: fg),
-              ),
+              Text(label, style: FxTypography.bodyStrong.copyWith(color: fg)),
             ],
           );
 

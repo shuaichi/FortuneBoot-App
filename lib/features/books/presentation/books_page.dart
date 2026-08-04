@@ -13,7 +13,7 @@ import 'package:fortuneboot/fx/components/fx_segmented.dart';
 import 'package:fortuneboot/fx/components/fx_sheet.dart';
 import 'package:fortuneboot/fx/components/fx_state_view.dart';
 import 'package:fortuneboot/fx/components/fx_tag_chip.dart';
-import 'package:fortuneboot/fx/tokens/fx_colors.dart';
+import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
@@ -60,8 +60,11 @@ class _BooksPageState extends State<BooksPage> {
 
   Future<void> _removeGroup(FortuneGroupVo group) async {
     if (group.groupId == null) return;
-    final ok = await _confirm('删除分组', '确定删除「${group.groupName ?? '该分组'}」吗？'
-        '该分组下账本也将无法访问。');
+    final ok = await _confirm(
+      '删除分组',
+      '确定删除「${group.groupName ?? '该分组'}」吗？'
+          '该分组下账本也将无法访问。',
+    );
     if (ok != true) return;
     await _run(() => _service.removeGroup(group.groupId!), reloadSession: true);
   }
@@ -108,7 +111,9 @@ class _BooksPageState extends State<BooksPage> {
     }
   }
 
-  Future<void> _bookAction(FortuneBookVo book, String action, {
+  Future<void> _bookAction(
+    FortuneBookVo book,
+    String action, {
     bool reloadSession = false,
   }) async {
     if (book.bookId == null) return;
@@ -120,8 +125,11 @@ class _BooksPageState extends State<BooksPage> {
 
   Future<void> _removeBook(FortuneBookVo book) async {
     if (book.bookId == null) return;
-    final ok = await _confirm('彻底删除账本', '确定彻底删除「${book.bookName ?? '该账本'}」吗？'
-        '此操作不可撤销。');
+    final ok = await _confirm(
+      '彻底删除账本',
+      '确定彻底删除「${book.bookName ?? '该账本'}」吗？'
+          '此操作不可撤销。',
+    );
     if (ok != true) return;
     await _run(() => _service.removeBook(book.bookId!), reloadSession: true);
   }
@@ -172,7 +180,9 @@ class _BooksPageState extends State<BooksPage> {
           ),
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(true),
-            style: TextButton.styleFrom(foregroundColor: FxColors.danger),
+            style: TextButton.styleFrom(
+              foregroundColor: FxPalette.of(context).danger,
+            ),
             child: const Text('确定'),
           ),
         ],
@@ -183,7 +193,7 @@ class _BooksPageState extends State<BooksPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: FxColors.canvas,
+      backgroundColor: FxPalette.of(context).canvas,
       body: SafeArea(
         bottom: false,
         child: Column(
@@ -256,7 +266,7 @@ class _BooksPageState extends State<BooksPage> {
       radius: 22,
       child: Padding(
         padding: const EdgeInsets.all(FxSpacing.xs),
-        child: Icon(icon, size: 26, color: FxColors.textPrimary),
+        child: Icon(icon, size: 26, color: FxPalette.of(context).textPrimary),
       ),
     );
   }
@@ -272,9 +282,7 @@ class _BooksPageState extends State<BooksPage> {
           onRetry: () => _bloc.add(const BooksLoaded()),
         );
       case BooksStatus.loaded:
-        return _tab == _Tab.groups
-            ? _buildGroups(state)
-            : _buildBooks(state);
+        return _tab == _Tab.groups ? _buildGroups(state) : _buildBooks(state);
     }
   }
 
@@ -304,7 +312,7 @@ class _BooksPageState extends State<BooksPage> {
           return Padding(
             padding: const EdgeInsets.only(bottom: FxSpacing.md),
             child: FxCard(
-              accent: isCurrent ? FxColors.primary : null,
+              accent: isCurrent ? FxPalette.of(context).primary : null,
               onTap: () => _switchSessionGroup(g),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -320,7 +328,10 @@ class _BooksPageState extends State<BooksPage> {
                         ),
                       ),
                       if (isCurrent)
-                        const FxTagChip(label: '当前', dotColor: FxColors.primary),
+                        FxTagChip(
+                          label: '当前',
+                          dotColor: FxPalette.of(context).primary,
+                        ),
                       _menu(
                         onEdit: () => _editGroup(group: g),
                         onDefault: () => _setDefaultGroup(g),
@@ -339,8 +350,12 @@ class _BooksPageState extends State<BooksPage> {
                     children: [
                       _pill(g.defaultCurrency ?? '-'),
                       if (g.roleTypeDesc != null)
-                        _pill(g.roleTypeDesc!, tint: FxColors.info),
-                      if (!g.enable) _pill('已停用', tint: FxColors.textTertiary),
+                        _pill(
+                          g.roleTypeDesc!,
+                          tint: FxPalette.of(context).info,
+                        ),
+                      if (!g.enable)
+                        _pill('已停用', tint: FxPalette.of(context).textTertiary),
                       if (g.defaultBookName != null)
                         Text(
                           '默认账本：${g.defaultBookName}',
@@ -436,8 +451,8 @@ class _BooksPageState extends State<BooksPage> {
     return Padding(
       padding: const EdgeInsets.only(bottom: FxSpacing.md),
       child: FxCard(
-        accent: isCurrent ? FxColors.primary : null,
-        background: recycled ? FxColors.surfaceMuted : null,
+        accent: isCurrent ? FxPalette.of(context).primary : null,
+        background: recycled ? FxPalette.of(context).surfaceMuted : null,
         onTap: recycled ? null : () => _setDefaultBook(b),
         child: Row(
           children: [
@@ -457,9 +472,9 @@ class _BooksPageState extends State<BooksPage> {
                       ),
                       if (isCurrent) ...[
                         const SizedBox(width: FxSpacing.sm),
-                        const FxTagChip(
+                        FxTagChip(
                           label: '当前',
-                          dotColor: FxColors.primary,
+                          dotColor: FxPalette.of(context).primary,
                         ),
                       ],
                     ],
@@ -470,7 +485,8 @@ class _BooksPageState extends State<BooksPage> {
                     runSpacing: FxSpacing.xs,
                     children: [
                       _pill(b.defaultCurrency ?? '-'),
-                      if (!b.enable) _pill('已停用', tint: FxColors.textTertiary),
+                      if (!b.enable)
+                        _pill('已停用', tint: FxPalette.of(context).textTertiary),
                     ],
                   ),
                 ],
@@ -486,9 +502,9 @@ class _BooksPageState extends State<BooksPage> {
                   ),
                   IconButton(
                     onPressed: () => _removeBook(b),
-                    icon: const Icon(
+                    icon: Icon(
                       Icons.delete_forever_rounded,
-                      color: FxColors.danger,
+                      color: FxPalette.of(context).danger,
                     ),
                   ),
                 ],
@@ -504,8 +520,8 @@ class _BooksPageState extends State<BooksPage> {
                   reloadSession: true,
                 ),
                 enabled: b.enable,
-                onRecycle: () => _bookAction(b, 'moveToRecycleBin',
-                    reloadSession: true),
+                onRecycle: () =>
+                    _bookAction(b, 'moveToRecycleBin', reloadSession: true),
               ),
           ],
         ),
@@ -514,7 +530,7 @@ class _BooksPageState extends State<BooksPage> {
   }
 
   Widget _pill(String text, {Color? tint}) {
-    final c = tint ?? FxColors.textSecondary;
+    final c = tint ?? FxPalette.of(context).textSecondary;
     return Container(
       padding: const EdgeInsets.symmetric(
         horizontal: FxSpacing.sm,
@@ -524,10 +540,7 @@ class _BooksPageState extends State<BooksPage> {
         color: c.withValues(alpha: 0.12),
         borderRadius: FxRadius.pillBorder,
       ),
-      child: Text(
-        text,
-        style: FxTypography.caption.copyWith(color: c),
-      ),
+      child: Text(text, style: FxTypography.caption.copyWith(color: c)),
     );
   }
 
@@ -541,7 +554,10 @@ class _BooksPageState extends State<BooksPage> {
     VoidCallback? onRemove,
   }) {
     return PopupMenuButton<String>(
-      icon: const Icon(Icons.more_vert_rounded, color: FxColors.textSecondary),
+      icon: Icon(
+        Icons.more_vert_rounded,
+        color: FxPalette.of(context).textSecondary,
+      ),
       onSelected: (v) {
         HapticFeedback.selectionClick();
         switch (v) {
@@ -564,9 +580,12 @@ class _BooksPageState extends State<BooksPage> {
         if (onRecycle != null)
           const PopupMenuItem(value: 'recycle', child: Text('移入回收站')),
         if (onRemove != null)
-          const PopupMenuItem(
+          PopupMenuItem(
             value: 'remove',
-            child: Text('删除', style: TextStyle(color: FxColors.danger)),
+            child: Text(
+              '删除',
+              style: TextStyle(color: FxPalette.of(context).danger),
+            ),
           ),
       ],
     );

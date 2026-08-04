@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:fortuneboot/fx/tokens/fx_colors.dart';
+import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
@@ -26,6 +26,7 @@ class FxListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = FxPalette.of(context);
     final row = Padding(
       padding: const EdgeInsets.symmetric(
         horizontal: FxSpacing.lg,
@@ -41,10 +42,24 @@ class FxListItem extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title, style: FxTypography.bodyStrong, maxLines: 1, overflow: TextOverflow.ellipsis),
+                Text(
+                  title,
+                  style: FxTypography.bodyStrong.copyWith(
+                    color: palette.textPrimary,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
                 if (subtitle != null) ...[
                   const SizedBox(height: 2),
-                  Text(subtitle!, style: FxTypography.caption, maxLines: 1, overflow: TextOverflow.ellipsis),
+                  Text(
+                    subtitle!,
+                    style: FxTypography.caption.copyWith(
+                      color: palette.textSecondary,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ],
               ],
             ),
@@ -52,7 +67,7 @@ class FxListItem extends StatelessWidget {
           if (trailing != null) trailing!,
           if (showChevron) ...[
             const SizedBox(width: FxSpacing.sm),
-            const Icon(Icons.chevron_right_rounded, color: FxColors.textTertiary),
+            Icon(Icons.chevron_right_rounded, color: palette.textTertiary),
           ],
         ],
       ),

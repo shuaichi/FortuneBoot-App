@@ -3,7 +3,7 @@ import 'package:fortuneboot/core/network/fx_api.dart';
 import 'package:fortuneboot/features/recurring/data/recurring_models.dart';
 import 'package:fortuneboot/features/recurring/data/recurring_service.dart';
 import 'package:fortuneboot/fx/components/fx_state_view.dart';
-import 'package:fortuneboot/fx/tokens/fx_colors.dart';
+import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
@@ -76,29 +76,28 @@ class _RecurringLogSheetState extends State<RecurringLogSheet> {
       return FxStateView.error(message: _error, onRetry: _load);
     }
     if (_logs.isEmpty) {
-      return FxStateView.empty(
-        message: '暂无执行记录',
-        icon: Icons.history_rounded,
-      );
+      return FxStateView.empty(message: '暂无执行记录', icon: Icons.history_rounded);
     }
     return ListView.builder(
       padding: const EdgeInsets.symmetric(horizontal: FxSpacing.lg),
       itemCount: _logs.length,
-      itemBuilder: (context, i) => _tile(_logs[i]),
+      itemBuilder: (context, i) => _tile(context, _logs[i]),
     );
   }
 
-  Widget _tile(RecurringLogVo log) {
-    final isError = (log.errorMsg != null && log.errorMsg!.isNotEmpty) ||
+  Widget _tile(BuildContext context, RecurringLogVo log) {
+    final palette = FxPalette.of(context);
+    final isError =
+        (log.errorMsg != null && log.errorMsg!.isNotEmpty) ||
         (log.status != null &&
             (log.status!.toLowerCase().contains('fail') ||
                 log.status!.contains('失败')));
-    final statusColor = isError ? FxColors.danger : FxColors.success;
+    final statusColor = isError ? palette.danger : palette.success;
     return Container(
       margin: const EdgeInsets.only(bottom: FxSpacing.sm),
       padding: const EdgeInsets.all(FxSpacing.md),
       decoration: BoxDecoration(
-        color: FxColors.surfaceMuted,
+        color: palette.surfaceMuted,
         borderRadius: FxRadius.tileBorder,
       ),
       child: Column(
@@ -135,15 +134,17 @@ class _RecurringLogSheetState extends State<RecurringLogSheet> {
               if (log.billId != null)
                 Text('账单 #${log.billId}', style: FxTypography.caption),
               if (log.executionDuration != null)
-                Text('耗时 ${log.executionDuration}ms',
-                    style: FxTypography.caption),
+                Text(
+                  '耗时 ${log.executionDuration}ms',
+                  style: FxTypography.caption,
+                ),
             ],
           ),
           if (log.errorMsg != null && log.errorMsg!.isNotEmpty) ...[
             const SizedBox(height: FxSpacing.xs),
             Text(
               log.errorMsg!,
-              style: FxTypography.caption.copyWith(color: FxColors.danger),
+              style: FxTypography.caption.copyWith(color: palette.danger),
             ),
           ],
         ],

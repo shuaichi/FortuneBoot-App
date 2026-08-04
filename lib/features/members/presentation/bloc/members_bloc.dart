@@ -95,10 +95,7 @@ class MembersBloc extends Bloc<MembersEvent, MembersState> {
       );
     } on Object catch (e) {
       emit(
-        state.copyWith(
-          status: MembersStatus.error,
-          errorMessage: e.toString(),
-        ),
+        state.copyWith(status: MembersStatus.error, errorMessage: e.toString()),
       );
     }
   }

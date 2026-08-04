@@ -3,7 +3,7 @@ import 'package:fortuneboot/core/network/fx_api.dart';
 import 'package:fortuneboot/features/accounts/data/account_models.dart';
 import 'package:fortuneboot/features/accounts/data/account_service.dart';
 import 'package:fortuneboot/fx/components/fx_button.dart';
-import 'package:fortuneboot/fx/tokens/fx_colors.dart';
+import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
@@ -240,12 +240,17 @@ class _AccountFormSheetState extends State<AccountFormSheet> {
             _label('信用/贷款额度'),
             TextField(
               controller: _creditLimitCtrl,
-              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+              ),
               decoration: _dec('如：50000'),
             ),
             const SizedBox(height: FxSpacing.md),
             _label('还款日（yyyy-MM-dd）'),
-            TextField(controller: _repayDayCtrl, decoration: _dec('2026-08-15')),
+            TextField(
+              controller: _repayDayCtrl,
+              decoration: _dec('2026-08-15'),
+            ),
           ],
           if (_isCredit) ...[
             const SizedBox(height: FxSpacing.md),
@@ -257,7 +262,9 @@ class _AccountFormSheetState extends State<AccountFormSheet> {
             _label('年利率 APR'),
             TextField(
               controller: _aprCtrl,
-              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+              ),
               decoration: _dec('如：0.045'),
             ),
           ],
@@ -270,7 +277,9 @@ class _AccountFormSheetState extends State<AccountFormSheet> {
             const SizedBox(height: FxSpacing.sm),
             Text(
               _error!,
-              style: FxTypography.caption.copyWith(color: FxColors.danger),
+              style: FxTypography.caption.copyWith(
+                color: FxPalette.of(context).danger,
+              ),
             ),
           ],
           const SizedBox(height: FxSpacing.xl),
@@ -286,6 +295,7 @@ class _AccountFormSheetState extends State<AccountFormSheet> {
   }
 
   Widget _typeSelector() {
+    final palette = FxPalette.of(context);
     return Wrap(
       spacing: FxSpacing.sm,
       children: AccountTypeMeta.ordered.map((meta) {
@@ -298,10 +308,10 @@ class _AccountFormSheetState extends State<AccountFormSheet> {
               vertical: FxSpacing.sm,
             ),
             decoration: BoxDecoration(
-              color: selected ? FxColors.primaryContainer : FxColors.surfaceMuted,
+              color: selected ? palette.primaryContainer : palette.surfaceMuted,
               borderRadius: FxRadius.pillBorder,
               border: Border.all(
-                color: selected ? FxColors.primary : FxColors.border,
+                color: selected ? palette.primary : palette.border,
               ),
             ),
             child: Row(
@@ -310,15 +320,13 @@ class _AccountFormSheetState extends State<AccountFormSheet> {
                 Icon(
                   meta.icon,
                   size: 16,
-                  color: selected ? FxColors.primary : FxColors.textSecondary,
+                  color: selected ? palette.primary : palette.textSecondary,
                 ),
                 const SizedBox(width: FxSpacing.xs),
                 Text(
                   meta.name,
                   style: FxTypography.label.copyWith(
-                    color: selected
-                        ? FxColors.primary
-                        : FxColors.textSecondary,
+                    color: selected ? palette.primary : palette.textSecondary,
                     fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
                   ),
                 ),
@@ -367,7 +375,7 @@ class _AccountFormSheetState extends State<AccountFormSheet> {
           Expanded(child: Text(field.label, style: FxTypography.body)),
           Switch.adaptive(
             value: value,
-            activeColor: FxColors.primary,
+            activeColor: FxPalette.of(context).primary,
             onChanged: (v) {
               onLocal(v);
               // 编辑模式：即时 PATCH（乐观更新在 bloc 侧）。
@@ -387,7 +395,7 @@ class _AccountFormSheetState extends State<AccountFormSheet> {
   InputDecoration _dec(String hint) => InputDecoration(
     hintText: hint,
     filled: true,
-    fillColor: FxColors.surfaceMuted,
+    fillColor: FxPalette.of(context).surfaceMuted,
     isDense: true,
     contentPadding: const EdgeInsets.symmetric(
       horizontal: FxSpacing.md,

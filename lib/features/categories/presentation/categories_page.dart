@@ -12,7 +12,7 @@ import 'package:fortuneboot/features/manage_shared/manage_menu.dart';
 import 'package:fortuneboot/features/manage_shared/manage_scaffold.dart';
 import 'package:fortuneboot/fx/components/fx_sheet.dart';
 import 'package:fortuneboot/fx/components/fx_state_view.dart';
-import 'package:fortuneboot/fx/tokens/fx_colors.dart';
+import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
 
@@ -183,6 +183,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
       );
     }
     final inRecycle = state.tab.recycleBin;
+    final finance = FxFinanceColors.of(context);
     return RefreshIndicator(
       onRefresh: () async => _bloc.add(const CategoriesLoaded()),
       child: ListView(
@@ -195,9 +196,9 @@ class _CategoriesPageState extends State<CategoriesPage> {
         ),
         children: [
           if (expense.isNotEmpty)
-            _section('支出分类', FxColors.expense, expense, 1, inRecycle),
+            _section('支出分类', finance.expense, expense, 1, inRecycle),
           if (income.isNotEmpty)
-            _section('收入分类', FxColors.income, income, 2, inRecycle),
+            _section('收入分类', finance.income, income, 2, inRecycle),
         ],
       ),
     );

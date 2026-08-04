@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fortuneboot/core/icon/fx_icon_badge.dart';
 import 'package:fortuneboot/core/icon/smart_category_engine.dart';
 import 'package:fortuneboot/core/navigation/app_router.dart';
 import 'package:fortuneboot/core/navigation/routes.dart';
+import 'package:fortuneboot/core/preferences/preferences_cubit.dart';
 import 'package:fortuneboot/features/dashboard/presentation/bloc/dashboard_bloc.dart';
 import 'package:fortuneboot/features/dashboard/presentation/widgets/dashboard_card_shell.dart';
 import 'package:fortuneboot/features/shared/data/bill_models.dart';
 import 'package:fortuneboot/fx/components/fx_card.dart';
 import 'package:fortuneboot/fx/components/fx_money_text.dart';
-import 'package:fortuneboot/fx/tokens/fx_colors.dart';
+import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
 import 'package:intl/intl.dart';
@@ -30,6 +32,12 @@ class RecentBillsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = FxPalette.of(context);
+    final hideAmounts = context
+        .watch<PreferencesCubit>()
+        .state
+        .dashboard
+        .hideAmounts;
     return DashboardCardShell<List<FortuneBillVo>>(
       section: section,
       onRetry: onRetry,
@@ -47,13 +55,13 @@ class RecentBillsCard extends StatelessWidget {
                     Text(
                       '全部',
                       style: FxTypography.caption.copyWith(
-                        color: FxColors.primary,
+                        color: palette.primary,
                       ),
                     ),
-                    const Icon(
+                    Icon(
                       Icons.chevron_right_rounded,
                       size: 16,
-                      color: FxColors.primary,
+                      color: palette.primary,
                     ),
                   ],
                 ),
@@ -68,14 +76,14 @@ class RecentBillsCard extends StatelessWidget {
                 ),
               )
             else
-              ...bills.map((b) => _row(context, b)),
+              ...bills.map((b) => _row(context, b, hideAmounts)),
           ],
         );
       },
     );
   }
 
-  Widget _row(BuildContext context, FortuneBillVo bill) {
+  Widget _row(BuildContext context, FortuneBillVo bill, bool hideAmounts) {
     final title = (bill.title?.isNotEmpty ?? false)
         ? bill.title!
         : (bill.primaryCategoryName.isNotEmpty
@@ -127,6 +135,7 @@ class RecentBillsCard extends StatelessWidget {
                 currencyCode: bill.currencyCode ?? currencyCode,
                 billType: bill.billType,
                 fontSize: 15,
+                masked: hideAmounts,
               ),
               Text(dateText, style: FxTypography.caption),
             ],

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fortuneboot/features/goods/data/goods_models.dart';
 import 'package:fortuneboot/fx/components/fx_money_text.dart';
-import 'package:fortuneboot/fx/tokens/fx_colors.dart';
+import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
 
@@ -10,14 +10,12 @@ class GoodsDetailSheet extends StatelessWidget {
   final FortuneGoodsKeeperVo goods;
   final String? currencyCode;
 
-  const GoodsDetailSheet({
-    super.key,
-    required this.goods,
-    this.currencyCode,
-  });
+  const GoodsDetailSheet({super.key, required this.goods, this.currencyCode});
 
   @override
   Widget build(BuildContext context) {
+    final palette = FxPalette.of(context);
+    final finance = FxFinanceColors.of(context);
     final profit = goods.profit;
     return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(
@@ -32,65 +30,73 @@ class GoodsDetailSheet extends StatelessWidget {
           Row(
             children: [
               Expanded(
-                child: Text(goods.goodsName ?? '未命名', style: FxTypography.title),
+                child: Text(
+                  goods.goodsName ?? '未命名',
+                  style: FxTypography.title,
+                ),
               ),
               FxMoneyText(
                 amount: goods.price ?? 0,
                 currencyCode: currencyCode,
                 fontSize: 20,
-                color: FxColors.textPrimary,
+                color: palette.textPrimary,
               ),
             ],
           ),
           const SizedBox(height: FxSpacing.lg),
-          _row('购买日期', goods.purchaseDate ?? '-'),
+          _row(context, '购买日期', goods.purchaseDate ?? '-'),
           if (goods.holdingTime != null)
-            _row('持有天数', '${goods.holdingTime} 天'),
+            _row(context, '持有天数', '${goods.holdingTime} 天'),
           if (goods.dailyAverageCost != null)
-            _row('日均成本', goods.dailyAverageCost!.toStringAsFixed(2)),
+            _row(context, '日均成本', goods.dailyAverageCost!.toStringAsFixed(2)),
           if ((goods.categoryName ?? '').isNotEmpty)
-            _row('分类', goods.categoryName!),
-          if ((goods.tagName ?? '').isNotEmpty) _row('标签', goods.tagName!),
+            _row(context, '分类', goods.categoryName!),
+          if ((goods.tagName ?? '').isNotEmpty)
+            _row(context, '标签', goods.tagName!),
           if ((goods.warrantyDate ?? '').isNotEmpty)
-            _row('保修日期', goods.warrantyDate!),
+            _row(context, '保修日期', goods.warrantyDate!),
           if ((goods.isOverWarranty ?? '').isNotEmpty)
-            _row('保修状态', goods.isOverWarranty!),
+            _row(context, '保修状态', goods.isOverWarranty!),
           if (goods.useByTimes && goods.usageNum != null)
-            _row('使用次数', '${goods.usageNum}'),
+            _row(context, '使用次数', '${goods.usageNum}'),
           if ((goods.statusDesc ?? '').isNotEmpty)
-            _row('状态', goods.statusDesc!),
+            _row(context, '状态', goods.statusDesc!),
           if ((goods.retiredDate ?? '').isNotEmpty)
-            _row('退役日期', goods.retiredDate!),
+            _row(context, '退役日期', goods.retiredDate!),
           if (goods.soldPrice != null)
-            _row('出售价格', goods.soldPrice!.toStringAsFixed(2)),
+            _row(context, '出售价格', goods.soldPrice!.toStringAsFixed(2)),
           if (profit != null)
             _row(
+              context,
               '出售盈亏',
               '${profit >= 0 ? '+' : ''}${profit.toStringAsFixed(2)}',
-              valueColor: profit >= 0 ? FxColors.income : FxColors.expense,
+              valueColor: profit >= 0 ? finance.income : finance.expense,
             ),
-          if ((goods.remark ?? '').isNotEmpty) _row('备注', goods.remark!),
+          if ((goods.remark ?? '').isNotEmpty)
+            _row(context, '备注', goods.remark!),
         ],
       ),
     );
   }
 
-  Widget _row(String label, String value, {Color? valueColor}) {
+  Widget _row(
+    BuildContext context,
+    String label,
+    String value, {
+    Color? valueColor,
+  }) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: FxSpacing.sm),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(
-            width: 84,
-            child: Text(label, style: FxTypography.label),
-          ),
+          SizedBox(width: 84, child: Text(label, style: FxTypography.label)),
           const SizedBox(width: FxSpacing.md),
           Expanded(
             child: Text(
               value,
               style: FxTypography.body.copyWith(
-                color: valueColor ?? FxColors.textPrimary,
+                color: valueColor ?? FxPalette.of(context).textPrimary,
               ),
             ),
           ),

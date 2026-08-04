@@ -7,7 +7,7 @@ import 'package:fortuneboot/features/profile/data/profile_service.dart';
 import 'package:fortuneboot/fx/components/fx_button.dart';
 import 'package:fortuneboot/fx/components/fx_card.dart';
 import 'package:fortuneboot/fx/components/fx_sheet.dart';
-import 'package:fortuneboot/fx/tokens/fx_colors.dart';
+import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
@@ -164,6 +164,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
 
   @override
   Widget build(BuildContext context) {
+    final palette = FxPalette.of(context);
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, result) {
@@ -171,15 +172,14 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
         Navigator.of(context).pop(_dirty);
       },
       child: Scaffold(
-        backgroundColor: FxColors.canvas,
+        backgroundColor: palette.canvas,
         appBar: AppBar(
-          backgroundColor: FxColors.surface,
+          backgroundColor: palette.surface,
           surfaceTintColor: Colors.transparent,
           elevation: 0,
           title: const Text('编辑资料', style: FxTypography.title),
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back_rounded,
-                color: FxColors.textPrimary),
+            icon: Icon(Icons.arrow_back_rounded, color: palette.textPrimary),
             onPressed: () => Navigator.of(context).pop(_dirty),
           ),
         ),
@@ -196,13 +196,19 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                   const SizedBox(height: FxSpacing.lg),
                   _sexField(),
                   const SizedBox(height: FxSpacing.lg),
-                  _labeledField('电话', _phoneCtrl,
-                      hint: '请输入手机号',
-                      keyboardType: TextInputType.phone),
+                  _labeledField(
+                    '电话',
+                    _phoneCtrl,
+                    hint: '请输入手机号',
+                    keyboardType: TextInputType.phone,
+                  ),
                   const SizedBox(height: FxSpacing.lg),
-                  _labeledField('邮箱', _emailCtrl,
-                      hint: '请输入邮箱',
-                      keyboardType: TextInputType.emailAddress),
+                  _labeledField(
+                    '邮箱',
+                    _emailCtrl,
+                    hint: '请输入邮箱',
+                    keyboardType: TextInputType.emailAddress,
+                  ),
                 ],
               ),
             ),
@@ -212,18 +218,22 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
               child: InkWell(
                 borderRadius: FxRadius.cardBorder,
                 onTap: _openPasswordSheet,
-                child: const Padding(
-                  padding: EdgeInsets.all(FxSpacing.lg),
+                child: Padding(
+                  padding: const EdgeInsets.all(FxSpacing.lg),
                   child: Row(
                     children: [
-                      Icon(Icons.lock_outline_rounded,
-                          color: FxColors.textSecondary),
-                      SizedBox(width: FxSpacing.md),
-                      Expanded(
+                      Icon(
+                        Icons.lock_outline_rounded,
+                        color: palette.textSecondary,
+                      ),
+                      const SizedBox(width: FxSpacing.md),
+                      const Expanded(
                         child: Text('修改密码', style: FxTypography.bodyStrong),
                       ),
-                      Icon(Icons.chevron_right_rounded,
-                          color: FxColors.textTertiary),
+                      Icon(
+                        Icons.chevron_right_rounded,
+                        color: palette.textTertiary,
+                      ),
                     ],
                   ),
                 ),
@@ -243,6 +253,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
   }
 
   Widget _avatarSection() {
+    final palette = FxPalette.of(context);
     return Center(
       child: Column(
         children: [
@@ -255,7 +266,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                   height: 88,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: FxColors.primaryContainer,
+                    color: palette.primaryContainer,
                     image: (_avatar != null && _avatar!.isNotEmpty)
                         ? DecorationImage(
                             image: NetworkImage(_avatar!),
@@ -266,8 +277,11 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                   ),
                   alignment: Alignment.center,
                   child: (_avatar == null || _avatar!.isEmpty)
-                      ? const Icon(Icons.person_rounded,
-                          size: 44, color: FxColors.primary)
+                      ? Icon(
+                          Icons.person_rounded,
+                          size: 44,
+                          color: palette.primary,
+                        )
                       : null,
                 ),
                 Positioned(
@@ -275,9 +289,9 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                   bottom: 0,
                   child: Container(
                     padding: const EdgeInsets.all(6),
-                    decoration: const BoxDecoration(
+                    decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: FxColors.primary,
+                      color: palette.primary,
                     ),
                     child: _uploadingAvatar
                         ? const SizedBox(
@@ -288,8 +302,11 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                               color: Colors.white,
                             ),
                           )
-                        : const Icon(Icons.camera_alt_rounded,
-                            size: 14, color: Colors.white),
+                        : const Icon(
+                            Icons.camera_alt_rounded,
+                            size: 14,
+                            color: Colors.white,
+                          ),
                   ),
                 ),
               ],
@@ -341,6 +358,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
   }
 
   Widget _sexChip(String label, int value) {
+    final palette = FxPalette.of(context);
     final selected = _sex == value;
     return Expanded(
       child: GestureDetector(
@@ -349,16 +367,16 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
           height: 44,
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            color: selected ? FxColors.primaryContainer : FxColors.surfaceMuted,
+            color: selected ? palette.primaryContainer : palette.surfaceMuted,
             borderRadius: FxRadius.tileBorder,
             border: Border.all(
-              color: selected ? FxColors.primary : FxColors.border,
+              color: selected ? palette.primary : palette.border,
             ),
           ),
           child: Text(
             label,
             style: FxTypography.bodyStrong.copyWith(
-              color: selected ? FxColors.primary : FxColors.textSecondary,
+              color: selected ? palette.primary : palette.textSecondary,
             ),
           ),
         ),
@@ -367,11 +385,12 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
   }
 
   InputDecoration _inputDecoration(String? hint) {
+    final palette = FxPalette.of(context);
     return InputDecoration(
       hintText: hint,
-      hintStyle: FxTypography.body.copyWith(color: FxColors.textTertiary),
+      hintStyle: FxTypography.body.copyWith(color: palette.textTertiary),
       filled: true,
-      fillColor: FxColors.surfaceMuted,
+      fillColor: palette.surfaceMuted,
       contentPadding: const EdgeInsets.symmetric(
         horizontal: FxSpacing.md,
         vertical: FxSpacing.md,
@@ -382,11 +401,11 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: FxRadius.tileBorder,
-        borderSide: const BorderSide(color: FxColors.border),
+        borderSide: BorderSide(color: palette.border),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: FxRadius.tileBorder,
-        borderSide: const BorderSide(color: FxColors.primary),
+        borderSide: BorderSide(color: palette.primary),
       ),
     );
   }
@@ -472,6 +491,7 @@ class _PasswordSheetState extends State<_PasswordSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final palette = FxPalette.of(context);
     return Padding(
       padding: const EdgeInsets.fromLTRB(
         FxSpacing.lg,
@@ -490,8 +510,10 @@ class _PasswordSheetState extends State<_PasswordSheet> {
           _field('确认新密码', _confirmCtrl),
           if (_error != null) ...[
             const SizedBox(height: FxSpacing.md),
-            Text(_error!,
-                style: FxTypography.caption.copyWith(color: FxColors.danger)),
+            Text(
+              _error!,
+              style: FxTypography.caption.copyWith(color: palette.danger),
+            ),
           ],
           const SizedBox(height: FxSpacing.lg),
           FxButton(
@@ -506,6 +528,7 @@ class _PasswordSheetState extends State<_PasswordSheet> {
   }
 
   Widget _field(String label, TextEditingController controller) {
+    final palette = FxPalette.of(context);
     return TextField(
       controller: controller,
       obscureText: true,
@@ -514,7 +537,7 @@ class _PasswordSheetState extends State<_PasswordSheet> {
         labelText: label,
         labelStyle: FxTypography.label,
         filled: true,
-        fillColor: FxColors.surfaceMuted,
+        fillColor: palette.surfaceMuted,
         contentPadding: const EdgeInsets.symmetric(
           horizontal: FxSpacing.md,
           vertical: FxSpacing.md,
@@ -525,11 +548,11 @@ class _PasswordSheetState extends State<_PasswordSheet> {
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: FxRadius.tileBorder,
-          borderSide: const BorderSide(color: FxColors.border),
+          borderSide: BorderSide(color: palette.border),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: FxRadius.tileBorder,
-          borderSide: const BorderSide(color: FxColors.primary),
+          borderSide: BorderSide(color: palette.primary),
         ),
       ),
     );

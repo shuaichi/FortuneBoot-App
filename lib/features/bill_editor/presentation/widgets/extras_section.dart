@@ -4,7 +4,7 @@ import 'package:fortuneboot/features/bill_editor/presentation/bill_editor_bloc.d
 import 'package:fortuneboot/features/bill_editor/presentation/widgets/amount_field.dart';
 import 'package:fortuneboot/fx/components/fx_card.dart';
 import 'package:fortuneboot/fx/components/fx_segmented.dart';
-import 'package:fortuneboot/fx/tokens/fx_colors.dart';
+import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
@@ -22,6 +22,7 @@ class ExtrasSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = FxPalette.of(context);
     final bloc = context.read<BillEditorBloc>();
     return FxCard(
       padding: EdgeInsets.zero,
@@ -61,12 +62,14 @@ class ExtrasSection extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(Icons.add_rounded,
-                        size: 18, color: FxColors.primary),
+                    Icon(Icons.add_rounded, size: 18, color: palette.primary),
                     const SizedBox(width: FxSpacing.xs),
-                    Text('添加手续费/优惠',
-                        style: FxTypography.bodyStrong
-                            .copyWith(color: FxColors.primary)),
+                    Text(
+                      '添加手续费/优惠',
+                      style: FxTypography.bodyStrong.copyWith(
+                        color: palette.primary,
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -97,6 +100,7 @@ class _ExtraRowEditor extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = FxPalette.of(context);
     return Padding(
       padding: const EdgeInsets.symmetric(
         horizontal: FxSpacing.lg,
@@ -110,15 +114,15 @@ class _ExtraRowEditor extends StatelessWidget {
                 child: FxSegmented<int>(
                   value: row.extraType,
                   onChanged: (v) => onChanged(row.copyWith(extraType: v)),
-                  segments: const [
-                    FxSegment(1, '手续费'),
-                    FxSegment(2, '优惠'),
-                  ],
+                  segments: const [FxSegment(1, '手续费'), FxSegment(2, '优惠')],
                 ),
               ),
               IconButton(
-                icon: const Icon(Icons.remove_circle_outline_rounded,
-                    size: 20, color: FxColors.textTertiary),
+                icon: Icon(
+                  Icons.remove_circle_outline_rounded,
+                  size: 20,
+                  color: palette.textTertiary,
+                ),
                 onPressed: onRemove,
               ),
             ],
@@ -136,13 +140,10 @@ class _ExtraRowEditor extends StatelessWidget {
             FxSegmented<int>(
               value: row.accountSide,
               onChanged: (v) => onChanged(row.copyWith(accountSide: v)),
-              segments: const [
-                FxSegment(1, '转出账户'),
-                FxSegment(2, '转入账户'),
-              ],
+              segments: const [FxSegment(1, '转出账户'), FxSegment(2, '转入账户')],
             ),
           ],
-          const Divider(height: FxSpacing.lg, color: FxColors.border),
+          Divider(height: FxSpacing.lg, color: palette.border),
         ],
       ),
     );

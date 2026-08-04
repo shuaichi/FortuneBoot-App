@@ -57,11 +57,7 @@ class AppTheme {
 
   // 阴影
   static const List<BoxShadow> cardShadow = [
-    BoxShadow(
-      color: Color(0x1A000000),
-      blurRadius: 8,
-      offset: Offset(0, 2),
-    ),
+    BoxShadow(color: Color(0x1A000000), blurRadius: 8, offset: Offset(0, 2)),
   ];
 
   // 字体
@@ -116,10 +112,7 @@ class AppTheme {
           fontWeight: FontWeight.w500,
           color: textPrimaryColor,
         ),
-        titleSmall: TextStyle(
-          fontFamily: fontFamily,
-          color: textPrimaryColor,
-        ),
+        titleSmall: TextStyle(fontFamily: fontFamily, color: textPrimaryColor),
         bodyLarge: TextStyle(
           fontFamily: fontFamily,
           fontSize: 16.0,
@@ -197,8 +190,10 @@ class AppTheme {
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: Colors.white,
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 16,
+        ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(inputBorderRadius),
           borderSide: const BorderSide(color: inputBorderColor),
@@ -251,8 +246,10 @@ class AppTheme {
         inputDecorationTheme: InputDecorationTheme(
           filled: true,
           fillColor: Colors.white,
-          contentPadding:
-              const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 16,
+          ),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(inputBorderRadius),
             borderSide: const BorderSide(color: inputBorderColor),
@@ -316,8 +313,10 @@ class AppTheme {
       inputTheme: InputDecorationTheme(
         filled: true,
         fillColor: Colors.white,
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 16,
+        ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(inputBorderRadius),
           borderSide: const BorderSide(color: inputBorderColor),

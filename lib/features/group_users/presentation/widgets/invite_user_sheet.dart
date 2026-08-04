@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fortuneboot/core/network/fx_api.dart';
 import 'package:fortuneboot/features/group_users/data/group_users_service.dart';
 import 'package:fortuneboot/fx/components/fx_button.dart';
-import 'package:fortuneboot/fx/tokens/fx_colors.dart';
+import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
@@ -95,6 +95,7 @@ class _InviteUserSheetState extends State<InviteUserSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final palette = FxPalette.of(context);
     return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(
         FxSpacing.lg,
@@ -108,7 +109,7 @@ class _InviteUserSheetState extends State<InviteUserSheet> {
           _label('用户名'),
           TextField(
             controller: _usernameCtrl,
-            decoration: _dec('输入被邀请人的用户名'),
+            decoration: _dec(context, '输入被邀请人的用户名'),
           ),
           const SizedBox(height: FxSpacing.md),
           _label('角色'),
@@ -124,11 +125,13 @@ class _InviteUserSheetState extends State<InviteUserSheet> {
               ),
             )
           else
-            _roleSelector(),
+            _roleSelector(context),
           if (_error != null) ...[
             const SizedBox(height: FxSpacing.sm),
-            Text(_error!,
-                style: FxTypography.caption.copyWith(color: FxColors.danger)),
+            Text(
+              _error!,
+              style: FxTypography.caption.copyWith(color: palette.danger),
+            ),
           ],
           const SizedBox(height: FxSpacing.xl),
           FxButton(
@@ -142,7 +145,8 @@ class _InviteUserSheetState extends State<InviteUserSheet> {
     );
   }
 
-  Widget _roleSelector() {
+  Widget _roleSelector(BuildContext context) {
+    final palette = FxPalette.of(context);
     return Wrap(
       spacing: FxSpacing.sm,
       runSpacing: FxSpacing.sm,
@@ -156,16 +160,16 @@ class _InviteUserSheetState extends State<InviteUserSheet> {
               vertical: FxSpacing.sm,
             ),
             decoration: BoxDecoration(
-              color: selected ? FxColors.primaryContainer : FxColors.surfaceMuted,
+              color: selected ? palette.primaryContainer : palette.surfaceMuted,
               borderRadius: FxRadius.pillBorder,
               border: Border.all(
-                color: selected ? FxColors.primary : FxColors.border,
+                color: selected ? palette.primary : palette.border,
               ),
             ),
             child: Text(
               r.label,
               style: FxTypography.label.copyWith(
-                color: selected ? FxColors.primary : FxColors.textSecondary,
+                color: selected ? palette.primary : palette.textSecondary,
                 fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
               ),
             ),
@@ -176,22 +180,22 @@ class _InviteUserSheetState extends State<InviteUserSheet> {
   }
 
   Widget _label(String text) => Padding(
-        padding: const EdgeInsets.only(bottom: FxSpacing.xs),
-        child: Text(text, style: FxTypography.label),
-      );
+    padding: const EdgeInsets.only(bottom: FxSpacing.xs),
+    child: Text(text, style: FxTypography.label),
+  );
 
-  InputDecoration _dec(String hint) => InputDecoration(
-        hintText: hint,
-        filled: true,
-        fillColor: FxColors.surfaceMuted,
-        isDense: true,
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: FxSpacing.md,
-          vertical: FxSpacing.md,
-        ),
-        border: OutlineInputBorder(
-          borderRadius: FxRadius.tileBorder,
-          borderSide: BorderSide.none,
-        ),
-      );
+  InputDecoration _dec(BuildContext context, String hint) => InputDecoration(
+    hintText: hint,
+    filled: true,
+    fillColor: FxPalette.of(context).surfaceMuted,
+    isDense: true,
+    contentPadding: const EdgeInsets.symmetric(
+      horizontal: FxSpacing.md,
+      vertical: FxSpacing.md,
+    ),
+    border: OutlineInputBorder(
+      borderRadius: FxRadius.tileBorder,
+      borderSide: BorderSide.none,
+    ),
+  );
 }

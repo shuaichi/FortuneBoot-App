@@ -1,6 +1,10 @@
+import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fortuneboot/core/network/fx_api.dart';
+import 'package:fortuneboot/core/preferences/billing_preferences.dart';
+import 'package:fortuneboot/core/time/month_window_resolver.dart';
+import 'package:fortuneboot/features/shared/data/bill_models.dart';
 import 'package:fortuneboot/features/shared/data/bill_service.dart';
 import 'package:fortuneboot/features/stats/data/stats_models.dart';
 import 'package:fortuneboot/features/stats/data/stats_service.dart';
@@ -26,20 +30,30 @@ class StatsBloc extends Bloc<StatsEvent, StatsState> {
   final BillService _billService;
 
   int? _bookId;
+  int _monthStartDay;
+  int _loadVersion = 0;
 
   StatsBloc({
     StatsService? statsService,
     BillService? billService,
     int? bookId,
     String? currencyCode,
+    int monthStartDay = BillingPreferences.defaultMonthStartDay,
   }) : _statsService = statsService ?? StatsService(),
        _billService = billService ?? BillService(),
        _bookId = bookId,
+       _monthStartDay = BillingPreferences.normalizeMonthStartDay(
+         monthStartDay,
+       ),
        super(StatsState(hasBook: bookId != null, currencyCode: currencyCode)) {
-    on<StatsBookChanged>(_onBookChanged);
-    on<StatsRefreshed>(_onRefreshed);
-    on<StatsRangeChanged>(_onRangeChanged);
-    on<StatsTypeChanged>(_onTypeChanged);
+    on<StatsBookChanged>(_onBookChanged, transformer: restartable());
+    on<StatsRefreshed>(_onRefreshed, transformer: restartable());
+    on<StatsRangeChanged>(_onRangeChanged, transformer: restartable());
+    on<StatsTypeChanged>(_onTypeChanged, transformer: restartable());
+    on<StatsMonthStartDayChanged>(
+      _onMonthStartDayChanged,
+      transformer: restartable(),
+    );
   }
 
   Future<void> _onBookChanged(
@@ -98,6 +112,18 @@ class StatsBloc extends Bloc<StatsEvent, StatsState> {
     await _loadAll(emit);
   }
 
+  Future<void> _onMonthStartDayChanged(
+    StatsMonthStartDayChanged event,
+    Emitter<StatsState> emit,
+  ) async {
+    final day = BillingPreferences.normalizeMonthStartDay(event.day);
+    if (day == _monthStartDay) return;
+    _monthStartDay = day;
+    if (_bookId == null || state.range != StatsRange.month) return;
+    emit(_resetLoading(state));
+    await _loadAll(emit);
+  }
+
   StatsState _resetLoading(StatsState s) => s.copyWith(
     overview: const StatsSection.loading(),
     trends: const StatsSection.loading(),
@@ -122,9 +148,8 @@ class StatsBloc extends Bloc<StatsEvent, StatsState> {
         final sunday = monday.add(const Duration(days: 6));
         return _Window(monday, sunday, 1, _noon(now));
       case StatsRange.month:
-        final start = DateTime(now.year, now.month);
-        final end = DateTime(now.year, now.month + 1, 0);
-        return _Window(start, end, 1, _noon(now));
+        final window = MonthWindowResolver.resolveCurrent(now, _monthStartDay);
+        return _Window(window.start, window.end, 1, _noon(now));
       case StatsRange.year:
         final start = DateTime(now.year);
         final end = DateTime(now.year, 12, 31);
@@ -144,6 +169,7 @@ class StatsBloc extends Bloc<StatsEvent, StatsState> {
 
   /// 并发拉取全部；各任务捕获自身异常写入对应 section。
   Future<void> _loadAll(Emitter<StatsState> emit) async {
+    final version = ++_loadVersion;
     final bookId = _bookId;
     if (bookId == null) return;
 
@@ -164,7 +190,16 @@ class StatsBloc extends Bloc<StatsEvent, StatsState> {
         _SectionKey.overview,
       ),
       _guard<List<TrendPoint>>(
-        () => isExpense
+        () => state.range == StatsRange.month
+            ? _buildMonthlyTrend(
+                bookId: bookId,
+                start: w.start,
+                end: w.end,
+                billType: isExpense
+                    ? FxBillType.expense.value
+                    : FxBillType.income.value,
+              )
+            : isExpense
             ? _statsService.getExpenseTrends(
                 bookId: bookId,
                 timeGranularity: w.granularity,
@@ -221,10 +256,49 @@ class StatsBloc extends Bloc<StatsEvent, StatsState> {
       ),
     ]);
 
+    if (version != _loadVersion) return;
     for (final r in results) {
       next = _apply(next, r);
     }
     emit(next);
+  }
+
+  Future<List<TrendPoint>> _buildMonthlyTrend({
+    required int bookId,
+    required DateTime start,
+    required DateTime end,
+    required int billType,
+  }) async {
+    final daily = <DateTime, double>{};
+    var pageNum = 1;
+    var loaded = 0;
+    while (true) {
+      final page = await _billService.getPage(
+        BillQuery(
+          bookId: bookId,
+          pageNum: pageNum,
+          pageSize: 500,
+          billTypes: [billType],
+          tradeTimeStartTime: _day.format(start),
+          tradeTimeEndTime: _day.format(end),
+          include: true,
+        ),
+      );
+      loaded += page.rows.length;
+      for (final bill in page.rows) {
+        final tradeTime = bill.tradeTime;
+        if (tradeTime == null) continue;
+        final day = DateTime(tradeTime.year, tradeTime.month, tradeTime.day);
+        daily[day] = (daily[day] ?? 0) + bill.displayAmount.abs();
+      }
+      if (page.rows.isEmpty || loaded >= page.total) break;
+      pageNum++;
+    }
+    final days = daily.keys.toList()..sort();
+    return [
+      for (final day in days)
+        TrendPoint(name: '${day.month}/${day.day}', value: daily[day] ?? 0),
+    ];
   }
 
   /// 执行单个拉取任务并封装为成功/失败结果，绝不抛出。

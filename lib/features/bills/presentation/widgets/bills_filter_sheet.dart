@@ -3,7 +3,7 @@ import 'package:fortuneboot/features/bills/data/bills_filter.dart';
 import 'package:fortuneboot/features/shared/data/bill_models.dart';
 import 'package:fortuneboot/fx/components/fx_button.dart';
 import 'package:fortuneboot/fx/components/fx_tag_chip.dart';
-import 'package:fortuneboot/fx/tokens/fx_colors.dart';
+import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
@@ -113,12 +113,12 @@ class _BillsFilterSheetState extends State<BillsFilterSheet> {
           _label('金额区间'),
           Row(
             children: [
-              Expanded(child: _amountField(_minCtrl, '最小')),
+              Expanded(child: _amountField(context, _minCtrl, '最小')),
               const Padding(
                 padding: EdgeInsets.symmetric(horizontal: FxSpacing.sm),
                 child: Text('—', style: FxTypography.label),
               ),
-              Expanded(child: _amountField(_maxCtrl, '最大')),
+              Expanded(child: _amountField(context, _maxCtrl, '最大')),
             ],
           ),
           const SizedBox(height: FxSpacing.lg),
@@ -146,11 +146,7 @@ class _BillsFilterSheetState extends State<BillsFilterSheet> {
               const SizedBox(width: FxSpacing.md),
               Expanded(
                 flex: 2,
-                child: FxButton(
-                  label: '应用',
-                  expand: true,
-                  onPressed: _apply,
-                ),
+                child: FxButton(label: '应用', expand: true, onPressed: _apply),
               ),
             ],
           ),
@@ -160,11 +156,16 @@ class _BillsFilterSheetState extends State<BillsFilterSheet> {
   }
 
   Widget _label(String text) => Padding(
-        padding: const EdgeInsets.only(bottom: FxSpacing.sm),
-        child: Text(text, style: FxTypography.label),
-      );
+    padding: const EdgeInsets.only(bottom: FxSpacing.sm),
+    child: Text(text, style: FxTypography.label),
+  );
 
-  Widget _amountField(TextEditingController ctrl, String hint) {
+  Widget _amountField(
+    BuildContext context,
+    TextEditingController ctrl,
+    String hint,
+  ) {
+    final palette = FxPalette.of(context);
     return TextField(
       controller: ctrl,
       keyboardType: const TextInputType.numberWithOptions(decimal: true),
@@ -178,7 +179,7 @@ class _BillsFilterSheetState extends State<BillsFilterSheet> {
           vertical: FxSpacing.md,
         ),
         filled: true,
-        fillColor: FxColors.surfaceMuted,
+        fillColor: palette.surfaceMuted,
         border: OutlineInputBorder(
           borderRadius: FxRadius.tileBorder,
           borderSide: BorderSide.none,

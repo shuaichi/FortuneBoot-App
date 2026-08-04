@@ -14,13 +14,13 @@ part 'tag_request.g.dart'; // 代码生成文件
 // 账户API
 @RestApi()
 abstract class TagService extends BaseService {
-  factory TagService({
-    String? baseUrl,
-  }) {
+  factory TagService({String? baseUrl}) {
     Dio dio = DioClient().dio;
-    return _TagService(dio,
-        baseUrl: baseUrl ?? dio.options.baseUrl,
-        errorLogger: AccountErrorReport());
+    return _TagService(
+      dio,
+      baseUrl: baseUrl ?? dio.options.baseUrl,
+      errorLogger: AccountErrorReport(),
+    );
   }
 
   /// 查询启动的战虎

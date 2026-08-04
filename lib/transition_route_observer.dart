@@ -14,8 +14,10 @@ class TransitionRouteObserver<R extends TransitionRoute<dynamic>?>
   /// is popped off the [Navigator] stack.
   void subscribe(TransitionRouteAware routeAware, R route) {
     assert(route != null);
-    final subscribers =
-        _listeners.putIfAbsent(route, () => <TransitionRouteAware>{});
+    final subscribers = _listeners.putIfAbsent(
+      route,
+      () => <TransitionRouteAware>{},
+    );
     if (subscribers.add(routeAware)) {
       routeAware.didPush();
       Future.delayed(route!.transitionDuration, () {

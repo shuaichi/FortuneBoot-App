@@ -3,14 +3,18 @@ import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:image_gallery_saver_plus/image_gallery_saver_plus.dart';
 import 'package:flutter/services.dart' show rootBundle;
-import 'web_download_stub.dart' if (dart.library.html) 'web_download.dart'
+import 'web_download_stub.dart'
+    if (dart.library.html) 'web_download.dart'
     as webdl;
 
 /// 跨平台图片保存/下载服务，将平台差异与异常提示封装在此处
 class ImageSaveService {
   /// 保存内置资源图片到相册（移动端）或触发下载（Web）
   static Future<void> saveAssetImage(
-      BuildContext context, String assetPath, String name) async {
+    BuildContext context,
+    String assetPath,
+    String name,
+  ) async {
     try {
       // 读取内置资源
       final data = await rootBundle.load(assetPath);
@@ -20,9 +24,9 @@ class ImageSaveService {
         final mimeType = _toMimeType(_ext(assetPath));
         final ok = await webdl.downloadBytes(name, bytes, mimeType);
         ScaffoldMessenger.of(context).removeCurrentSnackBar();
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(ok ? '已开始下载' : '下载失败')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(ok ? '已开始下载' : '下载失败')));
         return;
       }
 
@@ -55,10 +59,7 @@ class ImageSaveService {
     } catch (e) {
       ScaffoldMessenger.of(context).removeCurrentSnackBar();
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('保存失败：$e'),
-          backgroundColor: Colors.red,
-        ),
+        SnackBar(content: Text('保存失败：$e'), backgroundColor: Colors.red),
       );
     }
   }

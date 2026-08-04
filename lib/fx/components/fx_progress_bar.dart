@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fortuneboot/fx/tokens/fx_colors.dart';
+import 'package:fortuneboot/fx/theme/fx_theme.dart';
 
 /// 余额/预算占比条。
 class FxProgressBar extends StatelessWidget {
@@ -26,7 +26,7 @@ class FxProgressBar extends StatelessWidget {
         children: [
           Container(
             height: height,
-            color: background ?? FxColors.surfaceMuted,
+            color: background ?? FxPalette.of(context).surfaceMuted,
           ),
           FractionallySizedBox(
             widthFactor: clamped,

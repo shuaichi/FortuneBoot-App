@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fortuneboot/core/preferences/preferences_cubit.dart';
 import 'package:fortuneboot/features/dashboard/presentation/bloc/dashboard_bloc.dart';
 import 'package:fortuneboot/features/dashboard/presentation/widgets/dashboard_card_shell.dart';
 import 'package:fortuneboot/features/shared/data/bill_service.dart';
 import 'package:fortuneboot/fx/components/fx_card.dart';
 import 'package:fortuneboot/fx/components/fx_money_text.dart';
-import 'package:fortuneboot/fx/tokens/fx_colors.dart';
+import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 
-/// ② 本月支出 / ③ 本月收入（各 1 格）。支出红、收入绿。
+/// ② 本账期支出 / ③ 本账期收入（各 1 格）。支出红、收入绿。
 class MonthStatCard extends StatelessWidget {
   final DashboardSection<BillStatistics> section;
   final String? currencyCode;
@@ -24,8 +26,14 @@ class MonthStatCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final label = isExpense ? '本月支出' : '本月收入';
-    final color = isExpense ? FxColors.expense : FxColors.income;
+    final label = isExpense ? '本账期支出' : '本账期收入';
+    final finance = FxFinanceColors.of(context);
+    final color = isExpense ? finance.expense : finance.income;
+    final hideAmounts = context
+        .watch<PreferencesCubit>()
+        .state
+        .dashboard
+        .hideAmounts;
     final icon = isExpense
         ? Icons.trending_down_rounded
         : Icons.trending_up_rounded;
@@ -46,6 +54,7 @@ class MonthStatCard extends StatelessWidget {
               fontSize: 20,
               fontWeight: FontWeight.w700,
               color: color,
+              masked: hideAmounts,
             ),
             const SizedBox(height: FxSpacing.xs),
           ],

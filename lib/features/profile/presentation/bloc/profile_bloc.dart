@@ -15,8 +15,8 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   final ProfileService _service;
 
   ProfileBloc({ProfileService? service})
-      : _service = service ?? ProfileService(),
-        super(const ProfileState()) {
+    : _service = service ?? ProfileService(),
+      super(const ProfileState()) {
     on<ProfileLoaded>(_onLoaded);
     on<ProfileUserRefreshed>(_onUserRefreshed);
   }
@@ -30,12 +30,13 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       final profile = await _service.getProfile();
       emit(state.copyWith(status: ProfileStatus.ready, profile: profile));
     } on FxApiException catch (e) {
-      emit(state.copyWith(status: ProfileStatus.error, errorMessage: e.message));
+      emit(
+        state.copyWith(status: ProfileStatus.error, errorMessage: e.message),
+      );
     } on Object catch (e) {
-      emit(state.copyWith(
-        status: ProfileStatus.error,
-        errorMessage: e.toString(),
-      ));
+      emit(
+        state.copyWith(status: ProfileStatus.error, errorMessage: e.toString()),
+      );
     }
     // 应用信息独立拉取，失败不影响资料展示。
     await _loadAbout(emit);
@@ -76,12 +77,14 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       icp = null;
     }
 
-    emit(state.copyWith(
-      about: AppAbout(
-        appVersion: appVersion,
-        apiVersion: apiVersion,
-        icp: icp,
+    emit(
+      state.copyWith(
+        about: AppAbout(
+          appVersion: appVersion,
+          apiVersion: apiVersion,
+          icp: icp,
+        ),
       ),
-    ));
+    );
   }
 }

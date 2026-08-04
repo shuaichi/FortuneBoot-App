@@ -13,8 +13,9 @@ void registerBooksFeature() {
       builder: (BuildContext context) {
         final session = context.read<SessionCubit>().state;
         return BlocProvider<BooksBloc>(
-          create: (_) => BooksBloc(initialGroupId: session.currentGroupId)
-            ..add(const BooksLoaded()),
+          create: (_) =>
+              BooksBloc(initialGroupId: session.currentGroupId)
+                ..add(const BooksLoaded()),
           child: const BooksPage(),
         );
       },

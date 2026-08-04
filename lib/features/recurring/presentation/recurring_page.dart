@@ -10,7 +10,7 @@ import 'package:fortuneboot/features/recurring/presentation/widgets/recurring_lo
 import 'package:fortuneboot/fx/components/fx_card.dart';
 import 'package:fortuneboot/fx/components/fx_sheet.dart';
 import 'package:fortuneboot/fx/components/fx_state_view.dart';
-import 'package:fortuneboot/fx/tokens/fx_colors.dart';
+import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
@@ -46,11 +46,8 @@ class _RecurringPageState extends State<RecurringPage> {
     }
     final changed = await Navigator.of(context).push<bool>(
       MaterialPageRoute(
-        builder: (_) => RecurringEditorPage(
-          bookId: bookId,
-          groupId: groupId,
-          rule: rule,
-        ),
+        builder: (_) =>
+            RecurringEditorPage(bookId: bookId, groupId: groupId, rule: rule),
       ),
     );
     if (changed == true && mounted) _bloc.add(const RecurringMutated());
@@ -85,7 +82,9 @@ class _RecurringPageState extends State<RecurringPage> {
           ),
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(true),
-            style: TextButton.styleFrom(foregroundColor: FxColors.danger),
+            style: TextButton.styleFrom(
+              foregroundColor: FxPalette.of(ctx).danger,
+            ),
             child: const Text('删除'),
           ),
         ],
@@ -103,7 +102,7 @@ class _RecurringPageState extends State<RecurringPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: FxColors.canvas,
+      backgroundColor: FxPalette.of(context).canvas,
       body: SafeArea(
         bottom: false,
         child: BlocConsumer<RecurringBloc, RecurringState>(
@@ -117,7 +116,7 @@ class _RecurringPageState extends State<RecurringPage> {
           builder: (context, state) {
             return Column(
               children: [
-                _buildHeader(),
+                _buildHeader(context),
                 Expanded(child: _buildBody(state)),
               ],
             );
@@ -127,7 +126,8 @@ class _RecurringPageState extends State<RecurringPage> {
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(BuildContext context) {
+    final palette = FxPalette.of(context);
     return Padding(
       padding: const EdgeInsets.fromLTRB(
         FxSpacing.sm,
@@ -140,19 +140,26 @@ class _RecurringPageState extends State<RecurringPage> {
           InkResponse(
             onTap: () => Navigator.of(context).maybePop(),
             radius: 22,
-            child: const Padding(
-              padding: EdgeInsets.all(FxSpacing.xs),
-              child: Icon(Icons.chevron_left_rounded,
-                  size: 26, color: FxColors.textPrimary),
+            child: Padding(
+              padding: const EdgeInsets.all(FxSpacing.xs),
+              child: Icon(
+                Icons.chevron_left_rounded,
+                size: 26,
+                color: palette.textPrimary,
+              ),
             ),
           ),
           const Expanded(child: Text('周期记账', style: FxTypography.title)),
           InkResponse(
             onTap: () => _openEditor(),
             radius: 22,
-            child: const Padding(
-              padding: EdgeInsets.all(FxSpacing.xs),
-              child: Icon(Icons.add_rounded, size: 26, color: FxColors.textPrimary),
+            child: Padding(
+              padding: const EdgeInsets.all(FxSpacing.xs),
+              child: Icon(
+                Icons.add_rounded,
+                size: 26,
+                color: palette.textPrimary,
+              ),
             ),
           ),
         ],
@@ -199,25 +206,25 @@ class _RecurringPageState extends State<RecurringPage> {
               FxSpacing.xxxl,
             ),
             itemCount: state.rules.length,
-            itemBuilder: (context, i) => _ruleCard(state.rules[i]),
+            itemBuilder: (context, i) => _ruleCard(context, state.rules[i]),
           ),
         );
     }
   }
 
-  Widget _ruleCard(RecurringRuleVo rule) {
+  Widget _ruleCard(BuildContext context, RecurringRuleVo rule) {
+    final palette = FxPalette.of(context);
     return Padding(
       padding: const EdgeInsets.only(bottom: FxSpacing.md),
       child: FxCard(
-        accent: rule.enable ? FxColors.primary : FxColors.textTertiary,
+        accent: rule.enable ? palette.primary : palette.textTertiary,
         onTap: () => _openLogs(rule),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
-                const Icon(Icons.autorenew_rounded,
-                    size: 18, color: FxColors.primary),
+                Icon(Icons.autorenew_rounded, size: 18, color: palette.primary),
                 const SizedBox(width: FxSpacing.xs),
                 Expanded(
                   child: Text(
@@ -229,11 +236,11 @@ class _RecurringPageState extends State<RecurringPage> {
                 ),
                 Switch.adaptive(
                   value: rule.enable,
-                  activeColor: FxColors.primary,
+                  activeColor: palette.primary,
                   onChanged: (v) =>
                       _bloc.add(RecurringToggled(rule: rule, enable: v)),
                 ),
-                _menu(rule),
+                _menu(context, rule),
               ],
             ),
             const SizedBox(height: FxSpacing.xs),
@@ -243,7 +250,7 @@ class _RecurringPageState extends State<RecurringPage> {
                 vertical: 3,
               ),
               decoration: BoxDecoration(
-                color: FxColors.surfaceMuted,
+                color: palette.surfaceMuted,
                 borderRadius: FxRadius.pillBorder,
               ),
               child: Text(
@@ -256,18 +263,8 @@ class _RecurringPageState extends State<RecurringPage> {
             const SizedBox(height: FxSpacing.sm),
             Row(
               children: [
-                Expanded(
-                  child: _meta(
-                    '下次执行',
-                    rule.nextExecutionTime ?? '-',
-                  ),
-                ),
-                Expanded(
-                  child: _meta(
-                    '已执行',
-                    '${rule.executedCount ?? 0} 次',
-                  ),
-                ),
+                Expanded(child: _meta('下次执行', rule.nextExecutionTime ?? '-')),
+                Expanded(child: _meta('已执行', '${rule.executedCount ?? 0} 次')),
               ],
             ),
           ],
@@ -292,9 +289,10 @@ class _RecurringPageState extends State<RecurringPage> {
     );
   }
 
-  Widget _menu(RecurringRuleVo rule) {
+  Widget _menu(BuildContext context, RecurringRuleVo rule) {
+    final palette = FxPalette.of(context);
     return PopupMenuButton<String>(
-      icon: const Icon(Icons.more_vert_rounded, color: FxColors.textSecondary),
+      icon: Icon(Icons.more_vert_rounded, color: palette.textSecondary),
       onSelected: (v) {
         switch (v) {
           case 'edit':
@@ -305,12 +303,12 @@ class _RecurringPageState extends State<RecurringPage> {
             _remove(rule);
         }
       },
-      itemBuilder: (context) => const [
-        PopupMenuItem(value: 'edit', child: Text('编辑')),
-        PopupMenuItem(value: 'logs', child: Text('执行日志')),
+      itemBuilder: (context) => [
+        const PopupMenuItem(value: 'edit', child: Text('编辑')),
+        const PopupMenuItem(value: 'logs', child: Text('执行日志')),
         PopupMenuItem(
           value: 'remove',
-          child: Text('删除', style: TextStyle(color: FxColors.danger)),
+          child: Text('删除', style: TextStyle(color: palette.danger)),
         ),
       ],
     );

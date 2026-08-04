@@ -12,7 +12,7 @@ import 'package:fortuneboot/fx/components/fx_button.dart';
 import 'package:fortuneboot/fx/components/fx_card.dart';
 import 'package:fortuneboot/fx/components/fx_sheet.dart';
 import 'package:fortuneboot/fx/components/fx_state_view.dart';
-import 'package:fortuneboot/fx/tokens/fx_colors.dart';
+import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
@@ -114,7 +114,8 @@ class _IoPageState extends State<IoPage> {
     );
     if (picked == null || picked.files.isEmpty) return;
     final file = picked.files.first;
-    final bytes = file.bytes ??
+    final bytes =
+        file.bytes ??
         (file.path != null ? await File(file.path!).readAsBytes() : null);
     if (bytes == null) {
       _showToast('读取文件失败');
@@ -151,8 +152,7 @@ class _IoPageState extends State<IoPage> {
     );
   }
 
-  String _err(Object e) =>
-      e is FxApiException ? e.message : e.toString();
+  String _err(Object e) => e is FxApiException ? e.message : e.toString();
 
   @override
   Widget build(BuildContext context) {
@@ -160,12 +160,12 @@ class _IoPageState extends State<IoPage> {
       (c) => c.state.currentBookId,
     );
     return Scaffold(
-      backgroundColor: FxColors.canvas,
+      backgroundColor: FxPalette.of(context).canvas,
       body: SafeArea(
         bottom: false,
         child: Column(
           children: [
-            _buildHeader(),
+            _buildHeader(context),
             Expanded(
               child: bookId == null
                   ? FxStateView.empty(message: '请先选择账本')
@@ -177,7 +177,8 @@ class _IoPageState extends State<IoPage> {
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(BuildContext context) {
+    final palette = FxPalette.of(context);
     return Padding(
       padding: const EdgeInsets.fromLTRB(
         FxSpacing.sm,
@@ -190,12 +191,12 @@ class _IoPageState extends State<IoPage> {
           InkResponse(
             onTap: () => Navigator.of(context).maybePop(),
             radius: 22,
-            child: const Padding(
-              padding: EdgeInsets.all(FxSpacing.xs),
+            child: Padding(
+              padding: const EdgeInsets.all(FxSpacing.xs),
               child: Icon(
                 Icons.chevron_left_rounded,
                 size: 26,
-                color: FxColors.textPrimary,
+                color: palette.textPrimary,
               ),
             ),
           ),
@@ -206,12 +207,14 @@ class _IoPageState extends State<IoPage> {
   }
 
   Widget _buildBody() {
+    final palette = FxPalette.of(context);
+    final finance = FxFinanceColors.of(context);
     return ListView(
       padding: const EdgeInsets.all(FxSpacing.lg),
       children: [
         _actionCard(
           icon: Icons.file_download_outlined,
-          tint: FxColors.income,
+          tint: finance.income,
           title: '导出账单 Excel',
           subtitle: '导出当前账本账单（含筛选，最大 10000 条）',
           buttonLabel: '导出',
@@ -221,7 +224,7 @@ class _IoPageState extends State<IoPage> {
         const SizedBox(height: FxSpacing.md),
         _actionCard(
           icon: Icons.description_outlined,
-          tint: FxColors.info,
+          tint: palette.info,
           title: '下载导入模板',
           subtitle: '获取标准 Excel 模板，按格式填写后导入',
           buttonLabel: '下载模板',
@@ -231,7 +234,7 @@ class _IoPageState extends State<IoPage> {
         const SizedBox(height: FxSpacing.md),
         _actionCard(
           icon: Icons.file_upload_outlined,
-          tint: FxColors.primary,
+          tint: palette.primary,
           title: '导入账单 Excel',
           subtitle: '选择 .xlsx 文件上传，导入完成后展示结果',
           buttonLabel: '选择文件导入',
@@ -304,6 +307,7 @@ class _ImportResultBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = FxPalette.of(context);
     final result = outcome.result;
     return Padding(
       padding: const EdgeInsets.fromLTRB(
@@ -320,9 +324,9 @@ class _ImportResultBody extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                _stat('成功', result.successCount, FxColors.success),
-                _stat('失败', result.failCount, FxColors.danger),
-                _stat('共', result.total, FxColors.textPrimary),
+                _stat('成功', result.successCount, palette.success),
+                _stat('失败', result.failCount, palette.danger),
+                _stat('共', result.total, palette.textPrimary),
               ],
             ),
             if ((result.message ?? '').isNotEmpty) ...[
@@ -359,10 +363,7 @@ class _ImportResultBody extends StatelessWidget {
   Widget _stat(String label, int value, Color color) {
     return Column(
       children: [
-        Text(
-          '$value',
-          style: FxTypography.title.copyWith(color: color),
-        ),
+        Text('$value', style: FxTypography.title.copyWith(color: color)),
         const SizedBox(height: FxSpacing.xs),
         Text(label, style: FxTypography.caption),
       ],

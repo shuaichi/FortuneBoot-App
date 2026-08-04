@@ -3,15 +3,16 @@ import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 
 /// 一个 Bento 卡片单元：指定跨列数与跨行数（行高为 [FxBentoGrid.rowHeight] 的倍数）。
 class FxBentoTile {
+  static const int fullSpan = 999;
+
   final int colSpan;
   final int rowSpan;
   final Widget child;
 
-  const FxBentoTile({
-    this.colSpan = 1,
-    this.rowSpan = 1,
-    required this.child,
-  });
+  const FxBentoTile({this.colSpan = 1, this.rowSpan = 1, required this.child});
+
+  const FxBentoTile.fullWidth({this.rowSpan = 1, required this.child})
+    : colSpan = fullSpan;
 }
 
 /// Sliver 自实现 Bento 网格（零新依赖）。2 列为主，大屏自动展宽。
@@ -36,6 +37,68 @@ class FxBentoGrid extends StatelessWidget {
     return 2;
   }
 
+  int _effectiveColSpan(FxBentoTile tile, int columns) {
+    if (tile.colSpan >= FxBentoTile.fullSpan) return columns;
+    if (tile.colSpan < 1) return 1;
+    if (tile.colSpan > columns) return columns;
+    return tile.colSpan;
+  }
+
+  _GridSlot _findSlot(
+    List<List<bool>> occupied,
+    int columns,
+    int colSpan,
+    int rowSpan,
+  ) {
+    var row = 0;
+    while (true) {
+      _ensureRows(occupied, columns, row + rowSpan);
+      for (var col = 0; col <= columns - colSpan; col++) {
+        if (_canPlace(occupied, row, col, colSpan, rowSpan)) {
+          return _GridSlot(row: row, col: col);
+        }
+      }
+      row++;
+    }
+  }
+
+  bool _canPlace(
+    List<List<bool>> occupied,
+    int row,
+    int col,
+    int colSpan,
+    int rowSpan,
+  ) {
+    for (var r = row; r < row + rowSpan; r++) {
+      for (var c = col; c < col + colSpan; c++) {
+        if (occupied[r][c]) return false;
+      }
+    }
+    return true;
+  }
+
+  void _markOccupied(
+    List<List<bool>> occupied,
+    int columns,
+    int row,
+    int col,
+    int colSpan,
+    int rowSpan,
+  ) {
+    _ensureRows(occupied, columns, row + rowSpan);
+    for (var r = row; r < row + rowSpan; r++) {
+      for (var c = col; c < col + colSpan; c++) {
+        occupied[r][c] = true;
+      }
+    }
+  }
+
+  void _ensureRows(List<List<bool>> occupied, int columns, int rowCount) {
+    while (occupied.length < rowCount) {
+      occupied.add(List<bool>.filled(columns, false));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
@@ -44,40 +107,44 @@ class FxBentoGrid extends StatelessWidget {
         final innerWidth = constraints.maxWidth - padding.horizontal;
         final cellWidth = (innerWidth - spacing * (columns - 1)) / columns;
 
-        // 贪心排布：逐 tile 找当前行剩余列是否放得下，放不下则换行。
-        final List<_PositionedTile> positioned = [];
-        int cursorCol = 0;
-        double cursorTop = 0;
-        double rowMaxHeight = 0;
+        final positioned = <_PositionedTile>[];
+        final occupied = <List<bool>>[];
+        var occupiedRows = 0;
 
         for (final tile in tiles) {
-          final span = tile.colSpan.clamp(1, columns);
-          if (cursorCol + span > columns) {
-            // 换行
-            cursorTop += rowMaxHeight + spacing;
-            cursorCol = 0;
-            rowMaxHeight = 0;
-          }
+          final span = _effectiveColSpan(tile, columns);
+          final rowSpan = tile.rowSpan < 1 ? 1 : tile.rowSpan;
+          final position = _findSlot(occupied, columns, span, rowSpan);
+          _markOccupied(
+            occupied,
+            columns,
+            position.row,
+            position.col,
+            span,
+            rowSpan,
+          );
+          occupiedRows = occupiedRows > position.row + rowSpan
+              ? occupiedRows
+              : position.row + rowSpan;
+
           final tileWidth = cellWidth * span + spacing * (span - 1);
-          final tileHeight = rowHeight * tile.rowSpan + spacing * (tile.rowSpan - 1);
-          final left = cursorCol * (cellWidth + spacing);
-          positioned.add(_PositionedTile(
-            left: left,
-            top: cursorTop,
-            width: tileWidth,
-            height: tileHeight,
-            child: tile.child,
-          ));
-          cursorCol += span;
-          if (tileHeight > rowMaxHeight) rowMaxHeight = tileHeight;
-          if (cursorCol >= columns) {
-            cursorTop += rowMaxHeight + spacing;
-            cursorCol = 0;
-            rowMaxHeight = 0;
-          }
+          final tileHeight = rowHeight * rowSpan + spacing * (rowSpan - 1);
+          final left = position.col * (cellWidth + spacing);
+          final top = position.row * (rowHeight + spacing);
+          positioned.add(
+            _PositionedTile(
+              left: left,
+              top: top,
+              width: tileWidth,
+              height: tileHeight,
+              child: tile.child,
+            ),
+          );
         }
 
-        final totalHeight = cursorTop + rowMaxHeight;
+        final totalHeight = occupiedRows == 0
+            ? 0.0
+            : occupiedRows * rowHeight + (occupiedRows - 1) * spacing;
 
         return Padding(
           padding: padding,
@@ -86,13 +153,15 @@ class FxBentoGrid extends StatelessWidget {
             width: innerWidth,
             child: Stack(
               children: positioned
-                  .map((p) => Positioned(
-                        left: p.left,
-                        top: p.top,
-                        width: p.width,
-                        height: p.height,
-                        child: p.child,
-                      ))
+                  .map(
+                    (p) => Positioned(
+                      left: p.left,
+                      top: p.top,
+                      width: p.width,
+                      height: p.height,
+                      child: p.child,
+                    ),
+                  )
                   .toList(),
             ),
           ),
@@ -100,6 +169,13 @@ class FxBentoGrid extends StatelessWidget {
       },
     );
   }
+}
+
+class _GridSlot {
+  final int row;
+  final int col;
+
+  const _GridSlot({required this.row, required this.col});
 }
 
 class _PositionedTile {

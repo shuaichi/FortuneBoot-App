@@ -13,8 +13,9 @@ void registerGroupUsersFeature() {
       builder: (BuildContext context) {
         final session = context.read<SessionCubit>().state;
         return BlocProvider<GroupUsersBloc>(
-          create: (_) => GroupUsersBloc(groupId: session.currentGroupId)
-            ..add(const GroupUsersLoaded()),
+          create: (_) =>
+              GroupUsersBloc(groupId: session.currentGroupId)
+                ..add(const GroupUsersLoaded()),
           child: const GroupUsersPage(),
         );
       },

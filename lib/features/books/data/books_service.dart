@@ -9,9 +9,9 @@ class OptionItem {
   const OptionItem({required this.value, required this.label});
 
   factory OptionItem.fromJson(Map<String, dynamic> json) => OptionItem(
-        value: (json['value'] ?? '').toString(),
-        label: (json['label'] ?? json['value'] ?? '').toString(),
-      );
+    value: (json['value'] ?? '').toString(),
+    label: (json['label'] ?? json['value'] ?? '').toString(),
+  );
 }
 
 /// 账本与分组管理数据服务。
@@ -91,8 +91,9 @@ class BooksService {
   List<Map<String, dynamic>> _rows(dynamic data) {
     final List<dynamic> raw;
     if (data is Map) {
-      raw = (data['rows'] ?? data['list'] ?? data['records'] ?? <dynamic>[])
-          as List<dynamic>;
+      raw =
+          (data['rows'] ?? data['list'] ?? data['records'] ?? <dynamic>[])
+              as List<dynamic>;
     } else if (data is List) {
       raw = data;
     } else {

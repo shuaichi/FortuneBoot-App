@@ -93,13 +93,13 @@ class RecurringLogVo {
   });
 
   factory RecurringLogVo.fromJson(Map<String, dynamic> json) => RecurringLogVo(
-        logId: FxApi.asId(json['logId']),
-        executionTime: json['executionTime']?.toString(),
-        status: json['status']?.toString(),
-        billId: FxApi.asId(json['billId']),
-        errorMsg: json['errorMsg']?.toString(),
-        executionDuration: FxApi.asId(json['executionDuration']),
-      );
+    logId: FxApi.asId(json['logId']),
+    executionTime: json['executionTime']?.toString(),
+    status: json['status']?.toString(),
+    billId: FxApi.asId(json['billId']),
+    errorMsg: json['errorMsg']?.toString(),
+    executionDuration: FxApi.asId(json['executionDuration']),
+  );
 }
 
 /// 补偿策略选项 {value,label}。

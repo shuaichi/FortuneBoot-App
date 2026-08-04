@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fortuneboot/fx/tokens/fx_colors.dart';
+import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
@@ -15,7 +15,7 @@ Future<AccountMenuAction?> showAccountMenu(
 }) {
   return showModalBottomSheet<AccountMenuAction>(
     context: context,
-    backgroundColor: FxColors.surface,
+    backgroundColor: FxPalette.of(context).surface,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: FxRadius.sheetRadius),
     ),
@@ -31,7 +31,7 @@ Future<AccountMenuAction?> showAccountMenu(
                 width: 36,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: FxColors.border,
+                  color: FxPalette.of(ctx).border,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -74,7 +74,8 @@ Widget _item(
   bool danger = false,
   bool enabled = true,
 }) {
-  final color = danger ? FxColors.danger : FxColors.textPrimary;
+  final palette = FxPalette.of(context);
+  final color = danger ? palette.danger : palette.textPrimary;
   return Opacity(
     opacity: enabled ? 1 : 0.4,
     child: ListTile(
@@ -94,7 +95,7 @@ Future<bool?> confirmDangerAction(
 }) {
   return showModalBottomSheet<bool>(
     context: context,
-    backgroundColor: FxColors.surface,
+    backgroundColor: FxPalette.of(context).surface,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: FxRadius.sheetRadius),
     ),
@@ -117,8 +118,8 @@ Future<bool?> confirmDangerAction(
                     child: _btn(
                       '取消',
                       onTap: () => Navigator.of(ctx).pop(false),
-                      color: FxColors.surfaceMuted,
-                      fg: FxColors.textSecondary,
+                      color: FxPalette.of(ctx).surfaceMuted,
+                      fg: FxPalette.of(ctx).textSecondary,
                     ),
                   ),
                   const SizedBox(width: FxSpacing.md),
@@ -126,7 +127,7 @@ Future<bool?> confirmDangerAction(
                     child: _btn(
                       confirmLabel,
                       onTap: () => Navigator.of(ctx).pop(true),
-                      color: FxColors.danger,
+                      color: FxPalette.of(ctx).danger,
                       fg: Colors.white,
                     ),
                   ),

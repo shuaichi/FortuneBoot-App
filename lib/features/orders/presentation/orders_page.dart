@@ -11,7 +11,7 @@ import 'package:fortuneboot/fx/components/fx_card.dart';
 import 'package:fortuneboot/fx/components/fx_money_text.dart';
 import 'package:fortuneboot/fx/components/fx_sheet.dart';
 import 'package:fortuneboot/fx/components/fx_state_view.dart';
-import 'package:fortuneboot/fx/tokens/fx_colors.dart';
+import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
@@ -68,7 +68,10 @@ class _OrdersPageState extends State<OrdersPage> {
           ),
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(true),
-            child: const Text('删除', style: TextStyle(color: FxColors.danger)),
+            child: Text(
+              '删除',
+              style: TextStyle(color: FxPalette.of(ctx).danger),
+            ),
           ),
         ],
       ),
@@ -90,7 +93,7 @@ class _OrdersPageState extends State<OrdersPage> {
     return _BookSync(
       bookId: bookId,
       child: Scaffold(
-        backgroundColor: FxColors.canvas,
+        backgroundColor: FxPalette.of(context).canvas,
         body: SafeArea(
           bottom: false,
           child: BlocConsumer<OrdersBloc, OrdersState>(
@@ -103,7 +106,7 @@ class _OrdersPageState extends State<OrdersPage> {
             builder: (context, state) {
               return Column(
                 children: [
-                  _buildHeader(),
+                  _buildHeader(context),
                   Expanded(child: _buildBody(state, bookId)),
                 ],
               );
@@ -114,7 +117,8 @@ class _OrdersPageState extends State<OrdersPage> {
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(BuildContext context) {
+    final palette = FxPalette.of(context);
     return Padding(
       padding: const EdgeInsets.fromLTRB(
         FxSpacing.sm,
@@ -127,12 +131,12 @@ class _OrdersPageState extends State<OrdersPage> {
           InkResponse(
             onTap: () => Navigator.of(context).maybePop(),
             radius: 22,
-            child: const Padding(
-              padding: EdgeInsets.all(FxSpacing.xs),
+            child: Padding(
+              padding: const EdgeInsets.all(FxSpacing.xs),
               child: Icon(
                 Icons.chevron_left_rounded,
                 size: 26,
-                color: FxColors.textPrimary,
+                color: palette.textPrimary,
               ),
             ),
           ),
@@ -140,12 +144,12 @@ class _OrdersPageState extends State<OrdersPage> {
           InkResponse(
             onTap: () => _openForm(),
             radius: 22,
-            child: const Padding(
-              padding: EdgeInsets.all(FxSpacing.xs),
+            child: Padding(
+              padding: const EdgeInsets.all(FxSpacing.xs),
               child: Icon(
                 Icons.add_rounded,
                 size: 26,
-                color: FxColors.textPrimary,
+                color: palette.textPrimary,
               ),
             ),
           ),
@@ -193,16 +197,16 @@ class _OrdersPageState extends State<OrdersPage> {
               FxSpacing.xxxl,
             ),
             itemCount: state.orders.length,
-            separatorBuilder: (_, i) =>
-                const SizedBox(height: FxSpacing.md),
-            itemBuilder: (context, i) =>
-                _orderCard(state.orders[i]),
+            separatorBuilder: (_, i) => const SizedBox(height: FxSpacing.md),
+            itemBuilder: (context, i) => _orderCard(context, state.orders[i]),
           ),
         );
     }
   }
 
-  Widget _orderCard(FortuneFinanceOrderVo order) {
+  Widget _orderCard(BuildContext context, FortuneFinanceOrderVo order) {
+    final palette = FxPalette.of(context);
+    final finance = FxFinanceColors.of(context);
     return FxCard(
       onTap: () => _openForm(order: order),
       child: Column(
@@ -210,10 +214,10 @@ class _OrdersPageState extends State<OrdersPage> {
         children: [
           Row(
             children: [
-              const Icon(
+              Icon(
                 Icons.receipt_long_rounded,
                 size: 18,
-                color: FxColors.primary,
+                color: palette.primary,
               ),
               const SizedBox(width: FxSpacing.sm),
               Expanded(
@@ -225,7 +229,7 @@ class _OrdersPageState extends State<OrdersPage> {
                 ),
               ),
               if ((order.typeDesc ?? '').isNotEmpty)
-                _tag(order.typeDesc!, FxColors.info),
+                _tag(order.typeDesc!, palette.info),
             ],
           ),
           const SizedBox(height: FxSpacing.sm),
@@ -236,7 +240,7 @@ class _OrdersPageState extends State<OrdersPage> {
                 amount: order.outAmount ?? 0,
                 currencyCode: _currency,
                 fontSize: 13,
-                color: FxColors.expense,
+                color: finance.expense,
               ),
               const SizedBox(width: FxSpacing.md),
               const Text('转入 ', style: FxTypography.caption),
@@ -244,13 +248,13 @@ class _OrdersPageState extends State<OrdersPage> {
                 amount: order.inAmount ?? 0,
                 currencyCode: _currency,
                 fontSize: 13,
-                color: FxColors.income,
+                color: finance.income,
               ),
               const Spacer(),
               if ((order.statusDesc ?? '').isNotEmpty)
                 _tag(
                   order.statusDesc!,
-                  order.isUsing ? FxColors.success : FxColors.textTertiary,
+                  order.isUsing ? palette.success : palette.textTertiary,
                 ),
             ],
           ),
@@ -265,7 +269,7 @@ class _OrdersPageState extends State<OrdersPage> {
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
-              ..._actionButtons(order),
+              ..._actionButtons(context, order),
             ],
           ),
         ],
@@ -285,11 +289,14 @@ class _OrdersPageState extends State<OrdersPage> {
   }
 
   /// 状态机按钮：使用中→[关闭]；已关闭→[重开]。附删除。
-  List<Widget> _actionButtons(FortuneFinanceOrderVo order) {
+  List<Widget> _actionButtons(
+    BuildContext context,
+    FortuneFinanceOrderVo order,
+  ) {
     final buttons = <Widget>[];
     if (order.isUsing) {
       buttons.add(
-        _miniButton('关闭', () {
+        _miniButton(context, '关闭', () {
           HapticFeedback.selectionClick();
           _bloc.add(OrderTransitioned(order: order, action: 'close'));
         }),
@@ -297,7 +304,7 @@ class _OrdersPageState extends State<OrdersPage> {
       buttons.add(const SizedBox(width: FxSpacing.sm));
     } else if (order.isClosed) {
       buttons.add(
-        _miniButton('重开', () {
+        _miniButton(context, '重开', () {
           HapticFeedback.selectionClick();
           _bloc.add(OrderTransitioned(order: order, action: 'reopen'));
         }),
@@ -305,14 +312,18 @@ class _OrdersPageState extends State<OrdersPage> {
       buttons.add(const SizedBox(width: FxSpacing.sm));
     }
     // 未知/无法识别的状态：不猜测流转按钮，仅保留删除，避免对已关闭单据非法流转。
-    buttons.add(
-      _miniButton('删除', () => _remove(order), danger: true),
-    );
+    buttons.add(_miniButton(context, '删除', () => _remove(order), danger: true));
     return buttons;
   }
 
-  Widget _miniButton(String label, VoidCallback onTap, {bool danger = false}) {
-    final color = danger ? FxColors.danger : FxColors.primary;
+  Widget _miniButton(
+    BuildContext context,
+    String label,
+    VoidCallback onTap, {
+    bool danger = false,
+  }) {
+    final palette = FxPalette.of(context);
+    final color = danger ? palette.danger : palette.primary;
     return GestureDetector(
       onTap: onTap,
       child: Container(

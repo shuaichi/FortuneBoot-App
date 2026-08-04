@@ -3,7 +3,7 @@ import 'package:fortuneboot/core/network/fx_api.dart';
 import 'package:fortuneboot/features/accounts/data/account_models.dart';
 import 'package:fortuneboot/features/accounts/data/account_service.dart';
 import 'package:fortuneboot/fx/components/fx_button.dart';
-import 'package:fortuneboot/fx/tokens/fx_colors.dart';
+import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
@@ -103,6 +103,7 @@ class _BalanceAdjustSheetState extends State<BalanceAdjustSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final palette = FxPalette.of(context);
     return Padding(
       padding: const EdgeInsets.fromLTRB(
         FxSpacing.lg,
@@ -139,15 +140,15 @@ class _BalanceAdjustSheetState extends State<BalanceAdjustSheet> {
                 vertical: FxSpacing.md,
               ),
               decoration: BoxDecoration(
-                color: FxColors.surfaceMuted,
+                color: palette.surfaceMuted,
                 borderRadius: FxRadius.tileBorder,
               ),
               child: Row(
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.event_rounded,
                     size: 18,
-                    color: FxColors.textSecondary,
+                    color: palette.textSecondary,
                   ),
                   const SizedBox(width: FxSpacing.sm),
                   Text(_display.format(_tradeTime), style: FxTypography.body),
@@ -165,7 +166,7 @@ class _BalanceAdjustSheetState extends State<BalanceAdjustSheet> {
             const SizedBox(height: FxSpacing.sm),
             Text(
               _error!,
-              style: FxTypography.caption.copyWith(color: FxColors.danger),
+              style: FxTypography.caption.copyWith(color: palette.danger),
             ),
           ],
           const SizedBox(height: FxSpacing.xl),
@@ -188,7 +189,7 @@ class _BalanceAdjustSheetState extends State<BalanceAdjustSheet> {
   InputDecoration _decoration(String hint) => InputDecoration(
     hintText: hint,
     filled: true,
-    fillColor: FxColors.surfaceMuted,
+    fillColor: FxPalette.of(context).surfaceMuted,
     contentPadding: const EdgeInsets.symmetric(
       horizontal: FxSpacing.md,
       vertical: FxSpacing.md,

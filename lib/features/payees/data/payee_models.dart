@@ -32,11 +32,7 @@ class FortunePayeeVo {
     );
   }
 
-  FortunePayeeVo copyWith({
-    bool? canExpense,
-    bool? canIncome,
-    bool? enable,
-  }) {
+  FortunePayeeVo copyWith({bool? canExpense, bool? canIncome, bool? enable}) {
     return FortunePayeeVo(
       payeeId: payeeId,
       payeeName: payeeName,

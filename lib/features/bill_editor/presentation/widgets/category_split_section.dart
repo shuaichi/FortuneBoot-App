@@ -3,9 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fortuneboot/features/bill_editor/data/editor_options_service.dart';
 import 'package:fortuneboot/features/bill_editor/presentation/bill_editor_bloc.dart';
 import 'package:fortuneboot/features/bill_editor/presentation/widgets/amount_field.dart';
-import 'package:fortuneboot/features/bill_editor/presentation/widgets/editor_pickers.dart';
 import 'package:fortuneboot/fx/components/fx_card.dart';
-import 'package:fortuneboot/fx/tokens/fx_colors.dart';
+import 'package:fortuneboot/fx/tree/fx_tree_picker.dart';
+import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
@@ -23,14 +23,12 @@ class CategorySplitSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = FxPalette.of(context);
     final bloc = context.read<BillEditorBloc>();
-    // 支出/垫付/报销用支出分类；收入用收入分类。
-    final categories =
-        state.isIncome ? state.options.incomeCategories : state.options.expenseCategories;
-    final leaves = <CategoryNode>[];
-    for (final root in categories) {
-      leaves.addAll(root.flatten().where((n) => n.isLeaf));
-    }
+    // 支出/垫付/报销用支出分类；收入用收入分类。保留完整树，叶子可选。
+    final categories = state.isIncome
+        ? state.options.incomeCategories
+        : state.options.expenseCategories;
 
     return FxCard(
       padding: EdgeInsets.zero,
@@ -48,8 +46,10 @@ class CategorySplitSection extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Text('分类拆分', style: FxTypography.label),
-                Text('共 ${state.categoryRows.length} 项',
-                    style: FxTypography.caption),
+                Text(
+                  '共 ${state.categoryRows.length} 项',
+                  style: FxTypography.caption,
+                ),
               ],
             ),
           ),
@@ -57,24 +57,26 @@ class CategorySplitSection extends StatelessWidget {
             _CategoryRow(
               index: i,
               row: state.categoryRows[i],
-              leaves: leaves,
               currencyCode: currencyCode,
               canRemove: state.categoryRows.length > 1,
               onPickCategory: () async {
-                final picked = await showOptionPicker<CategoryNode>(
+                final picked = await FxTreePicker.show<CategoryNode>(
                   context,
-                  title: '选择分类',
-                  options: leaves,
+                  roots: categories,
+                  childrenOf: (c) => c.children,
                   labelOf: (c) => c.categoryName ?? '',
-                  selectedId: state.categoryRows[i].categoryId,
                   idOf: (c) => c.categoryId,
+                  initialSelected: state.categoryRows[i].categoryId == null
+                      ? const {}
+                      : {state.categoryRows[i].categoryId! as Object},
+                  leafOnly: true,
+                  title: '选择分类',
                 );
-                if (picked != null) {
-                  bloc.add(CategoryRowCategoryChanged(
-                    i,
-                    picked.categoryId,
-                    picked.categoryName,
-                  ));
+                if (picked != null && picked.isNotEmpty) {
+                  final c = picked.first;
+                  bloc.add(
+                    CategoryRowCategoryChanged(i, c.categoryId, c.categoryName),
+                  );
                 }
               },
               onAmount: (v) => bloc.add(CategoryRowAmountChanged(i, v)),
@@ -95,12 +97,14 @@ class CategorySplitSection extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(Icons.add_rounded,
-                        size: 18, color: FxColors.primary),
+                    Icon(Icons.add_rounded, size: 18, color: palette.primary),
                     const SizedBox(width: FxSpacing.xs),
-                    Text('添加分类',
-                        style: FxTypography.bodyStrong
-                            .copyWith(color: FxColors.primary)),
+                    Text(
+                      '添加分类',
+                      style: FxTypography.bodyStrong.copyWith(
+                        color: palette.primary,
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -116,7 +120,6 @@ class _CategoryRow extends StatelessWidget {
   const _CategoryRow({
     required this.index,
     required this.row,
-    required this.leaves,
     required this.currencyCode,
     required this.canRemove,
     required this.onPickCategory,
@@ -126,7 +129,6 @@ class _CategoryRow extends StatelessWidget {
 
   final int index;
   final CategoryAmountRow row;
-  final List<CategoryNode> leaves;
   final String currencyCode;
   final bool canRemove;
   final VoidCallback onPickCategory;
@@ -135,6 +137,7 @@ class _CategoryRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = FxPalette.of(context);
     final hasCat = row.categoryName != null && row.categoryName!.isNotEmpty;
     return Padding(
       padding: const EdgeInsets.symmetric(
@@ -154,7 +157,7 @@ class _CategoryRow extends StatelessWidget {
                   vertical: FxSpacing.md,
                 ),
                 decoration: BoxDecoration(
-                  color: FxColors.surfaceMuted,
+                  color: palette.surfaceMuted,
                   borderRadius: FxRadius.tileBorder,
                 ),
                 child: Row(
@@ -166,13 +169,16 @@ class _CategoryRow extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                         style: FxTypography.body.copyWith(
                           color: hasCat
-                              ? FxColors.textPrimary
-                              : FxColors.textTertiary,
+                              ? palette.textPrimary
+                              : palette.textTertiary,
                         ),
                       ),
                     ),
-                    const Icon(Icons.expand_more_rounded,
-                        size: 18, color: FxColors.textTertiary),
+                    Icon(
+                      Icons.expand_more_rounded,
+                      size: 18,
+                      color: palette.textTertiary,
+                    ),
                   ],
                 ),
               ),
@@ -191,8 +197,11 @@ class _CategoryRow extends StatelessWidget {
           ),
           if (canRemove)
             IconButton(
-              icon: const Icon(Icons.remove_circle_outline_rounded,
-                  size: 20, color: FxColors.textTertiary),
+              icon: Icon(
+                Icons.remove_circle_outline_rounded,
+                size: 20,
+                color: palette.textTertiary,
+              ),
               onPressed: onRemove,
             ),
         ],

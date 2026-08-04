@@ -58,10 +58,12 @@ class Base64Image extends StatelessWidget {
         final String svgString = utf8.decode(bytes);
         return LayoutBuilder(
           builder: (context, constraints) {
-            final double w =
-                constraints.maxWidth.isFinite ? constraints.maxWidth : 200;
-            final double h =
-                constraints.maxHeight.isFinite ? constraints.maxHeight : 54;
+            final double w = constraints.maxWidth.isFinite
+                ? constraints.maxWidth
+                : 200;
+            final double h = constraints.maxHeight.isFinite
+                ? constraints.maxHeight
+                : 54;
             return CustomPaint(
               size: Size(w, h),
               painter: SvgCaptchaPainter(svgString),
@@ -72,8 +74,7 @@ class Base64Image extends StatelessWidget {
         return Image.memory(
           bytes,
           fit: fit,
-          errorBuilder: (_, __, ___) =>
-              errorWidget ?? const Icon(Icons.error),
+          errorBuilder: (_, __, ___) => errorWidget ?? const Icon(Icons.error),
         );
       }
     } on FormatException catch (_) {

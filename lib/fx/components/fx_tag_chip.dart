@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fortuneboot/fx/tokens/fx_colors.dart';
+import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
 
@@ -22,17 +22,15 @@ class FxTagChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bg = selected ? FxColors.primaryContainer : FxColors.surfaceMuted;
-    final fg = selected ? FxColors.primary : FxColors.textSecondary;
+    final palette = FxPalette.of(context);
+    final bg = selected ? palette.primaryContainer : palette.surfaceMuted;
+    final fg = selected ? palette.primary : palette.textSecondary;
 
     return GestureDetector(
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-        decoration: BoxDecoration(
-          color: bg,
-          borderRadius: FxRadius.pillBorder,
-        ),
+        decoration: BoxDecoration(color: bg, borderRadius: FxRadius.pillBorder),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -40,7 +38,10 @@ class FxTagChip extends StatelessWidget {
               Container(
                 width: 7,
                 height: 7,
-                decoration: BoxDecoration(color: dotColor, shape: BoxShape.circle),
+                decoration: BoxDecoration(
+                  color: dotColor,
+                  shape: BoxShape.circle,
+                ),
               ),
               const SizedBox(width: 5),
             ],

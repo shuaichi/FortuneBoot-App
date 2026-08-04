@@ -4,7 +4,7 @@ import 'package:fortuneboot/features/stats/data/stats_models.dart';
 import 'package:fortuneboot/features/stats/presentation/bloc/stats_bloc.dart';
 import 'package:fortuneboot/features/stats/presentation/widgets/stats_card_shell.dart';
 import 'package:fortuneboot/features/stats/presentation/widgets/stats_palette.dart';
-import 'package:fortuneboot/fx/tokens/fx_colors.dart';
+import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
 import 'package:intl/intl.dart';
 
@@ -44,6 +44,7 @@ class _Bars extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = FxPalette.of(context);
     final maxV = items.fold<double>(0, (m, e) => e.value > m ? e.value : m);
     return BarChart(
       BarChartData(
@@ -53,7 +54,7 @@ class _Bars extends StatelessWidget {
           drawVerticalLine: false,
           horizontalInterval: maxV <= 0 ? 1 : maxV / 3,
           getDrawingHorizontalLine: (_) =>
-              const FlLine(color: FxColors.border, strokeWidth: 1),
+              FlLine(color: palette.border, strokeWidth: 1),
         ),
         borderData: FlBorderData(show: false),
         titlesData: FlTitlesData(
@@ -88,10 +89,10 @@ class _Bars extends StatelessWidget {
         ),
         barTouchData: BarTouchData(
           touchTooltipData: BarTouchTooltipData(
-            getTooltipColor: (_) => FxColors.textPrimary,
+            getTooltipColor: (_) => palette.textPrimary,
             getTooltipItem: (group, gi, rod, ri) => BarTooltipItem(
               NumberFormat('#,##0.##').format(rod.toY),
-              FxTypography.caption.copyWith(color: FxColors.surface),
+              FxTypography.caption.copyWith(color: palette.surface),
             ),
           ),
         ),

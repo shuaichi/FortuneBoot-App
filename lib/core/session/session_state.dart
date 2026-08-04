@@ -43,6 +43,12 @@ class SessionState extends Equatable {
   }
 
   @override
-  List<Object?> get props =>
-      [status, groups, currentGroup, books, currentBook, errorMessage];
+  List<Object?> get props => [
+    status,
+    groups,
+    currentGroup,
+    books,
+    currentBook,
+    errorMessage,
+  ];
 }

@@ -12,9 +12,9 @@ class GroupUsersBloc extends Bloc<GroupUsersEvent, GroupUsersState> {
   final int? _groupId;
 
   GroupUsersBloc({GroupUsersService? service, int? groupId})
-      : _service = service ?? GroupUsersService(),
-        _groupId = groupId,
-        super(const GroupUsersState()) {
+    : _service = service ?? GroupUsersService(),
+      _groupId = groupId,
+      super(const GroupUsersState()) {
     on<GroupUsersLoaded>(_onLoaded);
     on<GroupUsersMutated>(_onLoaded);
   }
@@ -35,23 +35,26 @@ class GroupUsersBloc extends Bloc<GroupUsersEvent, GroupUsersState> {
           ? state.roleTypes
           : await _service.getRoleTypes();
       final users = await _service.getGroupUsers(groupId);
-      emit(state.copyWith(
-        status: users.isEmpty
-            ? GroupUsersStatus.empty
-            : GroupUsersStatus.loaded,
-        users: users,
-        roleTypes: roleTypes,
-      ));
+      emit(
+        state.copyWith(
+          status: users.isEmpty
+              ? GroupUsersStatus.empty
+              : GroupUsersStatus.loaded,
+          users: users,
+          roleTypes: roleTypes,
+        ),
+      );
     } on FxApiException catch (e) {
-      emit(state.copyWith(
-        status: GroupUsersStatus.error,
-        errorMessage: e.message,
-      ));
+      emit(
+        state.copyWith(status: GroupUsersStatus.error, errorMessage: e.message),
+      );
     } on Object catch (e) {
-      emit(state.copyWith(
-        status: GroupUsersStatus.error,
-        errorMessage: e.toString(),
-      ));
+      emit(
+        state.copyWith(
+          status: GroupUsersStatus.error,
+          errorMessage: e.toString(),
+        ),
+      );
     }
   }
 }

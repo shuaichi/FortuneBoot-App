@@ -10,41 +10,38 @@ Widget buildSvgForWeb(String dataUri, BoxFit fit, {Key? key}) {
   final String viewType = 'captcha-svg-${dataUri.hashCode}';
 
   // ignore: undefined_prefixed_name
-  ui_web.platformViewRegistry.registerViewFactory(
-    viewType,
-    (int viewId) {
-      // 用 div 包裹 img，确保居中显示
-      final container = html.DivElement()
-        ..style.width = '100%'
-        ..style.height = '100%'
-        ..style.display = 'flex'
-        ..style.alignItems = 'center'
-        ..style.justifyContent = 'center'
-        ..style.overflow = 'hidden';
+  ui_web.platformViewRegistry.registerViewFactory(viewType, (int viewId) {
+    // 用 div 包裹 img，确保居中显示
+    final container = html.DivElement()
+      ..style.width = '100%'
+      ..style.height = '100%'
+      ..style.display = 'flex'
+      ..style.alignItems = 'center'
+      ..style.justifyContent = 'center'
+      ..style.overflow = 'hidden';
 
-      final img = html.ImageElement()
-        ..src = dataUri
-        ..style.maxWidth = '100%'
-        ..style.maxHeight = '100%'
-        ..style.display = 'block';
+    final img = html.ImageElement()
+      ..src = dataUri
+      ..style.maxWidth = '100%'
+      ..style.maxHeight = '100%'
+      ..style.display = 'block';
 
-      switch (fit) {
-        case BoxFit.contain:
-          img.style.objectFit = 'contain';
-          break;
-        case BoxFit.fill:
-          img.style.objectFit = 'fill';
-          break;
-        case BoxFit.cover:
-        default:
-          img.style.objectFit = 'cover';
-          break;
-      }
+    switch (fit) {
+      case BoxFit.contain:
+        img.style.objectFit = 'contain';
+        break;
+      case BoxFit.fill:
+        img.style.objectFit = 'fill';
+        break;
+      case BoxFit.cover:
+      default:
+        img.style.objectFit = 'cover';
+        break;
+    }
 
-      container.append(img);
-      return container;
-    },
-  );
+    container.append(img);
+    return container;
+  });
 
   return HtmlElementView(key: key, viewType: viewType);
 }

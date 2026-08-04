@@ -4,7 +4,7 @@ import 'package:fortuneboot/features/manage_shared/manage_menu.dart';
 import 'package:fortuneboot/features/payees/data/payee_models.dart';
 import 'package:fortuneboot/features/payees/data/payee_service.dart';
 import 'package:fortuneboot/fx/components/fx_button.dart';
-import 'package:fortuneboot/fx/tokens/fx_colors.dart';
+import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
 
@@ -103,6 +103,7 @@ class _PayeeFormSheetState extends State<PayeeFormSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final palette = FxPalette.of(context);
     return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(
         FxSpacing.lg,
@@ -116,36 +117,36 @@ class _PayeeFormSheetState extends State<PayeeFormSheet> {
           const ManageFieldLabel('交易对象名称'),
           TextField(
             controller: _nameCtrl,
-            decoration: manageInputDecoration('如：肯德基'),
+            decoration: manageInputDecoration(context, '如：肯德基'),
           ),
           const SizedBox(height: FxSpacing.md),
           const ManageFieldLabel('排序（可选）'),
           TextField(
             controller: _sortCtrl,
             keyboardType: TextInputType.number,
-            decoration: manageInputDecoration('数字越小越靠前'),
+            decoration: manageInputDecoration(context, '数字越小越靠前'),
           ),
           const SizedBox(height: FxSpacing.md),
           const ManageFieldLabel('备注（可选）'),
           TextField(
             controller: _remarkCtrl,
-            decoration: manageInputDecoration('备注'),
+            decoration: manageInputDecoration(context, '备注'),
           ),
           const SizedBox(height: FxSpacing.lg),
-          _switchRow(PayeeToggleField.canExpense, _canExpense, (v) {
+          _switchRow(context, PayeeToggleField.canExpense, _canExpense, (v) {
             setState(() => _canExpense = v);
           }),
-          _switchRow(PayeeToggleField.canIncome, _canIncome, (v) {
+          _switchRow(context, PayeeToggleField.canIncome, _canIncome, (v) {
             setState(() => _canIncome = v);
           }),
-          _switchRow(PayeeToggleField.enable, _enable, (v) {
+          _switchRow(context, PayeeToggleField.enable, _enable, (v) {
             setState(() => _enable = v);
           }),
           if (_error != null) ...[
             const SizedBox(height: FxSpacing.sm),
             Text(
               _error!,
-              style: FxTypography.caption.copyWith(color: FxColors.danger),
+              style: FxTypography.caption.copyWith(color: palette.danger),
             ),
           ],
           const SizedBox(height: FxSpacing.xl),
@@ -161,10 +162,12 @@ class _PayeeFormSheetState extends State<PayeeFormSheet> {
   }
 
   Widget _switchRow(
+    BuildContext context,
     PayeeToggleField field,
     bool value,
     ValueChanged<bool> onLocal,
   ) {
+    final palette = FxPalette.of(context);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 2),
       child: Row(
@@ -172,7 +175,7 @@ class _PayeeFormSheetState extends State<PayeeFormSheet> {
           Expanded(child: Text(field.label, style: FxTypography.body)),
           Switch.adaptive(
             value: value,
-            activeColor: FxColors.primary,
+            activeColor: palette.primary,
             onChanged: (v) {
               onLocal(v);
               if (widget.isEdit) widget.onToggle?.call(field, v);

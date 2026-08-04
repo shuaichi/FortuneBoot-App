@@ -56,8 +56,9 @@ class AccountService {
   List<FortuneAccountVo> _parseRows(dynamic data) {
     final List<dynamic> rowsRaw;
     if (data is Map) {
-      rowsRaw = (data['rows'] ?? data['list'] ?? data['records'] ?? <dynamic>[])
-          as List<dynamic>;
+      rowsRaw =
+          (data['rows'] ?? data['list'] ?? data['records'] ?? <dynamic>[])
+              as List<dynamic>;
     } else if (data is List) {
       rowsRaw = data;
     } else {
@@ -117,8 +118,14 @@ class AccountService {
     required String action,
   }) => _api.patch('/fortune/account/$groupId/$accountId/$action');
 
-  Future<void> moveToRecycleBin({required int groupId, required int accountId}) =>
-      toggle(groupId: groupId, accountId: accountId, action: 'moveToRecycleBin');
+  Future<void> moveToRecycleBin({
+    required int groupId,
+    required int accountId,
+  }) => toggle(
+    groupId: groupId,
+    accountId: accountId,
+    action: 'moveToRecycleBin',
+  );
 
   Future<void> putBack({required int groupId, required int accountId}) =>
       toggle(groupId: groupId, accountId: accountId, action: 'putBack');

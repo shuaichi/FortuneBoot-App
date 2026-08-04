@@ -6,7 +6,7 @@ import 'package:fortuneboot/features/dashboard/data/dashboard_models.dart';
 import 'package:fortuneboot/features/dashboard/presentation/bloc/dashboard_bloc.dart';
 import 'package:fortuneboot/features/dashboard/presentation/widgets/dashboard_card_shell.dart';
 import 'package:fortuneboot/fx/components/fx_card.dart';
-import 'package:fortuneboot/fx/tokens/fx_colors.dart';
+import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
 
@@ -49,6 +49,7 @@ class _MiniLine extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = FxPalette.of(context);
     final spots = <FlSpot>[
       for (var i = 0; i < points.length; i++)
         FlSpot(i.toDouble(), points[i].value),
@@ -65,12 +66,12 @@ class _MiniLine extends StatelessWidget {
             spots: spots,
             isCurved: true,
             preventCurveOverShooting: true,
-            color: FxColors.primary,
+            color: palette.primary,
             barWidth: 2.5,
             dotData: const FlDotData(show: false),
             belowBarData: BarAreaData(
               show: true,
-              color: FxColors.primary.withValues(alpha: 0.12),
+              color: palette.primary.withValues(alpha: 0.12),
             ),
           ),
         ],

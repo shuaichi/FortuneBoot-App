@@ -16,7 +16,7 @@ import 'package:fortuneboot/features/accounts/presentation/widgets/recycle_bin_s
 import 'package:fortuneboot/fx/components/fx_money_text.dart';
 import 'package:fortuneboot/fx/components/fx_sheet.dart';
 import 'package:fortuneboot/fx/components/fx_state_view.dart';
-import 'package:fortuneboot/fx/tokens/fx_colors.dart';
+import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
 
@@ -193,7 +193,7 @@ class _AccountsPageState extends State<AccountsPage> {
     return _GroupSync(
       groupId: groupId,
       child: Scaffold(
-        backgroundColor: FxColors.canvas,
+        backgroundColor: FxPalette.of(context).canvas,
         body: SafeArea(
           bottom: false,
           child: BlocConsumer<AccountsBloc, AccountsState>(
@@ -246,7 +246,7 @@ class _AccountsPageState extends State<AccountsPage> {
       radius: 22,
       child: Padding(
         padding: const EdgeInsets.all(FxSpacing.xs),
-        child: Icon(icon, size: 26, color: FxColors.textPrimary),
+        child: Icon(icon, size: 26, color: FxPalette.of(context).textPrimary),
       ),
     );
   }
@@ -313,23 +313,18 @@ class _AccountsPageState extends State<AccountsPage> {
             ),
           ),
           for (final group in groups) ...[
-            SliverToBoxAdapter(
-              child: _groupHeader(group, state.currencyCode),
-            ),
+            SliverToBoxAdapter(child: _groupHeader(group, state.currencyCode)),
             SliverList(
-              delegate: SliverChildBuilderDelegate(
-                (context, i) {
-                  final account = group.accounts[i];
-                  return AccountCard(
-                    account: account,
-                    currencyCode: state.currencyCode,
-                    onTap: () => _openForm(account: account),
-                    onMenu: () => _openMenu(account),
-                    onAdjustBalance: () => _openAdjust(account),
-                  );
-                },
-                childCount: group.accounts.length,
-              ),
+              delegate: SliverChildBuilderDelegate((context, i) {
+                final account = group.accounts[i];
+                return AccountCard(
+                  account: account,
+                  currencyCode: state.currencyCode,
+                  onTap: () => _openForm(account: account),
+                  onMenu: () => _openMenu(account),
+                  onAdjustBalance: () => _openAdjust(account),
+                );
+              }, childCount: group.accounts.length),
             ),
           ],
           const SliverToBoxAdapter(child: SizedBox(height: FxSpacing.xxxl)),
@@ -339,6 +334,7 @@ class _AccountsPageState extends State<AccountsPage> {
   }
 
   Widget _groupHeader(AccountGroup group, String? currencyCode) {
+    final palette = FxPalette.of(context);
     return Padding(
       padding: const EdgeInsets.fromLTRB(
         FxSpacing.lg,
@@ -352,7 +348,7 @@ class _AccountsPageState extends State<AccountsPage> {
             width: 4,
             height: 16,
             decoration: BoxDecoration(
-              color: group.meta.tint,
+              color: group.meta.tint(context),
               borderRadius: BorderRadius.circular(2),
             ),
           ),
@@ -364,7 +360,7 @@ class _AccountsPageState extends State<AccountsPage> {
             currencyCode: currencyCode,
             fontSize: 13,
             colorBySign: group.meta.isLiability,
-            color: group.meta.isLiability ? null : FxColors.textPrimary,
+            color: group.meta.isLiability ? null : palette.textPrimary,
           ),
         ],
       ),

@@ -22,3 +22,12 @@ final class DashboardBookChanged extends DashboardEvent {
 final class DashboardRefreshed extends DashboardEvent {
   const DashboardRefreshed();
 }
+
+/// 账单月开始日变更。
+final class DashboardMonthStartDayChanged extends DashboardEvent {
+  final int day;
+  const DashboardMonthStartDayChanged(this.day);
+
+  @override
+  List<Object?> get props => [day];
+}

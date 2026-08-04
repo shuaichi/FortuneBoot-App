@@ -54,8 +54,9 @@ class BillEditorArgs {
       final billRaw = map['bill'];
       final sourceBill = switch (billRaw) {
         final FortuneBillVo v => v,
-        final Map<dynamic, dynamic> m =>
-          FortuneBillVo.fromJson(Map<String, dynamic>.from(m)),
+        final Map<dynamic, dynamic> m => FortuneBillVo.fromJson(
+          Map<String, dynamic>.from(m),
+        ),
         _ => null,
       };
       final billId = _asInt(map['billId']) ?? sourceBill?.billId;

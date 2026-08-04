@@ -3,10 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:fortuneboot/login/view/login_screen.dart';
 
 class FadePageRoute<T> extends MaterialPageRoute<T> {
-  FadePageRoute({
-    required super.builder,
-    super.settings,
-  });
+  FadePageRoute({required super.builder, super.settings});
 
   @override
   Duration get transitionDuration => const Duration(milliseconds: 600);
@@ -22,9 +19,6 @@ class FadePageRoute<T> extends MaterialPageRoute<T> {
       return child;
     }
 
-    return FadeTransition(
-      opacity: animation,
-      child: child,
-    );
+    return FadeTransition(opacity: animation, child: child);
   }
 }

@@ -123,14 +123,22 @@ class TagsBloc extends Bloc<TagsEvent, TagsState> {
       final children = _applyToggle(n.children, tagId, field, value);
       if (n.tagId == tagId) {
         return switch (field) {
-          TagToggleField.canExpense =>
-            n.copyWith(canExpense: value, children: children),
-          TagToggleField.canIncome =>
-            n.copyWith(canIncome: value, children: children),
-          TagToggleField.canTransfer =>
-            n.copyWith(canTransfer: value, children: children),
-          TagToggleField.enable =>
-            n.copyWith(enable: value, children: children),
+          TagToggleField.canExpense => n.copyWith(
+            canExpense: value,
+            children: children,
+          ),
+          TagToggleField.canIncome => n.copyWith(
+            canIncome: value,
+            children: children,
+          ),
+          TagToggleField.canTransfer => n.copyWith(
+            canTransfer: value,
+            children: children,
+          ),
+          TagToggleField.enable => n.copyWith(
+            enable: value,
+            children: children,
+          ),
         };
       }
       return n.copyWith(children: children);

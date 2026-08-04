@@ -6,7 +6,7 @@ import 'package:fortuneboot/features/stats/presentation/widgets/stats_card_shell
 import 'package:fortuneboot/features/stats/presentation/widgets/stats_palette.dart';
 import 'package:fortuneboot/fx/components/fx_money_text.dart';
 import 'package:fortuneboot/fx/components/fx_progress_bar.dart';
-import 'package:fortuneboot/fx/tokens/fx_colors.dart';
+import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
 
@@ -86,19 +86,20 @@ class _TopList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = FxPalette.of(context);
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         for (var i = 0; i < top.length; i++) ...[
-          _row(i, top[i]),
+          _row(i, top[i], palette),
           if (i != top.length - 1) const SizedBox(height: FxSpacing.sm),
         ],
       ],
     );
   }
 
-  Widget _row(int index, PieSlice s) {
+  Widget _row(int index, PieSlice s, FxPalette palette) {
     final color = StatsPalette.colorAt(index);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -114,7 +115,7 @@ class _TopList extends StatelessWidget {
             Expanded(
               child: Text(
                 s.name.isEmpty ? '未分类' : s.name,
-                style: FxTypography.label.copyWith(color: FxColors.textPrimary),
+                style: FxTypography.label.copyWith(color: palette.textPrimary),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -123,7 +124,7 @@ class _TopList extends StatelessWidget {
             FxMoneyText(
               amount: s.value,
               currencyCode: currencyCode,
-              color: FxColors.textPrimary,
+              color: palette.textPrimary,
               fontSize: 12,
             ),
           ],

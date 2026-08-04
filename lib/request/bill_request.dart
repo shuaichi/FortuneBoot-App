@@ -17,13 +17,13 @@ part 'bill_request.g.dart'; // 代码生成文件
 // 账单API账单相关的增删查改
 @RestApi()
 abstract class BillService {
-factory BillService({
-    String? baseUrl,
-  }) {
+  factory BillService({String? baseUrl}) {
     Dio dio = DioClient().dio;
-    return _BillService(dio,
-        baseUrl: baseUrl ?? dio.options.baseUrl,
-        errorLogger: AccountErrorReport());
+    return _BillService(
+      dio,
+      baseUrl: baseUrl ?? dio.options.baseUrl,
+      errorLogger: AccountErrorReport(),
+    );
   }
 
   /// /fortune/bill/getPage
@@ -79,49 +79,63 @@ factory BillService({
 
   @DELETE('/fortune/bill/{bookId}/{billId}/remove')
   Future<HJResponse> removeBill(
-      @Path('bookId') int bookId, @Path('billId') int billId);
+    @Path('bookId') int bookId,
+    @Path('billId') int billId,
+  );
 
   @GET('/fortune/bill/file/{billId}/getByBillId')
   Future<HJResponse> getByBillFileId(@Path('billId') int billId);
 }
 
 class FromBillAddRequest {
-  Future<Response?>? submitBill(Map<String, dynamic> data,
-      {bool modify = false, List<dynamic>? attachmentFiles}) async {
+  Future<Response?>? submitBill(
+    Map<String, dynamic> data, {
+    bool modify = false,
+    List<dynamic>? attachmentFiles,
+  }) async {
     try {
       // 2. 构建 FormData
       final formData = FormData();
 
       // 添加 JSON 数据 (模拟 Blob)
-      formData.files.add(MapEntry(
-        'data',
-        MultipartFile.fromString(
-          jsonEncode(data), // 使用清理后的 JSON
-          contentType: DioMediaType('application', 'json'),
+      formData.files.add(
+        MapEntry(
+          'data',
+          MultipartFile.fromString(
+            jsonEncode(data), // 使用清理后的 JSON
+            contentType: DioMediaType('application', 'json'),
+          ),
         ),
-      ));
+      );
 
       // 3. 处理文件列表
       if (attachmentFiles != null && attachmentFiles.isNotEmpty) {
         for (final file in attachmentFiles) {
           if (file is File) {
             // 移动端文件处理
-            formData.files.add(MapEntry(
-              'files', // 字段名需与后端一致
-              await MultipartFile.fromFile(
-                file.path,
-                filename: 'upload_${DateTime.now().millisecondsSinceEpoch}_${file.path.split('/').last}',
+            formData.files.add(
+              MapEntry(
+                'files', // 字段名需与后端一致
+                await MultipartFile.fromFile(
+                  file.path,
+                  filename:
+                      'upload_${DateTime.now().millisecondsSinceEpoch}_${file.path.split('/').last}',
+                ),
               ),
-            ));
-          } else if (file is Map && file.containsKey('bytes') && file.containsKey('name')) {
+            );
+          } else if (file is Map &&
+              file.containsKey('bytes') &&
+              file.containsKey('name')) {
             // Web端文件处理
-            formData.files.add(MapEntry(
-              'files',
-              MultipartFile.fromBytes(
-                file['bytes'] as List<int>,
-                filename: file['name'] as String,
+            formData.files.add(
+              MapEntry(
+                'files',
+                MultipartFile.fromBytes(
+                  file['bytes'] as List<int>,
+                  filename: file['name'] as String,
+                ),
               ),
-            ));
+            );
           }
         }
       }

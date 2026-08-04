@@ -13,9 +13,9 @@ class BooksBloc extends Bloc<BooksEvent, BooksState> {
   final int? _initialGroupId;
 
   BooksBloc({BooksService? service, int? initialGroupId})
-      : _service = service ?? BooksService(),
-        _initialGroupId = initialGroupId,
-        super(BooksState(selectedGroupId: initialGroupId)) {
+    : _service = service ?? BooksService(),
+      _initialGroupId = initialGroupId,
+      super(BooksState(selectedGroupId: initialGroupId)) {
     on<BooksLoaded>(_onLoaded);
     on<BooksGroupSelected>(_onGroupSelected);
     on<BooksMutated>(_onLoaded);
@@ -28,12 +28,14 @@ class BooksBloc extends Bloc<BooksEvent, BooksState> {
       // 过滤掉无 groupId 的脏数据，避免后续 groupId! 解引用崩溃。
       final groups = allGroups.where((g) => g.groupId != null).toList();
       if (groups.isEmpty) {
-        emit(state.copyWith(
-          status: BooksStatus.loaded,
-          groups: const [],
-          books: const [],
-          recycledBooks: const [],
-        ));
+        emit(
+          state.copyWith(
+            status: BooksStatus.loaded,
+            groups: const [],
+            books: const [],
+            recycledBooks: const [],
+          ),
+        );
         return;
       }
       // 选中分组：保持已选，否则用初始会话分组，否则第一项。
@@ -42,14 +44,15 @@ class BooksBloc extends Bloc<BooksEvent, BooksState> {
     } on FxApiException catch (e) {
       emit(state.copyWith(status: BooksStatus.error, errorMessage: e.message));
     } on Object catch (e) {
-      emit(state.copyWith(status: BooksStatus.error, errorMessage: e.toString()));
+      emit(
+        state.copyWith(status: BooksStatus.error, errorMessage: e.toString()),
+      );
     }
   }
 
   int _resolveSelected(List<FortuneGroupVo> groups) {
     final ids = groups.map((g) => g.groupId).toList();
-    if (state.selectedGroupId != null &&
-        ids.contains(state.selectedGroupId)) {
+    if (state.selectedGroupId != null && ids.contains(state.selectedGroupId)) {
       return state.selectedGroupId!;
     }
     if (_initialGroupId != null && ids.contains(_initialGroupId)) {
@@ -62,13 +65,20 @@ class BooksBloc extends Bloc<BooksEvent, BooksState> {
     BooksGroupSelected event,
     Emitter<BooksState> emit,
   ) async {
-    emit(state.copyWith(status: BooksStatus.loading, selectedGroupId: event.groupId));
+    emit(
+      state.copyWith(
+        status: BooksStatus.loading,
+        selectedGroupId: event.groupId,
+      ),
+    );
     try {
       await _loadBooks(emit, state.groups, event.groupId);
     } on FxApiException catch (e) {
       emit(state.copyWith(status: BooksStatus.error, errorMessage: e.message));
     } on Object catch (e) {
-      emit(state.copyWith(status: BooksStatus.error, errorMessage: e.toString()));
+      emit(
+        state.copyWith(status: BooksStatus.error, errorMessage: e.toString()),
+      );
     }
   }
 
@@ -81,12 +91,14 @@ class BooksBloc extends Bloc<BooksEvent, BooksState> {
       _service.getBooks(groupId: groupId),
       _service.getBooks(groupId: groupId, recycleBin: true),
     ]);
-    emit(state.copyWith(
-      status: BooksStatus.loaded,
-      groups: groups,
-      selectedGroupId: groupId,
-      books: results[0],
-      recycledBooks: results[1],
-    ));
+    emit(
+      state.copyWith(
+        status: BooksStatus.loaded,
+        groups: groups,
+        selectedGroupId: groupId,
+        books: results[0],
+        recycledBooks: results[1],
+      ),
+    );
   }
 }

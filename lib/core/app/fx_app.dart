@@ -4,6 +4,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:fortuneboot/core/navigation/app_nav.dart';
 import 'package:fortuneboot/core/navigation/app_router.dart';
 import 'package:fortuneboot/core/navigation/routes.dart';
+import 'package:fortuneboot/core/preferences/preferences_cubit.dart';
 import 'package:fortuneboot/core/session/session_cubit.dart';
 import 'package:fortuneboot/core/shell/main_shell.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
@@ -19,8 +20,13 @@ class FxApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<SessionCubit>(
-      create: (_) => SessionCubit(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<SessionCubit>(create: (_) => SessionCubit()),
+        BlocProvider<PreferencesCubit>(
+          create: (_) => PreferencesCubit()..load(),
+        ),
+      ],
       child: const _FxAppView(),
     );
   }
@@ -43,15 +49,21 @@ class _FxAppView extends StatelessWidget {
       );
     };
 
-    return ValueListenableBuilder<Locale?>(
-      valueListenable: AppLocale.notifier,
-      builder: (context, locale, _) {
+    return BlocBuilder<PreferencesCubit, PreferencesState>(
+      builder: (context, prefs) {
+        final financeColors = FxFinanceColors.fromPreferences(
+          prefs.financeColors,
+        );
+        // 保持 AppLocale 兼容旧引用，但事实来源为偏好中心。
+        final locale = prefs.locale.locale;
+        AppLocale.value = locale;
         return MaterialApp(
           navigatorKey: appNavigatorKey,
           title: '好记',
           debugShowCheckedModeBanner: false,
-          theme: FxTheme.light,
-          themeMode: ThemeMode.light,
+          theme: FxTheme.buildLight(financeColors: financeColors),
+          darkTheme: FxTheme.buildDark(financeColors: financeColors),
+          themeMode: prefs.theme.mode,
           locale: locale,
           localizationsDelegates: const [
             GlobalMaterialLocalizations.delegate,
@@ -73,13 +85,8 @@ class _FxAppView extends StatelessWidget {
   }
 }
 
-/// 运行时 locale 持有者（Profile 语言切换用）。
+/// 运行时 locale 只读镜像（兼容旧引用）。真正的语言偏好由 PreferencesCubit 管理，
+/// 通过 `context.read<PreferencesCubit>().setLocaleCode(...)` 切换。
 class AppLocale {
   static Locale? value = const Locale('zh', 'CN');
-  static final ValueNotifier<Locale?> notifier = ValueNotifier(value);
-
-  static void set(Locale? l) {
-    value = l;
-    notifier.value = l;
-  }
 }

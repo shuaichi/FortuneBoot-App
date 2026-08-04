@@ -22,7 +22,9 @@ class SessionCubit extends Cubit<SessionState> {
       // 1. 分组列表
       final groupsData = FxApi.unwrap(await _groupService.getEnableList());
       final groups = (groupsData as List? ?? [])
-          .map((e) => FortuneGroupVo.fromJson(Map<String, dynamic>.from(e as Map)))
+          .map(
+            (e) => FortuneGroupVo.fromJson(Map<String, dynamic>.from(e as Map)),
+          )
           .toList();
 
       if (groups.isEmpty) {
@@ -46,9 +48,13 @@ class SessionCubit extends Cubit<SessionState> {
 
       await _loadBooks(groups, currentGroup);
     } on FxApiException catch (e) {
-      emit(state.copyWith(status: SessionStatus.error, errorMessage: e.message));
+      emit(
+        state.copyWith(status: SessionStatus.error, errorMessage: e.message),
+      );
     } catch (e) {
-      emit(state.copyWith(status: SessionStatus.error, errorMessage: e.toString()));
+      emit(
+        state.copyWith(status: SessionStatus.error, errorMessage: e.toString()),
+      );
     }
   }
 
@@ -56,8 +62,9 @@ class SessionCubit extends Cubit<SessionState> {
     List<FortuneGroupVo> groups,
     FortuneGroupVo currentGroup,
   ) async {
-    final booksData =
-        FxApi.unwrap(await _bookService.getByGroupId(currentGroup.groupId!));
+    final booksData = FxApi.unwrap(
+      await _bookService.getByGroupId(currentGroup.groupId!),
+    );
     final books = (booksData as List? ?? [])
         .map((e) => FortuneBookVo.fromJson(Map<String, dynamic>.from(e as Map)))
         .toList();
@@ -70,13 +77,15 @@ class SessionCubit extends Cubit<SessionState> {
       );
     }
 
-    emit(state.copyWith(
-      status: currentBook == null ? SessionStatus.empty : SessionStatus.ready,
-      groups: groups,
-      currentGroup: currentGroup,
-      books: books,
-      currentBook: currentBook,
-    ));
+    emit(
+      state.copyWith(
+        status: currentBook == null ? SessionStatus.empty : SessionStatus.ready,
+        groups: groups,
+        currentGroup: currentGroup,
+        books: books,
+        currentBook: currentBook,
+      ),
+    );
   }
 
   /// 切换分组：重拉该分组账本并选默认账本。
@@ -86,10 +95,14 @@ class SessionCubit extends Cubit<SessionState> {
     try {
       await _loadBooks(state.groups, group);
     } on FxApiException catch (e) {
-      emit(state.copyWith(status: SessionStatus.error, errorMessage: e.message));
+      emit(
+        state.copyWith(status: SessionStatus.error, errorMessage: e.message),
+      );
     } catch (e) {
       // Dio 超时/网络错误抛 DioException（非 FxApiException），需兜底避免永久卡 loading。
-      emit(state.copyWith(status: SessionStatus.error, errorMessage: e.toString()));
+      emit(
+        state.copyWith(status: SessionStatus.error, errorMessage: e.toString()),
+      );
     }
   }
 
@@ -113,26 +126,35 @@ class SessionCubit extends Cubit<SessionState> {
     }
     emit(state.copyWith(status: SessionStatus.loading));
     try {
-      final booksData =
-          FxApi.unwrap(await _bookService.getByGroupId(group.groupId!));
+      final booksData = FxApi.unwrap(
+        await _bookService.getByGroupId(group.groupId!),
+      );
       final books = (booksData as List? ?? [])
-          .map((e) => FortuneBookVo.fromJson(Map<String, dynamic>.from(e as Map)))
+          .map(
+            (e) => FortuneBookVo.fromJson(Map<String, dynamic>.from(e as Map)),
+          )
           .toList();
       // 用列表中的同 id 实例，避免持有过期副本。
       final target = books.firstWhere(
         (b) => b.bookId == book.bookId,
         orElse: () => book,
       );
-      emit(state.copyWith(
-        status: SessionStatus.ready,
-        currentGroup: group,
-        books: books,
-        currentBook: target,
-      ));
+      emit(
+        state.copyWith(
+          status: SessionStatus.ready,
+          currentGroup: group,
+          books: books,
+          currentBook: target,
+        ),
+      );
     } on FxApiException catch (e) {
-      emit(state.copyWith(status: SessionStatus.error, errorMessage: e.message));
+      emit(
+        state.copyWith(status: SessionStatus.error, errorMessage: e.message),
+      );
     } catch (e) {
-      emit(state.copyWith(status: SessionStatus.error, errorMessage: e.toString()));
+      emit(
+        state.copyWith(status: SessionStatus.error, errorMessage: e.toString()),
+      );
     }
   }
 

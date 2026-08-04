@@ -25,10 +25,9 @@ void registerBillEditorFeature() {
           );
         }
         return BlocProvider(
-          create: (_) => BillEditorBloc(
-            bookId: bookId,
-            groupId: groupId,
-          )..add(BillEditorInitialized(editorArgs)),
+          create: (_) =>
+              BillEditorBloc(bookId: bookId, groupId: groupId)
+                ..add(BillEditorInitialized(editorArgs)),
           child: const BillEditorPage(),
         );
       },

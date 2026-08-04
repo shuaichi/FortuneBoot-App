@@ -85,16 +85,12 @@ class PayeesBloc extends Bloc<PayeesEvent, PayeesState> {
       );
       emit(
         state.copyWith(
-          status: page.rows.isEmpty
-              ? PayeesStatus.empty
-              : PayeesStatus.loaded,
+          status: page.rows.isEmpty ? PayeesStatus.empty : PayeesStatus.loaded,
           payees: page.rows,
         ),
       );
     } on FxApiException catch (e) {
-      emit(
-        state.copyWith(status: PayeesStatus.error, errorMessage: e.message),
-      );
+      emit(state.copyWith(status: PayeesStatus.error, errorMessage: e.message));
     } on Object catch (e) {
       emit(
         state.copyWith(status: PayeesStatus.error, errorMessage: e.toString()),

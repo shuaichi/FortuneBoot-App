@@ -3,8 +3,10 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fortuneboot/core/navigation/app_router.dart';
 import 'package:fortuneboot/core/navigation/routes.dart';
+import 'package:fortuneboot/core/preferences/preferences_cubit.dart';
 import 'package:fortuneboot/core/session/bill_mutations.dart';
 import 'package:fortuneboot/core/session/session_cubit.dart';
+import 'package:fortuneboot/core/time/month_window_resolver.dart';
 import 'package:fortuneboot/features/bills/presentation/bloc/bills_bloc.dart';
 import 'package:fortuneboot/features/bills/presentation/widgets/bill_detail_sheet.dart';
 import 'package:fortuneboot/features/bills/presentation/widgets/bill_tile.dart';
@@ -14,7 +16,7 @@ import 'package:fortuneboot/features/shared/data/bill_service.dart';
 import 'package:fortuneboot/fx/components/fx_money_text.dart';
 import 'package:fortuneboot/fx/components/fx_sheet.dart';
 import 'package:fortuneboot/fx/components/fx_state_view.dart';
-import 'package:fortuneboot/fx/tokens/fx_colors.dart';
+import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
@@ -34,6 +36,7 @@ class _BillsPageState extends State<BillsPage> {
 
   static final DateFormat _monthFormat = DateFormat('yyyy年M月');
   static final DateFormat _dayFormat = DateFormat('M月d日');
+  static final DateFormat _rangeFormat = DateFormat('M月d日');
   static const List<String> _weekdays = [
     '周一',
     '周二',
@@ -125,7 +128,9 @@ class _BillsPageState extends State<BillsPage> {
 
   Future<bool> _confirmDelete(FortuneBillVo bill) async {
     if (bill.billId == null) return false;
-    final ok = await FxSheet.show<bool>(
+    final palette = FxPalette.of(context);
+    final ok =
+        await FxSheet.show<bool>(
           context,
           title: '删除账单',
           child: Padding(
@@ -149,8 +154,8 @@ class _BillsPageState extends State<BillsPage> {
                       child: _sheetButton(
                         '取消',
                         onTap: () => Navigator.of(context).pop(false),
-                        color: FxColors.surfaceMuted,
-                        fg: FxColors.textSecondary,
+                        color: palette.surfaceMuted,
+                        fg: palette.textSecondary,
                       ),
                     ),
                     const SizedBox(width: FxSpacing.md),
@@ -158,7 +163,7 @@ class _BillsPageState extends State<BillsPage> {
                       child: _sheetButton(
                         '删除',
                         onTap: () => Navigator.of(context).pop(true),
-                        color: FxColors.danger,
+                        color: palette.danger,
                         fg: Colors.white,
                       ),
                     ),
@@ -190,7 +195,10 @@ class _BillsPageState extends State<BillsPage> {
         child: Container(
           height: 48,
           alignment: Alignment.center,
-          child: Text(label, style: FxTypography.bodyStrong.copyWith(color: fg)),
+          child: Text(
+            label,
+            style: FxTypography.bodyStrong.copyWith(color: fg),
+          ),
         ),
       ),
     );
@@ -220,6 +228,7 @@ class _BillsPageState extends State<BillsPage> {
 
   @override
   Widget build(BuildContext context) {
+    final palette = FxPalette.of(context);
     // 订阅 book 变化，自动重拉。
     final bookId = context.select<SessionCubit, int?>(
       (c) => c.state.currentBookId,
@@ -227,20 +236,29 @@ class _BillsPageState extends State<BillsPage> {
 
     return _BookSync(
       bookId: bookId,
-      child: Scaffold(
-        backgroundColor: FxColors.canvas,
-        body: SafeArea(
-          bottom: false,
-          child: BlocBuilder<BillsBloc, BillsState>(
-            builder: (context, state) {
-              return Column(
-                children: [
-                  _buildHeader(state),
-                  _buildSummaryBar(state),
-                  Expanded(child: _buildBody(state, bookId)),
-                ],
-              );
-            },
+      child: BlocListener<PreferencesCubit, PreferencesState>(
+        listenWhen: (prev, next) =>
+            prev.billing.monthStartDay != next.billing.monthStartDay,
+        listener: (context, preferences) {
+          _bloc.add(
+            BillsMonthStartDayChanged(preferences.billing.monthStartDay),
+          );
+        },
+        child: Scaffold(
+          backgroundColor: palette.canvas,
+          body: SafeArea(
+            bottom: false,
+            child: BlocBuilder<BillsBloc, BillsState>(
+              builder: (context, state) {
+                return Column(
+                  children: [
+                    _buildHeader(state),
+                    _buildSummaryBar(state),
+                    Expanded(child: _buildBody(state, bookId)),
+                  ],
+                );
+              },
+            ),
           ),
         ),
       ),
@@ -248,7 +266,20 @@ class _BillsPageState extends State<BillsPage> {
   }
 
   Widget _buildHeader(BillsState state) {
+    final palette = FxPalette.of(context);
     final activeCount = state.filter.activeCount;
+    final monthStartDay = context
+        .watch<PreferencesCubit>()
+        .state
+        .billing
+        .monthStartDay;
+    final window = MonthWindowResolver.resolveForAnchor(
+      state.month,
+      monthStartDay,
+    );
+    final rangeLabel =
+        '${_rangeFormat.format(window.start)} - '
+        '${_rangeFormat.format(window.end)}';
     return Padding(
       padding: const EdgeInsets.fromLTRB(
         FxSpacing.lg,
@@ -264,9 +295,21 @@ class _BillsPageState extends State<BillsPage> {
           }),
           Expanded(
             child: Center(
-              child: Text(
-                _monthFormat.format(state.month),
-                style: FxTypography.title,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    '${_monthFormat.format(state.month)}账期',
+                    style: FxTypography.title,
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    rangeLabel,
+                    style: FxTypography.caption.copyWith(
+                      color: palette.textSecondary,
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
@@ -282,29 +325,31 @@ class _BillsPageState extends State<BillsPage> {
   }
 
   Widget _iconButton(IconData icon, VoidCallback onTap) {
+    final palette = FxPalette.of(context);
     return InkResponse(
       onTap: onTap,
       radius: 22,
       child: Padding(
         padding: const EdgeInsets.all(FxSpacing.xs),
-        child: Icon(icon, size: 26, color: FxColors.textPrimary),
+        child: Icon(icon, size: 26, color: palette.textPrimary),
       ),
     );
   }
 
   Widget _filterButton(BillsState state, int activeCount) {
+    final palette = FxPalette.of(context);
     return InkResponse(
       onTap: () => _openFilter(state),
       radius: 22,
       child: Stack(
         clipBehavior: Clip.none,
         children: [
-          const Padding(
-            padding: EdgeInsets.all(FxSpacing.xs),
+          Padding(
+            padding: const EdgeInsets.all(FxSpacing.xs),
             child: Icon(
               Icons.tune_rounded,
               size: 24,
-              color: FxColors.textPrimary,
+              color: palette.textPrimary,
             ),
           ),
           if (activeCount > 0)
@@ -313,8 +358,8 @@ class _BillsPageState extends State<BillsPage> {
               top: 0,
               child: Container(
                 padding: const EdgeInsets.all(4),
-                decoration: const BoxDecoration(
-                  color: FxColors.primary,
+                decoration: BoxDecoration(
+                  color: palette.primary,
                   shape: BoxShape.circle,
                 ),
                 constraints: const BoxConstraints(minWidth: 16, minHeight: 16),
@@ -336,6 +381,8 @@ class _BillsPageState extends State<BillsPage> {
   }
 
   Widget _buildSummaryBar(BillsState state) {
+    final palette = FxPalette.of(context);
+    final finance = FxFinanceColors.of(context);
     final stats = state.statistics;
     return Container(
       margin: const EdgeInsets.fromLTRB(
@@ -349,19 +396,23 @@ class _BillsPageState extends State<BillsPage> {
         vertical: FxSpacing.md,
       ),
       decoration: BoxDecoration(
-        color: FxColors.surface,
+        color: palette.surface,
         borderRadius: FxRadius.cardBorder,
-        boxShadow: const [
-          BoxShadow(color: FxColors.shadow, blurRadius: 12, offset: Offset(0, 3)),
+        boxShadow: [
+          BoxShadow(
+            color: palette.shadow,
+            blurRadius: 12,
+            offset: const Offset(0, 3),
+          ),
         ],
       ),
       child: Row(
         children: [
-          _summaryItem('支出', stats?.expense ?? 0, FxColors.expense),
+          _summaryItem('支出', stats?.expense ?? 0, finance.expense),
           _divider(),
-          _summaryItem('收入', stats?.income ?? 0, FxColors.income),
+          _summaryItem('收入', stats?.income ?? 0, finance.income),
           _divider(),
-          _summaryItem('结余', stats?.surplus ?? 0, FxColors.textPrimary),
+          _summaryItem('结余', stats?.surplus ?? 0, palette.textPrimary),
         ],
       ),
     );
@@ -385,11 +436,11 @@ class _BillsPageState extends State<BillsPage> {
   }
 
   Widget _divider() => Container(
-        width: 1,
-        height: 28,
-        color: FxColors.border,
-        margin: const EdgeInsets.symmetric(horizontal: FxSpacing.sm),
-      );
+    width: 1,
+    height: 28,
+    color: FxPalette.of(context).border,
+    margin: const EdgeInsets.symmetric(horizontal: FxSpacing.sm),
+  );
 
   Widget _buildBody(BillsState state, int? bookId) {
     if (bookId == null) {
@@ -413,7 +464,7 @@ class _BillsPageState extends State<BillsPage> {
                 SizedBox(
                   height: MediaQuery.of(context).size.height * 0.5,
                   child: FxStateView.empty(
-                    message: '本月暂无账单',
+                    message: '本账期暂无账单',
                     icon: Icons.receipt_long_rounded,
                   ),
                 ),
@@ -426,20 +477,28 @@ class _BillsPageState extends State<BillsPage> {
   }
 
   Widget _buildList(BillsState state) {
-    final groups = state.dayGroups;
+    final monthStartDay = context
+        .watch<PreferencesCubit>()
+        .state
+        .billing
+        .monthStartDay;
+    final groups = state.monthGroups(monthStartDay);
     return RefreshIndicator(
       onRefresh: _refresh,
       child: CustomScrollView(
         controller: _scrollController,
         physics: const AlwaysScrollableScrollPhysics(),
         slivers: [
-          for (final group in groups)
-            SliverStickyGroup(
-              header: _dayHeader(group),
-              children: [
-                for (final bill in group.bills) _dismissibleTile(bill),
-              ],
-            ),
+          for (final monthGroup in groups) ...[
+            SliverToBoxAdapter(child: _monthHeader(monthGroup)),
+            for (final group in monthGroup.dayGroups)
+              SliverStickyGroup(
+                header: _dayHeader(group),
+                children: [
+                  for (final bill in group.bills) _dismissibleTile(bill),
+                ],
+              ),
+          ],
           if (state.isLoadingMore)
             const SliverToBoxAdapter(
               child: Padding(
@@ -459,6 +518,86 @@ class _BillsPageState extends State<BillsPage> {
     );
   }
 
+  Widget _monthHeader(BillMonthGroup group) {
+    final palette = FxPalette.of(context);
+    final finance = FxFinanceColors.of(context);
+    final stats = group.statistics;
+    final range =
+        '${_rangeFormat.format(group.window.start)} - '
+        '${_rangeFormat.format(group.window.end)}';
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(
+        FxSpacing.lg,
+        FxSpacing.md,
+        FxSpacing.lg,
+        FxSpacing.xs,
+      ),
+      child: Container(
+        padding: const EdgeInsets.all(FxSpacing.md),
+        decoration: BoxDecoration(
+          color: palette.surface,
+          borderRadius: FxRadius.cardBorder,
+          boxShadow: [
+            BoxShadow(
+              color: palette.shadow,
+              blurRadius: 10,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Text(
+                  '${_monthFormat.format(group.window.anchorMonth)}账期',
+                  style: FxTypography.label,
+                ),
+                const Spacer(),
+                Text(
+                  range,
+                  style: FxTypography.caption.copyWith(
+                    color: palette.textSecondary,
+                  ),
+                ),
+              ],
+            ),
+            if (stats != null) ...[
+              const SizedBox(height: FxSpacing.sm),
+              Row(
+                children: [
+                  _miniSummary('支出', stats.expense, finance.expense),
+                  _miniSummary('收入', stats.income, finance.income),
+                  _miniSummary('结余', stats.surplus, palette.textPrimary),
+                ],
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _miniSummary(String label, double amount, Color color) {
+    return Expanded(
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text('$label ', style: FxTypography.caption),
+          Flexible(
+            child: FxMoneyText(
+              amount: amount,
+              color: color,
+              fontSize: 12,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _dayHeader(BillDayGroup group) {
     final dayExpense = group.bills
         .where((b) => _isExpenseType(b.billType))
@@ -468,7 +607,7 @@ class _BillsPageState extends State<BillsPage> {
         .fold<double>(0, (s, b) => s + b.displayAmount.abs());
 
     return Container(
-      color: FxColors.canvas,
+      color: FxPalette.of(context).canvas,
       padding: const EdgeInsets.fromLTRB(
         FxSpacing.lg,
         FxSpacing.sm,
@@ -477,10 +616,7 @@ class _BillsPageState extends State<BillsPage> {
       ),
       child: Row(
         children: [
-          Text(
-            _dayLabel(group.day),
-            style: FxTypography.label,
-          ),
+          Text(_dayLabel(group.day), style: FxTypography.label),
           const Spacer(),
           if (dayExpense > 0)
             Text('支 ${_compact(dayExpense)}', style: FxTypography.caption),
@@ -501,16 +637,21 @@ class _BillsPageState extends State<BillsPage> {
   String _compact(double v) => NumberFormat('#,##0.##').format(v);
 
   Widget _dismissibleTile(FortuneBillVo bill) {
+    final palette = FxPalette.of(context);
     final tile = Container(
       margin: const EdgeInsets.symmetric(
         horizontal: FxSpacing.lg,
         vertical: FxSpacing.xs,
       ),
       decoration: BoxDecoration(
-        color: FxColors.surface,
+        color: palette.surface,
         borderRadius: FxRadius.cardBorder,
-        boxShadow: const [
-          BoxShadow(color: FxColors.shadow, blurRadius: 10, offset: Offset(0, 2)),
+        boxShadow: [
+          BoxShadow(
+            color: palette.shadow,
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
         ],
       ),
       child: ClipRRect(
@@ -525,13 +666,13 @@ class _BillsPageState extends State<BillsPage> {
       key: ValueKey('bill_${bill.billId}'),
       background: _swipeBg(
         alignment: Alignment.centerLeft,
-        color: FxColors.primary,
+        color: palette.primary,
         icon: Icons.copy_rounded,
         label: '复制',
       ),
       secondaryBackground: _swipeBg(
         alignment: Alignment.centerRight,
-        color: FxColors.danger,
+        color: palette.danger,
         icon: Icons.delete_outline_rounded,
         label: '删除',
       ),
@@ -541,8 +682,10 @@ class _BillsPageState extends State<BillsPage> {
           _goCopy(bill);
           return false;
         }
-        // 左滑 → 删除二次确认。
-        return _confirmDelete(bill);
+        // 左滑 → 删除二次确认。返回 false，等待 Bloc 成功删除后由状态移除该行，
+        // 避免 Dismissible 动画结束时同 key 账单仍在树上导致崩溃。
+        await _confirmDelete(bill);
+        return false;
       },
       child: tile,
     );
@@ -630,9 +773,7 @@ class SliverStickyGroup extends StatelessWidget {
           pinned: true,
           delegate: _DayHeaderDelegate(child: header),
         ),
-        SliverList(
-          delegate: SliverChildListDelegate(children),
-        ),
+        SliverList(delegate: SliverChildListDelegate(children)),
       ],
     );
   }

@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fortuneboot/features/stats/presentation/bloc/stats_bloc.dart';
 import 'package:fortuneboot/fx/components/fx_segmented.dart';
-import 'package:fortuneboot/fx/tokens/fx_colors.dart';
+import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
@@ -21,7 +21,7 @@ class StatsTopBar extends StatelessWidget {
     final bloc = context.read<StatsBloc>();
 
     return Container(
-      color: FxColors.canvas,
+      color: FxPalette.of(context).canvas,
       padding: EdgeInsets.only(
         left: FxSpacing.lg,
         right: FxSpacing.lg,
@@ -42,7 +42,7 @@ class StatsTopBar extends StatelessWidget {
               ),
               const SizedBox(width: FxSpacing.sm),
               _RangeChip(
-                label: '本月',
+                label: '本账期',
                 selected: state.range == StatsRange.month,
                 onTap: () =>
                     bloc.add(const StatsRangeChanged(StatsRange.month)),
@@ -121,6 +121,7 @@ class _RangeChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = FxPalette.of(context);
     return GestureDetector(
       onTap: () {
         if (!selected) HapticFeedback.selectionClick();
@@ -134,13 +135,13 @@ class _RangeChip extends StatelessWidget {
           vertical: FxSpacing.sm,
         ),
         decoration: BoxDecoration(
-          color: selected ? FxColors.primary : FxColors.surface,
+          color: selected ? palette.primary : palette.surface,
           borderRadius: FxRadius.pillBorder,
         ),
         child: Text(
           label,
           style: FxTypography.label.copyWith(
-            color: selected ? FxColors.onPrimary : FxColors.textSecondary,
+            color: selected ? palette.onPrimary : palette.textSecondary,
             fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
           ),
         ),

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fortuneboot/features/dashboard/presentation/bloc/dashboard_bloc.dart';
 import 'package:fortuneboot/fx/components/fx_card.dart';
-import 'package:fortuneboot/fx/tokens/fx_colors.dart';
+import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
 
@@ -50,15 +50,12 @@ class _CompactError extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = FxPalette.of(context);
     return Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(
-            Icons.error_outline_rounded,
-            size: 22,
-            color: FxColors.danger,
-          ),
+          Icon(Icons.error_outline_rounded, size: 22, color: palette.danger),
           const SizedBox(height: FxSpacing.xs),
           Text(
             message,
@@ -73,7 +70,7 @@ class _CompactError extends StatelessWidget {
             child: Text(
               '重试',
               style: FxTypography.caption.copyWith(
-                color: FxColors.primary,
+                color: palette.primary,
                 fontWeight: FontWeight.w600,
               ),
             ),

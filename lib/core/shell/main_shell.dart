@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fortuneboot/core/navigation/app_router.dart';
 import 'package:fortuneboot/core/navigation/routes.dart';
 import 'package:fortuneboot/core/session/session_cubit.dart';
-import 'package:fortuneboot/fx/tokens/fx_colors.dart';
+import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
 
 /// MainShell 的 tab 内容槽。各 feature 阶段落地后通过 [MainShellSlots.register] 注入
@@ -41,9 +41,7 @@ class _MainShellState extends State<MainShell> {
 
   Widget _slot(WidgetBuilder? builder, String label) {
     if (builder == null) {
-      return Center(
-        child: Text('$label（开发中）', style: FxTypography.label),
-      );
+      return Center(child: Text('$label（开发中）', style: FxTypography.label));
     }
     return Builder(builder: builder);
   }
@@ -60,7 +58,7 @@ class _MainShellState extends State<MainShell> {
     return Scaffold(
       body: IndexedStack(index: _index, children: pages),
       floatingActionButton: FloatingActionButton(
-        backgroundColor: FxColors.primary,
+        backgroundColor: FxPalette.of(context).primary,
         elevation: 2,
         shape: const CircleBorder(),
         onPressed: () {
@@ -85,8 +83,9 @@ class _FxBottomBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = FxPalette.of(context);
     return BottomAppBar(
-      color: FxColors.surface,
+      color: palette.surface,
       surfaceTintColor: Colors.transparent,
       shape: const CircularNotchedRectangle(),
       notchMargin: 8,
@@ -95,19 +94,20 @@ class _FxBottomBar extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          _item(0, Icons.dashboard_rounded, '仪表盘'),
-          _item(1, Icons.receipt_long_rounded, '账单'),
+          _item(context, 0, Icons.dashboard_rounded, '仪表盘'),
+          _item(context, 1, Icons.receipt_long_rounded, '账单'),
           const SizedBox(width: 48), // FAB 缺口
-          _item(2, Icons.bar_chart_rounded, '统计'),
-          _item(3, Icons.person_rounded, '我的'),
+          _item(context, 2, Icons.bar_chart_rounded, '统计'),
+          _item(context, 3, Icons.person_rounded, '我的'),
         ],
       ),
     );
   }
 
-  Widget _item(int i, IconData icon, String label) {
+  Widget _item(BuildContext context, int i, IconData icon, String label) {
+    final palette = FxPalette.of(context);
     final selected = index == i;
-    final color = selected ? FxColors.primary : FxColors.textTertiary;
+    final color = selected ? palette.primary : palette.textTertiary;
     return Expanded(
       child: InkWell(
         onTap: () {

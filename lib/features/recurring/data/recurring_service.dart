@@ -50,26 +50,27 @@ class RecurringService {
     required int bookId,
     required int ruleId,
     required bool enable,
-  }) =>
-      _api.patch(
-        '/fortune/recurring/bill/$bookId/$ruleId/${enable ? 'enableRule' : 'disableRule'}',
-      );
+  }) => _api.patch(
+    '/fortune/recurring/bill/$bookId/$ruleId/${enable ? 'enableRule' : 'disableRule'}',
+  );
 
   /// 规则执行日志。
   Future<List<RecurringLogVo>> getLogs({
     required int bookId,
     required int ruleId,
   }) async {
-    final data =
-        await _api.get('/fortune/recurring/bill/$bookId/$ruleId/getLogByRuleId');
+    final data = await _api.get(
+      '/fortune/recurring/bill/$bookId/$ruleId/getLogByRuleId',
+    );
     return _rows(data).map(RecurringLogVo.fromJson).toList();
   }
 
   List<Map<String, dynamic>> _rows(dynamic data) {
     final List<dynamic> raw;
     if (data is Map) {
-      raw = (data['rows'] ?? data['list'] ?? data['records'] ?? <dynamic>[])
-          as List<dynamic>;
+      raw =
+          (data['rows'] ?? data['list'] ?? data['records'] ?? <dynamic>[])
+              as List<dynamic>;
     } else if (data is List) {
       raw = data;
     } else {

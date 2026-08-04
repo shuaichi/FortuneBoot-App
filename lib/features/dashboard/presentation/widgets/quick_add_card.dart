@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:fortuneboot/core/navigation/app_router.dart';
 import 'package:fortuneboot/core/navigation/routes.dart';
 import 'package:fortuneboot/fx/components/fx_card.dart';
-import 'package:fortuneboot/fx/tokens/fx_colors.dart';
+import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
 
@@ -15,7 +15,7 @@ class QuickAddCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FxCard(
-      background: FxColors.primary,
+      background: FxPalette.of(context).primary,
       onTap: () {
         HapticFeedback.selectionClick();
         AppRouter.push<void>(context, Routes.billEditor);

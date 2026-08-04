@@ -1,6 +1,9 @@
+import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fortuneboot/core/network/fx_api.dart';
+import 'package:fortuneboot/core/preferences/billing_preferences.dart';
+import 'package:fortuneboot/core/time/month_window_resolver.dart';
 import 'package:fortuneboot/features/dashboard/data/dashboard_models.dart';
 import 'package:fortuneboot/features/dashboard/data/dashboard_service.dart';
 import 'package:fortuneboot/features/shared/data/bill_models.dart';
@@ -19,6 +22,8 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
 
   int? _bookId;
   int? _groupId;
+  int _monthStartDay;
+  int _loadVersion = 0;
 
   DashboardBloc({
     DashboardService? dashboardService,
@@ -26,15 +31,23 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
     int? bookId,
     int? groupId,
     String? currencyCode,
+    int monthStartDay = BillingPreferences.defaultMonthStartDay,
   }) : _dashboardService = dashboardService ?? DashboardService(),
        _billService = billService ?? BillService(),
        _bookId = bookId,
        _groupId = groupId,
+       _monthStartDay = BillingPreferences.normalizeMonthStartDay(
+         monthStartDay,
+       ),
        super(
          DashboardState(hasBook: bookId != null, currencyCode: currencyCode),
        ) {
-    on<DashboardBookChanged>(_onBookChanged);
-    on<DashboardRefreshed>(_onRefreshed);
+    on<DashboardBookChanged>(_onBookChanged, transformer: restartable());
+    on<DashboardRefreshed>(_onRefreshed, transformer: restartable());
+    on<DashboardMonthStartDayChanged>(
+      _onMonthStartDayChanged,
+      transformer: restartable(),
+    );
   }
 
   static final DateFormat _day = DateFormat('yyyy-MM-dd');
@@ -74,16 +87,36 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
     await _loadAll(emit);
   }
 
+  Future<void> _onMonthStartDayChanged(
+    DashboardMonthStartDayChanged event,
+    Emitter<DashboardState> emit,
+  ) async {
+    final day = BillingPreferences.normalizeMonthStartDay(event.day);
+    if (day == _monthStartDay) return;
+    _monthStartDay = day;
+    if (_bookId == null) return;
+    emit(
+      state.copyWith(
+        assets: const DashboardSection.loading(),
+        monthStats: const DashboardSection.loading(),
+        trends: const DashboardSection.loading(),
+        categories: const DashboardSection.loading(),
+        recentBills: const DashboardSection.loading(),
+      ),
+    );
+    await _loadAll(emit);
+  }
+
   /// 并发拉取全部；各任务捕获自身异常写入对应 section。
   Future<void> _loadAll(Emitter<DashboardState> emit) async {
+    final version = ++_loadVersion;
     final bookId = _bookId;
     if (bookId == null) return;
 
     final now = DateTime.now();
-    final monthStart = DateTime(now.year, now.month);
-    final monthEnd = DateTime(now.year, now.month + 1, 0);
-    final startStr = _day.format(monthStart);
-    final endStr = _day.format(monthEnd);
+    final window = MonthWindowResolver.resolveCurrent(now, _monthStartDay);
+    final startStr = _day.format(window.start);
+    final endStr = _day.format(window.end);
 
     var next = state.copyWith(hasBook: true);
 
@@ -103,15 +136,18 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
         _SectionKey.monthStats,
       ),
       _guard<List<TrendPoint>>(
-        () =>
-            _dashboardService.getExpenseTrends(bookId: bookId, timePoint: now),
+        () => _buildExpenseTrend(
+          bookId: bookId,
+          start: window.start,
+          end: window.end,
+        ),
         _SectionKey.trends,
       ),
       _guard<List<CategorySlice>>(
         () => _dashboardService.getCategoryExpense(
           bookId: bookId,
-          start: monthStart,
-          end: monthEnd,
+          start: window.start,
+          end: window.end,
         ),
         _SectionKey.categories,
       ),
@@ -121,10 +157,48 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
       ),
     ]);
 
+    if (version != _loadVersion) return;
     for (final r in results) {
       next = _apply(next, r);
     }
     emit(next);
+  }
+
+  Future<List<TrendPoint>> _buildExpenseTrend({
+    required int bookId,
+    required DateTime start,
+    required DateTime end,
+  }) async {
+    final daily = <DateTime, double>{};
+    var pageNum = 1;
+    var loaded = 0;
+    while (true) {
+      final page = await _billService.getPage(
+        BillQuery(
+          bookId: bookId,
+          pageNum: pageNum,
+          pageSize: 500,
+          billTypes: [FxBillType.expense.value],
+          tradeTimeStartTime: _day.format(start),
+          tradeTimeEndTime: _day.format(end),
+          include: true,
+        ),
+      );
+      loaded += page.rows.length;
+      for (final bill in page.rows) {
+        final tradeTime = bill.tradeTime;
+        if (tradeTime == null) continue;
+        final day = DateTime(tradeTime.year, tradeTime.month, tradeTime.day);
+        daily[day] = (daily[day] ?? 0) + bill.displayAmount.abs();
+      }
+      if (page.rows.isEmpty || loaded >= page.total) break;
+      pageNum++;
+    }
+    final days = daily.keys.toList()..sort();
+    return [
+      for (final day in days)
+        TrendPoint(name: '${day.month}/${day.day}', value: daily[day] ?? 0),
+    ];
   }
 
   /// 执行单个拉取任务并封装为成功/失败结果，绝不抛出。

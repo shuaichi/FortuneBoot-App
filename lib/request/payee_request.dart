@@ -13,13 +13,13 @@ part 'payee_request.g.dart'; // 代码生成文件
 // 账单API账单相关的增删查改
 @RestApi()
 abstract class PayeeService extends BaseService {
-  factory PayeeService({
-    String? baseUrl,
-  }) {
+  factory PayeeService({String? baseUrl}) {
     Dio dio = DioClient().dio;
-    return _PayeeService(dio,
-        baseUrl: baseUrl ?? dio.options.baseUrl,
-        errorLogger: AccountErrorReport());
+    return _PayeeService(
+      dio,
+      baseUrl: baseUrl ?? dio.options.baseUrl,
+      errorLogger: AccountErrorReport(),
+    );
   }
 
   /// fortune/payee/{bookId}/getEnableList

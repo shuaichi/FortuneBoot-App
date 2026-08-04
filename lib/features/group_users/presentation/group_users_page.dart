@@ -9,7 +9,7 @@ import 'package:fortuneboot/fx/components/fx_button.dart';
 import 'package:fortuneboot/fx/components/fx_card.dart';
 import 'package:fortuneboot/fx/components/fx_sheet.dart';
 import 'package:fortuneboot/fx/components/fx_state_view.dart';
-import 'package:fortuneboot/fx/tokens/fx_colors.dart';
+import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
@@ -87,7 +87,9 @@ class _GroupUsersPageState extends State<GroupUsersPage> {
           ),
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(true),
-            style: TextButton.styleFrom(foregroundColor: FxColors.danger),
+            style: TextButton.styleFrom(
+              foregroundColor: FxPalette.of(ctx).danger,
+            ),
             child: const Text('移除'),
           ),
         ],
@@ -105,7 +107,7 @@ class _GroupUsersPageState extends State<GroupUsersPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: FxColors.canvas,
+      backgroundColor: FxPalette.of(context).canvas,
       body: SafeArea(
         bottom: false,
         child: BlocBuilder<GroupUsersBloc, GroupUsersState>(
@@ -113,7 +115,7 @@ class _GroupUsersPageState extends State<GroupUsersPage> {
             final isOwner = _currentUserIsOwner(state);
             return Column(
               children: [
-                _buildHeader(isOwner),
+                _buildHeader(context, isOwner),
                 Expanded(child: _buildBody(state, isOwner)),
               ],
             );
@@ -123,8 +125,13 @@ class _GroupUsersPageState extends State<GroupUsersPage> {
     );
   }
 
-  Widget _buildHeader(bool isOwner) {
-    final groupName = context.read<SessionCubit>().state.currentGroup?.groupName;
+  Widget _buildHeader(BuildContext context, bool isOwner) {
+    final palette = FxPalette.of(context);
+    final groupName = context
+        .read<SessionCubit>()
+        .state
+        .currentGroup
+        ?.groupName;
     return Padding(
       padding: const EdgeInsets.fromLTRB(
         FxSpacing.sm,
@@ -137,10 +144,13 @@ class _GroupUsersPageState extends State<GroupUsersPage> {
           InkResponse(
             onTap: () => Navigator.of(context).maybePop(),
             radius: 22,
-            child: const Padding(
-              padding: EdgeInsets.all(FxSpacing.xs),
-              child: Icon(Icons.chevron_left_rounded,
-                  size: 26, color: FxColors.textPrimary),
+            child: Padding(
+              padding: const EdgeInsets.all(FxSpacing.xs),
+              child: Icon(
+                Icons.chevron_left_rounded,
+                size: 26,
+                color: palette.textPrimary,
+              ),
             ),
           ),
           Expanded(
@@ -192,19 +202,25 @@ class _GroupUsersPageState extends State<GroupUsersPage> {
             ),
             itemCount: state.users.length,
             itemBuilder: (context, i) =>
-                _userTile(state.users[i], state, isOwner),
+                _userTile(context, state.users[i], state, isOwner),
           ),
         );
     }
   }
 
-  Widget _userTile(GroupUserVo user, GroupUsersState state, bool owner) {
+  Widget _userTile(
+    BuildContext context,
+    GroupUserVo user,
+    GroupUsersState state,
+    bool owner,
+  ) {
+    final palette = FxPalette.of(context);
     return Padding(
       padding: const EdgeInsets.only(bottom: FxSpacing.md),
       child: FxCard(
         child: Row(
           children: [
-            _avatar(user.displayName),
+            _avatar(context, user.displayName),
             const SizedBox(width: FxSpacing.md),
             Expanded(
               child: Column(
@@ -229,15 +245,19 @@ class _GroupUsersPageState extends State<GroupUsersPage> {
               ),
             ),
             if (user.roleTypeDesc != null)
-              _rolePill(user.roleTypeDesc!, _memberIsOwner(user, state)),
+              _rolePill(
+                context,
+                user.roleTypeDesc!,
+                _memberIsOwner(user, state),
+              ),
             // 移除按钮仅 owner 可见，且不允许移除其它 owner。
             if (owner && !_memberIsOwner(user, state)) ...[
               const SizedBox(width: FxSpacing.xs),
               IconButton(
                 onPressed: () => _remove(user),
-                icon: const Icon(
+                icon: Icon(
                   Icons.person_remove_alt_1_rounded,
-                  color: FxColors.danger,
+                  color: palette.danger,
                   size: 20,
                 ),
               ),
@@ -248,10 +268,14 @@ class _GroupUsersPageState extends State<GroupUsersPage> {
     );
   }
 
-  Widget _rolePill(String desc, bool isOwner) {
-    final c = isOwner ? FxColors.primary : FxColors.info;
+  Widget _rolePill(BuildContext context, String desc, bool isOwner) {
+    final palette = FxPalette.of(context);
+    final c = isOwner ? palette.primary : palette.info;
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: FxSpacing.sm, vertical: 3),
+      padding: const EdgeInsets.symmetric(
+        horizontal: FxSpacing.sm,
+        vertical: 3,
+      ),
       decoration: BoxDecoration(
         color: c.withValues(alpha: 0.12),
         borderRadius: FxRadius.pillBorder,
@@ -260,19 +284,20 @@ class _GroupUsersPageState extends State<GroupUsersPage> {
     );
   }
 
-  Widget _avatar(String name) {
+  Widget _avatar(BuildContext context, String name) {
+    final palette = FxPalette.of(context);
     final initial = name.isNotEmpty ? name.characters.first : '?';
     return Container(
       width: 40,
       height: 40,
       alignment: Alignment.center,
-      decoration: const BoxDecoration(
-        color: FxColors.primaryContainer,
+      decoration: BoxDecoration(
+        color: palette.primaryContainer,
         shape: BoxShape.circle,
       ),
       child: Text(
         initial,
-        style: FxTypography.bodyStrong.copyWith(color: FxColors.primary),
+        style: FxTypography.bodyStrong.copyWith(color: palette.primary),
       ),
     );
   }

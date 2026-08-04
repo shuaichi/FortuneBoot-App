@@ -8,7 +8,7 @@ import 'package:fortuneboot/features/recurring/data/template_options_service.dar
 import 'package:fortuneboot/features/shared/data/bill_models.dart';
 import 'package:fortuneboot/fx/components/fx_button.dart';
 import 'package:fortuneboot/fx/components/fx_state_view.dart';
-import 'package:fortuneboot/fx/tokens/fx_colors.dart';
+import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
@@ -80,14 +80,15 @@ class _RecurringEditorPageState extends State<RecurringEditorPage> {
     _cronCtrl = TextEditingController(text: r?.cronExpression ?? '');
     _startCtrl = TextEditingController(text: r?.startDate ?? '');
     _endCtrl = TextEditingController(text: r?.endDate ?? '');
-    _maxCtrl =
-        TextEditingController(text: r?.maxExecutions == null ? '' : '${r!.maxExecutions}');
+    _maxCtrl = TextEditingController(
+      text: r?.maxExecutions == null ? '' : '${r!.maxExecutions}',
+    );
     _remarkCtrl = TextEditingController(text: r?.remark ?? '');
     _enable = r?.enable ?? true;
     _recoveryStrategy = r?.recoveryStrategy;
 
-    _billType = FxBillType.fromValue(FxApi.asId(tpl['billType'])) ??
-        FxBillType.expense;
+    _billType =
+        FxBillType.fromValue(FxApi.asId(tpl['billType'])) ?? FxBillType.expense;
     _amountCtrl = TextEditingController(text: _initialAmount(tpl));
     _titleCtrl = TextEditingController(text: tpl['title']?.toString() ?? '');
     _accountId = FxApi.asId(tpl['accountId']);
@@ -139,8 +140,9 @@ class _RecurringEditorPageState extends State<RecurringEditorPage> {
         setState(() {
           _strategies = results[0] as List<RecoveryStrategyOption>;
           _options = results[1] as TemplateOptions;
-          _recoveryStrategy ??=
-              _strategies.isNotEmpty ? _strategies.first.value : null;
+          _recoveryStrategy ??= _strategies.isNotEmpty
+              ? _strategies.first.value
+              : null;
           _loadingOptions = false;
         });
       }
@@ -199,10 +201,9 @@ class _RecurringEditorPageState extends State<RecurringEditorPage> {
     });
   }
 
-  List<SimpleOption> get _currentCategories =>
-      _billType == FxBillType.income
-          ? _options.incomeCategories
-          : _options.expenseCategories;
+  List<SimpleOption> get _currentCategories => _billType == FxBillType.income
+      ? _options.incomeCategories
+      : _options.expenseCategories;
 
   /// 构造 FortuneBillAddCommand 对象作为 billRequest。
   Map<String, dynamic> _buildBillRequest() {
@@ -213,10 +214,7 @@ class _RecurringEditorPageState extends State<RecurringEditorPage> {
       if (_titleCtrl.text.trim().isNotEmpty) 'title': _titleCtrl.text.trim(),
       if (_accountId != null) 'accountId': _accountId,
       'categoryAmountPair': [
-        {
-          if (_categoryId != null) 'categoryId': _categoryId,
-          'amount': amount,
-        },
+        {if (_categoryId != null) 'categoryId': _categoryId, 'amount': amount},
       ],
       if (_tagIds.isNotEmpty) 'tagIds': _tagIds.toList(),
     };
@@ -288,20 +286,21 @@ class _RecurringEditorPageState extends State<RecurringEditorPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: FxColors.canvas,
+      backgroundColor: FxPalette.of(context).canvas,
       body: SafeArea(
         bottom: false,
         child: Column(
           children: [
-            _buildHeader(),
-            Expanded(child: _buildBody()),
+            _buildHeader(context),
+            Expanded(child: _buildBody(context)),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(BuildContext context) {
+    final palette = FxPalette.of(context);
     return Padding(
       padding: const EdgeInsets.fromLTRB(
         FxSpacing.sm,
@@ -314,10 +313,13 @@ class _RecurringEditorPageState extends State<RecurringEditorPage> {
           InkResponse(
             onTap: () => Navigator.of(context).maybePop(),
             radius: 22,
-            child: const Padding(
-              padding: EdgeInsets.all(FxSpacing.xs),
-              child: Icon(Icons.chevron_left_rounded,
-                  size: 26, color: FxColors.textPrimary),
+            child: Padding(
+              padding: const EdgeInsets.all(FxSpacing.xs),
+              child: Icon(
+                Icons.chevron_left_rounded,
+                size: 26,
+                color: palette.textPrimary,
+              ),
             ),
           ),
           Expanded(
@@ -331,7 +333,8 @@ class _RecurringEditorPageState extends State<RecurringEditorPage> {
     );
   }
 
-  Widget _buildBody() {
+  Widget _buildBody(BuildContext context) {
+    final palette = FxPalette.of(context);
     if (_loadingOptions) return FxStateView.loading();
     if (_optionsError != null) {
       return FxStateView.error(message: _optionsError, onRetry: _loadOptions);
@@ -348,17 +351,18 @@ class _RecurringEditorPageState extends State<RecurringEditorPage> {
         children: [
           _sectionTitle('规则设置'),
           _label('规则名称'),
-          TextField(controller: _nameCtrl, decoration: _dec('如：每月房租')),
+          TextField(controller: _nameCtrl, decoration: _dec(context, '如：每月房租')),
           const SizedBox(height: FxSpacing.md),
           _label('cron 表达式'),
           TextField(
             controller: _cronCtrl,
-            decoration: _dec('如：0 0 1 * * ?').copyWith(
-              suffixIcon: _cronSuffix(),
-            ),
+            decoration: _dec(
+              context,
+              '如：0 0 1 * * ?',
+            ).copyWith(suffixIcon: _cronSuffix(context)),
             onChanged: _onCronChanged,
           ),
-          _cronHint(),
+          _cronHint(context),
           const SizedBox(height: FxSpacing.md),
           Row(
             children: [
@@ -369,7 +373,7 @@ class _RecurringEditorPageState extends State<RecurringEditorPage> {
                     _label('开始日期（可选）'),
                     TextField(
                       controller: _startCtrl,
-                      decoration: _dec('yyyy-MM-dd'),
+                      decoration: _dec(context, 'yyyy-MM-dd'),
                     ),
                   ],
                 ),
@@ -382,7 +386,7 @@ class _RecurringEditorPageState extends State<RecurringEditorPage> {
                     _label('结束日期（可选）'),
                     TextField(
                       controller: _endCtrl,
-                      decoration: _dec('yyyy-MM-dd'),
+                      decoration: _dec(context, 'yyyy-MM-dd'),
                     ),
                   ],
                 ),
@@ -394,12 +398,12 @@ class _RecurringEditorPageState extends State<RecurringEditorPage> {
           TextField(
             controller: _maxCtrl,
             keyboardType: TextInputType.number,
-            decoration: _dec('留空为不限'),
+            decoration: _dec(context, '留空为不限'),
           ),
           if (_strategies.isNotEmpty) ...[
             const SizedBox(height: FxSpacing.md),
             _label('补偿策略'),
-            _strategyPicker(),
+            _strategyPicker(context),
           ],
           const SizedBox(height: FxSpacing.md),
           Row(
@@ -407,7 +411,7 @@ class _RecurringEditorPageState extends State<RecurringEditorPage> {
               const Expanded(child: Text('启用', style: FxTypography.body)),
               Switch.adaptive(
                 value: _enable,
-                activeColor: FxColors.primary,
+                activeColor: palette.primary,
                 onChanged: (v) => setState(() => _enable = v),
               ),
             ],
@@ -415,21 +419,21 @@ class _RecurringEditorPageState extends State<RecurringEditorPage> {
           const SizedBox(height: FxSpacing.lg),
           _sectionTitle('账单模板'),
           _label('类型'),
-          _typeSelector(),
+          _typeSelector(context),
           const SizedBox(height: FxSpacing.md),
           _label('标题（可选）'),
-          TextField(controller: _titleCtrl, decoration: _dec('账单标题')),
+          TextField(controller: _titleCtrl, decoration: _dec(context, '账单标题')),
           const SizedBox(height: FxSpacing.md),
           _label('金额'),
           TextField(
             controller: _amountCtrl,
-            keyboardType:
-                const TextInputType.numberWithOptions(decimal: true),
-            decoration: _dec('0.00'),
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            decoration: _dec(context, '0.00'),
           ),
           const SizedBox(height: FxSpacing.md),
           _label('分类'),
           _optionChips(
+            context,
             _currentCategories,
             _categoryId,
             (id) => setState(() => _categoryId = _categoryId == id ? null : id),
@@ -437,6 +441,7 @@ class _RecurringEditorPageState extends State<RecurringEditorPage> {
           const SizedBox(height: FxSpacing.md),
           _label('账户'),
           _optionChips(
+            context,
             _options.accounts,
             _accountId,
             (id) => setState(() => _accountId = _accountId == id ? null : id),
@@ -444,12 +449,14 @@ class _RecurringEditorPageState extends State<RecurringEditorPage> {
           if (_options.tags.isNotEmpty) ...[
             const SizedBox(height: FxSpacing.md),
             _label('标签（可多选，可选）'),
-            _tagChips(),
+            _tagChips(context),
           ],
           if (_error != null) ...[
             const SizedBox(height: FxSpacing.md),
-            Text(_error!,
-                style: FxTypography.caption.copyWith(color: FxColors.danger)),
+            Text(
+              _error!,
+              style: FxTypography.caption.copyWith(color: palette.danger),
+            ),
           ],
           const SizedBox(height: FxSpacing.xl),
           FxButton(
@@ -463,7 +470,7 @@ class _RecurringEditorPageState extends State<RecurringEditorPage> {
     );
   }
 
-  Widget? _cronSuffix() {
+  Widget? _cronSuffix(BuildContext context) {
     if (_cronChecking) {
       return const Padding(
         padding: EdgeInsets.all(12),
@@ -475,21 +482,26 @@ class _RecurringEditorPageState extends State<RecurringEditorPage> {
       );
     }
     if (_cronValid == true) {
-      return const Icon(Icons.check_circle_rounded, color: FxColors.success);
+      return Icon(
+        Icons.check_circle_rounded,
+        color: FxPalette.of(context).success,
+      );
     }
     if (_cronValid == false) {
-      return const Icon(Icons.error_rounded, color: FxColors.danger);
+      return Icon(Icons.error_rounded, color: FxPalette.of(context).danger);
     }
     return null;
   }
 
-  Widget _cronHint() {
+  Widget _cronHint(BuildContext context) {
     if (_cronValid == false) {
       return Padding(
         padding: const EdgeInsets.only(top: FxSpacing.xs),
         child: Text(
           'cron 表达式无效',
-          style: FxTypography.caption.copyWith(color: FxColors.danger),
+          style: FxTypography.caption.copyWith(
+            color: FxPalette.of(context).danger,
+          ),
         ),
       );
     }
@@ -498,20 +510,23 @@ class _RecurringEditorPageState extends State<RecurringEditorPage> {
         padding: const EdgeInsets.only(top: FxSpacing.xs),
         child: Text(
           'cron 表达式有效',
-          style: FxTypography.caption.copyWith(color: FxColors.success),
+          style: FxTypography.caption.copyWith(
+            color: FxPalette.of(context).success,
+          ),
         ),
       );
     }
     return const SizedBox.shrink();
   }
 
-  Widget _strategyPicker() {
+  Widget _strategyPicker(BuildContext context) {
     return Wrap(
       spacing: FxSpacing.sm,
       runSpacing: FxSpacing.sm,
       children: _strategies.map((s) {
         final selected = s.value == _recoveryStrategy;
         return _chip(
+          context,
           s.label,
           selected,
           () => setState(() => _recoveryStrategy = s.value),
@@ -520,13 +535,13 @@ class _RecurringEditorPageState extends State<RecurringEditorPage> {
     );
   }
 
-  Widget _typeSelector() {
+  Widget _typeSelector(BuildContext context) {
     return Wrap(
       spacing: FxSpacing.sm,
       runSpacing: FxSpacing.sm,
       children: FxBillType.selectable.map((t) {
         final selected = t == _billType;
-        return _chip(t.label, selected, () {
+        return _chip(context, t.label, selected, () {
           setState(() {
             _billType = t;
             _categoryId = null; // 类型变化清空分类。
@@ -537,6 +552,7 @@ class _RecurringEditorPageState extends State<RecurringEditorPage> {
   }
 
   Widget _optionChips(
+    BuildContext context,
     List<SimpleOption> items,
     int? selectedId,
     ValueChanged<int> onTap,
@@ -549,42 +565,40 @@ class _RecurringEditorPageState extends State<RecurringEditorPage> {
       runSpacing: FxSpacing.sm,
       children: items.map((o) {
         final selected = o.id == selectedId;
-        return _chip(
-          o.name,
-          selected,
-          () {
-            if (o.id != null) onTap(o.id!);
-          },
-        );
+        return _chip(context, o.name, selected, () {
+          if (o.id != null) onTap(o.id!);
+        });
       }).toList(),
     );
   }
 
-  Widget _tagChips() {
+  Widget _tagChips(BuildContext context) {
     return Wrap(
       spacing: FxSpacing.sm,
       runSpacing: FxSpacing.sm,
       children: _options.tags.map((o) {
         final selected = o.id != null && _tagIds.contains(o.id);
-        return _chip(
-          o.name,
-          selected,
-          () {
-            if (o.id == null) return;
-            setState(() {
-              if (_tagIds.contains(o.id)) {
-                _tagIds.remove(o.id);
-              } else {
-                _tagIds.add(o.id!);
-              }
-            });
-          },
-        );
+        return _chip(context, o.name, selected, () {
+          if (o.id == null) return;
+          setState(() {
+            if (_tagIds.contains(o.id)) {
+              _tagIds.remove(o.id);
+            } else {
+              _tagIds.add(o.id!);
+            }
+          });
+        });
       }).toList(),
     );
   }
 
-  Widget _chip(String label, bool selected, VoidCallback onTap) {
+  Widget _chip(
+    BuildContext context,
+    String label,
+    bool selected,
+    VoidCallback onTap,
+  ) {
+    final palette = FxPalette.of(context);
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -593,16 +607,16 @@ class _RecurringEditorPageState extends State<RecurringEditorPage> {
           vertical: FxSpacing.sm,
         ),
         decoration: BoxDecoration(
-          color: selected ? FxColors.primaryContainer : FxColors.surfaceMuted,
+          color: selected ? palette.primaryContainer : palette.surfaceMuted,
           borderRadius: FxRadius.pillBorder,
           border: Border.all(
-            color: selected ? FxColors.primary : FxColors.border,
+            color: selected ? palette.primary : palette.border,
           ),
         ),
         child: Text(
           label,
           style: FxTypography.label.copyWith(
-            color: selected ? FxColors.primary : FxColors.textSecondary,
+            color: selected ? palette.primary : palette.textSecondary,
             fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
           ),
         ),
@@ -611,27 +625,27 @@ class _RecurringEditorPageState extends State<RecurringEditorPage> {
   }
 
   Widget _sectionTitle(String text) => Padding(
-        padding: const EdgeInsets.only(bottom: FxSpacing.sm),
-        child: Text(text, style: FxTypography.bodyStrong),
-      );
+    padding: const EdgeInsets.only(bottom: FxSpacing.sm),
+    child: Text(text, style: FxTypography.bodyStrong),
+  );
 
   Widget _label(String text) => Padding(
-        padding: const EdgeInsets.only(bottom: FxSpacing.xs),
-        child: Text(text, style: FxTypography.label),
-      );
+    padding: const EdgeInsets.only(bottom: FxSpacing.xs),
+    child: Text(text, style: FxTypography.label),
+  );
 
-  InputDecoration _dec(String hint) => InputDecoration(
-        hintText: hint,
-        filled: true,
-        fillColor: FxColors.surfaceMuted,
-        isDense: true,
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: FxSpacing.md,
-          vertical: FxSpacing.md,
-        ),
-        border: OutlineInputBorder(
-          borderRadius: FxRadius.tileBorder,
-          borderSide: BorderSide.none,
-        ),
-      );
+  InputDecoration _dec(BuildContext context, String hint) => InputDecoration(
+    hintText: hint,
+    filled: true,
+    fillColor: FxPalette.of(context).surfaceMuted,
+    isDense: true,
+    contentPadding: const EdgeInsets.symmetric(
+      horizontal: FxSpacing.md,
+      vertical: FxSpacing.md,
+    ),
+    border: OutlineInputBorder(
+      borderRadius: FxRadius.tileBorder,
+      borderSide: BorderSide.none,
+    ),
+  );
 }

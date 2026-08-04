@@ -10,13 +10,13 @@ part 'login_request.g.dart'; // 代码生成文件
 // flutter pub run build_runner build
 @RestApi()
 abstract class LoginService {
-  factory LoginService({
-    String? baseUrl,
-  }) {
+  factory LoginService({String? baseUrl}) {
     final Dio dio = DioClient().dio;
-    return _LoginService(dio,
-        baseUrl: baseUrl ?? dio.options.baseUrl,
-        errorLogger: LoginErrorReport());
+    return _LoginService(
+      dio,
+      baseUrl: baseUrl ?? dio.options.baseUrl,
+      errorLogger: LoginErrorReport(),
+    );
   }
 
   @POST('/{userName}/checkRepeat')
@@ -52,10 +52,9 @@ class LoginErrorReport extends ParseErrorLogger {
   void logError(
     Object error,
     StackTrace stackTrace,
-    RequestOptions options,
-    {
-      Response? response,
-    }) {
+    RequestOptions options, {
+    Response? response,
+  }) {
     debugPrint('LoginErrorReport: $error $stackTrace $options');
   }
 }

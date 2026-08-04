@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fortuneboot/fx/components/fx_segmented.dart';
-import 'package:fortuneboot/fx/tokens/fx_colors.dart';
+import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
@@ -77,8 +77,9 @@ class _ManageScaffoldState extends State<ManageScaffold> {
 
   @override
   Widget build(BuildContext context) {
+    final palette = FxPalette.of(context);
     return Scaffold(
-      backgroundColor: FxColors.canvas,
+      backgroundColor: palette.canvas,
       body: SafeArea(
         bottom: false,
         child: Column(
@@ -137,6 +138,7 @@ class _ManageScaffoldState extends State<ManageScaffold> {
   }
 
   Widget _buildSearchField() {
+    final palette = FxPalette.of(context);
     return Padding(
       padding: const EdgeInsets.fromLTRB(
         FxSpacing.lg,
@@ -152,7 +154,7 @@ class _ManageScaffoldState extends State<ManageScaffold> {
           hintText: widget.searchHint,
           prefixIcon: const Icon(Icons.search_rounded, size: 20),
           filled: true,
-          fillColor: FxColors.surfaceMuted,
+          fillColor: palette.surfaceMuted,
           isDense: true,
           contentPadding: const EdgeInsets.symmetric(
             horizontal: FxSpacing.md,
@@ -168,12 +170,13 @@ class _ManageScaffoldState extends State<ManageScaffold> {
   }
 
   Widget _iconButton(IconData icon, VoidCallback onTap) {
+    final palette = FxPalette.of(context);
     return InkResponse(
       onTap: onTap,
       radius: 22,
       child: Padding(
         padding: const EdgeInsets.all(FxSpacing.xs),
-        child: Icon(icon, size: 26, color: FxColors.textPrimary),
+        child: Icon(icon, size: 26, color: palette.textPrimary),
       ),
     );
   }

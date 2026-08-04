@@ -10,7 +10,6 @@ import 'package:fortuneboot/fx/components/fx_button.dart';
 import 'package:fortuneboot/fx/components/fx_money_text.dart';
 import 'package:fortuneboot/fx/components/fx_tag_chip.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
-import 'package:fortuneboot/fx/tokens/fx_colors.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
@@ -54,18 +53,18 @@ class _BillDetailSheetState extends State<BillDetailSheet> {
   }
 
   BillIconInput get _iconInput => BillIconInput(
-        billType: _bill.billType,
-        title: _bill.title,
-        payeeName: _bill.payeeName,
-        remark: _bill.remark,
-        accountName: _bill.accountName,
-        categoryNames: _bill.categoryNamesByAmount,
-        tagNames: _bill.tagList
-            .map((t) => t.tagName ?? '')
-            .where((s) => s.isNotEmpty)
-            .toList(),
-        toAccountId: _bill.toAccountId,
-      );
+    billType: _bill.billType,
+    title: _bill.title,
+    payeeName: _bill.payeeName,
+    remark: _bill.remark,
+    accountName: _bill.accountName,
+    categoryNames: _bill.categoryNamesByAmount,
+    tagNames: _bill.tagList
+        .map((t) => t.tagName ?? '')
+        .where((s) => s.isNotEmpty)
+        .toList(),
+    toAccountId: _bill.toAccountId,
+  );
 
   bool get _isTransfer => _bill.billType == FxBillType.transfer.value;
 
@@ -79,6 +78,7 @@ class _BillDetailSheetState extends State<BillDetailSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final palette = FxPalette.of(context);
     return SingleChildScrollView(
       padding: const EdgeInsets.only(
         left: FxSpacing.lg,
@@ -90,7 +90,7 @@ class _BillDetailSheetState extends State<BillDetailSheet> {
         children: [
           _header(context),
           const SizedBox(height: FxSpacing.lg),
-          const Divider(height: 1, color: FxColors.border),
+          Divider(height: 1, color: palette.border),
           const SizedBox(height: FxSpacing.md),
           ..._infoRows(context),
           const SizedBox(height: FxSpacing.lg),
@@ -109,7 +109,8 @@ class _BillDetailSheetState extends State<BillDetailSheet> {
     if (_bill.tradeTime != null) {
       catLine.add(BillDetailSheet._dateTimeFormat.format(_bill.tradeTime!));
     }
-    if (!_isTransfer && _bill.accountName != null &&
+    if (!_isTransfer &&
+        _bill.accountName != null &&
         _bill.accountName!.isNotEmpty) {
       catLine.add(_bill.accountName!);
     }
@@ -152,15 +153,17 @@ class _BillDetailSheetState extends State<BillDetailSheet> {
     if (_bill.categoryAmountPair.length > 1) {
       rows.add(_sectionLabel('分类明细'));
       for (final c in _bill.categoryAmountPair) {
-        rows.add(_kv(
-          c.categoryName ?? '未分类',
-          trailing: FxMoneyText(
-            amount: c.amount,
-            currencyCode: _bill.currencyCode,
-            billType: _bill.billType,
-            fontSize: 14,
+        rows.add(
+          _kv(
+            c.categoryName ?? '未分类',
+            trailing: FxMoneyText(
+              amount: c.amount,
+              currencyCode: _bill.currencyCode,
+              billType: _bill.billType,
+              fontSize: 14,
+            ),
           ),
-        ));
+        );
       }
     }
 
@@ -169,14 +172,16 @@ class _BillDetailSheetState extends State<BillDetailSheet> {
       rows.add(_kv('转出账户', value: _bill.accountName ?? '-'));
       rows.add(_kv('转入账户', value: _bill.toAccountName ?? '-'));
       if (_bill.convertedAmount != null) {
-        rows.add(_kv(
-          '到账金额',
-          trailing: FxMoneyText(
-            amount: _bill.convertedAmount!,
-            currencyCode: _bill.toCurrencyCode ?? _bill.currencyCode,
-            fontSize: 14,
+        rows.add(
+          _kv(
+            '到账金额',
+            trailing: FxMoneyText(
+              amount: _bill.convertedAmount!,
+              currencyCode: _bill.toCurrencyCode ?? _bill.currencyCode,
+              fontSize: 14,
+            ),
           ),
-        ));
+        );
       }
     }
 
@@ -189,15 +194,17 @@ class _BillDetailSheetState extends State<BillDetailSheet> {
         .where((s) => s.isNotEmpty)
         .toList();
     if (tags.isNotEmpty) {
-      rows.add(_kvWidget(
-        '标签',
-        Wrap(
-          alignment: WrapAlignment.end,
-          spacing: FxSpacing.xs,
-          runSpacing: FxSpacing.xs,
-          children: tags.map((t) => FxTagChip(label: t)).toList(),
+      rows.add(
+        _kvWidget(
+          '标签',
+          Wrap(
+            alignment: WrapAlignment.end,
+            spacing: FxSpacing.xs,
+            runSpacing: FxSpacing.xs,
+            children: tags.map((t) => FxTagChip(label: t)).toList(),
+          ),
         ),
-      ));
+      );
     }
 
     final members = _bill.memberList
@@ -212,14 +219,16 @@ class _BillDetailSheetState extends State<BillDetailSheet> {
     if (_bill.extras.isNotEmpty) {
       rows.add(_sectionLabel('附加费用'));
       for (final e in _bill.extras) {
-        rows.add(_kv(
-          _extraLabel(e),
-          trailing: FxMoneyText(
-            amount: e.amount,
-            currencyCode: _bill.currencyCode,
-            fontSize: 14,
+        rows.add(
+          _kv(
+            _extraLabel(e),
+            trailing: FxMoneyText(
+              amount: e.amount,
+              currencyCode: _bill.currencyCode,
+              fontSize: 14,
+            ),
           ),
-        ));
+        );
       }
     }
 
@@ -250,9 +259,9 @@ class _BillDetailSheetState extends State<BillDetailSheet> {
   }
 
   Widget _sectionLabel(String text) => Padding(
-        padding: const EdgeInsets.only(top: FxSpacing.sm, bottom: FxSpacing.xs),
-        child: Text(text, style: FxTypography.label),
-      );
+    padding: const EdgeInsets.only(top: FxSpacing.sm, bottom: FxSpacing.xs),
+    child: Text(text, style: FxTypography.label),
+  );
 
   Widget _kv(String key, {String? value, Widget? trailing}) {
     return _kvWidget(
@@ -272,12 +281,11 @@ class _BillDetailSheetState extends State<BillDetailSheet> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(
-            width: 72,
-            child: Text(key, style: FxTypography.label),
-          ),
+          SizedBox(width: 72, child: Text(key, style: FxTypography.label)),
           const SizedBox(width: FxSpacing.md),
-          Expanded(child: Align(alignment: Alignment.centerRight, child: trailing)),
+          Expanded(
+            child: Align(alignment: Alignment.centerRight, child: trailing),
+          ),
         ],
       ),
     );
@@ -304,13 +312,14 @@ class _BillDetailSheetState extends State<BillDetailSheet> {
         return Wrap(
           spacing: FxSpacing.sm,
           runSpacing: FxSpacing.sm,
-          children: files.map(_fileThumb).toList(),
+          children: files.map((f) => _fileThumb(context, f)).toList(),
         );
       },
     );
   }
 
-  Widget _fileThumb(BillFileVo file) {
+  Widget _fileThumb(BuildContext context, BillFileVo file) {
+    final palette = FxPalette.of(context);
     final bytes = _decode(file.fileData);
     final isImage = (file.contentType ?? '').startsWith('image/');
     if (isImage && bytes != null) {
@@ -318,12 +327,7 @@ class _BillDetailSheetState extends State<BillDetailSheet> {
         onTap: () => _previewImage(bytes, file.originalName),
         child: ClipRRect(
           borderRadius: FxRadius.tileBorder,
-          child: Image.memory(
-            bytes,
-            width: 72,
-            height: 72,
-            fit: BoxFit.cover,
-          ),
+          child: Image.memory(bytes, width: 72, height: 72, fit: BoxFit.cover),
         ),
       );
     }
@@ -331,14 +335,11 @@ class _BillDetailSheetState extends State<BillDetailSheet> {
       width: 72,
       height: 72,
       decoration: BoxDecoration(
-        color: FxColors.surfaceMuted,
+        color: palette.surfaceMuted,
         borderRadius: FxRadius.tileBorder,
       ),
       alignment: Alignment.center,
-      child: const Icon(
-        Icons.insert_drive_file_rounded,
-        color: FxColors.textTertiary,
-      ),
+      child: Icon(Icons.insert_drive_file_rounded, color: palette.textTertiary),
     );
   }
 

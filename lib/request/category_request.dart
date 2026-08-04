@@ -13,13 +13,13 @@ part 'category_request.g.dart'; // 代码生成文件
 // 账户API
 @RestApi()
 abstract class CategoryService extends BaseService {
-  factory CategoryService({
-    String? baseUrl,
-  }) {
+  factory CategoryService({String? baseUrl}) {
     Dio dio = DioClient().dio;
-    return _CategoryService(dio,
-        baseUrl: baseUrl ?? dio.options.baseUrl,
-        errorLogger: AccountErrorReport());
+    return _CategoryService(
+      dio,
+      baseUrl: baseUrl ?? dio.options.baseUrl,
+      errorLogger: AccountErrorReport(),
+    );
   }
 
   @GET('/fortune/category/{bookId}/getEnableList')

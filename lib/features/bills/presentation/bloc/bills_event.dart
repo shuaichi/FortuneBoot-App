@@ -27,13 +27,22 @@ final class BillsNextPageRequested extends BillsEvent {
   const BillsNextPageRequested();
 }
 
-/// 切换到上一月 / 下一月（delta = -1 / +1）。
+/// 切换到上一账期 / 下一账期（delta = -1 / +1）。
 final class BillsMonthChanged extends BillsEvent {
   final int delta;
   const BillsMonthChanged(this.delta);
 
   @override
   List<Object?> get props => [delta];
+}
+
+/// 账单月开始日变更。
+final class BillsMonthStartDayChanged extends BillsEvent {
+  final int day;
+  const BillsMonthStartDayChanged(this.day);
+
+  @override
+  List<Object?> get props => [day];
 }
 
 /// 应用筛选条件。

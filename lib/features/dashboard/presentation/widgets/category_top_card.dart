@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fortuneboot/core/preferences/preferences_cubit.dart';
 import 'package:fortuneboot/features/dashboard/data/dashboard_models.dart';
 import 'package:fortuneboot/features/dashboard/presentation/bloc/dashboard_bloc.dart';
 import 'package:fortuneboot/features/dashboard/presentation/widgets/dashboard_card_shell.dart';
 import 'package:fortuneboot/fx/components/fx_card.dart';
 import 'package:fortuneboot/fx/components/fx_money_text.dart';
 import 'package:fortuneboot/fx/components/fx_progress_bar.dart';
-import 'package:fortuneboot/fx/tokens/fx_colors.dart';
+import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
 
@@ -23,15 +25,21 @@ class CategoryTopCard extends StatelessWidget {
     required this.onRetry,
   });
 
-  /// 一组循环使用的分类色。
-  static const List<Color> _palette = [
-    FxColors.primary,
-    FxColors.transfer,
-    FxColors.adjust,
-  ];
-
   @override
   Widget build(BuildContext context) {
+    final palette = FxPalette.of(context);
+    final finance = FxFinanceColors.of(context);
+    final hideAmounts = context
+        .watch<PreferencesCubit>()
+        .state
+        .dashboard
+        .hideAmounts;
+    // 一组循环使用的分类色。
+    final sliceColors = <Color>[
+      palette.primary,
+      finance.transfer,
+      finance.adjust,
+    ];
     return DashboardCardShell<List<CategorySlice>>(
       section: section,
       onRetry: onRetry,
@@ -46,7 +54,13 @@ class CategoryTopCard extends StatelessWidget {
             const FxCardLabel('本月支出分类 Top3'),
             const SizedBox(height: FxSpacing.md),
             for (var i = 0; i < slices.length; i++) ...[
-              _row(slices[i], _palette[i % _palette.length], maxValue),
+              _row(
+                slices[i],
+                sliceColors[i % sliceColors.length],
+                maxValue,
+                palette,
+                hideAmounts,
+              ),
               if (i != slices.length - 1) const SizedBox(height: FxSpacing.md),
             ],
           ],
@@ -55,7 +69,13 @@ class CategoryTopCard extends StatelessWidget {
     );
   }
 
-  Widget _row(CategorySlice slice, Color color, double maxValue) {
+  Widget _row(
+    CategorySlice slice,
+    Color color,
+    double maxValue,
+    FxPalette palette,
+    bool hideAmounts,
+  ) {
     // 优先用后端 percent(0-100),否则用相对最大值的占比。
     final ratio = slice.percent > 0
         ? (slice.percent / 100).clamp(0.0, 1.0)
@@ -76,7 +96,8 @@ class CategoryTopCard extends StatelessWidget {
               amount: slice.value,
               currencyCode: currencyCode,
               fontSize: 14,
-              color: FxColors.textPrimary,
+              color: palette.textPrimary,
+              masked: hideAmounts,
             ),
           ],
         ),

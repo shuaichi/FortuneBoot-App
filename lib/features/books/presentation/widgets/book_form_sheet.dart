@@ -3,7 +3,7 @@ import 'package:fortuneboot/core/network/fx_api.dart';
 import 'package:fortuneboot/core/session/session_models.dart';
 import 'package:fortuneboot/features/books/data/books_service.dart';
 import 'package:fortuneboot/fx/components/fx_button.dart';
-import 'package:fortuneboot/fx/tokens/fx_colors.dart';
+import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
@@ -47,7 +47,9 @@ class _BookFormSheetState extends State<BookFormSheet> {
     super.initState();
     final b = widget.book;
     _nameCtrl = TextEditingController(text: b?.bookName ?? '');
-    _sortCtrl = TextEditingController(text: b?.sort == null ? '' : '${b!.sort}');
+    _sortCtrl = TextEditingController(
+      text: b?.sort == null ? '' : '${b!.sort}',
+    );
     _remarkCtrl = TextEditingController(text: b?.remark ?? '');
     _currency = b?.defaultCurrency ?? widget.defaultCurrency;
     _enable = b?.enable ?? true;
@@ -64,7 +66,9 @@ class _BookFormSheetState extends State<BookFormSheet> {
         setState(() {
           _currencies = results[0];
           if (!widget.isEdit && results.length > 1) _templates = results[1];
-          _currency ??= _currencies.isNotEmpty ? _currencies.first.value : 'CNY';
+          _currency ??= _currencies.isNotEmpty
+              ? _currencies.first.value
+              : 'CNY';
         });
       }
     } on Object {
@@ -154,9 +158,8 @@ class _BookFormSheetState extends State<BookFormSheet> {
             _chips(
               _templates,
               _bookTemplate,
-              (v) => setState(
-                () => _bookTemplate = _bookTemplate == v ? null : v,
-              ),
+              (v) =>
+                  setState(() => _bookTemplate = _bookTemplate == v ? null : v),
             ),
           ],
           const SizedBox(height: FxSpacing.md),
@@ -172,7 +175,7 @@ class _BookFormSheetState extends State<BookFormSheet> {
               const Expanded(child: Text('启用', style: FxTypography.body)),
               Switch.adaptive(
                 value: _enable,
-                activeColor: FxColors.primary,
+                activeColor: FxPalette.of(context).primary,
                 onChanged: (v) => setState(() => _enable = v),
               ),
             ],
@@ -182,8 +185,12 @@ class _BookFormSheetState extends State<BookFormSheet> {
           TextField(controller: _remarkCtrl, decoration: _dec('备注')),
           if (_error != null) ...[
             const SizedBox(height: FxSpacing.sm),
-            Text(_error!,
-                style: FxTypography.caption.copyWith(color: FxColors.danger)),
+            Text(
+              _error!,
+              style: FxTypography.caption.copyWith(
+                color: FxPalette.of(context).danger,
+              ),
+            ),
           ],
           const SizedBox(height: FxSpacing.xl),
           FxButton(
@@ -204,6 +211,7 @@ class _BookFormSheetState extends State<BookFormSheet> {
     String? emptyCtrlText,
     ValueChanged<String>? onFreeText,
   }) {
+    final palette = FxPalette.of(context);
     if (items.isEmpty && onFreeText != null) {
       return TextField(
         controller: TextEditingController(text: emptyCtrlText),
@@ -224,14 +232,14 @@ class _BookFormSheetState extends State<BookFormSheet> {
               vertical: FxSpacing.sm,
             ),
             decoration: BoxDecoration(
-              color: on ? FxColors.primaryContainer : FxColors.surfaceMuted,
+              color: on ? palette.primaryContainer : palette.surfaceMuted,
               borderRadius: FxRadius.pillBorder,
-              border: Border.all(color: on ? FxColors.primary : FxColors.border),
+              border: Border.all(color: on ? palette.primary : palette.border),
             ),
             child: Text(
               c.label,
               style: FxTypography.label.copyWith(
-                color: on ? FxColors.primary : FxColors.textSecondary,
+                color: on ? palette.primary : palette.textSecondary,
                 fontWeight: on ? FontWeight.w600 : FontWeight.w500,
               ),
             ),
@@ -242,22 +250,22 @@ class _BookFormSheetState extends State<BookFormSheet> {
   }
 
   Widget _label(String text) => Padding(
-        padding: const EdgeInsets.only(bottom: FxSpacing.xs),
-        child: Text(text, style: FxTypography.label),
-      );
+    padding: const EdgeInsets.only(bottom: FxSpacing.xs),
+    child: Text(text, style: FxTypography.label),
+  );
 
   InputDecoration _dec(String hint) => InputDecoration(
-        hintText: hint,
-        filled: true,
-        fillColor: FxColors.surfaceMuted,
-        isDense: true,
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: FxSpacing.md,
-          vertical: FxSpacing.md,
-        ),
-        border: OutlineInputBorder(
-          borderRadius: FxRadius.tileBorder,
-          borderSide: BorderSide.none,
-        ),
-      );
+    hintText: hint,
+    filled: true,
+    fillColor: FxPalette.of(context).surfaceMuted,
+    isDense: true,
+    contentPadding: const EdgeInsets.symmetric(
+      horizontal: FxSpacing.md,
+      vertical: FxSpacing.md,
+    ),
+    border: OutlineInputBorder(
+      borderRadius: FxRadius.tileBorder,
+      borderSide: BorderSide.none,
+    ),
+  );
 }

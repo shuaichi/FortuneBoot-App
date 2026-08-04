@@ -91,10 +91,9 @@ class _BaseUrlConfigPageState extends State<BaseUrlConfigPage> {
         return;
       }
       if (!mounted) return;
-      Navigator.of(context).pushNamedAndRemoveUntil(
-        Routes.main,
-        (route) => false,
-      );
+      Navigator.of(
+        context,
+      ).pushNamedAndRemoveUntil(Routes.main, (route) => false);
     } else {
       _authMode.value = AuthMode.signIn;
     }

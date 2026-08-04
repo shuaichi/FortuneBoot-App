@@ -13,13 +13,13 @@ part 'book_request.g.dart'; // 代码生成文件
 // 分组API 分组相关的增删查改
 @RestApi()
 abstract class BookService extends BaseService {
-  factory BookService({
-    String? baseUrl,
-  }) {
+  factory BookService({String? baseUrl}) {
     Dio dio = DioClient().dio;
-    return _BookService(dio,
-        baseUrl: baseUrl ?? dio.options.baseUrl,
-        errorLogger: AccountErrorReport());
+    return _BookService(
+      dio,
+      baseUrl: baseUrl ?? dio.options.baseUrl,
+      errorLogger: AccountErrorReport(),
+    );
   }
 
   // /fortune/book/base/{groupId}/getByGroupId

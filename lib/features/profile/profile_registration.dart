@@ -20,7 +20,9 @@ void registerProfileFeature() {
   };
 
   AppRouter.register(Routes.profileEdit, (args) {
-    final profile = args is ProfileEditArgs ? args.profile : const UserProfile();
+    final profile = args is ProfileEditArgs
+        ? args.profile
+        : const UserProfile();
     return ProfileEditPage(profile: profile);
   });
 }

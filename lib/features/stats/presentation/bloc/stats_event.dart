@@ -44,3 +44,12 @@ final class StatsTypeChanged extends StatsEvent {
   @override
   List<Object?> get props => [type];
 }
+
+/// 账单月开始日变更，仅影响“本月”范围。
+final class StatsMonthStartDayChanged extends StatsEvent {
+  final int day;
+  const StatsMonthStartDayChanged(this.day);
+
+  @override
+  List<Object?> get props => [day];
+}

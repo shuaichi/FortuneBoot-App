@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:fortuneboot/fx/tokens/fx_colors.dart';
+import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
@@ -33,6 +33,7 @@ class _FxCardState extends State<FxCard> {
 
   @override
   Widget build(BuildContext context) {
+    final palette = FxPalette.of(context);
     final borderRadius = BorderRadius.circular(widget.radius);
     Widget content = widget.child;
 
@@ -59,13 +60,13 @@ class _FxCardState extends State<FxCard> {
       child: Container(
         padding: widget.padding,
         decoration: BoxDecoration(
-          color: widget.background ?? FxColors.surface,
+          color: widget.background ?? palette.surface,
           borderRadius: borderRadius,
-          boxShadow: const [
+          boxShadow: [
             BoxShadow(
-              color: FxColors.shadow,
+              color: palette.shadow,
               blurRadius: 16,
-              offset: Offset(0, 4),
+              offset: const Offset(0, 4),
             ),
           ],
         ),

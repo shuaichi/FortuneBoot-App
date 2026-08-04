@@ -22,11 +22,11 @@ class BillEditorBloc extends Bloc<BillEditorEvent, BillEditorState> {
     required int groupId,
     EditorOptionsService? optionsService,
     BillService? billService,
-  })  : _bookId = bookId,
-        _groupId = groupId,
-        _optionsService = optionsService ?? EditorOptionsService(),
-        _billService = billService ?? BillService(),
-        super(BillEditorState(tradeTime: DateTime.now())) {
+  }) : _bookId = bookId,
+       _groupId = groupId,
+       _optionsService = optionsService ?? EditorOptionsService(),
+       _billService = billService ?? BillService(),
+       super(BillEditorState(tradeTime: DateTime.now())) {
     on<BillEditorInitialized>(_onInitialized);
     on<BillEditorRetried>(_onRetried);
     on<BillTypeChanged>(_onBillTypeChanged);
@@ -121,20 +121,24 @@ class BillEditorBloc extends Bloc<BillEditorEvent, BillEditorState> {
       final rows = source.categoryAmountPair.isEmpty
           ? const [CategoryAmountRow()]
           : source.categoryAmountPair
-              .map((e) => CategoryAmountRow(
+                .map(
+                  (e) => CategoryAmountRow(
                     categoryId: e.categoryId,
                     categoryName: e.categoryName,
                     amount: e.amount,
-                  ))
-              .toList();
+                  ),
+                )
+                .toList();
       final extras = source.extras
-          .map((e) => ExtraRow(
-                extraType: e.extraType ?? 1,
-                amount: e.amount,
-                accountSide: e.accountSide ?? 1,
-                categoryId: e.categoryId,
-                remark: e.remark,
-              ))
+          .map(
+            (e) => ExtraRow(
+              extraType: e.extraType ?? 1,
+              amount: e.amount,
+              accountSide: e.accountSide ?? 1,
+              categoryId: e.categoryId,
+              remark: e.remark,
+            ),
+          )
           .toList();
 
       return base.copyWith(
@@ -151,10 +155,7 @@ class BillEditorBloc extends Bloc<BillEditorEvent, BillEditorState> {
         payeeId: source.payeeId,
         payeeName: source.payeeName,
         tradeTime: source.tradeTime ?? DateTime.now(),
-        tagIds: source.tagList
-            .map((t) => t.tagId)
-            .whereType<int>()
-            .toList(),
+        tagIds: source.tagList.map((t) => t.tagId).whereType<int>().toList(),
         tagNames: source.tagList
             .map((t) => t.tagName ?? '')
             .where((s) => s.isNotEmpty)
@@ -251,9 +252,11 @@ class BillEditorBloc extends Bloc<BillEditorEvent, BillEditorState> {
     CategoryRowAdded event,
     Emitter<BillEditorState> emit,
   ) {
-    emit(state.copyWith(
-      categoryRows: [...state.categoryRows, const CategoryAmountRow()],
-    ));
+    emit(
+      state.copyWith(
+        categoryRows: [...state.categoryRows, const CategoryAmountRow()],
+      ),
+    );
   }
 
   void _onCategoryRowRemoved(
@@ -289,20 +292,24 @@ class BillEditorBloc extends Bloc<BillEditorEvent, BillEditorState> {
   }
 
   void _onAccountChanged(AccountChanged event, Emitter<BillEditorState> emit) {
-    emit(state.copyWith(
-      accountId: event.accountId,
-      accountName: event.accountName,
-    ));
+    emit(
+      state.copyWith(
+        accountId: event.accountId,
+        accountName: event.accountName,
+      ),
+    );
   }
 
   void _onToAccountChanged(
     ToAccountChanged event,
     Emitter<BillEditorState> emit,
   ) {
-    emit(state.copyWith(
-      toAccountId: event.accountId,
-      toAccountName: event.accountName,
-    ));
+    emit(
+      state.copyWith(
+        toAccountId: event.accountId,
+        toAccountName: event.accountName,
+      ),
+    );
   }
 
   void _onPayeeChanged(PayeeChanged event, Emitter<BillEditorState> emit) {
@@ -325,17 +332,21 @@ class BillEditorBloc extends Bloc<BillEditorEvent, BillEditorState> {
   }
 
   void _onMembersChanged(MembersChanged event, Emitter<BillEditorState> emit) {
-    emit(state.copyWith(
-      memberIds: event.memberIds,
-      memberNames: event.memberNames,
-    ));
+    emit(
+      state.copyWith(
+        memberIds: event.memberIds,
+        memberNames: event.memberNames,
+      ),
+    );
   }
 
   void _onOrderChanged(OrderChanged event, Emitter<BillEditorState> emit) {
     if (event.orderId == null) {
       emit(state.copyWith(clearOrder: true));
     } else {
-      emit(state.copyWith(orderId: event.orderId, orderTitle: event.orderTitle));
+      emit(
+        state.copyWith(orderId: event.orderId, orderTitle: event.orderTitle),
+      );
     }
   }
 
@@ -399,10 +410,9 @@ class BillEditorBloc extends Bloc<BillEditorEvent, BillEditorState> {
   ) async {
     final error = state.validationError;
     if (error != null) {
-      emit(state.copyWith(
-        submitStatus: SubmitStatus.failure,
-        submitError: error,
-      ));
+      emit(
+        state.copyWith(submitStatus: SubmitStatus.failure, submitError: error),
+      );
       return;
     }
 
@@ -416,15 +426,19 @@ class BillEditorBloc extends Bloc<BillEditorEvent, BillEditorState> {
       );
       emit(state.copyWith(submitStatus: SubmitStatus.success));
     } on FxApiException catch (e) {
-      emit(state.copyWith(
-        submitStatus: SubmitStatus.failure,
-        submitError: e.message,
-      ));
+      emit(
+        state.copyWith(
+          submitStatus: SubmitStatus.failure,
+          submitError: e.message,
+        ),
+      );
     } on Object catch (e) {
-      emit(state.copyWith(
-        submitStatus: SubmitStatus.failure,
-        submitError: e.toString(),
-      ));
+      emit(
+        state.copyWith(
+          submitStatus: SubmitStatus.failure,
+          submitError: e.toString(),
+        ),
+      );
     }
   }
 
@@ -459,13 +473,15 @@ class BillEditorBloc extends Bloc<BillEditorEvent, BillEditorState> {
     if (s.showExtras && s.extras.isNotEmpty) {
       json['extras'] = s.extras
           .where((e) => e.amount > 0)
-          .map((e) => {
-                'extraType': e.extraType,
-                'amount': e.amount,
-                'accountSide': s.isTransfer ? e.accountSide : 1,
-                if (e.categoryId != null) 'categoryId': e.categoryId,
-                if (e.remark != null && e.remark!.isNotEmpty) 'remark': e.remark,
-              })
+          .map(
+            (e) => {
+              'extraType': e.extraType,
+              'amount': e.amount,
+              'accountSide': s.isTransfer ? e.accountSide : 1,
+              if (e.categoryId != null) 'categoryId': e.categoryId,
+              if (e.remark != null && e.remark!.isNotEmpty) 'remark': e.remark,
+            },
+          )
           .toList();
     }
 

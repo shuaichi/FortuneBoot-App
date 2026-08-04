@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:fortuneboot/fx/tokens/fx_colors.dart';
+import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
 
@@ -19,6 +19,7 @@ class FxSegmented<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = FxPalette.of(context);
     final index = segments.indexWhere((s) => s.value == value);
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -27,7 +28,7 @@ class FxSegmented<T> extends StatelessWidget {
         return Container(
           height: 40,
           decoration: BoxDecoration(
-            color: FxColors.surfaceMuted,
+            color: palette.surfaceMuted,
             borderRadius: FxRadius.tileBorder,
           ),
           child: Stack(
@@ -41,13 +42,13 @@ class FxSegmented<T> extends StatelessWidget {
                 width: segWidth - 6,
                 child: Container(
                   decoration: BoxDecoration(
-                    color: FxColors.surface,
+                    color: palette.surface,
                     borderRadius: BorderRadius.circular(FxRadius.tile - 2),
-                    boxShadow: const [
+                    boxShadow: [
                       BoxShadow(
-                        color: FxColors.shadow,
+                        color: palette.shadow,
                         blurRadius: 6,
-                        offset: Offset(0, 2),
+                        offset: const Offset(0, 2),
                       ),
                     ],
                   ),
@@ -70,10 +71,11 @@ class FxSegmented<T> extends StatelessWidget {
                           s.label,
                           style: FxTypography.label.copyWith(
                             color: selected
-                                ? FxColors.textPrimary
-                                : FxColors.textSecondary,
-                            fontWeight:
-                                selected ? FontWeight.w600 : FontWeight.w500,
+                                ? palette.textPrimary
+                                : palette.textSecondary,
+                            fontWeight: selected
+                                ? FontWeight.w600
+                                : FontWeight.w500,
                           ),
                         ),
                       ),

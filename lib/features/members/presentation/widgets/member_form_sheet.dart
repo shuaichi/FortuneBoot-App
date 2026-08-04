@@ -4,7 +4,7 @@ import 'package:fortuneboot/features/manage_shared/manage_menu.dart';
 import 'package:fortuneboot/features/members/data/member_models.dart';
 import 'package:fortuneboot/features/members/data/member_service.dart';
 import 'package:fortuneboot/fx/components/fx_button.dart';
-import 'package:fortuneboot/fx/tokens/fx_colors.dart';
+import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
 
@@ -93,6 +93,7 @@ class _MemberFormSheetState extends State<MemberFormSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final palette = FxPalette.of(context);
     return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(
         FxSpacing.lg,
@@ -106,20 +107,20 @@ class _MemberFormSheetState extends State<MemberFormSheet> {
           const ManageFieldLabel('成员名称'),
           TextField(
             controller: _nameCtrl,
-            decoration: manageInputDecoration('如：张三'),
+            decoration: manageInputDecoration(context, '如：张三'),
           ),
           const SizedBox(height: FxSpacing.md),
           const ManageFieldLabel('排序（可选）'),
           TextField(
             controller: _sortCtrl,
             keyboardType: TextInputType.number,
-            decoration: manageInputDecoration('数字越小越靠前'),
+            decoration: manageInputDecoration(context, '数字越小越靠前'),
           ),
           const SizedBox(height: FxSpacing.md),
           const ManageFieldLabel('备注（可选）'),
           TextField(
             controller: _remarkCtrl,
-            decoration: manageInputDecoration('备注'),
+            decoration: manageInputDecoration(context, '备注'),
           ),
           const SizedBox(height: FxSpacing.md),
           ManageSwitchRow(
@@ -131,7 +132,7 @@ class _MemberFormSheetState extends State<MemberFormSheet> {
             const SizedBox(height: FxSpacing.sm),
             Text(
               _error!,
-              style: FxTypography.caption.copyWith(color: FxColors.danger),
+              style: FxTypography.caption.copyWith(color: palette.danger),
             ),
           ],
           const SizedBox(height: FxSpacing.xl),

@@ -16,14 +16,14 @@ import 'package:fortuneboot/features/shared/data/bill_models.dart';
 import 'package:fortuneboot/features/shared/data/bill_service.dart';
 import 'package:fortuneboot/fx/components/fx_button.dart';
 import 'package:fortuneboot/fx/components/fx_card.dart';
+import 'package:fortuneboot/fx/components/fx_date_picker.dart';
 import 'package:fortuneboot/fx/components/fx_segmented.dart';
 import 'package:fortuneboot/fx/components/fx_state_view.dart';
 import 'package:fortuneboot/fx/components/fx_tag_chip.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
-import 'package:fortuneboot/fx/tokens/fx_colors.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
-import 'package:omni_datetime_picker/omni_datetime_picker.dart';
+import 'package:fortuneboot/fx/tree/fx_tree_picker.dart';
 
 /// BillEditor 记账表单页。
 class BillEditorPage extends StatelessWidget {
@@ -45,10 +45,11 @@ class BillEditorPage extends StatelessWidget {
         }
       },
       builder: (context, state) {
+        final palette = FxPalette.of(context);
         return Scaffold(
-          backgroundColor: FxColors.canvas,
+          backgroundColor: palette.canvas,
           appBar: AppBar(
-            backgroundColor: FxColors.surface,
+            backgroundColor: palette.surface,
             elevation: 0,
             scrolledUnderElevation: 0.5,
             title: Text(
@@ -56,17 +57,17 @@ class BillEditorPage extends StatelessWidget {
               style: FxTypography.title,
             ),
             leading: IconButton(
-              icon: const Icon(Icons.close_rounded, color: FxColors.textPrimary),
+              icon: Icon(Icons.close_rounded, color: palette.textPrimary),
               onPressed: () => Navigator.of(context).maybePop(),
             ),
           ),
           body: switch (state.status) {
             EditorStatus.loading => FxStateView.loading(),
             EditorStatus.error => FxStateView.error(
-                message: state.loadError,
-                onRetry: () =>
-                    context.read<BillEditorBloc>().add(const BillEditorRetried()),
-              ),
+              message: state.loadError,
+              onRetry: () =>
+                  context.read<BillEditorBloc>().add(const BillEditorRetried()),
+            ),
             EditorStatus.ready => _EditorBody(state: state),
           },
           bottomNavigationBar: state.status == EditorStatus.ready
@@ -130,16 +131,22 @@ class _EditorBody extends StatelessWidget {
                 _AccountRow(state: state)
               else ...[
                 _TransferAccountRow(state: state, isOut: true),
-                _divider(),
+                _divider(context),
                 _TransferAccountRow(state: state, isOut: false),
               ],
-              if (state.showPayee) ...[_divider(), _PayeeRow(state: state)],
-              if (state.showOrder) ...[_divider(), _OrderRow(state: state)],
-              _divider(),
+              if (state.showPayee) ...[
+                _divider(context),
+                _PayeeRow(state: state),
+              ],
+              if (state.showOrder) ...[
+                _divider(context),
+                _OrderRow(state: state),
+              ],
+              _divider(context),
               _TradeTimeRow(state: state),
-              _divider(),
+              _divider(context),
               _TagsRow(state: state),
-              _divider(),
+              _divider(context),
               _MembersRow(state: state),
             ],
           ),
@@ -176,7 +183,8 @@ String _currency(BillEditorState state) {
   return '';
 }
 
-Widget _divider() => const Divider(height: 1, thickness: 1, color: FxColors.border);
+Widget _divider(BuildContext context) =>
+    Divider(height: 1, thickness: 1, color: FxPalette.of(context).border);
 
 // ---------------- 金额区 ----------------
 
@@ -344,9 +352,10 @@ class _OrderRow extends StatelessWidget {
           context,
           title: '选择使用中单据',
           options: state.options.orders,
-          labelOf: (o) => [o.title, o.typeDesc]
-              .where((s) => s != null && s.isNotEmpty)
-              .join(' · '),
+          labelOf: (o) => [
+            o.title,
+            o.typeDesc,
+          ].where((s) => s != null && s.isNotEmpty).join(' · '),
           selectedId: state.orderId,
           idOf: (o) => o.orderId,
         );
@@ -370,12 +379,12 @@ class _TradeTimeRow extends StatelessWidget {
       label: '时间',
       value: text,
       onTap: () async {
-        final picked = await showOmniDateTimePicker(
-          context: context,
-          initialDate: state.tradeTime,
+        final picked = await showFxDateTimePicker(
+          context,
+          initial: state.tradeTime,
           firstDate: DateTime(2000),
           lastDate: DateTime(2100),
-          is24HourMode: true,
+          title: '交易时间',
         );
         if (picked != null) {
           bloc.add(TradeTimeChanged(picked));
@@ -391,34 +400,56 @@ class _TagsRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = FxPalette.of(context);
     final bloc = context.read<BillEditorBloc>();
-    // 按类型过滤可用标签，扁平展开。
-    final flat = <TagNode>[];
-    for (final root in state.options.tags) {
-      flat.addAll(root.flattenAll());
-    }
-    final usable = flat.where((t) {
-      if (t.tagId == null) return false;
+    // 按当前账单类型过滤标签树：保留可用节点及其祖先，维持树形层级。
+    bool usable(TagNode t) {
       if (state.isTransfer) return t.canTransfer;
       if (state.isIncome) return t.canIncome;
       return t.canExpense;
-    }).toList();
+    }
+
+    List<TagNode> prune(List<TagNode> nodes) {
+      final result = <TagNode>[];
+      for (final n in nodes) {
+        final children = prune(n.children);
+        if (usable(n) || children.isNotEmpty) {
+          result.add(
+            TagNode(
+              tagId: n.tagId,
+              tagName: n.tagName,
+              canExpense: n.canExpense,
+              canIncome: n.canIncome,
+              canTransfer: n.canTransfer,
+              children: children,
+            ),
+          );
+        }
+      }
+      return result;
+    }
+
+    final roots = prune(state.options.tags);
 
     return InkWell(
       onTap: () async {
-        final result = await showMultiSelect<TagNode>(
+        final result = await FxTreePicker.show<TagNode>(
           context,
-          title: '选择标签',
-          options: usable,
+          roots: roots,
+          childrenOf: (t) => t.children,
           labelOf: (t) => t.tagName ?? '',
-          idOf: (t) => t.tagId!,
-          selectedIds: state.tagIds,
+          idOf: (t) => t.tagId,
+          initialSelected: state.tagIds.map((e) => e as Object).toSet(),
+          multiSelect: true,
+          title: '选择标签',
         );
         if (result != null) {
-          bloc.add(TagsChanged(
-            result.map((t) => t.tagId!).toList(),
-            result.map((t) => t.tagName ?? '').toList(),
-          ));
+          bloc.add(
+            TagsChanged(
+              result.map((t) => t.tagId!).toList(),
+              result.map((t) => t.tagName ?? '').toList(),
+            ),
+          );
         }
       },
       child: Padding(
@@ -435,8 +466,12 @@ class _TagsRow extends StatelessWidget {
             ),
             Expanded(
               child: state.tagNames.isEmpty
-                  ? Text('添加标签', style: FxTypography.body.copyWith(
-                      color: FxColors.textTertiary))
+                  ? Text(
+                      '添加标签',
+                      style: FxTypography.body.copyWith(
+                        color: palette.textTertiary,
+                      ),
+                    )
                   : Wrap(
                       spacing: FxSpacing.sm,
                       runSpacing: FxSpacing.sm,
@@ -445,8 +480,7 @@ class _TagsRow extends StatelessWidget {
                           .toList(),
                     ),
             ),
-            const Icon(Icons.chevron_right_rounded,
-                color: FxColors.textTertiary),
+            Icon(Icons.chevron_right_rounded, color: palette.textTertiary),
           ],
         ),
       ),
@@ -461,8 +495,9 @@ class _MembersRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bloc = context.read<BillEditorBloc>();
-    final members =
-        state.options.members.where((m) => m.memberId != null).toList();
+    final members = state.options.members
+        .where((m) => m.memberId != null)
+        .toList();
     return _PickerRow(
       label: '成员',
       value: state.memberNames.isEmpty ? null : state.memberNames.join('、'),
@@ -477,10 +512,12 @@ class _MembersRow extends StatelessWidget {
           selectedIds: state.memberIds,
         );
         if (result != null) {
-          bloc.add(MembersChanged(
-            result.map((m) => m.memberId!).toList(),
-            result.map((m) => m.memberName ?? '').toList(),
-          ));
+          bloc.add(
+            MembersChanged(
+              result.map((m) => m.memberId!).toList(),
+              result.map((m) => m.memberName ?? '').toList(),
+            ),
+          );
         }
       },
     );
@@ -505,6 +542,7 @@ class _PickerRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = FxPalette.of(context);
     final hasValue = value != null && value!.isNotEmpty;
     return InkWell(
       onTap: () {
@@ -524,9 +562,10 @@ class _PickerRow extends StatelessWidget {
                 children: [
                   Text(label, style: FxTypography.label),
                   if (required)
-                    Text(' *',
-                        style: FxTypography.label
-                            .copyWith(color: FxColors.danger)),
+                    Text(
+                      ' *',
+                      style: FxTypography.label.copyWith(color: palette.danger),
+                    ),
                 ],
               ),
             ),
@@ -537,14 +576,12 @@ class _PickerRow extends StatelessWidget {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: FxTypography.body.copyWith(
-                  color:
-                      hasValue ? FxColors.textPrimary : FxColors.textTertiary,
+                  color: hasValue ? palette.textPrimary : palette.textTertiary,
                 ),
               ),
             ),
             const SizedBox(width: FxSpacing.sm),
-            const Icon(Icons.chevron_right_rounded,
-                color: FxColors.textTertiary),
+            Icon(Icons.chevron_right_rounded, color: palette.textTertiary),
           ],
         ),
       ),
@@ -614,6 +651,7 @@ class _TitleRemarkCardState extends State<_TitleRemarkCard> {
 
   @override
   Widget build(BuildContext context) {
+    final palette = FxPalette.of(context);
     final bloc = context.read<BillEditorBloc>();
     return FxCard(
       child: Column(
@@ -630,12 +668,13 @@ class _TitleRemarkCardState extends State<_TitleRemarkCard> {
               hintText: widget.state.firstCategoryName.isEmpty
                   ? '请输入标题'
                   : '默认「${widget.state.firstCategoryName}」',
-              hintStyle:
-                  FxTypography.body.copyWith(color: FxColors.textTertiary),
+              hintStyle: FxTypography.body.copyWith(
+                color: palette.textTertiary,
+              ),
             ),
             onChanged: (v) => bloc.add(TitleChanged(v)),
           ),
-          const Divider(height: FxSpacing.lg, color: FxColors.border),
+          Divider(height: FxSpacing.lg, color: palette.border),
           const Text('备注', style: FxTypography.label),
           const SizedBox(height: FxSpacing.xs),
           TextField(
@@ -647,8 +686,9 @@ class _TitleRemarkCardState extends State<_TitleRemarkCard> {
               isDense: true,
               border: InputBorder.none,
               hintText: '添加备注…',
-              hintStyle:
-                  FxTypography.body.copyWith(color: FxColors.textTertiary),
+              hintStyle: FxTypography.body.copyWith(
+                color: palette.textTertiary,
+              ),
             ),
             onChanged: (v) => bloc.add(RemarkChanged(v)),
           ),
@@ -666,6 +706,7 @@ class _TogglesCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = FxPalette.of(context);
     final bloc = context.read<BillEditorBloc>();
     return FxCard(
       padding: const EdgeInsets.symmetric(horizontal: FxSpacing.lg),
@@ -673,16 +714,16 @@ class _TogglesCard extends StatelessWidget {
         children: [
           SwitchListTile.adaptive(
             contentPadding: EdgeInsets.zero,
-            activeColor: FxColors.primary,
+            activeColor: palette.primary,
             title: const Text('已确认', style: FxTypography.bodyStrong),
             subtitle: const Text('未确认账单不计入余额', style: FxTypography.caption),
             value: state.confirm,
             onChanged: (v) => bloc.add(ConfirmToggled(v)),
           ),
-          const Divider(height: 1, color: FxColors.border),
+          Divider(height: 1, color: palette.border),
           SwitchListTile.adaptive(
             contentPadding: EdgeInsets.zero,
-            activeColor: FxColors.primary,
+            activeColor: palette.primary,
             title: const Text('计入统计', style: FxTypography.bodyStrong),
             subtitle: const Text('关闭后不参与收支统计', style: FxTypography.caption),
             value: state.include,
@@ -705,7 +746,7 @@ class _SubmitBar extends StatelessWidget {
     final bloc = context.read<BillEditorBloc>();
     final submitting = state.submitStatus == SubmitStatus.submitting;
     return Container(
-      color: FxColors.surface,
+      color: FxPalette.of(context).surface,
       padding: EdgeInsets.fromLTRB(
         FxSpacing.lg,
         FxSpacing.md,

@@ -19,16 +19,17 @@ class GroupUserVo {
   });
 
   factory GroupUserVo.fromJson(Map<String, dynamic> json) => GroupUserVo(
-        userGroupRelationId: FxApi.asId(json['userGroupRelationId']),
-        roleType: FxApi.asId(json['roleType']),
-        roleTypeDesc: json['roleTypeDesc']?.toString(),
-        groupId: FxApi.asId(json['groupId']),
-        username: json['username']?.toString(),
-        nickname: json['nickname']?.toString(),
-      );
+    userGroupRelationId: FxApi.asId(json['userGroupRelationId']),
+    roleType: FxApi.asId(json['roleType']),
+    roleTypeDesc: json['roleTypeDesc']?.toString(),
+    groupId: FxApi.asId(json['groupId']),
+    username: json['username']?.toString(),
+    nickname: json['nickname']?.toString(),
+  );
 
-  String get displayName =>
-      (nickname != null && nickname!.isNotEmpty) ? nickname! : (username ?? '-');
+  String get displayName => (nickname != null && nickname!.isNotEmpty)
+      ? nickname!
+      : (username ?? '-');
 }
 
 /// 角色类型选项（roleType int → 描述）。
@@ -62,7 +63,9 @@ class GroupUsersService {
       data.forEach((k, v) {
         final value = FxApi.asId(k);
         if (value != null) {
-          out.add(RoleTypeOption(value: value, label: v?.toString() ?? '$value'));
+          out.add(
+            RoleTypeOption(value: value, label: v?.toString() ?? '$value'),
+          );
         }
       });
       out.sort((a, b) => a.value.compareTo(b.value));
@@ -76,12 +79,10 @@ class GroupUsersService {
     required int groupId,
     required int roleType,
     required String username,
-  }) =>
-      _api.post('/fortune/group/inviteUser', data: {
-        'groupId': groupId,
-        'roleType': roleType,
-        'username': username,
-      });
+  }) => _api.post(
+    '/fortune/group/inviteUser',
+    data: {'groupId': groupId, 'roleType': roleType, 'username': username},
+  );
 
   /// 移除成员（仅 owner）。
   Future<void> removeGroupUser(int relationId) =>

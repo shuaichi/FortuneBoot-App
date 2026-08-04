@@ -22,7 +22,7 @@ class SvgCaptchaPainter extends CustomPainter {
           double.tryParse(svgElement.getAttribute('width') ?? '') ?? size.width;
       final double svgH =
           double.tryParse(svgElement.getAttribute('height') ?? '') ??
-              size.height;
+          size.height;
 
       // 缩放 Canvas 以适配容器尺寸
       final double scaleX = size.width / svgW;
@@ -81,15 +81,13 @@ class SvgCaptchaPainter extends CustomPainter {
     final wStr = el.getAttribute('width') ?? '';
     final hStr = el.getAttribute('height') ?? '';
     if (wStr.endsWith('%')) {
-      final svgW = double.tryParse(
-              el.parent?.getAttribute('width') ?? '') ??
-          160;
+      final svgW =
+          double.tryParse(el.parent?.getAttribute('width') ?? '') ?? 160;
       w = svgW * (double.tryParse(wStr.replaceAll('%', '')) ?? 100) / 100;
     }
     if (hStr.endsWith('%')) {
-      final svgH = double.tryParse(
-              el.parent?.getAttribute('height') ?? '') ??
-          60;
+      final svgH =
+          double.tryParse(el.parent?.getAttribute('height') ?? '') ?? 60;
       h = svgH * (double.tryParse(hStr.replaceAll('%', '')) ?? 100) / 100;
     }
 
@@ -137,7 +135,10 @@ class SvgCaptchaPainter extends CustomPainter {
     final fill = _parseColor(el.getAttribute('fill'));
     if (fill != null) {
       canvas.drawCircle(
-          Offset(cx, cy), r, Paint()..color = fill.withOpacity(opacity));
+        Offset(cx, cy),
+        r,
+        Paint()..color = fill.withOpacity(opacity),
+      );
     }
 
     final stroke = _parseColor(el.getAttribute('stroke'));
@@ -158,7 +159,11 @@ class SvgCaptchaPainter extends CustomPainter {
     final cy = _d(el, 'cy');
     final rx = _d(el, 'rx');
     final ry = _d(el, 'ry');
-    final rect = Rect.fromCenter(center: Offset(cx, cy), width: rx * 2, height: ry * 2);
+    final rect = Rect.fromCenter(
+      center: Offset(cx, cy),
+      width: rx * 2,
+      height: ry * 2,
+    );
 
     final fill = _parseColor(el.getAttribute('fill'));
     if (fill != null) {
@@ -188,7 +193,9 @@ class SvgCaptchaPainter extends CustomPainter {
           color: fill.withOpacity(opacity),
           fontSize: fontSize,
           fontWeight: fontWeight,
-          fontStyle: style.contains('italic') ? FontStyle.italic : FontStyle.normal,
+          fontStyle: style.contains('italic')
+              ? FontStyle.italic
+              : FontStyle.normal,
         ),
       ),
       textDirection: TextDirection.ltr,
@@ -274,9 +281,9 @@ class SvgCaptchaPainter extends CustomPainter {
     }
 
     // rgb(r,g,b) / rgba(r,g,b,a)
-    final rgbMatch =
-        RegExp(r'rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)')
-            .firstMatch(lower);
+    final rgbMatch = RegExp(
+      r'rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)',
+    ).firstMatch(lower);
     if (rgbMatch != null) {
       final r = int.parse(rgbMatch.group(1)!);
       final g = int.parse(rgbMatch.group(2)!);
@@ -293,10 +300,9 @@ class SvgCaptchaPainter extends CustomPainter {
   /// 基础 SVG path 解析器（支持 M, L, H, V, C, S, Q, Z 命令）
   ui.Path _parseSvgPath(String d) {
     final path = ui.Path();
-    final tokens = RegExp(r'[MmLlHhVvCcSsQqTtAaZz]|[-+]?[\d]*\.?[\d]+(?:[eE][-+]?\d+)?')
-        .allMatches(d)
-        .map((m) => m.group(0)!)
-        .toList();
+    final tokens = RegExp(
+      r'[MmLlHhVvCcSsQqTtAaZz]|[-+]?[\d]*\.?[\d]+(?:[eE][-+]?\d+)?',
+    ).allMatches(d).map((m) => m.group(0)!).toList();
 
     double cx = 0, cy = 0; // current point
     int i = 0;
@@ -313,71 +319,93 @@ class SvgCaptchaPainter extends CustomPainter {
 
       switch (cmd) {
         case 'M':
-          cx = next(); cy = next();
+          cx = next();
+          cy = next();
           path.moveTo(cx, cy);
-          while (i < tokens.length && !RegExp(r'[A-Za-z]').hasMatch(tokens[i])) {
-            cx = next(); cy = next();
+          while (i < tokens.length &&
+              !RegExp(r'[A-Za-z]').hasMatch(tokens[i])) {
+            cx = next();
+            cy = next();
             path.lineTo(cx, cy);
           }
           break;
         case 'm':
-          cx += next(); cy += next();
+          cx += next();
+          cy += next();
           path.moveTo(cx, cy);
-          while (i < tokens.length && !RegExp(r'[A-Za-z]').hasMatch(tokens[i])) {
-            cx += next(); cy += next();
+          while (i < tokens.length &&
+              !RegExp(r'[A-Za-z]').hasMatch(tokens[i])) {
+            cx += next();
+            cy += next();
             path.lineTo(cx, cy);
           }
           break;
         case 'L':
-          while (i < tokens.length && !RegExp(r'[A-Za-z]').hasMatch(tokens[i])) {
-            cx = next(); cy = next();
+          while (i < tokens.length &&
+              !RegExp(r'[A-Za-z]').hasMatch(tokens[i])) {
+            cx = next();
+            cy = next();
             path.lineTo(cx, cy);
           }
           break;
         case 'l':
-          while (i < tokens.length && !RegExp(r'[A-Za-z]').hasMatch(tokens[i])) {
-            cx += next(); cy += next();
+          while (i < tokens.length &&
+              !RegExp(r'[A-Za-z]').hasMatch(tokens[i])) {
+            cx += next();
+            cy += next();
             path.lineTo(cx, cy);
           }
           break;
         case 'H':
-          cx = next(); path.lineTo(cx, cy);
+          cx = next();
+          path.lineTo(cx, cy);
           break;
         case 'h':
-          cx += next(); path.lineTo(cx, cy);
+          cx += next();
+          path.lineTo(cx, cy);
           break;
         case 'V':
-          cy = next(); path.lineTo(cx, cy);
+          cy = next();
+          path.lineTo(cx, cy);
           break;
         case 'v':
-          cy += next(); path.lineTo(cx, cy);
+          cy += next();
+          path.lineTo(cx, cy);
           break;
         case 'C':
-          while (i < tokens.length && !RegExp(r'[A-Za-z]').hasMatch(tokens[i])) {
+          while (i < tokens.length &&
+              !RegExp(r'[A-Za-z]').hasMatch(tokens[i])) {
             final x1 = next(), y1 = next(), x2 = next(), y2 = next();
-            cx = next(); cy = next();
+            cx = next();
+            cy = next();
             path.cubicTo(x1, y1, x2, y2, cx, cy);
           }
           break;
         case 'c':
-          while (i < tokens.length && !RegExp(r'[A-Za-z]').hasMatch(tokens[i])) {
+          while (i < tokens.length &&
+              !RegExp(r'[A-Za-z]').hasMatch(tokens[i])) {
             final x1 = cx + next(), y1 = cy + next();
             final x2 = cx + next(), y2 = cy + next();
-            cx += next(); cy += next();
+            cx += next();
+            cy += next();
             path.cubicTo(x1, y1, x2, y2, cx, cy);
           }
           break;
         case 'Q':
-          while (i < tokens.length && !RegExp(r'[A-Za-z]').hasMatch(tokens[i])) {
+          while (i < tokens.length &&
+              !RegExp(r'[A-Za-z]').hasMatch(tokens[i])) {
             final x1 = next(), y1 = next();
-            cx = next(); cy = next();
+            cx = next();
+            cy = next();
             path.quadraticBezierTo(x1, y1, cx, cy);
           }
           break;
         case 'q':
-          while (i < tokens.length && !RegExp(r'[A-Za-z]').hasMatch(tokens[i])) {
+          while (i < tokens.length &&
+              !RegExp(r'[A-Za-z]').hasMatch(tokens[i])) {
             final x1 = cx + next(), y1 = cy + next();
-            cx += next(); cy += next();
+            cx += next();
+            cy += next();
             path.quadraticBezierTo(x1, y1, cx, cy);
           }
           break;
@@ -387,7 +415,8 @@ class SvgCaptchaPainter extends CustomPainter {
           break;
         default:
           // 跳过不支持的命令参数
-          while (i < tokens.length && !RegExp(r'[A-Za-z]').hasMatch(tokens[i])) {
+          while (i < tokens.length &&
+              !RegExp(r'[A-Za-z]').hasMatch(tokens[i])) {
             i++;
           }
           break;

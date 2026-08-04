@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fortuneboot/core/preferences/preferences_cubit.dart';
 import 'package:fortuneboot/core/session/session_cubit.dart';
 import 'package:fortuneboot/core/shell/main_shell.dart';
 import 'package:fortuneboot/features/dashboard/presentation/bloc/dashboard_bloc.dart';
@@ -8,11 +9,17 @@ import 'package:fortuneboot/features/dashboard/presentation/dashboard_page.dart'
 void registerDashboardSlot() {
   MainShellSlots.dashboard = (context) {
     final session = context.read<SessionCubit>().state;
+    final monthStartDay = context
+        .read<PreferencesCubit>()
+        .state
+        .billing
+        .monthStartDay;
     return BlocProvider<DashboardBloc>(
       create: (_) => DashboardBloc(
         bookId: session.currentBookId,
         groupId: session.currentGroupId,
         currencyCode: session.defaultCurrency,
+        monthStartDay: monthStartDay,
       )..add(const DashboardRefreshed()),
       child: const DashboardPage(),
     );

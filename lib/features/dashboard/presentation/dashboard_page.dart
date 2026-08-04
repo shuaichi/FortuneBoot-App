@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fortuneboot/core/preferences/preferences_cubit.dart';
 import 'package:fortuneboot/core/session/bill_mutations.dart';
 import 'package:fortuneboot/core/session/session_cubit.dart';
 import 'package:fortuneboot/features/dashboard/presentation/bloc/dashboard_bloc.dart';
@@ -13,7 +14,7 @@ import 'package:fortuneboot/features/dashboard/presentation/widgets/recent_bills
 import 'package:fortuneboot/features/dashboard/presentation/widgets/trend_card.dart';
 import 'package:fortuneboot/fx/components/fx_state_view.dart';
 import 'package:fortuneboot/fx/layout/fx_bento_grid.dart';
-import 'package:fortuneboot/fx/tokens/fx_colors.dart';
+import 'package:fortuneboot/fx/theme/fx_theme.dart';
 
 /// 看板首页：粘顶栏 + Bento 卡片网格。订阅 SessionCubit 切账本重拉。
 class DashboardPage extends StatelessWidget {
@@ -34,14 +35,23 @@ class DashboardPage extends StatelessWidget {
           ),
         );
       },
-      child: _MutationRefresher(
-        child: Scaffold(
-          backgroundColor: FxColors.canvas,
-          body: Column(
-            children: [
-              const DashboardTopBar(),
-              Expanded(child: _Body()),
-            ],
+      child: BlocListener<PreferencesCubit, PreferencesState>(
+        listenWhen: (prev, next) =>
+            prev.billing.monthStartDay != next.billing.monthStartDay,
+        listener: (context, preferences) {
+          context.read<DashboardBloc>().add(
+            DashboardMonthStartDayChanged(preferences.billing.monthStartDay),
+          );
+        },
+        child: _MutationRefresher(
+          child: Scaffold(
+            backgroundColor: FxPalette.of(context).canvas,
+            body: Column(
+              children: [
+                const DashboardTopBar(),
+                Expanded(child: _Body()),
+              ],
+            ),
           ),
         ),
       ),
@@ -164,7 +174,7 @@ class _Body extends StatelessWidget {
         // ⑦ 最近账单(跨满)
         tiles.add(
           FxBentoTile(
-            colSpan: 2,
+            colSpan: FxBentoTile.fullSpan,
             rowSpan: 2,
             child: RecentBillsCard(
               section: state.recentBills,
@@ -177,12 +187,12 @@ class _Body extends StatelessWidget {
         // ⑧ 分类 Top3(跨满,可选:无数据整卡隐藏)
         final showCategories =
             !emptyUser &&
-            state.categories.isReady &&
-            (state.categories.data?.isNotEmpty ?? false);
+            (!state.categories.isReady ||
+                (state.categories.data?.isNotEmpty ?? false));
         if (showCategories) {
           tiles.add(
             FxBentoTile(
-              colSpan: 2,
+              colSpan: FxBentoTile.fullSpan,
               rowSpan: 2,
               child: CategoryTopCard(
                 section: state.categories,

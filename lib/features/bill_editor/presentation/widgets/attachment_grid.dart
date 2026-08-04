@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:fortuneboot/fx/tokens/fx_colors.dart';
+import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
@@ -56,6 +56,7 @@ class _Thumb extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = FxPalette.of(context);
     return SizedBox(
       width: AttachmentGrid._tile,
       height: AttachmentGrid._tile,
@@ -72,9 +73,11 @@ class _Thumb extends StatelessWidget {
               errorBuilder: (context, error, stack) => Container(
                 width: AttachmentGrid._tile,
                 height: AttachmentGrid._tile,
-                color: FxColors.surfaceMuted,
-                child: const Icon(Icons.insert_drive_file_rounded,
-                    color: FxColors.textTertiary),
+                color: palette.surfaceMuted,
+                child: Icon(
+                  Icons.insert_drive_file_rounded,
+                  color: palette.textTertiary,
+                ),
               ),
             ),
           ),
@@ -85,12 +88,15 @@ class _Thumb extends StatelessWidget {
               onTap: onRemove,
               child: Container(
                 padding: const EdgeInsets.all(2),
-                decoration: const BoxDecoration(
-                  color: FxColors.textPrimary,
+                decoration: BoxDecoration(
+                  color: palette.textPrimary,
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(Icons.close_rounded,
-                    size: 14, color: Colors.white),
+                child: const Icon(
+                  Icons.close_rounded,
+                  size: 14,
+                  color: Colors.white,
+                ),
               ),
             ),
           ),
@@ -106,6 +112,7 @@ class _AddTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = FxPalette.of(context);
     return InkWell(
       onTap: onTap,
       borderRadius: FxRadius.tileBorder,
@@ -113,12 +120,11 @@ class _AddTile extends StatelessWidget {
         width: AttachmentGrid._tile,
         height: AttachmentGrid._tile,
         decoration: BoxDecoration(
-          color: FxColors.surfaceMuted,
+          color: palette.surfaceMuted,
           borderRadius: FxRadius.tileBorder,
-          border: Border.all(color: FxColors.border),
+          border: Border.all(color: palette.border),
         ),
-        child: const Icon(Icons.add_a_photo_outlined,
-            color: FxColors.textTertiary),
+        child: Icon(Icons.add_a_photo_outlined, color: palette.textTertiary),
       ),
     );
   }

@@ -30,8 +30,7 @@ class CategoriesBloc extends Bloc<CategoriesEvent, CategoriesState> {
     CategoriesBookChanged event,
     Emitter<CategoriesState> emit,
   ) async {
-    if (event.bookId == _bookId &&
-        state.status != CategoriesStatus.initial) {
+    if (event.bookId == _bookId && state.status != CategoriesStatus.initial) {
       return;
     }
     _bookId = event.bookId;
@@ -86,10 +85,7 @@ class CategoriesBloc extends Bloc<CategoriesEvent, CategoriesState> {
       );
     } on FxApiException catch (e) {
       emit(
-        state.copyWith(
-          status: CategoriesStatus.error,
-          errorMessage: e.message,
-        ),
+        state.copyWith(status: CategoriesStatus.error, errorMessage: e.message),
       );
     } on Object catch (e) {
       emit(

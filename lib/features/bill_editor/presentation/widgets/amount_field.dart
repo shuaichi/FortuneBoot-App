@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:fortuneboot/fx/tokens/fx_colors.dart';
+import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
 import 'package:fortuneboot/util/currency_symbol.dart';
@@ -62,10 +62,11 @@ class _AmountFieldState extends State<AmountField> {
 
   @override
   Widget build(BuildContext context) {
+    final palette = FxPalette.of(context);
     final symbol = (widget.currencyCode == null || widget.currencyCode!.isEmpty)
         ? ''
         : getCurrencySymbol(widget.currencyCode!);
-    final color = widget.tint ?? FxColors.textPrimary;
+    final color = widget.tint ?? palette.textPrimary;
     final fontSize = widget.large ? 34.0 : 20.0;
 
     return Column(
@@ -91,7 +92,9 @@ class _AmountFieldState extends State<AmountField> {
             Expanded(
               child: TextField(
                 controller: _controller,
-                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
+                ),
                 inputFormatters: [
                   FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}')),
                 ],
@@ -107,7 +110,7 @@ class _AmountFieldState extends State<AmountField> {
                   hintStyle: FxTypography.money.copyWith(
                     fontSize: fontSize,
                     fontWeight: FontWeight.w700,
-                    color: FxColors.textTertiary,
+                    color: palette.textTertiary,
                   ),
                 ),
                 onChanged: (t) => widget.onChanged(double.tryParse(t) ?? 0),

@@ -44,11 +44,7 @@ class _MembersPageState extends State<MembersPage> {
       context,
       title: member == null ? '新增成员' : '编辑成员',
       expand: true,
-      child: MemberFormSheet(
-        service: _service,
-        bookId: bookId,
-        member: member,
-      ),
+      child: MemberFormSheet(service: _service, bookId: bookId, member: member),
     );
     if (changed == true && mounted) _bloc.add(const MembersMutated());
   }

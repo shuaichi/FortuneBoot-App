@@ -28,9 +28,7 @@ class UserProfile {
   factory UserProfile.fromJson(Map<String, dynamic> json) {
     // 兼容两种形态：{user:{...}, roleName} 或直接平铺。
     final rawUser = json['user'];
-    final user = rawUser is Map
-        ? Map<String, dynamic>.from(rawUser)
-        : json;
+    final user = rawUser is Map ? Map<String, dynamic>.from(rawUser) : json;
     final sexValue = user['sex'];
     return UserProfile(
       userId: FxApi.asId(user['userId']),
@@ -67,10 +65,10 @@ class UserProfile {
 
   /// 性别展示文案。
   String get sexLabel => switch (sex) {
-        1 => '男',
-        0 => '女',
-        _ => '未设置',
-      };
+    1 => '男',
+    0 => '女',
+    _ => '未设置',
+  };
 }
 
 /// 应用信息聚合（关于页）。
@@ -79,9 +77,5 @@ class AppAbout {
   final String? apiVersion; // GET /getApiVersion
   final String? icp; // GET /getIcp
 
-  const AppAbout({
-    this.appVersion = '',
-    this.apiVersion,
-    this.icp,
-  });
+  const AppAbout({this.appVersion = '', this.apiVersion, this.icp});
 }

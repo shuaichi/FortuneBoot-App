@@ -3,7 +3,7 @@ import 'package:fortuneboot/core/network/fx_api.dart';
 import 'package:fortuneboot/core/session/session_models.dart';
 import 'package:fortuneboot/features/books/data/books_service.dart';
 import 'package:fortuneboot/fx/components/fx_button.dart';
-import 'package:fortuneboot/fx/tokens/fx_colors.dart';
+import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
@@ -125,7 +125,7 @@ class _GroupFormSheetState extends State<GroupFormSheet> {
               const Expanded(child: Text('启用', style: FxTypography.body)),
               Switch.adaptive(
                 value: _enable,
-                activeColor: FxColors.primary,
+                activeColor: FxPalette.of(context).primary,
                 onChanged: (v) => setState(() => _enable = v),
               ),
             ],
@@ -135,8 +135,12 @@ class _GroupFormSheetState extends State<GroupFormSheet> {
           TextField(controller: _remarkCtrl, decoration: _dec('备注')),
           if (_error != null) ...[
             const SizedBox(height: FxSpacing.sm),
-            Text(_error!,
-                style: FxTypography.caption.copyWith(color: FxColors.danger)),
+            Text(
+              _error!,
+              style: FxTypography.caption.copyWith(
+                color: FxPalette.of(context).danger,
+              ),
+            ),
           ],
           const SizedBox(height: FxSpacing.xl),
           FxButton(
@@ -151,6 +155,7 @@ class _GroupFormSheetState extends State<GroupFormSheet> {
   }
 
   Widget _currencyPicker() {
+    final palette = FxPalette.of(context);
     if (_currencies.isEmpty) {
       return TextField(
         controller: TextEditingController(text: _currency ?? 'CNY'),
@@ -171,16 +176,16 @@ class _GroupFormSheetState extends State<GroupFormSheet> {
               vertical: FxSpacing.sm,
             ),
             decoration: BoxDecoration(
-              color: selected ? FxColors.primaryContainer : FxColors.surfaceMuted,
+              color: selected ? palette.primaryContainer : palette.surfaceMuted,
               borderRadius: FxRadius.pillBorder,
               border: Border.all(
-                color: selected ? FxColors.primary : FxColors.border,
+                color: selected ? palette.primary : palette.border,
               ),
             ),
             child: Text(
               c.label,
               style: FxTypography.label.copyWith(
-                color: selected ? FxColors.primary : FxColors.textSecondary,
+                color: selected ? palette.primary : palette.textSecondary,
                 fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
               ),
             ),
@@ -191,22 +196,22 @@ class _GroupFormSheetState extends State<GroupFormSheet> {
   }
 
   Widget _label(String text) => Padding(
-        padding: const EdgeInsets.only(bottom: FxSpacing.xs),
-        child: Text(text, style: FxTypography.label),
-      );
+    padding: const EdgeInsets.only(bottom: FxSpacing.xs),
+    child: Text(text, style: FxTypography.label),
+  );
 
   InputDecoration _dec(String hint) => InputDecoration(
-        hintText: hint,
-        filled: true,
-        fillColor: FxColors.surfaceMuted,
-        isDense: true,
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: FxSpacing.md,
-          vertical: FxSpacing.md,
-        ),
-        border: OutlineInputBorder(
-          borderRadius: FxRadius.tileBorder,
-          borderSide: BorderSide.none,
-        ),
-      );
+    hintText: hint,
+    filled: true,
+    fillColor: FxPalette.of(context).surfaceMuted,
+    isDense: true,
+    contentPadding: const EdgeInsets.symmetric(
+      horizontal: FxSpacing.md,
+      vertical: FxSpacing.md,
+    ),
+    border: OutlineInputBorder(
+      borderRadius: FxRadius.tileBorder,
+      borderSide: BorderSide.none,
+    ),
+  );
 }

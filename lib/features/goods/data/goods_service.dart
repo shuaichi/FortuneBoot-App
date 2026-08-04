@@ -43,7 +43,9 @@ class GoodsService {
           data['rows'] ?? data['list'] ?? data['records'] ?? <dynamic>[];
       final rows = (rowsRaw as List? ?? [])
           .whereType<Map<dynamic, dynamic>>()
-          .map((e) => FortuneGoodsKeeperVo.fromJson(Map<String, dynamic>.from(e)))
+          .map(
+            (e) => FortuneGoodsKeeperVo.fromJson(Map<String, dynamic>.from(e)),
+          )
           .toList();
       final total = FxApi.asId(data['total']) ?? rows.length;
       return GoodsPage(rows: rows, total: total);
@@ -51,7 +53,9 @@ class GoodsService {
     if (data is List) {
       final rows = data
           .whereType<Map<dynamic, dynamic>>()
-          .map((e) => FortuneGoodsKeeperVo.fromJson(Map<String, dynamic>.from(e)))
+          .map(
+            (e) => FortuneGoodsKeeperVo.fromJson(Map<String, dynamic>.from(e)),
+          )
           .toList();
       return GoodsPage(rows: rows, total: rows.length);
     }
@@ -122,11 +126,7 @@ class GoodsService {
       '/fortune/category/$bookId/getEnableList',
       query: {'billType': 1},
     );
-    return _flattenOptions(
-      data,
-      idKey: 'categoryId',
-      nameKey: 'categoryName',
-    );
+    return _flattenOptions(data, idKey: 'categoryId', nameKey: 'categoryName');
   }
 
   /// 标签下拉（复用 tag getEnableList；扁平化）。

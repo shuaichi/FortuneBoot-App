@@ -2,7 +2,11 @@
 import 'dart:typed_data';
 import 'dart:html' as html;
 
-Future<bool> downloadBytes(String name, Uint8List bytes, String mimeType) async {
+Future<bool> downloadBytes(
+  String name,
+  Uint8List bytes,
+  String mimeType,
+) async {
   try {
     final blob = html.Blob([bytes], mimeType);
     final url = html.Url.createObjectUrlFromBlob(blob);

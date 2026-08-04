@@ -108,8 +108,7 @@ class IoService {
     if (!contentType.contains('application/json')) return;
     final json = _decodeJson(res.data ?? const <int>[]);
     final code = json == null ? null : FxApi.asId(json['code']);
-    final msg =
-        (json?['msg'] ?? json?['message'] ?? '导出失败').toString();
+    final msg = (json?['msg'] ?? json?['message'] ?? '导出失败').toString();
     throw FxApiException(code ?? -1, msg);
   }
 
@@ -125,10 +124,7 @@ class IoService {
   }) async {
     final formData = FormData();
     formData.files.add(
-      MapEntry(
-        'file',
-        MultipartFile.fromBytes(fileBytes, filename: filename),
-      ),
+      MapEntry('file', MultipartFile.fromBytes(fileBytes, filename: filename)),
     );
     final res = await _dio.post<List<int>>(
       '/fortune/bill/$bookId/import',
@@ -140,8 +136,7 @@ class IoService {
         validateStatus: (s) => s != null && s < 500,
       ),
     );
-    final contentType =
-        (res.headers.value('content-type') ?? '').toLowerCase();
+    final contentType = (res.headers.value('content-type') ?? '').toLowerCase();
     final bytes = res.data ?? const <int>[];
 
     if (contentType.contains('application/json')) {
@@ -151,14 +146,11 @@ class IoService {
         // “成功 0/0/0”。code 缺省视为成功（部分接口直接返回裸 data）。
         final code = FxApi.asId(json['code']);
         if (code != null && code != 0) {
-          final msg =
-              (json['msg'] ?? json['message'] ?? '导入失败').toString();
+          final msg = (json['msg'] ?? json['message'] ?? '导入失败').toString();
           throw FxApiException(code, msg);
         }
         final data = json['data'];
-        final payload = data is Map
-            ? Map<String, dynamic>.from(data)
-            : json;
+        final payload = data is Map ? Map<String, dynamic>.from(data) : json;
         return ImportOutcome(result: BillImportResult.fromJson(payload));
       }
     }
@@ -187,10 +179,7 @@ class IoService {
     return null;
   }
 
-  String _filenameFrom(
-    Response<dynamic> res, {
-    required String fallback,
-  }) {
+  String _filenameFrom(Response<dynamic> res, {required String fallback}) {
     final disposition = res.headers.value('content-disposition');
     if (disposition != null) {
       final match = RegExp('filename[^=]*=([^;]+)').firstMatch(disposition);

@@ -14,13 +14,10 @@ class AccountsBloc extends Bloc<AccountsEvent, AccountsState> {
   final AccountService _service;
   int? _groupId;
 
-  AccountsBloc({
-    AccountService? service,
-    int? groupId,
-    String? currencyCode,
-  }) : _service = service ?? AccountService(),
-       _groupId = groupId,
-       super(AccountsState(currencyCode: currencyCode)) {
+  AccountsBloc({AccountService? service, int? groupId, String? currencyCode})
+    : _service = service ?? AccountService(),
+      _groupId = groupId,
+      super(AccountsState(currencyCode: currencyCode)) {
     on<AccountsLoaded>(_onLoaded);
     on<AccountsMutated>(_onLoaded);
     on<AccountsGroupChanged>(_onGroupChanged);
@@ -69,10 +66,15 @@ class AccountsBloc extends Bloc<AccountsEvent, AccountsState> {
         ),
       );
     } on FxApiException catch (e) {
-      emit(state.copyWith(status: AccountsStatus.error, errorMessage: e.message));
+      emit(
+        state.copyWith(status: AccountsStatus.error, errorMessage: e.message),
+      );
     } on Object catch (e) {
       emit(
-        state.copyWith(status: AccountsStatus.error, errorMessage: e.toString()),
+        state.copyWith(
+          status: AccountsStatus.error,
+          errorMessage: e.toString(),
+        ),
       );
     }
   }
@@ -87,7 +89,12 @@ class AccountsBloc extends Bloc<AccountsEvent, AccountsState> {
     if (groupId == null || accountId == null) return;
 
     final original = state.accounts;
-    final optimistic = _applyToggle(original, accountId, event.field, event.value);
+    final optimistic = _applyToggle(
+      original,
+      accountId,
+      event.field,
+      event.value,
+    );
     emit(state.copyWith(accounts: optimistic));
 
     try {
@@ -110,7 +117,8 @@ class AccountsBloc extends Bloc<AccountsEvent, AccountsState> {
       emit(
         state.copyWith(
           accounts: original,
-          toastMessage: '${event.field.label}切换失败：'
+          toastMessage:
+              '${event.field.label}切换失败：'
               '${e is FxApiException ? e.message : e.toString()}',
         ),
       );

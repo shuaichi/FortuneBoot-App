@@ -4,5 +4,6 @@ import 'package:flutter/material.dart';
 /// 运行时不会被调用，由 kIsWeb 守护
 Widget buildSvgForWeb(String dataUri, BoxFit fit, {Key? key}) {
   throw UnsupportedError(
-      'buildSvgForWeb should not be called on non-web platforms');
+    'buildSvgForWeb should not be called on non-web platforms',
+  );
 }

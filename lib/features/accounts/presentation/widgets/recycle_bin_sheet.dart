@@ -5,7 +5,7 @@ import 'package:fortuneboot/features/accounts/data/account_service.dart';
 import 'package:fortuneboot/features/accounts/presentation/widgets/account_menu.dart';
 import 'package:fortuneboot/fx/components/fx_money_text.dart';
 import 'package:fortuneboot/fx/components/fx_state_view.dart';
-import 'package:fortuneboot/fx/tokens/fx_colors.dart';
+import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
@@ -125,22 +125,23 @@ class _RecycleBinSheetState extends State<RecycleBinSheet> {
     return ListView.builder(
       padding: const EdgeInsets.symmetric(horizontal: FxSpacing.lg),
       itemCount: _accounts.length,
-      itemBuilder: (context, i) => _tile(_accounts[i]),
+      itemBuilder: (context, i) => _tile(context, _accounts[i]),
     );
   }
 
-  Widget _tile(FortuneAccountVo a) {
+  Widget _tile(BuildContext context, FortuneAccountVo a) {
+    final palette = FxPalette.of(context);
     final meta = AccountTypeMeta.of(a.accountType);
     return Container(
       margin: const EdgeInsets.only(bottom: FxSpacing.sm),
       padding: const EdgeInsets.all(FxSpacing.md),
       decoration: BoxDecoration(
-        color: FxColors.surfaceMuted,
+        color: palette.surfaceMuted,
         borderRadius: FxRadius.tileBorder,
       ),
       child: Row(
         children: [
-          Icon(meta.icon, color: meta.tint, size: 20),
+          Icon(meta.icon, color: meta.tint(context), size: 20),
           const SizedBox(width: FxSpacing.sm),
           Expanded(
             child: Column(
@@ -157,21 +158,15 @@ class _RecycleBinSheetState extends State<RecycleBinSheet> {
                   currencyCode: a.currencyCode,
                   fontSize: 12,
                   fontWeight: FontWeight.w500,
-                  color: FxColors.textSecondary,
+                  color: palette.textSecondary,
                 ),
               ],
             ),
           ),
-          TextButton(
-            onPressed: () => _putBack(a),
-            child: const Text('移出'),
-          ),
+          TextButton(onPressed: () => _putBack(a), child: const Text('移出')),
           IconButton(
             onPressed: () => _remove(a),
-            icon: const Icon(
-              Icons.delete_forever_rounded,
-              color: FxColors.danger,
-            ),
+            icon: Icon(Icons.delete_forever_rounded, color: palette.danger),
           ),
         ],
       ),

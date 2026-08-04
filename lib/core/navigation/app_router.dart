@@ -26,7 +26,11 @@ class AppRouter {
   }
 
   /// 便捷 push。
-  static Future<T?> push<T>(BuildContext context, String route, {Object? args}) {
+  static Future<T?> push<T>(
+    BuildContext context,
+    String route, {
+    Object? args,
+  }) {
     return Navigator.of(context).pushNamed<T>(route, arguments: args);
   }
 }

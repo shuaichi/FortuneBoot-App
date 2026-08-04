@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fortuneboot/features/members/data/member_models.dart';
-import 'package:fortuneboot/fx/tokens/fx_colors.dart';
+import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
@@ -20,8 +20,9 @@ class MemberCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = FxPalette.of(context);
     return Material(
-      color: FxColors.surface,
+      color: palette.surface,
       borderRadius: FxRadius.tileBorder,
       child: InkWell(
         borderRadius: FxRadius.tileBorder,
@@ -36,16 +37,14 @@ class MemberCard extends StatelessWidget {
               Container(
                 width: 36,
                 height: 36,
-                decoration: const BoxDecoration(
-                  color: FxColors.surfaceMuted,
+                decoration: BoxDecoration(
+                  color: palette.surfaceMuted,
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
                   Icons.person_rounded,
                   size: 20,
-                  color: member.enable
-                      ? FxColors.primary
-                      : FxColors.textTertiary,
+                  color: member.enable ? palette.primary : palette.textTertiary,
                 ),
               ),
               const SizedBox(width: FxSpacing.md),
@@ -54,22 +53,22 @@ class MemberCard extends StatelessWidget {
                   member.memberName ?? '未命名',
                   style: FxTypography.bodyStrong.copyWith(
                     color: member.enable
-                        ? FxColors.textPrimary
-                        : FxColors.textTertiary,
+                        ? palette.textPrimary
+                        : palette.textTertiary,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
-              _statusChip(member.enable),
+              _statusChip(context, member.enable),
               const SizedBox(width: FxSpacing.sm),
               InkResponse(
                 radius: 18,
                 onTap: onMenu,
-                child: const Icon(
+                child: Icon(
                   Icons.more_horiz_rounded,
                   size: 20,
-                  color: FxColors.textSecondary,
+                  color: palette.textSecondary,
                 ),
               ),
             ],
@@ -79,10 +78,14 @@ class MemberCard extends StatelessWidget {
     );
   }
 
-  Widget _statusChip(bool enable) {
-    final color = enable ? FxColors.success : FxColors.textTertiary;
+  Widget _statusChip(BuildContext context, bool enable) {
+    final palette = FxPalette.of(context);
+    final color = enable ? palette.success : palette.textTertiary;
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: FxSpacing.sm, vertical: 2),
+      padding: const EdgeInsets.symmetric(
+        horizontal: FxSpacing.sm,
+        vertical: 2,
+      ),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.12),
         borderRadius: FxRadius.pillBorder,

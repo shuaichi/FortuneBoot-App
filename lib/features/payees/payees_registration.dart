@@ -13,8 +13,7 @@ void registerPayeesFeature() {
       builder: (BuildContext context) {
         final bookId = context.read<SessionCubit>().state.currentBookId;
         return BlocProvider<PayeesBloc>(
-          create: (_) =>
-              PayeesBloc(bookId: bookId)..add(const PayeesLoaded()),
+          create: (_) => PayeesBloc(bookId: bookId)..add(const PayeesLoaded()),
           child: const PayeesPage(),
         );
       },

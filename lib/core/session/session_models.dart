@@ -82,10 +82,16 @@ class FortuneBookVo {
       defaultExpenseAccountName: json['defaultExpenseAccountName']?.toString(),
       defaultIncomeAccountId: FxApi.asId(json['defaultIncomeAccountId']),
       defaultIncomeAccountName: json['defaultIncomeAccountName']?.toString(),
-      defaultTransferOutAccountId: FxApi.asId(json['defaultTransferOutAccountId']),
-      defaultTransferOutAccountName: json['defaultTransferOutAccountName']?.toString(),
-      defaultTransferInAccountId: FxApi.asId(json['defaultTransferInAccountId']),
-      defaultTransferInAccountName: json['defaultTransferInAccountName']?.toString(),
+      defaultTransferOutAccountId: FxApi.asId(
+        json['defaultTransferOutAccountId'],
+      ),
+      defaultTransferOutAccountName: json['defaultTransferOutAccountName']
+          ?.toString(),
+      defaultTransferInAccountId: FxApi.asId(
+        json['defaultTransferInAccountId'],
+      ),
+      defaultTransferInAccountName: json['defaultTransferInAccountName']
+          ?.toString(),
       sort: FxApi.asId(json['sort']),
       remark: json['remark']?.toString(),
       enable: FxApi.asBool(json['enable'], orElse: true),

@@ -6,7 +6,11 @@ class CategoryAmountRow extends Equatable {
   final String? categoryName;
   final double amount;
 
-  const CategoryAmountRow({this.categoryId, this.categoryName, this.amount = 0});
+  const CategoryAmountRow({
+    this.categoryId,
+    this.categoryName,
+    this.amount = 0,
+  });
 
   CategoryAmountRow copyWith({
     int? categoryId,
@@ -61,6 +65,11 @@ class ExtraRow extends Equatable {
   }
 
   @override
-  List<Object?> get props =>
-      [extraType, amount, accountSide, categoryId, remark];
+  List<Object?> get props => [
+    extraType,
+    amount,
+    accountSide,
+    categoryId,
+    remark,
+  ];
 }

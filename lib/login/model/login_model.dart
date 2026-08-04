@@ -19,17 +19,18 @@ class ResisterLogin {
   final int source;
 
   ResisterLogin(
-      this.username,
-      this.nickname,
-      this.email,
-      this.phoneNumber,
-      this.sex,
-      this.avatar,
-      this.password,
-      this.status,
-      this.roleId,
-      this.remark,
-      this.source);
+    this.username,
+    this.nickname,
+    this.email,
+    this.phoneNumber,
+    this.sex,
+    this.avatar,
+    this.password,
+    this.status,
+    this.roleId,
+    this.remark,
+    this.source,
+  );
 
   factory ResisterLogin.fromJson(Map<String, dynamic> json) =>
       _$ResisterLoginFromJson(json);
@@ -79,4 +80,3 @@ class HJResponse {
     return 'LoginResponse{code: $code, msg: $msg, data: $data}';
   }
 }
-

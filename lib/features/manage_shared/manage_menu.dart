@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fortuneboot/fx/tokens/fx_colors.dart';
+import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
@@ -17,7 +17,7 @@ Future<ManageMenuAction?> showManageMenu(
 }) {
   return showModalBottomSheet<ManageMenuAction>(
     context: context,
-    backgroundColor: FxColors.surface,
+    backgroundColor: FxPalette.of(context).surface,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: FxRadius.sheetRadius),
     ),
@@ -33,7 +33,7 @@ Future<ManageMenuAction?> showManageMenu(
                 width: 36,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: FxColors.border,
+                  color: FxPalette.of(ctx).border,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -77,7 +77,8 @@ Widget _item(
   ManageMenuAction action, {
   bool danger = false,
 }) {
-  final color = danger ? FxColors.danger : FxColors.textPrimary;
+  final palette = FxPalette.of(context);
+  final color = danger ? palette.danger : palette.textPrimary;
   return ListTile(
     leading: Icon(icon, color: color),
     title: Text(label, style: FxTypography.body.copyWith(color: color)),
@@ -94,7 +95,7 @@ Future<bool?> confirmManageAction(
 }) {
   return showModalBottomSheet<bool>(
     context: context,
-    backgroundColor: FxColors.surface,
+    backgroundColor: FxPalette.of(context).surface,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: FxRadius.sheetRadius),
     ),
@@ -117,8 +118,8 @@ Future<bool?> confirmManageAction(
                     child: _confirmBtn(
                       '取消',
                       onTap: () => Navigator.of(ctx).pop(false),
-                      color: FxColors.surfaceMuted,
-                      fg: FxColors.textSecondary,
+                      color: FxPalette.of(ctx).surfaceMuted,
+                      fg: FxPalette.of(ctx).textSecondary,
                     ),
                   ),
                   const SizedBox(width: FxSpacing.md),
@@ -126,7 +127,7 @@ Future<bool?> confirmManageAction(
                     child: _confirmBtn(
                       confirmLabel,
                       onTap: () => Navigator.of(ctx).pop(true),
-                      color: FxColors.danger,
+                      color: FxPalette.of(ctx).danger,
                       fg: Colors.white,
                     ),
                   ),
@@ -183,7 +184,7 @@ class ManageSwitchRow extends StatelessWidget {
           Expanded(child: Text(label, style: FxTypography.body)),
           Switch.adaptive(
             value: value,
-            activeColor: FxColors.primary,
+            activeColor: FxPalette.of(context).primary,
             onChanged: onChanged,
           ),
         ],
@@ -205,17 +206,18 @@ class ManageFieldLabel extends StatelessWidget {
 }
 
 /// 表单文本框统一装饰。
-InputDecoration manageInputDecoration(String hint) => InputDecoration(
-  hintText: hint,
-  filled: true,
-  fillColor: FxColors.surfaceMuted,
-  isDense: true,
-  contentPadding: const EdgeInsets.symmetric(
-    horizontal: FxSpacing.md,
-    vertical: FxSpacing.md,
-  ),
-  border: OutlineInputBorder(
-    borderRadius: FxRadius.tileBorder,
-    borderSide: BorderSide.none,
-  ),
-);
+InputDecoration manageInputDecoration(BuildContext context, String hint) =>
+    InputDecoration(
+      hintText: hint,
+      filled: true,
+      fillColor: FxPalette.of(context).surfaceMuted,
+      isDense: true,
+      contentPadding: const EdgeInsets.symmetric(
+        horizontal: FxSpacing.md,
+        vertical: FxSpacing.md,
+      ),
+      border: OutlineInputBorder(
+        borderRadius: FxRadius.tileBorder,
+        borderSide: BorderSide.none,
+      ),
+    );

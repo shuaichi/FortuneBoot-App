@@ -4,7 +4,7 @@ import 'package:fortuneboot/features/categories/data/category_models.dart';
 import 'package:fortuneboot/features/categories/data/category_service.dart';
 import 'package:fortuneboot/features/manage_shared/manage_menu.dart';
 import 'package:fortuneboot/fx/components/fx_button.dart';
-import 'package:fortuneboot/fx/tokens/fx_colors.dart';
+import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
@@ -129,7 +129,7 @@ class _CategoryFormSheetState extends State<CategoryFormSheet> {
           const ManageFieldLabel('分类名称'),
           TextField(
             controller: _nameCtrl,
-            decoration: manageInputDecoration('如：餐饮'),
+            decoration: manageInputDecoration(context, '如：餐饮'),
           ),
           const SizedBox(height: FxSpacing.md),
           const ManageFieldLabel('分类类型'),
@@ -142,13 +142,13 @@ class _CategoryFormSheetState extends State<CategoryFormSheet> {
           TextField(
             controller: _sortCtrl,
             keyboardType: TextInputType.number,
-            decoration: manageInputDecoration('数字越小越靠前'),
+            decoration: manageInputDecoration(context, '数字越小越靠前'),
           ),
           const SizedBox(height: FxSpacing.md),
           const ManageFieldLabel('备注（可选）'),
           TextField(
             controller: _remarkCtrl,
-            decoration: manageInputDecoration('备注'),
+            decoration: manageInputDecoration(context, '备注'),
           ),
           const SizedBox(height: FxSpacing.md),
           ManageSwitchRow(
@@ -160,7 +160,9 @@ class _CategoryFormSheetState extends State<CategoryFormSheet> {
             const SizedBox(height: FxSpacing.sm),
             Text(
               _error!,
-              style: FxTypography.caption.copyWith(color: FxColors.danger),
+              style: FxTypography.caption.copyWith(
+                color: FxPalette.of(context).danger,
+              ),
             ),
           ],
           const SizedBox(height: FxSpacing.xl),
@@ -176,16 +178,18 @@ class _CategoryFormSheetState extends State<CategoryFormSheet> {
   }
 
   Widget _typeSelector() {
+    final finance = FxFinanceColors.of(context);
     return Wrap(
       spacing: FxSpacing.sm,
       children: [
-        _chip('支出', 1, FxColors.expense),
-        _chip('收入', 2, FxColors.income),
+        _chip('支出', 1, finance.expense),
+        _chip('收入', 2, finance.income),
       ],
     );
   }
 
   Widget _chip(String label, int type, Color tint) {
+    final palette = FxPalette.of(context);
     final selected = _categoryType == type;
     return GestureDetector(
       onTap: widget.isEdit
@@ -202,14 +206,16 @@ class _CategoryFormSheetState extends State<CategoryFormSheet> {
             vertical: FxSpacing.sm,
           ),
           decoration: BoxDecoration(
-            color: selected ? tint.withValues(alpha: 0.12) : FxColors.surfaceMuted,
+            color: selected
+                ? tint.withValues(alpha: 0.12)
+                : palette.surfaceMuted,
             borderRadius: FxRadius.pillBorder,
-            border: Border.all(color: selected ? tint : FxColors.border),
+            border: Border.all(color: selected ? tint : palette.border),
           ),
           child: Text(
             label,
             style: FxTypography.label.copyWith(
-              color: selected ? tint : FxColors.textSecondary,
+              color: selected ? tint : palette.textSecondary,
               fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
             ),
           ),
@@ -223,7 +229,7 @@ class _CategoryFormSheetState extends State<CategoryFormSheet> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: FxSpacing.md),
       decoration: BoxDecoration(
-        color: FxColors.surfaceMuted,
+        color: FxPalette.of(context).surfaceMuted,
         borderRadius: FxRadius.tileBorder,
       ),
       child: DropdownButtonHideUnderline(

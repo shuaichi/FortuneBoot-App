@@ -60,10 +60,15 @@ class GoodsBloc extends Bloc<GoodsEvent, GoodsState> {
         ),
       );
     } on FxApiException catch (e) {
-      emit(state.copyWith(status: GoodsViewStatus.error, errorMessage: e.message));
+      emit(
+        state.copyWith(status: GoodsViewStatus.error, errorMessage: e.message),
+      );
     } on Object catch (e) {
       emit(
-        state.copyWith(status: GoodsViewStatus.error, errorMessage: e.toString()),
+        state.copyWith(
+          status: GoodsViewStatus.error,
+          errorMessage: e.toString(),
+        ),
       );
     }
   }

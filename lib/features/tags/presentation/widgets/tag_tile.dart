@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fortuneboot/features/tags/data/tag_models.dart';
-import 'package:fortuneboot/fx/tokens/fx_colors.dart';
+import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
@@ -29,6 +29,7 @@ class _TagTileState extends State<TagTile> {
 
   @override
   Widget build(BuildContext context) {
+    final palette = FxPalette.of(context);
     final node = widget.node;
     final hasChildren = node.children.isNotEmpty;
     return Column(
@@ -37,9 +38,7 @@ class _TagTileState extends State<TagTile> {
         Padding(
           padding: EdgeInsets.only(left: widget.depth * FxSpacing.lg),
           child: Material(
-            color: widget.depth == 0
-                ? FxColors.surface
-                : FxColors.surfaceMuted,
+            color: widget.depth == 0 ? palette.surface : palette.surfaceMuted,
             borderRadius: FxRadius.tileBorder,
             child: InkWell(
               borderRadius: FxRadius.tileBorder,
@@ -60,7 +59,7 @@ class _TagTileState extends State<TagTile> {
                               ? Icons.expand_more_rounded
                               : Icons.chevron_right_rounded,
                           size: 20,
-                          color: FxColors.textSecondary,
+                          color: palette.textSecondary,
                         ),
                       )
                     else
@@ -71,22 +70,22 @@ class _TagTileState extends State<TagTile> {
                         '#${node.tagName ?? '未命名'}',
                         style: FxTypography.body.copyWith(
                           color: node.enable
-                              ? FxColors.textPrimary
-                              : FxColors.textTertiary,
+                              ? palette.textPrimary
+                              : palette.textTertiary,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
-                    _capDots(node),
+                    _capDots(context, node),
                     const SizedBox(width: FxSpacing.sm),
                     InkResponse(
                       radius: 18,
                       onTap: () => widget.onMenu(node),
-                      child: const Icon(
+                      child: Icon(
                         Icons.more_horiz_rounded,
                         size: 20,
-                        color: FxColors.textSecondary,
+                        color: palette.textSecondary,
                       ),
                     ),
                   ],
@@ -111,13 +110,14 @@ class _TagTileState extends State<TagTile> {
     );
   }
 
-  Widget _capDots(FortuneTagVo node) {
+  Widget _capDots(BuildContext context, FortuneTagVo node) {
+    final finance = FxFinanceColors.of(context);
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        if (node.canExpense) _dot(FxColors.expense),
-        if (node.canIncome) _dot(FxColors.income),
-        if (node.canTransfer) _dot(FxColors.transfer),
+        if (node.canExpense) _dot(finance.expense),
+        if (node.canIncome) _dot(finance.income),
+        if (node.canTransfer) _dot(finance.transfer),
       ],
     );
   }

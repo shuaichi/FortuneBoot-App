@@ -53,12 +53,12 @@ class BooksState extends Equatable {
 
   @override
   List<Object?> get props => [
-        status,
-        groups,
-        selectedGroupId,
-        books,
-        recycledBooks,
-        errorMessage,
-        toastMessage,
-      ];
+    status,
+    groups,
+    selectedGroupId,
+    books,
+    recycledBooks,
+    errorMessage,
+    toastMessage,
+  ];
 }

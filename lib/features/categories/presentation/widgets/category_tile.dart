@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fortuneboot/features/categories/data/category_models.dart';
-import 'package:fortuneboot/fx/tokens/fx_colors.dart';
+import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
@@ -35,6 +35,7 @@ class _CategoryTileState extends State<CategoryTile> {
 
   @override
   Widget build(BuildContext context) {
+    final palette = FxPalette.of(context);
     final node = widget.node;
     final hasChildren = node.children.isNotEmpty;
     return Column(
@@ -43,9 +44,7 @@ class _CategoryTileState extends State<CategoryTile> {
         Padding(
           padding: EdgeInsets.only(left: widget.depth * FxSpacing.lg),
           child: Material(
-            color: widget.depth == 0
-                ? FxColors.surface
-                : FxColors.surfaceMuted,
+            color: widget.depth == 0 ? palette.surface : palette.surfaceMuted,
             borderRadius: FxRadius.tileBorder,
             child: InkWell(
               borderRadius: FxRadius.tileBorder,
@@ -66,7 +65,7 @@ class _CategoryTileState extends State<CategoryTile> {
                               ? Icons.expand_more_rounded
                               : Icons.chevron_right_rounded,
                           size: 20,
-                          color: FxColors.textSecondary,
+                          color: palette.textSecondary,
                         ),
                       )
                     else
@@ -78,7 +77,7 @@ class _CategoryTileState extends State<CategoryTile> {
                       decoration: BoxDecoration(
                         color: node.enable
                             ? widget.typeTint
-                            : FxColors.textTertiary,
+                            : palette.textTertiary,
                         shape: BoxShape.circle,
                       ),
                     ),
@@ -88,8 +87,8 @@ class _CategoryTileState extends State<CategoryTile> {
                         node.categoryName ?? '未命名',
                         style: FxTypography.body.copyWith(
                           color: node.enable
-                              ? FxColors.textPrimary
-                              : FxColors.textTertiary,
+                              ? palette.textPrimary
+                              : palette.textTertiary,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -99,19 +98,19 @@ class _CategoryTileState extends State<CategoryTile> {
                       InkResponse(
                         radius: 18,
                         onTap: () => widget.onAddChild!(node),
-                        child: const Icon(
+                        child: Icon(
                           Icons.add_rounded,
                           size: 20,
-                          color: FxColors.textSecondary,
+                          color: palette.textSecondary,
                         ),
                       ),
                     InkResponse(
                       radius: 18,
                       onTap: () => widget.onMenu(node),
-                      child: const Icon(
+                      child: Icon(
                         Icons.more_horiz_rounded,
                         size: 20,
-                        color: FxColors.textSecondary,
+                        color: palette.textSecondary,
                       ),
                     ),
                   ],

@@ -53,7 +53,10 @@ class FortuneCategoryVo {
   bool get isExpense => categoryType != 2;
   bool get isIncome => categoryType == 2;
 
-  FortuneCategoryVo copyWith({bool? enable, List<FortuneCategoryVo>? children}) {
+  FortuneCategoryVo copyWith({
+    bool? enable,
+    List<FortuneCategoryVo>? children,
+  }) {
     return FortuneCategoryVo(
       categoryId: categoryId,
       parentId: parentId,

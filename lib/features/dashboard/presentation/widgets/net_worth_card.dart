@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fortuneboot/core/navigation/app_router.dart';
 import 'package:fortuneboot/core/navigation/routes.dart';
+import 'package:fortuneboot/core/preferences/preferences_cubit.dart';
 import 'package:fortuneboot/features/dashboard/data/dashboard_models.dart';
 import 'package:fortuneboot/features/dashboard/presentation/bloc/dashboard_bloc.dart';
 import 'package:fortuneboot/features/dashboard/presentation/widgets/dashboard_card_shell.dart';
 import 'package:fortuneboot/fx/components/fx_card.dart';
 import 'package:fortuneboot/fx/components/fx_money_text.dart';
 import 'package:fortuneboot/fx/components/fx_progress_bar.dart';
-import 'package:fortuneboot/fx/tokens/fx_colors.dart';
+import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
 
@@ -29,6 +31,12 @@ class NetWorthCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = FxPalette.of(context);
+    final hideAmounts = context
+        .watch<PreferencesCubit>()
+        .state
+        .dashboard
+        .hideAmounts;
     if (emptyUser) {
       return FxCard(
         onTap: () => AppRouter.push<void>(context, Routes.billEditor),
@@ -45,14 +53,14 @@ class NetWorthCard extends StatelessWidget {
                 Text(
                   '开始记第一笔',
                   style: FxTypography.body.copyWith(
-                    color: FxColors.primary,
+                    color: palette.primary,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                const Icon(
+                Icon(
                   Icons.arrow_forward_rounded,
                   size: 18,
-                  color: FxColors.primary,
+                  color: palette.primary,
                 ),
               ],
             ),
@@ -66,9 +74,10 @@ class NetWorthCard extends StatelessWidget {
       section: section,
       onRetry: onRetry,
       builder: (data) {
-        final total = data.totalAssets + data.totalLiabilities;
-        final assetRatio = total <= 0 ? 0.0 : data.totalAssets / total;
-        final liabRatio = total <= 0 ? 0.0 : data.totalLiabilities / total;
+        final liabilityMagnitude = data.totalLiabilities.abs();
+        final total = data.totalAssets.abs() + liabilityMagnitude;
+        final assetRatio = total <= 0 ? 0.0 : data.totalAssets.abs() / total;
+        final liabRatio = total <= 0 ? 0.0 : liabilityMagnitude / total;
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -79,19 +88,38 @@ class NetWorthCard extends StatelessWidget {
               currencyCode: currencyCode,
               fontSize: 30,
               fontWeight: FontWeight.w700,
-              color: FxColors.textPrimary,
+              color: palette.textPrimary,
+              masked: hideAmounts,
             ),
             const Spacer(),
-            _bar('资产', data.totalAssets, assetRatio, FxColors.income),
+            _bar(
+              '资产',
+              data.totalAssets,
+              assetRatio,
+              palette.success,
+              hideAmounts,
+            ),
             const SizedBox(height: FxSpacing.md),
-            _bar('负债', data.totalLiabilities, liabRatio, FxColors.expense),
+            _bar(
+              '负债',
+              data.totalLiabilities,
+              liabRatio,
+              palette.danger,
+              hideAmounts,
+            ),
           ],
         );
       },
     );
   }
 
-  Widget _bar(String label, double amount, double ratio, Color color) {
+  Widget _bar(
+    String label,
+    double amount,
+    double ratio,
+    Color color,
+    bool hideAmounts,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -104,6 +132,7 @@ class NetWorthCard extends StatelessWidget {
               currencyCode: currencyCode,
               fontSize: 13,
               color: color,
+              masked: hideAmounts,
             ),
           ],
         ),

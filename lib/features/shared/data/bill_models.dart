@@ -36,7 +36,11 @@ class BillCategoryAmount {
   final String? categoryName;
   final double amount;
 
-  const BillCategoryAmount({this.categoryId, this.categoryName, this.amount = 0});
+  const BillCategoryAmount({
+    this.categoryId,
+    this.categoryName,
+    this.amount = 0,
+  });
 
   factory BillCategoryAmount.fromJson(Map<String, dynamic> json) {
     return BillCategoryAmount(
@@ -47,9 +51,9 @@ class BillCategoryAmount {
   }
 
   Map<String, dynamic> toAddJson() => {
-        'categoryId': categoryId,
-        'amount': amount,
-      };
+    'categoryId': categoryId,
+    'amount': amount,
+  };
 }
 
 /// 账单标签（简版，列表/详情展示用）。
@@ -59,9 +63,9 @@ class BillTag {
   const BillTag({this.tagId, this.tagName});
 
   factory BillTag.fromJson(Map<String, dynamic> json) => BillTag(
-        tagId: FxApi.asId(json['tagId'] ?? json['id']),
-        tagName: json['tagName']?.toString(),
-      );
+    tagId: FxApi.asId(json['tagId'] ?? json['id']),
+    tagName: json['tagName']?.toString(),
+  );
 }
 
 /// 账单成员（简版）。
@@ -71,9 +75,9 @@ class BillMember {
   const BillMember({this.memberId, this.memberName});
 
   factory BillMember.fromJson(Map<String, dynamic> json) => BillMember(
-        memberId: FxApi.asId(json['memberId'] ?? json['id']),
-        memberName: json['memberName']?.toString(),
-      );
+    memberId: FxApi.asId(json['memberId'] ?? json['id']),
+    memberName: json['memberName']?.toString(),
+  );
 }
 
 /// 附加费用：1手续费/2优惠；accountSide 1转出from/2转入to。
@@ -95,21 +99,21 @@ class BillExtra {
   });
 
   factory BillExtra.fromJson(Map<String, dynamic> json) => BillExtra(
-        extraId: FxApi.asId(json['extraId']),
-        extraType: FxApi.asId(json['extraType']),
-        amount: FxApi.asDouble(json['amount']) ?? 0,
-        accountSide: FxApi.asId(json['accountSide']),
-        categoryId: FxApi.asId(json['categoryId']),
-        remark: json['remark']?.toString(),
-      );
+    extraId: FxApi.asId(json['extraId']),
+    extraType: FxApi.asId(json['extraType']),
+    amount: FxApi.asDouble(json['amount']) ?? 0,
+    accountSide: FxApi.asId(json['accountSide']),
+    categoryId: FxApi.asId(json['categoryId']),
+    remark: json['remark']?.toString(),
+  );
 
   Map<String, dynamic> toAddJson() => {
-        if (extraType != null) 'extraType': extraType,
-        'amount': amount,
-        if (accountSide != null) 'accountSide': accountSide,
-        if (categoryId != null) 'categoryId': categoryId,
-        if (remark != null && remark!.isNotEmpty) 'remark': remark,
-      };
+    if (extraType != null) 'extraType': extraType,
+    'amount': amount,
+    if (accountSide != null) 'accountSide': accountSide,
+    if (categoryId != null) 'categoryId': categoryId,
+    if (remark != null && remark!.isNotEmpty) 'remark': remark,
+  };
 }
 
 /// 账单出参 VO。
@@ -201,8 +205,10 @@ class FortuneBillVo {
       include: FxApi.asBool(json['include'], orElse: true),
       remark: json['remark']?.toString(),
       hasFile: FxApi.asBool(json['hasFile']),
-      categoryAmountPair:
-          mapList(json['categoryAmountPair'], BillCategoryAmount.fromJson),
+      categoryAmountPair: mapList(
+        json['categoryAmountPair'],
+        BillCategoryAmount.fromJson,
+      ),
       tagList: mapList(json['tagList'], BillTag.fromJson),
       memberList: mapList(json['memberList'], BillMember.fromJson),
       extras: mapList(json['extras'], BillExtra.fromJson),
@@ -221,7 +227,10 @@ class FortuneBillVo {
   List<String> get categoryNamesByAmount {
     final sorted = [...categoryAmountPair]
       ..sort((a, b) => b.amount.compareTo(a.amount));
-    return sorted.map((e) => e.categoryName ?? '').where((s) => s.isNotEmpty).toList();
+    return sorted
+        .map((e) => e.categoryName ?? '')
+        .where((s) => s.isNotEmpty)
+        .toList();
   }
 
   /// 展示金额（多分类取和，否则 amount）。
@@ -234,7 +243,8 @@ class FortuneBillVo {
 
   static DateTime? _parseDateTime(dynamic v) {
     if (v == null) return null;
-    if (v is String && v.isNotEmpty) return DateTime.tryParse(v.replaceFirst(' ', 'T'));
+    if (v is String && v.isNotEmpty)
+      return DateTime.tryParse(v.replaceFirst(' ', 'T'));
     return null;
   }
 }

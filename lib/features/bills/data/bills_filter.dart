@@ -78,14 +78,14 @@ class BillsFilter extends Equatable {
 
   @override
   List<Object?> get props => [
-        billTypes,
-        amountMin,
-        amountMax,
-        confirm,
-        include,
-        categoryIds,
-        tagIds,
-        accountId,
-        payeeId,
-      ];
+    billTypes,
+    amountMin,
+    amountMax,
+    confirm,
+    include,
+    categoryIds,
+    tagIds,
+    accountId,
+    payeeId,
+  ];
 }

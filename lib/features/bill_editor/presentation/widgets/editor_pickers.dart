@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fortuneboot/fx/components/fx_button.dart';
 import 'package:fortuneboot/fx/components/fx_sheet.dart';
-import 'package:fortuneboot/fx/tokens/fx_colors.dart';
+import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
 
@@ -15,6 +15,7 @@ Future<T?> showOptionPicker<T>(
   int? selectedId,
   bool allowClear = false,
 }) {
+  final palette = FxPalette.of(context);
   return FxSheet.show<T>(
     context,
     title: title,
@@ -30,18 +31,25 @@ Future<T?> showOptionPicker<T>(
             children: [
               if (allowClear)
                 ListTile(
-                  title: Text('不选择',
-                      style: FxTypography.body
-                          .copyWith(color: FxColors.textSecondary)),
+                  title: Text(
+                    '不选择',
+                    style: FxTypography.body.copyWith(
+                      color: palette.textSecondary,
+                    ),
+                  ),
                   onTap: () => Navigator.of(context).pop<T?>(),
                 ),
               ...options.map((o) {
                 final selected = idOf(o) == selectedId;
                 return ListTile(
-                  title: Text(labelOf(o), style: FxTypography.body),
+                  title: Text(
+                    labelOf(o),
+                    style: FxTypography.body.copyWith(
+                      color: palette.textPrimary,
+                    ),
+                  ),
                   trailing: selected
-                      ? const Icon(Icons.check_rounded,
-                          color: FxColors.primary)
+                      ? Icon(Icons.check_rounded, color: palette.primary)
                       : null,
                   onTap: () => Navigator.of(context).pop<T>(o),
                 );
@@ -118,7 +126,7 @@ class _MultiSelectBodyState<T> extends State<_MultiSelectBody<T>> {
               final checked = _selected.contains(id);
               return CheckboxListTile.adaptive(
                 controlAffinity: ListTileControlAffinity.leading,
-                activeColor: FxColors.primary,
+                activeColor: FxPalette.of(context).primary,
                 title: Text(widget.labelOf(o), style: FxTypography.body),
                 value: checked,
                 onChanged: (v) => setState(() {

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fortuneboot/features/goods/data/goods_models.dart';
 import 'package:fortuneboot/fx/components/fx_card.dart';
 import 'package:fortuneboot/fx/components/fx_money_text.dart';
-import 'package:fortuneboot/fx/tokens/fx_colors.dart';
+import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
@@ -24,6 +24,7 @@ class GoodsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = FxPalette.of(context);
     return GestureDetector(
       onLongPress: onLongPress,
       child: FxCard(
@@ -44,13 +45,18 @@ class GoodsCard extends StatelessWidget {
               amount: goods.price ?? 0,
               currencyCode: currencyCode,
               fontSize: 18,
-              color: FxColors.textPrimary,
+              color: palette.textPrimary,
             ),
             const SizedBox(height: FxSpacing.sm),
             if (goods.holdingTime != null)
-              _line(Icons.schedule_rounded, '持有 ${goods.holdingTime} 天'),
+              _line(
+                context,
+                Icons.schedule_rounded,
+                '持有 ${goods.holdingTime} 天',
+              ),
             if (goods.dailyAverageCost != null)
               _line(
+                context,
                 Icons.trending_down_rounded,
                 '日均 ${_money(goods.dailyAverageCost!)}',
               ),
@@ -60,13 +66,13 @@ class GoodsCard extends StatelessWidget {
               runSpacing: FxSpacing.xs,
               children: [
                 if ((goods.statusDesc ?? '').isNotEmpty)
-                  _tag(goods.statusDesc!, FxColors.primary),
+                  _tag(goods.statusDesc!, palette.primary),
                 if ((goods.isOverWarranty ?? '').isNotEmpty)
                   _tag(
                     goods.isOverWarranty!,
                     goods.isOverWarrantyFlag
-                        ? FxColors.warning
-                        : FxColors.success,
+                        ? palette.warning
+                        : palette.success,
                   ),
               ],
             ),
@@ -78,12 +84,12 @@ class GoodsCard extends StatelessWidget {
 
   String _money(double v) => v.toStringAsFixed(2);
 
-  Widget _line(IconData icon, String text) {
+  Widget _line(BuildContext context, IconData icon, String text) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 2),
       child: Row(
         children: [
-          Icon(icon, size: 13, color: FxColors.textTertiary),
+          Icon(icon, size: 13, color: FxPalette.of(context).textTertiary),
           const SizedBox(width: FxSpacing.xs),
           Expanded(
             child: Text(

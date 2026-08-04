@@ -80,7 +80,9 @@ class TemplateOptionsService {
       } else {
         final id = FxApi.asId(node['categoryId']);
         if (id != null) {
-          out.add(SimpleOption(id: id, name: node['categoryName']?.toString() ?? ''));
+          out.add(
+            SimpleOption(id: id, name: node['categoryName']?.toString() ?? ''),
+          );
         }
       }
     }

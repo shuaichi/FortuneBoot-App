@@ -145,7 +145,9 @@ class SmartCategoryEngine {
     return (match: r.match, top3: r.top3);
   }
 
-  ({CategoryMatch match, List<CategoryScore> top3}) _score(BillIconInput input) {
+  ({CategoryMatch match, List<CategoryScore> top3}) _score(
+    BillIconInput input,
+  ) {
     final board = <CategoryDomain, int>{};
     final billType = input.billType;
 
@@ -228,28 +230,46 @@ class SmartCategoryEngine {
       return (match: _fallback(input), top3: debug);
     }
     final best = top3.first.key;
-    return (match: CategoryMatch(icon: best.icon, color: best.color), top3: debug);
+    return (
+      match: CategoryMatch(icon: best.icon, color: best.color),
+      top3: debug,
+    );
   }
 
   /// 兜底：按 billType 给语义色（切 FxColors）+ 细化图标。
   CategoryMatch _fallback(BillIconInput input) {
     switch (input.billType) {
       case 2: // 收入
-        return const CategoryMatch(icon: Icons.savings_rounded, color: FxColors.income);
+        return const CategoryMatch(
+          icon: Icons.savings_rounded,
+          color: FxColors.income,
+        );
       case 3: // 转账
         final icon = input.toAccountId != null
             ? Icons.sync_alt_rounded
             : Icons.call_made_rounded;
         return CategoryMatch(icon: icon, color: FxColors.transfer);
       case 4: // 调整
-        return const CategoryMatch(icon: Icons.tune_rounded, color: FxColors.adjust);
+        return const CategoryMatch(
+          icon: Icons.tune_rounded,
+          color: FxColors.adjust,
+        );
       case 7: // 垫付
-        return const CategoryMatch(icon: Icons.payment_rounded, color: FxColors.expense);
+        return const CategoryMatch(
+          icon: Icons.payment_rounded,
+          color: FxColors.expense,
+        );
       case 8: // 报销
-        return const CategoryMatch(icon: Icons.assignment_return_rounded, color: FxColors.income);
+        return const CategoryMatch(
+          icon: Icons.assignment_return_rounded,
+          color: FxColors.income,
+        );
       case 1: // 支出
       default:
-        return const CategoryMatch(icon: Icons.receipt_rounded, color: FxColors.expense);
+        return const CategoryMatch(
+          icon: Icons.receipt_rounded,
+          color: FxColors.expense,
+        );
     }
   }
 }

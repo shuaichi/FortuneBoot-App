@@ -13,8 +13,9 @@ void registerRecurringFeature() {
       builder: (BuildContext context) {
         final session = context.read<SessionCubit>().state;
         return BlocProvider<RecurringBloc>(
-          create: (_) => RecurringBloc(bookId: session.currentBookId)
-            ..add(const RecurringLoaded()),
+          create: (_) =>
+              RecurringBloc(bookId: session.currentBookId)
+                ..add(const RecurringLoaded()),
           child: const RecurringPage(),
         );
       },

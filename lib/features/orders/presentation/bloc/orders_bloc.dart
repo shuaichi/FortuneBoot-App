@@ -48,9 +48,7 @@ class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
       final page = await _service.getPage(bookId: bookId, pageSize: 200);
       emit(
         state.copyWith(
-          status: page.rows.isEmpty
-              ? OrdersStatus.empty
-              : OrdersStatus.loaded,
+          status: page.rows.isEmpty ? OrdersStatus.empty : OrdersStatus.loaded,
           orders: page.rows,
         ),
       );
@@ -80,7 +78,8 @@ class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
     } on Object catch (e) {
       emit(
         state.copyWith(
-          toastMessage: '操作失败：'
+          toastMessage:
+              '操作失败：'
               '${e is FxApiException ? e.message : e.toString()}',
         ),
       );

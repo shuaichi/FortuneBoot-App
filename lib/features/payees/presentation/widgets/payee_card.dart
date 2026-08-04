@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fortuneboot/features/payees/data/payee_models.dart';
-import 'package:fortuneboot/fx/tokens/fx_colors.dart';
+import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
@@ -20,8 +20,10 @@ class PayeeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = FxPalette.of(context);
+    final finance = FxFinanceColors.of(context);
     return Material(
-      color: FxColors.surface,
+      color: palette.surface,
       borderRadius: FxRadius.tileBorder,
       child: InkWell(
         borderRadius: FxRadius.tileBorder,
@@ -37,15 +39,13 @@ class PayeeCard extends StatelessWidget {
                 width: 36,
                 height: 36,
                 decoration: BoxDecoration(
-                  color: FxColors.surfaceMuted,
+                  color: palette.surfaceMuted,
                   borderRadius: FxRadius.tileBorder,
                 ),
                 child: Icon(
                   Icons.storefront_rounded,
                   size: 20,
-                  color: payee.enable
-                      ? FxColors.primary
-                      : FxColors.textTertiary,
+                  color: payee.enable ? palette.primary : palette.textTertiary,
                 ),
               ),
               const SizedBox(width: FxSpacing.md),
@@ -57,8 +57,8 @@ class PayeeCard extends StatelessWidget {
                       payee.payeeName ?? '未命名',
                       style: FxTypography.bodyStrong.copyWith(
                         color: payee.enable
-                            ? FxColors.textPrimary
-                            : FxColors.textTertiary,
+                            ? palette.textPrimary
+                            : palette.textTertiary,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -66,15 +66,25 @@ class PayeeCard extends StatelessWidget {
                     const SizedBox(height: 2),
                     Row(
                       children: [
-                        _capChip('可支', payee.canExpense, FxColors.expense),
+                        _capChip(
+                          context,
+                          '可支',
+                          payee.canExpense,
+                          finance.expense,
+                        ),
                         const SizedBox(width: FxSpacing.xs),
-                        _capChip('可收', payee.canIncome, FxColors.income),
+                        _capChip(
+                          context,
+                          '可收',
+                          payee.canIncome,
+                          finance.income,
+                        ),
                         if (payee.sort != null) ...[
                           const SizedBox(width: FxSpacing.sm),
                           Text(
                             '排序 ${payee.sort}',
                             style: FxTypography.caption.copyWith(
-                              color: FxColors.textTertiary,
+                              color: palette.textTertiary,
                             ),
                           ),
                         ],
@@ -86,10 +96,10 @@ class PayeeCard extends StatelessWidget {
               InkResponse(
                 radius: 18,
                 onTap: onMenu,
-                child: const Icon(
+                child: Icon(
                   Icons.more_horiz_rounded,
                   size: 20,
-                  color: FxColors.textSecondary,
+                  color: palette.textSecondary,
                 ),
               ),
             ],
@@ -99,8 +109,9 @@ class PayeeCard extends StatelessWidget {
     );
   }
 
-  Widget _capChip(String label, bool on, Color tint) {
-    final color = on ? tint : FxColors.textTertiary;
+  Widget _capChip(BuildContext context, String label, bool on, Color tint) {
+    final palette = FxPalette.of(context);
+    final color = on ? tint : palette.textTertiary;
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [

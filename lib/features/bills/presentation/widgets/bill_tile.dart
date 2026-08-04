@@ -4,7 +4,7 @@ import 'package:fortuneboot/core/icon/smart_category_engine.dart';
 import 'package:fortuneboot/features/shared/data/bill_models.dart';
 import 'package:fortuneboot/fx/components/fx_money_text.dart';
 import 'package:fortuneboot/fx/components/fx_tag_chip.dart';
-import 'package:fortuneboot/fx/tokens/fx_colors.dart';
+import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
 import 'package:intl/intl.dart';
@@ -19,18 +19,18 @@ class BillTile extends StatelessWidget {
   static final DateFormat _timeFormat = DateFormat('HH:mm');
 
   BillIconInput get _iconInput => BillIconInput(
-        billType: bill.billType,
-        title: bill.title,
-        payeeName: bill.payeeName,
-        remark: bill.remark,
-        accountName: bill.accountName,
-        categoryNames: bill.categoryNamesByAmount,
-        tagNames: bill.tagList
-            .map((t) => t.tagName ?? '')
-            .where((s) => s.isNotEmpty)
-            .toList(),
-        toAccountId: bill.toAccountId,
-      );
+    billType: bill.billType,
+    title: bill.title,
+    payeeName: bill.payeeName,
+    remark: bill.remark,
+    accountName: bill.accountName,
+    categoryNames: bill.categoryNamesByAmount,
+    tagNames: bill.tagList
+        .map((t) => t.tagName ?? '')
+        .where((s) => s.isNotEmpty)
+        .toList(),
+    toAccountId: bill.toAccountId,
+  );
 
   String get _title {
     final t = bill.title;
@@ -58,6 +58,7 @@ class BillTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = FxPalette.of(context);
     final tags = bill.tagList
         .map((t) => t.tagName ?? '')
         .where((s) => s.isNotEmpty)
@@ -90,15 +91,15 @@ class BillTile extends StatelessWidget {
                       ),
                       if (bill.hasFile) ...[
                         const SizedBox(width: FxSpacing.xs),
-                        const Icon(
+                        Icon(
                           Icons.attach_file_rounded,
                           size: 14,
-                          color: FxColors.textTertiary,
+                          color: palette.textTertiary,
                         ),
                       ],
                       if (!bill.confirm) ...[
                         const SizedBox(width: FxSpacing.xs),
-                        _flagDot('待确认', FxColors.warning),
+                        _flagDot('待确认', palette.warning),
                       ],
                     ],
                   ),

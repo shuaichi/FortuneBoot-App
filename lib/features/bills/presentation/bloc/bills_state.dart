@@ -12,11 +12,27 @@ class BillDayGroup extends Equatable {
   List<Object?> get props => [day, bills];
 }
 
+/// 按账期分组的账单块。
+class BillMonthGroup extends Equatable {
+  final MonthWindow window;
+  final List<BillDayGroup> dayGroups;
+  final BillStatistics? statistics;
+
+  const BillMonthGroup({
+    required this.window,
+    required this.dayGroups,
+    this.statistics,
+  });
+
+  @override
+  List<Object?> get props => [window, dayGroups, statistics];
+}
+
 /// 单一状态类：状态机由 [status] + 数据字段承载。
 class BillsState extends Equatable {
   final BillsStatus status;
 
-  /// 当前展示月份（取其年月，日=1）。
+  /// 当前展示账期的锚点月份（取其年月，日=1）。
   final DateTime month;
   final BillsFilter filter;
 
@@ -32,6 +48,7 @@ class BillsState extends Equatable {
   final bool isRefreshing;
 
   final BillStatistics? statistics;
+  final Map<DateTime, BillStatistics> monthStatistics;
   final String? errorMessage;
 
   const BillsState({
@@ -44,12 +61,12 @@ class BillsState extends Equatable {
     this.isLoadingMore = false,
     this.isRefreshing = false,
     this.statistics,
+    this.monthStatistics = const {},
     this.errorMessage,
   });
 
-  factory BillsState.initial(DateTime month) => BillsState(
-        month: DateTime(month.year, month.month),
-      );
+  factory BillsState.initial(DateTime month) =>
+      BillsState(month: DateTime(month.year, month.month));
 
   bool get isEmpty => status == BillsStatus.loaded && bills.isEmpty;
 
@@ -69,6 +86,45 @@ class BillsState extends Equatable {
         .toList(growable: false);
   }
 
+  List<BillMonthGroup> monthGroups(int monthStartDay) {
+    final map = <DateTime, List<FortuneBillVo>>{};
+    for (final bill in bills) {
+      final tradeTime = bill.tradeTime;
+      final window = MonthWindowResolver.resolveCurrent(
+        tradeTime ?? DateTime(month.year, month.month),
+        monthStartDay,
+      );
+      map.putIfAbsent(window.anchorMonth, () => []).add(bill);
+    }
+    final anchors = map.keys.toList()..sort((a, b) => b.compareTo(a));
+    return [
+      for (final anchor in anchors)
+        BillMonthGroup(
+          window: MonthWindowResolver.resolveForAnchor(anchor, monthStartDay),
+          dayGroups: _dayGroupsFor(map[anchor]!, anchor),
+          statistics: monthStatistics[anchor],
+        ),
+    ];
+  }
+
+  List<BillDayGroup> _dayGroupsFor(
+    List<FortuneBillVo> source,
+    DateTime anchor,
+  ) {
+    final map = <DateTime, List<FortuneBillVo>>{};
+    for (final b in source) {
+      final t = b.tradeTime;
+      final day = t == null
+          ? DateTime(anchor.year, anchor.month)
+          : DateTime(t.year, t.month, t.day);
+      map.putIfAbsent(day, () => []).add(b);
+    }
+    final days = map.keys.toList()..sort((a, b) => b.compareTo(a));
+    return days
+        .map((d) => BillDayGroup(day: d, bills: map[d]!))
+        .toList(growable: false);
+  }
+
   BillsState copyWith({
     BillsStatus? status,
     DateTime? month,
@@ -79,6 +135,7 @@ class BillsState extends Equatable {
     bool? isLoadingMore,
     bool? isRefreshing,
     BillStatistics? statistics,
+    Map<DateTime, BillStatistics>? monthStatistics,
     bool clearStatistics = false,
     String? errorMessage,
   }) {
@@ -92,21 +149,23 @@ class BillsState extends Equatable {
       isLoadingMore: isLoadingMore ?? this.isLoadingMore,
       isRefreshing: isRefreshing ?? this.isRefreshing,
       statistics: clearStatistics ? null : (statistics ?? this.statistics),
+      monthStatistics: monthStatistics ?? this.monthStatistics,
       errorMessage: errorMessage,
     );
   }
 
   @override
   List<Object?> get props => [
-        status,
-        month,
-        filter,
-        bills,
-        total,
-        hasMore,
-        isLoadingMore,
-        isRefreshing,
-        statistics,
-        errorMessage,
-      ];
+    status,
+    month,
+    filter,
+    bills,
+    total,
+    hasMore,
+    isLoadingMore,
+    isRefreshing,
+    statistics,
+    monthStatistics,
+    errorMessage,
+  ];
 }

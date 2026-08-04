@@ -13,13 +13,13 @@ part 'group_request.g.dart'; // 代码生成文件
 // 分组API 分组相关的增删查改
 @RestApi()
 abstract class GroupService {
-  factory GroupService({
-    String? baseUrl,
-  }) {
+  factory GroupService({String? baseUrl}) {
     Dio dio = DioClient().dio;
-    return _GroupService(dio,
-        baseUrl: baseUrl ?? dio.options.baseUrl,
-        errorLogger: AccountErrorReport());
+    return _GroupService(
+      dio,
+      baseUrl: baseUrl ?? dio.options.baseUrl,
+      errorLogger: AccountErrorReport(),
+    );
   }
 
   @GET('/fortune/group/getDefaultGroupId')

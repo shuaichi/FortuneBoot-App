@@ -21,14 +21,14 @@ class AccountOption {
   });
 
   factory AccountOption.fromJson(Map<String, dynamic> json) => AccountOption(
-        accountId: FxApi.asId(json['accountId']),
-        accountName: json['accountName']?.toString(),
-        canExpense: FxApi.asBool(json['canExpense']),
-        canIncome: FxApi.asBool(json['canIncome']),
-        canTransferOut: FxApi.asBool(json['canTransferOut']),
-        canTransferIn: FxApi.asBool(json['canTransferIn']),
-        currencyCode: json['currencyCode']?.toString(),
-      );
+    accountId: FxApi.asId(json['accountId']),
+    accountName: json['accountName']?.toString(),
+    canExpense: FxApi.asBool(json['canExpense']),
+    canIncome: FxApi.asBool(json['canIncome']),
+    canTransferOut: FxApi.asBool(json['canTransferOut']),
+    canTransferIn: FxApi.asBool(json['canTransferIn']),
+    currencyCode: json['currencyCode']?.toString(),
+  );
 }
 
 /// 分类树节点（categoryType 1支出/2收入）。
@@ -48,11 +48,11 @@ class CategoryNode {
   bool get isLeaf => children.isEmpty;
 
   factory CategoryNode.fromJson(Map<String, dynamic> json) => CategoryNode(
-        categoryId: FxApi.asId(json['categoryId']),
-        categoryName: json['categoryName']?.toString(),
-        categoryType: FxApi.asId(json['categoryType']),
-        children: _mapNodes(json['children'], CategoryNode.fromJson),
-      );
+    categoryId: FxApi.asId(json['categoryId']),
+    categoryName: json['categoryName']?.toString(),
+    categoryType: FxApi.asId(json['categoryType']),
+    children: _mapNodes(json['children'], CategoryNode.fromJson),
+  );
 
   /// 扁平化（含分组与叶子），供选择器铺开展示。
   List<CategoryNode> flatten() {
@@ -90,13 +90,13 @@ class TagNode {
   });
 
   factory TagNode.fromJson(Map<String, dynamic> json) => TagNode(
-        tagId: FxApi.asId(json['tagId']),
-        tagName: json['tagName']?.toString(),
-        canExpense: FxApi.asBool(json['canExpense'], orElse: true),
-        canIncome: FxApi.asBool(json['canIncome'], orElse: true),
-        canTransfer: FxApi.asBool(json['canTransfer'], orElse: true),
-        children: _mapNodes(json['children'], TagNode.fromJson),
-      );
+    tagId: FxApi.asId(json['tagId']),
+    tagName: json['tagName']?.toString(),
+    canExpense: FxApi.asBool(json['canExpense'], orElse: true),
+    canIncome: FxApi.asBool(json['canIncome'], orElse: true),
+    canTransfer: FxApi.asBool(json['canTransfer'], orElse: true),
+    children: _mapNodes(json['children'], TagNode.fromJson),
+  );
 
   /// 扁平化所有节点（含分组），供多选铺开。
   List<TagNode> flattenAll() {
@@ -121,9 +121,9 @@ class MemberOption {
   const MemberOption({this.memberId, this.memberName});
 
   factory MemberOption.fromJson(Map<String, dynamic> json) => MemberOption(
-        memberId: FxApi.asId(json['memberId']),
-        memberName: json['memberName']?.toString(),
-      );
+    memberId: FxApi.asId(json['memberId']),
+    memberName: json['memberName']?.toString(),
+  );
 }
 
 /// 交易对象选项。
@@ -141,11 +141,11 @@ class PayeeOption {
   });
 
   factory PayeeOption.fromJson(Map<String, dynamic> json) => PayeeOption(
-        payeeId: FxApi.asId(json['payeeId']),
-        payeeName: json['payeeName']?.toString(),
-        canExpense: FxApi.asBool(json['canExpense'], orElse: true),
-        canIncome: FxApi.asBool(json['canIncome'], orElse: true),
-      );
+    payeeId: FxApi.asId(json['payeeId']),
+    payeeName: json['payeeName']?.toString(),
+    canExpense: FxApi.asBool(json['canExpense'], orElse: true),
+    canIncome: FxApi.asBool(json['canIncome'], orElse: true),
+  );
 }
 
 /// 使用中单据选项（垫付/报销关联）。
@@ -157,10 +157,10 @@ class OrderOption {
   const OrderOption({this.orderId, this.title, this.typeDesc});
 
   factory OrderOption.fromJson(Map<String, dynamic> json) => OrderOption(
-        orderId: FxApi.asId(json['orderId']),
-        title: json['title']?.toString(),
-        typeDesc: json['typeDesc']?.toString(),
-      );
+    orderId: FxApi.asId(json['orderId']),
+    title: json['title']?.toString(),
+    typeDesc: json['typeDesc']?.toString(),
+  );
 }
 
 /// 一次并发拉取的全部选项数据集合。
@@ -247,8 +247,9 @@ class EditorOptionsService {
   }
 
   Future<List<OrderOption>> getUsingOrders(int bookId) async {
-    final data =
-        await _api.get('/fortune/finance/order/$bookId/getUsingFinanceOrderList');
+    final data = await _api.get(
+      '/fortune/finance/order/$bookId/getUsingFinanceOrderList',
+    );
     return _list(data, OrderOption.fromJson);
   }
 

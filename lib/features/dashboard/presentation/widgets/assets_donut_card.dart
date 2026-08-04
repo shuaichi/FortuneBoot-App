@@ -1,13 +1,15 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fortuneboot/core/navigation/app_router.dart';
 import 'package:fortuneboot/core/navigation/routes.dart';
+import 'package:fortuneboot/core/preferences/preferences_cubit.dart';
 import 'package:fortuneboot/features/dashboard/data/dashboard_models.dart';
 import 'package:fortuneboot/features/dashboard/presentation/bloc/dashboard_bloc.dart';
 import 'package:fortuneboot/features/dashboard/presentation/widgets/dashboard_card_shell.dart';
 import 'package:fortuneboot/fx/components/fx_card.dart';
 import 'package:fortuneboot/fx/components/fx_money_text.dart';
-import 'package:fortuneboot/fx/tokens/fx_colors.dart';
+import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
 
@@ -58,6 +60,13 @@ class _Donut extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = FxPalette.of(context);
+    final finance = FxFinanceColors.of(context);
+    final hideAmounts = context
+        .watch<PreferencesCubit>()
+        .state
+        .dashboard
+        .hideAmounts;
     return Stack(
       alignment: Alignment.center,
       children: [
@@ -65,11 +74,11 @@ class _Donut extends StatelessWidget {
           PieChartData(
             startDegreeOffset: -90,
             sectionsSpace: 2,
-            centerSpaceRadius: 28,
+            centerSpaceRadius: 34,
             sections: [
               PieChartSectionData(
                 value: data.totalAssets <= 0 ? 0.001 : data.totalAssets,
-                color: FxColors.income,
+                color: finance.income,
                 radius: 12,
                 showTitle: false,
               ),
@@ -77,25 +86,32 @@ class _Donut extends StatelessWidget {
                 value: data.totalLiabilities <= 0
                     ? 0.001
                     : data.totalLiabilities,
-                color: FxColors.expense,
+                color: finance.expense,
                 radius: 12,
                 showTitle: false,
               ),
             ],
           ),
         ),
-        Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text('净资产', style: FxTypography.caption),
-            FxMoneyText(
-              amount: data.netAssets,
-              currencyCode: currencyCode,
-              fontSize: 12,
-              fontWeight: FontWeight.w700,
-              color: FxColors.textPrimary,
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: FxSpacing.md),
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text('净资产', style: FxTypography.caption),
+                FxMoneyText(
+                  amount: data.netAssets,
+                  currencyCode: currencyCode,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700,
+                  color: palette.textPrimary,
+                  masked: hideAmounts,
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ],
     );

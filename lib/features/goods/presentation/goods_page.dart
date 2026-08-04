@@ -13,7 +13,7 @@ import 'package:fortuneboot/fx/components/fx_card.dart';
 import 'package:fortuneboot/fx/components/fx_money_text.dart';
 import 'package:fortuneboot/fx/components/fx_sheet.dart';
 import 'package:fortuneboot/fx/components/fx_state_view.dart';
-import 'package:fortuneboot/fx/tokens/fx_colors.dart';
+import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
@@ -67,7 +67,7 @@ class _GoodsPageState extends State<GoodsPage> {
     HapticFeedback.selectionClick();
     final action = await showModalBottomSheet<String>(
       context: context,
-      backgroundColor: FxColors.surface,
+      backgroundColor: FxPalette.of(context).surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: FxRadius.sheetRadius),
       ),
@@ -107,7 +107,8 @@ class _GoodsPageState extends State<GoodsPage> {
     String value, {
     bool danger = false,
   }) {
-    final color = danger ? FxColors.danger : FxColors.textPrimary;
+    final palette = FxPalette.of(ctx);
+    final color = danger ? palette.danger : palette.textPrimary;
     return ListTile(
       leading: Icon(icon, color: color),
       title: Text(label, style: FxTypography.body.copyWith(color: color)),
@@ -145,7 +146,10 @@ class _GoodsPageState extends State<GoodsPage> {
           ),
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(true),
-            child: const Text('删除', style: TextStyle(color: FxColors.danger)),
+            child: Text(
+              '删除',
+              style: TextStyle(color: FxPalette.of(ctx).danger),
+            ),
           ),
         ],
       ),
@@ -160,7 +164,7 @@ class _GoodsPageState extends State<GoodsPage> {
     return _BookSync(
       bookId: bookId,
       child: Scaffold(
-        backgroundColor: FxColors.canvas,
+        backgroundColor: FxPalette.of(context).canvas,
         body: SafeArea(
           bottom: false,
           child: BlocConsumer<GoodsBloc, GoodsState>(
@@ -211,7 +215,7 @@ class _GoodsPageState extends State<GoodsPage> {
       radius: 22,
       child: Padding(
         padding: const EdgeInsets.all(FxSpacing.xs),
-        child: Icon(icon, size: 26, color: FxColors.textPrimary),
+        child: Icon(icon, size: 26, color: FxPalette.of(context).textPrimary),
       ),
     );
   }
@@ -318,23 +322,29 @@ class _StatBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = FxPalette.of(context);
     return FxCard(
       child: Row(
         children: [
-          _cell('全部成本', stats.allPrice, FxColors.textPrimary),
-          _divider(),
-          _cell('在役成本', stats.activePrice, FxColors.primary),
-          _divider(),
-          _cell('日均成本', stats.allDailyPrice, FxColors.income),
+          _cell(context, '全部成本', stats.allPrice, palette.textPrimary),
+          _divider(context),
+          _cell(context, '在役成本', stats.activePrice, palette.primary),
+          _divider(context),
+          _cell(
+            context,
+            '日均成本',
+            stats.allDailyPrice,
+            FxFinanceColors.of(context).income,
+          ),
         ],
       ),
     );
   }
 
-  Widget _divider() =>
-      Container(width: 1, height: 32, color: FxColors.border);
+  Widget _divider(BuildContext context) =>
+      Container(width: 1, height: 32, color: FxPalette.of(context).border);
 
-  Widget _cell(String label, double amount, Color color) {
+  Widget _cell(BuildContext context, String label, double amount, Color color) {
     return Expanded(
       child: Column(
         children: [

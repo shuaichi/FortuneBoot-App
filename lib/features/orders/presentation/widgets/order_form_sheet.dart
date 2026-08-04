@@ -3,7 +3,7 @@ import 'package:fortuneboot/core/network/fx_api.dart';
 import 'package:fortuneboot/features/orders/data/orders_models.dart';
 import 'package:fortuneboot/features/orders/data/orders_service.dart';
 import 'package:fortuneboot/fx/components/fx_button.dart';
-import 'package:fortuneboot/fx/tokens/fx_colors.dart';
+import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
@@ -95,6 +95,7 @@ class _OrderFormSheetState extends State<OrderFormSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final palette = FxPalette.of(context);
     return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(
         FxSpacing.lg,
@@ -106,7 +107,10 @@ class _OrderFormSheetState extends State<OrderFormSheet> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           _label('单据标题'),
-          TextField(controller: _titleCtrl, decoration: _dec('如：8月差旅垫付')),
+          TextField(
+            controller: _titleCtrl,
+            decoration: _dec(context, '如：8月差旅垫付'),
+          ),
           const SizedBox(height: FxSpacing.md),
           _label('类型'),
           Wrap(
@@ -122,19 +126,17 @@ class _OrderFormSheetState extends State<OrderFormSheet> {
                   ),
                   decoration: BoxDecoration(
                     color: selected
-                        ? FxColors.primaryContainer
-                        : FxColors.surfaceMuted,
+                        ? palette.primaryContainer
+                        : palette.surfaceMuted,
                     borderRadius: FxRadius.pillBorder,
                     border: Border.all(
-                      color: selected ? FxColors.primary : FxColors.border,
+                      color: selected ? palette.primary : palette.border,
                     ),
                   ),
                   child: Text(
                     t.label,
                     style: FxTypography.label.copyWith(
-                      color: selected
-                          ? FxColors.primary
-                          : FxColors.textSecondary,
+                      color: selected ? palette.primary : palette.textSecondary,
                       fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
                     ),
                   ),
@@ -146,19 +148,17 @@ class _OrderFormSheetState extends State<OrderFormSheet> {
             padding: const EdgeInsets.only(top: FxSpacing.xs),
             child: Text(
               'TODO(后端确认): 类型 int 值文档未定义，暂用 垫付1/报销2。',
-              style: FxTypography.caption.copyWith(
-                color: FxColors.textTertiary,
-              ),
+              style: FxTypography.caption.copyWith(color: palette.textTertiary),
             ),
           ),
           const SizedBox(height: FxSpacing.md),
           _label('备注（可选）'),
-          TextField(controller: _remarkCtrl, decoration: _dec('备注')),
+          TextField(controller: _remarkCtrl, decoration: _dec(context, '备注')),
           if (_error != null) ...[
             const SizedBox(height: FxSpacing.sm),
             Text(
               _error!,
-              style: FxTypography.caption.copyWith(color: FxColors.danger),
+              style: FxTypography.caption.copyWith(color: palette.danger),
             ),
           ],
           const SizedBox(height: FxSpacing.xl),
@@ -178,10 +178,10 @@ class _OrderFormSheetState extends State<OrderFormSheet> {
     child: Text(text, style: FxTypography.label),
   );
 
-  InputDecoration _dec(String hint) => InputDecoration(
+  InputDecoration _dec(BuildContext context, String hint) => InputDecoration(
     hintText: hint,
     filled: true,
-    fillColor: FxColors.surfaceMuted,
+    fillColor: FxPalette.of(context).surfaceMuted,
     isDense: true,
     contentPadding: const EdgeInsets.symmetric(
       horizontal: FxSpacing.md,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fortuneboot/core/preferences/preferences_cubit.dart';
 import 'package:fortuneboot/core/session/bill_mutations.dart';
 import 'package:fortuneboot/core/session/session_cubit.dart';
 import 'package:fortuneboot/features/stats/presentation/bloc/stats_bloc.dart';
@@ -9,7 +10,7 @@ import 'package:fortuneboot/features/stats/presentation/widgets/stats_tag_card.d
 import 'package:fortuneboot/features/stats/presentation/widgets/stats_top_bar.dart';
 import 'package:fortuneboot/features/stats/presentation/widgets/stats_trend_card.dart';
 import 'package:fortuneboot/fx/components/fx_state_view.dart';
-import 'package:fortuneboot/fx/tokens/fx_colors.dart';
+import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 
 /// 统计图表页：时间区间 + 支/收分段（全页联动）+ 概览条 + 4 图表卡。
@@ -48,13 +49,22 @@ class _StatsPageState extends State<StatsPage> {
           StatsBookChanged(bookId: session.currentBookId),
         );
       },
-      child: Scaffold(
-        backgroundColor: FxColors.canvas,
-        body: Column(
-          children: [
-            const StatsTopBar(),
-            Expanded(child: _Body()),
-          ],
+      child: BlocListener<PreferencesCubit, PreferencesState>(
+        listenWhen: (prev, next) =>
+            prev.billing.monthStartDay != next.billing.monthStartDay,
+        listener: (context, preferences) {
+          context.read<StatsBloc>().add(
+            StatsMonthStartDayChanged(preferences.billing.monthStartDay),
+          );
+        },
+        child: Scaffold(
+          backgroundColor: FxPalette.of(context).canvas,
+          body: Column(
+            children: [
+              const StatsTopBar(),
+              Expanded(child: _Body()),
+            ],
+          ),
         ),
       ),
     );

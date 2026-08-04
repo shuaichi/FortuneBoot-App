@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fortuneboot/core/network/fx_api.dart';
-import 'package:fortuneboot/fx/tokens/fx_colors.dart';
+import 'package:fortuneboot/fx/theme/fx_theme.dart';
 
 /// 账户 VO（FortuneAccountVo）。金额 BigDecimal / id 雪花 Long 用 FxApi 宽松解析。
 /// billDay / repayDay 为 LocalDate（yyyy-MM-dd），保留原始字符串用于展示与编辑。
@@ -207,18 +207,19 @@ class AccountTypeMeta {
   }
 
   /// 该类型的主色（信息区分用；负债偏红/橙，资产偏蓝/绿）。
-  Color get tint {
+  Color tint(BuildContext context) {
+    final finance = FxFinanceColors.of(context);
     switch (id) {
       case 1:
-        return FxColors.income;
+        return finance.income;
       case 2:
-        return FxColors.expense;
+        return finance.expense;
       case 3:
-        return FxColors.primary;
+        return FxPalette.of(context).primary;
       case 4:
-        return FxColors.adjust;
+        return finance.adjust;
       default:
-        return FxColors.textSecondary;
+        return FxPalette.of(context).textSecondary;
     }
   }
 }

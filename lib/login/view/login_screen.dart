@@ -323,10 +323,9 @@ class LoginScreen extends StatelessWidget {
         return _signupUser(signupData);
       },
       onSubmitAnimationCompleted: () {
-        Navigator.of(context).pushNamedAndRemoveUntil(
-          Routes.main,
-          (route) => false,
-        );
+        Navigator.of(
+          context,
+        ).pushNamedAndRemoveUntil(Routes.main, (route) => false);
       },
       onRecoverPassword: (name) {
         HapticFeedback.lightImpact();

@@ -48,8 +48,16 @@ class FxApi {
     return unwrapRaw(res);
   }
 
-  Future<dynamic> post(String path, {dynamic data, Map<String, dynamic>? query}) async {
-    final res = await dio.post<dynamic>(path, data: data, queryParameters: query);
+  Future<dynamic> post(
+    String path, {
+    dynamic data,
+    Map<String, dynamic>? query,
+  }) async {
+    final res = await dio.post<dynamic>(
+      path,
+      data: data,
+      queryParameters: query,
+    );
     return unwrapRaw(res);
   }
 

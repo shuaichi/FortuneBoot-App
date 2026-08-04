@@ -4,7 +4,7 @@ import 'package:fortuneboot/features/manage_shared/manage_menu.dart';
 import 'package:fortuneboot/features/tags/data/tag_models.dart';
 import 'package:fortuneboot/features/tags/data/tag_service.dart';
 import 'package:fortuneboot/fx/components/fx_button.dart';
-import 'package:fortuneboot/fx/tokens/fx_colors.dart';
+import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
@@ -155,7 +155,7 @@ class _TagFormSheetState extends State<TagFormSheet> {
           const ManageFieldLabel('标签名称'),
           TextField(
             controller: _nameCtrl,
-            decoration: manageInputDecoration('如：聚餐'),
+            decoration: manageInputDecoration(context, '如：聚餐'),
           ),
           const SizedBox(height: FxSpacing.md),
           const ManageFieldLabel('父级标签（可选）'),
@@ -165,13 +165,13 @@ class _TagFormSheetState extends State<TagFormSheet> {
           TextField(
             controller: _sortCtrl,
             keyboardType: TextInputType.number,
-            decoration: manageInputDecoration('数字越小越靠前'),
+            decoration: manageInputDecoration(context, '数字越小越靠前'),
           ),
           const SizedBox(height: FxSpacing.md),
           const ManageFieldLabel('备注（可选）'),
           TextField(
             controller: _remarkCtrl,
-            decoration: manageInputDecoration('备注'),
+            decoration: manageInputDecoration(context, '备注'),
           ),
           const SizedBox(height: FxSpacing.lg),
           _switchRow(TagToggleField.canExpense, _canExpense, (v) {
@@ -190,7 +190,9 @@ class _TagFormSheetState extends State<TagFormSheet> {
             const SizedBox(height: FxSpacing.sm),
             Text(
               _error!,
-              style: FxTypography.caption.copyWith(color: FxColors.danger),
+              style: FxTypography.caption.copyWith(
+                color: FxPalette.of(context).danger,
+              ),
             ),
           ],
           const SizedBox(height: FxSpacing.xl),
@@ -217,7 +219,7 @@ class _TagFormSheetState extends State<TagFormSheet> {
           Expanded(child: Text(field.label, style: FxTypography.body)),
           Switch.adaptive(
             value: value,
-            activeColor: FxColors.primary,
+            activeColor: FxPalette.of(context).primary,
             onChanged: (v) {
               onLocal(v);
               if (widget.isEdit) widget.onToggle?.call(field, v);
@@ -233,7 +235,7 @@ class _TagFormSheetState extends State<TagFormSheet> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: FxSpacing.md),
       decoration: BoxDecoration(
-        color: FxColors.surfaceMuted,
+        color: FxPalette.of(context).surfaceMuted,
         borderRadius: FxRadius.tileBorder,
       ),
       child: DropdownButtonHideUnderline(

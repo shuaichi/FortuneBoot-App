@@ -54,7 +54,11 @@ class CategoryRowCategoryChanged extends BillEditorEvent {
   final int index;
   final int? categoryId;
   final String? categoryName;
-  const CategoryRowCategoryChanged(this.index, this.categoryId, this.categoryName);
+  const CategoryRowCategoryChanged(
+    this.index,
+    this.categoryId,
+    this.categoryName,
+  );
 
   @override
   List<Object?> get props => [index, categoryId, categoryName];

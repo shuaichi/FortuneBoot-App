@@ -13,9 +13,9 @@ class RecurringBloc extends Bloc<RecurringEvent, RecurringState> {
   final int? _bookId;
 
   RecurringBloc({RecurringService? service, int? bookId})
-      : _service = service ?? RecurringService(),
-        _bookId = bookId,
-        super(const RecurringState()) {
+    : _service = service ?? RecurringService(),
+      _bookId = bookId,
+      super(const RecurringState()) {
     on<RecurringLoaded>(_onLoaded);
     on<RecurringMutated>(_onLoaded);
     on<RecurringToggled>(_onToggled);
@@ -33,17 +33,25 @@ class RecurringBloc extends Bloc<RecurringEvent, RecurringState> {
     emit(state.copyWith(status: RecurringStatus.loading));
     try {
       final rules = await _service.getRules(bookId: bookId);
-      emit(state.copyWith(
-        status: rules.isEmpty ? RecurringStatus.empty : RecurringStatus.loaded,
-        rules: rules,
-      ));
+      emit(
+        state.copyWith(
+          status: rules.isEmpty
+              ? RecurringStatus.empty
+              : RecurringStatus.loaded,
+          rules: rules,
+        ),
+      );
     } on FxApiException catch (e) {
-      emit(state.copyWith(status: RecurringStatus.error, errorMessage: e.message));
+      emit(
+        state.copyWith(status: RecurringStatus.error, errorMessage: e.message),
+      );
     } on Object catch (e) {
-      emit(state.copyWith(
-        status: RecurringStatus.error,
-        errorMessage: e.toString(),
-      ));
+      emit(
+        state.copyWith(
+          status: RecurringStatus.error,
+          errorMessage: e.toString(),
+        ),
+      );
     }
   }
 
@@ -57,9 +65,7 @@ class RecurringBloc extends Bloc<RecurringEvent, RecurringState> {
 
     final original = state.rules;
     final optimistic = original
-        .map((r) => r.ruleId == ruleId
-            ? _copyEnable(r, event.enable)
-            : r)
+        .map((r) => r.ruleId == ruleId ? _copyEnable(r, event.enable) : r)
         .toList();
     emit(state.copyWith(rules: optimistic));
 
@@ -70,11 +76,13 @@ class RecurringBloc extends Bloc<RecurringEvent, RecurringState> {
         enable: event.enable,
       );
     } on Object catch (e) {
-      emit(state.copyWith(
-        rules: original,
-        toastMessage:
-            '切换失败：${e is FxApiException ? e.message : e.toString()}',
-      ));
+      emit(
+        state.copyWith(
+          rules: original,
+          toastMessage:
+              '切换失败：${e is FxApiException ? e.message : e.toString()}',
+        ),
+      );
     }
   }
 

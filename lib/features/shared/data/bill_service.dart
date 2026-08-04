@@ -21,12 +21,13 @@ class BillStatistics {
   const BillStatistics({this.income = 0, this.expense = 0, this.surplus = 0});
 
   factory BillStatistics.fromJson(Map<String, dynamic> json) => BillStatistics(
-        income: FxApi.asDouble(json['income']) ?? 0,
-        expense: FxApi.asDouble(json['expense']) ?? 0,
-        surplus: FxApi.asDouble(json['surplus']) ??
-            ((FxApi.asDouble(json['income']) ?? 0) -
-                (FxApi.asDouble(json['expense']) ?? 0)),
-      );
+    income: FxApi.asDouble(json['income']) ?? 0,
+    expense: FxApi.asDouble(json['expense']) ?? 0,
+    surplus:
+        FxApi.asDouble(json['surplus']) ??
+        ((FxApi.asDouble(json['income']) ?? 0) -
+            (FxApi.asDouble(json['expense']) ?? 0)),
+  );
 }
 
 /// 账单查询条件。
@@ -82,13 +83,15 @@ class BillQuery {
     if (billType != null) m['billType'] = billType;
     if (billTypes != null && billTypes!.isNotEmpty) m['billTypes'] = billTypes;
     if (title != null && title!.isNotEmpty) m['title'] = title;
-    if (tradeTimeStartTime != null) m['tradeTimeStartTime'] = tradeTimeStartTime;
+    if (tradeTimeStartTime != null)
+      m['tradeTimeStartTime'] = tradeTimeStartTime;
     if (tradeTimeEndTime != null) m['tradeTimeEndTime'] = tradeTimeEndTime;
     if (amountMin != null) m['amountMin'] = amountMin;
     if (amountMax != null) m['amountMax'] = amountMax;
     if (accountId != null) m['accountId'] = accountId;
     if (payeeId != null) m['payeeId'] = payeeId;
-    if (categoryIds != null && categoryIds!.isNotEmpty) m['categoryIds'] = categoryIds;
+    if (categoryIds != null && categoryIds!.isNotEmpty)
+      m['categoryIds'] = categoryIds;
     if (tagIds != null && tagIds!.isNotEmpty) m['tagIds'] = tagIds;
     if (confirm != null) m['confirm'] = confirm;
     if (include != null) m['include'] = include;
@@ -115,13 +118,13 @@ class BillFileVo {
   });
 
   factory BillFileVo.fromJson(Map<String, dynamic> json) => BillFileVo(
-        fileId: FxApi.asId(json['fileId']),
-        contentType: json['contentType']?.toString(),
-        fileData: json['fileData']?.toString(),
-        size: FxApi.asId(json['size']),
-        originalName: json['originalName']?.toString(),
-        billId: FxApi.asId(json['billId']),
-      );
+    fileId: FxApi.asId(json['fileId']),
+    contentType: json['contentType']?.toString(),
+    fileData: json['fileData']?.toString(),
+    size: FxApi.asId(json['size']),
+    originalName: json['originalName']?.toString(),
+    billId: FxApi.asId(json['billId']),
+  );
 }
 
 /// 账单数据服务（覆盖现有 Retrofit BillService 未提供的接口）。
@@ -129,13 +132,17 @@ class BillService {
   final FxApi _api = FxApi.instance;
 
   Future<BillPage> getPage(BillQuery query) async {
-    final data = await _api.get('/fortune/bill/getPage', query: query.toQueryParams());
+    final data = await _api.get(
+      '/fortune/bill/getPage',
+      query: query.toQueryParams(),
+    );
     return _parsePage(data);
   }
 
   BillPage _parsePage(dynamic data) {
     if (data is Map) {
-      final rowsRaw = data['rows'] ?? data['list'] ?? data['records'] ?? <dynamic>[];
+      final rowsRaw =
+          data['rows'] ?? data['list'] ?? data['records'] ?? <dynamic>[];
       final rows = (rowsRaw as List? ?? [])
           .whereType<Map<dynamic, dynamic>>()
           .map((e) => FortuneBillVo.fromJson(Map<String, dynamic>.from(e)))
@@ -158,11 +165,14 @@ class BillService {
     required String tradeTimeStartTime,
     required String tradeTimeEndTime,
   }) async {
-    final data = await _api.get('/fortune/include/getBillStatistics', query: {
-      'bookId': bookId,
-      'tradeTimeStartTime': tradeTimeStartTime,
-      'tradeTimeEndTime': tradeTimeEndTime,
-    });
+    final data = await _api.get(
+      '/fortune/include/getBillStatistics',
+      query: {
+        'bookId': bookId,
+        'tradeTimeStartTime': tradeTimeStartTime,
+        'tradeTimeEndTime': tradeTimeEndTime,
+      },
+    );
     if (data is Map) {
       return BillStatistics.fromJson(Map<String, dynamic>.from(data));
     }
@@ -202,40 +212,54 @@ class BillService {
     List<dynamic>? attachmentFiles,
   }) async {
     final formData = FormData();
-    formData.files.add(MapEntry(
-      'data',
-      MultipartFile.fromString(
-        jsonEncode(data),
-        contentType: DioMediaType('application', 'json'),
+    formData.files.add(
+      MapEntry(
+        'data',
+        MultipartFile.fromString(
+          jsonEncode(data),
+          contentType: DioMediaType('application', 'json'),
+        ),
       ),
-    ));
+    );
     if (attachmentFiles != null) {
       for (final file in attachmentFiles) {
         if (file is File) {
-          formData.files.add(MapEntry(
-            'files',
-            await MultipartFile.fromFile(
-              file.path,
-              filename: file.path.split(Platform.pathSeparator).last,
+          formData.files.add(
+            MapEntry(
+              'files',
+              await MultipartFile.fromFile(
+                file.path,
+                filename: file.path.split(Platform.pathSeparator).last,
+              ),
             ),
-          ));
-        } else if (file is Map && file['bytes'] != null && file['name'] != null) {
-          formData.files.add(MapEntry(
-            'files',
-            MultipartFile.fromBytes(
-              List<int>.from(file['bytes'] as List<dynamic>),
-              filename: file['name'].toString(),
+          );
+        } else if (file is Map &&
+            file['bytes'] != null &&
+            file['name'] != null) {
+          formData.files.add(
+            MapEntry(
+              'files',
+              MultipartFile.fromBytes(
+                List<int>.from(file['bytes'] as List<dynamic>),
+                filename: file['name'].toString(),
+              ),
             ),
-          ));
+          );
         }
       }
     }
     final path = modify ? '/fortune/bill/modify' : '/fortune/bill/add';
     final res = modify
-        ? await _api.dio.put<dynamic>(path,
-            data: formData, options: Options(contentType: 'multipart/form-data'))
-        : await _api.dio.post<dynamic>(path,
-            data: formData, options: Options(contentType: 'multipart/form-data'));
+        ? await _api.dio.put<dynamic>(
+            path,
+            data: formData,
+            options: Options(contentType: 'multipart/form-data'),
+          )
+        : await _api.dio.post<dynamic>(
+            path,
+            data: formData,
+            options: Options(contentType: 'multipart/form-data'),
+          );
     FxApi.unwrapRaw(res);
   }
 

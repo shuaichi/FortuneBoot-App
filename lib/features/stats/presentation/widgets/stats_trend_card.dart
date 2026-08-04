@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:fortuneboot/features/stats/data/stats_models.dart';
 import 'package:fortuneboot/features/stats/presentation/bloc/stats_bloc.dart';
 import 'package:fortuneboot/features/stats/presentation/widgets/stats_card_shell.dart';
-import 'package:fortuneboot/fx/tokens/fx_colors.dart';
+import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
 import 'package:intl/intl.dart';
 
@@ -30,9 +30,10 @@ class StatsTrendCard extends StatelessWidget {
         if (points.isEmpty) {
           return const _EmptyAxis();
         }
+        final finance = FxFinanceColors.of(context);
         return _Line(
           points: points,
-          color: type == StatsType.expense ? FxColors.expense : FxColors.income,
+          color: type == StatsType.expense ? finance.expense : finance.income,
         );
       },
     );
@@ -57,6 +58,7 @@ class _Line extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = FxPalette.of(context);
     final spots = <FlSpot>[
       for (var i = 0; i < points.length; i++)
         FlSpot(i.toDouble(), points[i].value),
@@ -73,7 +75,7 @@ class _Line extends StatelessWidget {
           drawVerticalLine: false,
           horizontalInterval: maxY <= 0 ? 1 : maxY / 3,
           getDrawingHorizontalLine: (_) =>
-              const FlLine(color: FxColors.border, strokeWidth: 1),
+              FlLine(color: palette.border, strokeWidth: 1),
         ),
         borderData: FlBorderData(show: false),
         titlesData: FlTitlesData(
@@ -112,12 +114,12 @@ class _Line extends StatelessWidget {
         ),
         lineTouchData: LineTouchData(
           touchTooltipData: LineTouchTooltipData(
-            getTooltipColor: (_) => FxColors.textPrimary,
+            getTooltipColor: (_) => palette.textPrimary,
             getTooltipItems: (spots) => spots
                 .map(
                   (s) => LineTooltipItem(
                     NumberFormat('#,##0.##').format(s.y),
-                    FxTypography.caption.copyWith(color: FxColors.surface),
+                    FxTypography.caption.copyWith(color: palette.surface),
                   ),
                 )
                 .toList(),

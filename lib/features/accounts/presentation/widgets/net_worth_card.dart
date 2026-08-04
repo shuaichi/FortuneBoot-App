@@ -3,7 +3,7 @@ import 'package:fortuneboot/features/accounts/data/account_models.dart';
 import 'package:fortuneboot/fx/components/fx_card.dart';
 import 'package:fortuneboot/fx/components/fx_money_text.dart';
 import 'package:fortuneboot/fx/components/fx_progress_bar.dart';
-import 'package:fortuneboot/fx/tokens/fx_colors.dart';
+import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
 
@@ -12,14 +12,12 @@ class NetWorthCard extends StatelessWidget {
   final AssetsLiabilities assets;
   final String? currencyCode;
 
-  const NetWorthCard({
-    super.key,
-    required this.assets,
-    this.currencyCode,
-  });
+  const NetWorthCard({super.key, required this.assets, this.currencyCode});
 
   @override
   Widget build(BuildContext context) {
+    final palette = FxPalette.of(context);
+    final finance = FxFinanceColors.of(context);
     final total = assets.totalAssets + assets.totalLiabilities;
     final assetRatio = total <= 0 ? 0.0 : assets.totalAssets / total;
     final liabRatio = total <= 0 ? 0.0 : assets.totalLiabilities / total;
@@ -35,12 +33,12 @@ class NetWorthCard extends StatelessWidget {
             currencyCode: currencyCode,
             fontSize: 32,
             fontWeight: FontWeight.w700,
-            color: FxColors.textPrimary,
+            color: palette.textPrimary,
           ),
           const SizedBox(height: FxSpacing.lg),
-          _bar('资产', assets.totalAssets, assetRatio, FxColors.income),
+          _bar('资产', assets.totalAssets, assetRatio, finance.income),
           const SizedBox(height: FxSpacing.md),
-          _bar('负债', assets.totalLiabilities, liabRatio, FxColors.expense),
+          _bar('负债', assets.totalLiabilities, liabRatio, finance.expense),
         ],
       ),
     );
@@ -58,7 +56,10 @@ class NetWorthCard extends StatelessWidget {
                 Container(
                   width: 8,
                   height: 8,
-                  decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+                  decoration: BoxDecoration(
+                    color: color,
+                    shape: BoxShape.circle,
+                  ),
                 ),
                 const SizedBox(width: FxSpacing.sm),
                 Text(label, style: FxTypography.label),
