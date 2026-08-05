@@ -213,7 +213,7 @@ class _ProfileView extends StatelessWidget {
           _divider(context),
           FxListItem(
             leading: _tileIcon(Icons.folder_copy_rounded, palette.info),
-            title: '分组与账本',
+            title: S.of(context).booksManageTitle,
             showChevron: true,
             onTap: () => AppRouter.push<void>(context, Routes.groups),
           ),

@@ -547,6 +547,139 @@
   "booksSortOptional": "排序（可选）",
   "booksSortHint": "数值越小越靠前",
   "booksCreateBook": "创建账本",
+  "booksManageTitle": "分组与账本",
+  "booksCurrentAt": "当前在：{tab}",
+  "@booksCurrentAt": {
+    "placeholders": {
+      "tab": {}
+    }
+  },
+  "booksTabGroupShort": "分组",
+  "booksTabBookShort": "账本",
+  "booksGroupSearchHint": "搜索分组名称 / 备注 / 币种",
+  "booksNoMatchingGroups": "暂无匹配分组",
+  "booksFilterAll": "全部",
+  "booksFilterEnabled": "启用中",
+  "booksFilterDisabled": "已停用",
+  "booksHasMore": "还有更多",
+  "booksNoRemark": "暂无备注",
+  "booksDefaultGroupTag": "默认分组",
+  "booksCurrentUsingTag": "当前使用",
+  "booksNoDefaultBook": "默认账本：未设置",
+  "booksVisitorViewGroupOnly": "你是访客，仅可查看分组信息",
+  "booksInviteMembers": "邀请成员",
+  "booksDeleteGroupForever": "永久删除分组",
+  "booksGroupNoAvailableBook": "该分组暂无可用账本，请先新建或启用账本",
+  "booksGroupCreated": "分组已创建",
+  "booksGroupSaved": "分组已保存",
+  "booksBookCreated": "账本已创建",
+  "booksBookSaved": "账本已保存",
+  "booksBookSearchHint": "搜索账本名称 / 备注",
+  "booksRecycleEmpty": "回收站为空",
+  "booksGroupNoBooks": "该分组暂无账本",
+  "booksGroupDisabledReadonly": "该分组已停用，仅可查看历史账本；启用分组后可编辑。",
+  "booksActiveSegment": "在用",
+  "booksSelectGroup": "请选择分组",
+  "booksTapSwitchGroup": "点击切换管理分组",
+  "booksGroupDisabledViewOnly": "已停用 · 仅可查看",
+  "booksSwitchGroup": "切换分组",
+  "booksDefaultTag": "默认",
+  "booksDefaultAccountSettings": "默认账户设置",
+  "booksDeleteForever": "彻底删除",
+  "booksBookFallbackName": "该账本",
+  "booksDeleteGroupTitle": "永久删除分组「{name}」?",
+  "@booksDeleteGroupTitle": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "booksDeleteGroupWarning": "此操作不可恢复，会删除账本、账户、分类、标签、交易对象、成员关系、全部账单记录与照片。当前版本无法预览具体数量。",
+  "booksDeleteGroupUnderstand": "我理解无法预览数量，仍要删除",
+  "booksDeleteBookForeverTitle": "彻底删除账本「{name}」?",
+  "@booksDeleteBookForeverTitle": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "booksDeleteBookWarning": "此操作不可恢复。删除前请确认当前分组仍保留至少一个在用启用账本。",
+  "booksVisitorCannotCreateGroup": "访客无法新建分组",
+  "booksRecycleCannotCreateBook": "回收站中不可新建账本",
+  "booksEnableGroupBeforeCreateBook": "启用分组后可新建账本",
+  "booksVisitorCannotCreateBook": "访客无法新建账本",
+  "booksGroupDetailTitle": "分组详情",
+  "booksBookDetailTitle": "账本详情",
+  "booksMembersCount": "成员（{count}）",
+  "@booksMembersCount": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "booksInvite": "邀请",
+  "booksAdjustRoleHint": "如需调整角色，请移除后重新邀请。",
+  "booksUnknownRole": "角色未知",
+  "booksCannotRemoveSelf": "不能移除自己",
+  "booksCannotRemoveOnlyOwner": "不能移除唯一管理员",
+  "booksInvitedUser": "已邀请 {username}",
+  "@booksInvitedUser": {
+    "placeholders": {
+      "username": {}
+    }
+  },
+  "booksBookOverview": "账本概览",
+  "booksNoBooks": "暂无账本",
+  "booksManageAllBooksInTab": "去账本 Tab 管理全部账本",
+  "booksInfo": "信息",
+  "booksSortValue": "显示顺序：{sort}",
+  "@booksSortValue": {
+    "placeholders": {
+      "sort": {}
+    }
+  },
+  "booksRemarkValue": "备注：{remark}",
+  "@booksRemarkValue": {
+    "placeholders": {
+      "remark": {}
+    }
+  },
+  "booksNone": "无",
+  "booksDefaultBookUpdated": "默认账本已更新",
+  "booksUsername": "用户名",
+  "booksRole": "角色",
+  "booksInviteConfirmTitle": "确认邀请",
+  "booksInviteConfirmMessage": "将邀请 {username} 加入当前分组，请确认用户名完全一致。",
+  "@booksInviteConfirmMessage": {
+    "placeholders": {
+      "username": {}
+    }
+  },
+  "booksSendInvite": "发送邀请",
+  "booksInviteInputError": "请输入用户名并选择角色",
+  "booksInviteHelp": "请确认对方用户名完全一致。当前接口无法预览昵称或头像。",
+  "booksNoEnabledAccounts": "本分组暂无启用账户\n可先保存账本，稍后在账户管理中设置默认账户",
+  "booksUnsupportedAccount": "该账户不支持{kind}",
+  "@booksUnsupportedAccount": {
+    "placeholders": {
+      "kind": {}
+    }
+  },
+  "booksClearSelection": "清除选择",
+  "booksConfirmObjectHint": "请输入「{name}」确认",
+  "@booksConfirmObjectHint": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "booksDefaultDestructiveCheckbox": "我理解该操作不可恢复，仍要继续",
+  "booksPermanentlyDelete": "永久删除",
+  "booksRoleOwner": "管理员",
+  "booksRoleActor": "协作者",
+  "booksRoleVisitor": "访客",
+  "booksUnnamedMember": "未知成员",
+  "booksUnnamedAccount": "未命名账户",
+  "booksDefaultExpenseAccount": "默认支出账户",
+  "booksDefaultIncomeAccount": "默认收入账户",
+  "booksDefaultTransferOutAccount": "默认转出账户",
+  "booksDefaultTransferInAccount": "默认转入账户",
   "recurringSelectBookFirst": "请先选择账本",
   "recurringLogsTitle": "执行日志 · {name}",
   "@recurringLogsTitle": {
@@ -598,21 +731,49 @@
   "recurringOnDayOfMonth": "每月几号",
   "recurringOnMonth": "月份",
   "recurringDayOfMonthValue": "{day} 号",
-  "@recurringDayOfMonthValue": { "placeholders": { "day": {} } },
+  "@recurringDayOfMonthValue": {
+    "placeholders": {
+      "day": {}
+    }
+  },
   "recurringMonthValue": "{month} 月",
-  "@recurringMonthValue": { "placeholders": { "month": {} } },
+  "@recurringMonthValue": {
+    "placeholders": {
+      "month": {}
+    }
+  },
   "recurringAdvancedCron": "自定义 cron（高级）",
   "recurringAdvancedCronHint": "手动编辑 cron 表达式，适合高级用户",
   "recurringUseVisual": "使用可视化选择",
   "recurringUseAdvanced": "切换到自定义 cron",
   "recurringSummaryDaily": "每天 {time}",
-  "@recurringSummaryDaily": { "placeholders": { "time": {} } },
+  "@recurringSummaryDaily": {
+    "placeholders": {
+      "time": {}
+    }
+  },
   "recurringSummaryWeekly": "每周 {days} {time}",
-  "@recurringSummaryWeekly": { "placeholders": { "days": {}, "time": {} } },
+  "@recurringSummaryWeekly": {
+    "placeholders": {
+      "days": {},
+      "time": {}
+    }
+  },
   "recurringSummaryMonthly": "每月 {day} 号 {time}",
-  "@recurringSummaryMonthly": { "placeholders": { "day": {}, "time": {} } },
+  "@recurringSummaryMonthly": {
+    "placeholders": {
+      "day": {},
+      "time": {}
+    }
+  },
   "recurringSummaryYearly": "每年 {month}月{day}号 {time}",
-  "@recurringSummaryYearly": { "placeholders": { "month": {}, "day": {}, "time": {} } },
+  "@recurringSummaryYearly": {
+    "placeholders": {
+      "month": {},
+      "day": {},
+      "time": {}
+    }
+  },
   "recurringWeekdayMon": "周一",
   "recurringWeekdayTue": "周二",
   "recurringWeekdayWed": "周三",
@@ -1149,5 +1310,34 @@
   "billEditorValidateCategoryAmount": "分类金额需大于 0",
   "billEditorValidateAccount": "请选择账户",
   "billEditorValidateOrder": "请选择关联单据",
-  "billEditorValidateTitle": "请填写标题"
+  "billEditorValidateTitle": "请填写标题",
+  "booksNoPermissionSetDefaultGroup": "你没有设置默认分组的权限",
+  "booksEnableGroupFirst": "请先启用该分组",
+  "booksAlreadyDefaultGroup": "该分组已是默认分组",
+  "booksNoPermissionToggleGroup": "你没有启停分组的权限",
+  "booksGroupAlreadyEnabled": "该分组已启用",
+  "booksGroupAlreadyDisabled": "该分组已停用",
+  "booksKeepOneEnabledGroup": "至少保留一个启用分组",
+  "booksSetOtherDefaultGroupFirst": "请先设置其他分组为默认分组",
+  "booksNoPermissionDeleteGroup": "你没有删除分组的权限",
+  "booksNoPermissionSetDefaultBook": "你没有设置默认账本的权限",
+  "booksRestoreBookFirst": "请先恢复该账本",
+  "booksEnableBookBeforeDefault": "请先启用该账本再设为默认",
+  "booksAlreadyDefaultBook": "该账本已是默认账本",
+  "booksNoPermissionToggleBook": "你没有启停账本的权限",
+  "booksBookAlreadyEnabled": "该账本已启用",
+  "booksBookAlreadyDisabled": "该账本已停用",
+  "booksSetOtherDefaultBookFirst": "请先设置其他账本为默认账本",
+  "booksOnlyAvailableBook": "这是当前分组唯一可用账本，请先新建或启用其他账本",
+  "booksNoPermissionMoveBook": "你没有移动账本的权限",
+  "booksNoPermissionRestoreBook": "你没有恢复账本的权限",
+  "booksNoPermissionDeleteBook": "你没有删除账本的权限",
+  "booksDefaultAccountMissing": "默认账户未完整设置，点击补全",
+  "booksDefaultBookTag": "默认账本",
+  "booksDefaultExpenseAccountValue": "默认支出：{name}",
+  "@booksDefaultExpenseAccountValue": {
+    "placeholders": {
+      "name": {}
+    }
+  }
 }

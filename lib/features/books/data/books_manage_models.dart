@@ -1,5 +1,6 @@
 import 'package:fortuneboot/core/network/fx_api.dart';
 import 'package:fortuneboot/core/session/session_models.dart';
+import 'package:fortuneboot/generated/l10n.dart';
 
 class PagedRows<T> {
   const PagedRows({required this.rows, this.total});
@@ -19,7 +20,7 @@ class ManagedGroup {
   int? get groupId => group.groupId;
   String get name => group.groupName?.trim().isNotEmpty == true
       ? group.groupName!.trim()
-      : '未命名分组';
+      : S.current.booksUnnamedGroup;
   String? get defaultCurrency => group.defaultCurrency;
   String? get roleTypeDesc => group.roleTypeDesc;
   bool get enable => group.enable;
@@ -44,15 +45,19 @@ class RoleTypeOption {
   factory RoleTypeOption.fromEntry(Object? key, Object? value) {
     return RoleTypeOption(
       value: FxApi.asId(key) ?? FxApi.asId(value) ?? 3,
-      label: value?.toString() ?? key?.toString() ?? '访客',
+      label: value?.toString() ?? key?.toString() ?? S.current.booksRoleVisitor,
     );
   }
 
   factory RoleTypeOption.fromJson(Map<String, dynamic> json) {
     return RoleTypeOption(
       value: FxApi.asId(json['value'] ?? json['roleType']) ?? 3,
-      label: (json['label'] ?? json['desc'] ?? json['roleName'] ?? '访客')
-          .toString(),
+      label:
+          (json['label'] ??
+                  json['desc'] ??
+                  json['roleName'] ??
+                  S.current.booksRoleVisitor)
+              .toString(),
     );
   }
 }
@@ -79,7 +84,7 @@ class GroupMemberVo {
     if (nick != null && nick.isNotEmpty) return nick;
     final user = username?.trim();
     if (user != null && user.isNotEmpty) return user;
-    return '未知成员';
+    return S.current.booksUnnamedMember;
   }
 
   bool matchesAccount(String? account) {
@@ -132,8 +137,9 @@ class AccountOptionVo {
   final bool canTransferOut;
   final bool canTransferIn;
 
-  String get name =>
-      accountName?.trim().isNotEmpty == true ? accountName!.trim() : '未命名账户';
+  String get name => accountName?.trim().isNotEmpty == true
+      ? accountName!.trim()
+      : S.current.booksUnnamedAccount;
 
   bool canUseFor(DefaultAccountKind kind) {
     return switch (kind) {
@@ -161,10 +167,10 @@ enum DefaultAccountKind { expense, income, transferOut, transferIn }
 
 extension DefaultAccountKindX on DefaultAccountKind {
   String get label => switch (this) {
-    DefaultAccountKind.expense => '默认支出账户',
-    DefaultAccountKind.income => '默认收入账户',
-    DefaultAccountKind.transferOut => '默认转出账户',
-    DefaultAccountKind.transferIn => '默认转入账户',
+    DefaultAccountKind.expense => S.current.booksDefaultExpenseAccount,
+    DefaultAccountKind.income => S.current.booksDefaultIncomeAccount,
+    DefaultAccountKind.transferOut => S.current.booksDefaultTransferOutAccount,
+    DefaultAccountKind.transferIn => S.current.booksDefaultTransferInAccount,
   };
 
   String get fieldId => switch (this) {

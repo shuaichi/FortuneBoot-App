@@ -6,6 +6,7 @@ import 'package:fortuneboot/fx/components/fx_tag_chip.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
+import 'package:fortuneboot/generated/l10n.dart';
 
 class GroupCard extends StatelessWidget {
   const GroupCard({
@@ -63,7 +64,7 @@ class GroupCard extends StatelessWidget {
                       Text(
                         group.remark?.trim().isNotEmpty == true
                             ? group.remark!.trim()
-                            : '暂无备注',
+                            : S.of(context).booksNoRemark,
                         style: FxTypography.caption.copyWith(
                           color: palette.textSecondary,
                         ),
@@ -81,17 +82,28 @@ class GroupCard extends StatelessWidget {
               children: [
                 FxTagChip(label: group.defaultCurrency ?? 'CNY'),
                 FxTagChip(label: capabilities.role.label),
-                if (isDefault) const FxTagChip(label: '默认分组', selected: true),
-                if (isCurrent) const FxTagChip(label: '当前使用', selected: true),
+                if (isDefault)
+                  FxTagChip(
+                    label: S.of(context).booksDefaultGroupTag,
+                    selected: true,
+                  ),
+                if (isCurrent)
+                  FxTagChip(
+                    label: S.of(context).booksCurrentUsingTag,
+                    selected: true,
+                  ),
                 if (!group.enable)
-                  FxTagChip(label: '已停用', dotColor: palette.warning),
+                  FxTagChip(
+                    label: S.of(context).booksDisabled,
+                    dotColor: palette.warning,
+                  ),
               ],
             ),
             const SizedBox(height: FxSpacing.sm),
             Text(
               group.defaultBookName?.trim().isNotEmpty == true
-                  ? '默认账本：${group.defaultBookName}'
-                  : '默认账本：未设置',
+                  ? S.of(context).booksDefaultBook(group.defaultBookName!)
+                  : S.of(context).booksNoDefaultBook,
               style: FxTypography.caption.copyWith(color: palette.textTertiary),
             ),
           ],

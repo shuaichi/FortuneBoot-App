@@ -122,7 +122,11 @@ class _BooksPageState extends State<BooksPage> {
       child: GroupFormSheet(service: _service, group: group?.group),
     );
     if (changed == true && mounted) {
-      _showToast(group == null ? '分组已创建' : '分组已保存');
+      _showToast(
+        group == null
+            ? S.of(context).booksGroupCreated
+            : S.of(context).booksGroupSaved,
+      );
       await _syncAfterWrite();
     }
   }
@@ -191,7 +195,11 @@ class _BooksPageState extends State<BooksPage> {
       ),
     );
     if (changed == true && mounted) {
-      _showToast(book == null ? '账本已创建' : '账本已保存');
+      _showToast(
+        book == null
+            ? S.of(context).booksBookCreated
+            : S.of(context).booksBookSaved,
+      );
       await _syncAfterWrite();
     }
   }
@@ -233,13 +241,13 @@ class _BooksPageState extends State<BooksPage> {
               _menuItem(
                 ctx,
                 Icons.visibility_rounded,
-                '你是访客，仅可查看分组信息',
+                S.of(context).booksVisitorViewGroupOnly,
                 _GroupAction.explain,
               ),
             _menuItem(
               ctx,
               Icons.star_rounded,
-              '设为默认分组',
+              S.of(context).booksSetDefaultGroup,
               _GroupAction.setDefault,
               enabled: GroupGuard.canSetDefault(
                 group: group,
@@ -258,7 +266,7 @@ class _BooksPageState extends State<BooksPage> {
             _menuItem(
               ctx,
               Icons.person_add_alt_rounded,
-              '邀请成员',
+              S.of(context).booksInviteMembers,
               _GroupAction.invite,
               enabled: capabilities.canInvite,
             ),
@@ -278,7 +286,7 @@ class _BooksPageState extends State<BooksPage> {
             _menuItem(
               ctx,
               Icons.delete_forever_rounded,
-              '永久删除分组',
+              S.of(context).booksDeleteGroupForever,
               _GroupAction.delete,
               enabled: GroupGuard.canDelete(
                 group: group,
@@ -302,7 +310,7 @@ class _BooksPageState extends State<BooksPage> {
               enable: true,
             );
             if (enabled.rows.isEmpty) {
-              throw FxApiException(-1, '该分组暂无可用账本，请先新建或启用账本');
+              throw FxApiException(-1, S.current.booksGroupNoAvailableBook);
             }
             await _service.setDefaultGroup(groupId);
           });
@@ -312,7 +320,7 @@ class _BooksPageState extends State<BooksPage> {
       case _GroupAction.edit:
         await _openGroupForm(group: group);
       case _GroupAction.explain:
-        _showVisitorNotice('你是访客，仅可查看分组信息');
+        _showVisitorNotice(S.of(context).booksVisitorViewGroupOnly);
       case _GroupAction.invite:
         await _openGroupDetail(group);
       case _GroupAction.toggle:
@@ -330,12 +338,12 @@ class _BooksPageState extends State<BooksPage> {
     final name = group.name;
     final ok = await FxSheet.show<bool>(
       context,
-      title: '永久删除分组「$name」?',
+      title: S.of(context).booksDeleteGroupTitle(name),
       child: DestructiveConfirmSheet(
-        title: '永久删除分组「$name」?',
+        title: S.of(context).booksDeleteGroupTitle(name),
         objectName: name,
-        warning: '此操作不可恢复，会删除账本、账户、分类、标签、交易对象、成员关系、全部账单记录与照片。当前版本无法预览具体数量。',
-        checkboxLabel: '我理解无法预览数量，仍要删除',
+        warning: S.of(context).booksDeleteGroupWarning,
+        checkboxLabel: S.of(context).booksDeleteGroupUnderstand,
       ),
     );
     if (ok == true && group.groupId != null) {
@@ -372,7 +380,7 @@ class _BooksPageState extends State<BooksPage> {
                   _menuItem(
                     ctx,
                     Icons.delete_forever_rounded,
-                    '彻底删除',
+                    S.of(ctx).booksDeleteForever,
                     _BookAction.delete,
                     enabled: BookGuard.canDeleteForever(
                       book: book,
@@ -388,7 +396,7 @@ class _BooksPageState extends State<BooksPage> {
                   _menuItem(
                     ctx,
                     Icons.account_balance_wallet_rounded,
-                    '默认账户设置',
+                    S.of(ctx).booksDefaultAccountSettings,
                     _BookAction.accounts,
                     enabled: capabilities.canEdit,
                   ),
@@ -470,15 +478,15 @@ class _BooksPageState extends State<BooksPage> {
   Future<void> _confirmDeleteBook(FortuneBookVo book) async {
     final name = book.bookName?.trim().isNotEmpty == true
         ? book.bookName!.trim()
-        : '该账本';
+        : S.of(context).booksBookFallbackName;
     final ok = await FxSheet.show<bool>(
       context,
-      title: '彻底删除账本「$name」?',
+      title: S.of(context).booksDeleteBookForeverTitle(name),
       child: DestructiveConfirmSheet(
-        title: '彻底删除账本「$name」?',
+        title: S.of(context).booksDeleteBookForeverTitle(name),
         objectName: name,
-        warning: '此操作不可恢复。删除前请确认当前分组仍保留至少一个在用启用账本。',
-        confirmLabel: '彻底删除',
+        warning: S.of(context).booksDeleteBookWarning,
+        confirmLabel: S.of(context).booksDeleteForever,
       ),
     );
     if (ok == true && book.bookId != null) {
@@ -528,9 +536,9 @@ class _BooksPageState extends State<BooksPage> {
               child: FxSegmented<BooksTab>(
                 value: _tab,
                 onChanged: _setTab,
-                segments: const [
-                  FxSegment(BooksTab.groups, '分组'),
-                  FxSegment(BooksTab.books, '账本'),
+                segments: [
+                  FxSegment(BooksTab.groups, S.of(context).booksTabGroupShort),
+                  FxSegment(BooksTab.books, S.of(context).booksTabBookShort),
                 ],
               ),
             ),
@@ -601,10 +609,16 @@ class _Header extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('分组与账本', style: FxTypography.title),
+                Text(S.of(context).booksManageTitle, style: FxTypography.title),
                 const SizedBox(height: 2),
                 Text(
-                  '当前在：${tab == BooksTab.groups ? '分组' : '账本'}',
+                  S
+                      .of(context)
+                      .booksCurrentAt(
+                        tab == BooksTab.groups
+                            ? S.of(context).booksTabGroupShort
+                            : S.of(context).booksTabBookShort,
+                      ),
                   style: FxTypography.caption.copyWith(
                     color: palette.textSecondary,
                   ),
@@ -640,20 +654,22 @@ class _BottomAction extends StatelessWidget {
     VoidCallback? onPressed;
     String? hint;
     if (tab == BooksTab.groups) {
-      label = '＋ 新建分组';
+      label = '＋ ${S.of(context).booksAddGroup}';
       onPressed = capabilities.canCreateGroup ? onAddGroup : null;
-      if (onPressed == null) hint = '访客无法新建分组';
+      if (onPressed == null) hint = S.of(context).booksVisitorCannotCreateGroup;
     } else {
-      label = '＋ 新建账本';
+      label = '＋ ${S.of(context).booksAddBook}';
       if (isRecycleBin) {
         onPressed = null;
-        hint = '回收站中不可新建账本';
+        hint = S.of(context).booksRecycleCannotCreateBook;
       } else if (group != null && !group.enable) {
         onPressed = null;
-        hint = '启用分组后可新建账本';
+        hint = S.of(context).booksEnableGroupBeforeCreateBook;
       } else {
         onPressed = capabilities.canCreateBook ? onAddBook : null;
-        if (onPressed == null) hint = '访客无法新建账本';
+        if (onPressed == null) {
+          hint = S.of(context).booksVisitorCannotCreateBook;
+        }
       }
     }
     return Padding(

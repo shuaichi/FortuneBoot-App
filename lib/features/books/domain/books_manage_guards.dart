@@ -1,6 +1,7 @@
 import 'package:fortuneboot/core/session/session_models.dart';
 import 'package:fortuneboot/features/books/data/books_manage_models.dart';
 import 'package:fortuneboot/features/books/domain/books_manage_capabilities.dart';
+import 'package:fortuneboot/generated/l10n.dart';
 
 class GuardDecision {
   const GuardDecision.allowed({this.reason}) : allowed = true;
@@ -20,16 +21,16 @@ class GroupGuard {
     required ManageCapabilities capabilities,
   }) {
     if (!capabilities.canSetDefault) {
-      return const GuardDecision.blocked('你没有设置默认分组的权限');
+      return GuardDecision.blocked(S.current.booksNoPermissionSetDefaultGroup);
     }
     if (!group.enable) {
-      return const GuardDecision.blocked('请先启用该分组');
+      return GuardDecision.blocked(S.current.booksEnableGroupFirst);
     }
     if (group.groupId == defaultGroupId) {
-      return const GuardDecision.blocked('该分组已是默认分组');
+      return GuardDecision.blocked(S.current.booksAlreadyDefaultGroup);
     }
     if (enabledActiveBooksCount <= 0) {
-      return const GuardDecision.blocked('该分组暂无可用账本，请先新建或启用账本');
+      return GuardDecision.blocked(S.current.booksGroupNoAvailableBook);
     }
     return const GuardDecision.allowed();
   }
@@ -42,22 +43,22 @@ class GroupGuard {
     required ManageCapabilities capabilities,
   }) {
     if (!capabilities.canToggle) {
-      return const GuardDecision.blocked('你没有启停分组的权限');
+      return GuardDecision.blocked(S.current.booksNoPermissionToggleGroup);
     }
     if (targetEnable) {
       if (group.enable) {
-        return const GuardDecision.blocked('该分组已启用');
+        return GuardDecision.blocked(S.current.booksGroupAlreadyEnabled);
       }
       return const GuardDecision.allowed();
     }
     if (!group.enable) {
-      return const GuardDecision.blocked('该分组已停用');
+      return GuardDecision.blocked(S.current.booksGroupAlreadyDisabled);
     }
     if (enabledGroupCount <= 1) {
-      return const GuardDecision.blocked('至少保留一个启用分组');
+      return GuardDecision.blocked(S.current.booksKeepOneEnabledGroup);
     }
     if (group.groupId == defaultGroupId) {
-      return const GuardDecision.blocked('请先设置其他分组为默认分组');
+      return GuardDecision.blocked(S.current.booksSetOtherDefaultGroupFirst);
     }
     return const GuardDecision.allowed();
   }
@@ -69,13 +70,13 @@ class GroupGuard {
     required ManageCapabilities capabilities,
   }) {
     if (!capabilities.canDeleteGroup) {
-      return const GuardDecision.blocked('你没有删除分组的权限');
+      return GuardDecision.blocked(S.current.booksNoPermissionDeleteGroup);
     }
     if (group.enable && enabledGroupCount <= 1) {
-      return const GuardDecision.blocked('至少保留一个启用分组');
+      return GuardDecision.blocked(S.current.booksKeepOneEnabledGroup);
     }
     if (group.groupId == defaultGroupId) {
-      return const GuardDecision.blocked('请先设置其他分组为默认分组');
+      return GuardDecision.blocked(S.current.booksSetOtherDefaultGroupFirst);
     }
     return const GuardDecision.allowed();
   }
@@ -95,16 +96,16 @@ class BookGuard {
     required ManageCapabilities capabilities,
   }) {
     if (!capabilities.canSetDefault) {
-      return const GuardDecision.blocked('你没有设置默认账本的权限');
+      return GuardDecision.blocked(S.current.booksNoPermissionSetDefaultBook);
     }
     if (inRecycleBin) {
-      return const GuardDecision.blocked('请先恢复该账本');
+      return GuardDecision.blocked(S.current.booksRestoreBookFirst);
     }
     if (!book.enable) {
-      return const GuardDecision.blocked('请先启用该账本再设为默认');
+      return GuardDecision.blocked(S.current.booksEnableBookBeforeDefault);
     }
     if (isDefaultBook(book, defaultBookId)) {
-      return const GuardDecision.blocked('该账本已是默认账本');
+      return GuardDecision.blocked(S.current.booksAlreadyDefaultBook);
     }
     return const GuardDecision.allowed();
   }
@@ -117,22 +118,22 @@ class BookGuard {
     required ManageCapabilities capabilities,
   }) {
     if (!capabilities.canToggle) {
-      return const GuardDecision.blocked('你没有启停账本的权限');
+      return GuardDecision.blocked(S.current.booksNoPermissionToggleBook);
     }
     if (targetEnable) {
       if (book.enable) {
-        return const GuardDecision.blocked('该账本已启用');
+        return GuardDecision.blocked(S.current.booksBookAlreadyEnabled);
       }
       return const GuardDecision.allowed();
     }
     if (!book.enable) {
-      return const GuardDecision.blocked('该账本已停用');
+      return GuardDecision.blocked(S.current.booksBookAlreadyDisabled);
     }
     if (isDefaultBook(book, defaultBookId)) {
-      return const GuardDecision.blocked('请先设置其他账本为默认账本');
+      return GuardDecision.blocked(S.current.booksSetOtherDefaultBookFirst);
     }
     if (enabledActiveBookCount <= 1) {
-      return const GuardDecision.blocked('这是当前分组唯一可用账本，请先新建或启用其他账本');
+      return GuardDecision.blocked(S.current.booksOnlyAvailableBook);
     }
     return const GuardDecision.allowed();
   }
@@ -144,20 +145,20 @@ class BookGuard {
     required ManageCapabilities capabilities,
   }) {
     if (!capabilities.canEdit) {
-      return const GuardDecision.blocked('你没有移动账本的权限');
+      return GuardDecision.blocked(S.current.booksNoPermissionMoveBook);
     }
     if (isDefaultBook(book, defaultBookId)) {
-      return const GuardDecision.blocked('请先设置其他账本为默认账本');
+      return GuardDecision.blocked(S.current.booksSetOtherDefaultBookFirst);
     }
     if (book.enable && enabledActiveBookCount <= 1) {
-      return const GuardDecision.blocked('这是当前分组唯一可用账本，请先新建或启用其他账本');
+      return GuardDecision.blocked(S.current.booksOnlyAvailableBook);
     }
     return const GuardDecision.allowed();
   }
 
   static GuardDecision canRestore({required ManageCapabilities capabilities}) {
     if (!capabilities.canEdit) {
-      return const GuardDecision.blocked('你没有恢复账本的权限');
+      return GuardDecision.blocked(S.current.booksNoPermissionRestoreBook);
     }
     return const GuardDecision.allowed();
   }
@@ -170,13 +171,13 @@ class BookGuard {
     bool inRecycleBin = false,
   }) {
     if (!capabilities.canEdit) {
-      return const GuardDecision.blocked('你没有删除账本的权限');
+      return GuardDecision.blocked(S.current.booksNoPermissionDeleteBook);
     }
     if (isDefaultBook(book, defaultBookId)) {
-      return const GuardDecision.blocked('请先设置其他账本为默认账本');
+      return GuardDecision.blocked(S.current.booksSetOtherDefaultBookFirst);
     }
     if (!inRecycleBin && book.enable && enabledActiveBookCount <= 1) {
-      return const GuardDecision.blocked('这是当前分组唯一可用账本，请先新建或启用其他账本');
+      return GuardDecision.blocked(S.current.booksOnlyAvailableBook);
     }
     return const GuardDecision.allowed();
   }

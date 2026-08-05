@@ -1,10 +1,16 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fortuneboot/core/session/session_models.dart';
 import 'package:fortuneboot/features/books/data/books_manage_models.dart';
 import 'package:fortuneboot/features/books/domain/books_manage_capabilities.dart';
 import 'package:fortuneboot/features/books/domain/books_manage_guards.dart';
+import 'package:fortuneboot/generated/l10n.dart';
 
 void main() {
+  setUpAll(() async {
+    await S.load(const Locale('zh'));
+  });
+
   const owner = ManageCapabilities(role: ManageRole.owner);
   const actor = ManageCapabilities(role: ManageRole.actor);
   const visitor = ManageCapabilities.visitor;

@@ -545,6 +545,139 @@
   "booksSortOptional": "Sort (optional)",
   "booksSortHint": "Lower values appear first",
   "booksCreateBook": "Create Book",
+  "booksManageTitle": "Groups & Books",
+  "booksCurrentAt": "Current: {tab}",
+  "@booksCurrentAt": {
+    "placeholders": {
+      "tab": {}
+    }
+  },
+  "booksTabGroupShort": "Groups",
+  "booksTabBookShort": "Books",
+  "booksGroupSearchHint": "Search group name / note / currency",
+  "booksNoMatchingGroups": "No matching groups",
+  "booksFilterAll": "All",
+  "booksFilterEnabled": "Enabled",
+  "booksFilterDisabled": "Disabled",
+  "booksHasMore": "More available",
+  "booksNoRemark": "No note",
+  "booksDefaultGroupTag": "Default group",
+  "booksCurrentUsingTag": "Current",
+  "booksNoDefaultBook": "Default book: Not set",
+  "booksVisitorViewGroupOnly": "You are a visitor and can only view group information",
+  "booksInviteMembers": "Invite members",
+  "booksDeleteGroupForever": "Permanently delete group",
+  "booksGroupNoAvailableBook": "This group has no available books. Create or enable a book first.",
+  "booksGroupCreated": "Group created",
+  "booksGroupSaved": "Group saved",
+  "booksBookCreated": "Book created",
+  "booksBookSaved": "Book saved",
+  "booksBookSearchHint": "Search book name / note",
+  "booksRecycleEmpty": "Recycle bin is empty",
+  "booksGroupNoBooks": "No books in this group",
+  "booksGroupDisabledReadonly": "This group is disabled. You can only view historical books; enable it to edit.",
+  "booksActiveSegment": "Active",
+  "booksSelectGroup": "Select a group",
+  "booksTapSwitchGroup": "Tap to switch group",
+  "booksGroupDisabledViewOnly": "Disabled · view only",
+  "booksSwitchGroup": "Switch group",
+  "booksDefaultTag": "Default",
+  "booksDefaultAccountSettings": "Default account settings",
+  "booksDeleteForever": "Delete forever",
+  "booksBookFallbackName": "this book",
+  "booksDeleteGroupTitle": "Permanently delete group \"{name}\"?",
+  "@booksDeleteGroupTitle": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "booksDeleteGroupWarning": "This cannot be undone. It will delete books, accounts, categories, tags, payees, member relations, all bill records, and photos. This version cannot preview exact counts.",
+  "booksDeleteGroupUnderstand": "I understand counts cannot be previewed and still want to delete",
+  "booksDeleteBookForeverTitle": "Permanently delete book \"{name}\"?",
+  "@booksDeleteBookForeverTitle": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "booksDeleteBookWarning": "This cannot be undone. Make sure the group still keeps at least one active enabled book.",
+  "booksVisitorCannotCreateGroup": "Visitors cannot create groups",
+  "booksRecycleCannotCreateBook": "Cannot create books in recycle bin",
+  "booksEnableGroupBeforeCreateBook": "Enable the group before creating a book",
+  "booksVisitorCannotCreateBook": "Visitors cannot create books",
+  "booksGroupDetailTitle": "Group details",
+  "booksBookDetailTitle": "Book details",
+  "booksMembersCount": "Members ({count})",
+  "@booksMembersCount": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "booksInvite": "Invite",
+  "booksAdjustRoleHint": "To adjust roles, remove the member and invite again.",
+  "booksUnknownRole": "Unknown role",
+  "booksCannotRemoveSelf": "You cannot remove yourself",
+  "booksCannotRemoveOnlyOwner": "You cannot remove the only owner",
+  "booksInvitedUser": "Invited {username}",
+  "@booksInvitedUser": {
+    "placeholders": {
+      "username": {}
+    }
+  },
+  "booksBookOverview": "Book overview",
+  "booksNoBooks": "No books",
+  "booksManageAllBooksInTab": "Manage all books in the Books tab",
+  "booksInfo": "Info",
+  "booksSortValue": "Sort order: {sort}",
+  "@booksSortValue": {
+    "placeholders": {
+      "sort": {}
+    }
+  },
+  "booksRemarkValue": "Remark: {remark}",
+  "@booksRemarkValue": {
+    "placeholders": {
+      "remark": {}
+    }
+  },
+  "booksNone": "None",
+  "booksDefaultBookUpdated": "Default book updated",
+  "booksUsername": "Username",
+  "booksRole": "Role",
+  "booksInviteConfirmTitle": "Confirm invitation",
+  "booksInviteConfirmMessage": "Invite {username} to this group. Please confirm the username is exact.",
+  "@booksInviteConfirmMessage": {
+    "placeholders": {
+      "username": {}
+    }
+  },
+  "booksSendInvite": "Send invitation",
+  "booksInviteInputError": "Enter a username and select a role",
+  "booksInviteHelp": "Please confirm the username is exact. The current API cannot preview nickname or avatar.",
+  "booksNoEnabledAccounts": "No enabled accounts in this group\nYou can save the book first and set default accounts later in account management.",
+  "booksUnsupportedAccount": "This account does not support {kind}",
+  "@booksUnsupportedAccount": {
+    "placeholders": {
+      "kind": {}
+    }
+  },
+  "booksClearSelection": "Clear selection",
+  "booksConfirmObjectHint": "Enter \"{name}\" to confirm",
+  "@booksConfirmObjectHint": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "booksDefaultDestructiveCheckbox": "I understand this action cannot be undone and want to continue",
+  "booksPermanentlyDelete": "Permanently delete",
+  "booksRoleOwner": "Owner",
+  "booksRoleActor": "Collaborator",
+  "booksRoleVisitor": "Visitor",
+  "booksUnnamedMember": "Unknown member",
+  "booksUnnamedAccount": "Unnamed account",
+  "booksDefaultExpenseAccount": "Default expense account",
+  "booksDefaultIncomeAccount": "Default income account",
+  "booksDefaultTransferOutAccount": "Default transfer-out account",
+  "booksDefaultTransferInAccount": "Default transfer-in account",
   "recurringSelectBookFirst": "Please select a book first",
   "recurringLogsTitle": "Execution Logs · {name}",
   "@recurringLogsTitle": {
@@ -596,21 +729,49 @@
   "recurringOnDayOfMonth": "Day of month",
   "recurringOnMonth": "Month",
   "recurringDayOfMonthValue": "Day {day}",
-  "@recurringDayOfMonthValue": { "placeholders": { "day": {} } },
+  "@recurringDayOfMonthValue": {
+    "placeholders": {
+      "day": {}
+    }
+  },
   "recurringMonthValue": "Month {month}",
-  "@recurringMonthValue": { "placeholders": { "month": {} } },
+  "@recurringMonthValue": {
+    "placeholders": {
+      "month": {}
+    }
+  },
   "recurringAdvancedCron": "Custom cron (advanced)",
   "recurringAdvancedCronHint": "Manually edit the cron expression for advanced use",
   "recurringUseVisual": "Use visual picker",
   "recurringUseAdvanced": "Switch to custom cron",
   "recurringSummaryDaily": "Every day at {time}",
-  "@recurringSummaryDaily": { "placeholders": { "time": {} } },
+  "@recurringSummaryDaily": {
+    "placeholders": {
+      "time": {}
+    }
+  },
   "recurringSummaryWeekly": "Every {days} at {time}",
-  "@recurringSummaryWeekly": { "placeholders": { "days": {}, "time": {} } },
+  "@recurringSummaryWeekly": {
+    "placeholders": {
+      "days": {},
+      "time": {}
+    }
+  },
   "recurringSummaryMonthly": "Day {day} monthly at {time}",
-  "@recurringSummaryMonthly": { "placeholders": { "day": {}, "time": {} } },
+  "@recurringSummaryMonthly": {
+    "placeholders": {
+      "day": {},
+      "time": {}
+    }
+  },
   "recurringSummaryYearly": "{month}/{day} yearly at {time}",
-  "@recurringSummaryYearly": { "placeholders": { "month": {}, "day": {}, "time": {} } },
+  "@recurringSummaryYearly": {
+    "placeholders": {
+      "month": {},
+      "day": {},
+      "time": {}
+    }
+  },
   "recurringWeekdayMon": "Mon",
   "recurringWeekdayTue": "Tue",
   "recurringWeekdayWed": "Wed",
@@ -1147,5 +1308,34 @@
   "billEditorValidateCategoryAmount": "Category amount must be greater than 0",
   "billEditorValidateAccount": "Select an account",
   "billEditorValidateOrder": "Select a related order",
-  "billEditorValidateTitle": "Enter a title"
+  "billEditorValidateTitle": "Enter a title",
+  "booksNoPermissionSetDefaultGroup": "You do not have permission to set the default group",
+  "booksEnableGroupFirst": "Enable this group first",
+  "booksAlreadyDefaultGroup": "This group is already the default",
+  "booksNoPermissionToggleGroup": "You do not have permission to enable or disable groups",
+  "booksGroupAlreadyEnabled": "This group is already enabled",
+  "booksGroupAlreadyDisabled": "This group is already disabled",
+  "booksKeepOneEnabledGroup": "Keep at least one enabled group",
+  "booksSetOtherDefaultGroupFirst": "Set another group as default first",
+  "booksNoPermissionDeleteGroup": "You do not have permission to delete groups",
+  "booksNoPermissionSetDefaultBook": "You do not have permission to set the default book",
+  "booksRestoreBookFirst": "Restore this book first",
+  "booksEnableBookBeforeDefault": "Enable this book before setting it as default",
+  "booksAlreadyDefaultBook": "This book is already the default",
+  "booksNoPermissionToggleBook": "You do not have permission to enable or disable books",
+  "booksBookAlreadyEnabled": "This book is already enabled",
+  "booksBookAlreadyDisabled": "This book is already disabled",
+  "booksSetOtherDefaultBookFirst": "Set another book as default first",
+  "booksOnlyAvailableBook": "This is the only available book in the group. Create or enable another book first.",
+  "booksNoPermissionMoveBook": "You do not have permission to move books",
+  "booksNoPermissionRestoreBook": "You do not have permission to restore books",
+  "booksNoPermissionDeleteBook": "You do not have permission to delete books",
+  "booksDefaultAccountMissing": "Default accounts are incomplete. Tap to complete.",
+  "booksDefaultBookTag": "Default book",
+  "booksDefaultExpenseAccountValue": "Default expense: {name}",
+  "@booksDefaultExpenseAccountValue": {
+    "placeholders": {
+      "name": {}
+    }
+  }
 }

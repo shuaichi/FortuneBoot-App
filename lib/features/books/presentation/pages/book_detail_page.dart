@@ -14,6 +14,7 @@ import 'package:fortuneboot/fx/components/fx_tag_chip.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
+import 'package:fortuneboot/generated/l10n.dart';
 
 class BookDetailPage extends StatefulWidget {
   const BookDetailPage({
@@ -161,7 +162,7 @@ class _BookDetailPageState extends State<BookDetailPage> {
       backgroundColor: palette.canvas,
       appBar: AppBar(
         backgroundColor: palette.canvas,
-        title: const Text('账本详情'),
+        title: Text(S.of(context).booksBookDetailTitle),
         actions: [
           if (widget.capabilities.canEdit && !widget.inRecycleBin)
             IconButton(
@@ -182,18 +183,30 @@ class _BookDetailPageState extends State<BookDetailPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(book.bookName ?? '未命名账本', style: FxTypography.display),
+                Text(
+                  book.bookName ?? S.of(context).booksUnnamedBook,
+                  style: FxTypography.display,
+                ),
                 const SizedBox(height: FxSpacing.sm),
                 Wrap(
                   spacing: FxSpacing.xs,
                   children: [
                     FxTagChip(label: book.defaultCurrency ?? 'CNY'),
                     if (book.bookId == widget.group?.defaultBookId)
-                      const FxTagChip(label: '默认账本', selected: true),
+                      FxTagChip(
+                        label: S.of(context).booksDefaultBookTag,
+                        selected: true,
+                      ),
                     if (!book.enable)
-                      FxTagChip(label: '已停用', dotColor: palette.warning),
+                      FxTagChip(
+                        label: S.of(context).booksDisabled,
+                        dotColor: palette.warning,
+                      ),
                     if (widget.inRecycleBin)
-                      FxTagChip(label: '回收站', dotColor: palette.danger),
+                      FxTagChip(
+                        label: S.of(context).booksRecycleBin,
+                        dotColor: palette.danger,
+                      ),
                   ],
                 ),
               ],
@@ -207,7 +220,10 @@ class _BookDetailPageState extends State<BookDetailPage> {
                     (kind) => ListTile(
                       contentPadding: EdgeInsets.zero,
                       title: Text(kind.label),
-                      subtitle: Text(_selectedAccountName(kind) ?? '未设置'),
+                      subtitle: Text(
+                        _selectedAccountName(kind) ??
+                            S.of(context).commonPleaseSelect,
+                      ),
                       trailing: const Icon(Icons.chevron_right_rounded),
                       onTap: widget.inRecycleBin
                           ? null
@@ -222,12 +238,21 @@ class _BookDetailPageState extends State<BookDetailPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('信息', style: FxTypography.title),
+                Text(S.of(context).booksInfo, style: FxTypography.title),
                 const SizedBox(height: FxSpacing.sm),
-                Text('显示顺序：${book.sort ?? 0}', style: FxTypography.body),
+                Text(
+                  S.of(context).booksSortValue(book.sort ?? 0),
+                  style: FxTypography.body,
+                ),
                 const SizedBox(height: FxSpacing.xs),
                 Text(
-                  '备注：${book.remark?.trim().isNotEmpty == true ? book.remark : '无'}',
+                  S
+                      .of(context)
+                      .booksRemarkValue(
+                        book.remark?.trim().isNotEmpty == true
+                            ? book.remark!
+                            : S.of(context).booksNone,
+                      ),
                 ),
               ],
             ),
@@ -244,7 +269,7 @@ class _BookDetailPageState extends State<BookDetailPage> {
               const SizedBox(height: FxSpacing.sm),
             ],
             FxButton.tonal(
-              label: '设为默认账本',
+              label: S.of(context).booksSetDefaultBook,
               expand: true,
               onPressed: defaultDecision.allowed
                   ? () async {
@@ -252,7 +277,7 @@ class _BookDetailPageState extends State<BookDetailPage> {
                       await widget.service.setDefaultBook(book.bookId!);
                       if (!mounted) return;
                       widget.onChanged?.call();
-                      _toast('默认账本已更新');
+                      _toast(S.current.booksDefaultBookUpdated);
                     }
                   : null,
             ),

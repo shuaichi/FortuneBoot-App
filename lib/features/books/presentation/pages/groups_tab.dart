@@ -8,6 +8,7 @@ import 'package:fortuneboot/fx/components/fx_tag_chip.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
+import 'package:fortuneboot/generated/l10n.dart';
 
 class GroupsTab extends StatelessWidget {
   const GroupsTab({
@@ -37,7 +38,7 @@ class GroupsTab extends StatelessWidget {
         return Column(
           children: [
             _SearchField(
-              hintText: '搜索分组名称 / 备注 / 币种',
+              hintText: S.of(context).booksGroupSearchHint,
               onChanged: (value) =>
                   context.read<BooksBloc>().add(BooksGroupSearchChanged(value)),
             ),
@@ -53,7 +54,7 @@ class GroupsTab extends StatelessWidget {
                           const SizedBox(height: 80),
                           Center(
                             child: FxStateView.empty(
-                              message: '暂无匹配分组',
+                              message: S.of(context).booksNoMatchingGroups,
                               icon: Icons.folder_off_rounded,
                             ),
                           ),
@@ -106,28 +107,31 @@ class _FilterChips extends StatelessWidget {
         spacing: FxSpacing.sm,
         children: [
           FxTagChip(
-            label: '全部',
+            label: S.of(context).booksFilterAll,
             selected: state.groupFilter == GroupFilter.all,
             onTap: () => context.read<BooksBloc>().add(
               const BooksGroupFilterChanged(GroupFilter.all),
             ),
           ),
           FxTagChip(
-            label: '启用中',
+            label: S.of(context).booksFilterEnabled,
             selected: state.groupFilter == GroupFilter.enabled,
             onTap: () => context.read<BooksBloc>().add(
               const BooksGroupFilterChanged(GroupFilter.enabled),
             ),
           ),
           FxTagChip(
-            label: '已停用',
+            label: S.of(context).booksFilterDisabled,
             selected: state.groupFilter == GroupFilter.disabled,
             onTap: () => context.read<BooksBloc>().add(
               const BooksGroupFilterChanged(GroupFilter.disabled),
             ),
           ),
           if (state.hasMoreGroups)
-            const FxTagChip(label: '还有更多', dotColor: Colors.orange),
+            FxTagChip(
+              label: S.of(context).booksHasMore,
+              dotColor: Colors.orange,
+            ),
         ],
       ),
     );

@@ -3,6 +3,7 @@ import 'package:fortuneboot/fx/components/fx_button.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
+import 'package:fortuneboot/generated/l10n.dart';
 
 class DestructiveConfirmSheet extends StatefulWidget {
   const DestructiveConfirmSheet({
@@ -10,15 +11,15 @@ class DestructiveConfirmSheet extends StatefulWidget {
     required this.title,
     required this.objectName,
     required this.warning,
-    this.checkboxLabel = '我理解该操作不可恢复，仍要继续',
-    this.confirmLabel = '永久删除',
+    this.checkboxLabel,
+    this.confirmLabel,
   });
 
   final String title;
   final String objectName;
   final String warning;
-  final String checkboxLabel;
-  final String confirmLabel;
+  final String? checkboxLabel;
+  final String? confirmLabel;
 
   @override
   State<DestructiveConfirmSheet> createState() =>
@@ -62,7 +63,11 @@ class _DestructiveConfirmSheetState extends State<DestructiveConfirmSheet> {
             contentPadding: EdgeInsets.zero,
             value: _checked,
             onChanged: (value) => setState(() => _checked = value ?? false),
-            title: Text(widget.checkboxLabel, style: FxTypography.caption),
+            title: Text(
+              widget.checkboxLabel ??
+                  S.of(context).booksDefaultDestructiveCheckbox,
+              style: FxTypography.caption,
+            ),
             controlAffinity: ListTileControlAffinity.leading,
           ),
           const SizedBox(height: FxSpacing.sm),
@@ -70,13 +75,13 @@ class _DestructiveConfirmSheetState extends State<DestructiveConfirmSheet> {
             controller: _controller,
             onChanged: (_) => setState(() {}),
             decoration: InputDecoration(
-              hintText: '请输入「${widget.objectName}」确认',
+              hintText: S.of(context).booksConfirmObjectHint(widget.objectName),
               border: const OutlineInputBorder(),
             ),
           ),
           const SizedBox(height: FxSpacing.xl),
           FxButton.critical(
-            label: widget.confirmLabel,
+            label: widget.confirmLabel ?? S.of(context).booksPermanentlyDelete,
             expand: true,
             onPressed: _enabled ? () => Navigator.of(context).pop(true) : null,
           ),

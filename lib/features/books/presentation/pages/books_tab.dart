@@ -12,6 +12,7 @@ import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
+import 'package:fortuneboot/generated/l10n.dart';
 
 class BooksTabView extends StatelessWidget {
   const BooksTabView({
@@ -45,14 +46,16 @@ class BooksTabView extends StatelessWidget {
           children: [
             _GroupSelector(state: state),
             if (selectedGroup != null && !selectedGroup.enable)
-              const Padding(
-                padding: EdgeInsets.fromLTRB(
+              Padding(
+                padding: const EdgeInsets.fromLTRB(
                   FxSpacing.lg,
                   FxSpacing.sm,
                   FxSpacing.lg,
                   0,
                 ),
-                child: ManageInlineBanner(message: '该分组已停用，仅可查看历史账本；启用分组后可编辑。'),
+                child: ManageInlineBanner(
+                  message: S.of(context).booksGroupDisabledReadonly,
+                ),
               ),
             Padding(
               padding: const EdgeInsets.fromLTRB(
@@ -65,14 +68,20 @@ class BooksTabView extends StatelessWidget {
                 value: state.bookSegment,
                 onChanged: (value) =>
                     context.read<BooksBloc>().add(BooksSegmentChanged(value)),
-                segments: const [
-                  FxSegment(BooksSegment.active, '在用'),
-                  FxSegment(BooksSegment.recycleBin, '回收站'),
+                segments: [
+                  FxSegment(
+                    BooksSegment.active,
+                    S.of(context).booksActiveSegment,
+                  ),
+                  FxSegment(
+                    BooksSegment.recycleBin,
+                    S.of(context).booksRecycleBin,
+                  ),
                 ],
               ),
             ),
             _SearchField(
-              hintText: '搜索账本名称 / 备注',
+              hintText: S.of(context).booksBookSearchHint,
               onChanged: (value) =>
                   context.read<BooksBloc>().add(BooksSearchChanged(value)),
             ),
@@ -88,8 +97,8 @@ class BooksTabView extends StatelessWidget {
                           FxStateView.empty(
                             message:
                                 state.bookSegment == BooksSegment.recycleBin
-                                ? '回收站为空'
-                                : '该分组暂无账本',
+                                ? S.of(context).booksRecycleEmpty
+                                : S.of(context).booksGroupNoBooks,
                             icon: Icons.menu_book_outlined,
                           ),
                         ],
@@ -178,12 +187,14 @@ class _GroupSelector extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      selected?.name ?? '请选择分组',
+                      selected?.name ?? S.of(context).booksSelectGroup,
                       style: FxTypography.bodyStrong,
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      selected?.enable == false ? '已停用 · 仅可查看' : '点击切换管理分组',
+                      selected?.enable == false
+                          ? S.of(context).booksGroupDisabledViewOnly
+                          : S.of(context).booksTapSwitchGroup,
                       style: FxTypography.caption.copyWith(
                         color: palette.textSecondary,
                       ),
@@ -202,7 +213,7 @@ class _GroupSelector extends StatelessWidget {
   Future<void> _showGroupPicker(BuildContext context) async {
     final selectedId = await FxSheet.show<int>(
       context,
-      title: '切换分组',
+      title: S.of(context).booksSwitchGroup,
       child: _GroupPicker(state: state),
       expand: true,
     );
@@ -241,9 +252,12 @@ class _GroupPicker extends StatelessWidget {
             spacing: FxSpacing.xs,
             children: [
               if (!group.enable)
-                FxTagChip(label: '已停用', dotColor: palette.warning),
+                FxTagChip(
+                  label: S.of(context).booksDisabled,
+                  dotColor: palette.warning,
+                ),
               if (group.groupId == state.defaultGroupId)
-                const FxTagChip(label: '默认', selected: true),
+                FxTagChip(label: S.of(context).booksDefaultTag, selected: true),
             ],
           ),
           onTap: () => Navigator.of(context).pop(group.groupId),

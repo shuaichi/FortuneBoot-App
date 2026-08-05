@@ -1,13 +1,14 @@
 import 'package:flutter/foundation.dart';
 import 'package:fortuneboot/features/books/data/books_manage_models.dart';
+import 'package:fortuneboot/generated/l10n.dart';
 
 enum ManageRole { owner, actor, visitor }
 
 extension ManageRoleX on ManageRole {
   String get label => switch (this) {
-    ManageRole.owner => '管理员',
-    ManageRole.actor => '协作者',
-    ManageRole.visitor => '访客',
+    ManageRole.owner => S.current.booksRoleOwner,
+    ManageRole.actor => S.current.booksRoleActor,
+    ManageRole.visitor => S.current.booksRoleVisitor,
   };
 
   int get value => switch (this) {

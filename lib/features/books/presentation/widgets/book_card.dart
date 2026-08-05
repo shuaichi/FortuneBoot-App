@@ -5,6 +5,7 @@ import 'package:fortuneboot/fx/components/fx_tag_chip.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
+import 'package:fortuneboot/generated/l10n.dart';
 
 class BookCard extends StatelessWidget {
   const BookCard({
@@ -63,7 +64,7 @@ class BookCard extends StatelessWidget {
                       Text(
                         book.bookName?.trim().isNotEmpty == true
                             ? book.bookName!.trim()
-                            : '未命名账本',
+                            : S.of(context).booksUnnamedBook,
                         style: FxTypography.title.copyWith(
                           color: palette.textPrimary,
                         ),
@@ -72,7 +73,12 @@ class BookCard extends StatelessWidget {
                       Text(
                         book.remark?.trim().isNotEmpty == true
                             ? book.remark!.trim()
-                            : '默认支出：${book.defaultExpenseAccountName ?? '未设置'}',
+                            : S
+                                  .of(context)
+                                  .booksDefaultExpenseAccountValue(
+                                    book.defaultExpenseAccountName ??
+                                        S.of(context).commonPleaseSelect,
+                                  ),
                         style: FxTypography.caption.copyWith(
                           color: palette.textSecondary,
                         ),
@@ -89,12 +95,26 @@ class BookCard extends StatelessWidget {
               runSpacing: FxSpacing.xs,
               children: [
                 FxTagChip(label: book.defaultCurrency ?? 'CNY'),
-                if (isDefault) const FxTagChip(label: '默认账本', selected: true),
-                if (isCurrent) const FxTagChip(label: '当前使用', selected: true),
+                if (isDefault)
+                  FxTagChip(
+                    label: S.of(context).booksDefaultBookTag,
+                    selected: true,
+                  ),
+                if (isCurrent)
+                  FxTagChip(
+                    label: S.of(context).booksCurrentUsingTag,
+                    selected: true,
+                  ),
                 if (!book.enable)
-                  FxTagChip(label: '已停用', dotColor: palette.warning),
+                  FxTagChip(
+                    label: S.of(context).booksDisabled,
+                    dotColor: palette.warning,
+                  ),
                 if (inRecycleBin)
-                  FxTagChip(label: '回收站', dotColor: palette.danger),
+                  FxTagChip(
+                    label: S.of(context).booksRecycleBin,
+                    dotColor: palette.danger,
+                  ),
               ],
             ),
             if (hasMissingAccount && !inRecycleBin) ...[
@@ -102,7 +122,7 @@ class BookCard extends StatelessWidget {
               GestureDetector(
                 onTap: onMissingAccountTap,
                 child: Text(
-                  '默认账户未完整设置，点击补全',
+                  S.of(context).booksDefaultAccountMissing,
                   style: FxTypography.caption.copyWith(color: palette.warning),
                 ),
               ),

@@ -5,6 +5,7 @@ import 'package:fortuneboot/fx/components/fx_state_view.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
+import 'package:fortuneboot/generated/l10n.dart';
 
 class DefaultAccountSheet extends StatefulWidget {
   const DefaultAccountSheet({
@@ -29,7 +30,7 @@ class _DefaultAccountSheetState extends State<DefaultAccountSheet> {
   Widget build(BuildContext context) {
     if (widget.accounts.isEmpty) {
       return FxStateView.empty(
-        message: '本分组暂无启用账户\n可先保存账本，稍后在账户管理中设置默认账户',
+        message: S.of(context).booksNoEnabledAccounts,
         icon: Icons.account_balance_wallet_outlined,
       );
     }
@@ -63,7 +64,11 @@ class _DefaultAccountSheetState extends State<DefaultAccountSheet> {
                   subtitle: Text(
                     enabled
                         ? account.currency ?? 'CNY'
-                        : '该账户不支持${widget.kind.label.replaceFirst('默认', '')}',
+                        : S
+                              .of(context)
+                              .booksUnsupportedAccount(
+                                widget.kind.label.replaceFirst('默认', ''),
+                              ),
                     style: FxTypography.caption.copyWith(
                       color: enabled ? palette.textSecondary : palette.warning,
                     ),
@@ -76,13 +81,13 @@ class _DefaultAccountSheetState extends State<DefaultAccountSheet> {
           ),
           const SizedBox(height: FxSpacing.md),
           FxButton.tonal(
-            label: '清除选择',
+            label: S.of(context).booksClearSelection,
             expand: true,
             onPressed: () => setState(() => _selectedId = null),
           ),
           const SizedBox(height: FxSpacing.sm),
           FxButton(
-            label: '确认',
+            label: S.of(context).commonConfirm,
             expand: true,
             onPressed: () => Navigator.of(context).pop(_selectedId),
           ),

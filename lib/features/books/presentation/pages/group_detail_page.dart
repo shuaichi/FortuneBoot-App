@@ -13,6 +13,7 @@ import 'package:fortuneboot/fx/components/fx_tag_chip.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
+import 'package:fortuneboot/generated/l10n.dart';
 
 class GroupDetailPage extends StatefulWidget {
   const GroupDetailPage({
@@ -84,14 +85,14 @@ class _GroupDetailPageState extends State<GroupDetailPage> {
     if (groupId == null) return;
     final username = await FxSheet.show<String>(
       context,
-      title: '邀请成员',
+      title: S.of(context).booksInviteMembers,
       child: InviteMemberSheet(service: widget.service, groupId: groupId),
       expand: true,
     );
     if (username == null || !mounted) return;
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text('已邀请 $username')));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(S.of(context).booksInvitedUser(username))),
+    );
     await _load();
     widget.onChanged?.call();
   }
@@ -100,12 +101,12 @@ class _GroupDetailPageState extends State<GroupDetailPage> {
     final relationId = member.relationId;
     if (relationId == null) return;
     if (member.matchesAccount(widget.currentUsername)) {
-      _toast('不能移除自己');
+      _toast(S.of(context).booksCannotRemoveSelf);
       return;
     }
     final owners = _members.where((m) => m.roleType == ManageRole.owner.value);
     if (member.roleType == ManageRole.owner.value && owners.length <= 1) {
-      _toast('不能移除唯一管理员');
+      _toast(S.of(context).booksCannotRemoveOnlyOwner);
       return;
     }
     setState(() => _removingRelationId = relationId);
@@ -143,7 +144,7 @@ class _GroupDetailPageState extends State<GroupDetailPage> {
       backgroundColor: palette.canvas,
       appBar: AppBar(
         backgroundColor: palette.canvas,
-        title: const Text('分组详情'),
+        title: Text(S.of(context).booksGroupDetailTitle),
         actions: [
           if (widget.capabilities.canEdit)
             IconButton(
@@ -164,7 +165,10 @@ class _GroupDetailPageState extends State<GroupDetailPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(group.groupName ?? '未命名分组', style: FxTypography.display),
+                Text(
+                  group.groupName ?? S.of(context).booksUnnamedGroup,
+                  style: FxTypography.display,
+                ),
                 const SizedBox(height: FxSpacing.sm),
                 Wrap(
                   spacing: FxSpacing.xs,
@@ -172,7 +176,10 @@ class _GroupDetailPageState extends State<GroupDetailPage> {
                     FxTagChip(label: widget.capabilities.role.label),
                     FxTagChip(label: group.defaultCurrency ?? 'CNY'),
                     if (!group.enable)
-                      FxTagChip(label: '已停用', dotColor: palette.warning),
+                      FxTagChip(
+                        label: S.of(context).booksDisabled,
+                        dotColor: palette.warning,
+                      ),
                   ],
                 ),
                 if (group.remark?.trim().isNotEmpty == true) ...[
@@ -186,8 +193,10 @@ class _GroupDetailPageState extends State<GroupDetailPage> {
           FxCard(
             child: ListTile(
               contentPadding: EdgeInsets.zero,
-              title: const Text('默认账本'),
-              subtitle: Text(group.defaultBookName ?? '未设置'),
+              title: Text(S.of(context).booksDefaultBookTag),
+              subtitle: Text(
+                group.defaultBookName ?? S.of(context).commonPleaseSelect,
+              ),
               trailing: const Icon(Icons.chevron_right_rounded),
               onTap: widget.onManageBooks,
             ),
@@ -199,20 +208,23 @@ class _GroupDetailPageState extends State<GroupDetailPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('账本概览', style: FxTypography.title),
+                Text(
+                  S.of(context).booksBookOverview,
+                  style: FxTypography.title,
+                ),
                 const SizedBox(height: FxSpacing.sm),
                 if (_books.isEmpty)
-                  const Text('暂无账本', style: FxTypography.caption)
+                  Text(S.of(context).booksNoBooks, style: FxTypography.caption)
                 else
                   ..._books.map(
                     (b) => ListTile(
                       contentPadding: EdgeInsets.zero,
-                      title: Text(b.bookName ?? '未命名账本'),
+                      title: Text(b.bookName ?? S.of(context).booksUnnamedBook),
                       subtitle: Text(b.defaultCurrency ?? 'CNY'),
                     ),
                   ),
                 FxButton.tonal(
-                  label: '去账本 Tab 管理全部账本',
+                  label: S.of(context).booksManageAllBooksInTab,
                   expand: true,
                   onPressed: widget.onManageBooks,
                 ),
@@ -234,7 +246,7 @@ class _GroupDetailPageState extends State<GroupDetailPage> {
             children: [
               Expanded(
                 child: Text(
-                  '成员（${_members.length}）',
+                  S.of(context).booksMembersCount(_members.length),
                   style: FxTypography.title,
                 ),
               ),
@@ -242,12 +254,12 @@ class _GroupDetailPageState extends State<GroupDetailPage> {
                 TextButton.icon(
                   onPressed: _invite,
                   icon: const Icon(Icons.person_add_alt_rounded),
-                  label: const Text('邀请'),
+                  label: Text(S.of(context).booksInvite),
                 ),
             ],
           ),
           Text(
-            '如需调整角色，请移除后重新邀请。',
+            S.of(context).booksAdjustRoleHint,
             style: FxTypography.caption.copyWith(color: palette.textSecondary),
           ),
           const SizedBox(height: FxSpacing.sm),
@@ -258,7 +270,9 @@ class _GroupDetailPageState extends State<GroupDetailPage> {
             return ListTile(
               contentPadding: EdgeInsets.zero,
               title: Text(member.displayName),
-              subtitle: Text(member.roleTypeDesc ?? '角色未知'),
+              subtitle: Text(
+                member.roleTypeDesc ?? S.of(context).booksUnknownRole,
+              ),
               trailing: widget.capabilities.canRemoveMember
                   ? removing
                         ? const SizedBox(
