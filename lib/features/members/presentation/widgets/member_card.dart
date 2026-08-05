@@ -6,7 +6,7 @@ import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
 import 'package:fortuneboot/generated/l10n.dart';
 
-/// 成员列表项：头像图标 + 名称 + 启用状态 + 排序 + ⋯ 菜单。
+/// 成员卡：悬浮卡片风格。头像徽章 + 名称/停用置灰 + 启用状态芯片 + ⋯ 菜单。
 class MemberCard extends StatelessWidget {
   final FortuneMemberVo member;
   final VoidCallback onTap;
@@ -22,71 +22,81 @@ class MemberCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final palette = FxPalette.of(context);
-    return Material(
-      color: palette.surface,
-      borderRadius: FxRadius.tileBorder,
-      child: InkWell(
-        borderRadius: FxRadius.tileBorder,
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: FxSpacing.md,
-            vertical: FxSpacing.md,
-          ),
-          child: Row(
-            children: [
-              Container(
-                width: 36,
-                height: 36,
-                decoration: BoxDecoration(
-                  color: palette.surfaceMuted,
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(
-                  Icons.person_rounded,
-                  size: 20,
-                  color: member.enable ? palette.primary : palette.textTertiary,
-                ),
+    final finance = FxFinanceColors.of(context);
+    final disabled = !member.enable;
+    final tint = disabled ? palette.textTertiary : finance.income;
+
+    return GestureDetector(
+      onTap: onTap,
+      onLongPress: onMenu,
+      behavior: HitTestBehavior.opaque,
+      child: Container(
+        padding: const EdgeInsets.all(FxSpacing.md),
+        decoration: BoxDecoration(
+          color: palette.surface,
+          borderRadius: FxRadius.cardBorder,
+          boxShadow: [
+            BoxShadow(
+              color: palette.shadow,
+              blurRadius: 10,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: tint.withValues(alpha: 0.12),
+                shape: BoxShape.circle,
               ),
-              const SizedBox(width: FxSpacing.md),
-              Expanded(
-                child: Text(
-                  member.memberName ?? S.of(context).membersUnnamed,
-                  style: FxTypography.bodyStrong.copyWith(
-                    color: member.enable
-                        ? palette.textPrimary
-                        : palette.textTertiary,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
+              alignment: Alignment.center,
+              child: Text(
+                _initial(context),
+                style: FxTypography.bodyStrong.copyWith(color: tint),
               ),
-              _statusChip(context, member.enable),
-              const SizedBox(width: FxSpacing.sm),
-              InkResponse(
-                radius: 18,
-                onTap: onMenu,
-                child: Icon(
-                  Icons.more_horiz_rounded,
-                  size: 20,
-                  color: palette.textSecondary,
+            ),
+            const SizedBox(width: FxSpacing.md),
+            Expanded(
+              child: Text(
+                member.memberName ?? S.of(context).membersUnnamed,
+                style: FxTypography.bodyStrong.copyWith(
+                  color: disabled ? palette.textTertiary : palette.textPrimary,
                 ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
-            ],
-          ),
+            ),
+            _statusChip(context, member.enable),
+            const SizedBox(width: FxSpacing.sm),
+            InkResponse(
+              radius: 20,
+              onTap: onMenu,
+              child: Icon(
+                Icons.more_horiz_rounded,
+                size: 20,
+                color: palette.textSecondary,
+              ),
+            ),
+          ],
         ),
       ),
     );
+  }
+
+  String _initial(BuildContext context) {
+    final name = member.memberName ?? '';
+    if (name.trim().isEmpty) return '?';
+    return name.characters.first.toUpperCase();
   }
 
   Widget _statusChip(BuildContext context, bool enable) {
     final palette = FxPalette.of(context);
     final color = enable ? palette.success : palette.textTertiary;
     return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: FxSpacing.sm,
-        vertical: 2,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: FxSpacing.sm, vertical: 2),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.12),
         borderRadius: FxRadius.pillBorder,

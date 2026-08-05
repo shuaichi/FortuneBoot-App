@@ -215,7 +215,7 @@ class _ProfileView extends StatelessWidget {
             leading: _tileIcon(Icons.folder_rounded, palette.info),
             title: S.of(context).profileGroupManage,
             showChevron: true,
-            onTap: () => AppRouter.push<void>(context, Routes.books),
+            onTap: () => AppRouter.push<void>(context, Routes.groups),
           ),
           _divider(context),
           FxListItem(
@@ -660,26 +660,82 @@ class _ProfileView extends StatelessWidget {
   }
 
   Future<void> _openHelp(BuildContext context) async {
+    final palette = FxPalette.of(context);
+    final finance = FxFinanceColors.of(context);
+    final s = S.of(context);
+    final sections = <(IconData, Color, String, String)>[
+      (Icons.add_circle_rounded, palette.primary, s.profileHelpQuickTitle, s.profileHelpQuickBody),
+      (Icons.receipt_long_rounded, finance.expense, s.profileHelpBillsTitle, s.profileHelpBillsBody),
+      (Icons.menu_book_rounded, finance.transfer, s.profileHelpBookTitle, s.profileHelpBookBody),
+      (Icons.category_rounded, palette.info, s.profileHelpManageTitle, s.profileHelpManageBody),
+      (Icons.autorenew_rounded, finance.income, s.profileHelpRecurringTitle, s.profileHelpRecurringBody),
+      (Icons.visibility_off_rounded, finance.adjust, s.profileHelpPrivacyTitle, s.profileHelpPrivacyBody),
+      (Icons.support_agent_rounded, palette.textSecondary, s.profileHelpContactTitle, s.profileHelpContactBody),
+    ];
     await FxSheet.show<void>(
       context,
-      title: S.of(context).profileHelp,
-      child: Padding(
+      title: s.profileHelp,
+      expand: true,
+      expandHeightFactor: FxSheet.pickerHeightFactor,
+      child: ListView(
         padding: const EdgeInsets.fromLTRB(
           FxSpacing.lg,
           0,
           FxSpacing.lg,
-          FxSpacing.xl,
+          FxSpacing.xxxl,
         ),
-        child: Text(
-          S.of(context).profileHelpContent,
-          style: FxTypography.body,
-        ),
+        children: [
+          Text(
+            s.profileHelpIntro,
+            style: FxTypography.body.copyWith(color: palette.textSecondary),
+          ),
+          const SizedBox(height: FxSpacing.lg),
+          for (final sec in sections) ...[
+            _helpSection(context, sec.$1, sec.$2, sec.$3, sec.$4),
+            const SizedBox(height: FxSpacing.md),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _helpSection(
+    BuildContext context,
+    IconData icon,
+    Color tint,
+    String title,
+    String body,
+  ) {
+    final palette = FxPalette.of(context);
+    return FxCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              _tileIcon(icon, tint),
+              const SizedBox(width: FxSpacing.md),
+              Expanded(
+                child: Text(title, style: FxTypography.bodyStrong),
+              ),
+            ],
+          ),
+          const SizedBox(height: FxSpacing.sm),
+          Text(
+            body,
+            style: FxTypography.body.copyWith(
+              color: palette.textSecondary,
+              height: 1.5,
+            ),
+          ),
+        ],
       ),
     );
   }
 
   Future<void> _openDonate(BuildContext context) async {
     final finance = FxFinanceColors.of(context);
+    final palette = FxPalette.of(context);
     await FxSheet.show<void>(
       context,
       title: S.of(context).profileDonate,
@@ -693,16 +749,95 @@ class _ProfileView extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.favorite_rounded, size: 48, color: finance.expense),
-            const SizedBox(height: FxSpacing.md),
+            Icon(Icons.favorite_rounded, size: 44, color: finance.expense),
+            const SizedBox(height: FxSpacing.sm),
             Text(
               S.of(context).profileDonateContent,
               style: FxTypography.body,
               textAlign: TextAlign.center,
             ),
+            const SizedBox(height: FxSpacing.xl),
+            Row(
+              children: [
+                Expanded(
+                  child: _donateQr(
+                    context,
+                    asset: 'assets/images/donate_wechat.jpg',
+                    label: S.of(context).profileDonateWechat,
+                    tint: finance.expense,
+                    icon: Icons.wechat_rounded,
+                  ),
+                ),
+                const SizedBox(width: FxSpacing.md),
+                Expanded(
+                  child: _donateQr(
+                    context,
+                    asset: 'assets/images/donate_alipay.jpg',
+                    label: S.of(context).profileDonateAlipay,
+                    tint: palette.info,
+                    icon: Icons.account_balance_wallet_rounded,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: FxSpacing.md),
+            Text(
+              S.of(context).profileDonateScanHint,
+              style: FxTypography.caption.copyWith(color: palette.textTertiary),
+              textAlign: TextAlign.center,
+            ),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _donateQr(
+    BuildContext context, {
+    required String asset,
+    required String label,
+    required Color tint,
+    required IconData icon,
+  }) {
+    final palette = FxPalette.of(context);
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, size: 16, color: tint),
+            const SizedBox(width: FxSpacing.xs),
+            Text(
+              label,
+              style: FxTypography.label.copyWith(color: tint),
+            ),
+          ],
+        ),
+        const SizedBox(height: FxSpacing.sm),
+        AspectRatio(
+          aspectRatio: 1,
+          child: Container(
+            decoration: BoxDecoration(
+              color: palette.surface,
+              borderRadius: FxRadius.cardBorder,
+              border: Border.all(color: palette.border),
+            ),
+            clipBehavior: Clip.antiAlias,
+            padding: const EdgeInsets.all(FxSpacing.sm),
+            child: Image.asset(
+              asset,
+              fit: BoxFit.contain,
+              errorBuilder: (context, error, stack) => Center(
+                child: Icon(
+                  Icons.qr_code_2_rounded,
+                  size: 48,
+                  color: palette.textTertiary,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 

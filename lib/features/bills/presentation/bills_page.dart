@@ -132,6 +132,76 @@ class _BillsPageState extends State<BillsPage> {
     return keys.first;
   }
 
+  DateTime _normalizeAnchor(DateTime d) => DateTime(d.year, d.month);
+
+  /// 当前已加载账单归属的账期锚点（降序，最新在前）。
+  List<DateTime> _presentAnchors() {
+    final monthStartDay =
+        context.read<PreferencesCubit>().state.billing.monthStartDay;
+    return _bloc.state
+        .monthGroups(monthStartDay)
+        .map((g) => g.window.anchorMonth)
+        .toList(growable: false);
+  }
+
+  /// 箭头切月：基于当前可见账期，在时间流中滚动到相邻账期。
+  /// delta<0 更早（更旧，需要时向后翻页加载）；delta>0 更新（更近）。
+  Future<void> _navigateMonth(int delta) async {
+    HapticFeedback.selectionClick();
+    final current = _normalizeAnchor(_visibleAnchor.value ?? _bloc.state.month);
+    var anchors = _presentAnchors();
+    var idx = anchors.indexOf(current);
+    if (idx < 0) idx = 0;
+    // delta>0 更新→上移(idx-1)，delta<0 更旧→下移(idx+1)。
+    var target = idx - delta;
+    // 目标更旧但尚未加载，则按需翻页直至出现或无更多数据。
+    while (delta < 0 && target >= anchors.length && _bloc.state.hasMore) {
+      final grew = await _loadMoreAndWait();
+      anchors = _presentAnchors();
+      if (!grew) break;
+    }
+    if (anchors.isEmpty) return;
+    target = target.clamp(0, anchors.length - 1);
+    await _scrollToAnchor(anchors[target]);
+  }
+
+  /// 触发下一页加载并等待其完成，返回列表是否增长。
+  Future<bool> _loadMoreAndWait() async {
+    final before = _bloc.state.bills.length;
+    _bloc.add(const BillsNextPageRequested());
+    try {
+      await _bloc.stream
+          .firstWhere(
+            (s) =>
+                s.bills.length != before || (!s.hasMore && !s.isLoadingMore),
+          )
+          .timeout(const Duration(seconds: 6));
+    } on Object {
+      return _bloc.state.bills.length != before;
+    }
+    return _bloc.state.bills.length != before;
+  }
+
+  /// 平滑滚动到指定账期 section 的顶部探针。
+  Future<void> _scrollToAnchor(DateTime anchor) async {
+    final key = _monthKeys[_normalizeAnchor(anchor)];
+    var ctx = key?.currentContext;
+    if (ctx == null) {
+      await WidgetsBinding.instance.endOfFrame;
+      if (!mounted) return;
+      ctx = _monthKeys[_normalizeAnchor(anchor)]?.currentContext;
+    }
+    final target = ctx;
+    if (target == null || !mounted) return;
+    await Scrollable.ensureVisible(
+      target,
+      duration: FxMotion.normal,
+      curve: FxMotion.standard,
+    );
+    if (mounted) _visibleAnchor.value = _normalizeAnchor(anchor);
+  }
+
+
   BillsBloc get _bloc => context.read<BillsBloc>();
 
   Future<void> _refresh() async {
@@ -353,9 +423,7 @@ class _BillsPageState extends State<BillsPage> {
       child: Row(
         children: [
           _iconButton(Icons.chevron_left_rounded, () {
-            HapticFeedback.selectionClick();
-            _visibleAnchor.value = null;
-            _bloc.add(const BillsMonthChanged(-1));
+            _navigateMonth(-1);
           }),
           Expanded(
             child: Center(
@@ -378,9 +446,7 @@ class _BillsPageState extends State<BillsPage> {
             ),
           ),
           _iconButton(Icons.chevron_right_rounded, () {
-            HapticFeedback.selectionClick();
-            _visibleAnchor.value = null;
-            _bloc.add(const BillsMonthChanged(1));
+            _navigateMonth(1);
           }),
           const SizedBox(width: FxSpacing.sm),
           _filterButton(state, activeCount),

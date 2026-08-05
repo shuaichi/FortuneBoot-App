@@ -19,21 +19,26 @@ import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
 import 'package:fortuneboot/generated/l10n.dart';
 
-/// 账本与分组管理页（Routes.books）。
+/// 账本与分组管理页（Routes.books / Routes.groups）。
 ///
-/// 顶部分段切换：分组管理 / 账本管理。切换默认分组/账本后联动更新 SessionCubit。
+/// 顶部分段切换：分组管理 / 账本管理。[initialTab] 决定进入时默认选中的分段，
+/// 使「分组管理」「账本管理」两个入口跳转到同一页面但落到各自的分段。
+/// 切换默认分组/账本后联动更新 SessionCubit。
 class BooksPage extends StatefulWidget {
-  const BooksPage({super.key});
+  const BooksPage({super.key, this.initialTab = BooksTab.groups});
+
+  final BooksTab initialTab;
 
   @override
   State<BooksPage> createState() => _BooksPageState();
 }
 
-enum _Tab { groups, books }
+/// 账本管理页的顶部分段。
+enum BooksTab { groups, books }
 
 class _BooksPageState extends State<BooksPage> {
   final BooksService _service = BooksService();
-  _Tab _tab = _Tab.groups;
+  late BooksTab _tab = widget.initialTab;
 
   BooksBloc get _bloc => context.read<BooksBloc>();
   SessionCubit get _session => context.read<SessionCubit>();
@@ -215,12 +220,12 @@ class _BooksPageState extends State<BooksPage> {
                 FxSpacing.lg,
                 FxSpacing.sm,
               ),
-              child: FxSegmented<_Tab>(
+              child: FxSegmented<BooksTab>(
                 value: _tab,
                 onChanged: (v) => setState(() => _tab = v),
                 segments: [
-                  FxSegment(_Tab.groups, S.of(context).booksTabGroups),
-                  FxSegment(_Tab.books, S.of(context).booksTabBooks),
+                  FxSegment(BooksTab.groups, S.of(context).booksTabGroups),
+                  FxSegment(BooksTab.books, S.of(context).booksTabBooks),
                 ],
               ),
             ),
@@ -236,7 +241,7 @@ class _BooksPageState extends State<BooksPage> {
   }
 
   Widget _buildHeader() {
-    final title = _tab == _Tab.groups
+    final title = _tab == BooksTab.groups
         ? S.of(context).booksTabGroups
         : S.of(context).booksTabBooks;
     return Padding(
@@ -259,7 +264,7 @@ class _BooksPageState extends State<BooksPage> {
   }
 
   void _onAdd() {
-    if (_tab == _Tab.groups) {
+    if (_tab == BooksTab.groups) {
       _editGroup();
     } else {
       final groupId = _bloc.state.selectedGroupId;
@@ -293,7 +298,7 @@ class _BooksPageState extends State<BooksPage> {
           onRetry: () => _bloc.add(const BooksLoaded()),
         );
       case BooksStatus.loaded:
-        return _tab == _Tab.groups ? _buildGroups(state) : _buildBooks(state);
+        return _tab == BooksTab.groups ? _buildGroups(state) : _buildBooks(state);
     }
   }
 
@@ -320,28 +325,67 @@ class _BooksPageState extends State<BooksPage> {
         itemBuilder: (context, i) {
           final g = state.groups[i];
           final isCurrent = g.groupId == currentGroupId;
+          final palette = FxPalette.of(context);
+          final tint = g.enable ? palette.primary : palette.textTertiary;
           return Padding(
             padding: const EdgeInsets.only(bottom: FxSpacing.md),
             child: FxCard(
-              accent: isCurrent ? FxPalette.of(context).primary : null,
+              accent: isCurrent ? palette.primary : null,
               onTap: () => _switchSessionGroup(g),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
                     children: [
+                      Container(
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          color: tint.withValues(alpha: 0.12),
+                          borderRadius: FxRadius.tileBorder,
+                        ),
+                        alignment: Alignment.center,
+                        child: Icon(
+                          Icons.folder_rounded,
+                          size: 22,
+                          color: tint,
+                        ),
+                      ),
+                      const SizedBox(width: FxSpacing.md),
                       Expanded(
-                        child: Text(
-                          g.groupName ?? S.of(context).booksUnnamedGroup,
-                          style: FxTypography.bodyStrong,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              g.groupName ?? S.of(context).booksUnnamedGroup,
+                              style: FxTypography.bodyStrong.copyWith(
+                                color: g.enable
+                                    ? palette.textPrimary
+                                    : palette.textTertiary,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            if (g.defaultBookName != null) ...[
+                              const SizedBox(height: 2),
+                              Text(
+                                S.of(context).booksDefaultBook(
+                                  g.defaultBookName!,
+                                ),
+                                style: FxTypography.caption.copyWith(
+                                  color: palette.textTertiary,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
+                          ],
                         ),
                       ),
                       if (isCurrent)
                         FxTagChip(
                           label: S.of(context).booksCurrent,
-                          dotColor: FxPalette.of(context).primary,
+                          dotColor: palette.primary,
                         ),
                       _menu(
                         onEdit: () => _editGroup(group: g),
@@ -353,7 +397,7 @@ class _BooksPageState extends State<BooksPage> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: FxSpacing.xs),
+                  const SizedBox(height: FxSpacing.sm),
                   Wrap(
                     spacing: FxSpacing.sm,
                     runSpacing: FxSpacing.xs,
@@ -361,21 +405,11 @@ class _BooksPageState extends State<BooksPage> {
                     children: [
                       _pill(g.defaultCurrency ?? '-'),
                       if (g.roleTypeDesc != null)
-                        _pill(
-                          g.roleTypeDesc!,
-                          tint: FxPalette.of(context).info,
-                        ),
+                        _pill(g.roleTypeDesc!, tint: palette.info),
                       if (!g.enable)
                         _pill(
                           S.of(context).booksDisabled,
-                          tint: FxPalette.of(context).textTertiary,
-                        ),
-                      if (g.defaultBookName != null)
-                        Text(
-                          S.of(context).booksDefaultBook(g.defaultBookName!),
-                          style: FxTypography.caption.copyWith(
-                            color: FxPalette.of(context).textTertiary,
-                          ),
+                          tint: palette.textTertiary,
                         ),
                     ],
                   ),
@@ -397,10 +431,25 @@ class _BooksPageState extends State<BooksPage> {
       return FxStateView.empty(message: S.of(context).booksSelectGroupFirst);
     }
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // 分组选择条
+        // 分组选择条：账本归属分组，切换后展示该分组下账本。
+        Padding(
+          padding: const EdgeInsets.fromLTRB(
+            FxSpacing.lg,
+            FxSpacing.xs,
+            FxSpacing.lg,
+            FxSpacing.xs,
+          ),
+          child: Text(
+            S.of(context).booksBelongGroup,
+            style: FxTypography.caption.copyWith(
+              color: FxPalette.of(context).textTertiary,
+            ),
+          ),
+        ),
         SizedBox(
-          height: 44,
+          height: 40,
           child: ListView(
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.symmetric(horizontal: FxSpacing.lg),
@@ -469,14 +518,29 @@ class _BooksPageState extends State<BooksPage> {
     required bool recycled,
   }) {
     final isCurrent = b.bookId == currentBookId;
+    final palette = FxPalette.of(context);
+    final tint = recycled
+        ? palette.textTertiary
+        : (b.enable ? palette.primary : palette.textTertiary);
     return Padding(
       padding: const EdgeInsets.only(bottom: FxSpacing.md),
       child: FxCard(
-        accent: isCurrent ? FxPalette.of(context).primary : null,
-        background: recycled ? FxPalette.of(context).surfaceMuted : null,
+        accent: isCurrent ? palette.primary : null,
+        background: recycled ? palette.surfaceMuted : null,
         onTap: recycled ? null : () => _setDefaultBook(b),
         child: Row(
           children: [
+            Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: tint.withValues(alpha: 0.12),
+                borderRadius: FxRadius.tileBorder,
+              ),
+              alignment: Alignment.center,
+              child: Icon(Icons.menu_book_rounded, size: 22, color: tint),
+            ),
+            const SizedBox(width: FxSpacing.md),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -486,7 +550,11 @@ class _BooksPageState extends State<BooksPage> {
                       Flexible(
                         child: Text(
                           b.bookName ?? S.of(context).booksUnnamedBook,
-                          style: FxTypography.bodyStrong,
+                          style: FxTypography.bodyStrong.copyWith(
+                            color: (recycled || !b.enable)
+                                ? palette.textTertiary
+                                : palette.textPrimary,
+                          ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -495,7 +563,7 @@ class _BooksPageState extends State<BooksPage> {
                         const SizedBox(width: FxSpacing.sm),
                         FxTagChip(
                           label: S.of(context).booksCurrent,
-                          dotColor: FxPalette.of(context).primary,
+                          dotColor: palette.primary,
                         ),
                       ],
                     ],
@@ -509,7 +577,7 @@ class _BooksPageState extends State<BooksPage> {
                       if (!b.enable)
                         _pill(
                           S.of(context).booksDisabled,
-                          tint: FxPalette.of(context).textTertiary,
+                          tint: palette.textTertiary,
                         ),
                     ],
                   ),
@@ -528,7 +596,7 @@ class _BooksPageState extends State<BooksPage> {
                     onPressed: () => _removeBook(b),
                     icon: Icon(
                       Icons.delete_forever_rounded,
-                      color: FxPalette.of(context).danger,
+                      color: palette.danger,
                     ),
                   ),
                 ],

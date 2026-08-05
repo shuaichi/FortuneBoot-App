@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fortuneboot/core/network/fx_api.dart';
 import 'package:fortuneboot/core/session/session_cubit.dart';
+import 'package:fortuneboot/features/recurring/data/cron_builder.dart';
 import 'package:fortuneboot/features/recurring/data/recurring_models.dart';
 import 'package:fortuneboot/features/recurring/data/recurring_service.dart';
 import 'package:fortuneboot/features/recurring/presentation/bloc/recurring_bloc.dart';
 import 'package:fortuneboot/features/recurring/presentation/recurring_editor_page.dart';
+import 'package:fortuneboot/features/recurring/presentation/widgets/cron_schedule_editor.dart';
 import 'package:fortuneboot/features/recurring/presentation/widgets/recurring_log_sheet.dart';
 import 'package:fortuneboot/fx/components/fx_card.dart';
 import 'package:fortuneboot/fx/components/fx_sheet.dart';
@@ -256,22 +258,7 @@ class _RecurringPageState extends State<RecurringPage> {
               ],
             ),
             const SizedBox(height: FxSpacing.xs),
-            Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: FxSpacing.sm,
-                vertical: 3,
-              ),
-              decoration: BoxDecoration(
-                color: palette.surfaceMuted,
-                borderRadius: FxRadius.pillBorder,
-              ),
-              child: Text(
-                'cron: ${rule.cronExpression ?? '-'}',
-                style: FxTypography.caption.copyWith(
-                  fontFamily: FxTypography.monoFamily,
-                ),
-              ),
-            ),
+            _scheduleChip(context, rule.cronExpression),
             const SizedBox(height: FxSpacing.sm),
             Row(
               children: [
@@ -295,6 +282,43 @@ class _RecurringPageState extends State<RecurringPage> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  /// 调度摘要芯片：优先展示可视化人类可读描述，无法解析时回退原始 cron。
+  Widget _scheduleChip(BuildContext context, String? cron) {
+    final palette = FxPalette.of(context);
+    final spec = CronBuilder.tryParse(cron);
+    final label = spec != null
+        ? CronScheduleEditor.summarize(context, spec)
+        : 'cron: ${cron ?? '-'}';
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: FxSpacing.sm,
+        vertical: 4,
+      ),
+      decoration: BoxDecoration(
+        color: palette.primaryContainer,
+        borderRadius: FxRadius.pillBorder,
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.schedule_rounded, size: 13, color: palette.primary),
+          const SizedBox(width: FxSpacing.xs),
+          Flexible(
+            child: Text(
+              label,
+              style: FxTypography.caption.copyWith(
+                color: palette.primary,
+                fontFamily: spec == null ? FxTypography.monoFamily : null,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ],
       ),
     );
   }

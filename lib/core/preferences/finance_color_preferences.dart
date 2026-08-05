@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 /// 用户自定义账单语义颜色偏好。
 ///
-/// 默认值与 FxColors 保持一致：收入绿、支出红、转账紫、调整橙。
+/// 默认值与 FxColors 保持一致：支出绿、收入红（国内记账习惯）、转账紫、调整橙。
 /// 垫付 / 报销默认复用支出色，允许用户单独调整。
 class FinanceColorPreferences extends Equatable {
   final int income;
@@ -14,8 +14,8 @@ class FinanceColorPreferences extends Equatable {
   final int reimburse;
 
   // 与 FxColors 的常量值保持一致（编译期常量，供默认参数使用）。
-  static const int _defaultIncome = 0xFF16A34A;
-  static const int _defaultExpense = 0xFFEF4444;
+  static const int _defaultIncome = 0xFFEF4444;
+  static const int _defaultExpense = 0xFF16A34A;
   static const int _defaultTransfer = 0xFF7C3AED;
   static const int _defaultAdjust = 0xFFF59E0B;
 

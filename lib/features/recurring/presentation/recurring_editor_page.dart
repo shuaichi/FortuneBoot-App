@@ -2,9 +2,11 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:fortuneboot/core/network/fx_api.dart';
+import 'package:fortuneboot/features/recurring/data/cron_builder.dart';
 import 'package:fortuneboot/features/recurring/data/recurring_models.dart';
 import 'package:fortuneboot/features/recurring/data/recurring_service.dart';
 import 'package:fortuneboot/features/recurring/data/template_options_service.dart';
+import 'package:fortuneboot/features/recurring/presentation/widgets/cron_schedule_editor.dart';
 import 'package:fortuneboot/features/shared/data/bill_models.dart';
 import 'package:fortuneboot/fx/components/fx_button.dart';
 import 'package:fortuneboot/fx/components/fx_state_view.dart';
@@ -64,10 +66,14 @@ class _RecurringEditorPageState extends State<RecurringEditorPage> {
   bool _loadingOptions = true;
   String? _optionsError;
 
-  // cron 校验
+  // cron 校验（自定义模式）
   Timer? _cronDebounce;
   bool? _cronValid;
   bool _cronChecking = false;
+
+  /// cron 编辑模式：false=可视化下拉选择；true=自定义手写。
+  bool _cronAdvanced = false;
+  CronSpec _cronSpec = const CronSpec();
 
   bool _submitting = false;
   String? _error;
@@ -79,6 +85,18 @@ class _RecurringEditorPageState extends State<RecurringEditorPage> {
     final tpl = r?.billRequest ?? const {};
     _nameCtrl = TextEditingController(text: r?.ruleName ?? '');
     _cronCtrl = TextEditingController(text: r?.cronExpression ?? '');
+    // 尝试把已有 cron 反解析为可视化规格；能解析走可视化，否则走自定义手写。
+    final parsed = CronBuilder.tryParse(r?.cronExpression);
+    if (parsed != null) {
+      _cronSpec = parsed;
+      _cronAdvanced = false;
+      _cronCtrl.text = CronBuilder.build(parsed);
+    } else if ((r?.cronExpression ?? '').trim().isNotEmpty) {
+      _cronAdvanced = true;
+    } else {
+      // 新建：默认可视化，并用默认规格生成初始 cron。
+      _cronCtrl.text = CronBuilder.build(_cronSpec);
+    }
     _startCtrl = TextEditingController(text: r?.startDate ?? '');
     _endCtrl = TextEditingController(text: r?.endDate ?? '');
     _maxCtrl = TextEditingController(
@@ -359,16 +377,7 @@ class _RecurringEditorPageState extends State<RecurringEditorPage> {
             decoration: _dec(context, S.of(context).recurringRuleNameHint),
           ),
           const SizedBox(height: FxSpacing.md),
-          _label(context, S.of(context).recurringCron),
-          TextField(
-            controller: _cronCtrl,
-            decoration: _dec(
-              context,
-              S.of(context).recurringCronHint,
-            ).copyWith(suffixIcon: _cronSuffix(context)),
-            onChanged: _onCronChanged,
-          ),
-          _cronHint(context),
+          _cronField(context),
           const SizedBox(height: FxSpacing.md),
           Row(
             children: [
@@ -483,6 +492,71 @@ class _RecurringEditorPageState extends State<RecurringEditorPage> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _cronField(BuildContext context) {
+    final palette = FxPalette.of(context);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Row(
+          children: [
+            _label(context, S.of(context).recurringSchedule),
+            const Spacer(),
+            GestureDetector(
+              onTap: () {
+                setState(() {
+                  _cronAdvanced = !_cronAdvanced;
+                  if (!_cronAdvanced) {
+                    // 回到可视化：当前 cron 可解析则同步规格，否则用现有规格重建。
+                    final parsed = CronBuilder.tryParse(_cronCtrl.text);
+                    if (parsed != null) _cronSpec = parsed;
+                    _cronCtrl.text = CronBuilder.build(_cronSpec);
+                    _cronValid = null;
+                  }
+                });
+              },
+              child: Text(
+                _cronAdvanced
+                    ? S.of(context).recurringUseVisual
+                    : S.of(context).recurringUseAdvanced,
+                style: FxTypography.label.copyWith(color: palette.primary),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: FxSpacing.sm),
+        if (_cronAdvanced) ...[
+          TextField(
+            controller: _cronCtrl,
+            style: FxTypography.body.copyWith(
+              fontFamily: FxTypography.monoFamily,
+            ),
+            decoration: _dec(
+              context,
+              S.of(context).recurringCronHint,
+            ).copyWith(suffixIcon: _cronSuffix(context)),
+            onChanged: _onCronChanged,
+          ),
+          const SizedBox(height: FxSpacing.xs),
+          Text(
+            S.of(context).recurringAdvancedCronHint,
+            style: FxTypography.caption.copyWith(color: palette.textTertiary),
+          ),
+          _cronHint(context),
+        ] else
+          CronScheduleEditor(
+            spec: _cronSpec,
+            onChanged: (spec) {
+              setState(() {
+                _cronSpec = spec;
+                _cronCtrl.text = CronBuilder.build(spec);
+                _cronValid = true; // 可视化生成的 cron 恒有效。
+              });
+            },
+          ),
+      ],
     );
   }
 

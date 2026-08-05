@@ -145,6 +145,10 @@ class _EditorBody extends StatelessWidget {
         ),
         const SizedBox(height: FxSpacing.lg),
 
+        // 标题（置于金额上方，便于先命名再记金额）
+        _TitleCard(state: state),
+        const SizedBox(height: FxSpacing.lg),
+
         // 金额区
         _AmountArea(state: state, currency: currency),
         const SizedBox(height: FxSpacing.lg),
@@ -196,8 +200,8 @@ class _EditorBody extends StatelessWidget {
         _AttachmentCard(state: state),
         const SizedBox(height: FxSpacing.lg),
 
-        // 标题 + 备注
-        _TitleRemarkCard(state: state),
+        // 备注
+        _RemarkCard(state: state),
         const SizedBox(height: FxSpacing.lg),
 
         // 开关
@@ -683,31 +687,28 @@ class _AttachmentCard extends StatelessWidget {
   }
 }
 
-// ---------------- 标题 + 备注 ----------------
+// ---------------- 标题 ----------------
 
-class _TitleRemarkCard extends StatefulWidget {
-  const _TitleRemarkCard({required this.state});
+class _TitleCard extends StatefulWidget {
+  const _TitleCard({required this.state});
   final BillEditorState state;
 
   @override
-  State<_TitleRemarkCard> createState() => _TitleRemarkCardState();
+  State<_TitleCard> createState() => _TitleCardState();
 }
 
-class _TitleRemarkCardState extends State<_TitleRemarkCard> {
+class _TitleCardState extends State<_TitleCard> {
   late final TextEditingController _title;
-  late final TextEditingController _remark;
 
   @override
   void initState() {
     super.initState();
     _title = TextEditingController(text: widget.state.title);
-    _remark = TextEditingController(text: widget.state.remark);
   }
 
   @override
   void dispose() {
     _title.dispose();
-    _remark.dispose();
     super.dispose();
   }
 
@@ -741,7 +742,45 @@ class _TitleRemarkCardState extends State<_TitleRemarkCard> {
             ),
             onChanged: (v) => bloc.add(TitleChanged(v)),
           ),
-          Divider(height: FxSpacing.lg, color: palette.border),
+        ],
+      ),
+    );
+  }
+}
+
+// ---------------- 备注 ----------------
+
+class _RemarkCard extends StatefulWidget {
+  const _RemarkCard({required this.state});
+  final BillEditorState state;
+
+  @override
+  State<_RemarkCard> createState() => _RemarkCardState();
+}
+
+class _RemarkCardState extends State<_RemarkCard> {
+  late final TextEditingController _remark;
+
+  @override
+  void initState() {
+    super.initState();
+    _remark = TextEditingController(text: widget.state.remark);
+  }
+
+  @override
+  void dispose() {
+    _remark.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = FxPalette.of(context);
+    final bloc = context.read<BillEditorBloc>();
+    return FxCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
           Text(
             S.of(context).billEditorRemark,
             style: FxTypography.label.copyWith(color: palette.textSecondary),

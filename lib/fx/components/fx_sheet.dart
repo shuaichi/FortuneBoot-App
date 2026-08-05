@@ -6,6 +6,9 @@ import 'package:fortuneboot/fx/tokens/fx_typography.dart';
 
 /// 统一 bottom sheet 壳：圆角 + 拖拽条 + 可选标题。theme-aware，支持暗色。
 class FxSheet extends StatelessWidget {
+  /// 列表 / 树 / 多选类选择弹层的统一高度占屏比，保证记一笔各选择 sheet 一致。
+  static const double pickerHeightFactor = 0.82;
+
   final String? title;
   final Widget child;
   final List<Widget>? actions;
@@ -98,6 +101,7 @@ class FxSheet extends StatelessWidget {
     bool expand = false,
     bool scrollable = false,
     double maxHeightFactor = 0.7,
+    double expandHeightFactor = 0.92,
   }) {
     final palette = FxPalette.of(context);
     return showModalBottomSheet<R>(
@@ -116,7 +120,10 @@ class FxSheet extends StatelessWidget {
           child: child,
         );
         if (expand) {
-          return FractionallySizedBox(heightFactor: 0.92, child: sheet);
+          return FractionallySizedBox(
+            heightFactor: expandHeightFactor,
+            child: sheet,
+          );
         }
         return sheet;
       },

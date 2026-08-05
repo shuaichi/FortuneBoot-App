@@ -39,82 +39,113 @@ class _CategoryTileState extends State<CategoryTile> {
     final palette = FxPalette.of(context);
     final node = widget.node;
     final hasChildren = node.children.isNotEmpty;
+    final isRoot = widget.depth == 0;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Padding(
           padding: EdgeInsets.only(left: widget.depth * FxSpacing.lg),
-          child: Material(
-            color: widget.depth == 0 ? palette.surface : palette.surfaceMuted,
-            borderRadius: FxRadius.tileBorder,
-            child: InkWell(
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              color: isRoot ? palette.surface : palette.surfaceMuted,
               borderRadius: FxRadius.tileBorder,
-              onTap: () => widget.onTap(node),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: FxSpacing.md,
-                  vertical: FxSpacing.sm,
-                ),
-                child: Row(
-                  children: [
-                    if (hasChildren)
-                      InkResponse(
-                        radius: 18,
-                        onTap: () => setState(() => _expanded = !_expanded),
-                        child: Icon(
-                          _expanded
-                              ? Icons.expand_more_rounded
-                              : Icons.chevron_right_rounded,
-                          size: 20,
-                          color: palette.textSecondary,
-                        ),
-                      )
-                    else
-                      const SizedBox(width: 20),
-                    const SizedBox(width: FxSpacing.xs),
-                    Container(
-                      width: 8,
-                      height: 8,
-                      decoration: BoxDecoration(
-                        color: node.enable
-                            ? widget.typeTint
-                            : palette.textTertiary,
-                        shape: BoxShape.circle,
+              boxShadow: isRoot
+                  ? [
+                      BoxShadow(
+                        color: palette.shadow,
+                        blurRadius: 10,
+                        offset: const Offset(0, 2),
                       ),
-                    ),
-                    const SizedBox(width: FxSpacing.sm),
-                    Expanded(
-                      child: Text(
-                        node.categoryName ?? S.of(context).categoriesUnnamed,
-                        style: FxTypography.body.copyWith(
+                    ]
+                  : null,
+            ),
+            child: Material(
+              color: Colors.transparent,
+              borderRadius: FxRadius.tileBorder,
+              child: InkWell(
+                borderRadius: FxRadius.tileBorder,
+                onTap: () => widget.onTap(node),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: FxSpacing.md,
+                    vertical: FxSpacing.sm,
+                  ),
+                  child: Row(
+                    children: [
+                      if (hasChildren)
+                        InkResponse(
+                          radius: 18,
+                          onTap: () => setState(() => _expanded = !_expanded),
+                          child: Icon(
+                            _expanded
+                                ? Icons.expand_more_rounded
+                                : Icons.chevron_right_rounded,
+                            size: 20,
+                            color: palette.textSecondary,
+                          ),
+                        )
+                      else
+                        const SizedBox(width: 20),
+                      const SizedBox(width: FxSpacing.xs),
+                      Container(
+                        width: 28,
+                        height: 28,
+                        decoration: BoxDecoration(
+                          color:
+                              (node.enable
+                                      ? widget.typeTint
+                                      : palette.textTertiary)
+                                  .withValues(alpha: 0.14),
+                          borderRadius: FxRadius.tileBorder,
+                        ),
+                        alignment: Alignment.center,
+                        child: Icon(
+                          isRoot
+                              ? Icons.folder_rounded
+                              : Icons.label_outline_rounded,
+                          size: 15,
                           color: node.enable
-                              ? palette.textPrimary
+                              ? widget.typeTint
                               : palette.textTertiary,
                         ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
                       ),
-                    ),
-                    if (widget.onAddChild != null && widget.depth == 0)
+                      const SizedBox(width: FxSpacing.sm),
+                      Expanded(
+                        child: Text(
+                          node.categoryName ?? S.of(context).categoriesUnnamed,
+                          style: FxTypography.body.copyWith(
+                            color: node.enable
+                                ? palette.textPrimary
+                                : palette.textTertiary,
+                            fontWeight: isRoot
+                                ? FontWeight.w600
+                                : FontWeight.w400,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      if (widget.onAddChild != null && widget.depth == 0)
+                        InkResponse(
+                          radius: 18,
+                          onTap: () => widget.onAddChild!(node),
+                          child: Icon(
+                            Icons.add_rounded,
+                            size: 20,
+                            color: palette.textSecondary,
+                          ),
+                        ),
                       InkResponse(
                         radius: 18,
-                        onTap: () => widget.onAddChild!(node),
+                        onTap: () => widget.onMenu(node),
                         child: Icon(
-                          Icons.add_rounded,
+                          Icons.more_horiz_rounded,
                           size: 20,
                           color: palette.textSecondary,
                         ),
                       ),
-                    InkResponse(
-                      radius: 18,
-                      onTap: () => widget.onMenu(node),
-                      child: Icon(
-                        Icons.more_horiz_rounded,
-                        size: 20,
-                        color: palette.textSecondary,
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),

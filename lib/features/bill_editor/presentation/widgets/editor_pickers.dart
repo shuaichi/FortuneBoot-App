@@ -20,14 +20,14 @@ Future<T?> showOptionPicker<T>(
   return FxSheet.show<T>(
     context,
     title: title,
-    expand: options.length > 8,
+    expand: true,
+    expandHeightFactor: FxSheet.pickerHeightFactor,
     child: options.isEmpty
         ? Padding(
             padding: const EdgeInsets.all(FxSpacing.xxxl),
             child: Center(child: Text(S.of(context).billEditorNoOptions)),
           )
         : ListView(
-            shrinkWrap: true,
             padding: const EdgeInsets.only(bottom: FxSpacing.lg),
             children: [
               if (allowClear)
@@ -72,7 +72,8 @@ Future<List<T>?> showMultiSelect<T>(
   return FxSheet.show<List<T>>(
     context,
     title: title,
-    expand: options.length > 8,
+    expand: true,
+    expandHeightFactor: FxSheet.pickerHeightFactor,
     child: _MultiSelectBody<T>(
       options: options,
       labelOf: labelOf,
@@ -117,11 +118,9 @@ class _MultiSelectBodyState<T> extends State<_MultiSelectBody<T>> {
       );
     }
     return Column(
-      mainAxisSize: MainAxisSize.min,
       children: [
-        Flexible(
+        Expanded(
           child: ListView(
-            shrinkWrap: true,
             children: widget.options.map((o) {
               final id = widget.idOf(o);
               final checked = _selected.contains(id);

@@ -144,6 +144,39 @@ class _ExtraRowEditor extends StatelessWidget {
             large: false,
             onChanged: (v) => onChanged(row.copyWith(amount: v)),
           ),
+          const SizedBox(height: FxSpacing.sm),
+          TextFormField(
+            key: ValueKey('extra_remark_$index'),
+            initialValue: row.remark ?? '',
+            style: FxTypography.body.copyWith(color: palette.textPrimary),
+            decoration: InputDecoration(
+              isDense: true,
+              prefixIcon: Icon(
+                Icons.notes_rounded,
+                size: 18,
+                color: palette.textTertiary,
+              ),
+              prefixIconConstraints: const BoxConstraints(
+                minWidth: 32,
+                minHeight: 32,
+              ),
+              hintText: S.of(context).billEditorExtraRemarkHint,
+              hintStyle: FxTypography.body.copyWith(
+                color: palette.textTertiary,
+              ),
+              filled: true,
+              fillColor: palette.surfaceMuted,
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: FxSpacing.sm,
+                vertical: FxSpacing.sm,
+              ),
+              border: OutlineInputBorder(
+                borderRadius: FxRadius.tileBorder,
+                borderSide: BorderSide.none,
+              ),
+            ),
+            onChanged: (v) => onChanged(row.copyWith(remark: v)),
+          ),
           if (showSide) ...[
             const SizedBox(height: FxSpacing.sm),
             FxSegmented<int>(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fortuneboot/fx/components/fx_button.dart';
+import 'package:fortuneboot/fx/components/fx_sheet.dart';
 import 'package:fortuneboot/fx/tree/fx_tree_utils.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
@@ -55,7 +56,7 @@ class FxTreePicker<T> extends StatefulWidget {
         borderRadius: BorderRadius.vertical(top: FxRadius.sheetRadius),
       ),
       builder: (ctx) => FractionallySizedBox(
-        heightFactor: 0.82,
+        heightFactor: FxSheet.pickerHeightFactor,
         child: FxTreePicker<T>(
           roots: roots,
           childrenOf: childrenOf,
