@@ -153,3 +153,5 @@ Thumbs.db
 *.jks
 *.keystore
 android/keystore/
+
+*.md

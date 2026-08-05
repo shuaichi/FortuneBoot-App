@@ -13,22 +13,27 @@ import 'package:fortuneboot/features/books/presentation/books_page.dart';
 void registerBooksFeature() {
   AppRouter.register(
     Routes.books,
-    (args) => _buildBooksPage(BooksTab.books),
+    (args) => _buildBooksPage(args, BooksTab.books),
   );
   AppRouter.register(
     Routes.groups,
-    (args) => _buildBooksPage(BooksTab.groups),
+    (args) => _buildBooksPage(args, BooksTab.groups),
   );
 }
 
-Widget _buildBooksPage(BooksTab initialTab) {
+Widget _buildBooksPage(Object? args, BooksTab fallbackTab) {
+  final manageArgs = args is BooksManageArgs ? args : null;
+  final initialTab = manageArgs?.initialTab ?? fallbackTab;
+  final groupId = manageArgs?.groupId;
   return Builder(
     builder: (BuildContext context) {
       final session = context.read<SessionCubit>().state;
+      final initialGroupId = groupId ?? session.currentGroupId;
       return BlocProvider<BooksBloc>(
-        create: (_) => BooksBloc(initialGroupId: session.currentGroupId)
-          ..add(const BooksLoaded()),
-        child: BooksPage(initialTab: initialTab),
+        create: (_) =>
+            BooksBloc(initialGroupId: initialGroupId)
+              ..add(BooksLoaded(selectedGroupId: initialGroupId)),
+        child: BooksPage(initialTab: initialTab, groupId: groupId),
       );
     },
   );

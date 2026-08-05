@@ -1,6 +1,5 @@
 part of 'books_bloc.dart';
 
-/// 账本/分组管理事件。
 sealed class BooksEvent extends Equatable {
   const BooksEvent();
 
@@ -8,21 +7,69 @@ sealed class BooksEvent extends Equatable {
   List<Object?> get props => [];
 }
 
-/// 首次加载 / 刷新：拉分组列表 + 当前分组账本（正常+回收站）。
 class BooksLoaded extends BooksEvent {
-  const BooksLoaded();
+  const BooksLoaded({this.selectedGroupId});
+
+  final int? selectedGroupId;
+
+  @override
+  List<Object?> get props => [selectedGroupId];
 }
 
-/// 选中某分组查看其账本（分组管理内部选择，不改全局 Session）。
+class BooksMutated extends BooksEvent {
+  const BooksMutated();
+}
+
 class BooksGroupSelected extends BooksEvent {
-  final int groupId;
   const BooksGroupSelected(this.groupId);
+
+  final int groupId;
 
   @override
   List<Object?> get props => [groupId];
 }
 
-/// 写操作成功后重拉。
-class BooksMutated extends BooksEvent {
-  const BooksMutated();
+class BooksGroupSearchChanged extends BooksEvent {
+  const BooksGroupSearchChanged(this.query);
+
+  final String query;
+
+  @override
+  List<Object?> get props => [query];
+}
+
+class BooksGroupFilterChanged extends BooksEvent {
+  const BooksGroupFilterChanged(this.filter);
+
+  final GroupFilter filter;
+
+  @override
+  List<Object?> get props => [filter];
+}
+
+class BooksSearchChanged extends BooksEvent {
+  const BooksSearchChanged(this.query);
+
+  final String query;
+
+  @override
+  List<Object?> get props => [query];
+}
+
+class BooksSegmentChanged extends BooksEvent {
+  const BooksSegmentChanged(this.segment);
+
+  final BooksSegment segment;
+
+  @override
+  List<Object?> get props => [segment];
+}
+
+class BooksCapabilitiesRequested extends BooksEvent {
+  const BooksCapabilitiesRequested(this.groupId);
+
+  final int groupId;
+
+  @override
+  List<Object?> get props => [groupId];
 }

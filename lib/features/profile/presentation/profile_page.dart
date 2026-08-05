@@ -212,17 +212,10 @@ class _ProfileView extends StatelessWidget {
           ),
           _divider(context),
           FxListItem(
-            leading: _tileIcon(Icons.folder_rounded, palette.info),
-            title: S.of(context).profileGroupManage,
+            leading: _tileIcon(Icons.folder_copy_rounded, palette.info),
+            title: '分组与账本',
             showChevron: true,
             onTap: () => AppRouter.push<void>(context, Routes.groups),
-          ),
-          _divider(context),
-          FxListItem(
-            leading: _tileIcon(Icons.menu_book_rounded, finance.transfer),
-            title: S.of(context).profileBookManage,
-            showChevron: true,
-            onTap: () => AppRouter.push<void>(context, Routes.books),
           ),
           _divider(context),
           FxListItem(
@@ -630,7 +623,11 @@ class _ProfileView extends StatelessWidget {
               S.of(context).profileAppVersion,
               about.appVersion.isEmpty ? '-' : 'v${about.appVersion}',
             ),
-            _aboutRow(context, S.of(context).profileApiVersion, about.apiVersion ?? '-'),
+            _aboutRow(
+              context,
+              S.of(context).profileApiVersion,
+              about.apiVersion ?? '-',
+            ),
             _aboutRow(context, S.of(context).profileIcp, about.icp ?? '-'),
           ],
         ),
@@ -664,13 +661,48 @@ class _ProfileView extends StatelessWidget {
     final finance = FxFinanceColors.of(context);
     final s = S.of(context);
     final sections = <(IconData, Color, String, String)>[
-      (Icons.add_circle_rounded, palette.primary, s.profileHelpQuickTitle, s.profileHelpQuickBody),
-      (Icons.receipt_long_rounded, finance.expense, s.profileHelpBillsTitle, s.profileHelpBillsBody),
-      (Icons.menu_book_rounded, finance.transfer, s.profileHelpBookTitle, s.profileHelpBookBody),
-      (Icons.category_rounded, palette.info, s.profileHelpManageTitle, s.profileHelpManageBody),
-      (Icons.autorenew_rounded, finance.income, s.profileHelpRecurringTitle, s.profileHelpRecurringBody),
-      (Icons.visibility_off_rounded, finance.adjust, s.profileHelpPrivacyTitle, s.profileHelpPrivacyBody),
-      (Icons.support_agent_rounded, palette.textSecondary, s.profileHelpContactTitle, s.profileHelpContactBody),
+      (
+        Icons.add_circle_rounded,
+        palette.primary,
+        s.profileHelpQuickTitle,
+        s.profileHelpQuickBody,
+      ),
+      (
+        Icons.receipt_long_rounded,
+        finance.expense,
+        s.profileHelpBillsTitle,
+        s.profileHelpBillsBody,
+      ),
+      (
+        Icons.menu_book_rounded,
+        finance.transfer,
+        s.profileHelpBookTitle,
+        s.profileHelpBookBody,
+      ),
+      (
+        Icons.category_rounded,
+        palette.info,
+        s.profileHelpManageTitle,
+        s.profileHelpManageBody,
+      ),
+      (
+        Icons.autorenew_rounded,
+        finance.income,
+        s.profileHelpRecurringTitle,
+        s.profileHelpRecurringBody,
+      ),
+      (
+        Icons.visibility_off_rounded,
+        finance.adjust,
+        s.profileHelpPrivacyTitle,
+        s.profileHelpPrivacyBody,
+      ),
+      (
+        Icons.support_agent_rounded,
+        palette.textSecondary,
+        s.profileHelpContactTitle,
+        s.profileHelpContactBody,
+      ),
     ];
     await FxSheet.show<void>(
       context,
@@ -715,9 +747,7 @@ class _ProfileView extends StatelessWidget {
             children: [
               _tileIcon(icon, tint),
               const SizedBox(width: FxSpacing.md),
-              Expanded(
-                child: Text(title, style: FxTypography.bodyStrong),
-              ),
+              Expanded(child: Text(title, style: FxTypography.bodyStrong)),
             ],
           ),
           const SizedBox(height: FxSpacing.sm),
@@ -807,10 +837,7 @@ class _ProfileView extends StatelessWidget {
           children: [
             Icon(icon, size: 16, color: tint),
             const SizedBox(width: FxSpacing.xs),
-            Text(
-              label,
-              style: FxTypography.label.copyWith(color: tint),
-            ),
+            Text(label, style: FxTypography.label.copyWith(color: tint)),
           ],
         ),
         const SizedBox(height: FxSpacing.sm),
