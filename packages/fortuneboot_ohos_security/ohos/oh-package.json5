@@ -1,0 +1,10 @@
+{
+  "name": "fortuneboot_ohos_security",
+  "version": "0.1.0",
+  "description": "FortuneBoot HarmonyOS security plugin",
+  "main": "index.ets",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@ohos/flutter_ohos": "file:./har/flutter.har"
+  }
+}

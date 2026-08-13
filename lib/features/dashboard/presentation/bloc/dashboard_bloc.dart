@@ -136,8 +136,9 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
         _SectionKey.monthStats,
       ),
       _guard<List<TrendPoint>>(
-        () => _buildExpenseTrend(
+        () => _dashboardService.getExpenseTrends(
           bookId: bookId,
+          timePoint: now,
           start: window.start,
           end: window.end,
         ),
@@ -162,43 +163,6 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
       next = _apply(next, r);
     }
     emit(next);
-  }
-
-  Future<List<TrendPoint>> _buildExpenseTrend({
-    required int bookId,
-    required DateTime start,
-    required DateTime end,
-  }) async {
-    final daily = <DateTime, double>{};
-    var pageNum = 1;
-    var loaded = 0;
-    while (true) {
-      final page = await _billService.getPage(
-        BillQuery(
-          bookId: bookId,
-          pageNum: pageNum,
-          pageSize: 500,
-          billTypes: [FxBillType.expense.value],
-          tradeTimeStartTime: _day.format(start),
-          tradeTimeEndTime: _day.format(end),
-          include: true,
-        ),
-      );
-      loaded += page.rows.length;
-      for (final bill in page.rows) {
-        final tradeTime = bill.tradeTime;
-        if (tradeTime == null) continue;
-        final day = DateTime(tradeTime.year, tradeTime.month, tradeTime.day);
-        daily[day] = (daily[day] ?? 0) + bill.displayAmount.abs();
-      }
-      if (page.rows.isEmpty || loaded >= page.total) break;
-      pageNum++;
-    }
-    final days = daily.keys.toList()..sort();
-    return [
-      for (final day in days)
-        TrendPoint(name: '${day.month}/${day.day}', value: daily[day] ?? 0),
-    ];
   }
 
   /// 执行单个拉取任务并封装为成功/失败结果，绝不抛出。

@@ -19,6 +19,10 @@
     {
       "name": "perm_reason_write_media",
       "value": "用于保存图片和视频"
+    },
+    {
+      "name": "perm_reason_access_biometric",
+      "value": "用于验证身份并解锁好记"
     }
   ]
 }

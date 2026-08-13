@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:fortuneboot/core/app_lock/app_lock_cubit.dart';
+import 'package:fortuneboot/core/app_lock/app_lock_gate.dart';
+import 'package:fortuneboot/core/app_lock/app_lock_stores.dart';
 import 'package:fortuneboot/core/navigation/app_nav.dart';
 import 'package:fortuneboot/core/navigation/app_router.dart';
 import 'package:fortuneboot/core/navigation/routes.dart';
@@ -20,11 +23,19 @@ class FxApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final appLockDependencies = AppLockPlatformDependencies.create();
     return MultiBlocProvider(
       providers: [
         BlocProvider<SessionCubit>(create: (_) => SessionCubit()),
         BlocProvider<PreferencesCubit>(
           create: (_) => PreferencesCubit()..load(),
+        ),
+        BlocProvider<AppLockCubit>(
+          create: (_) => AppLockCubit(
+            settingsStore: SharedPreferencesAppLockSettingsStore(),
+            secretStore: appLockDependencies.secretStore,
+            biometricAuthenticator: appLockDependencies.biometricAuthenticator,
+          )..initialize(),
         ),
       ],
       child: const _FxAppView(),
@@ -32,8 +43,36 @@ class FxApp extends StatelessWidget {
   }
 }
 
-class _FxAppView extends StatelessWidget {
+class _FxAppView extends StatefulWidget {
   const _FxAppView();
+
+  @override
+  State<_FxAppView> createState() => _FxAppViewState();
+}
+
+class _FxAppViewState extends State<_FxAppView> with WidgetsBindingObserver {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      context.read<AppLockCubit>().onAppResumed();
+    } else if (state == AppLifecycleState.inactive ||
+        state == AppLifecycleState.paused ||
+        state == AppLifecycleState.detached) {
+      context.read<AppLockCubit>().lockNow();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,6 +81,7 @@ class _FxAppView extends StatelessWidget {
       final ctx = appNavigatorKey.currentContext;
       if (ctx != null) {
         ctx.read<SessionCubit>().reset();
+        ctx.read<AppLockCubit>().onSignedOut();
       }
       appNavigatorKey.currentState?.pushNamedAndRemoveUntil(
         Routes.auth,
@@ -78,6 +118,8 @@ class _FxAppView extends StatelessWidget {
             LoginScreen.routeName: (context) => const LoginScreen(),
             Routes.main: (context) => const MainShell(),
           },
+          builder: (context, child) =>
+              AppLockGate(child: child ?? const SizedBox.shrink()),
           onGenerateRoute: AppRouter.onGenerateRoute,
         );
       },

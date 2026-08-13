@@ -3,7 +3,9 @@ import 'dart:ui'; // 引入以使用 FontFeature
 
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart' show timeDilation;
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_login/flutter_login.dart';
+import 'package:fortuneboot/core/app_lock/app_lock_cubit.dart';
 import 'package:fortuneboot/login/model/login_model.dart';
 import 'package:fortuneboot/request/login_request.dart';
 import 'package:fortuneboot/util/constants.dart';
@@ -322,7 +324,9 @@ class LoginScreen extends StatelessWidget {
         HapticFeedback.mediumImpact();
         return _signupUser(signupData);
       },
-      onSubmitAnimationCompleted: () {
+      onSubmitAnimationCompleted: () async {
+        await context.read<AppLockCubit>().onAuthenticated();
+        if (!context.mounted) return;
         Navigator.of(
           context,
         ).pushNamedAndRemoveUntil(Routes.main, (route) => false);

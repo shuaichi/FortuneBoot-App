@@ -1068,6 +1068,7 @@
   "statsExpense": "支出",
   "statsIncome": "收入",
   "statsSurplus": "结余",
+  "statsBasicTitle": "收支洞察",
   "statsExpenseTrend": "支出趋势",
   "statsIncomeTrend": "收入趋势",
   "ioTitle": "导入导出",
@@ -1339,5 +1340,51 @@
     "placeholders": {
       "name": {}
     }
-  }
+  },
+  "profileStatsAssets": "资产统计",
+  "profileStatsLoans": "借贷理财",
+  "profileStatsPolicy": "统计策略说明",
+  "statsMoreReports": "更多统计报表",
+  "statsAssetsEntrySubtitle": "资产负债构成、净资产趋势和信用卡概览",
+  "statsLoansEntrySubtitle": "借贷应收应付、理财盈亏和待确认账单",
+  "statsPolicyEntrySubtitle": "查看哪些账单会进入统计图表",
+  "statsAssetsTitle": "资产统计",
+  "statsLoansTitle": "借贷理财",
+  "statsPolicyTitle": "统计策略说明",
+  "statsSelectGroupFirst": "请先选择分组",
+  "statsAssetsComposition": "资产负债构成",
+  "statsNetAssetsTrend": "净资产趋势",
+  "statsAssetsByAccountType": "按账户类型",
+  "statsCreditCardOverview": "信用卡概览",
+  "statsCreditCardDates": "账单日 {billing} · 还款日 {repayment}",
+  "@statsCreditCardDates": {
+    "placeholders": {
+      "billing": {},
+      "repayment": {}
+    }
+  },
+  "statsLoanOverview": "借贷概览",
+  "statsLoanReceivable": "待收回",
+  "statsLoanPayable": "待归还",
+  "statsOverdueReceivable": "逾期待收",
+  "statsOverduePayable": "逾期待还",
+  "statsPendingConfirm": "待确认",
+  "statsFinanceProfit": "理财收益",
+  "statsProfit": "盈利",
+  "statsLoss": "亏损",
+  "statsNetProfit": "净收益",
+  "statsBillCount": "{count} 笔",
+  "@statsBillCount": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "statsPolicyScope": "统计口径",
+  "statsPolicyDefaultInclude": "默认计入统计",
+  "statsPolicyDefaultExclude": "默认不计入统计",
+  "statsPolicyDefaultDesc": "已确认且开启“计入统计”的账单会进入收支、趋势、分类和资产相关报表；关闭计入统计的账单仅保留明细，不影响统计图表。",
+  "statsPolicyEndpointFallback": "当前后端尚未提供完整策略接口，以下按前端约定展示。",
+  "statsPolicyBillTypes": "账单类型口径",
+  "statsPolicyIncluded": "计入",
+  "statsPolicyExcluded": "不计入"
 }

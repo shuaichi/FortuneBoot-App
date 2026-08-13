@@ -23,10 +23,12 @@ class DashboardService {
   }
 
   /// 支出趋势（日粒度）：GET /fortune/include/getExpenseTrends。
-  /// [timePoint] 传本月内任意时刻（yyyy-MM-dd HH:mm:ss），后端按 timeGranularity=1 返回每日。
+  /// [timePoint] 传账期内任意时刻；[start]/[end] 用于兼容新版账期窗口查询。
   Future<List<TrendPoint>> getExpenseTrends({
     required int bookId,
     required DateTime timePoint,
+    DateTime? start,
+    DateTime? end,
   }) async {
     final data = await _api.get(
       '/fortune/include/getExpenseTrends',
@@ -34,6 +36,8 @@ class DashboardService {
         'bookId': bookId,
         'timeGranularity': 1,
         'timePoint': _dateTime.format(timePoint),
+        if (start != null) 'startDate': _day.format(start),
+        if (end != null) 'endDate': _day.format(end),
       },
     );
     return _parseList(data, TrendPoint.fromJson);
@@ -53,7 +57,9 @@ class DashboardService {
         'endDate': _day.format(end),
       },
     );
-    final slices = _parseList(data, CategorySlice.fromJson);
+    final slices = data is Map
+        ? _parseList(data['items'], CategorySlice.fromExpenseEnvelope)
+        : _parseList(data, CategorySlice.fromJson);
     slices.sort((a, b) => b.value.compareTo(a.value));
     return slices;
   }

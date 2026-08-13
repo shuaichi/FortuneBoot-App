@@ -12,9 +12,15 @@ import 'package:fortuneboot/features/dashboard/presentation/widgets/net_worth_ca
 import 'package:fortuneboot/features/dashboard/presentation/widgets/quick_add_card.dart';
 import 'package:fortuneboot/features/dashboard/presentation/widgets/recent_bills_card.dart';
 import 'package:fortuneboot/features/dashboard/presentation/widgets/trend_card.dart';
+import 'package:fortuneboot/features/shared/data/bill_service.dart';
+import 'package:fortuneboot/fx/components/fx_card.dart';
+import 'package:fortuneboot/fx/components/fx_money_text.dart';
+import 'package:fortuneboot/fx/components/fx_progress_bar.dart';
 import 'package:fortuneboot/fx/components/fx_state_view.dart';
 import 'package:fortuneboot/fx/layout/fx_bento_grid.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
+import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
+import 'package:fortuneboot/fx/tokens/fx_typography.dart';
 import 'package:fortuneboot/generated/l10n.dart';
 
 /// 看板首页：粘顶栏 + Bento 卡片网格。订阅 SessionCubit 切账本重拉。
@@ -153,7 +159,17 @@ class _Body extends StatelessWidget {
               ),
             ),
           );
-          // ④ 收支趋势(1格,rowSpan2)
+          // ④ 收支洞察(跨满,让看板首屏可见对比关系)
+          tiles.add(
+            FxBentoTile(
+              colSpan: FxBentoTile.fullSpan,
+              child: _DashboardInsightCard(
+                section: state.monthStats,
+                currencyCode: currency,
+              ),
+            ),
+          );
+          // ⑤ 收支趋势(1格,rowSpan2)
           tiles.add(
             FxBentoTile(
               rowSpan: 2,
@@ -224,6 +240,107 @@ class _Body extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+}
+
+class _DashboardInsightCard extends StatelessWidget {
+  final DashboardSection<BillStatistics> section;
+  final String? currencyCode;
+
+  const _DashboardInsightCard({
+    required this.section,
+    required this.currencyCode,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final data = section.data;
+    if (data == null) return const SizedBox.shrink();
+    final palette = FxPalette.of(context);
+    final finance = FxFinanceColors.of(context);
+    final total = data.income + data.expense;
+    final expenseRatio = total <= 0 ? 0.0 : data.expense / total;
+    return FxCard(
+      accent: palette.primary,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          FxCardLabel(S.of(context).statsBasicTitle),
+          const SizedBox(height: FxSpacing.md),
+          Row(
+            children: [
+              Expanded(
+                child: _DashboardMetric(
+                  label: S.of(context).dashboardPeriodExpense,
+                  amount: data.expense,
+                  color: finance.expense,
+                  currencyCode: currencyCode,
+                ),
+              ),
+              const SizedBox(width: FxSpacing.md),
+              Expanded(
+                child: _DashboardMetric(
+                  label: S.of(context).dashboardPeriodIncome,
+                  amount: data.income,
+                  color: finance.income,
+                  currencyCode: currencyCode,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: FxSpacing.md),
+          FxProgressBar(value: expenseRatio, color: finance.expense, height: 7),
+          const SizedBox(height: FxSpacing.xs),
+          Text(
+            '${S.of(context).statsExpense} ${(expenseRatio * 100).toStringAsFixed(0)}% · ${S.of(context).statsSurplus}',
+            style: FxTypography.caption.copyWith(color: palette.textTertiary),
+          ),
+          const SizedBox(height: FxSpacing.xs),
+          FxMoneyText(
+            amount: data.surplus,
+            currencyCode: currencyCode,
+            showSign: true,
+            colorBySign: true,
+            fontSize: 14,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _DashboardMetric extends StatelessWidget {
+  final String label;
+  final double amount;
+  final Color color;
+  final String? currencyCode;
+
+  const _DashboardMetric({
+    required this.label,
+    required this.amount,
+    required this.color,
+    required this.currencyCode,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = FxPalette.of(context);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: FxTypography.caption.copyWith(color: palette.textTertiary),
+        ),
+        const SizedBox(height: FxSpacing.xs),
+        FxMoneyText(
+          amount: amount,
+          currencyCode: currencyCode,
+          color: color,
+          fontSize: 18,
+        ),
+      ],
     );
   }
 }

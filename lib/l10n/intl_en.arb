@@ -1066,6 +1066,7 @@
   "statsExpense": "Expense",
   "statsIncome": "Income",
   "statsSurplus": "Surplus",
+  "statsBasicTitle": "Cashflow insight",
   "statsExpenseTrend": "Expense trend",
   "statsIncomeTrend": "Income trend",
   "ioTitle": "Import & export",
@@ -1337,5 +1338,51 @@
     "placeholders": {
       "name": {}
     }
-  }
+  },
+  "profileStatsAssets": "Asset stats",
+  "profileStatsLoans": "Loans & finance",
+  "profileStatsPolicy": "Stats policy",
+  "statsMoreReports": "More reports",
+  "statsAssetsEntrySubtitle": "Assets, liabilities, net worth trend and credit cards",
+  "statsLoansEntrySubtitle": "Receivables, payables, finance P/L and pending bills",
+  "statsPolicyEntrySubtitle": "See which bills are included in charts",
+  "statsAssetsTitle": "Asset stats",
+  "statsLoansTitle": "Loans & finance",
+  "statsPolicyTitle": "Stats policy",
+  "statsSelectGroupFirst": "Select a group first",
+  "statsAssetsComposition": "Assets & liabilities mix",
+  "statsNetAssetsTrend": "Net worth trend",
+  "statsAssetsByAccountType": "By account type",
+  "statsCreditCardOverview": "Credit cards",
+  "statsCreditCardDates": "Billing {billing} · Repayment {repayment}",
+  "@statsCreditCardDates": {
+    "placeholders": {
+      "billing": {},
+      "repayment": {}
+    }
+  },
+  "statsLoanOverview": "Loan overview",
+  "statsLoanReceivable": "Receivable",
+  "statsLoanPayable": "Payable",
+  "statsOverdueReceivable": "Overdue receivable",
+  "statsOverduePayable": "Overdue payable",
+  "statsPendingConfirm": "Pending confirmation",
+  "statsFinanceProfit": "Finance profit",
+  "statsProfit": "Profit",
+  "statsLoss": "Loss",
+  "statsNetProfit": "Net profit",
+  "statsBillCount": "{count} bills",
+  "@statsBillCount": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "statsPolicyScope": "Statistics scope",
+  "statsPolicyDefaultInclude": "Included by default",
+  "statsPolicyDefaultExclude": "Excluded by default",
+  "statsPolicyDefaultDesc": "Confirmed bills with “include in statistics” enabled are counted in income, expense, trends, category reports, and asset charts. Bills with statistics disabled remain in details only and do not affect charts.",
+  "statsPolicyEndpointFallback": "The backend policy endpoint is not available yet, so this page shows the frontend convention.",
+  "statsPolicyBillTypes": "Bill type policy",
+  "statsPolicyIncluded": "Included",
+  "statsPolicyExcluded": "Excluded"
 }

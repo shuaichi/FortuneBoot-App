@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fortuneboot/core/app_lock/app_lock_cubit.dart';
 import 'package:fortuneboot/core/navigation/app_router.dart';
 import 'package:fortuneboot/core/navigation/routes.dart';
 import 'package:fortuneboot/core/preferences/locale_preferences.dart';
@@ -9,6 +10,7 @@ import 'package:fortuneboot/core/session/session_cubit.dart';
 import 'package:fortuneboot/core/session/widgets/session_switcher_sheet.dart';
 import 'package:fortuneboot/features/profile/data/profile_models.dart';
 import 'package:fortuneboot/features/profile/data/profile_service.dart';
+import 'package:fortuneboot/features/profile/presentation/app_lock_settings_page.dart';
 import 'package:fortuneboot/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:fortuneboot/features/profile/presentation/profile_edit_page.dart';
 import 'package:fortuneboot/features/profile/presentation/widgets/finance_color_editor.dart';
@@ -412,6 +414,16 @@ class _ProfileView extends StatelessWidget {
             subtitle: S.of(context).profileFinanceColorsSubtitle,
             showChevron: true,
             onTap: () => _openFinanceColors(context),
+          ),
+          _divider(context),
+          FxListItem(
+            leading: _tileIcon(Icons.lock_rounded, palette.primary),
+            title: '应用锁',
+            subtitle: '设置密码、手势或生物识别保护账务数据',
+            showChevron: true,
+            onTap: () => Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => const AppLockSettingsPage()),
+            ),
           ),
         ]);
       },
@@ -901,6 +913,7 @@ class _ProfileView extends StatelessWidget {
                 DioClient().clearAuthHeader();
                 await UserDataSingleton().clearAuth();
                 sessionCubit.reset();
+                context.read<AppLockCubit>().onSignedOut();
                 navigator.pushNamedAndRemoveUntil(
                   Routes.auth,
                   (route) => false,

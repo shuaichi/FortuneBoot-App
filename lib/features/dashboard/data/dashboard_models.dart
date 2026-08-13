@@ -49,4 +49,11 @@ class CategorySlice {
     value: FxApi.asDouble(json['value']) ?? 0,
     percent: FxApi.asDouble(json['percent']) ?? 0,
   );
+
+  factory CategorySlice.fromExpenseEnvelope(Map<String, dynamic> json) =>
+      CategorySlice(
+        name: json['categoryName']?.toString() ?? '',
+        value: FxApi.asDouble(json['total']) ?? 0,
+        percent: FxApi.asDouble(json['percentage']) ?? 0,
+      );
 }

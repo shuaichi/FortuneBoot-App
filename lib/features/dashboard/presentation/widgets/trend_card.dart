@@ -1,4 +1,3 @@
-import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:fortuneboot/core/navigation/app_router.dart';
 import 'package:fortuneboot/core/navigation/routes.dart';
@@ -6,6 +5,7 @@ import 'package:fortuneboot/features/dashboard/data/dashboard_models.dart';
 import 'package:fortuneboot/features/dashboard/presentation/bloc/dashboard_bloc.dart';
 import 'package:fortuneboot/features/dashboard/presentation/widgets/dashboard_card_shell.dart';
 import 'package:fortuneboot/fx/components/fx_card.dart';
+import 'package:fortuneboot/fx/components/fx_line_chart.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
@@ -56,32 +56,19 @@ class _MiniLine extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final palette = FxPalette.of(context);
-    final spots = <FlSpot>[
-      for (var i = 0; i < points.length; i++)
-        FlSpot(i.toDouble(), points[i].value),
-    ];
-    return LineChart(
-      LineChartData(
-        gridData: const FlGridData(show: false),
-        titlesData: const FlTitlesData(show: false),
-        borderData: FlBorderData(show: false),
-        lineTouchData: const LineTouchData(enabled: false),
-        minY: 0,
-        lineBarsData: [
-          LineChartBarData(
-            spots: spots,
-            isCurved: true,
-            preventCurveOverShooting: true,
-            color: palette.primary,
-            barWidth: 2.5,
-            dotData: const FlDotData(show: false),
-            belowBarData: BarAreaData(
-              show: true,
-              color: palette.primary.withValues(alpha: 0.12),
-            ),
-          ),
-        ],
-      ),
+    return FxLineChart(
+      height: 120,
+      showAxes: false,
+      series: [
+        FxLineSeries(
+          points: [
+            for (final point in points)
+              FxLinePoint(name: point.name, value: point.value),
+          ],
+          color: palette.primary,
+          label: S.of(context).dashboardExpenseTrend,
+        ),
+      ],
     );
   }
 }

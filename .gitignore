@@ -154,4 +154,7 @@ Thumbs.db
 *.keystore
 android/keystore/
 
+# Local agent and audit artifacts
 *.md
+/.skillflow/
+/.xcross/

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fortuneboot/core/app_constants.dart';
+import 'package:fortuneboot/core/app_lock/app_lock_cubit.dart';
 import 'package:fortuneboot/core/navigation/routes.dart';
 import 'package:fortuneboot/core/preferences/locale_preferences.dart';
 import 'package:fortuneboot/core/preferences/preferences_cubit.dart';
@@ -93,6 +94,8 @@ class _BaseUrlConfigPageState extends State<BaseUrlConfigPage> {
         _authMode.value = AuthMode.signIn;
         return;
       }
+      if (!mounted) return;
+      await context.read<AppLockCubit>().onAuthenticated();
       if (!mounted) return;
       Navigator.of(
         context,
