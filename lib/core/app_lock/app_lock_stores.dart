@@ -1,9 +1,10 @@
 import 'dart:io' show Platform;
 
 import 'package:cryptography/cryptography.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:fortuneboot_ohos_security/fortuneboot_ohos_security.dart';
 import 'package:fortuneboot/core/app_lock/app_lock_models.dart';
+import 'package:fortuneboot_ohos_security/fortuneboot_ohos_security.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -193,6 +194,12 @@ class AppLockPlatformDependencies {
   final BiometricAuthenticator biometricAuthenticator;
 
   factory AppLockPlatformDependencies.create() {
+    if (kIsWeb) {
+      return AppLockPlatformDependencies(
+        secretStore: SecureAppLockSecretStore(),
+        biometricAuthenticator: LocalBiometricAuthenticator(),
+      );
+    }
     if (Platform.operatingSystem == 'ohos') {
       return AppLockPlatformDependencies(
         secretStore: OhosAppLockSecretStore(),

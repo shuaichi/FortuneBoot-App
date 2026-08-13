@@ -915,7 +915,8 @@ class _ProfileView extends StatelessWidget {
                 sessionCubit.reset();
                 context.read<AppLockCubit>().onSignedOut();
                 navigator.pushNamedAndRemoveUntil(
-                  Routes.auth,
+                  // 登出强制返回URL配置页，用于用户更换服务器（登录页无法直接返回URL配置页）
+                  Routes.baseUrlConfig,
                   (route) => false,
                 );
               },
