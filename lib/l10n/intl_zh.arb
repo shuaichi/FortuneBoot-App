@@ -1041,6 +1041,7 @@
   "dashboardPeriodExpense": "本账期支出",
   "dashboardPeriodIncome": "本账期收入",
   "dashboardExpenseTrend": "支出趋势",
+  "dashboardIncomeExpenseTrend": "收支趋势",
   "dashboardInsufficientData": "数据不足",
   "dashboardLoadFailed": "加载失败",
   "dashboardSelectGroup": "选择分组",
@@ -1069,6 +1070,14 @@
   "statsIncome": "收入",
   "statsSurplus": "结余",
   "statsBasicTitle": "收支洞察",
+  "statsExpenseAnalytics": "支出分析",
+  "statsIncomeAnalytics": "收入分析",
+  "statsExpenseCategoryShare": "支出分类占比",
+  "statsIncomeCategoryShare": "收入分类占比",
+  "statsExpenseTags": "支出标签",
+  "statsIncomeTags": "收入标签",
+  "statsExpensePayees": "支出交易对象",
+  "statsIncomePayees": "收入交易对象",
   "statsExpenseTrend": "支出趋势",
   "statsIncomeTrend": "收入趋势",
   "ioTitle": "导入导出",
@@ -1386,5 +1395,37 @@
   "statsPolicyEndpointFallback": "当前后端尚未提供完整策略接口，以下按前端约定展示。",
   "statsPolicyBillTypes": "账单类型口径",
   "statsPolicyIncluded": "计入",
-  "statsPolicyExcluded": "不计入"
+  "statsPolicyExcluded": "不计入",
+  "statsIncomeExpenseCalendar": "收支日历",
+  "statsCalendarMonth": "月",
+  "statsCalendarYear": "年",
+  "statsCalendarHistory": "历史",
+  "statsCalendarIncome": "收",
+  "statsCalendarExpense": "支",
+  "statsCalendarPrevious": "上一个",
+  "statsCalendarNext": "下一个",
+  "statsCalendarTotalCount": "共 {count} 笔",
+  "@statsCalendarTotalCount": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "statsCalendarIncomeCount": "收入 {count} 笔",
+  "@statsCalendarIncomeCount": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "statsCalendarExpenseCount": "支出 {count} 笔",
+  "@statsCalendarExpenseCount": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "statsCalendarDateSummary": "{date} 收支",
+  "@statsCalendarDateSummary": {
+    "placeholders": {
+      "date": {}
+    }
+  }
 }

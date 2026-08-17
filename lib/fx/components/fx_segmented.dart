@@ -21,12 +21,16 @@ class FxSegmented<T> extends StatelessWidget {
   Widget build(BuildContext context) {
     final palette = FxPalette.of(context);
     final index = segments.indexWhere((s) => s.value == value);
+    final height = (40 * MediaQuery.textScalerOf(context).scale(1)).clamp(
+      48.0,
+      96.0,
+    );
     return LayoutBuilder(
       builder: (context, constraints) {
         final count = segments.length;
         final segWidth = constraints.maxWidth / count;
         return Container(
-          height: 40,
+          height: height,
           decoration: BoxDecoration(
             color: palette.surfaceMuted,
             borderRadius: FxRadius.tileBorder,
@@ -69,6 +73,8 @@ class FxSegmented<T> extends StatelessWidget {
                       child: Center(
                         child: Text(
                           s.label,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                           style: FxTypography.label.copyWith(
                             color: selected
                                 ? palette.textPrimary

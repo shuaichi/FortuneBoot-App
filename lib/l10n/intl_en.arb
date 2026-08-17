@@ -1039,6 +1039,7 @@
   "dashboardPeriodExpense": "Period expense",
   "dashboardPeriodIncome": "Period income",
   "dashboardExpenseTrend": "Expense trend",
+  "dashboardIncomeExpenseTrend": "Income & expense trend",
   "dashboardInsufficientData": "Not enough data",
   "dashboardLoadFailed": "Failed to load",
   "dashboardSelectGroup": "Select group",
@@ -1067,6 +1068,14 @@
   "statsIncome": "Income",
   "statsSurplus": "Surplus",
   "statsBasicTitle": "Cashflow insight",
+  "statsExpenseAnalytics": "Expense analytics",
+  "statsIncomeAnalytics": "Income analytics",
+  "statsExpenseCategoryShare": "Expense category share",
+  "statsIncomeCategoryShare": "Income category share",
+  "statsExpenseTags": "Expense tags",
+  "statsIncomeTags": "Income tags",
+  "statsExpensePayees": "Expense payees",
+  "statsIncomePayees": "Income payees",
   "statsExpenseTrend": "Expense trend",
   "statsIncomeTrend": "Income trend",
   "ioTitle": "Import & export",
@@ -1384,5 +1393,37 @@
   "statsPolicyEndpointFallback": "The backend policy endpoint is not available yet, so this page shows the frontend convention.",
   "statsPolicyBillTypes": "Bill type policy",
   "statsPolicyIncluded": "Included",
-  "statsPolicyExcluded": "Excluded"
+  "statsPolicyExcluded": "Excluded",
+  "statsIncomeExpenseCalendar": "Income & expense calendar",
+  "statsCalendarMonth": "Month",
+  "statsCalendarYear": "Year",
+  "statsCalendarHistory": "History",
+  "statsCalendarIncome": "Income",
+  "statsCalendarExpense": "Expense",
+  "statsCalendarPrevious": "Previous",
+  "statsCalendarNext": "Next",
+  "statsCalendarTotalCount": "{count} total",
+  "@statsCalendarTotalCount": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "statsCalendarIncomeCount": "{count} income",
+  "@statsCalendarIncomeCount": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "statsCalendarExpenseCount": "{count} expense",
+  "@statsCalendarExpenseCount": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "statsCalendarDateSummary": "{date} income & expense",
+  "@statsCalendarDateSummary": {
+    "placeholders": {
+      "date": {}
+    }
+  }
 }

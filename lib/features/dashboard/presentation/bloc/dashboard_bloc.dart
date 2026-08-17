@@ -68,7 +68,8 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
         hasBook: true,
         assets: const DashboardSection.loading(),
         monthStats: const DashboardSection.loading(),
-        trends: const DashboardSection.loading(),
+        expenseTrends: const DashboardSection.loading(),
+        incomeTrends: const DashboardSection.loading(),
         categories: const DashboardSection.loading(),
         recentBills: const DashboardSection.loading(),
       ),
@@ -99,7 +100,8 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
       state.copyWith(
         assets: const DashboardSection.loading(),
         monthStats: const DashboardSection.loading(),
-        trends: const DashboardSection.loading(),
+        expenseTrends: const DashboardSection.loading(),
+        incomeTrends: const DashboardSection.loading(),
         categories: const DashboardSection.loading(),
         recentBills: const DashboardSection.loading(),
       ),
@@ -120,7 +122,7 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
 
     var next = state.copyWith(hasBook: true);
 
-    final results = await Future.wait<_SectionResult>([
+    final requests = [
       _guard<AssetsLiabilities>(
         () => _groupId == null
             ? Future.value(const AssetsLiabilities())
@@ -142,7 +144,16 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
           start: window.start,
           end: window.end,
         ),
-        _SectionKey.trends,
+        _SectionKey.expenseTrends,
+      ),
+      _guard<List<TrendPoint>>(
+        () => _dashboardService.getIncomeTrends(
+          bookId: bookId,
+          timePoint: now,
+          start: window.start,
+          end: window.end,
+        ),
+        _SectionKey.incomeTrends,
       ),
       _guard<List<CategorySlice>>(
         () => _dashboardService.getCategoryExpense(
@@ -156,13 +167,16 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
         () => _billService.getPage(BillQuery(bookId: bookId, pageSize: 3)),
         _SectionKey.recentBills,
       ),
-    ]);
+    ];
 
-    if (version != _loadVersion) return;
-    for (final r in results) {
-      next = _apply(next, r);
-    }
-    emit(next);
+    await Future.wait(
+      requests.map((request) async {
+        final result = await request;
+        if (version != _loadVersion) return;
+        next = _apply(next, result);
+        emit(next);
+      }),
+    );
   }
 
   /// 执行单个拉取任务并封装为成功/失败结果，绝不抛出。
@@ -199,9 +213,17 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
                   r.value! as BillStatistics,
                 ),
         );
-      case _SectionKey.trends:
+      case _SectionKey.expenseTrends:
         return s.copyWith(
-          trends: err != null
+          expenseTrends: err != null
+              ? DashboardSection<List<TrendPoint>>.error(err)
+              : DashboardSection<List<TrendPoint>>.ready(
+                  r.value! as List<TrendPoint>,
+                ),
+        );
+      case _SectionKey.incomeTrends:
+        return s.copyWith(
+          incomeTrends: err != null
               ? DashboardSection<List<TrendPoint>>.error(err)
               : DashboardSection<List<TrendPoint>>.ready(
                   r.value! as List<TrendPoint>,
@@ -227,7 +249,14 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
   }
 }
 
-enum _SectionKey { assets, monthStats, trends, categories, recentBills }
+enum _SectionKey {
+  assets,
+  monthStats,
+  expenseTrends,
+  incomeTrends,
+  categories,
+  recentBills,
+}
 
 class _SectionResult {
   final _SectionKey key;

@@ -319,6 +319,21 @@ class StatsService {
     return _parseList(data, CalendarHeatmapPoint.fromJson);
   }
 
+  Future<IncomeExpenseCalendarResponse> getIncomeExpenseCalendar({
+    required IncomeExpenseCalendarRequest request,
+  }) async {
+    final data = await _api.get(
+      '/fortune/include/getIncomeExpenseCalendar',
+      query: request.toQueryParameters(),
+    );
+    if (data is Map) {
+      return IncomeExpenseCalendarResponse.fromJson(
+        Map<String, dynamic>.from(data),
+      );
+    }
+    return IncomeExpenseCalendarResponse(granularity: request.granularity);
+  }
+
   Future<List<NetAssetsTrendPoint>> getNetAssetsTrend({
     required int groupId,
     int periodType = 3,

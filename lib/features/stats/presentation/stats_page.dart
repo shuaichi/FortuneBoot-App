@@ -6,6 +6,7 @@ import 'package:fortuneboot/core/preferences/preferences_cubit.dart';
 import 'package:fortuneboot/core/session/bill_mutations.dart';
 import 'package:fortuneboot/core/session/session_cubit.dart';
 import 'package:fortuneboot/features/stats/presentation/bloc/stats_bloc.dart';
+import 'package:fortuneboot/features/stats/presentation/widgets/stats_income_expense_calendar_card.dart';
 import 'package:fortuneboot/features/stats/presentation/widgets/stats_overview_bar.dart';
 import 'package:fortuneboot/features/stats/presentation/widgets/stats_pie_card.dart';
 import 'package:fortuneboot/features/stats/presentation/widgets/stats_tag_card.dart';
@@ -107,6 +108,20 @@ class _Body extends StatelessWidget {
               const SizedBox(height: FxSpacing.md),
               StatsOverviewBar(section: state.overview, currencyCode: currency),
               const SizedBox(height: FxSpacing.md),
+              StatsIncomeExpenseCalendarCard(
+                section: state.calendar,
+                view: state.calendarView,
+                anchor: state.calendarAnchor,
+                currencyCode: currency,
+                onViewChanged: (view) =>
+                    bloc.add(StatsCalendarViewChanged(view)),
+                onNavigate: (delta) => bloc.add(StatsCalendarNavigate(delta)),
+                onDrillDown: (view, anchor) => bloc.add(
+                  StatsCalendarDrilledDown(view: view, anchor: anchor),
+                ),
+                onRetry: () => bloc.add(const StatsCalendarRetried()),
+              ),
+              const SizedBox(height: FxSpacing.md),
               _StatsInsightCard(state: state, currencyCode: currency),
               const SizedBox(height: FxSpacing.md),
               _StatsDimensionPreviewCard(state: state, currencyCode: currency),
@@ -118,16 +133,20 @@ class _Body extends StatelessWidget {
               ),
               const SizedBox(height: FxSpacing.md),
               StatsPieCard(
-                label: S.of(context).statsCategoryShare,
+                label: _categoryLabel(context, state.type),
                 section: state.categories,
                 currencyCode: currency,
                 onRetry: retry,
               ),
               const SizedBox(height: FxSpacing.md),
-              StatsTagCard(section: state.tags, onRetry: retry),
+              StatsTagCard(
+                label: _tagLabel(context, state.type),
+                section: state.tags,
+                onRetry: retry,
+              ),
               const SizedBox(height: FxSpacing.md),
               StatsPieCard(
-                label: S.of(context).statsPayees,
+                label: _payeeLabel(context, state.type),
                 section: state.payees,
                 currencyCode: currency,
                 onRetry: retry,
@@ -139,6 +158,26 @@ class _Body extends StatelessWidget {
     );
   }
 }
+
+String _analyticsLabel(BuildContext context, StatsType type) =>
+    type == StatsType.expense
+    ? S.of(context).statsExpenseAnalytics
+    : S.of(context).statsIncomeAnalytics;
+
+String _categoryLabel(BuildContext context, StatsType type) =>
+    type == StatsType.expense
+    ? S.of(context).statsExpenseCategoryShare
+    : S.of(context).statsIncomeCategoryShare;
+
+String _tagLabel(BuildContext context, StatsType type) =>
+    type == StatsType.expense
+    ? S.of(context).statsExpenseTags
+    : S.of(context).statsIncomeTags;
+
+String _payeeLabel(BuildContext context, StatsType type) =>
+    type == StatsType.expense
+    ? S.of(context).statsExpensePayees
+    : S.of(context).statsIncomePayees;
 
 class _StatsEntryCard extends StatelessWidget {
   const _StatsEntryCard();
@@ -280,10 +319,10 @@ class _StatsDimensionPreviewCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          FxCardLabel(S.of(context).statsMoreReports),
+          FxCardLabel(_analyticsLabel(context, state.type)),
           const SizedBox(height: FxSpacing.md),
           _DimensionRow(
-            title: S.of(context).statsCategoryShare,
+            title: _categoryLabel(context, state.type),
             name: category?.name,
             amount: category?.value,
             percent: category?.percent,
@@ -291,7 +330,7 @@ class _StatsDimensionPreviewCard extends StatelessWidget {
           ),
           const Divider(height: FxSpacing.lg),
           _DimensionRow(
-            title: S.of(context).statsTags,
+            title: _tagLabel(context, state.type),
             name: tag?.name,
             amount: tag?.value,
             percent: tag?.percent,
@@ -299,7 +338,7 @@ class _StatsDimensionPreviewCard extends StatelessWidget {
           ),
           const Divider(height: FxSpacing.lg),
           _DimensionRow(
-            title: S.of(context).statsPayees,
+            title: _payeeLabel(context, state.type),
             name: payee?.name,
             amount: payee?.value,
             percent: payee?.percent,

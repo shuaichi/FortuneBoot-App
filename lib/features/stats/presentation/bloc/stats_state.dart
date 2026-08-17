@@ -6,6 +6,9 @@ enum StatsRange { week, month, year, custom }
 /// 统计类型（支出/收入）。
 enum StatsType { expense, income }
 
+/// 收支日历的自然时间视图。
+enum IncomeExpenseCalendarView { month, year, history }
+
 /// 单张图表卡的加载态：各卡独立 loading/data/error，互不拖累。
 enum StatsSectionStatus { loading, ready, error }
 
@@ -49,9 +52,12 @@ class StatsState extends Equatable {
   final StatsSection<List<PieSlice>> categories;
   final StatsSection<List<BarItem>> tags;
   final StatsSection<List<PieSlice>> payees;
+  final IncomeExpenseCalendarView calendarView;
+  final DateTime calendarAnchor;
+  final StatsSection<IncomeExpenseCalendarResponse> calendar;
   final String? currencyCode;
 
-  const StatsState({
+  StatsState({
     this.hasBook = false,
     this.range = StatsRange.month,
     this.type = StatsType.expense,
@@ -62,8 +68,13 @@ class StatsState extends Equatable {
     this.categories = const StatsSection.loading(),
     this.tags = const StatsSection.loading(),
     this.payees = const StatsSection.loading(),
+    this.calendarView = IncomeExpenseCalendarView.month,
+    DateTime? calendarAnchor,
+    this.calendar = const StatsSection.loading(),
     this.currencyCode,
-  });
+  }) : calendarAnchor =
+           calendarAnchor ??
+           DateTime(DateTime.now().year, DateTime.now().month);
 
   StatsState copyWith({
     bool? hasBook,
@@ -76,6 +87,9 @@ class StatsState extends Equatable {
     StatsSection<List<PieSlice>>? categories,
     StatsSection<List<BarItem>>? tags,
     StatsSection<List<PieSlice>>? payees,
+    IncomeExpenseCalendarView? calendarView,
+    DateTime? calendarAnchor,
+    StatsSection<IncomeExpenseCalendarResponse>? calendar,
     String? currencyCode,
   }) {
     return StatsState(
@@ -89,6 +103,9 @@ class StatsState extends Equatable {
       categories: categories ?? this.categories,
       tags: tags ?? this.tags,
       payees: payees ?? this.payees,
+      calendarView: calendarView ?? this.calendarView,
+      calendarAnchor: calendarAnchor ?? this.calendarAnchor,
+      calendar: calendar ?? this.calendar,
       currencyCode: currencyCode ?? this.currencyCode,
     );
   }
@@ -105,6 +122,9 @@ class StatsState extends Equatable {
     categories,
     tags,
     payees,
+    calendarView,
+    calendarAnchor,
+    calendar,
     currencyCode,
   ];
 }

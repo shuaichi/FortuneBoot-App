@@ -27,9 +27,19 @@ class StatsOverviewBar extends StatelessWidget {
     return FxCard(
       child: Row(
         children: [
-          _cell(context, S.of(context).statsExpense, data.expense, finance.expense),
+          _cell(
+            context,
+            S.of(context).statsExpense,
+            data.expense,
+            finance.expense,
+          ),
           _divider(palette),
-          _cell(context, S.of(context).statsIncome, data.income, finance.income),
+          _cell(
+            context,
+            S.of(context).statsIncome,
+            data.income,
+            finance.income,
+          ),
           _divider(palette),
           _cell(
             context,
@@ -42,12 +52,7 @@ class StatsOverviewBar extends StatelessWidget {
     );
   }
 
-  Widget _cell(
-    BuildContext context,
-    String label,
-    double amount,
-    Color color,
-  ) {
+  Widget _cell(BuildContext context, String label, double amount, Color color) {
     return Expanded(
       child: Column(
         children: [

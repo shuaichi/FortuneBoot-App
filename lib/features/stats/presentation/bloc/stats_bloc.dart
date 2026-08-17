@@ -30,8 +30,13 @@ class StatsBloc extends Bloc<StatsEvent, StatsState> {
   final BillService _billService;
 
   int? _bookId;
+  static const int _minCalendarYear = 1900;
+  static const int _maxCalendarYear = 2100;
+  static const int _historyYearSpan = 5;
+
   int _monthStartDay;
   int _loadVersion = 0;
+  int _calendarLoadVersion = 0;
 
   StatsBloc({
     StatsService? statsService,
@@ -54,6 +59,16 @@ class StatsBloc extends Bloc<StatsEvent, StatsState> {
       _onMonthStartDayChanged,
       transformer: restartable(),
     );
+    on<StatsCalendarViewChanged>(
+      _onCalendarViewChanged,
+      transformer: restartable(),
+    );
+    on<StatsCalendarNavigate>(_onCalendarNavigate, transformer: restartable());
+    on<StatsCalendarDrilledDown>(
+      _onCalendarDrilledDown,
+      transformer: restartable(),
+    );
+    on<StatsCalendarRetried>(_onCalendarRetried, transformer: restartable());
   }
 
   Future<void> _onBookChanged(
@@ -70,6 +85,7 @@ class StatsBloc extends Bloc<StatsEvent, StatsState> {
           categories: const StatsSection.loading(),
           tags: const StatsSection.loading(),
           payees: const StatsSection.loading(),
+          calendar: const StatsSection.loading(),
         ),
       );
       return;
@@ -107,9 +123,16 @@ class StatsBloc extends Bloc<StatsEvent, StatsState> {
     StatsTypeChanged event,
     Emitter<StatsState> emit,
   ) async {
-    emit(_resetLoading(state.copyWith(type: event.type)));
+    if (event.type == state.type) return;
+    final shouldReloadCalendar =
+        state.calendar.status == StatsSectionStatus.loading;
+    emit(_resetAnalyticsLoading(state.copyWith(type: event.type)));
     if (_bookId == null) return;
-    await _loadAll(emit);
+    if (shouldReloadCalendar) {
+      await Future.wait([_loadAnalytics(emit), _loadCalendar(emit)]);
+      return;
+    }
+    await _loadAnalytics(emit);
   }
 
   Future<void> _onMonthStartDayChanged(
@@ -120,12 +143,86 @@ class StatsBloc extends Bloc<StatsEvent, StatsState> {
     if (day == _monthStartDay) return;
     _monthStartDay = day;
     if (_bookId == null || state.range != StatsRange.month) return;
-    emit(_resetLoading(state));
-    await _loadAll(emit);
+    emit(_resetLoading(state, includeCalendar: false));
+    await _loadAll(emit, includeCalendar: false);
   }
 
-  StatsState _resetLoading(StatsState s) => s.copyWith(
-    overview: const StatsSection.loading(),
+  Future<void> _onCalendarViewChanged(
+    StatsCalendarViewChanged event,
+    Emitter<StatsState> emit,
+  ) async {
+    if (event.view == state.calendarView) return;
+    final anchor = _normalizeCalendarAnchor(state.calendarAnchor, event.view);
+    emit(
+      state.copyWith(
+        calendarView: event.view,
+        calendarAnchor: anchor,
+        calendar: const StatsSection.loading(),
+      ),
+    );
+    await _loadCalendar(emit);
+  }
+
+  Future<void> _onCalendarNavigate(
+    StatsCalendarNavigate event,
+    Emitter<StatsState> emit,
+  ) async {
+    final anchor = switch (state.calendarView) {
+      IncomeExpenseCalendarView.month => DateTime(
+        state.calendarAnchor.year,
+        state.calendarAnchor.month + event.delta,
+      ),
+      IncomeExpenseCalendarView.year => DateTime(
+        state.calendarAnchor.year + event.delta,
+      ),
+      IncomeExpenseCalendarView.history => DateTime(
+        state.calendarAnchor.year + event.delta * _historyYearSpan,
+      ),
+    };
+    if (!_isValidCalendarAnchor(anchor, state.calendarView)) return;
+    emit(
+      state.copyWith(
+        calendarAnchor: anchor,
+        calendar: const StatsSection.loading(),
+      ),
+    );
+    await _loadCalendar(emit);
+  }
+
+  Future<void> _onCalendarDrilledDown(
+    StatsCalendarDrilledDown event,
+    Emitter<StatsState> emit,
+  ) async {
+    if (!_isValidCalendarAnchor(event.anchor, event.view)) return;
+    emit(
+      state.copyWith(
+        calendarView: event.view,
+        calendarAnchor: event.anchor,
+        calendar: const StatsSection.loading(),
+      ),
+    );
+    await _loadCalendar(emit);
+  }
+
+  Future<void> _onCalendarRetried(
+    StatsCalendarRetried event,
+    Emitter<StatsState> emit,
+  ) async {
+    emit(state.copyWith(calendar: const StatsSection.loading()));
+    await _loadCalendar(emit);
+  }
+
+  StatsState _resetLoading(StatsState s, {bool includeCalendar = true}) =>
+      s.copyWith(
+        overview: const StatsSection.loading(),
+        trends: const StatsSection.loading(),
+        categories: const StatsSection.loading(),
+        tags: const StatsSection.loading(),
+        payees: const StatsSection.loading(),
+        calendar: includeCalendar ? const StatsSection.loading() : s.calendar,
+      );
+
+  StatsState _resetAnalyticsLoading(StatsState s) => s.copyWith(
     trends: const StatsSection.loading(),
     categories: const StatsSection.loading(),
     tags: const StatsSection.loading(),
@@ -168,7 +265,10 @@ class StatsBloc extends Bloc<StatsEvent, StatsState> {
   DateTime _noon(DateTime d) => DateTime(d.year, d.month, d.day, 12);
 
   /// 并发拉取全部；各任务捕获自身异常写入对应 section。
-  Future<void> _loadAll(Emitter<StatsState> emit) async {
+  Future<void> _loadAll(
+    Emitter<StatsState> emit, {
+    bool includeCalendar = true,
+  }) async {
     final version = ++_loadVersion;
     final bookId = _bookId;
     if (bookId == null) return;
@@ -177,8 +277,14 @@ class StatsBloc extends Bloc<StatsEvent, StatsState> {
     final startStr = _day.format(w.start);
     final endStr = _day.format(w.end);
     final isExpense = state.type == StatsType.expense;
-
-    var next = state.copyWith(hasBook: true);
+    final calendarVersion = includeCalendar ? ++_calendarLoadVersion : null;
+    final calendarFuture = includeCalendar
+        ? _calendarSection(
+            bookId: bookId,
+            view: state.calendarView,
+            anchor: state.calendarAnchor,
+          )
+        : null;
 
     final results = await Future.wait<_SectionResult>([
       _guard<BillStatistics>(
@@ -257,10 +363,167 @@ class StatsBloc extends Bloc<StatsEvent, StatsState> {
     ]);
 
     if (version != _loadVersion) return;
+    final calendar = calendarFuture == null ? null : await calendarFuture;
+    if (version != _loadVersion || bookId != _bookId) return;
+
+    var next = state.copyWith(hasBook: true);
     for (final r in results) {
       next = _apply(next, r);
     }
+    if (calendar != null && calendarVersion == _calendarLoadVersion) {
+      next = next.copyWith(calendar: calendar);
+    }
     emit(next);
+  }
+
+  Future<void> _loadAnalytics(Emitter<StatsState> emit) async {
+    final version = ++_loadVersion;
+    final bookId = _bookId;
+    if (bookId == null) return;
+
+    final window = _resolveWindow();
+    final isExpense = state.type == StatsType.expense;
+    final results = await Future.wait<_SectionResult>([
+      _guard<List<TrendPoint>>(
+        () => state.range == StatsRange.month
+            ? _buildMonthlyTrend(
+                bookId: bookId,
+                start: window.start,
+                end: window.end,
+                billType: isExpense
+                    ? FxBillType.expense.value
+                    : FxBillType.income.value,
+              )
+            : isExpense
+            ? _statsService.getExpenseTrends(
+                bookId: bookId,
+                timeGranularity: window.granularity,
+                timePoint: window.timePoint,
+              )
+            : _statsService.getIncomeTrends(
+                bookId: bookId,
+                timeGranularity: window.granularity,
+                timePoint: window.timePoint,
+              ),
+        _SectionKey.trends,
+      ),
+      _guard<List<PieSlice>>(
+        () => isExpense
+            ? _statsService.getCategoryExpense(
+                bookId: bookId,
+                start: window.start,
+                end: window.end,
+              )
+            : _statsService.getCategoryIncome(
+                bookId: bookId,
+                start: window.start,
+                end: window.end,
+              ),
+        _SectionKey.categories,
+      ),
+      _guard<List<BarItem>>(
+        () => isExpense
+            ? _statsService.getTagExpense(
+                bookId: bookId,
+                start: window.start,
+                end: window.end,
+              )
+            : _statsService.getTagIncome(
+                bookId: bookId,
+                start: window.start,
+                end: window.end,
+              ),
+        _SectionKey.tags,
+      ),
+      _guard<List<PieSlice>>(
+        () => isExpense
+            ? _statsService.getPayeeExpense(
+                bookId: bookId,
+                start: window.start,
+                end: window.end,
+              )
+            : _statsService.getPayeeIncome(
+                bookId: bookId,
+                start: window.start,
+                end: window.end,
+              ),
+        _SectionKey.payees,
+      ),
+    ]);
+
+    if (version != _loadVersion || bookId != _bookId) return;
+    var next = state;
+    for (final result in results) {
+      next = _apply(next, result);
+    }
+    emit(next);
+  }
+
+  DateTime _normalizeCalendarAnchor(
+    DateTime anchor,
+    IncomeExpenseCalendarView view,
+  ) {
+    final minYear = view == IncomeExpenseCalendarView.history
+        ? _minCalendarYear + _historyYearSpan - 1
+        : _minCalendarYear;
+    return DateTime(anchor.year.clamp(minYear, _maxCalendarYear), anchor.month);
+  }
+
+  bool _isValidCalendarAnchor(
+    DateTime anchor,
+    IncomeExpenseCalendarView view,
+  ) => switch (view) {
+    IncomeExpenseCalendarView.month || IncomeExpenseCalendarView.year =>
+      anchor.year >= _minCalendarYear && anchor.year <= _maxCalendarYear,
+    IncomeExpenseCalendarView.history =>
+      anchor.year - (_historyYearSpan - 1) >= _minCalendarYear &&
+          anchor.year <= _maxCalendarYear,
+  };
+
+  Future<void> _loadCalendar(Emitter<StatsState> emit) async {
+    final version = ++_calendarLoadVersion;
+    final bookId = _bookId;
+    if (bookId == null) return;
+    final section = await _calendarSection(
+      bookId: bookId,
+      view: state.calendarView,
+      anchor: state.calendarAnchor,
+    );
+    if (version != _calendarLoadVersion || bookId != _bookId) return;
+    emit(state.copyWith(calendar: section));
+  }
+
+  Future<StatsSection<IncomeExpenseCalendarResponse>> _calendarSection({
+    required int bookId,
+    required IncomeExpenseCalendarView view,
+    required DateTime anchor,
+  }) async {
+    final request = switch (view) {
+      IncomeExpenseCalendarView.month => IncomeExpenseCalendarRequest.month(
+        bookId: bookId,
+        year: anchor.year,
+        month: anchor.month,
+      ),
+      IncomeExpenseCalendarView.year => IncomeExpenseCalendarRequest.year(
+        bookId: bookId,
+        year: anchor.year,
+      ),
+      IncomeExpenseCalendarView.history => IncomeExpenseCalendarRequest.history(
+        bookId: bookId,
+        startYear: anchor.year - (_historyYearSpan - 1),
+        endYear: anchor.year,
+      ),
+    };
+    try {
+      final response = await _statsService.getIncomeExpenseCalendar(
+        request: request,
+      );
+      return StatsSection.ready(response);
+    } on FxApiException catch (e) {
+      return StatsSection.error(e.message);
+    } on Object catch (e) {
+      return StatsSection.error(e.toString());
+    }
   }
 
   Future<List<TrendPoint>> _buildMonthlyTrend({

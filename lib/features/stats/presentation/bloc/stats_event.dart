@@ -53,3 +53,39 @@ final class StatsMonthStartDayChanged extends StatsEvent {
   @override
   List<Object?> get props => [day];
 }
+
+/// 切换收支日历的自然时间视图。
+final class StatsCalendarViewChanged extends StatsEvent {
+  const StatsCalendarViewChanged(this.view);
+
+  final IncomeExpenseCalendarView view;
+
+  @override
+  List<Object?> get props => [view];
+}
+
+/// 根据当前日历视图前后移动自然时间锚点。
+final class StatsCalendarNavigate extends StatsEvent {
+  const StatsCalendarNavigate(this.delta);
+
+  final int delta;
+
+  @override
+  List<Object?> get props => [delta];
+}
+
+/// 从历史年度或年度月汇总下钻。
+final class StatsCalendarDrilledDown extends StatsEvent {
+  const StatsCalendarDrilledDown({required this.view, required this.anchor});
+
+  final IncomeExpenseCalendarView view;
+  final DateTime anchor;
+
+  @override
+  List<Object?> get props => [view, anchor];
+}
+
+/// 仅重试收支日历接口。
+final class StatsCalendarRetried extends StatsEvent {
+  const StatsCalendarRetried();
+}

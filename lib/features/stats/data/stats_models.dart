@@ -249,6 +249,171 @@ class CalendarHeatmapPoint {
       );
 }
 
+/// 收支日历接口的时间粒度。
+enum IncomeExpenseCalendarGranularity {
+  month(1),
+  year(2),
+  history(3);
+
+  const IncomeExpenseCalendarGranularity(this.value);
+
+  final int value;
+
+  static IncomeExpenseCalendarGranularity fromValue(int? value) =>
+      switch (value) {
+        1 => month,
+        2 => year,
+        3 => history,
+        _ => month,
+      };
+}
+
+/// 收支日历接口请求。每个命名构造只允许当前粒度的参数。
+class IncomeExpenseCalendarRequest {
+  IncomeExpenseCalendarRequest.month({
+    required this.bookId,
+    required this.year,
+    required this.month,
+  }) : granularity = IncomeExpenseCalendarGranularity.month,
+       startYear = null,
+       endYear = null {
+    _validateBookId(bookId);
+    _validateYear(year!);
+    if (month! < 1 || month! > 12) {
+      throw ArgumentError.value(month, 'month', 'must be between 1 and 12');
+    }
+  }
+
+  IncomeExpenseCalendarRequest.year({required this.bookId, required this.year})
+    : granularity = IncomeExpenseCalendarGranularity.year,
+      month = null,
+      startYear = null,
+      endYear = null {
+    _validateBookId(bookId);
+    _validateYear(year!);
+  }
+
+  IncomeExpenseCalendarRequest.history({
+    required this.bookId,
+    required this.startYear,
+    required this.endYear,
+  }) : granularity = IncomeExpenseCalendarGranularity.history,
+       year = null,
+       month = null {
+    _validateBookId(bookId);
+    _validateYear(startYear!);
+    _validateYear(endYear!);
+    if (startYear! > endYear!) {
+      throw ArgumentError.value(
+        startYear,
+        'startYear',
+        'must not exceed endYear',
+      );
+    }
+    if (endYear! - startYear! >= 10) {
+      throw ArgumentError.value(
+        endYear,
+        'endYear',
+        'history range must not exceed 10 years',
+      );
+    }
+  }
+
+  static void _validateBookId(int bookId) {
+    if (bookId <= 0) {
+      throw ArgumentError.value(bookId, 'bookId', 'must be positive');
+    }
+  }
+
+  static void _validateYear(int year) {
+    if (year < 1900 || year > 2100) {
+      throw ArgumentError.value(year, 'year', 'must be between 1900 and 2100');
+    }
+  }
+
+  final int bookId;
+  final IncomeExpenseCalendarGranularity granularity;
+  final int? year;
+  final int? month;
+  final int? startYear;
+  final int? endYear;
+
+  Map<String, dynamic> toQueryParameters() => {
+    'bookId': bookId,
+    'granularity': granularity.value,
+    if (year != null) 'year': year,
+    if (month != null) 'month': month,
+    if (startYear != null) 'startYear': startYear,
+    if (endYear != null) 'endYear': endYear,
+  };
+}
+
+/// 收支日历的单个日、月或年时间桶。
+class IncomeExpenseCalendarBucket {
+  const IncomeExpenseCalendarBucket({
+    this.period = '',
+    this.income = 0,
+    this.expense = 0,
+    this.incomeCount = 0,
+    this.expenseCount = 0,
+  });
+
+  final String period;
+  final double income;
+  final double expense;
+  final int incomeCount;
+  final int expenseCount;
+
+  double get totalAmount => income + expense;
+  int get totalCount => incomeCount + expenseCount;
+
+  factory IncomeExpenseCalendarBucket.fromJson(Map<String, dynamic> json) =>
+      IncomeExpenseCalendarBucket(
+        period: json['period']?.toString() ?? '',
+        income: FxApi.asDouble(json['income']) ?? 0,
+        expense: FxApi.asDouble(json['expense']) ?? 0,
+        incomeCount: FxApi.asId(json['incomeCount']) ?? 0,
+        expenseCount: FxApi.asId(json['expenseCount']) ?? 0,
+      );
+}
+
+/// 收支日历接口响应，时间范围由后端按请求粒度返回。
+class IncomeExpenseCalendarResponse {
+  IncomeExpenseCalendarResponse({
+    this.startDate = '',
+    this.endDate = '',
+    this.granularity = IncomeExpenseCalendarGranularity.month,
+    List<IncomeExpenseCalendarBucket> items = const [],
+  }) : items = List.unmodifiable(items);
+
+  final String startDate;
+  final String endDate;
+  final IncomeExpenseCalendarGranularity granularity;
+  final List<IncomeExpenseCalendarBucket> items;
+
+  factory IncomeExpenseCalendarResponse.fromJson(Map<String, dynamic> json) {
+    final rawItems = json['items'];
+    final items = rawItems is List
+        ? rawItems
+              .whereType<Map<dynamic, dynamic>>()
+              .map(
+                (item) => IncomeExpenseCalendarBucket.fromJson(
+                  Map<String, dynamic>.from(item),
+                ),
+              )
+              .toList()
+        : <IncomeExpenseCalendarBucket>[];
+    return IncomeExpenseCalendarResponse(
+      startDate: json['startDate']?.toString() ?? '',
+      endDate: json['endDate']?.toString() ?? '',
+      granularity: IncomeExpenseCalendarGranularity.fromValue(
+        FxApi.asId(json['granularity']),
+      ),
+      items: items,
+    );
+  }
+}
+
 class NetAssetsTrendPoint {
   final String name;
   final double totalAssets;

@@ -47,7 +47,10 @@ class NetWorthCard extends StatelessWidget {
           children: [
             FxCardLabel(S.of(context).dashboardNetWorth),
             const Spacer(),
-            Text(S.of(context).dashboardNoRecordsYet, style: FxTypography.title),
+            Text(
+              S.of(context).dashboardNoRecordsYet,
+              style: FxTypography.title,
+            ),
             const SizedBox(height: FxSpacing.xs),
             Row(
               children: [
@@ -74,6 +77,7 @@ class NetWorthCard extends StatelessWidget {
     return DashboardCardShell<AssetsLiabilities>(
       section: section,
       onRetry: onRetry,
+      onTap: () => AppRouter.push<void>(context, Routes.accounts),
       builder: (data) {
         final liabilityMagnitude = data.totalLiabilities.abs();
         final total = data.totalAssets.abs() + liabilityMagnitude;

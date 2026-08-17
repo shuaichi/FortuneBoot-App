@@ -9,17 +9,23 @@ import 'package:fortuneboot/generated/l10n.dart';
 
 /// ③ 标签柱图：Top N（默认 10）。
 class StatsTagCard extends StatelessWidget {
+  final String label;
   final StatsSection<List<BarItem>> section;
   final VoidCallback onRetry;
 
   static const int _topN = 10;
 
-  const StatsTagCard({super.key, required this.section, required this.onRetry});
+  const StatsTagCard({
+    super.key,
+    required this.label,
+    required this.section,
+    required this.onRetry,
+  });
 
   @override
   Widget build(BuildContext context) {
     return StatsCardShell<List<BarItem>>(
-      label: S.of(context).statsTags,
+      label: label,
       section: section,
       onRetry: onRetry,
       height: 260,

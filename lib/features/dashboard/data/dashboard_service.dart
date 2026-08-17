@@ -43,6 +43,26 @@ class DashboardService {
     return _parseList(data, TrendPoint.fromJson);
   }
 
+  /// 收入趋势（日粒度）：GET /fortune/include/getIncomeTrends。
+  Future<List<TrendPoint>> getIncomeTrends({
+    required int bookId,
+    required DateTime timePoint,
+    DateTime? start,
+    DateTime? end,
+  }) async {
+    final data = await _api.get(
+      '/fortune/include/getIncomeTrends',
+      query: {
+        'bookId': bookId,
+        'timeGranularity': 1,
+        'timePoint': _dateTime.format(timePoint),
+        if (start != null) 'startDate': _day.format(start),
+        if (end != null) 'endDate': _day.format(end),
+      },
+    );
+    return _parseList(data, TrendPoint.fromJson);
+  }
+
   /// 分类支出 Top（本月）：GET /fortune/include/getCategoryExpense。
   Future<List<CategorySlice>> getCategoryExpense({
     required int bookId,

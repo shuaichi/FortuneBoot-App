@@ -33,7 +33,8 @@ class DashboardState extends Equatable {
   final bool hasBook;
   final DashboardSection<AssetsLiabilities> assets;
   final DashboardSection<BillStatistics> monthStats;
-  final DashboardSection<List<TrendPoint>> trends;
+  final DashboardSection<List<TrendPoint>> expenseTrends;
+  final DashboardSection<List<TrendPoint>> incomeTrends;
   final DashboardSection<List<CategorySlice>> categories;
   final DashboardSection<List<FortuneBillVo>> recentBills;
   final String? currencyCode;
@@ -42,7 +43,8 @@ class DashboardState extends Equatable {
     this.hasBook = false,
     this.assets = const DashboardSection.loading(),
     this.monthStats = const DashboardSection.loading(),
-    this.trends = const DashboardSection.loading(),
+    this.expenseTrends = const DashboardSection.loading(),
+    this.incomeTrends = const DashboardSection.loading(),
     this.categories = const DashboardSection.loading(),
     this.recentBills = const DashboardSection.loading(),
     this.currencyCode,
@@ -56,7 +58,8 @@ class DashboardState extends Equatable {
     bool? hasBook,
     DashboardSection<AssetsLiabilities>? assets,
     DashboardSection<BillStatistics>? monthStats,
-    DashboardSection<List<TrendPoint>>? trends,
+    DashboardSection<List<TrendPoint>>? expenseTrends,
+    DashboardSection<List<TrendPoint>>? incomeTrends,
     DashboardSection<List<CategorySlice>>? categories,
     DashboardSection<List<FortuneBillVo>>? recentBills,
     String? currencyCode,
@@ -65,7 +68,8 @@ class DashboardState extends Equatable {
       hasBook: hasBook ?? this.hasBook,
       assets: assets ?? this.assets,
       monthStats: monthStats ?? this.monthStats,
-      trends: trends ?? this.trends,
+      expenseTrends: expenseTrends ?? this.expenseTrends,
+      incomeTrends: incomeTrends ?? this.incomeTrends,
       categories: categories ?? this.categories,
       recentBills: recentBills ?? this.recentBills,
       currencyCode: currencyCode ?? this.currencyCode,
@@ -77,7 +81,8 @@ class DashboardState extends Equatable {
     hasBook,
     assets,
     monthStats,
-    trends,
+    expenseTrends,
+    incomeTrends,
     categories,
     recentBills,
     currencyCode,

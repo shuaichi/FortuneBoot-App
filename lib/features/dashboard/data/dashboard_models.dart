@@ -36,6 +36,37 @@ class TrendPoint {
   );
 }
 
+/// 对齐后的收支趋势。折线图按序号绘制，因此两端点必须共享日期序列。
+class IncomeExpenseTrend {
+  final List<TrendPoint> expense;
+  final List<TrendPoint> income;
+
+  const IncomeExpenseTrend({required this.expense, required this.income});
+
+  factory IncomeExpenseTrend.align({
+    required List<TrendPoint> expense,
+    required List<TrendPoint> income,
+  }) {
+    final expenseByName = {
+      for (final point in expense) point.name: point.value,
+    };
+    final incomeByName = {for (final point in income) point.name: point.value};
+    final names = {...expenseByName.keys, ...incomeByName.keys}.toList()
+      ..sort();
+
+    return IncomeExpenseTrend(
+      expense: List.unmodifiable([
+        for (final name in names)
+          TrendPoint(name: name, value: expenseByName[name] ?? 0),
+      ]),
+      income: List.unmodifiable([
+        for (final name in names)
+          TrendPoint(name: name, value: incomeByName[name] ?? 0),
+      ]),
+    );
+  }
+}
+
 /// 分类支出切片（FortunePieVo：name 分类名，value 金额，percent 占比 0-100）。
 class CategorySlice {
   final String name;
