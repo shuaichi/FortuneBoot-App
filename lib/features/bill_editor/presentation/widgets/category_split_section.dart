@@ -78,6 +78,7 @@ class CategorySplitSection extends StatelessWidget {
                       ? const {}
                       : {state.categoryRows[i].categoryId! as Object},
                   leafOnly: true,
+                  initiallyCollapsed: true,
                   title: S.of(context).billEditorSelectCategory,
                 );
                 if (picked != null && picked.isNotEmpty) {

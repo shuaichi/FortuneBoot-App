@@ -21,6 +21,7 @@ class FxTreePicker<T> extends StatefulWidget {
   final Set<Object> initialSelected;
   final bool multiSelect;
   final bool leafOnly;
+  final bool initiallyCollapsed;
   final String title;
 
   const FxTreePicker({
@@ -32,6 +33,7 @@ class FxTreePicker<T> extends StatefulWidget {
     this.initialSelected = const {},
     this.multiSelect = false,
     this.leafOnly = false,
+    this.initiallyCollapsed = false,
     this.title = '选择',
   });
 
@@ -45,6 +47,7 @@ class FxTreePicker<T> extends StatefulWidget {
     Set<Object> initialSelected = const {},
     bool multiSelect = false,
     bool leafOnly = false,
+    bool initiallyCollapsed = false,
     String title = '选择',
   }) {
     final palette = FxPalette.of(context);
@@ -65,6 +68,7 @@ class FxTreePicker<T> extends StatefulWidget {
           initialSelected: initialSelected,
           multiSelect: multiSelect,
           leafOnly: leafOnly,
+          initiallyCollapsed: initiallyCollapsed,
           title: title,
         ),
       ),
@@ -83,8 +87,18 @@ class _FxTreePickerState<T> extends State<FxTreePicker<T>> {
   );
 
   late Set<Object> _selected = {...widget.initialSelected};
-  final Set<Object> _collapsed = {};
+  late final Set<FxFlatNode<T>> _collapsed;
   String _query = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _collapsed = {
+      if (widget.initiallyCollapsed)
+        for (final f in _all)
+          if (f.hasChildren) f,
+    };
+  }
 
   bool _selectable(FxFlatNode<T> f) {
     if (widget.idOf(f.node) == null) return false;
@@ -133,8 +147,7 @@ class _FxTreePickerState<T> extends State<FxTreePicker<T>> {
         hideDepth = null;
       }
       result.add(f);
-      final id = widget.idOf(f.node);
-      if (f.hasChildren && id != null && _collapsed.contains(id)) {
+      if (f.hasChildren && _collapsed.contains(f)) {
         hideDepth = f.depth;
       }
     }
@@ -266,7 +279,7 @@ class _FxTreePickerState<T> extends State<FxTreePicker<T>> {
     final selectable = _selectable(f);
     final selected = id != null && _selected.contains(id);
     final searching = _query.trim().isNotEmpty;
-    final collapsed = id != null && _collapsed.contains(id);
+    final collapsed = _collapsed.contains(f);
     final indent = searching ? 0.0 : f.depth * 16.0;
 
     return InkWell(
@@ -283,11 +296,10 @@ class _FxTreePickerState<T> extends State<FxTreePicker<T>> {
             if (f.hasChildren && !searching)
               GestureDetector(
                 onTap: () => setState(() {
-                  if (id == null) return;
                   if (collapsed) {
-                    _collapsed.remove(id);
+                    _collapsed.remove(f);
                   } else {
-                    _collapsed.add(id);
+                    _collapsed.add(f);
                   }
                 }),
                 child: Icon(

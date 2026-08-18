@@ -253,9 +253,9 @@ class _AmountArea extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            S.of(context).billEditorAmountOf(
-              state.billType.localizedLabel(context),
-            ),
+            S
+                .of(context)
+                .billEditorAmountOf(state.billType.localizedLabel(context)),
             style: FxTypography.label.copyWith(
               color: FxPalette.of(context).textSecondary,
             ),
@@ -496,6 +496,7 @@ class _TagsRow extends StatelessWidget {
           idOf: (t) => t.tagId,
           initialSelected: state.tagIds.map((e) => e as Object).toSet(),
           multiSelect: true,
+          initiallyCollapsed: true,
           title: S.of(context).billEditorSelectTags,
         );
         if (result != null) {
@@ -733,9 +734,9 @@ class _TitleCardState extends State<_TitleCard> {
               border: InputBorder.none,
               hintText: widget.state.firstCategoryName.isEmpty
                   ? S.of(context).billEditorTitleHint
-                  : S.of(context).billEditorTitleDefault(
-                      widget.state.firstCategoryName,
-                    ),
+                  : S
+                        .of(context)
+                        .billEditorTitleDefault(widget.state.firstCategoryName),
               hintStyle: FxTypography.body.copyWith(
                 color: palette.textTertiary,
               ),
@@ -830,9 +831,7 @@ class _TogglesCard extends StatelessWidget {
             ),
             subtitle: Text(
               S.of(context).billEditorConfirmedSubtitle,
-              style: FxTypography.caption.copyWith(
-                color: palette.textTertiary,
-              ),
+              style: FxTypography.caption.copyWith(color: palette.textTertiary),
             ),
             value: state.confirm,
             onChanged: (v) => bloc.add(ConfirmToggled(v)),
@@ -847,9 +846,7 @@ class _TogglesCard extends StatelessWidget {
             ),
             subtitle: Text(
               S.of(context).billEditorIncludeSubtitle,
-              style: FxTypography.caption.copyWith(
-                color: palette.textTertiary,
-              ),
+              style: FxTypography.caption.copyWith(color: palette.textTertiary),
             ),
             value: state.include,
             onChanged: (v) => bloc.add(IncludeToggled(v)),
