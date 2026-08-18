@@ -204,6 +204,7 @@
   "profileDonateWechat": "微信",
   "profileDonateAlipay": "支付宝",
   "profileDonateScanHint": "长按二维码保存到相册，或用另一台设备扫描二维码",
+  "imageSaveSaving": "正在保存…",
   "imageSaveDownloadStarted": "已开始下载",
   "imageSaveDownloadFailed": "下载失败",
   "imageSaveSuccess": "已保存到相册",

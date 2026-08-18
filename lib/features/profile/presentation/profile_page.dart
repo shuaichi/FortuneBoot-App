@@ -810,6 +810,8 @@ class _ProfileView extends StatelessWidget {
     await FxSheet.show<void>(
       context,
       title: S.of(context).profileDonate,
+      scrollable: true,
+      maxHeightFactor: 0.82,
       child: Padding(
         padding: const EdgeInsets.fromLTRB(
           FxSpacing.lg,
@@ -840,12 +842,7 @@ class _ProfileView extends StatelessWidget {
                         '${S.of(context).profileDonateScanHint}',
                     tint: finance.expense,
                     icon: Icons.wechat_rounded,
-                    onSave: (assetPath, fileName) =>
-                        ImageSaveService.saveAssetImage(
-                          context,
-                          assetPath,
-                          fileName,
-                        ),
+                    onSave: ImageSaveService.saveAssetImage,
                   ),
                 ),
                 const SizedBox(width: FxSpacing.md),
@@ -859,12 +856,7 @@ class _ProfileView extends StatelessWidget {
                         '${S.of(context).profileDonateScanHint}',
                     tint: palette.info,
                     icon: Icons.account_balance_wallet_rounded,
-                    onSave: (assetPath, fileName) =>
-                        ImageSaveService.saveAssetImage(
-                          context,
-                          assetPath,
-                          fileName,
-                        ),
+                    onSave: ImageSaveService.saveAssetImage,
                   ),
                 ),
               ],

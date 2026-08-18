@@ -202,6 +202,7 @@
   "profileDonateWechat": "WeChat",
   "profileDonateAlipay": "Alipay",
   "profileDonateScanHint": "Long press to save the QR code, or scan it with another device.",
+  "imageSaveSaving": "Saving…",
   "imageSaveDownloadStarted": "Download started",
   "imageSaveDownloadFailed": "Download failed",
   "imageSaveSuccess": "Saved to photos",
