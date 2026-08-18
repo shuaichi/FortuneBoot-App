@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:fortuneboot/core/network/fx_api.dart';
 import 'package:fortuneboot/features/profile/data/profile_models.dart';
+import 'package:fortuneboot/login/model/users.dart';
 
 /// 个人中心数据服务：用户资料 / 改密码 / 头像上传 / 汇率刷新 / 应用信息。
 /// 全部走 [FxApi.instance]。
@@ -12,10 +13,17 @@ class ProfileService {
   /// 拉取当前用户资料：GET /system/user/profile。
   Future<UserProfile> getProfile() async {
     final data = await _api.get('/system/user/profile');
-    if (data is Map) {
-      return UserProfile.fromJson(Map<String, dynamic>.from(data));
+    if (data is! Map) return const UserProfile();
+
+    final profile = UserProfile.fromJson(Map<String, dynamic>.from(data));
+    try {
+      final cachedUser = await UserDataSingleton().getMap(
+        UserDataSingleton.userInfo,
+      );
+      return profile.withAuditFallback(cachedUser);
+    } on Object {
+      return profile;
     }
-    return const UserProfile();
   }
 
   /// 更新资料：PUT /system/user/profile（UpdateProfileCommand）。

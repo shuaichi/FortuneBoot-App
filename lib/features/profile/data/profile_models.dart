@@ -13,6 +13,9 @@ class UserProfile {
   final String? phoneNumber;
   final String? email;
   final String? roleName;
+  final String? loginIp;
+  final String? loginDate;
+  final String? remark;
 
   const UserProfile({
     this.userId,
@@ -23,6 +26,9 @@ class UserProfile {
     this.phoneNumber,
     this.email,
     this.roleName,
+    this.loginIp,
+    this.loginDate,
+    this.remark,
   });
 
   factory UserProfile.fromJson(Map<String, dynamic> json) {
@@ -41,6 +47,9 @@ class UserProfile {
       phoneNumber: user['phoneNumber']?.toString(),
       email: user['email']?.toString(),
       roleName: json['roleName']?.toString() ?? user['roleName']?.toString(),
+      loginIp: _firstValue(user['loginIp'], json['loginIp']),
+      loginDate: _firstValue(user['loginDate'], json['loginDate']),
+      remark: _firstValue(user['remark'], json['remark']),
     );
   }
 
@@ -60,7 +69,34 @@ class UserProfile {
       phoneNumber: phoneNumber ?? this.phoneNumber,
       email: email ?? this.email,
       roleName: roleName,
+      loginIp: loginIp,
+      loginDate: loginDate,
+      remark: remark,
     );
+  }
+
+  UserProfile withAuditFallback(Map<String, dynamic>? cachedUser) {
+    if (cachedUser == null) return this;
+    return UserProfile(
+      userId: userId,
+      nickname: nickname,
+      username: username,
+      avatar: avatar,
+      sex: sex,
+      phoneNumber: phoneNumber,
+      email: email,
+      roleName: roleName,
+      loginIp: loginIp ?? _firstValue(cachedUser['loginIp']),
+      loginDate: loginDate ?? _firstValue(cachedUser['loginDate']),
+      remark: remark ?? _firstValue(cachedUser['remark']),
+    );
+  }
+
+  static String? _firstValue(Object? first, [Object? second]) {
+    final firstValue = first?.toString().trim();
+    if (firstValue?.isNotEmpty == true) return firstValue;
+    final secondValue = second?.toString().trim();
+    return secondValue?.isNotEmpty == true ? secondValue : null;
   }
 
   /// 性别展示文案。

@@ -64,37 +64,54 @@ class _ProfileView extends StatelessWidget {
       backgroundColor: palette.canvas,
       body: SafeArea(
         bottom: false,
-        child: BlocBuilder<ProfileBloc, ProfileState>(
-          builder: (context, state) {
-            return ListView(
-              padding: const EdgeInsets.fromLTRB(
-                FxSpacing.lg,
-                FxSpacing.lg,
-                FxSpacing.lg,
-                FxSpacing.xxxl,
-              ),
-              children: [
-                _userCard(context, state),
-                const SizedBox(height: FxSpacing.lg),
-                _bookGroupSection(context),
-                const SizedBox(height: FxSpacing.lg),
-                _billingSection(context),
-                const SizedBox(height: FxSpacing.lg),
-                _toolboxSection(context),
-                const SizedBox(height: FxSpacing.lg),
-                _preferenceSection(context),
-                const SizedBox(height: FxSpacing.lg),
-                _aboutSection(context, state.about),
-                const SizedBox(height: FxSpacing.xxl),
-                FxButton.critical(
-                  label: S.of(context).profileLogout,
-                  expand: true,
-                  onPressed: () => _confirmLogout(context),
+        child: Column(
+          children: [
+            SizedBox(
+              height: kToolbarHeight,
+              child: Center(
+                child: Text(
+                  S.of(context).navProfile,
+                  style: FxTypography.title.copyWith(
+                    color: palette.textPrimary,
+                  ),
                 ),
-                const SizedBox(height: FxSpacing.xxl),
-              ],
-            );
-          },
+              ),
+            ),
+            Expanded(
+              child: BlocBuilder<ProfileBloc, ProfileState>(
+                builder: (context, state) {
+                  return ListView(
+                    padding: const EdgeInsets.fromLTRB(
+                      FxSpacing.lg,
+                      FxSpacing.lg,
+                      FxSpacing.lg,
+                      FxSpacing.xxxl,
+                    ),
+                    children: [
+                      _userCard(context, state),
+                      const SizedBox(height: FxSpacing.lg),
+                      _bookGroupSection(context),
+                      const SizedBox(height: FxSpacing.lg),
+                      _billingSection(context),
+                      const SizedBox(height: FxSpacing.lg),
+                      _toolboxSection(context),
+                      const SizedBox(height: FxSpacing.lg),
+                      _preferenceSection(context),
+                      const SizedBox(height: FxSpacing.lg),
+                      _aboutSection(context, state.about),
+                      const SizedBox(height: FxSpacing.xxl),
+                      FxButton.critical(
+                        label: S.of(context).profileLogout,
+                        expand: true,
+                        onPressed: () => _confirmLogout(context),
+                      ),
+                      const SizedBox(height: FxSpacing.xxl),
+                    ],
+                  );
+                },
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -403,8 +420,8 @@ class _ProfileView extends StatelessWidget {
           _divider(context),
           FxListItem(
             leading: _tileIcon(Icons.lock_rounded, palette.primary),
-            title: '应用锁',
-            subtitle: '设置密码、手势或生物识别保护账务数据',
+            title: S.of(context).profileAppLock,
+            subtitle: S.of(context).profileAppLockSubtitle,
             showChevron: true,
             onTap: () => Navigator.of(context).push(
               MaterialPageRoute(builder: (_) => const AppLockSettingsPage()),

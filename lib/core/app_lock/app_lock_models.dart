@@ -6,6 +6,12 @@ enum AppLockStatus { loading, disabled, locked, unlocked, setupRequired }
 
 enum BiometricResult { authenticated, cancelled, unavailable, failed }
 
+enum AppLockFailure {
+  invalidCredential,
+  configurationSaveFailed,
+  disableFailed,
+}
+
 class AppLockSettings extends Equatable {
   const AppLockSettings({required this.method, this.biometricEnabled = false});
 
@@ -20,13 +26,13 @@ class AppLockState extends Equatable {
   const AppLockState({
     this.status = AppLockStatus.loading,
     this.settings,
-    this.errorMessage,
+    this.failure,
     this.isAuthenticating = false,
   });
 
   final AppLockStatus status;
   final AppLockSettings? settings;
-  final String? errorMessage;
+  final AppLockFailure? failure;
   final bool isAuthenticating;
 
   bool get isLocked =>
@@ -37,18 +43,18 @@ class AppLockState extends Equatable {
   AppLockState copyWith({
     AppLockStatus? status,
     AppLockSettings? settings,
-    String? errorMessage,
-    bool clearError = false,
+    AppLockFailure? failure,
+    bool clearFailure = false,
     bool? isAuthenticating,
   }) {
     return AppLockState(
       status: status ?? this.status,
       settings: settings ?? this.settings,
-      errorMessage: clearError ? null : errorMessage ?? this.errorMessage,
+      failure: clearFailure ? null : failure ?? this.failure,
       isAuthenticating: isAuthenticating ?? this.isAuthenticating,
     );
   }
 
   @override
-  List<Object?> get props => [status, settings, errorMessage, isAuthenticating];
+  List<Object?> get props => [status, settings, failure, isAuthenticating];
 }

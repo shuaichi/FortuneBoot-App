@@ -83,7 +83,7 @@ class AppLockCubit extends Cubit<AppLockState> {
       AppLockMethod.pattern => _isValidPatternValue(value),
     };
     if (!isValid) {
-      emit(state.copyWith(errorMessage: '验证失败，请重试'));
+      emit(state.copyWith(failure: AppLockFailure.invalidCredential));
       return false;
     }
     final operationVersion = ++_operationVersion;
@@ -106,16 +106,18 @@ class AppLockCubit extends Cubit<AppLockState> {
       return false;
     }
     if (!isVerified) {
-      emit(state.copyWith(errorMessage: '验证失败，请重试'));
+      emit(state.copyWith(failure: AppLockFailure.invalidCredential));
       return false;
     }
-    emit(state.copyWith(status: AppLockStatus.unlocked, clearError: true));
+    emit(state.copyWith(status: AppLockStatus.unlocked, clearFailure: true));
     return true;
   }
 
   Future<bool> isBiometricAvailable() => _biometricAuthenticator.isAvailable();
 
-  Future<BiometricResult> unlockWithBiometrics() async {
+  Future<BiometricResult> unlockWithBiometrics({
+    required String localizedReason,
+  }) async {
     final settings = state.settings;
     if (settings == null || !settings.biometricEnabled || !state.isLocked) {
       return BiometricResult.unavailable;
@@ -125,8 +127,10 @@ class AppLockCubit extends Cubit<AppLockState> {
       return BiometricResult.unavailable;
     }
     final operationVersion = ++_operationVersion;
-    emit(state.copyWith(isAuthenticating: true, clearError: true));
-    final result = await _biometricAuthenticator.authenticate();
+    emit(state.copyWith(isAuthenticating: true, clearFailure: true));
+    final result = await _biometricAuthenticator.authenticate(
+      localizedReason: localizedReason,
+    );
     if (isClosed ||
         operationVersion != _operationVersion ||
         !state.isAuthenticating) {
@@ -137,14 +141,17 @@ class AppLockCubit extends Cubit<AppLockState> {
         state.copyWith(
           status: AppLockStatus.unlocked,
           isAuthenticating: false,
-          clearError: true,
+          clearFailure: true,
         ),
       );
     } else {
       emit(
         state.copyWith(
           isAuthenticating: false,
-          errorMessage: result == BiometricResult.failed ? '验证失败，请重试' : null,
+          failure: result == BiometricResult.failed
+              ? AppLockFailure.invalidCredential
+              : null,
+          clearFailure: result != BiometricResult.failed,
         ),
       );
     }
@@ -177,7 +184,7 @@ class AppLockCubit extends Cubit<AppLockState> {
       emit(AppLockState(status: AppLockStatus.unlocked, settings: settings));
       return true;
     } on Object {
-      emit(state.copyWith(errorMessage: '应用锁设置保存失败'));
+      emit(state.copyWith(failure: AppLockFailure.configurationSaveFailed));
       return false;
     }
   }
@@ -185,7 +192,7 @@ class AppLockCubit extends Cubit<AppLockState> {
   Future<bool> disable(String value) async {
     final settings = state.settings;
     if (settings == null || !await _verifyCredential(settings, value)) {
-      emit(state.copyWith(errorMessage: '验证失败，请重试'));
+      emit(state.copyWith(failure: AppLockFailure.invalidCredential));
       return false;
     }
     try {
@@ -194,7 +201,7 @@ class AppLockCubit extends Cubit<AppLockState> {
       emit(const AppLockState(status: AppLockStatus.disabled));
       return true;
     } on Object {
-      emit(state.copyWith(errorMessage: '应用锁关闭失败'));
+      emit(state.copyWith(failure: AppLockFailure.disableFailed));
       return false;
     }
   }

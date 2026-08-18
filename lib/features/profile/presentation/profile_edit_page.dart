@@ -15,6 +15,7 @@ import 'package:fortuneboot/fx/tokens/fx_typography.dart';
 import 'package:fortuneboot/generated/l10n.dart';
 import 'package:fortuneboot/util/rsa_util.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 
 /// 编辑资料页参数：传入当前资料预填。
 class ProfileEditArgs {
@@ -175,7 +176,6 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                 color: palette.warning,
                 title: s.profileSex,
                 value: _sexLabel(s),
-                onTap: _openEditSheet,
               ),
               _divider(context),
               _informationItem(
@@ -184,7 +184,6 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                 color: palette.warning,
                 title: s.profilePhone,
                 value: _valueOrPlaceholder(widget.profile.phoneNumber, s),
-                onTap: _openEditSheet,
               ),
               _divider(context),
               _informationItem(
@@ -193,7 +192,6 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                 color: palette.info,
                 title: s.profileEmail,
                 value: _valueOrPlaceholder(widget.profile.email, s),
-                onTap: _openEditSheet,
               ),
             ]),
             const SizedBox(height: FxSpacing.xxl),
@@ -216,10 +214,26 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
               _divider(context),
               _informationItem(
                 context,
-                icon: Icons.badge_outlined,
+                icon: Icons.language_rounded,
                 color: palette.info,
-                title: s.profileUserId,
-                value: widget.profile.userId?.toString() ?? s.profileNotSet,
+                title: s.profileLoginIp,
+                value: _valueOrPlaceholder(widget.profile.loginIp, s),
+              ),
+              _divider(context),
+              _informationItem(
+                context,
+                icon: Icons.access_time_rounded,
+                color: palette.danger,
+                title: s.profileLoginTime,
+                value: _loginTimeLabel(widget.profile.loginDate, s),
+              ),
+              _divider(context),
+              _informationItem(
+                context,
+                icon: Icons.note_alt_outlined,
+                color: palette.textSecondary,
+                title: s.profileRemark,
+                value: _valueOrPlaceholder(widget.profile.remark, s),
               ),
               _divider(context),
               _informationItem(
@@ -392,8 +406,16 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
     _ => s.profileNotSet,
   };
 
+  String _loginTimeLabel(String? value, S s) {
+    final rawValue = value?.trim();
+    if (rawValue?.isEmpty ?? true) return s.profileNotSet;
+    final parsed = DateTime.tryParse(rawValue!);
+    if (parsed == null) return rawValue;
+    return DateFormat('yyyy-MM-dd HH:mm').format(parsed.toLocal());
+  }
+
   String _valueOrPlaceholder(String? value, S s) {
-    return value?.isNotEmpty == true ? value! : s.profileNotSet;
+    return value?.trim().isNotEmpty == true ? value!.trim() : s.profileNotSet;
   }
 }
 

@@ -27,8 +27,12 @@ class FortunebootOhosSecurity {
     return await _channel.invokeMethod<bool>('isBiometricAvailable') ?? false;
   }
 
-  Future<String> authenticateBiometrics() async {
-    return await _channel.invokeMethod<String>('authenticateBiometrics') ??
+  Future<String> authenticateBiometrics({
+    required String localizedReason,
+  }) async {
+    return await _channel.invokeMethod<String>('authenticateBiometrics', {
+          'localizedReason': localizedReason,
+        }) ??
         'failed';
   }
 

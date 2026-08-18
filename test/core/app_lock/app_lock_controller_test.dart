@@ -101,7 +101,9 @@ class _FakeSecretStore implements AppLockSecretStore {
 
 class _FakeBiometricAuthenticator implements BiometricAuthenticator {
   @override
-  Future<BiometricResult> authenticate() async => BiometricResult.cancelled;
+  Future<BiometricResult> authenticate({
+    required String localizedReason,
+  }) async => BiometricResult.cancelled;
 
   @override
   Future<bool> isAvailable() async => false;

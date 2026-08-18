@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fortuneboot/core/app_lock/app_lock_cubit.dart';
 import 'package:fortuneboot/core/app_lock/app_lock_models.dart';
+import 'package:fortuneboot/generated/l10n.dart';
 
 class AppLockSettingsPage extends StatefulWidget {
   const AppLockSettingsPage({super.key});
@@ -36,29 +37,37 @@ class _AppLockSettingsPageState extends State<AppLockSettingsPage> {
   @override
   Widget build(BuildContext context) {
     final state = context.watch<AppLockCubit>().state;
+    final s = S.of(context);
     final settings = state.settings;
     final isEnabled =
         settings != null && state.status != AppLockStatus.disabled;
     final activeMethod = isEnabled ? settings.method : _method;
     return Scaffold(
-      appBar: AppBar(title: const Text('应用锁')),
+      appBar: AppBar(title: Text(s.appLockSettingsTitle)),
       body: ListView(
         padding: const EdgeInsets.all(24),
         children: [
           Text(
-            isEnabled ? '已开启应用锁' : '开启应用锁',
+            isEnabled ? s.appLockEnabledHeading : s.appLockEnableHeading,
             style: Theme.of(context).textTheme.headlineSmall,
           ),
           const SizedBox(height: 8),
-          Text(isEnabled ? '离开应用前台后需要重新验证。' : '设置后，离开应用前台或再次进入主界面时需要验证。'),
+          Text(
+            isEnabled
+                ? s.appLockEnabledDescription
+                : s.appLockEnableDescription,
+          ),
           const SizedBox(height: 24),
           if (!isEnabled) ...[
             SegmentedButton<AppLockMethod>(
-              segments: const [
-                ButtonSegment(value: AppLockMethod.pin, label: Text('数字密码')),
+              segments: [
+                ButtonSegment(
+                  value: AppLockMethod.pin,
+                  label: Text(s.appLockPinMethod),
+                ),
                 ButtonSegment(
                   value: AppLockMethod.pattern,
-                  label: Text('手势序列'),
+                  label: Text(s.appLockPatternMethod),
                 ),
               ],
               selected: {_method},
@@ -76,8 +85,8 @@ class _AppLockSettingsPageState extends State<AppLockSettingsPage> {
                   : TextInputType.text,
               decoration: InputDecoration(
                 labelText: activeMethod == AppLockMethod.pin
-                    ? '设置 6–12 位数字密码'
-                    : '输入手势节点，例如 0,1,2,5',
+                    ? s.appLockPinSetupLabel
+                    : s.appLockPatternSetupLabel,
                 border: const OutlineInputBorder(),
               ),
             ),
@@ -90,17 +99,19 @@ class _AppLockSettingsPageState extends State<AppLockSettingsPage> {
               keyboardType: activeMethod == AppLockMethod.pin
                   ? TextInputType.number
                   : TextInputType.text,
-              decoration: const InputDecoration(
-                labelText: '再次确认',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: s.appLockConfirmCredentialLabel,
+                border: const OutlineInputBorder(),
               ),
             ),
             const SizedBox(height: 12),
             SwitchListTile.adaptive(
               contentPadding: EdgeInsets.zero,
-              title: const Text('使用生物识别快捷解锁'),
+              title: Text(s.appLockBiometricToggleTitle),
               subtitle: Text(
-                _isBiometricAvailable ? '仍需保留密码或手势作为回退方式' : '当前设备不支持或未设置生物识别',
+                _isBiometricAvailable
+                    ? s.appLockBiometricAvailableSubtitle
+                    : s.appLockBiometricUnavailableSubtitle,
               ),
               value: _biometricEnabled,
               onChanged: _isBiometricAvailable
@@ -110,28 +121,30 @@ class _AppLockSettingsPageState extends State<AppLockSettingsPage> {
             const SizedBox(height: 20),
             FilledButton(
               onPressed: _isSaving ? null : _enable,
-              child: Text(_isSaving ? '正在保存…' : '开启应用锁'),
+              child: Text(_isSaving ? s.appLockSaving : s.appLockEnable),
             ),
           ] else ...[
             ListTile(
               contentPadding: EdgeInsets.zero,
               leading: const Icon(Icons.lock_outline_rounded),
-              title: const Text('当前解锁方式'),
+              title: Text(s.appLockCurrentMethod),
               subtitle: Text(
-                activeMethod == AppLockMethod.pin ? '数字密码' : '手势序列',
+                activeMethod == AppLockMethod.pin
+                    ? s.appLockPinMethod
+                    : s.appLockPatternMethod,
               ),
             ),
             const SizedBox(height: 16),
             OutlinedButton.icon(
               onPressed: () => context.read<AppLockCubit>().lockNow(),
               icon: const Icon(Icons.lock_rounded),
-              label: const Text('立即锁定'),
+              label: Text(s.appLockLockNow),
             ),
             const SizedBox(height: 12),
             FilledButton.tonalIcon(
               onPressed: _isSaving ? null : _disable,
               icon: const Icon(Icons.lock_open_rounded),
-              label: const Text('关闭应用锁'),
+              label: Text(s.appLockDisable),
             ),
           ],
         ],
@@ -150,7 +163,7 @@ class _AppLockSettingsPageState extends State<AppLockSettingsPage> {
 
   Future<void> _enable() async {
     if (_credentialController.text != _confirmationController.text) {
-      _showMessage('两次输入不一致');
+      _showMessage(S.of(context).appLockCredentialMismatch);
       return;
     }
     setState(() => _isSaving = true);
@@ -162,7 +175,7 @@ class _AppLockSettingsPageState extends State<AppLockSettingsPage> {
     if (!mounted) return;
     setState(() => _isSaving = false);
     if (ok) Navigator.of(context).pop();
-    if (!ok) _showMessage('请检查密码或手势格式后重试');
+    if (!ok) _showMessage(S.of(context).appLockConfigurationInvalid);
   }
 
   Future<void> _disable() async {
@@ -173,7 +186,7 @@ class _AppLockSettingsPageState extends State<AppLockSettingsPage> {
     if (!mounted) return;
     setState(() => _isSaving = false);
     if (ok) Navigator.of(context).pop();
-    if (!ok) _showMessage('验证失败，请重试');
+    if (!ok) _showMessage(S.of(context).appLockDisableVerificationFailed);
   }
 
   Future<String?> _askForCredential() async {
@@ -183,23 +196,25 @@ class _AppLockSettingsPageState extends State<AppLockSettingsPage> {
     final value = await showDialog<String>(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: const Text('验证后关闭应用锁'),
+        title: Text(S.of(dialogContext).appLockDisableDialogTitle),
         content: TextField(
           controller: controller,
           obscureText: true,
           keyboardType: method == AppLockMethod.pin
               ? TextInputType.number
               : TextInputType.text,
-          decoration: const InputDecoration(labelText: '当前密码或手势'),
+          decoration: InputDecoration(
+            labelText: S.of(dialogContext).appLockCurrentCredentialLabel,
+          ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(dialogContext),
-            child: const Text('取消'),
+            child: Text(S.of(dialogContext).commonCancel),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(dialogContext, controller.text),
-            child: const Text('验证'),
+            child: Text(S.of(dialogContext).appLockVerify),
           ),
         ],
       ),

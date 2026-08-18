@@ -67,7 +67,7 @@ export default class FortunebootOhosSecurityPlugin
       return;
     }
     if (call.method === 'authenticateBiometrics') {
-      this.authenticateBiometrics(result);
+      this.authenticateBiometrics(call, result);
       return;
     }
     result.notImplemented();
@@ -256,7 +256,7 @@ export default class FortunebootOhosSecurityPlugin
     }
   }
 
-  private authenticateBiometrics(result: MethodResult): void {
+  private authenticateBiometrics(call: MethodCall, result: MethodResult): void {
     if (this.authenticationInProgress || !this.isBiometricAvailable()) {
       result.success(this.authenticationInProgress ? 'failed' : 'unavailable');
       return;
@@ -266,7 +266,11 @@ export default class FortunebootOhosSecurityPlugin
       authType: [userAuth.UserAuthType.FINGERPRINT, userAuth.UserAuthType.FACE],
       authTrustLevel: userAuth.AuthTrustLevel.ATL1,
     };
-    const widgetParam: userAuth.WidgetParam = { title: '验证身份以解锁好记' };
+    const localizedReason: string | null = call.argument('localizedReason');
+    const title: string = localizedReason !== null && localizedReason.length > 0
+      ? localizedReason
+      : 'Verify your identity to unlock FortuneBoot';
+    const widgetParam: userAuth.WidgetParam = { title };
     try {
       const instance: userAuth.UserAuthInstance = userAuth.getUserAuthInstance(
         authParam,

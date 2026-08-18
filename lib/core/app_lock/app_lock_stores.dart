@@ -22,7 +22,7 @@ abstract interface class AppLockSecretStore {
 
 abstract interface class BiometricAuthenticator {
   Future<bool> isAvailable();
-  Future<BiometricResult> authenticate();
+  Future<BiometricResult> authenticate({required String localizedReason});
 }
 
 class SharedPreferencesAppLockSettingsStore implements AppLockSettingsStore {
@@ -72,7 +72,7 @@ class SharedPreferencesAppLockSettingsStore implements AppLockSettingsStore {
       prefs.setBool(_biometricEnabledKey, settings.biometricEnabled),
     ]);
     if (results.any((saved) => !saved)) {
-      throw StateError('应用锁设置保存失败');
+      throw StateError('App lock settings were not persisted');
     }
   }
 }
@@ -126,9 +126,13 @@ class OhosBiometricAuthenticator implements BiometricAuthenticator {
   final FortunebootOhosSecurity _security;
 
   @override
-  Future<BiometricResult> authenticate() async {
+  Future<BiometricResult> authenticate({
+    required String localizedReason,
+  }) async {
     try {
-      return switch (await _security.authenticateBiometrics()) {
+      return switch (await _security.authenticateBiometrics(
+        localizedReason: localizedReason,
+      )) {
         'authenticated' => BiometricResult.authenticated,
         'cancelled' => BiometricResult.cancelled,
         'unavailable' => BiometricResult.unavailable,
@@ -156,10 +160,12 @@ class LocalBiometricAuthenticator implements BiometricAuthenticator {
   final LocalAuthentication _authentication;
 
   @override
-  Future<BiometricResult> authenticate() async {
+  Future<BiometricResult> authenticate({
+    required String localizedReason,
+  }) async {
     try {
       final authenticated = await _authentication.authenticate(
-        localizedReason: '请验证身份以解锁好记',
+        localizedReason: localizedReason,
         options: const AuthenticationOptions(
           biometricOnly: true,
           stickyAuth: true,

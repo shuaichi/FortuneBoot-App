@@ -14,6 +14,9 @@ const _profile = UserProfile(
   phoneNumber: '15888888888',
   email: 'work.chi.zhang@gmail.com',
   roleName: '超级管理员',
+  loginIp: '111.202.148.166',
+  loginDate: '2026-08-18T10:29:23',
+  remark: '管理员',
 );
 
 Widget _page({ThemeData? theme}) {
@@ -44,11 +47,28 @@ void main() {
     expect(find.text('work.chi.zhang@gmail.com'), findsOneWidget);
     expect(find.text('admin'), findsOneWidget);
     expect(find.text('超级管理员'), findsNWidgets(2));
+    expect(find.text('111.202.148.166'), findsOneWidget);
+    expect(find.text('2026-08-18 10:29'), findsOneWidget);
+    expect(find.text('管理员'), findsOneWidget);
+    expect(find.text('用户 ID'), findsNothing);
   });
 
-  testWidgets('opens the edit sheet from the identity card', (tester) async {
+  testWidgets('opens the edit sheet only from the identity card', (
+    tester,
+  ) async {
+    await tester.binding.setSurfaceSize(const Size(390, 1200));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
     await tester.pumpWidget(_page());
     await tester.pumpAndSettle();
+
+    await tester.tap(find.text('性别'));
+    await tester.pumpAndSettle();
+    expect(find.byType(TextField), findsNothing);
+
+    expect(
+      find.ancestor(of: find.text('性别'), matching: find.byType(InkWell)),
+      findsNothing,
+    );
 
     await tester.tap(find.byTooltip('编辑资料'));
     await tester.pumpAndSettle();

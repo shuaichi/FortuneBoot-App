@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fortuneboot/core/app_lock/app_lock_cubit.dart';
 import 'package:fortuneboot/core/app_lock/app_lock_models.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
+import 'package:fortuneboot/generated/l10n.dart';
 
 class AppLockGate extends StatelessWidget {
   const AppLockGate({required this.child, super.key});
@@ -47,6 +48,7 @@ class _AppLockScreenState extends State<_AppLockScreen> {
   Widget build(BuildContext context) {
     final state = context.watch<AppLockCubit>().state;
     final palette = FxPalette.of(context);
+    final s = S.of(context);
     final isPin = state.settings?.method == AppLockMethod.pin;
     return Material(
       color: palette.canvas,
@@ -62,16 +64,16 @@ class _AppLockScreenState extends State<_AppLockScreen> {
                   Icon(Icons.lock_rounded, color: palette.primary, size: 48),
                   const SizedBox(height: 20),
                   Text(
-                    '好记已锁定',
+                    s.appLockGateTitle,
                     style: Theme.of(context).textTheme.headlineSmall,
                   ),
                   const SizedBox(height: 8),
                   Text(
                     state.status == AppLockStatus.setupRequired
-                        ? '应用锁配置不完整，请重新登录后在我的页面设置。'
+                        ? s.appLockSetupRequiredDescription
                         : isPin
-                        ? '请输入数字密码以继续'
-                        : '请输入手势节点序列以继续',
+                        ? s.appLockEnterPinDescription
+                        : s.appLockEnterPatternDescription,
                     textAlign: TextAlign.center,
                   ),
                   if (state.status == AppLockStatus.locked) ...[
@@ -86,14 +88,19 @@ class _AppLockScreenState extends State<_AppLockScreen> {
                           ? TextInputType.number
                           : TextInputType.text,
                       decoration: InputDecoration(
-                        errorText: state.errorMessage,
-                        hintText: isPin ? '6–12 位数字密码' : '例如 0,1,2,5',
+                        errorText: _failureMessage(state.failure, s),
+                        hintText: isPin
+                            ? s.appLockPinHint
+                            : s.appLockPatternHint,
                         border: const OutlineInputBorder(),
                       ),
                       onSubmitted: (_) => _unlock(),
                     ),
                     const SizedBox(height: 12),
-                    FilledButton(onPressed: _unlock, child: const Text('解锁')),
+                    FilledButton(
+                      onPressed: _unlock,
+                      child: Text(s.appLockUnlock),
+                    ),
                     if (state.settings?.biometricEnabled == true) ...[
                       const SizedBox(height: 8),
                       TextButton.icon(
@@ -101,9 +108,12 @@ class _AppLockScreenState extends State<_AppLockScreen> {
                             ? null
                             : () => context
                                   .read<AppLockCubit>()
-                                  .unlockWithBiometrics(),
+                                  .unlockWithBiometrics(
+                                    localizedReason:
+                                        s.appLockBiometricLocalizedReason,
+                                  ),
                         icon: const Icon(Icons.fingerprint_rounded),
-                        label: const Text('使用生物识别'),
+                        label: Text(s.appLockUseBiometrics),
                       ),
                     ],
                   ],
@@ -114,6 +124,16 @@ class _AppLockScreenState extends State<_AppLockScreen> {
         ),
       ),
     );
+  }
+
+  String? _failureMessage(AppLockFailure? failure, S s) {
+    return switch (failure) {
+      AppLockFailure.invalidCredential => s.appLockFailureInvalidCredential,
+      AppLockFailure.configurationSaveFailed =>
+        s.appLockFailureConfigurationSave,
+      AppLockFailure.disableFailed => s.appLockFailureDisable,
+      null => null,
+    };
   }
 
   Future<void> _unlock() async {
