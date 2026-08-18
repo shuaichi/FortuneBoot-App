@@ -1,11 +1,11 @@
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
-import 'package:image_gallery_saver_plus/image_gallery_saver_plus.dart';
-import 'package:flutter/services.dart' show rootBundle;
-import 'web_download_stub.dart'
-    if (dart.library.html) 'web_download.dart'
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show PlatformException, rootBundle;
+import 'package:fortuneboot/generated/l10n.dart';
+import 'package:fortuneboot/util/web_download_stub.dart'
+    if (dart.library.html) 'package:fortuneboot/util/web_download.dart'
     as webdl;
+import 'package:image_gallery_saver_plus/image_gallery_saver_plus.dart';
 
 /// 跨平台图片保存/下载服务，将平台差异与异常提示封装在此处
 class ImageSaveService {
@@ -15,6 +15,7 @@ class ImageSaveService {
     String assetPath,
     String name,
   ) async {
+    final strings = S.of(context);
     try {
       // 读取内置资源
       final data = await rootBundle.load(assetPath);
@@ -23,10 +24,14 @@ class ImageSaveService {
       if (kIsWeb) {
         final mimeType = _toMimeType(_ext(assetPath));
         final ok = await webdl.downloadBytes(name, bytes, mimeType);
-        ScaffoldMessenger.of(context).removeCurrentSnackBar();
-        ScaffoldMessenger.of(
+        if (!context.mounted) return;
+        _showMessage(
           context,
-        ).showSnackBar(SnackBar(content: Text(ok ? '已开始下载' : '下载失败')));
+          ok
+              ? strings.imageSaveDownloadStarted
+              : strings.imageSaveDownloadFailed,
+          isError: !ok,
+        );
         return;
       }
 
@@ -38,30 +43,41 @@ class ImageSaveService {
         isReturnImagePathOfIOS: true,
       );
 
+      if (!context.mounted) return;
       final success = _isSaveSuccess(result);
-      ScaffoldMessenger.of(context).removeCurrentSnackBar();
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(success ? '已保存到相册' : '保存失败'),
-          backgroundColor: success ? null : Colors.red,
-        ),
+      _showMessage(
+        context,
+        success ? strings.imageSaveSuccess : strings.imageSaveFailed,
+        isError: !success,
       );
     } on PlatformException catch (_) {
       // 和谐OS或不支持场景：给出友好降级提示
-      ScaffoldMessenger.of(context).removeCurrentSnackBar();
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('当前平台暂不支持直接保存，请截图或使用下载方式'),
-          backgroundColor: Colors.orange,
-          duration: Duration(seconds: 3),
+      if (!context.mounted) return;
+      _showMessage(
+        context,
+        strings.imageSaveUnsupported,
+        backgroundColor: Colors.orange,
+      );
+    } on Exception catch (_) {
+      if (!context.mounted) return;
+      _showMessage(context, strings.imageSaveFailed, isError: true);
+    }
+  }
+
+  static void _showMessage(
+    BuildContext context,
+    String message, {
+    bool isError = false,
+    Color? backgroundColor,
+  }) {
+    ScaffoldMessenger.of(context)
+      ..removeCurrentSnackBar()
+      ..showSnackBar(
+        SnackBar(
+          content: Text(message),
+          backgroundColor: backgroundColor ?? (isError ? Colors.red : null),
         ),
       );
-    } catch (e) {
-      ScaffoldMessenger.of(context).removeCurrentSnackBar();
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('保存失败：$e'), backgroundColor: Colors.red),
-      );
-    }
   }
 
   static String _ext(String assetPath) {

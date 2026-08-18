@@ -13,6 +13,7 @@ import 'package:fortuneboot/features/profile/data/profile_service.dart';
 import 'package:fortuneboot/features/profile/presentation/app_lock_settings_page.dart';
 import 'package:fortuneboot/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:fortuneboot/features/profile/presentation/profile_edit_page.dart';
+import 'package:fortuneboot/features/profile/presentation/widgets/donate_qr_tile.dart';
 import 'package:fortuneboot/features/profile/presentation/widgets/finance_color_editor.dart';
 import 'package:fortuneboot/fx/components/fx_button.dart';
 import 'package:fortuneboot/fx/components/fx_card.dart';
@@ -26,6 +27,7 @@ import 'package:fortuneboot/fx/tokens/fx_typography.dart';
 import 'package:fortuneboot/generated/l10n.dart';
 import 'package:fortuneboot/login/model/users.dart';
 import 'package:fortuneboot/util/dio_client.dart';
+import 'package:fortuneboot/util/image_save_service.dart';
 
 /// 个人中心 / 设置（MainShell "我的" tab）。
 ///
@@ -829,22 +831,40 @@ class _ProfileView extends StatelessWidget {
             Row(
               children: [
                 Expanded(
-                  child: _donateQr(
-                    context,
-                    asset: 'assets/images/donate_wechat.jpg',
+                  child: DonateQrTile(
+                    assetPath: 'assets/images/donate_wechat.jpg',
+                    fileName: 'fortuneboot_donate_wechat.jpg',
                     label: S.of(context).profileDonateWechat,
+                    semanticsLabel:
+                        '${S.of(context).profileDonateWechat} '
+                        '${S.of(context).profileDonateScanHint}',
                     tint: finance.expense,
                     icon: Icons.wechat_rounded,
+                    onSave: (assetPath, fileName) =>
+                        ImageSaveService.saveAssetImage(
+                          context,
+                          assetPath,
+                          fileName,
+                        ),
                   ),
                 ),
                 const SizedBox(width: FxSpacing.md),
                 Expanded(
-                  child: _donateQr(
-                    context,
-                    asset: 'assets/images/donate_alipay.jpg',
+                  child: DonateQrTile(
+                    assetPath: 'assets/images/donate_alipay.jpg',
+                    fileName: 'fortuneboot_donate_alipay.jpg',
                     label: S.of(context).profileDonateAlipay,
+                    semanticsLabel:
+                        '${S.of(context).profileDonateAlipay} '
+                        '${S.of(context).profileDonateScanHint}',
                     tint: palette.info,
                     icon: Icons.account_balance_wallet_rounded,
+                    onSave: (assetPath, fileName) =>
+                        ImageSaveService.saveAssetImage(
+                          context,
+                          assetPath,
+                          fileName,
+                        ),
                   ),
                 ),
               ],
@@ -858,52 +878,6 @@ class _ProfileView extends StatelessWidget {
           ],
         ),
       ),
-    );
-  }
-
-  Widget _donateQr(
-    BuildContext context, {
-    required String asset,
-    required String label,
-    required Color tint,
-    required IconData icon,
-  }) {
-    final palette = FxPalette.of(context);
-    return Column(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, size: 16, color: tint),
-            const SizedBox(width: FxSpacing.xs),
-            Text(label, style: FxTypography.label.copyWith(color: tint)),
-          ],
-        ),
-        const SizedBox(height: FxSpacing.sm),
-        AspectRatio(
-          aspectRatio: 1,
-          child: Container(
-            decoration: BoxDecoration(
-              color: palette.surface,
-              borderRadius: FxRadius.cardBorder,
-              border: Border.all(color: palette.border),
-            ),
-            clipBehavior: Clip.antiAlias,
-            padding: const EdgeInsets.all(FxSpacing.sm),
-            child: Image.asset(
-              asset,
-              fit: BoxFit.contain,
-              errorBuilder: (context, error, stack) => Center(
-                child: Icon(
-                  Icons.qr_code_2_rounded,
-                  size: 48,
-                  color: palette.textTertiary,
-                ),
-              ),
-            ),
-          ),
-        ),
-      ],
     );
   }
 
