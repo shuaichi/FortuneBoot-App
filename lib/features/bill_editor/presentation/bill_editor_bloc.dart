@@ -460,6 +460,8 @@ class BillEditorBloc extends Bloc<BillEditorEvent, BillEditorState> {
       json['amount'] = s.transferAmount;
       json['accountId'] = s.accountId;
       json['toAccountId'] = s.toAccountId;
+      // 转账无分类，补空数组占位绕过后端 @NotNull 校验（空 list 非 null）。
+      json['categoryAmountPair'] = const <Map<String, dynamic>>[];
     } else {
       json['accountId'] = s.accountId;
       json['categoryAmountPair'] = s.categoryRows
