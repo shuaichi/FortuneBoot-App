@@ -4,6 +4,7 @@ import cryptoFramework from '@ohos.security.cryptoFramework';
 import dataPreferences from '@ohos.data.preferences';
 import huks from '@ohos.security.huks';
 import userAuth from '@ohos.userIAM.userAuth';
+import window from '@ohos.window';
 import {
   FlutterPlugin,
   FlutterPluginBinding,
@@ -22,6 +23,53 @@ const IV_LENGTH: number = 12;
 const ASSOCIATED_DATA: Uint8Array = new Uint8Array([
   102, 111, 114, 116, 117, 110, 101, 98, 111, 111, 116,
 ]);
+
+class ScreenCaptureWindowController {
+  private mainWindow: window.Window | null = null;
+  private protectionEnabled: boolean = true;
+
+  async bind(window: window.Window): Promise<void> {
+    this.mainWindow = window;
+    await this.applyProtection();
+  }
+
+  async setScreenCaptureAllowed(allowed: boolean): Promise<void> {
+    const previousProtectionEnabled: boolean = this.protectionEnabled;
+    this.protectionEnabled = !allowed;
+    try {
+      await this.applyProtection();
+    } catch (_) {
+      this.protectionEnabled = previousProtectionEnabled;
+      throw new Error('Unable to update screen capture protection');
+    }
+  }
+
+  async reapplyProtection(): Promise<void> {
+    await this.applyProtection();
+  }
+
+  private async applyProtection(): Promise<void> {
+    if (this.mainWindow === null) {
+      throw new Error('Main window unavailable');
+    }
+    await this.mainWindow.setWindowPrivacyMode(this.protectionEnabled);
+  }
+}
+
+const screenCaptureWindowController: ScreenCaptureWindowController =
+  new ScreenCaptureWindowController();
+
+export function bindScreenCaptureWindow(mainWindow: window.Window): void {
+  screenCaptureWindowController.bind(mainWindow).catch((): void => {
+    console.error('Unable to enable screen capture protection');
+  });
+}
+
+export function reapplyScreenCaptureProtection(): void {
+  screenCaptureWindowController.reapplyProtection().catch((): void => {
+    console.error('Unable to reapply screen capture protection');
+  });
+}
 
 type StoredSecret = string;
 
@@ -70,7 +118,32 @@ export default class FortunebootOhosSecurityPlugin
       this.authenticateBiometrics(call, result);
       return;
     }
+    if (call.method === 'setScreenCaptureAllowed') {
+      this.setScreenCaptureAllowed(call, result);
+      return;
+    }
     result.notImplemented();
+  }
+
+  private async setScreenCaptureAllowed(
+    call: MethodCall,
+    result: MethodResult,
+  ): Promise<void> {
+    const allowed: boolean | null = call.argument('allowed');
+    if (allowed === null) {
+      result.error('invalid_argument', 'Missing allowed value', null);
+      return;
+    }
+    try {
+      await screenCaptureWindowController.setScreenCaptureAllowed(allowed);
+      result.success(null);
+    } catch (_) {
+      result.error(
+        'screen_capture_protection_failed',
+        'Unable to update screen capture protection',
+        null,
+      );
+    }
   }
 
   private async readSecret(call: MethodCall, result: MethodResult): Promise<void> {

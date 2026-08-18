@@ -14,7 +14,6 @@ import 'package:fortuneboot/features/profile/presentation/app_lock_settings_page
 import 'package:fortuneboot/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:fortuneboot/features/profile/presentation/profile_edit_page.dart';
 import 'package:fortuneboot/features/profile/presentation/widgets/finance_color_editor.dart';
-import 'package:fortuneboot/generated/l10n.dart';
 import 'package:fortuneboot/fx/components/fx_button.dart';
 import 'package:fortuneboot/fx/components/fx_card.dart';
 import 'package:fortuneboot/fx/components/fx_list_item.dart';
@@ -24,6 +23,7 @@ import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
+import 'package:fortuneboot/generated/l10n.dart';
 import 'package:fortuneboot/login/model/users.dart';
 import 'package:fortuneboot/util/dio_client.dart';
 
@@ -344,6 +344,10 @@ class _ProfileView extends StatelessWidget {
           ThemeMode.dark => S.of(context).profileThemeDark,
           ThemeMode.system => S.of(context).commonFollowSystem,
         };
+        final screenCaptureSubtitle =
+            Theme.of(context).platform == TargetPlatform.iOS
+            ? S.of(context).profileScreenCaptureAllowedIosHint
+            : S.of(context).profileScreenCaptureAllowedSubtitle;
         return _sectionCard(context, S.of(context).profilePreferences, [
           FxListItem(
             leading: _tileIcon(Icons.language_rounded, palette.primary),
@@ -407,6 +411,27 @@ class _ProfileView extends StatelessWidget {
                 if (!context.mounted || ok) return;
                 _toast(context, S.of(context).profileSaveFailedRetry);
               },
+            ),
+          ),
+          _divider(context),
+          FxListItem(
+            leading: _tileIcon(Icons.screenshot_monitor_rounded, palette.info),
+            title: S.of(context).profileScreenCaptureAllowed,
+            subtitle: screenCaptureSubtitle,
+            trailing: Switch.adaptive(
+              value: preferences.screenCapture.allowScreenCapture,
+              onChanged: preferences.isLoading
+                  ? null
+                  : (allowed) async {
+                      final ok = await context
+                          .read<PreferencesCubit>()
+                          .setScreenCaptureAllowed(allowed);
+                      if (!context.mounted || ok) return;
+                      _toast(
+                        context,
+                        S.of(context).profileScreenCaptureProtectionFailed,
+                      );
+                    },
             ),
           ),
           _divider(context),

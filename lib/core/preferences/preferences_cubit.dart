@@ -5,7 +5,9 @@ import 'package:fortuneboot/core/preferences/billing_preferences.dart';
 import 'package:fortuneboot/core/preferences/dashboard_display_preferences.dart';
 import 'package:fortuneboot/core/preferences/finance_color_preferences.dart';
 import 'package:fortuneboot/core/preferences/locale_preferences.dart';
+import 'package:fortuneboot/core/preferences/screen_capture_preferences.dart';
 import 'package:fortuneboot/core/preferences/theme_preferences.dart';
+import 'package:fortuneboot/core/security/screen_capture_protection.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class PreferencesState extends Equatable {
@@ -14,6 +16,7 @@ class PreferencesState extends Equatable {
   final LocalePreferences locale;
   final DashboardDisplayPreferences dashboard;
   final FinanceColorPreferences financeColors;
+  final ScreenCapturePreferences screenCapture;
   final bool isLoading;
   final String? errorMessage;
 
@@ -23,6 +26,7 @@ class PreferencesState extends Equatable {
     this.locale = const LocalePreferences(),
     this.dashboard = const DashboardDisplayPreferences(),
     this.financeColors = const FinanceColorPreferences(),
+    this.screenCapture = const ScreenCapturePreferences(),
     this.isLoading = false,
     this.errorMessage,
   });
@@ -33,6 +37,7 @@ class PreferencesState extends Equatable {
     LocalePreferences? locale,
     DashboardDisplayPreferences? dashboard,
     FinanceColorPreferences? financeColors,
+    ScreenCapturePreferences? screenCapture,
     bool? isLoading,
     String? errorMessage,
   }) {
@@ -42,6 +47,7 @@ class PreferencesState extends Equatable {
       locale: locale ?? this.locale,
       dashboard: dashboard ?? this.dashboard,
       financeColors: financeColors ?? this.financeColors,
+      screenCapture: screenCapture ?? this.screenCapture,
       isLoading: isLoading ?? this.isLoading,
       errorMessage: errorMessage,
     );
@@ -54,6 +60,7 @@ class PreferencesState extends Equatable {
     locale,
     dashboard,
     financeColors,
+    screenCapture,
     isLoading,
     errorMessage,
   ];
@@ -61,9 +68,19 @@ class PreferencesState extends Equatable {
 
 /// App-level user preferences：账单月开始日、主题、语言、首页金额显示、账单颜色。
 class PreferencesCubit extends Cubit<PreferencesState> {
-  PreferencesCubit({SharedPreferences? sharedPreferences})
-    : _sharedPreferences = sharedPreferences,
-      super(const PreferencesState());
+  PreferencesCubit({
+    SharedPreferences? sharedPreferences,
+    ScreenCapturePreferenceStore? screenCapturePreferenceStore,
+    ScreenCaptureProtection? screenCaptureProtection,
+  }) : _sharedPreferences = sharedPreferences,
+       _screenCapturePreferenceStore =
+           screenCapturePreferenceStore ??
+           SharedPreferencesScreenCapturePreferenceStore(
+             sharedPreferences: sharedPreferences,
+           ),
+       _screenCaptureProtection =
+           screenCaptureProtection ?? PlatformScreenCaptureProtection(),
+       super(const PreferencesState());
 
   static const String _monthStartDayKey =
       'fortune.preferences.billing.monthStartDay';
@@ -85,12 +102,17 @@ class PreferencesCubit extends Cubit<PreferencesState> {
       'fortune.preferences.financeColors.reimburse';
 
   SharedPreferences? _sharedPreferences;
+  final ScreenCapturePreferenceStore _screenCapturePreferenceStore;
+  final ScreenCaptureProtection _screenCaptureProtection;
+  var _screenCaptureOperationVersion = 0;
+  var _screenCaptureRequestedAllowed = false;
 
   Future<SharedPreferences> get _prefs async {
     return _sharedPreferences ??= await SharedPreferences.getInstance();
   }
 
   Future<void> load() async {
+    final operationVersion = ++_screenCaptureOperationVersion;
     emit(state.copyWith(isLoading: true));
     try {
       final prefs = await _prefs;
@@ -98,6 +120,17 @@ class PreferencesCubit extends Cubit<PreferencesState> {
           prefs.getInt(_monthStartDayKey) ??
           BillingPreferences.defaultMonthStartDay;
       final defaults = FinanceColorPreferences.defaults();
+      final allowScreenCapture =
+          await _screenCapturePreferenceStore.readAllowed() ?? false;
+      if (operationVersion != _screenCaptureOperationVersion) return;
+      _screenCaptureRequestedAllowed = allowScreenCapture;
+      final applied = await _screenCaptureProtection.setScreenCaptureAllowed(
+        allowScreenCapture,
+      );
+      if (operationVersion != _screenCaptureOperationVersion) return;
+      final screenCapture = ScreenCapturePreferences(
+        allowScreenCapture: applied && allowScreenCapture,
+      );
       emit(
         PreferencesState(
           billing: BillingPreferences(
@@ -124,9 +157,12 @@ class PreferencesCubit extends Cubit<PreferencesState> {
             advance: prefs.getInt(_colorAdvanceKey) ?? defaults.advance,
             reimburse: prefs.getInt(_colorReimburseKey) ?? defaults.reimburse,
           ),
+          screenCapture: screenCapture,
+          errorMessage: applied ? null : '屏幕保护设置未生效，请重试',
         ),
       );
     } on Object catch (e) {
+      if (operationVersion != _screenCaptureOperationVersion) return;
       emit(state.copyWith(isLoading: false, errorMessage: e.toString()));
     }
   }
@@ -173,6 +209,70 @@ class PreferencesCubit extends Cubit<PreferencesState> {
       ),
       failMessage: '金额显示设置保存失败',
     );
+  }
+
+  Future<bool> setScreenCaptureAllowed(bool allowed) async {
+    if (allowed == _screenCaptureRequestedAllowed) return true;
+
+    _screenCaptureRequestedAllowed = allowed;
+    final operationVersion = ++_screenCaptureOperationVersion;
+    emit(state.copyWith(isLoading: true));
+    final applied = await _screenCaptureProtection.setScreenCaptureAllowed(
+      allowed,
+    );
+    if (operationVersion != _screenCaptureOperationVersion) return false;
+    if (!applied) {
+      _screenCaptureRequestedAllowed = state.screenCapture.allowScreenCapture;
+      emit(state.copyWith(isLoading: false, errorMessage: '屏幕保护设置未生效，请重试'));
+      return false;
+    }
+
+    try {
+      final saved = await _screenCapturePreferenceStore.writeAllowed(allowed);
+      if (operationVersion != _screenCaptureOperationVersion) return false;
+      if (saved) {
+        emit(
+          state.copyWith(
+            screenCapture: state.screenCapture.copyWith(
+              allowScreenCapture: allowed,
+            ),
+            isLoading: false,
+          ),
+        );
+        return true;
+      }
+    } on Object catch (_) {
+      // Fall through to the shared failure handling below.
+    }
+
+    if (allowed) {
+      final restored = await _screenCaptureProtection.setScreenCaptureAllowed(
+        false,
+      );
+      if (!restored) {
+        _screenCaptureRequestedAllowed = true;
+        emit(
+          state.copyWith(
+            screenCapture: state.screenCapture.copyWith(
+              allowScreenCapture: true,
+            ),
+            isLoading: false,
+            errorMessage: '屏幕保护设置未生效，请重试',
+          ),
+        );
+        return false;
+      }
+    }
+    if (operationVersion != _screenCaptureOperationVersion) return false;
+    _screenCaptureRequestedAllowed = false;
+    emit(
+      state.copyWith(
+        screenCapture: state.screenCapture.copyWith(allowScreenCapture: false),
+        isLoading: false,
+        errorMessage: '屏幕保护设置未生效，请重试',
+      ),
+    );
+    return false;
   }
 
   Future<bool> setFinanceColors(FinanceColorPreferences colors) async {

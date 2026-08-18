@@ -6,7 +6,9 @@
   "main": "",
   "author": "",
   "license": "",
-  "dependencies": {},
+  "dependencies": {
+    "fortuneboot_ohos_security": "file:../packages/fortuneboot_ohos_security/ohos"
+  },
   "devDependencies": {
     "@ohos/hypium": "1.0.6"
   }

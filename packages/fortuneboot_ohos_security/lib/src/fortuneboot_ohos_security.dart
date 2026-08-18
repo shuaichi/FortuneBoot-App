@@ -36,9 +36,14 @@ class FortunebootOhosSecurity {
         'failed';
   }
 
-  Future<void> setPrivacyVisible(bool visible) async {
-    await _channel.invokeMethod<void>('setPrivacyVisible', {
-      'visible': visible,
+  Future<void> setScreenCaptureAllowed(bool allowed) async {
+    await _channel.invokeMethod<void>('setScreenCaptureAllowed', {
+      'allowed': allowed,
     });
+  }
+
+  @Deprecated('Use setScreenCaptureAllowed instead.')
+  Future<void> setPrivacyVisible(bool visible) {
+    return setScreenCaptureAllowed(!visible);
   }
 }

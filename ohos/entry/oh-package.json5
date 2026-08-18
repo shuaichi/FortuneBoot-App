@@ -6,6 +6,8 @@
   "main": "",
   "author": "",
   "license": "",
-  "dependencies": {},
+  "dependencies": {
+    "fortuneboot_ohos_security": "file:../../packages/fortuneboot_ohos_security/ohos"
+  },
 }
 
