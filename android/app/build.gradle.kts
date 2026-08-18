@@ -15,7 +15,7 @@ val localProperties = Properties().apply {
     }
 }
 android {
-    namespace = "com.fortuneboot.intelligent"
+    namespace = "com.fortuneboot.fortuneboot"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -30,7 +30,7 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.fortuneboot.intelligent"
+        applicationId = "com.fortuneboot.fortuneboot"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = 23
@@ -44,6 +44,12 @@ android {
             keyPassword = localProperties.getProperty("sign.key.password")
             storeFile = file(localProperties.getProperty("sign.store.file"))
             storePassword = localProperties.getProperty("sign.store.password")
+        }
+    }
+
+    packaging {
+        jniLibs {
+            useLegacyPackaging = true
         }
     }
 

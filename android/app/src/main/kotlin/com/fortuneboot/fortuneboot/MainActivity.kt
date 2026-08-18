@@ -1,4 +1,4 @@
-package com.fortuneboot.intelligent
+package com.fortuneboot.fortuneboot
 
 import android.os.Bundle
 import android.view.WindowManager
