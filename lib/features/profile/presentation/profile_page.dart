@@ -118,75 +118,60 @@ class _ProfileView extends StatelessWidget {
       );
     }
     final profile = state.profile ?? const UserProfile();
+    final displayName = profile.nickname?.isNotEmpty == true
+        ? profile.nickname!
+        : (profile.username ?? S.of(context).profileNotLoggedIn);
     final avatar = profile.avatar;
     return FxCard(
       onTap: () => _openEdit(context, profile),
+      radius: FxRadius.sheet,
       child: Row(
         children: [
-          Container(
-            width: 56,
-            height: 56,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: palette.primaryContainer,
-              image: (avatar != null && avatar.isNotEmpty)
-                  ? DecorationImage(
-                      image: NetworkImage(avatar),
-                      fit: BoxFit.cover,
-                      onError: (_, __) {},
-                    )
-                  : null,
-            ),
-            alignment: Alignment.center,
-            child: (avatar == null || avatar.isEmpty)
-                ? Icon(Icons.person_rounded, size: 30, color: palette.primary)
-                : null,
-          ),
+          _ProfileAvatar(imageUrl: avatar, label: displayName, size: 64),
           const SizedBox(width: FxSpacing.lg),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  profile.nickname?.isNotEmpty == true
-                      ? profile.nickname!
-                      : (profile.username ?? S.of(context).profileNotLoggedIn),
-                  style: FxTypography.titleLarge,
+                  displayName,
+                  style: FxTypography.titleLarge.copyWith(
+                    color: palette.textPrimary,
+                  ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
-                const SizedBox(height: 4),
-                if (profile.roleName?.isNotEmpty == true)
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: FxSpacing.sm,
-                      vertical: 2,
-                    ),
-                    decoration: BoxDecoration(
-                      color: palette.primaryContainer,
-                      borderRadius: FxRadius.pillBorder,
-                    ),
-                    child: Text(
-                      profile.roleName!,
-                      style: FxTypography.caption.copyWith(
-                        color: palette.primary,
+                const SizedBox(height: FxSpacing.xs),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Flexible(
+                      child: Text(
+                        S.of(context).profileViewProfile,
+                        style: FxTypography.body.copyWith(
+                          color: palette.textSecondary,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
-                  ),
+                    Icon(
+                      Icons.chevron_right_rounded,
+                      color: palette.textTertiary,
+                    ),
+                  ],
+                ),
               ],
             ),
           ),
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                S.of(context).profileEditProfile,
-                style: FxTypography.caption.copyWith(
-                  color: palette.textSecondary,
-                ),
-              ),
-              Icon(Icons.chevron_right_rounded, color: palette.textTertiary),
-            ],
+          Semantics(
+            label: S.of(context).profileQrCode,
+            child: Icon(
+              Icons.qr_code_rounded,
+              size: 28,
+              color: palette.textSecondary,
+            ),
           ),
         ],
       ),
@@ -999,6 +984,53 @@ class _ProfileView extends StatelessWidget {
       color: FxPalette.of(context).border,
     ),
   );
+}
+
+class _ProfileAvatar extends StatelessWidget {
+  final String? imageUrl;
+  final String label;
+  final double size;
+
+  const _ProfileAvatar({
+    required this.imageUrl,
+    required this.label,
+    required this.size,
+  });
+
+  String get _initial {
+    final trimmed = label.trim();
+    return trimmed.isEmpty ? '?' : trimmed.characters.first.toUpperCase();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = FxPalette.of(context);
+    return ClipOval(
+      child: SizedBox.square(
+        dimension: size,
+        child: imageUrl?.isNotEmpty == true
+            ? Image.network(
+                imageUrl!,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) =>
+                    _fallback(palette),
+              )
+            : _fallback(palette),
+      ),
+    );
+  }
+
+  Widget _fallback(FxPalette palette) {
+    return ColoredBox(
+      color: palette.primaryContainer,
+      child: Center(
+        child: Text(
+          _initial,
+          style: FxTypography.titleLarge.copyWith(color: palette.primary),
+        ),
+      ),
+    );
+  }
 }
 
 /// 内联 loading（用于卡片内小高度占位）。

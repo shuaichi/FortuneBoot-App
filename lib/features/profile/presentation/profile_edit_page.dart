@@ -6,6 +6,7 @@ import 'package:fortuneboot/features/profile/data/profile_models.dart';
 import 'package:fortuneboot/features/profile/data/profile_service.dart';
 import 'package:fortuneboot/fx/components/fx_button.dart';
 import 'package:fortuneboot/fx/components/fx_card.dart';
+import 'package:fortuneboot/fx/components/fx_list_item.dart';
 import 'package:fortuneboot/fx/components/fx_sheet.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
@@ -18,16 +19,14 @@ import 'package:image_picker/image_picker.dart';
 /// 编辑资料页参数：传入当前资料预填。
 class ProfileEditArgs {
   final UserProfile profile;
+
   const ProfileEditArgs({required this.profile});
 }
 
-/// 编辑资料页（Routes.profileEdit）。
+/// 个人资料详情页。
 ///
-/// - 头像上传（image_picker → multipart avatarfile → 刷新）。
-/// - 昵称/性别/电话/邮箱 → PUT profile。
-/// - 改密码入口 → FxSheet（旧+新密码 RSA 加密 → PUT password）。
-///
-/// 保存/头像变更成功后 pop(true)，由 ProfilePage 触发用户卡刷新。
+/// 保留原有资料更新、头像上传与密码修改的业务契约；资料编辑通过底部
+/// Sheet 完成，页面返回 true 后由 [ProfilePage] 刷新用户入口卡。
 class ProfileEditPage extends StatefulWidget {
   final UserProfile profile;
 
@@ -41,33 +40,22 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
   final ProfileService _service = ProfileService();
   final ImagePicker _picker = ImagePicker();
 
-  late final TextEditingController _nicknameCtrl;
-  late final TextEditingController _phoneCtrl;
-  late final TextEditingController _emailCtrl;
-  late int _sex;
   String? _avatar;
-
-  bool _saving = false;
   bool _uploadingAvatar = false;
-  bool _dirty = false; // 任一保存成功
+  bool _dirty = false;
 
   @override
   void initState() {
     super.initState();
-    final p = widget.profile;
-    _nicknameCtrl = TextEditingController(text: p.nickname ?? '');
-    _phoneCtrl = TextEditingController(text: p.phoneNumber ?? '');
-    _emailCtrl = TextEditingController(text: p.email ?? '');
-    _sex = p.sex ?? 1;
-    _avatar = p.avatar;
+    _avatar = widget.profile.avatar;
   }
 
-  @override
-  void dispose() {
-    _nicknameCtrl.dispose();
-    _phoneCtrl.dispose();
-    _emailCtrl.dispose();
-    super.dispose();
+  int? get _userId => widget.profile.userId;
+
+  String get _displayName {
+    final nickname = widget.profile.nickname;
+    if (nickname?.isNotEmpty == true) return nickname!;
+    return widget.profile.username ?? S.of(context).profileNotLoggedIn;
   }
 
   void _toast(String message) {
@@ -77,8 +65,6 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
       ..showSnackBar(SnackBar(content: Text(message)));
   }
 
-  int? get _userId => widget.profile.userId;
-
   Future<void> _pickAvatar() async {
     final userId = _userId;
     final s = S.of(context);
@@ -86,12 +72,13 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
       _toast(s.profileMissingUserInfoUpload);
       return;
     }
-    final XFile? picked = await _picker.pickImage(
+    final picked = await _picker.pickImage(
       source: ImageSource.gallery,
       maxWidth: 1024,
       imageQuality: 85,
     );
     if (picked == null) return;
+
     setState(() => _uploadingAvatar = true);
     try {
       final url = await _service.uploadAvatar(File(picked.path));
@@ -113,43 +100,26 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
     }
   }
 
-  Future<void> _save() async {
+  Future<void> _openEditSheet() async {
     final userId = _userId;
-    final s = S.of(context);
     if (userId == null) {
-      _toast(s.profileMissingUserInfoSave);
+      _toast(S.of(context).profileMissingUserInfoSave);
       return;
     }
-    final nickname = _nicknameCtrl.text.trim();
-    if (nickname.isEmpty) {
-      _toast(s.profileNicknameRequired);
-      return;
-    }
-    setState(() => _saving = true);
-    try {
-      await _service.updateProfile(
+    final changed = await FxSheet.show<bool>(
+      context,
+      title: S.of(context).profileEditTitle,
+      expand: true,
+      expandHeightFactor: 0.82,
+      child: _ProfileDetailsEditSheet(
+        profile: widget.profile,
+        service: _service,
         userId: userId,
-        nickname: nickname,
-        sex: _sex,
-        phoneNumber: _phoneCtrl.text.trim(),
-        email: _emailCtrl.text.trim(),
-      );
-      if (!mounted) return;
-      setState(() {
-        _saving = false;
-        _dirty = true;
-      });
-      _toast(s.profileSaved);
-      Navigator.of(context).pop(true);
-    } on FxApiException catch (e) {
-      if (!mounted) return;
-      setState(() => _saving = false);
-      _toast(e.message);
-    } on Object catch (e) {
-      if (!mounted) return;
-      setState(() => _saving = false);
-      _toast(s.profileSaveFailed(e.toString()));
-    }
+      ),
+    );
+    if (changed != true || !mounted) return;
+    setState(() => _dirty = true);
+    Navigator.of(context).pop(true);
   }
 
   Future<void> _openPasswordSheet() async {
@@ -168,269 +138,538 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
   @override
   Widget build(BuildContext context) {
     final palette = FxPalette.of(context);
+    final s = S.of(context);
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, result) {
-        if (didPop) return;
-        Navigator.of(context).pop(_dirty);
+        if (!didPop) Navigator.of(context).pop(_dirty);
       },
       child: Scaffold(
         backgroundColor: palette.canvas,
         appBar: AppBar(
-          backgroundColor: palette.surface,
+          backgroundColor: palette.canvas,
           surfaceTintColor: Colors.transparent,
           elevation: 0,
-          title: Text(S.of(context).profileEditTitle, style: FxTypography.title),
+          centerTitle: true,
+          title: Text(s.profileDetailsTitle, style: FxTypography.title),
           leading: IconButton(
+            tooltip: s.profileBack,
             icon: Icon(Icons.arrow_back_rounded, color: palette.textPrimary),
             onPressed: () => Navigator.of(context).pop(_dirty),
           ),
         ),
         body: ListView(
-          padding: const EdgeInsets.all(FxSpacing.lg),
+          padding: const EdgeInsets.fromLTRB(
+            FxSpacing.lg,
+            FxSpacing.md,
+            FxSpacing.lg,
+            FxSpacing.xxxl,
+          ),
           children: [
-            _avatarSection(),
-            const SizedBox(height: FxSpacing.lg),
-            FxCard(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  _labeledField(
-                    S.of(context).profileNickname,
-                    _nicknameCtrl,
-                    hint: S.of(context).profileNicknameHint,
-                  ),
-                  const SizedBox(height: FxSpacing.lg),
-                  _sexField(),
-                  const SizedBox(height: FxSpacing.lg),
-                  _labeledField(
-                    S.of(context).profilePhone,
-                    _phoneCtrl,
-                    hint: S.of(context).profilePhoneHint,
-                    keyboardType: TextInputType.phone,
-                  ),
-                  const SizedBox(height: FxSpacing.lg),
-                  _labeledField(
-                    S.of(context).profileEmail,
-                    _emailCtrl,
-                    hint: S.of(context).profileEmailHint,
-                    keyboardType: TextInputType.emailAddress,
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: FxSpacing.lg),
-            FxCard(
-              padding: EdgeInsets.zero,
-              child: InkWell(
-                borderRadius: FxRadius.cardBorder,
-                onTap: _openPasswordSheet,
-                child: Padding(
-                  padding: const EdgeInsets.all(FxSpacing.lg),
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.lock_outline_rounded,
-                        color: palette.textSecondary,
-                      ),
-                      const SizedBox(width: FxSpacing.md),
-                      Expanded(
-                        child: Text(
-                          S.of(context).profileChangePassword,
-                          style: FxTypography.bodyStrong,
-                        ),
-                      ),
-                      Icon(
-                        Icons.chevron_right_rounded,
-                        color: palette.textTertiary,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
+            _identityCard(context),
             const SizedBox(height: FxSpacing.xxl),
-            FxButton(
-              label: S.of(context).commonSave,
-              expand: true,
-              loading: _saving,
-              onPressed: _saving ? null : _save,
-            ),
+            _section(context, s.profileDetailedInformation, [
+              _informationItem(
+                context,
+                icon: Icons.wc_rounded,
+                color: palette.warning,
+                title: s.profileSex,
+                value: _sexLabel(s),
+                onTap: _openEditSheet,
+              ),
+              _divider(context),
+              _informationItem(
+                context,
+                icon: Icons.phone_iphone_rounded,
+                color: palette.warning,
+                title: s.profilePhone,
+                value: _valueOrPlaceholder(widget.profile.phoneNumber, s),
+                onTap: _openEditSheet,
+              ),
+              _divider(context),
+              _informationItem(
+                context,
+                icon: Icons.mail_outline_rounded,
+                color: palette.info,
+                title: s.profileEmail,
+                value: _valueOrPlaceholder(widget.profile.email, s),
+                onTap: _openEditSheet,
+              ),
+            ]),
+            const SizedBox(height: FxSpacing.xxl),
+            _section(context, s.profileSystemRecords, [
+              _informationItem(
+                context,
+                icon: Icons.person_outline_rounded,
+                color: palette.primary,
+                title: s.profileUsername,
+                value: _valueOrPlaceholder(widget.profile.username, s),
+              ),
+              _divider(context),
+              _informationItem(
+                context,
+                icon: Icons.verified_user_outlined,
+                color: palette.success,
+                title: s.profileRole,
+                value: _valueOrPlaceholder(widget.profile.roleName, s),
+              ),
+              _divider(context),
+              _informationItem(
+                context,
+                icon: Icons.badge_outlined,
+                color: palette.info,
+                title: s.profileUserId,
+                value: widget.profile.userId?.toString() ?? s.profileNotSet,
+              ),
+              _divider(context),
+              _informationItem(
+                context,
+                icon: Icons.lock_outline_rounded,
+                color: palette.danger,
+                title: s.profileChangePassword,
+                value: '',
+                onTap: _openPasswordSheet,
+              ),
+            ]),
           ],
         ),
       ),
     );
   }
 
-  Widget _avatarSection() {
+  Widget _identityCard(BuildContext context) {
     final palette = FxPalette.of(context);
-    return Center(
-      child: Column(
+    final s = S.of(context);
+    return FxCard(
+      radius: FxRadius.sheet,
+      child: Row(
         children: [
-          GestureDetector(
-            onTap: _uploadingAvatar ? null : _pickAvatar,
-            child: Stack(
-              children: [
-                Container(
-                  width: 88,
-                  height: 88,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: palette.primaryContainer,
-                    image: (_avatar != null && _avatar!.isNotEmpty)
-                        ? DecorationImage(
-                            image: NetworkImage(_avatar!),
-                            fit: BoxFit.cover,
-                            onError: (_, __) {},
-                          )
-                        : null,
+          Semantics(
+            button: true,
+            label: s.profileEditAvatar,
+            child: InkWell(
+              customBorder: const CircleBorder(),
+              onTap: _uploadingAvatar ? null : _pickAvatar,
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  _ProfileAvatar(
+                    imageUrl: _avatar,
+                    label: _displayName,
+                    size: 88,
                   ),
-                  alignment: Alignment.center,
-                  child: (_avatar == null || _avatar!.isEmpty)
-                      ? Icon(
-                          Icons.person_rounded,
-                          size: 44,
-                          color: palette.primary,
-                        )
-                      : null,
-                ),
-                Positioned(
-                  right: 0,
-                  bottom: 0,
-                  child: Container(
-                    padding: const EdgeInsets.all(6),
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: palette.primary,
+                  if (_uploadingAvatar)
+                    ColoredBox(
+                      color: palette.shadow,
+                      child: const SizedBox.square(
+                        dimension: 88,
+                        child: Center(
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        ),
+                      ),
                     ),
-                    child: _uploadingAvatar
-                        ? const SizedBox(
-                            width: 14,
-                            height: 14,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              color: Colors.white,
-                            ),
-                          )
-                        : const Icon(
-                            Icons.camera_alt_rounded,
-                            size: 14,
-                            color: Colors.white,
-                          ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(width: FxSpacing.lg),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  _displayName,
+                  style: FxTypography.titleLarge.copyWith(
+                    color: palette.textPrimary,
                   ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: FxSpacing.xs),
+                Text(
+                  _valueOrPlaceholder(widget.profile.roleName, s),
+                  style: FxTypography.body.copyWith(
+                    color: palette.textSecondary,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ],
             ),
           ),
-          const SizedBox(height: FxSpacing.sm),
-          Text(
-            S.of(context).profileTapToChangeAvatar,
-            style: FxTypography.caption.copyWith(
-              color: FxPalette.of(context).textTertiary,
-            ),
+          IconButton.filledTonal(
+            tooltip: s.profileEditProfile,
+            onPressed: _openEditSheet,
+            icon: const Icon(Icons.edit_outlined),
           ),
         ],
       ),
     );
   }
 
-  Widget _labeledField(
-    String label,
-    TextEditingController controller, {
+  Widget _section(BuildContext context, String title, List<Widget> children) {
+    final palette = FxPalette.of(context);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(
+            left: FxSpacing.xs,
+            bottom: FxSpacing.sm,
+          ),
+          child: Text(
+            title,
+            style: FxTypography.title.copyWith(color: palette.textSecondary),
+          ),
+        ),
+        FxCard(
+          padding: const EdgeInsets.symmetric(vertical: FxSpacing.xs),
+          radius: FxRadius.sheet,
+          child: Column(children: children),
+        ),
+      ],
+    );
+  }
+
+  Widget _informationItem(
+    BuildContext context, {
+    required IconData icon,
+    required Color color,
+    required String title,
+    required String value,
+    VoidCallback? onTap,
+  }) {
+    final palette = FxPalette.of(context);
+    return FxListItem(
+      leading: _tileIcon(icon, color),
+      title: title,
+      trailing: value.isEmpty
+          ? null
+          : ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 180),
+              child: Text(
+                value,
+                style: FxTypography.bodyStrong.copyWith(
+                  color: palette.textSecondary,
+                ),
+                textAlign: TextAlign.end,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+      showChevron: onTap != null,
+      onTap: onTap,
+    );
+  }
+
+  Widget _tileIcon(IconData icon, Color color) {
+    return Container(
+      width: 44,
+      height: 44,
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.12),
+        shape: BoxShape.circle,
+      ),
+      alignment: Alignment.center,
+      child: Icon(icon, color: color),
+    );
+  }
+
+  Widget _divider(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 72),
+      child: Divider(
+        height: 1,
+        thickness: 0.5,
+        color: FxPalette.of(context).border,
+      ),
+    );
+  }
+
+  String _sexLabel(S s) => switch (widget.profile.sex) {
+    1 => s.profileSexMale,
+    0 => s.profileSexFemale,
+    _ => s.profileNotSet,
+  };
+
+  String _valueOrPlaceholder(String? value, S s) {
+    return value?.isNotEmpty == true ? value! : s.profileNotSet;
+  }
+}
+
+class _ProfileAvatar extends StatelessWidget {
+  final String? imageUrl;
+  final String label;
+  final double size;
+
+  const _ProfileAvatar({
+    required this.imageUrl,
+    required this.label,
+    required this.size,
+  });
+
+  String get _initial {
+    final trimmed = label.trim();
+    return trimmed.isEmpty ? '?' : trimmed.characters.first.toUpperCase();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = FxPalette.of(context);
+    return ClipOval(
+      child: SizedBox.square(
+        dimension: size,
+        child: imageUrl?.isNotEmpty == true
+            ? Image.network(
+                imageUrl!,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) =>
+                    _fallback(palette),
+              )
+            : _fallback(palette),
+      ),
+    );
+  }
+
+  Widget _fallback(FxPalette palette) {
+    return ColoredBox(
+      color: palette.primaryContainer,
+      child: Center(
+        child: Text(
+          _initial,
+          style: FxTypography.titleLarge.copyWith(color: palette.primary),
+        ),
+      ),
+    );
+  }
+}
+
+class _ProfileDetailsEditSheet extends StatefulWidget {
+  final UserProfile profile;
+  final ProfileService service;
+  final int userId;
+
+  const _ProfileDetailsEditSheet({
+    required this.profile,
+    required this.service,
+    required this.userId,
+  });
+
+  @override
+  State<_ProfileDetailsEditSheet> createState() =>
+      _ProfileDetailsEditSheetState();
+}
+
+class _ProfileDetailsEditSheetState extends State<_ProfileDetailsEditSheet> {
+  late final TextEditingController _nicknameCtrl;
+  late final TextEditingController _phoneCtrl;
+  late final TextEditingController _emailCtrl;
+  late int _sex;
+  bool _saving = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _nicknameCtrl = TextEditingController(text: widget.profile.nickname ?? '');
+    _phoneCtrl = TextEditingController(text: widget.profile.phoneNumber ?? '');
+    _emailCtrl = TextEditingController(text: widget.profile.email ?? '');
+    _sex = widget.profile.sex ?? 1;
+  }
+
+  @override
+  void dispose() {
+    _nicknameCtrl.dispose();
+    _phoneCtrl.dispose();
+    _emailCtrl.dispose();
+    super.dispose();
+  }
+
+  Future<void> _save() async {
+    final s = S.of(context);
+    final nickname = _nicknameCtrl.text.trim();
+    if (nickname.isEmpty) {
+      _toast(s.profileNicknameRequired);
+      return;
+    }
+    setState(() => _saving = true);
+    try {
+      await widget.service.updateProfile(
+        userId: widget.userId,
+        nickname: nickname,
+        sex: _sex,
+        phoneNumber: _phoneCtrl.text.trim(),
+        email: _emailCtrl.text.trim(),
+      );
+      if (!mounted) return;
+      final messenger = ScaffoldMessenger.of(context);
+      Navigator.of(context).pop(true);
+      messenger
+        ..hideCurrentSnackBar()
+        ..showSnackBar(SnackBar(content: Text(s.profileSaved)));
+    } on FxApiException catch (e) {
+      if (!mounted) return;
+      setState(() => _saving = false);
+      _toast(e.message);
+    } on Object catch (e) {
+      if (!mounted) return;
+      setState(() => _saving = false);
+      _toast(s.profileSaveFailed(e.toString()));
+    }
+  }
+
+  void _toast(String message) {
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(SnackBar(content: Text(message)));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.fromLTRB(
+        FxSpacing.lg,
+        0,
+        FxSpacing.lg,
+        FxSpacing.xxl,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          _field(
+            label: S.of(context).profileNickname,
+            controller: _nicknameCtrl,
+            icon: Icons.badge_outlined,
+            hint: S.of(context).profileNicknameHint,
+            autofillHints: const [AutofillHints.nickname],
+            textInputAction: TextInputAction.next,
+          ),
+          const SizedBox(height: FxSpacing.lg),
+          _field(
+            label: S.of(context).profilePhone,
+            controller: _phoneCtrl,
+            icon: Icons.phone_iphone_rounded,
+            hint: S.of(context).profilePhoneHint,
+            keyboardType: TextInputType.phone,
+            autofillHints: const [AutofillHints.telephoneNumber],
+            textInputAction: TextInputAction.next,
+          ),
+          const SizedBox(height: FxSpacing.lg),
+          _field(
+            label: S.of(context).profileEmail,
+            controller: _emailCtrl,
+            icon: Icons.mail_outline_rounded,
+            hint: S.of(context).profileEmailHint,
+            keyboardType: TextInputType.emailAddress,
+            autofillHints: const [AutofillHints.email],
+          ),
+          const SizedBox(height: FxSpacing.xl),
+          _genderSelector(),
+          const SizedBox(height: FxSpacing.xxl),
+          FxButton(
+            label: S.of(context).commonSave,
+            expand: true,
+            loading: _saving,
+            onPressed: _saving ? null : _save,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _field({
+    required String label,
+    required TextEditingController controller,
+    required IconData icon,
     String? hint,
     TextInputType? keyboardType,
+    Iterable<String>? autofillHints,
+    TextInputAction? textInputAction,
   }) {
+    final palette = FxPalette.of(context);
+    return TextField(
+      controller: controller,
+      keyboardType: keyboardType,
+      autofillHints: autofillHints,
+      textInputAction: textInputAction,
+      style: FxTypography.bodyStrong.copyWith(color: palette.textPrimary),
+      decoration: InputDecoration(
+        labelText: label,
+        hintText: hint,
+        labelStyle: FxTypography.label.copyWith(color: palette.textSecondary),
+        hintStyle: FxTypography.body.copyWith(color: palette.textTertiary),
+        prefixIcon: Icon(icon, color: palette.textSecondary),
+        filled: true,
+        fillColor: palette.surfaceMuted,
+        contentPadding: const EdgeInsets.symmetric(vertical: FxSpacing.md),
+        border: OutlineInputBorder(
+          borderRadius: FxRadius.tileBorder,
+          borderSide: BorderSide.none,
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: FxRadius.tileBorder,
+          borderSide: BorderSide(color: palette.border),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: FxRadius.tileBorder,
+          borderSide: BorderSide(color: palette.primary, width: 1.5),
+        ),
+      ),
+    );
+  }
+
+  Widget _genderSelector() {
+    final s = S.of(context);
+    final palette = FxPalette.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          label,
-          style: FxTypography.label.copyWith(
-            color: FxPalette.of(context).textSecondary,
-          ),
+          s.profileSex,
+          style: FxTypography.bodyStrong.copyWith(color: palette.textPrimary),
         ),
         const SizedBox(height: FxSpacing.sm),
-        TextField(
-          controller: controller,
-          keyboardType: keyboardType,
-          style: FxTypography.body,
-          decoration: _inputDecoration(hint),
+        Container(
+          height: 52,
+          padding: const EdgeInsets.all(FxSpacing.xs),
+          decoration: BoxDecoration(
+            color: palette.surfaceMuted,
+            borderRadius: FxRadius.pillBorder,
+          ),
+          child: Row(
+            children: [
+              _genderOption(s.profileSexMale, 1),
+              _genderOption(s.profileSexFemale, 0),
+            ],
+          ),
         ),
       ],
     );
   }
 
-  Widget _sexField() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          S.of(context).profileSex,
-          style: FxTypography.label.copyWith(
-            color: FxPalette.of(context).textSecondary,
-          ),
-        ),
-        const SizedBox(height: FxSpacing.sm),
-        Row(
-          children: [
-            _sexChip(S.of(context).profileSexMale, 1),
-            const SizedBox(width: FxSpacing.md),
-            _sexChip(S.of(context).profileSexFemale, 0),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget _sexChip(String label, int value) {
+  Widget _genderOption(String label, int value) {
     final palette = FxPalette.of(context);
     final selected = _sex == value;
     return Expanded(
-      child: GestureDetector(
-        onTap: () => setState(() => _sex = value),
-        child: Container(
-          height: 44,
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            color: selected ? palette.primaryContainer : palette.surfaceMuted,
-            borderRadius: FxRadius.tileBorder,
-            border: Border.all(
-              color: selected ? palette.primary : palette.border,
-            ),
-          ),
-          child: Text(
-            label,
-            style: FxTypography.bodyStrong.copyWith(
-              color: selected ? palette.primary : palette.textSecondary,
+      child: Semantics(
+        button: true,
+        selected: selected,
+        label: label,
+        child: Material(
+          color: selected ? palette.surface : Colors.transparent,
+          borderRadius: FxRadius.pillBorder,
+          child: InkWell(
+            borderRadius: FxRadius.pillBorder,
+            onTap: () => setState(() => _sex = value),
+            child: Center(
+              child: Text(
+                label,
+                style: FxTypography.bodyStrong.copyWith(
+                  color: selected ? palette.textPrimary : palette.textSecondary,
+                ),
+              ),
             ),
           ),
         ),
-      ),
-    );
-  }
-
-  InputDecoration _inputDecoration(String? hint) {
-    final palette = FxPalette.of(context);
-    return InputDecoration(
-      hintText: hint,
-      hintStyle: FxTypography.body.copyWith(color: palette.textTertiary),
-      filled: true,
-      fillColor: palette.surfaceMuted,
-      contentPadding: const EdgeInsets.symmetric(
-        horizontal: FxSpacing.md,
-        vertical: FxSpacing.md,
-      ),
-      border: OutlineInputBorder(
-        borderRadius: FxRadius.tileBorder,
-        borderSide: BorderSide.none,
-      ),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: FxRadius.tileBorder,
-        borderSide: BorderSide(color: palette.border),
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: FxRadius.tileBorder,
-        borderSide: BorderSide(color: palette.primary),
       ),
     );
   }
@@ -484,7 +723,6 @@ class _PasswordSheetState extends State<_PasswordSheet> {
       _error = null;
     });
     try {
-      // 旧密码与新密码分别 RSA 加密。
       final encOld = await rsaEncrypt(oldPwd);
       final encNew = await rsaEncrypt(newPwd);
       await widget.service.updatePassword(
@@ -493,8 +731,6 @@ class _PasswordSheetState extends State<_PasswordSheet> {
         newPassword: encNew,
       );
       if (!mounted) return;
-      // 先捕获 messenger 引用再 pop：pop 后本页 context 失效，
-      // 直接 ScaffoldMessenger.of(context) 取不到，提示会丢失。
       final messenger = ScaffoldMessenger.of(context);
       Navigator.of(context).pop();
       messenger
