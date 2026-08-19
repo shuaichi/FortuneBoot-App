@@ -1,5 +1,4 @@
-import 'dart:math';
-
+import 'package:fortuneboot/core/auth/auth_version_checker.dart';
 import 'package:flutter/material.dart';
 // 引入震动反馈
 import 'package:flutter/services.dart';
@@ -9,9 +8,8 @@ import 'package:fortuneboot/core/app_lock/app_lock_cubit.dart';
 import 'package:fortuneboot/core/navigation/routes.dart';
 import 'package:fortuneboot/core/preferences/locale_preferences.dart';
 import 'package:fortuneboot/core/preferences/preferences_cubit.dart';
-import 'package:fortuneboot/request/login_request.dart';
+import 'package:fortuneboot/login/auth_version_source.dart';
 import 'package:fortuneboot/login/model/users.dart';
-import 'package:fortuneboot/login/view/login_screen.dart';
 import 'package:fortuneboot/generated/l10n.dart';
 import 'package:fortuneboot/util/dio_client.dart';
 
@@ -82,8 +80,10 @@ class _BaseUrlConfigPageState extends State<BaseUrlConfigPage> {
       // 跳登录页
       final baseUrl = '$baseProtocol://$baseUrlDomain:$baseUrlPort';
       DioClient().updateBaseUrl('$baseUrl/prod-api');
-      if (!(await checkApiVersion())) {
-        _showErrorDialog(S.current.serverConnectionFailed);
+      final check = await _checkApiVersion();
+      if (!mounted) return;
+      if (!check.isCompatible) {
+        _showVersionCheckFailure(check);
         _authMode.value = AuthMode.signIn;
         return;
       }
@@ -470,7 +470,9 @@ class _BaseUrlConfigPageState extends State<BaseUrlConfigPage> {
       }
       DioClient().updateBaseUrl('$baseUrl/prod-api');
       try {
-        if (await checkApiVersion()) {
+        final check = await _checkApiVersion();
+        if (!mounted) return;
+        if (check.isCompatible) {
           UserDataSingleton().setStr(
             UserDataSingleton.baseUrlDomain,
             _domainController.text,
@@ -485,11 +487,9 @@ class _BaseUrlConfigPageState extends State<BaseUrlConfigPage> {
           );
 
           if (!mounted) return;
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => LoginScreen()),
-          );
+          Navigator.of(context).pushReplacementNamed(Routes.auth);
         } else {
-          _showErrorDialog(S.current.serverConnectionFailed);
+          _showVersionCheckFailure(check);
         }
       } catch (e) {
         _showErrorDialog(S.current.serverConnectionFailed);
@@ -499,53 +499,27 @@ class _BaseUrlConfigPageState extends State<BaseUrlConfigPage> {
     }
   }
 
-  // --- 核心业务逻辑不变 ---
-  Future<bool> checkApiVersion() async {
-    LoginService loginService = LoginService();
-    try {
-      final apiResponse = await loginService.apiVersion();
-      if (apiResponse.code == 0) {
-        final curVersionString = apiResponse.data as String? ?? '';
-        if (curVersionString.isNotEmpty) {
-          final int maxRes = compareVersion(
-            curVersionString,
-            AppConstants.maxApiVersion,
-          );
-          final int minRes = compareVersion(
-            curVersionString,
-            AppConstants.minApiVersion,
-          );
-          // 左闭右开
-          print('lxjtodo: $maxRes $minRes');
-          return maxRes < 0 && minRes >= 0;
-        } else {
-          return false;
-        }
-      } else {
-        return false;
-      }
-    } catch (e) {
-      _showErrorDialog(e.toString());
-      return false;
-    }
-  }
+  Future<ApiVersionCheckResult> _checkApiVersion() =>
+      AuthVersionChecker(source: LoginApiVersionSource()).check();
 
-  int compareVersion(String version1, String version2) {
-    List<String> v1 = version1.split('.');
-    List<String> v2 = version2.split('.');
-
-    int maxLength = max(v1.length, v2.length);
-    for (int i = 0; i < maxLength; i++) {
-      int num1 = (i < v1.length) ? int.parse(v1[i]) : 0;
-      int num2 = (i < v2.length) ? int.parse(v2[i]) : 0;
-
-      if (num1 < num2) {
-        return -1;
-      } else if (num1 > num2) {
-        return 1;
-      }
-    }
-    return 0;
+  /// 按版本校验失败结果弹出对应的提示文案。
+  void _showVersionCheckFailure(ApiVersionCheckResult check) {
+    final message = switch (check.status) {
+      ApiVersionStatus.versionTooLow => S.current.apiVersionTooLow(
+        check.actualVersion,
+        AppConstants.minApiVersion,
+      ),
+      ApiVersionStatus.versionTooHigh => S.current.apiVersionTooHigh(
+        check.actualVersion,
+        AppConstants.maxApiVersion,
+      ),
+      ApiVersionStatus.endpointUnavailable =>
+        S.current.apiVersionEndpointUnavailable(AppConstants.minApiVersion),
+      ApiVersionStatus.versionInvalid => S.current.apiVersionUnavailable,
+      ApiVersionStatus.connectionFailed => S.current.serverConnectionFailed,
+      ApiVersionStatus.compatible => '',
+    };
+    if (message.isNotEmpty) _showErrorDialog(message);
   }
 
   // --- 4. 摒弃原生系统警告，重写高端金融级报错弹窗 ---

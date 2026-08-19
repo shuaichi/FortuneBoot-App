@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:fortuneboot/core/app/main_version_gate.dart';
 import 'package:fortuneboot/core/app_lock/app_lock_cubit.dart';
 import 'package:fortuneboot/core/app_lock/app_lock_gate.dart';
 import 'package:fortuneboot/core/app_lock/app_lock_stores.dart';
@@ -11,11 +12,10 @@ import 'package:fortuneboot/core/navigation/app_router.dart';
 import 'package:fortuneboot/core/navigation/routes.dart';
 import 'package:fortuneboot/core/preferences/preferences_cubit.dart';
 import 'package:fortuneboot/core/session/session_cubit.dart';
-import 'package:fortuneboot/core/shell/main_shell.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/generated/l10n.dart';
+import 'package:fortuneboot/login/view/auth_version_gate.dart';
 import 'package:fortuneboot/login/view/base_url_config_page.dart';
-import 'package:fortuneboot/login/view/login_screen.dart';
 import 'package:fortuneboot/util/dio_client.dart';
 
 /// 新应用根：挂全局 SessionCubit、FxTheme、集中路由。
@@ -117,8 +117,8 @@ class _FxAppViewState extends State<_FxAppView> with WidgetsBindingObserver {
           initialRoute: BaseUrlConfigPage.routeName,
           routes: {
             BaseUrlConfigPage.routeName: (context) => const BaseUrlConfigPage(),
-            LoginScreen.routeName: (context) => const LoginScreen(),
-            Routes.main: (context) => const MainShell(),
+            Routes.auth: (context) => const AuthVersionGate(),
+            Routes.main: (context) => const MainVersionGate(),
           },
           builder: (context, child) =>
               AppLockGate(child: child ?? const SizedBox.shrink()),

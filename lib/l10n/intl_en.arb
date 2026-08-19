@@ -8,7 +8,28 @@
   "pleaseEnterPort": "Please enter a port",
   "invalidPort": "Invalid port number",
   "confirm": "Confirm",
-  "serverConnectionFailed": "Server connection failed",
+  "serverConnectionFailed": "Cannot connect to server. Please check the address, port, or network.",
+  "@apiVersionTooLow": {
+    "placeholders": {
+      "actual": {},
+      "required": {}
+    }
+  },
+  "apiVersionTooLow": "Server version is too low (v{actual}). Please contact the administrator to upgrade the server to {required} or above.",
+  "@apiVersionTooHigh": {
+    "placeholders": {
+      "actual": {},
+      "supportedMax": {}
+    }
+  },
+  "apiVersionTooHigh": "Server version is too high (v{actual}). This client supports versions below {supportedMax}. Please upgrade the client or contact the administrator.",
+  "@apiVersionEndpointUnavailable": {
+    "placeholders": {
+      "required": {}
+    }
+  },
+  "apiVersionEndpointUnavailable": "The server does not support version detection, so compatibility cannot be confirmed. Verify the server and upgrade it to {required} or above.",
+  "apiVersionUnavailable": "The server returned invalid version information, so compatibility cannot be confirmed.",
   "error": "Error",
   "ok": "OK",
   "nickname_required": "Nickname cannot be empty",

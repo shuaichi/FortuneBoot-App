@@ -8,7 +8,28 @@
   "pleaseEnterPort": "请输入端口",
   "invalidPort": "无效的端口号",
   "confirm": "确认",
-  "serverConnectionFailed": "服务器连接失败 or 客户端版本过低",
+  "serverConnectionFailed": "无法连接服务器，请检查地址、端口或网络",
+  "@apiVersionTooLow": {
+    "placeholders": {
+      "actual": {},
+      "required": {}
+    }
+  },
+  "apiVersionTooLow": "服务端版本过低（v{actual}），需 {required} 及以上，请联系管理员升级服务端",
+  "@apiVersionTooHigh": {
+    "placeholders": {
+      "actual": {},
+      "supportedMax": {}
+    }
+  },
+  "apiVersionTooHigh": "服务端版本过高（v{actual}），当前客户端仅支持低于 {supportedMax} 的服务端，请升级客户端或联系管理员",
+  "@apiVersionEndpointUnavailable": {
+    "placeholders": {
+      "required": {}
+    }
+  },
+  "apiVersionEndpointUnavailable": "服务端不支持版本检测，无法确认兼容性。请确认服务端并升级至 {required} 及以上",
+  "apiVersionUnavailable": "服务端返回的版本信息无效，无法确认兼容性，请联系管理员",
   "error": "错误",
   "ok": "确定",
   "nickname_required": "昵称不能为空",

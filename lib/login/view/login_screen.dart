@@ -5,7 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart' show timeDilation;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_login/flutter_login.dart';
+import 'package:fortuneboot/core/app_constants.dart';
 import 'package:fortuneboot/core/app_lock/app_lock_cubit.dart';
+import 'package:fortuneboot/core/auth/auth_version_checker.dart';
+import 'package:fortuneboot/login/auth_version_source.dart';
 import 'package:fortuneboot/login/model/login_model.dart';
 import 'package:fortuneboot/request/login_request.dart';
 import 'package:fortuneboot/util/constants.dart';
@@ -239,6 +242,29 @@ class LoginScreen extends StatelessWidget {
     });
   }
 
+  String _apiVersionFailureMessage(
+    BuildContext context,
+    ApiVersionCheckResult check,
+  ) {
+    final s = S.of(context);
+    return switch (check.status) {
+      ApiVersionStatus.versionTooLow => s.apiVersionTooLow(
+        check.actualVersion,
+        AppConstants.minApiVersion,
+      ),
+      ApiVersionStatus.versionTooHigh => s.apiVersionTooHigh(
+        check.actualVersion,
+        AppConstants.maxApiVersion,
+      ),
+      ApiVersionStatus.endpointUnavailable => s.apiVersionEndpointUnavailable(
+        AppConstants.minApiVersion,
+      ),
+      ApiVersionStatus.versionInvalid => s.apiVersionUnavailable,
+      ApiVersionStatus.connectionFailed => s.serverConnectionFailed,
+      ApiVersionStatus.compatible => '',
+    };
+  }
+
   @override
   Widget build(BuildContext context) {
     final additionalSignupFields = fetchUserForms(context);
@@ -325,6 +351,19 @@ class LoginScreen extends StatelessWidget {
         return _signupUser(signupData);
       },
       onSubmitAnimationCompleted: () async {
+        final check = await AuthVersionChecker(
+          source: LoginApiVersionSource(),
+        ).check();
+        if (!context.mounted) return;
+        if (!check.isCompatible) {
+          DioClient().clearAuthHeader();
+          await UserDataSingleton().clearAuth();
+          if (!context.mounted) return;
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(_apiVersionFailureMessage(context, check))),
+          );
+          return;
+        }
         await context.read<AppLockCubit>().onAuthenticated();
         if (!context.mounted) return;
         Navigator.of(

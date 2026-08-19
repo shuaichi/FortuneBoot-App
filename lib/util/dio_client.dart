@@ -58,7 +58,9 @@ class DioClient {
               ),
             );
           }
-          if (data is Map && _isAuthExpiredCode(data['code'])) {
+          if (data is Map &&
+              _isAuthExpiredCode(data['code']) &&
+              !_isApiVersionRequest(response.requestOptions)) {
             await _handleAuthExpired();
             return handler.reject(
               DioException(
@@ -72,7 +74,8 @@ class DioClient {
           return handler.next(response);
         },
         onError: (error, handler) async {
-          if (_isAuthExpiredStatus(error.response?.statusCode)) {
+          if (_isAuthExpiredStatus(error.response?.statusCode) &&
+              !_isApiVersionRequest(error.requestOptions)) {
             await _handleAuthExpired();
           }
           return handler.next(error);
@@ -116,9 +119,12 @@ class DioClient {
     }
   }
 
+  bool _isApiVersionRequest(RequestOptions options) =>
+      options.path.endsWith('/getApiVersion');
+
   bool _shouldAttachAuth(RequestOptions options) {
     final path = options.path;
-    return !path.endsWith('/getApiVersion') &&
+    return !_isApiVersionRequest(options) &&
         !path.endsWith('/getIcp') &&
         !path.endsWith('/refreshToken') &&
         !path.endsWith('/login') &&

@@ -4,7 +4,7 @@
 set -e
 
 # 每次打包需要变动的字段放在这里，便于发布前统一修改。
-MAJOR_VERSION="1.4.1"
+MAJOR_VERSION="1.4.2"
 VERSION_MARKER="#😁😈"
 
 # 打印帮助信息
