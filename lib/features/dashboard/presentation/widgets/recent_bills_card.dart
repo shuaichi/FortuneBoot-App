@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fortuneboot/core/icon/fx_icon_badge.dart';
 import 'package:fortuneboot/core/icon/smart_category_engine.dart';
-import 'package:fortuneboot/core/navigation/app_router.dart';
-import 'package:fortuneboot/core/navigation/routes.dart';
 import 'package:fortuneboot/core/preferences/preferences_cubit.dart';
+import 'package:fortuneboot/core/shell/main_shell.dart';
 import 'package:fortuneboot/features/dashboard/presentation/bloc/dashboard_bloc.dart';
 import 'package:fortuneboot/features/dashboard/presentation/widgets/dashboard_card_shell.dart';
 import 'package:fortuneboot/features/shared/data/bill_models.dart';
@@ -49,7 +48,7 @@ class RecentBillsCard extends StatelessWidget {
             FxCardLabel(
               S.of(context).dashboardRecentBills,
               trailing: GestureDetector(
-                onTap: () => AppRouter.push<void>(context, Routes.bills),
+                onTap: () => MainShell.selectTab(context, MainShellTab.bills),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [

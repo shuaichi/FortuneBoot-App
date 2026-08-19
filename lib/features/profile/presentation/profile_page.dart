@@ -184,9 +184,10 @@ class _ProfileView extends StatelessWidget {
               ],
             ),
           ),
-          Semantics(
-            label: S.of(context).profileQrCode,
-            child: Icon(
+          IconButton(
+            tooltip: S.of(context).profileDonate,
+            onPressed: () => _openDonate(context),
+            icon: Icon(
               Icons.qr_code_rounded,
               size: 28,
               color: palette.textSecondary,

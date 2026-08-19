@@ -19,17 +19,33 @@ class MainShellSlots {
   static WidgetBuilder? profile;
 }
 
+enum MainShellTab { dashboard, bills, stats, profile }
+
 /// 底部导航容器：4 tab + 中央 FAB 记一笔。IndexedStack 保活。
 /// 首次进入时触发 SessionCubit.load() 拉取分组/账本。
 class MainShell extends StatefulWidget {
   const MainShell({super.key});
+
+  /// 切换当前 Shell 内的 tab。仅能在 [MainShell] 子树中调用。
+  static void selectTab(BuildContext context, MainShellTab tab) {
+    final state = context.findAncestorStateOfType<_MainShellState>();
+    if (state == null) {
+      throw FlutterError('MainShell.selectTab must be called below MainShell.');
+    }
+    state._selectTab(tab);
+  }
 
   @override
   State<MainShell> createState() => _MainShellState();
 }
 
 class _MainShellState extends State<MainShell> {
-  int _index = 0;
+  var _index = MainShellTab.dashboard.index;
+
+  void _selectTab(MainShellTab tab) {
+    if (_index == tab.index) return;
+    setState(() => _index = tab.index);
+  }
 
   @override
   void initState() {
@@ -81,7 +97,7 @@ class _MainShellState extends State<MainShell> {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: _FxBottomBar(
         index: _index,
-        onChanged: (i) => setState(() => _index = i),
+        onChanged: (index) => _selectTab(MainShellTab.values[index]),
       ),
     );
   }
