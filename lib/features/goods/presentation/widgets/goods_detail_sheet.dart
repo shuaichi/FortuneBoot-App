@@ -18,7 +18,7 @@ class GoodsDetailSheet extends StatelessWidget {
     final palette = FxPalette.of(context);
     final finance = FxFinanceColors.of(context);
     final profit = goods.profit;
-    return SingleChildScrollView(
+    return Padding(
       padding: const EdgeInsets.fromLTRB(
         FxSpacing.lg,
         0,

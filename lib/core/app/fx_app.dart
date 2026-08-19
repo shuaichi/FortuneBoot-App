@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -66,11 +68,11 @@ class _FxAppViewState extends State<_FxAppView> with WidgetsBindingObserver {
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
-      context.read<AppLockCubit>().onAppResumed();
+      unawaited(context.read<AppLockCubit>().onAppResumed());
     } else if (state == AppLifecycleState.inactive ||
         state == AppLifecycleState.paused ||
         state == AppLifecycleState.detached) {
-      context.read<AppLockCubit>().lockNow();
+      unawaited(context.read<AppLockCubit>().onAppBecameInactive());
     }
   }
 

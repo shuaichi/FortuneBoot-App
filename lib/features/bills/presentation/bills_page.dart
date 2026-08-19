@@ -8,11 +8,11 @@ import 'package:fortuneboot/core/session/bill_mutations.dart';
 import 'package:fortuneboot/core/session/session_cubit.dart';
 import 'package:fortuneboot/core/time/month_window_resolver.dart';
 import 'package:fortuneboot/features/bills/presentation/bloc/bills_bloc.dart';
-import 'package:fortuneboot/features/bills/presentation/widgets/bill_detail_sheet.dart';
 import 'package:fortuneboot/features/bills/presentation/widgets/bill_tile.dart';
 import 'package:fortuneboot/features/bills/presentation/widgets/bills_filter_sheet.dart';
 import 'package:fortuneboot/features/shared/data/bill_models.dart';
 import 'package:fortuneboot/features/shared/data/bill_service.dart';
+import 'package:fortuneboot/features/shared/presentation/bills/bill_detail_flow.dart';
 import 'package:fortuneboot/fx/components/fx_money_text.dart';
 import 'package:fortuneboot/fx/components/fx_sheet.dart';
 import 'package:fortuneboot/fx/components/fx_state_view.dart';
@@ -136,8 +136,11 @@ class _BillsPageState extends State<BillsPage> {
 
   /// 当前已加载账单归属的账期锚点（降序，最新在前）。
   List<DateTime> _presentAnchors() {
-    final monthStartDay =
-        context.read<PreferencesCubit>().state.billing.monthStartDay;
+    final monthStartDay = context
+        .read<PreferencesCubit>()
+        .state
+        .billing
+        .monthStartDay;
     return _bloc.state
         .monthGroups(monthStartDay)
         .map((g) => g.window.anchorMonth)
@@ -172,8 +175,7 @@ class _BillsPageState extends State<BillsPage> {
     try {
       await _bloc.stream
           .firstWhere(
-            (s) =>
-                s.bills.length != before || (!s.hasMore && !s.isLoadingMore),
+            (s) => s.bills.length != before || (!s.hasMore && !s.isLoadingMore),
           )
           .timeout(const Duration(seconds: 6));
     } on Object {
@@ -201,7 +203,6 @@ class _BillsPageState extends State<BillsPage> {
     if (mounted) _visibleAnchor.value = _normalizeAnchor(anchor);
   }
 
-
   BillsBloc get _bloc => context.read<BillsBloc>();
 
   Future<void> _refresh() async {
@@ -223,27 +224,10 @@ class _BillsPageState extends State<BillsPage> {
   }
 
   void _openDetail(FortuneBillVo bill) {
-    FxSheet.show<void>(
+    BillDetailFlow(service: _service).show(
       context,
-      expand: true,
-      child: BillDetailSheet(
-        bill: bill,
-        service: _service,
-        onEdit: () {
-          Navigator.of(context).pop();
-          _goEdit(bill);
-        },
-        onDelete: () {
-          Navigator.of(context).pop();
-          _confirmDelete(bill);
-        },
-        onConfirmToggle: (confirm) {
-          Navigator.of(context).pop();
-          if (bill.billId != null) {
-            _bloc.add(BillsConfirmToggled(bill.billId!, confirm: confirm));
-          }
-        },
-      ),
+      bookId: context.read<SessionCubit>().state.currentBookId,
+      bill: bill,
     );
   }
 
@@ -265,9 +249,11 @@ class _BillsPageState extends State<BillsPage> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Text(
-                  S.of(context).billsDeleteConfirm(
-                    bill.title ?? bill.primaryCategoryName,
-                  ),
+                  S
+                      .of(context)
+                      .billsDeleteConfirm(
+                        bill.title ?? bill.primaryCategoryName,
+                      ),
                   style: FxTypography.body,
                 ),
                 const SizedBox(height: FxSpacing.xl),
@@ -338,17 +324,6 @@ class _BillsPageState extends State<BillsPage> {
     });
   }
 
-  /// 编辑：跳 BillEditor，传完整 VO 预填（后端无单账单查询端点，用列表已持有的 VO）。
-  void _goEdit(FortuneBillVo bill) {
-    AppRouter.push<void>(
-      context,
-      Routes.billEditor,
-      args: {'mode': 'edit', 'billId': bill.billId, 'bill': bill},
-    ).then((_) {
-      if (mounted) _bloc.add(const BillsRefreshed());
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     final palette = FxPalette.of(context);
@@ -406,10 +381,7 @@ class _BillsPageState extends State<BillsPage> {
         .state
         .billing
         .monthStartDay;
-    final window = MonthWindowResolver.resolveForAnchor(
-      anchor,
-      monthStartDay,
-    );
+    final window = MonthWindowResolver.resolveForAnchor(anchor, monthStartDay);
     final rangeLabel =
         '${_rangeFormat.format(window.start)} - '
         '${_rangeFormat.format(window.end)}';
@@ -431,7 +403,9 @@ class _BillsPageState extends State<BillsPage> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    S.of(context).billsBillingCycle(_monthFormat.format(anchor)),
+                    S
+                        .of(context)
+                        .billsBillingCycle(_monthFormat.format(anchor)),
                     style: FxTypography.title,
                   ),
                   const SizedBox(height: 2),
@@ -542,7 +516,11 @@ class _BillsPageState extends State<BillsPage> {
       ),
       child: Row(
         children: [
-          _summaryItem(S.of(context).billsExpense, stats.expense, finance.expense),
+          _summaryItem(
+            S.of(context).billsExpense,
+            stats.expense,
+            finance.expense,
+          ),
           _divider(),
           _summaryItem(S.of(context).billsIncome, stats.income, finance.income),
           _divider(),
@@ -707,9 +685,11 @@ class _BillsPageState extends State<BillsPage> {
             Row(
               children: [
                 Text(
-                  S.of(context).billsBillingCycle(
-                    _monthFormat.format(group.window.anchorMonth),
-                  ),
+                  S
+                      .of(context)
+                      .billsBillingCycle(
+                        _monthFormat.format(group.window.anchorMonth),
+                      ),
                   style: FxTypography.label.copyWith(
                     color: FxPalette.of(context).textSecondary,
                   ),

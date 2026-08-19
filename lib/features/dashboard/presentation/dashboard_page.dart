@@ -11,6 +11,7 @@ import 'package:fortuneboot/features/dashboard/presentation/widgets/net_worth_ca
 import 'package:fortuneboot/features/dashboard/presentation/widgets/quick_add_card.dart';
 import 'package:fortuneboot/features/dashboard/presentation/widgets/recent_bills_card.dart';
 import 'package:fortuneboot/features/dashboard/presentation/widgets/trend_card.dart';
+import 'package:fortuneboot/features/shared/presentation/bills/bill_detail_flow.dart';
 import 'package:fortuneboot/fx/components/fx_state_view.dart';
 import 'package:fortuneboot/fx/layout/fx_bento_grid.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
@@ -175,6 +176,11 @@ class _Body extends StatelessWidget {
               section: state.recentBills,
               currencyCode: currency,
               onRetry: retry,
+              onBillTap: (bill) => BillDetailFlow().show(
+                context,
+                bookId: context.read<SessionCubit>().state.currentBookId,
+                bill: bill,
+              ),
             ),
           ),
         );

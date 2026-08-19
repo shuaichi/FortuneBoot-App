@@ -357,9 +357,12 @@ class _PeriodGrid extends StatelessWidget {
         ? List.generate(12, (index) => DateTime(anchor.year, index + 1))
         : List.generate(5, (index) => DateTime(anchor.year - 4 + index));
     final textScale = MediaQuery.textScalerOf(context).scale(1);
+    // 年度视图一排 4 个月(12 ÷ 4 = 3 排),与历史视图 3 排的纵向节奏对齐,
+    // 一屏即可概览全年;历史视图保持 2 列不变。
+    final crossAxisCount = view == IncomeExpenseCalendarView.year ? 4 : 2;
     return GridView.builder(
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
+        crossAxisCount: crossAxisCount,
         mainAxisExtent: 96 * textScale,
         mainAxisSpacing: FxSpacing.sm,
         crossAxisSpacing: FxSpacing.sm,

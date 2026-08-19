@@ -21,18 +21,8 @@ import 'package:intl/intl.dart';
 class BillDetailSheet extends StatefulWidget {
   final FortuneBillVo bill;
   final BillService service;
-  final VoidCallback onEdit;
-  final VoidCallback onDelete;
-  final ValueChanged<bool> onConfirmToggle;
 
-  const BillDetailSheet({
-    super.key,
-    required this.bill,
-    required this.service,
-    required this.onEdit,
-    required this.onDelete,
-    required this.onConfirmToggle,
-  });
+  const BillDetailSheet({super.key, required this.bill, required this.service});
 
   static final DateFormat _dateTimeFormat = DateFormat('M月d日 HH:mm');
 
@@ -81,7 +71,7 @@ class _BillDetailSheetState extends State<BillDetailSheet> {
   @override
   Widget build(BuildContext context) {
     final palette = FxPalette.of(context);
-    return SingleChildScrollView(
+    return Padding(
       padding: const EdgeInsets.only(
         left: FxSpacing.lg,
         right: FxSpacing.lg,
@@ -96,7 +86,6 @@ class _BillDetailSheetState extends State<BillDetailSheet> {
           const SizedBox(height: FxSpacing.md),
           ..._infoRows(context),
           const SizedBox(height: FxSpacing.lg),
-          _actions(context),
         ],
       ),
     );
@@ -176,8 +165,18 @@ class _BillDetailSheetState extends State<BillDetailSheet> {
 
     // 转账双账户
     if (_isTransfer) {
-      rows.add(_kv(S.of(context).billsTransferOutAccount, value: _bill.accountName ?? '-'));
-      rows.add(_kv(S.of(context).billsTransferInAccount, value: _bill.toAccountName ?? '-'));
+      rows.add(
+        _kv(
+          S.of(context).billsTransferOutAccount,
+          value: _bill.accountName ?? '-',
+        ),
+      );
+      rows.add(
+        _kv(
+          S.of(context).billsTransferInAccount,
+          value: _bill.toAccountName ?? '-',
+        ),
+      );
       if (_bill.convertedAmount != null) {
         rows.add(
           _kv(
@@ -262,9 +261,7 @@ class _BillDetailSheetState extends State<BillDetailSheet> {
       2 => S.of(context).billsSideIn,
       _ => null,
     };
-    return side == null
-        ? type
-        : S.of(context).billsExtraWithSide(type, side);
+    return side == null ? type : S.of(context).billsExtraWithSide(type, side);
   }
 
   Widget _sectionLabel(String text) => Padding(
@@ -402,39 +399,90 @@ class _BillDetailSheetState extends State<BillDetailSheet> {
       ),
     );
   }
+}
 
-  Widget _actions(BuildContext context) {
-    return Row(
-      children: [
-        Expanded(
-          child: FxButton.tonal(
-            label: S.of(context).billsEdit,
-            icon: Icons.edit_rounded,
-            onPressed: widget.onEdit,
-          ),
+class BillDetailActions extends StatelessWidget {
+  const BillDetailActions({
+    super.key,
+    required this.bill,
+    required this.onEdit,
+    required this.onDelete,
+    required this.onConfirmToggle,
+  });
+
+  final FortuneBillVo bill;
+  final VoidCallback onEdit;
+  final VoidCallback onDelete;
+  final ValueChanged<bool> onConfirmToggle;
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = FxPalette.of(context);
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: palette.surface,
+        border: Border(top: BorderSide(color: palette.border)),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(
+          FxSpacing.md,
+          FxSpacing.md,
+          FxSpacing.md,
+          FxSpacing.lg,
         ),
-        const SizedBox(width: FxSpacing.sm),
-        Expanded(
-          child: FxButton(
-            label: _bill.confirm
-                ? S.of(context).billsUnconfirm
-                : S.of(context).confirm,
-            variant: FxButtonVariant.text,
-            icon: _bill.confirm
-                ? Icons.remove_done_rounded
-                : Icons.done_all_rounded,
-            onPressed: () => widget.onConfirmToggle(!_bill.confirm),
-          ),
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final useCompactActions = constraints.maxWidth < 400;
+            final confirmButton = FxButton(
+              label: bill.confirm
+                  ? S.of(context).billsUnconfirm
+                  : S.of(context).confirm,
+              variant: FxButtonVariant.text,
+              icon: useCompactActions
+                  ? null
+                  : (bill.confirm
+                        ? Icons.remove_done_rounded
+                        : Icons.done_all_rounded),
+              onPressed: () => onConfirmToggle(!bill.confirm),
+            );
+            final editButton = FxButton.tonal(
+              label: S.of(context).billsEdit,
+              icon: useCompactActions ? null : Icons.edit_rounded,
+              onPressed: onEdit,
+            );
+            final deleteButton = FxButton.critical(
+              label: S.of(context).billsDelete,
+              icon: useCompactActions ? null : Icons.delete_outline_rounded,
+              onPressed: onDelete,
+            );
+            if (useCompactActions) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Row(
+                    children: [
+                      Expanded(child: editButton),
+                      const SizedBox(width: FxSpacing.sm),
+                      Expanded(child: confirmButton),
+                    ],
+                  ),
+                  const SizedBox(height: FxSpacing.sm),
+                  deleteButton,
+                ],
+              );
+            }
+            return Row(
+              children: [
+                Expanded(child: editButton),
+                const SizedBox(width: FxSpacing.sm),
+                Expanded(child: confirmButton),
+                const SizedBox(width: FxSpacing.sm),
+                Expanded(child: deleteButton),
+              ],
+            );
+          },
         ),
-        const SizedBox(width: FxSpacing.sm),
-        Expanded(
-          child: FxButton.critical(
-            label: S.of(context).billsDelete,
-            icon: Icons.delete_outline_rounded,
-            onPressed: widget.onDelete,
-          ),
-        ),
-      ],
+      ),
     );
   }
 }

@@ -61,7 +61,9 @@ class _GoodsPageState extends State<GoodsPage> {
     await FxSheet.show<void>(
       context,
       title: goods.goodsName ?? S.of(context).goodsDetailTitle,
-      expand: true,
+      scrollable: true,
+      minHeightFactor: 0.4,
+      maxHeightFactor: 0.72,
       child: GoodsDetailSheet(goods: goods, currencyCode: _currency),
     );
   }

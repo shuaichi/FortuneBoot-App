@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fortuneboot/core/app_lock/app_lock_cubit.dart';
 import 'package:fortuneboot/core/app_lock/app_lock_models.dart';
+import 'package:fortuneboot/core/app_lock/pattern_path_resolver.dart';
+import 'package:fortuneboot/core/app_lock/presentation/pattern_lock_grid.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/generated/l10n.dart';
 
@@ -36,6 +38,7 @@ class _AppLockScreen extends StatefulWidget {
 
 class _AppLockScreenState extends State<_AppLockScreen> {
   final _controller = TextEditingController();
+  int _patternResetToken = 0;
 
   @override
   void dispose() {
@@ -78,29 +81,59 @@ class _AppLockScreenState extends State<_AppLockScreen> {
                   ),
                   if (state.status == AppLockStatus.locked) ...[
                     const SizedBox(height: 24),
-                    TextField(
-                      controller: _controller,
-                      autofocus: true,
-                      obscureText: true,
-                      enableSuggestions: false,
-                      autocorrect: false,
-                      keyboardType: isPin
-                          ? TextInputType.number
-                          : TextInputType.text,
-                      decoration: InputDecoration(
-                        errorText: _failureMessage(state.failure, s),
-                        hintText: isPin
-                            ? s.appLockPinHint
-                            : s.appLockPatternHint,
-                        border: const OutlineInputBorder(),
+                    if (isPin) ...[
+                      TextField(
+                        controller: _controller,
+                        autofocus: true,
+                        obscureText: true,
+                        enableSuggestions: false,
+                        autocorrect: false,
+                        keyboardType: TextInputType.number,
+                        decoration: InputDecoration(
+                          errorText: _failureMessage(state.failure, s),
+                          hintText: s.appLockPinHint,
+                          border: const OutlineInputBorder(),
+                        ),
+                        onSubmitted: (_) => _unlock(),
                       ),
-                      onSubmitted: (_) => _unlock(),
-                    ),
-                    const SizedBox(height: 12),
-                    FilledButton(
-                      onPressed: _unlock,
-                      child: Text(s.appLockUnlock),
-                    ),
+                      const SizedBox(height: 12),
+                      FilledButton(
+                        onPressed: _unlock,
+                        child: Text(s.appLockUnlock),
+                      ),
+                    ] else ...[
+                      Text(
+                        s.appLockDrawPattern,
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
+                      const SizedBox(height: 12),
+                      PatternLockGrid(
+                        key: const Key('app-lock-pattern-grid'),
+                        enabled: !state.isAuthenticating,
+                        error:
+                            state.failure == AppLockFailure.invalidCredential,
+                        resetToken: _patternResetToken,
+                        semanticLabel: s.appLockPatternAccessibilityLabel,
+                        minimumPointsMessage: s.appLockPatternMinimumPoints,
+                        progressSemanticLabel: s.appLockPatternProgress,
+                        nodeSemanticLabel: (row, column, selected) =>
+                            s.appLockPatternNodeAccessibility(
+                              row + 1,
+                              column + 1,
+                              selected
+                                  ? s.appLockPatternNodeSelected
+                                  : s.appLockPatternNodeUnselected,
+                            ),
+                        onCompleted: _unlockPattern,
+                      ),
+                      if (state.failure != null) ...[
+                        const SizedBox(height: 8),
+                        Text(
+                          _failureMessage(state.failure, s) ?? '',
+                          style: TextStyle(color: palette.danger),
+                        ),
+                      ],
+                    ],
                     if (state.settings?.biometricEnabled == true) ...[
                       const SizedBox(height: 8),
                       TextButton.icon(
@@ -141,5 +174,13 @@ class _AppLockScreenState extends State<_AppLockScreen> {
       _controller.text,
     );
     if (unlocked) _controller.clear();
+  }
+
+  Future<void> _unlockPattern(PatternPathResolution pattern) async {
+    final unlocked = await context.read<AppLockCubit>().unlockWithPattern(
+      pattern,
+    );
+    if (!mounted || unlocked) return;
+    setState(() => _patternResetToken++);
   }
 }

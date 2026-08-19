@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
@@ -12,6 +14,7 @@ class FxSheet extends StatelessWidget {
   final String? title;
   final Widget child;
   final List<Widget>? actions;
+  final Widget? footer;
 
   /// 内容是否自身滚动。true 时 child 会被约束在最大高度内并可滚动。
   final bool scrollable;
@@ -19,29 +22,37 @@ class FxSheet extends StatelessWidget {
   /// 最大高度占屏幕比例（scrollable 时生效）。
   final double maxHeightFactor;
 
+  /// 最小高度占屏幕比例（scrollable 时生效）。
+  final double minHeightFactor;
+
   const FxSheet({
     super.key,
     this.title,
     required this.child,
     this.actions,
+    this.footer,
     this.scrollable = false,
     this.maxHeightFactor = 0.7,
+    this.minHeightFactor = 0,
   });
 
   @override
   Widget build(BuildContext context) {
     final palette = FxPalette.of(context);
+    final usesAdaptiveHeight = scrollable && minHeightFactor > 0;
     Widget body = child;
     if (scrollable) {
-      body = ConstrainedBox(
-        constraints: BoxConstraints(
-          maxHeight: MediaQuery.of(context).size.height * maxHeightFactor,
-        ),
-        child: SingleChildScrollView(child: child),
-      );
+      body = usesAdaptiveHeight
+          ? SingleChildScrollView(child: child)
+          : ConstrainedBox(
+              constraints: BoxConstraints(
+                maxHeight: MediaQuery.of(context).size.height * maxHeightFactor,
+              ),
+              child: SingleChildScrollView(child: child),
+            );
     }
 
-    final content = Column(
+    final bodySection = Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -79,6 +90,19 @@ class FxSheet extends StatelessWidget {
         Flexible(child: body),
       ],
     );
+    final content = footer == null
+        ? bodySection
+        : Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: usesAdaptiveHeight
+                ? MainAxisAlignment.spaceBetween
+                : MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Flexible(child: bodySection),
+              footer!,
+            ],
+          );
 
     return SafeArea(
       top: false,
@@ -86,7 +110,27 @@ class FxSheet extends StatelessWidget {
         padding: EdgeInsets.only(
           bottom: MediaQuery.of(context).viewInsets.bottom,
         ),
-        child: content,
+        child: usesAdaptiveHeight
+            ? LayoutBuilder(
+                builder: (context, constraints) {
+                  final maxHeight = math.min(
+                    constraints.maxHeight,
+                    constraints.maxHeight * maxHeightFactor,
+                  );
+                  final minHeight = math.min(
+                    maxHeight,
+                    constraints.maxHeight * minHeightFactor,
+                  );
+                  return ConstrainedBox(
+                    constraints: BoxConstraints(
+                      minHeight: minHeight,
+                      maxHeight: maxHeight,
+                    ),
+                    child: content,
+                  );
+                },
+              )
+            : content,
       ),
     );
   }
@@ -97,10 +141,12 @@ class FxSheet extends StatelessWidget {
     String? title,
     required Widget child,
     List<Widget>? actions,
+    Widget? footer,
     bool isScrollControlled = true,
     bool expand = false,
     bool scrollable = false,
     double maxHeightFactor = 0.7,
+    double minHeightFactor = 0,
     double expandHeightFactor = 0.92,
   }) {
     final palette = FxPalette.of(context);
@@ -115,8 +161,10 @@ class FxSheet extends StatelessWidget {
         final sheet = FxSheet(
           title: title,
           actions: actions,
+          footer: footer,
           scrollable: scrollable,
           maxHeightFactor: maxHeightFactor,
+          minHeightFactor: minHeightFactor,
           child: child,
         );
         if (expand) {
