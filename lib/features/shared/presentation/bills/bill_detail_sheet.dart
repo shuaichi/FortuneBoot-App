@@ -405,12 +405,14 @@ class BillDetailActions extends StatelessWidget {
   const BillDetailActions({
     super.key,
     required this.bill,
+    required this.onCopy,
     required this.onEdit,
     required this.onDelete,
     required this.onConfirmToggle,
   });
 
   final FortuneBillVo bill;
+  final VoidCallback onCopy;
   final VoidCallback onEdit;
   final VoidCallback onDelete;
   final ValueChanged<bool> onConfirmToggle;
@@ -432,7 +434,7 @@ class BillDetailActions extends StatelessWidget {
         ),
         child: LayoutBuilder(
           builder: (context, constraints) {
-            final useCompactActions = constraints.maxWidth < 400;
+            final useCompactActions = constraints.maxWidth < 560;
             final confirmButton = FxButton(
               label: bill.confirm
                   ? S.of(context).billsUnconfirm
@@ -450,6 +452,11 @@ class BillDetailActions extends StatelessWidget {
               icon: useCompactActions ? null : Icons.edit_rounded,
               onPressed: onEdit,
             );
+            final copyButton = FxButton.tonal(
+              label: S.of(context).billsCopy,
+              icon: useCompactActions ? null : Icons.copy_rounded,
+              onPressed: onCopy,
+            );
             final deleteButton = FxButton.critical(
               label: S.of(context).billsDelete,
               icon: useCompactActions ? null : Icons.delete_outline_rounded,
@@ -463,17 +470,25 @@ class BillDetailActions extends StatelessWidget {
                     children: [
                       Expanded(child: editButton),
                       const SizedBox(width: FxSpacing.sm),
-                      Expanded(child: confirmButton),
+                      Expanded(child: copyButton),
                     ],
                   ),
                   const SizedBox(height: FxSpacing.sm),
-                  deleteButton,
+                  Row(
+                    children: [
+                      Expanded(child: confirmButton),
+                      const SizedBox(width: FxSpacing.sm),
+                      Expanded(child: deleteButton),
+                    ],
+                  ),
                 ],
               );
             }
             return Row(
               children: [
                 Expanded(child: editButton),
+                const SizedBox(width: FxSpacing.sm),
+                Expanded(child: copyButton),
                 const SizedBox(width: FxSpacing.sm),
                 Expanded(child: confirmButton),
                 const SizedBox(width: FxSpacing.sm),

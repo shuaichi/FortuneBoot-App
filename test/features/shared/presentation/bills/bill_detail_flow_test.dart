@@ -43,6 +43,7 @@ void main() {
     expect(find.byType(BillDetailSheet), findsOneWidget);
     expect(find.text('午餐'), findsOneWidget);
     expect(find.text('编辑'), findsOneWidget);
+    expect(find.text('复制'), findsOneWidget);
     expect(find.text('删除'), findsOneWidget);
 
     final sheetHeight = tester.getSize(find.byType(FxSheet)).height;
@@ -54,6 +55,80 @@ void main() {
       tester.getBottomLeft(find.byType(BillDetailActions)).dy,
       closeTo(tester.getBottomLeft(find.byType(FxSheet)).dy, 1),
     );
+  });
+
+  testWidgets('invokes only the copy callback when copy is tapped', (
+    tester,
+  ) async {
+    var copyCount = 0;
+    var editCount = 0;
+    var deleteCount = 0;
+    var confirmCount = 0;
+
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: FxTheme.light,
+        locale: const Locale('zh'),
+        localizationsDelegates: const [
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+          S.delegate,
+        ],
+        supportedLocales: S.delegate.supportedLocales,
+        home: Scaffold(
+          body: BillDetailActions(
+            bill: const FortuneBillVo(billType: 1),
+            onCopy: () => copyCount += 1,
+            onEdit: () => editCount += 1,
+            onDelete: () => deleteCount += 1,
+            onConfirmToggle: (_) => confirmCount += 1,
+          ),
+        ),
+      ),
+    );
+
+    await tester.tap(find.text('复制'));
+
+    expect(copyCount, 1);
+    expect(editCount, 0);
+    expect(deleteCount, 0);
+    expect(confirmCount, 0);
+  });
+
+  testWidgets('uses compact actions at 414 pixels without overflow', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(414, 896);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: FxTheme.light,
+        locale: const Locale('zh'),
+        localizationsDelegates: const [
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+          S.delegate,
+        ],
+        supportedLocales: S.delegate.supportedLocales,
+        home: Scaffold(
+          body: BillDetailActions(
+            bill: const FortuneBillVo(billType: 1),
+            onCopy: () {},
+            onEdit: () {},
+            onDelete: () {},
+            onConfirmToggle: (_) {},
+          ),
+        ),
+      ),
+    );
+
+    expect(find.text('复制'), findsOneWidget);
+    expect(tester.takeException(), isNull);
   });
 
   testWidgets('keeps bill detail actions fixed on a small viewport', (
@@ -77,7 +152,9 @@ void main() {
     await tester.pumpAndSettle();
 
     final editButton = find.text('编辑');
+    final copyButton = find.text('复制');
     final editTop = tester.getTopLeft(editButton).dy;
+    final copyTop = tester.getTopLeft(copyButton).dy;
     final sheetHeight = tester.getSize(find.byType(FxSheet)).height;
 
     expect(tester.takeException(), isNull);
@@ -91,6 +168,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(tester.getTopLeft(editButton).dy, editTop);
+    expect(tester.getTopLeft(copyButton).dy, copyTop);
     expect(tester.takeException(), isNull);
   });
 }

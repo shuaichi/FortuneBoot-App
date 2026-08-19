@@ -154,7 +154,9 @@ class BillEditorBloc extends Bloc<BillEditorEvent, BillEditorState> {
         toAccountName: source.toAccountName,
         payeeId: source.payeeId,
         payeeName: source.payeeName,
-        tradeTime: source.tradeTime ?? DateTime.now(),
+        tradeTime: args.isCopy
+            ? DateTime.now()
+            : (source.tradeTime ?? DateTime.now()),
         tagIds: source.tagList.map((t) => t.tagId).whereType<int>().toList(),
         tagNames: source.tagList
             .map((t) => t.tagName ?? '')

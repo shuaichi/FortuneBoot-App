@@ -31,6 +31,7 @@ class BillDetailFlow {
       child: BillDetailSheet(bill: bill, service: _service),
       footer: BillDetailActions(
         bill: bill,
+        onCopy: () => _copy(context, bill),
         onEdit: () => _edit(context, bill),
         onDelete: () => _delete(context, bookId: bookId, bill: bill),
         onConfirmToggle: (confirm) => _toggleConfirm(
@@ -40,6 +41,15 @@ class BillDetailFlow {
           confirm: confirm,
         ),
       ),
+    );
+  }
+
+  void _copy(BuildContext context, FortuneBillVo bill) {
+    Navigator.of(context).pop();
+    AppRouter.push<void>(
+      context,
+      Routes.billEditor,
+      args: {'mode': 'copy', 'bill': bill},
     );
   }
 
