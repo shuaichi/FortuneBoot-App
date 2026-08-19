@@ -1,4 +1,6 @@
+import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:fortuneboot/core/errors/fx_failure.dart';
 import 'package:fortuneboot/core/session/session_cubit.dart';
 import 'package:fortuneboot/core/session/session_models.dart';
 import 'package:fortuneboot/login/model/login_model.dart';
@@ -133,6 +135,31 @@ void main() {
       },
     );
 
+    test('maps a timeout to a safe failure without raw details', () async {
+      final groups = _FakeGroupService(
+        enabledGroups: [_group(id: 1)],
+        defaultGroupId: 1,
+        groupDetailException: DioException(
+          requestOptions: RequestOptions(
+            path: 'https://example.test/token=secret',
+          ),
+          type: DioExceptionType.receiveTimeout,
+          message: 'token=secret',
+        ),
+      );
+      final cubit = SessionCubit(
+        groupService: groups,
+        bookService: const _FakeBookService({}),
+      );
+      addTearDown(cubit.close);
+
+      await cubit.load();
+
+      expect(cubit.state.status, SessionStatus.error);
+      expect(cubit.state.failure?.kind, FxFailureKind.timeout);
+      expect(cubit.state.errorMessage, isNull);
+    });
+
     test('emits error when group detail cannot be loaded', () async {
       final groups = _FakeGroupService(
         enabledGroups: [_group(id: 1)],
@@ -194,6 +221,7 @@ class _FakeGroupService implements GroupService {
     this.groupDetails = const {},
     this.defaultGroupError = false,
     this.groupDetailError = false,
+    this.groupDetailException,
   });
 
   final List<Map<String, dynamic>> enabledGroups;
@@ -201,6 +229,7 @@ class _FakeGroupService implements GroupService {
   final Map<int, Map<String, dynamic>> groupDetails;
   final bool defaultGroupError;
   bool groupDetailError;
+  final Object? groupDetailException;
   final requestedGroupIds = <int>[];
 
   @override
@@ -216,6 +245,7 @@ class _FakeGroupService implements GroupService {
   @override
   Future<HJResponse> getByGroupId(int groupId) async {
     requestedGroupIds.add(groupId);
+    if (groupDetailException case final exception?) throw exception;
     if (groupDetailError) throw StateError('group detail failed');
     return HJResponse(0, 'ok', groupDetails[groupId]);
   }

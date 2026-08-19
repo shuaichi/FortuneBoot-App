@@ -74,13 +74,21 @@ class FxListItem extends StatelessWidget {
     );
 
     if (onTap == null) return row;
-    return InkWell(
-      borderRadius: FxRadius.tileBorder,
-      onTap: () {
-        HapticFeedback.selectionClick();
-        onTap!();
-      },
-      child: row,
+    return Semantics(
+      button: true,
+      enabled: true,
+      label: subtitle == null ? title : '$title, $subtitle',
+      child: InkWell(
+        borderRadius: FxRadius.tileBorder,
+        onTap: () {
+          HapticFeedback.selectionClick();
+          onTap!();
+        },
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(minHeight: 48),
+          child: row,
+        ),
+      ),
     );
   }
 }

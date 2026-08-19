@@ -22,6 +22,10 @@ abstract final class FxMotion {
   static const Duration fast = Duration(milliseconds: 150);
   static const Duration normal = Duration(milliseconds: 250);
   static const Duration slow = Duration(milliseconds: 400);
+  static const Duration page = Duration(milliseconds: 250);
+
+  static Duration resolve(BuildContext context, Duration duration) =>
+      MediaQuery.disableAnimationsOf(context) ? Duration.zero : duration;
 
   static const Curve easeOut = Cubic(0.16, 1, 0.3, 1);
   static const Curve standard = Curves.easeOutCubic;

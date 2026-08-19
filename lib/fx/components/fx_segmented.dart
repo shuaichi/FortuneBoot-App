@@ -38,7 +38,7 @@ class FxSegmented<T> extends StatelessWidget {
           child: Stack(
             children: [
               AnimatedPositioned(
-                duration: const Duration(milliseconds: 220),
+                duration: FxMotion.resolve(context, FxMotion.normal),
                 curve: Curves.easeOutCubic,
                 left: (index < 0 ? 0 : index) * segWidth + 3,
                 top: 3,
@@ -62,26 +62,33 @@ class FxSegmented<T> extends StatelessWidget {
                 children: segments.map((s) {
                   final selected = s.value == value;
                   return Expanded(
-                    child: GestureDetector(
-                      behavior: HitTestBehavior.opaque,
-                      onTap: () {
-                        if (!selected) {
-                          HapticFeedback.selectionClick();
-                          onChanged(s.value);
-                        }
-                      },
-                      child: Center(
-                        child: Text(
-                          s.label,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: FxTypography.label.copyWith(
-                            color: selected
-                                ? palette.textPrimary
-                                : palette.textSecondary,
-                            fontWeight: selected
-                                ? FontWeight.w600
-                                : FontWeight.w500,
+                    child: Semantics(
+                      inMutuallyExclusiveGroup: true,
+                      selected: selected,
+                      label: s.label,
+                      child: Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          onTap: () {
+                            if (!selected) {
+                              HapticFeedback.selectionClick();
+                              onChanged(s.value);
+                            }
+                          },
+                          child: Center(
+                            child: Text(
+                              s.label,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: FxTypography.label.copyWith(
+                                color: selected
+                                    ? palette.textPrimary
+                                    : palette.textSecondary,
+                                fontWeight: selected
+                                    ? FontWeight.w600
+                                    : FontWeight.w500,
+                              ),
+                            ),
                           ),
                         ),
                       ),

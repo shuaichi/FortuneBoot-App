@@ -56,7 +56,7 @@ class _FxCardState extends State<FxCard> {
 
     final card = AnimatedScale(
       scale: _pressed ? 0.97 : 1.0,
-      duration: const Duration(milliseconds: 120),
+      duration: FxMotion.resolve(context, FxMotion.fast),
       child: Container(
         padding: widget.padding,
         decoration: BoxDecoration(
@@ -76,15 +76,22 @@ class _FxCardState extends State<FxCard> {
 
     if (widget.onTap == null) return card;
 
-    return GestureDetector(
-      onTapDown: (_) => setState(() => _pressed = true),
-      onTapUp: (_) => setState(() => _pressed = false),
-      onTapCancel: () => setState(() => _pressed = false),
-      onTap: () {
-        HapticFeedback.selectionClick();
-        widget.onTap!();
-      },
-      child: card,
+    return Semantics(
+      button: true,
+      enabled: true,
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: borderRadius,
+        child: InkWell(
+          borderRadius: borderRadius,
+          onHighlightChanged: (pressed) => setState(() => _pressed = pressed),
+          onTap: () {
+            HapticFeedback.selectionClick();
+            widget.onTap!();
+          },
+          child: card,
+        ),
+      ),
     );
   }
 }

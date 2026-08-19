@@ -11,28 +11,56 @@ class FxStateView extends StatelessWidget {
     this.message,
     this.onRetry,
     this.icon,
+    this.compact = false,
+    this.loadingLabel,
+    this.retryLabel,
   });
 
   final _Kind kind;
   final String? message;
   final VoidCallback? onRetry;
   final IconData? icon;
+  final bool compact;
+  final String? loadingLabel;
+  final String? retryLabel;
 
-  factory FxStateView.loading({String? message}) =>
-      FxStateView._(kind: _Kind.loading, message: message);
+  factory FxStateView.loading({
+    String? message,
+    bool compact = false,
+    String? loadingLabel,
+  }) => FxStateView._(
+    kind: _Kind.loading,
+    message: message,
+    compact: compact,
+    loadingLabel: loadingLabel,
+  );
 
-  factory FxStateView.error({String? message, VoidCallback? onRetry}) =>
-      FxStateView._(kind: _Kind.error, message: message, onRetry: onRetry);
+  factory FxStateView.error({
+    String? message,
+    VoidCallback? onRetry,
+    String? retryLabel,
+    bool compact = false,
+  }) => FxStateView._(
+    kind: _Kind.error,
+    message: message,
+    onRetry: onRetry,
+    retryLabel: retryLabel,
+    compact: compact,
+  );
 
   factory FxStateView.empty({
     String? message,
     IconData? icon,
     VoidCallback? onRetry,
+    String? retryLabel,
+    bool compact = false,
   }) => FxStateView._(
     kind: _Kind.empty,
     message: message,
     icon: icon,
     onRetry: onRetry,
+    retryLabel: retryLabel,
+    compact: compact,
   );
 
   @override
@@ -40,27 +68,40 @@ class FxStateView extends StatelessWidget {
     final palette = FxPalette.of(context);
     switch (kind) {
       case _Kind.loading:
-        return const Center(
-          child: Padding(
-            padding: EdgeInsets.all(FxSpacing.xxxl),
-            child: CircularProgressIndicator(strokeWidth: 2.5),
+        return Semantics(
+          liveRegion: true,
+          label: loadingLabel ?? message,
+          child: Center(
+            child: Padding(
+              padding: EdgeInsets.all(compact ? FxSpacing.md : FxSpacing.xxxl),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const CircularProgressIndicator(strokeWidth: 2.5),
+                  if (message != null) ...[
+                    const SizedBox(height: FxSpacing.sm),
+                    Text(message!),
+                  ],
+                ],
+              ),
+            ),
           ),
         );
       case _Kind.error:
         return _message(
           context,
           icon ?? Icons.error_outline_rounded,
-          message ?? '加载失败',
+          message ?? '',
           palette.danger,
-          retryLabel: '重试',
+          retryLabel: retryLabel,
         );
       case _Kind.empty:
         return _message(
           context,
           icon ?? Icons.inbox_rounded,
-          message ?? '暂无数据',
+          message ?? '',
           palette.textTertiary,
-          retryLabel: onRetry != null ? '刷新' : null,
+          retryLabel: onRetry != null ? retryLabel : null,
         );
     }
   }

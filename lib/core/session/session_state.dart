@@ -9,6 +9,7 @@ class SessionState extends Equatable {
   final List<FortuneBookVo> books;
   final FortuneBookVo? currentBook;
   final String? errorMessage;
+  final FxFailure? failure;
 
   const SessionState({
     this.status = SessionStatus.initial,
@@ -17,6 +18,7 @@ class SessionState extends Equatable {
     this.books = const [],
     this.currentBook,
     this.errorMessage,
+    this.failure,
   });
 
   int? get currentGroupId => currentGroup?.groupId;
@@ -31,6 +33,7 @@ class SessionState extends Equatable {
     List<FortuneBookVo>? books,
     FortuneBookVo? currentBook,
     String? errorMessage,
+    FxFailure? failure,
   }) {
     return SessionState(
       status: status ?? this.status,
@@ -39,6 +42,7 @@ class SessionState extends Equatable {
       books: books ?? this.books,
       currentBook: currentBook ?? this.currentBook,
       errorMessage: errorMessage,
+      failure: failure,
     );
   }
 
@@ -50,5 +54,6 @@ class SessionState extends Equatable {
     books,
     currentBook,
     errorMessage,
+    failure,
   ];
 }

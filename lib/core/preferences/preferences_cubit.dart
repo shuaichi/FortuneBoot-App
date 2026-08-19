@@ -1,6 +1,8 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fortuneboot/core/errors/fx_failure.dart';
+import 'package:fortuneboot/core/errors/fx_failure_mapper.dart';
 import 'package:fortuneboot/core/preferences/billing_preferences.dart';
 import 'package:fortuneboot/core/preferences/dashboard_display_preferences.dart';
 import 'package:fortuneboot/core/preferences/finance_color_preferences.dart';
@@ -19,6 +21,7 @@ class PreferencesState extends Equatable {
   final ScreenCapturePreferences screenCapture;
   final bool isLoading;
   final String? errorMessage;
+  final FxFailure? failure;
 
   const PreferencesState({
     this.billing = const BillingPreferences(),
@@ -29,6 +32,7 @@ class PreferencesState extends Equatable {
     this.screenCapture = const ScreenCapturePreferences(),
     this.isLoading = false,
     this.errorMessage,
+    this.failure,
   });
 
   PreferencesState copyWith({
@@ -40,6 +44,7 @@ class PreferencesState extends Equatable {
     ScreenCapturePreferences? screenCapture,
     bool? isLoading,
     String? errorMessage,
+    FxFailure? failure,
   }) {
     return PreferencesState(
       billing: billing ?? this.billing,
@@ -50,6 +55,7 @@ class PreferencesState extends Equatable {
       screenCapture: screenCapture ?? this.screenCapture,
       isLoading: isLoading ?? this.isLoading,
       errorMessage: errorMessage,
+      failure: failure,
     );
   }
 
@@ -63,6 +69,7 @@ class PreferencesState extends Equatable {
     screenCapture,
     isLoading,
     errorMessage,
+    failure,
   ];
 }
 
@@ -158,12 +165,20 @@ class PreferencesCubit extends Cubit<PreferencesState> {
             reimburse: prefs.getInt(_colorReimburseKey) ?? defaults.reimburse,
           ),
           screenCapture: screenCapture,
-          errorMessage: applied ? null : '屏幕保护设置未生效，请重试',
+          failure: applied
+              ? null
+              : const FxFailure(kind: FxFailureKind.persistence),
         ),
       );
-    } on Object catch (e) {
+    } on Object catch (error) {
       if (operationVersion != _screenCaptureOperationVersion) return;
-      emit(state.copyWith(isLoading: false, errorMessage: e.toString()));
+      emit(
+        state.copyWith(
+          isLoading: false,
+          errorMessage: null,
+          failure: FxFailureMapper.map(error),
+        ),
+      );
     }
   }
 
@@ -175,7 +190,6 @@ class PreferencesCubit extends Cubit<PreferencesState> {
       apply: () => state.copyWith(
         billing: state.billing.copyWith(monthStartDay: normalized),
       ),
-      failMessage: '账单月开始日保存失败',
     );
   }
 
@@ -185,7 +199,6 @@ class PreferencesCubit extends Cubit<PreferencesState> {
       save: (prefs) =>
           prefs.setString(_themeModeKey, ThemePreferences.modeToStorage(mode)),
       apply: () => state.copyWith(theme: state.theme.copyWith(mode: mode)),
-      failMessage: '主题保存失败',
     );
   }
 
@@ -196,7 +209,6 @@ class PreferencesCubit extends Cubit<PreferencesState> {
       save: (prefs) => prefs.setString(_localeCodeKey, normalized),
       apply: () =>
           state.copyWith(locale: state.locale.copyWith(code: normalized)),
-      failMessage: '语言保存失败',
     );
   }
 
@@ -207,7 +219,6 @@ class PreferencesCubit extends Cubit<PreferencesState> {
       apply: () => state.copyWith(
         dashboard: state.dashboard.copyWith(hideAmounts: hide),
       ),
-      failMessage: '金额显示设置保存失败',
     );
   }
 
@@ -223,7 +234,13 @@ class PreferencesCubit extends Cubit<PreferencesState> {
     if (operationVersion != _screenCaptureOperationVersion) return false;
     if (!applied) {
       _screenCaptureRequestedAllowed = state.screenCapture.allowScreenCapture;
-      emit(state.copyWith(isLoading: false, errorMessage: '屏幕保护设置未生效，请重试'));
+      emit(
+        state.copyWith(
+          isLoading: false,
+          errorMessage: null,
+          failure: const FxFailure(kind: FxFailureKind.persistence),
+        ),
+      );
       return false;
     }
 
@@ -257,7 +274,8 @@ class PreferencesCubit extends Cubit<PreferencesState> {
               allowScreenCapture: true,
             ),
             isLoading: false,
-            errorMessage: '屏幕保护设置未生效，请重试',
+            errorMessage: null,
+            failure: const FxFailure(kind: FxFailureKind.persistence),
           ),
         );
         return false;
@@ -269,7 +287,8 @@ class PreferencesCubit extends Cubit<PreferencesState> {
       state.copyWith(
         screenCapture: state.screenCapture.copyWith(allowScreenCapture: false),
         isLoading: false,
-        errorMessage: '屏幕保护设置未生效，请重试',
+        errorMessage: null,
+        failure: const FxFailure(kind: FxFailureKind.persistence),
       ),
     );
     return false;
@@ -288,13 +307,20 @@ class PreferencesCubit extends Cubit<PreferencesState> {
         prefs.setInt(_colorReimburseKey, colors.reimburse),
       ]);
       if (results.any((ok) => !ok)) {
-        emit(state.copyWith(errorMessage: '账单颜色保存失败'));
+        emit(
+          state.copyWith(
+            errorMessage: null,
+            failure: const FxFailure(kind: FxFailureKind.persistence),
+          ),
+        );
         return false;
       }
       emit(state.copyWith(financeColors: colors));
       return true;
-    } on Object catch (e) {
-      emit(state.copyWith(errorMessage: e.toString()));
+    } on Object catch (error) {
+      emit(
+        state.copyWith(errorMessage: null, failure: FxFailureMapper.map(error)),
+      );
       return false;
     }
   }
@@ -305,19 +331,25 @@ class PreferencesCubit extends Cubit<PreferencesState> {
   Future<bool> _guardSave({
     required Future<bool> Function(SharedPreferences prefs) save,
     required PreferencesState Function() apply,
-    required String failMessage,
   }) async {
     try {
       final prefs = await _prefs;
       final saved = await save(prefs);
       if (!saved) {
-        emit(state.copyWith(errorMessage: failMessage));
+        emit(
+          state.copyWith(
+            errorMessage: null,
+            failure: const FxFailure(kind: FxFailureKind.persistence),
+          ),
+        );
         return false;
       }
       emit(apply());
       return true;
-    } on Object catch (e) {
-      emit(state.copyWith(errorMessage: e.toString()));
+    } on Object catch (error) {
+      emit(
+        state.copyWith(errorMessage: null, failure: FxFailureMapper.map(error)),
+      );
       return false;
     }
   }

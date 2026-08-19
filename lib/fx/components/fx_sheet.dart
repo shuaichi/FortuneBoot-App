@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:fortuneboot/fx/components/fx_icon_button.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
@@ -15,6 +16,8 @@ class FxSheet extends StatelessWidget {
   final Widget child;
   final List<Widget>? actions;
   final Widget? footer;
+  final String? closeTooltip;
+  final String? dragHandleLabel;
 
   /// 内容是否自身滚动。true 时 child 会被约束在最大高度内并可滚动。
   final bool scrollable;
@@ -31,6 +34,8 @@ class FxSheet extends StatelessWidget {
     required this.child,
     this.actions,
     this.footer,
+    this.closeTooltip,
+    this.dragHandleLabel,
     this.scrollable = false,
     this.maxHeightFactor = 0.7,
     this.minHeightFactor = 0,
@@ -57,13 +62,19 @@ class FxSheet extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         const SizedBox(height: FxSpacing.sm),
-        Center(
-          child: Container(
-            width: 36,
-            height: 4,
-            decoration: BoxDecoration(
-              color: palette.border,
-              borderRadius: BorderRadius.circular(2),
+        Semantics(
+          label: dragHandleLabel,
+          child: ExcludeSemantics(
+            excluding: dragHandleLabel == null,
+            child: Center(
+              child: Container(
+                width: 36,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: palette.border,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
             ),
           ),
         ),
@@ -80,8 +91,18 @@ class FxSheet extends StatelessWidget {
                     color: palette.textPrimary,
                   ),
                 ),
-                if (actions != null)
-                  Row(mainAxisSize: MainAxisSize.min, children: actions!),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (actions != null) ...actions!,
+                    if (closeTooltip != null)
+                      FxIconButton(
+                        icon: Icons.close_rounded,
+                        tooltip: closeTooltip!,
+                        onPressed: () => Navigator.of(context).maybePop(),
+                      ),
+                  ],
+                ),
               ],
             ),
           ),

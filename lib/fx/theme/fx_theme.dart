@@ -272,11 +272,37 @@ abstract final class FxTheme {
     required FxFinanceColors financeColors,
   }) {
     final base = ThemeData(brightness: brightness, useMaterial3: true);
-    final colorScheme = ColorScheme.fromSeed(
-      seedColor: palette.primary,
-      primary: palette.primary,
+    final colorScheme = ColorScheme(
       brightness: brightness,
-    ).copyWith(surface: palette.surface, onSurface: palette.textPrimary);
+      primary: palette.primary,
+      onPrimary: palette.onPrimary,
+      primaryContainer: palette.primaryContainer,
+      onPrimaryContainer: palette.textPrimary,
+      secondary: palette.info,
+      onSecondary: palette.onPrimary,
+      secondaryContainer: palette.surfaceMuted,
+      onSecondaryContainer: palette.textPrimary,
+      tertiary: palette.warning,
+      onTertiary: palette.canvas,
+      tertiaryContainer: palette.surfaceMuted,
+      onTertiaryContainer: palette.textPrimary,
+      error: palette.danger,
+      onError: palette.onPrimary,
+      errorContainer: palette.danger.withValues(alpha: 0.16),
+      onErrorContainer: palette.textPrimary,
+      surface: palette.surface,
+      onSurface: palette.textPrimary,
+      surfaceContainerHighest: palette.surfaceMuted,
+      onSurfaceVariant: palette.textSecondary,
+      outline: palette.border,
+      outlineVariant: palette.border,
+      shadow: palette.shadow,
+      scrim: palette.shadow,
+      inverseSurface: palette.textPrimary,
+      onInverseSurface: palette.surface,
+      inversePrimary: palette.primary,
+      surfaceTint: palette.primary,
+    );
 
     return base.copyWith(
       colorScheme: colorScheme,

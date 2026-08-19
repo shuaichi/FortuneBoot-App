@@ -1,5 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fortuneboot/core/errors/fx_failure.dart';
+import 'package:fortuneboot/core/errors/fx_failure_mapper.dart';
 import 'package:fortuneboot/core/network/fx_api.dart';
 import 'package:fortuneboot/core/session/session_models.dart';
 import 'package:fortuneboot/request/book_request.dart';
@@ -54,15 +56,18 @@ class SessionCubit extends Cubit<SessionState> {
       }
 
       await _loadGroupAndBooks(groups, groupId);
-    } on FxApiException catch (e) {
-      emit(
-        state.copyWith(status: SessionStatus.error, errorMessage: e.message),
-      );
-    } catch (e) {
-      emit(
-        state.copyWith(status: SessionStatus.error, errorMessage: e.toString()),
-      );
+    } on Object catch (error) {
+      _emitFailure(error);
     }
+  }
+
+  void _emitFailure(Object error) {
+    emit(
+      state.copyWith(
+        status: SessionStatus.error,
+        failure: FxFailureMapper.map(error),
+      ),
+    );
   }
 
   Future<void> _loadGroupAndBooks(
@@ -122,25 +127,13 @@ class SessionCubit extends Cubit<SessionState> {
     );
     final groupId = group.groupId;
     if (groupId == null) {
-      emit(
-        state.copyWith(
-          status: SessionStatus.error,
-          errorMessage: 'Selected group has no groupId',
-        ),
-      );
+      _emitFailure(StateError('Selected group has no groupId'));
       return;
     }
     try {
       await _loadGroupAndBooks(state.groups, groupId);
-    } on FxApiException catch (e) {
-      emit(
-        state.copyWith(status: SessionStatus.error, errorMessage: e.message),
-      );
-    } catch (e) {
-      // Dio 超时/网络错误抛 DioException（非 FxApiException），需兜底避免永久卡 loading。
-      emit(
-        state.copyWith(status: SessionStatus.error, errorMessage: e.toString()),
-      );
+    } on Object catch (error) {
+      _emitFailure(error);
     }
   }
 
@@ -185,14 +178,8 @@ class SessionCubit extends Cubit<SessionState> {
           currentBook: target,
         ),
       );
-    } on FxApiException catch (e) {
-      emit(
-        state.copyWith(status: SessionStatus.error, errorMessage: e.message),
-      );
-    } catch (e) {
-      emit(
-        state.copyWith(status: SessionStatus.error, errorMessage: e.toString()),
-      );
+    } on Object catch (error) {
+      _emitFailure(error);
     }
   }
 

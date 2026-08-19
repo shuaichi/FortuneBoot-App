@@ -1,8 +1,8 @@
 import 'package:flutter/widgets.dart';
+import 'package:fortuneboot/core/money/fx_money_formatter.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
 import 'package:fortuneboot/util/currency_symbol.dart';
-import 'package:intl/intl.dart';
 
 /// 等宽金额文本：tabular figures + 正负色 + 币种符号 + 千分位。
 ///
@@ -29,6 +29,9 @@ class FxMoneyText extends StatelessWidget {
   /// 掩码占位文本。
   final String maskedText;
 
+  /// Overrides the locale derived from [Localizations] when supplied.
+  final Locale? locale;
+
   const FxMoneyText({
     super.key,
     required this.amount,
@@ -40,11 +43,13 @@ class FxMoneyText extends StatelessWidget {
     this.showSign = false,
     this.colorBySign = false,
     this.masked = false,
-    this.maskedText = '••••',
+    this.maskedText = FxMoneyFormatter.hiddenPlaceholder,
+    this.locale,
   });
 
   @override
   Widget build(BuildContext context) {
+    final palette = FxPalette.of(context);
     Color resolved;
     if (color != null) {
       resolved = color!;
@@ -57,48 +62,36 @@ class FxMoneyText extends StatelessWidget {
       resolved = FxPalette.of(context).textPrimary;
     }
 
-    if (masked) {
-      return Text(
-        maskedText,
-        style: FxTypography.money.copyWith(
-          fontSize: fontSize,
-          fontWeight: fontWeight,
-          color: resolved,
-        ),
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-      );
-    }
-
+    final isMasked = masked;
     final symbol = currencyCode == null || currencyCode!.isEmpty
         ? ''
         : getCurrencySymbol(currencyCode!);
+    final text = isMasked
+        ? maskedText
+        : FxMoneyFormatter.format(
+            amount,
+            locale: (locale ?? Localizations.localeOf(context)).toString(),
+            currencySymbol: symbol,
+            showSign: showSign,
+          );
+    final safeColor = isMasked && color == null
+        ? palette.textPrimary
+        : resolved;
 
-    final formatter = NumberFormat('#,##0.00');
-    final absText = formatter.format(amount.abs());
-
-    String signPrefix = '';
-    if (showSign) {
-      if (amount > 0) {
-        signPrefix = '+';
-      } else if (amount < 0) {
-        signPrefix = '-';
-      }
-    } else if (amount < 0) {
-      signPrefix = '-';
-    }
-
-    final text = '$signPrefix$symbol$absText';
-
-    return Text(
-      text,
-      style: FxTypography.money.copyWith(
-        fontSize: fontSize,
-        fontWeight: fontWeight,
-        color: resolved,
+    return Semantics(
+      label: isMasked ? maskedText : text,
+      child: ExcludeSemantics(
+        child: Text(
+          text,
+          style: FxTypography.money.copyWith(
+            fontSize: fontSize,
+            fontWeight: fontWeight,
+            color: safeColor,
+          ),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
       ),
-      maxLines: 1,
-      overflow: TextOverflow.ellipsis,
     );
   }
 }

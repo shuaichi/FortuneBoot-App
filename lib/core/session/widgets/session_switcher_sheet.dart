@@ -5,6 +5,7 @@ import 'package:fortuneboot/core/navigation/app_router.dart';
 import 'package:fortuneboot/core/navigation/routes.dart';
 import 'package:fortuneboot/core/session/session_cubit.dart';
 import 'package:fortuneboot/core/session/session_models.dart';
+import 'package:fortuneboot/generated/l10n.dart';
 import 'package:fortuneboot/fx/components/fx_sheet.dart';
 import 'package:fortuneboot/fx/components/fx_state_view.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
@@ -23,7 +24,7 @@ class SessionSwitcherSheet extends StatelessWidget {
     final cubit = context.read<SessionCubit>();
     return FxSheet.show<void>(
       context,
-      title: '切换分组 / 账本',
+      title: S.of(context).booksManageTitle,
       scrollable: true,
       maxHeightFactor: 0.72,
       child: SessionSwitcherSheet(cubit: cubit),
@@ -49,14 +50,14 @@ class SessionSwitcherSheet extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                '分组',
+                S.of(context).booksTabGroups,
                 style: FxTypography.label.copyWith(
                   color: palette.textSecondary,
                 ),
               ),
               const SizedBox(height: FxSpacing.sm),
               if (state.groups.isEmpty)
-                _empty(palette, '暂无分组')
+                _empty(palette, S.of(context).booksEmptyGroups)
               else
                 Wrap(
                   spacing: FxSpacing.sm,
@@ -75,7 +76,7 @@ class SessionSwitcherSheet extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    '账本',
+                    S.of(context).booksTabBooks,
                     style: FxTypography.label.copyWith(
                       color: palette.textSecondary,
                     ),
@@ -91,7 +92,8 @@ class SessionSwitcherSheet extends StatelessWidget {
               const SizedBox(height: FxSpacing.sm),
               if (state.status == SessionStatus.error)
                 FxStateView.error(
-                  message: state.errorMessage ?? '加载失败',
+                  message: S.of(context).dashboardLoadFailed,
+                  retryLabel: S.of(context).commonRetry,
                   onRetry: () {
                     final target =
                         state.currentGroup ??
@@ -104,7 +106,7 @@ class SessionSwitcherSheet extends StatelessWidget {
                   },
                 )
               else if (state.books.isEmpty && !loading)
-                _empty(palette, '该分组下暂无账本')
+                _empty(palette, S.of(context).booksGroupNoBooks)
               else
                 ...state.books.map(
                   (b) => _BookCard(
@@ -137,7 +139,7 @@ class SessionSwitcherSheet extends StatelessWidget {
                       ),
                       const SizedBox(width: FxSpacing.sm),
                       Text(
-                        '管理分组与账本',
+                        S.of(context).booksManageTitle,
                         style: FxTypography.bodyStrong.copyWith(
                           color: palette.primary,
                         ),

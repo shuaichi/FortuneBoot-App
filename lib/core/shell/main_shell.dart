@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -52,7 +54,7 @@ class _MainShellState extends State<MainShell> {
     super.initState();
     final session = context.read<SessionCubit>();
     if (session.state.status == SessionStatus.initial) {
-      session.load();
+      unawaited(session.load());
     }
   }
 
@@ -85,14 +87,16 @@ class _MainShellState extends State<MainShell> {
     return Scaffold(
       body: IndexedStack(index: _index, children: pages),
       floatingActionButton: FloatingActionButton(
+        tooltip: s.dashboardQuickAdd,
         backgroundColor: FxPalette.of(context).primary,
+        foregroundColor: FxPalette.of(context).onPrimary,
         elevation: 2,
         shape: const CircleBorder(),
         onPressed: () {
           HapticFeedback.selectionClick();
           AppRouter.push<void>(context, Routes.billEditor);
         },
-        child: const Icon(Icons.add_rounded, color: Colors.white, size: 30),
+        child: const Icon(Icons.add_rounded, size: 30),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: _FxBottomBar(
@@ -117,17 +121,22 @@ class _FxBottomBar extends StatelessWidget {
       surfaceTintColor: Colors.transparent,
       shape: const CircularNotchedRectangle(),
       notchMargin: 8,
-      height: 64,
       padding: EdgeInsets.zero,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          _item(context, 0, Icons.dashboard_rounded, s.navDashboard),
-          _item(context, 1, Icons.receipt_long_rounded, s.navBills),
-          const SizedBox(width: 48), // FAB 缺口
-          _item(context, 2, Icons.bar_chart_rounded, s.navStats),
-          _item(context, 3, Icons.person_rounded, s.navProfile),
-        ],
+      child: SafeArea(
+        top: false,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(minHeight: 64),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              _item(context, 0, Icons.dashboard_rounded, s.navDashboard),
+              _item(context, 1, Icons.receipt_long_rounded, s.navBills),
+              const SizedBox(width: 48), // FAB 缺口
+              _item(context, 2, Icons.bar_chart_rounded, s.navStats),
+              _item(context, 3, Icons.person_rounded, s.navProfile),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -137,24 +146,35 @@ class _FxBottomBar extends StatelessWidget {
     final selected = index == i;
     final color = selected ? palette.primary : palette.textTertiary;
     return Expanded(
-      child: InkWell(
-        onTap: () {
-          HapticFeedback.selectionClick();
-          onChanged(i);
-        },
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, color: color, size: 24),
-            const SizedBox(height: 2),
-            Text(
-              label,
-              style: FxTypography.caption.copyWith(
-                color: color,
-                fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
+      child: Semantics(
+        button: true,
+        selected: selected,
+        label: label,
+        child: Tooltip(
+          message: label,
+          child: InkWell(
+            onTap: () {
+              HapticFeedback.selectionClick();
+              onChanged(i);
+            },
+            child: SizedBox(
+              height: 64,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(icon, color: color, size: 24),
+                  const SizedBox(height: 2),
+                  Text(
+                    label,
+                    style: FxTypography.caption.copyWith(
+                      color: color,
+                      fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
+                    ),
+                  ),
+                ],
               ),
             ),
-          ],
+          ),
         ),
       ),
     );

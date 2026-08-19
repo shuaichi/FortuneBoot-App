@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:fortuneboot/core/errors/fx_failure.dart';
 import 'package:fortuneboot/core/preferences/preferences_cubit.dart';
 import 'package:fortuneboot/core/preferences/screen_capture_preferences.dart';
 import 'package:fortuneboot/core/security/screen_capture_protection.dart';
@@ -82,7 +83,8 @@ void main() {
       expect(saved, isFalse);
       expect(store.writes, isEmpty);
       expect(cubit.state.screenCapture.allowScreenCapture, isFalse);
-      expect(cubit.state.errorMessage, isNotNull);
+      expect(cubit.state.errorMessage, isNull);
+      expect(cubit.state.failure?.kind, FxFailureKind.persistence);
     });
 
     test(
@@ -105,7 +107,8 @@ void main() {
         expect(saved, isFalse);
         expect(events, ['native:true', 'store:true', 'native:false']);
         expect(cubit.state.screenCapture.allowScreenCapture, isFalse);
-        expect(cubit.state.errorMessage, isNotNull);
+        expect(cubit.state.errorMessage, isNull);
+        expect(cubit.state.failure?.kind, FxFailureKind.persistence);
       },
     );
 
@@ -123,7 +126,8 @@ void main() {
       expect(saved, isFalse);
       expect(protection.calls, [true, false]);
       expect(cubit.state.screenCapture.allowScreenCapture, isTrue);
-      expect(cubit.state.errorMessage, isNotNull);
+      expect(cubit.state.errorMessage, isNull);
+      expect(cubit.state.failure?.kind, FxFailureKind.persistence);
     });
 
     test(
@@ -144,7 +148,8 @@ void main() {
         expect(saved, isFalse);
         expect(protection.calls, [true, false]);
         expect(cubit.state.screenCapture.allowScreenCapture, isFalse);
-        expect(cubit.state.errorMessage, isNotNull);
+        expect(cubit.state.errorMessage, isNull);
+        expect(cubit.state.failure?.kind, FxFailureKind.persistence);
       },
     );
   });
