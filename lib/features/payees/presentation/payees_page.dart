@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fortuneboot/core/feedback/fx_feedback.dart';
 import 'package:fortuneboot/core/network/fx_api.dart';
 import 'package:fortuneboot/core/session/session_cubit.dart';
 import 'package:fortuneboot/features/manage_shared/manage_menu.dart';
@@ -30,9 +31,7 @@ class _PayeesPageState extends State<PayeesPage> {
   int? get _bookId => context.read<SessionCubit>().state.currentBookId;
 
   void _showToast(String message) {
-    ScaffoldMessenger.of(context)
-      ..hideCurrentSnackBar()
-      ..showSnackBar(SnackBar(content: Text(message)));
+    FxFeedback.info(context, message: message);
   }
 
   Future<void> _openForm({FortunePayeeVo? payee}) async {
@@ -83,9 +82,11 @@ class _PayeesPageState extends State<PayeesPage> {
       final ok = await confirmManageAction(
         context,
         title: S.of(context).payeesMoveToRecycleBin,
-        message: S.of(context).payeesMoveToRecycleBinConfirm(
-          payee.payeeName ?? S.of(context).payeesThisPayee,
-        ),
+        message: S
+            .of(context)
+            .payeesMoveToRecycleBinConfirm(
+              payee.payeeName ?? S.of(context).payeesThisPayee,
+            ),
         confirmLabel: S.of(context).payeesMove,
       );
       if (ok != true) return;
@@ -101,7 +102,10 @@ class _PayeesPageState extends State<PayeesPage> {
       }
       if (mounted) _bloc.add(const PayeesMutated());
     } on Object catch (e) {
-      _showToast(e is FxApiException ? e.message : e.toString());
+      if (!mounted) return;
+      _showToast(
+        e is FxApiException ? e.message : S.of(context).profileSaveFailedRetry,
+      );
     }
   }
 
@@ -111,9 +115,11 @@ class _PayeesPageState extends State<PayeesPage> {
     final ok = await confirmManageAction(
       context,
       title: S.of(context).payeesDeletePermanently,
-      message: S.of(context).payeesDeletePermanentlyConfirm(
-        payee.payeeName ?? S.of(context).payeesThisPayee,
-      ),
+      message: S
+          .of(context)
+          .payeesDeletePermanentlyConfirm(
+            payee.payeeName ?? S.of(context).payeesThisPayee,
+          ),
       confirmLabel: S.of(context).payeesDelete,
     );
     if (ok != true) return;
@@ -121,7 +127,10 @@ class _PayeesPageState extends State<PayeesPage> {
       await _service.remove(bookId: bookId, payeeId: payee.payeeId!);
       if (mounted) _bloc.add(const PayeesMutated());
     } on Object catch (e) {
-      _showToast(e is FxApiException ? e.message : e.toString());
+      if (!mounted) return;
+      _showToast(
+        e is FxApiException ? e.message : S.of(context).profileSaveFailedRetry,
+      );
     }
   }
 
@@ -144,6 +153,7 @@ class _PayeesPageState extends State<PayeesPage> {
           return ManageScaffold(
             title: S.of(context).payeesTitle,
             searchHint: S.of(context).payeesSearchHint,
+            addTooltip: S.of(context).payeesAdd,
             onAdd: () => _openForm(),
             onSearch: (kw) => _bloc.add(PayeesSearchChanged(kw)),
             tab: state.tab,
@@ -166,6 +176,7 @@ class _PayeesPageState extends State<PayeesPage> {
       case PayeesStatus.error:
         return FxStateView.error(
           message: state.errorMessage,
+          retryLabel: S.of(context).commonRetry,
           onRetry: () => _bloc.add(const PayeesLoaded()),
         );
       case PayeesStatus.empty:

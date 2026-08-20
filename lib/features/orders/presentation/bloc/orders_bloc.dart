@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fortuneboot/core/network/fx_api.dart';
 import 'package:fortuneboot/features/orders/data/orders_models.dart';
 import 'package:fortuneboot/features/orders/data/orders_service.dart';
+import 'package:fortuneboot/generated/l10n.dart';
 
 part 'orders_event.dart';
 part 'orders_state.dart';
@@ -54,9 +55,12 @@ class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
       );
     } on FxApiException catch (e) {
       emit(state.copyWith(status: OrdersStatus.error, errorMessage: e.message));
-    } on Object catch (e) {
+    } on Object {
       emit(
-        state.copyWith(status: OrdersStatus.error, errorMessage: e.toString()),
+        state.copyWith(
+          status: OrdersStatus.error,
+          errorMessage: S.current.dashboardLoadFailed,
+        ),
       );
     }
   }
@@ -78,9 +82,9 @@ class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
     } on Object catch (e) {
       emit(
         state.copyWith(
-          toastMessage:
-              '操作失败：'
-              '${e is FxApiException ? e.message : e.toString()}',
+          toastMessage: e is FxApiException
+              ? e.message
+              : S.current.profileSaveFailedRetry,
         ),
       );
     }

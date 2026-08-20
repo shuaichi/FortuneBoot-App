@@ -256,9 +256,7 @@ class _TagFormSheetState extends State<TagFormSheet> {
           value: options.any((o) => o.tagId == _parentId) ? _parentId : null,
           hint: Text(S.of(context).tagsParentNone),
           items: [
-            DropdownMenuItem<int?>(
-              child: Text(S.of(context).tagsParentNone),
-            ),
+            DropdownMenuItem<int?>(child: Text(S.of(context).tagsParentNone)),
             ...options.map(
               (o) => DropdownMenuItem<int?>(
                 value: o.tagId,

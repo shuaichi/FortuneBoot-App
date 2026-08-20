@@ -153,7 +153,14 @@ class IoService {
         final payload = data is Map ? Map<String, dynamic>.from(data) : json;
         return ImportOutcome(result: BillImportResult.fromJson(payload));
       }
+      throw FxApiException(-1, '导入失败');
     }
+    if (bytes.isEmpty) throw FxApiException(-1, '导入失败');
+    final isExcel =
+        contentType.contains(_xlsxMime) ||
+        contentType.contains('application/vnd.ms-excel') ||
+        contentType.contains('application/octet-stream');
+    if (!isExcel) throw FxApiException(-1, '导入失败');
     // 错误 Excel 字节流。
     return ImportOutcome(
       errorFile: BytesResult(

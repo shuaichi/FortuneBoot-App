@@ -4,6 +4,7 @@ import 'package:fortuneboot/core/network/fx_api.dart';
 import 'package:fortuneboot/features/manage_shared/manage_scaffold.dart';
 import 'package:fortuneboot/features/payees/data/payee_models.dart';
 import 'package:fortuneboot/features/payees/data/payee_service.dart';
+import 'package:fortuneboot/generated/l10n.dart';
 import 'package:stream_transform/stream_transform.dart';
 
 part 'payees_event.dart';
@@ -91,9 +92,12 @@ class PayeesBloc extends Bloc<PayeesEvent, PayeesState> {
       );
     } on FxApiException catch (e) {
       emit(state.copyWith(status: PayeesStatus.error, errorMessage: e.message));
-    } on Object catch (e) {
+    } on Object {
       emit(
-        state.copyWith(status: PayeesStatus.error, errorMessage: e.toString()),
+        state.copyWith(
+          status: PayeesStatus.error,
+          errorMessage: S.current.dashboardLoadFailed,
+        ),
       );
     }
   }
@@ -127,9 +131,9 @@ class PayeesBloc extends Bloc<PayeesEvent, PayeesState> {
       emit(
         state.copyWith(
           payees: original,
-          toastMessage:
-              '${event.field.label}切换失败：'
-              '${e is FxApiException ? e.message : e.toString()}',
+          toastMessage: e is FxApiException
+              ? e.message
+              : S.current.profileSaveFailedRetry,
         ),
       );
     }

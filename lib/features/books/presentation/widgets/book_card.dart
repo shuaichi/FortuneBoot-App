@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fortuneboot/core/session/session_models.dart';
 import 'package:fortuneboot/fx/components/fx_card.dart';
+import 'package:fortuneboot/fx/components/fx_chart_palette.dart';
 import 'package:fortuneboot/fx/components/fx_tag_chip.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
@@ -134,31 +135,27 @@ class BookCard extends StatelessWidget {
   }
 
   Widget _menuButton(BuildContext context) {
-    return InkResponse(
-      onTap: onMenu,
-      radius: 24,
-      child: SizedBox(
-        width: 44,
-        height: 44,
-        child: Icon(
-          Icons.more_horiz_rounded,
-          color: FxPalette.of(context).textSecondary,
+    final tooltip = MaterialLocalizations.of(context).showMenuTooltip;
+    return Semantics(
+      button: true,
+      label: tooltip,
+      child: Tooltip(
+        message: tooltip,
+        child: InkResponse(
+          onTap: onMenu,
+          radius: 24,
+          child: SizedBox(
+            width: 48,
+            height: 48,
+            child: Icon(
+              Icons.more_horiz_rounded,
+              color: FxPalette.of(context).textSecondary,
+            ),
+          ),
         ),
       ),
     );
   }
 
-  Color _accentFor(int seed) {
-    const colors = [
-      Color(0xFF2563EB),
-      Color(0xFF7C3AED),
-      Color(0xFFDB2777),
-      Color(0xFFEA580C),
-      Color(0xFF16A34A),
-      Color(0xFF0891B2),
-      Color(0xFF4F46E5),
-      Color(0xFFB45309),
-    ];
-    return colors[seed.abs() % colors.length];
-  }
+  Color _accentFor(int seed) => FxChartPalette.colorAt(seed.abs());
 }

@@ -4,6 +4,7 @@ import 'package:fortuneboot/core/network/fx_api.dart';
 import 'package:fortuneboot/features/categories/data/category_models.dart';
 import 'package:fortuneboot/features/categories/data/category_service.dart';
 import 'package:fortuneboot/features/manage_shared/manage_scaffold.dart';
+import 'package:fortuneboot/generated/l10n.dart';
 
 part 'categories_event.dart';
 part 'categories_state.dart';
@@ -87,11 +88,11 @@ class CategoriesBloc extends Bloc<CategoriesEvent, CategoriesState> {
       emit(
         state.copyWith(status: CategoriesStatus.error, errorMessage: e.message),
       );
-    } on Object catch (e) {
+    } on Object {
       emit(
         state.copyWith(
           status: CategoriesStatus.error,
-          errorMessage: e.toString(),
+          errorMessage: S.current.dashboardLoadFailed,
         ),
       );
     }
@@ -119,8 +120,9 @@ class CategoriesBloc extends Bloc<CategoriesEvent, CategoriesState> {
       emit(
         state.copyWith(
           tree: original,
-          toastMessage:
-              '启用切换失败：${e is FxApiException ? e.message : e.toString()}',
+          toastMessage: e is FxApiException
+              ? e.message
+              : S.current.profileSaveFailedRetry,
         ),
       );
     }

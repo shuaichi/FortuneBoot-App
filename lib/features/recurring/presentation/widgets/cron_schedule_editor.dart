@@ -32,7 +32,10 @@ class CronScheduleEditor extends StatelessWidget {
           segments: [
             FxSegment(CronFrequency.daily, S.of(context).recurringFreqDaily),
             FxSegment(CronFrequency.weekly, S.of(context).recurringFreqWeekly),
-            FxSegment(CronFrequency.monthly, S.of(context).recurringFreqMonthly),
+            FxSegment(
+              CronFrequency.monthly,
+              S.of(context).recurringFreqMonthly,
+            ),
             FxSegment(CronFrequency.yearly, S.of(context).recurringFreqYearly),
           ],
         ),
@@ -95,14 +98,14 @@ class CronScheduleEditor extends StatelessWidget {
               context: context,
               initialTime: TimeOfDay(hour: spec.hour, minute: spec.minute),
               builder: (ctx, child) => MediaQuery(
-                data: MediaQuery.of(
-                  ctx,
-                ).copyWith(alwaysUse24HourFormat: true),
+                data: MediaQuery.of(ctx).copyWith(alwaysUse24HourFormat: true),
                 child: child!,
               ),
             );
             if (picked != null) {
-              onChanged(spec.copyWith(hour: picked.hour, minute: picked.minute));
+              onChanged(
+                spec.copyWith(hour: picked.hour, minute: picked.minute),
+              );
             }
           },
           child: Container(
@@ -176,10 +179,21 @@ class CronScheduleEditor extends StatelessWidget {
               _chip(
                 context,
                 '$d',
-                spec.dayOfMonth == d,
-                () => onChanged(spec.copyWith(dayOfMonth: d)),
+                spec.dayOfMonth == d && !spec.lastDayOfMonth,
+                () => onChanged(
+                  spec.copyWith(dayOfMonth: d, lastDayOfMonth: false),
+                ),
                 compact: true,
               ),
+            _chip(
+              context,
+              '31/月末',
+              spec.lastDayOfMonth,
+              () => onChanged(
+                spec.copyWith(dayOfMonth: 31, lastDayOfMonth: true),
+              ),
+              compact: true,
+            ),
           ],
         ),
       ],
@@ -281,9 +295,11 @@ class CronScheduleEditor extends StatelessWidget {
                 .join('、');
         return s.recurringSummaryWeekly(days, time);
       case CronFrequency.monthly:
-        return s.recurringSummaryMonthly(spec.dayOfMonth, time);
+        final day = spec.lastDayOfMonth ? 31 : spec.dayOfMonth;
+        return s.recurringSummaryMonthly(day, time);
       case CronFrequency.yearly:
-        return s.recurringSummaryYearly(spec.month, spec.dayOfMonth, time);
+        final day = spec.lastDayOfMonth ? 31 : spec.dayOfMonth;
+        return s.recurringSummaryYearly(spec.month, day, time);
     }
   }
 }

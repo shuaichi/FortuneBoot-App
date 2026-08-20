@@ -85,10 +85,14 @@ Widget _item(
 }) {
   final palette = FxPalette.of(context);
   final color = danger ? palette.danger : palette.textPrimary;
-  return ListTile(
-    leading: Icon(icon, color: color),
-    title: Text(label, style: FxTypography.body.copyWith(color: color)),
-    onTap: () => Navigator.of(context).pop(action),
+  return Semantics(
+    button: true,
+    label: label,
+    child: ListTile(
+      leading: Icon(icon, color: color),
+      title: Text(label, style: FxTypography.body.copyWith(color: color)),
+      onTap: () => Navigator.of(context).pop(action),
+    ),
   );
 }
 
@@ -153,16 +157,23 @@ Widget _confirmBtn(
   required Color color,
   required Color fg,
 }) {
-  return Material(
-    color: color,
-    borderRadius: FxRadius.tileBorder,
-    child: InkWell(
+  return Semantics(
+    button: true,
+    label: label,
+    child: Material(
+      color: color,
       borderRadius: FxRadius.tileBorder,
-      onTap: onTap,
-      child: Container(
-        height: 48,
-        alignment: Alignment.center,
-        child: Text(label, style: FxTypography.bodyStrong.copyWith(color: fg)),
+      child: InkWell(
+        borderRadius: FxRadius.tileBorder,
+        onTap: onTap,
+        child: Container(
+          height: 48,
+          alignment: Alignment.center,
+          child: Text(
+            label,
+            style: FxTypography.bodyStrong.copyWith(color: fg),
+          ),
+        ),
       ),
     ),
   );

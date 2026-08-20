@@ -4,6 +4,7 @@ import 'package:fortuneboot/core/network/fx_api.dart';
 import 'package:fortuneboot/features/manage_shared/manage_scaffold.dart';
 import 'package:fortuneboot/features/tags/data/tag_models.dart';
 import 'package:fortuneboot/features/tags/data/tag_service.dart';
+import 'package:fortuneboot/generated/l10n.dart';
 
 part 'tags_event.dart';
 part 'tags_state.dart';
@@ -76,9 +77,12 @@ class TagsBloc extends Bloc<TagsEvent, TagsState> {
       );
     } on FxApiException catch (e) {
       emit(state.copyWith(status: TagsStatus.error, errorMessage: e.message));
-    } on Object catch (e) {
+    } on Object {
       emit(
-        state.copyWith(status: TagsStatus.error, errorMessage: e.toString()),
+        state.copyWith(
+          status: TagsStatus.error,
+          errorMessage: S.current.dashboardLoadFailed,
+        ),
       );
     }
   }
@@ -105,9 +109,9 @@ class TagsBloc extends Bloc<TagsEvent, TagsState> {
       emit(
         state.copyWith(
           tree: original,
-          toastMessage:
-              '${event.field.label}切换失败：'
-              '${e is FxApiException ? e.message : e.toString()}',
+          toastMessage: e is FxApiException
+              ? e.message
+              : S.current.profileSaveFailedRetry,
         ),
       );
     }

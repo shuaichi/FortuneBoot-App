@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fortuneboot/core/network/fx_api.dart';
+import 'package:fortuneboot/core/feedback/fx_feedback.dart';
 import 'package:fortuneboot/core/session/session_cubit.dart';
 import 'package:fortuneboot/features/group_users/data/group_users_service.dart';
 import 'package:fortuneboot/features/group_users/presentation/bloc/group_users_bloc.dart';
 import 'package:fortuneboot/features/group_users/presentation/widgets/invite_user_sheet.dart';
 import 'package:fortuneboot/fx/components/fx_button.dart';
 import 'package:fortuneboot/fx/components/fx_card.dart';
+import 'package:fortuneboot/fx/components/fx_confirm_sheet.dart';
+import 'package:fortuneboot/fx/components/fx_icon_button.dart';
 import 'package:fortuneboot/fx/components/fx_sheet.dart';
 import 'package:fortuneboot/fx/components/fx_state_view.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
@@ -37,9 +39,9 @@ class _GroupUsersPageState extends State<GroupUsersPage> {
   /// FortuneGroupVo 只返回 roleTypeDesc（无 int），故与 getRoleTypes 中 owner 的
   /// 描述文案精确比较，而非猜测中/英文子串。枚举未就绪时回退为 false（隐藏专属操作），
   /// 后端 SpEL 兜底真正鉴权。
-  bool _currentUserIsOwner(GroupUsersState state) {
+  bool _currentUserIsOwner(GroupUsersState state, int? currentGroupId) {
     final ownerDesc = state.ownerRoleDesc;
-    if (ownerDesc == null) return false;
+    if (ownerDesc == null || state.groupId != currentGroupId) return false;
     final desc = context.read<SessionCubit>().state.currentGroup?.roleTypeDesc;
     return desc != null && desc == ownerDesc;
   }
@@ -51,9 +53,7 @@ class _GroupUsersPageState extends State<GroupUsersPage> {
   }
 
   void _showToast(String message) {
-    ScaffoldMessenger.of(context)
-      ..hideCurrentSnackBar()
-      ..showSnackBar(SnackBar(content: Text(message)));
+    FxFeedback.info(context, message: message);
   }
 
   Future<void> _invite() async {
@@ -67,7 +67,7 @@ class _GroupUsersPageState extends State<GroupUsersPage> {
       title: S.of(context).groupUsersInviteTitle,
       child: InviteUserSheet(service: _service, groupId: groupId),
     );
-    if (ok == true && mounted) {
+    if (ok == true && mounted && _groupId == groupId) {
       _bloc.add(const GroupUsersMutated());
       _showToast(S.of(context).groupUsersInviteSent);
     }
@@ -75,61 +75,54 @@ class _GroupUsersPageState extends State<GroupUsersPage> {
 
   Future<void> _remove(GroupUserVo user) async {
     final relationId = user.userGroupRelationId;
-    if (relationId == null) return;
-    final ok = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(S.of(ctx).groupUsersRemoveTitle),
-        content: Text(
-          S.of(ctx).groupUsersRemoveConfirm(user.displayName),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(false),
-            child: Text(S.of(ctx).commonCancel),
-          ),
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(true),
-            style: TextButton.styleFrom(
-              foregroundColor: FxPalette.of(ctx).danger,
-            ),
-            child: Text(S.of(ctx).groupUsersRemove),
-          ),
-        ],
-      ),
+    final groupId = _groupId;
+    if (relationId == null || groupId == null) return;
+    final ok = await FxConfirmSheet.show(
+      context,
+      title: S.of(context).groupUsersRemoveTitle,
+      message: S.of(context).groupUsersRemoveConfirm(user.displayName),
+      confirmLabel: S.of(context).groupUsersRemove,
+      cancelLabel: S.of(context).commonCancel,
+      destructive: true,
+      failureMessage: S.of(context).profileSaveFailedRetry,
+      onConfirm: () async {
+        await _service.removeGroupUser(relationId);
+        return true;
+      },
     );
-    if (ok != true) return;
-    try {
-      await _service.removeGroupUser(relationId);
-      if (mounted) _bloc.add(const GroupUsersMutated());
-    } on Object catch (e) {
-      _showToast(e is FxApiException ? e.message : e.toString());
+    if (ok == true && mounted && _groupId == groupId) {
+      _bloc.add(const GroupUsersMutated());
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: FxPalette.of(context).canvas,
-      body: SafeArea(
-        bottom: false,
-        child: BlocBuilder<GroupUsersBloc, GroupUsersState>(
-          builder: (context, state) {
-            final isOwner = _currentUserIsOwner(state);
-            return Column(
-              children: [
-                _buildHeader(context, isOwner),
-                Expanded(child: _buildBody(state, isOwner)),
-              ],
-            );
-          },
+    final groupId = context.select<SessionCubit, int?>(
+      (c) => c.state.currentGroupId,
+    );
+    return _GroupSync(
+      groupId: groupId,
+      child: Scaffold(
+        backgroundColor: FxPalette.of(context).canvas,
+        body: SafeArea(
+          bottom: false,
+          child: BlocBuilder<GroupUsersBloc, GroupUsersState>(
+            builder: (context, state) {
+              final isOwner = _currentUserIsOwner(state, groupId);
+              return Column(
+                children: [
+                  _buildHeader(context, isOwner),
+                  Expanded(child: _buildBody(state, isOwner)),
+                ],
+              );
+            },
+          ),
         ),
       ),
     );
   }
 
   Widget _buildHeader(BuildContext context, bool isOwner) {
-    final palette = FxPalette.of(context);
     final groupName = context
         .read<SessionCubit>()
         .state
@@ -144,17 +137,10 @@ class _GroupUsersPageState extends State<GroupUsersPage> {
       ),
       child: Row(
         children: [
-          InkResponse(
-            onTap: () => Navigator.of(context).maybePop(),
-            radius: 22,
-            child: Padding(
-              padding: const EdgeInsets.all(FxSpacing.xs),
-              child: Icon(
-                Icons.chevron_left_rounded,
-                size: 26,
-                color: palette.textPrimary,
-              ),
-            ),
+          FxIconButton(
+            icon: Icons.chevron_left_rounded,
+            tooltip: MaterialLocalizations.of(context).backButtonTooltip,
+            onPressed: () => Navigator.of(context).maybePop(),
           ),
           Expanded(
             child: Text(
@@ -178,8 +164,10 @@ class _GroupUsersPageState extends State<GroupUsersPage> {
   }
 
   Widget _buildBody(GroupUsersState state, bool isOwner) {
-    if (_groupId == null) {
-      return FxStateView.empty(message: S.of(context).groupUsersSelectGroupFirst);
+    if (_groupId == null || state.groupId != _groupId) {
+      return FxStateView.empty(
+        message: S.of(context).groupUsersSelectGroupFirst,
+      );
     }
     switch (state.status) {
       case GroupUsersStatus.initial:
@@ -188,6 +176,7 @@ class _GroupUsersPageState extends State<GroupUsersPage> {
       case GroupUsersStatus.error:
         return FxStateView.error(
           message: state.errorMessage,
+          retryLabel: S.of(context).commonRetry,
           onRetry: () => _bloc.add(const GroupUsersLoaded()),
         );
       case GroupUsersStatus.empty:
@@ -261,6 +250,7 @@ class _GroupUsersPageState extends State<GroupUsersPage> {
             if (owner && !_memberIsOwner(user, state)) ...[
               const SizedBox(width: FxSpacing.xs),
               IconButton(
+                tooltip: S.of(context).groupUsersRemove,
                 onPressed: () => _remove(user),
                 icon: Icon(
                   Icons.person_remove_alt_1_rounded,
@@ -308,4 +298,40 @@ class _GroupUsersPageState extends State<GroupUsersPage> {
       ),
     );
   }
+}
+
+class _GroupSync extends StatefulWidget {
+  final int? groupId;
+  final Widget child;
+
+  const _GroupSync({required this.groupId, required this.child});
+
+  @override
+  State<_GroupSync> createState() => _GroupSyncState();
+}
+
+class _GroupSyncState extends State<_GroupSync> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      context.read<GroupUsersBloc>().add(
+        GroupUsersGroupChanged(widget.groupId),
+      );
+    });
+  }
+
+  @override
+  void didUpdateWidget(_GroupSync oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.groupId != widget.groupId) {
+      context.read<GroupUsersBloc>().add(
+        GroupUsersGroupChanged(widget.groupId),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) => widget.child;
 }

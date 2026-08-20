@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fortuneboot/core/network/fx_api.dart';
+import 'package:fortuneboot/core/feedback/fx_feedback.dart';
 import 'package:fortuneboot/core/session/session_cubit.dart';
 import 'package:fortuneboot/features/recurring/data/cron_builder.dart';
 import 'package:fortuneboot/features/recurring/data/recurring_models.dart';
@@ -10,6 +10,8 @@ import 'package:fortuneboot/features/recurring/presentation/recurring_editor_pag
 import 'package:fortuneboot/features/recurring/presentation/widgets/cron_schedule_editor.dart';
 import 'package:fortuneboot/features/recurring/presentation/widgets/recurring_log_sheet.dart';
 import 'package:fortuneboot/fx/components/fx_card.dart';
+import 'package:fortuneboot/fx/components/fx_confirm_sheet.dart';
+import 'package:fortuneboot/fx/components/fx_icon_button.dart';
 import 'package:fortuneboot/fx/components/fx_sheet.dart';
 import 'package:fortuneboot/fx/components/fx_state_view.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
@@ -35,9 +37,7 @@ class _RecurringPageState extends State<RecurringPage> {
   int? get _groupId => context.read<SessionCubit>().state.currentGroupId;
 
   void _showToast(String message) {
-    ScaffoldMessenger.of(context)
-      ..hideCurrentSnackBar()
-      ..showSnackBar(SnackBar(content: Text(message)));
+    FxFeedback.info(context, message: message);
   }
 
   Future<void> _openEditor({RecurringRuleVo? rule}) async {
@@ -48,8 +48,8 @@ class _RecurringPageState extends State<RecurringPage> {
       return;
     }
     final changed = await Navigator.of(context).push<bool>(
-      MaterialPageRoute(
-        builder: (_) =>
+      PageRouteBuilder<bool>(
+        pageBuilder: (_, _, _) =>
             RecurringEditorPage(bookId: bookId, groupId: groupId, rule: rule),
       ),
     );
@@ -73,39 +73,24 @@ class _RecurringPageState extends State<RecurringPage> {
   Future<void> _remove(RecurringRuleVo rule) async {
     final bookId = _bookId;
     if (bookId == null || rule.ruleId == null) return;
-    final ok = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(S.of(context).recurringRemoveTitle),
-        content: Text(
-          S
-              .of(context)
-              .recurringRemoveMessage(
-                rule.ruleName ?? S.of(context).recurringThisRule,
-              ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(false),
-            child: Text(S.of(context).commonCancel),
+    final ok = await FxConfirmSheet.show(
+      context,
+      title: S.of(context).recurringRemoveTitle,
+      message: S
+          .of(context)
+          .recurringRemoveMessage(
+            rule.ruleName ?? S.of(context).recurringThisRule,
           ),
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(true),
-            style: TextButton.styleFrom(
-              foregroundColor: FxPalette.of(ctx).danger,
-            ),
-            child: Text(S.of(context).recurringDelete),
-          ),
-        ],
-      ),
+      confirmLabel: S.of(context).recurringDelete,
+      cancelLabel: S.of(context).commonCancel,
+      destructive: true,
+      failureMessage: S.of(context).profileSaveFailedRetry,
+      onConfirm: () async {
+        await _service.removeRule(bookId: bookId, ruleId: rule.ruleId!);
+        return true;
+      },
     );
-    if (ok != true) return;
-    try {
-      await _service.removeRule(bookId: bookId, ruleId: rule.ruleId!);
-      if (mounted) _bloc.add(const RecurringMutated());
-    } on Object catch (e) {
-      _showToast(e is FxApiException ? e.message : e.toString());
-    }
+    if (ok == true && mounted) _bloc.add(const RecurringMutated());
   }
 
   @override
@@ -116,8 +101,7 @@ class _RecurringPageState extends State<RecurringPage> {
         bottom: false,
         child: BlocConsumer<RecurringBloc, RecurringState>(
           listenWhen: (prev, curr) =>
-              curr.toastMessage != null &&
-              prev.toastMessage != curr.toastMessage,
+              curr.toastMessage != null && prev.toastSerial != curr.toastSerial,
           listener: (context, state) {
             final msg = state.toastMessage;
             if (msg != null) _showToast(msg);
@@ -136,7 +120,6 @@ class _RecurringPageState extends State<RecurringPage> {
   }
 
   Widget _buildHeader(BuildContext context) {
-    final palette = FxPalette.of(context);
     return Padding(
       padding: const EdgeInsets.fromLTRB(
         FxSpacing.sm,
@@ -146,17 +129,10 @@ class _RecurringPageState extends State<RecurringPage> {
       ),
       child: Row(
         children: [
-          InkResponse(
-            onTap: () => Navigator.of(context).maybePop(),
-            radius: 22,
-            child: Padding(
-              padding: const EdgeInsets.all(FxSpacing.xs),
-              child: Icon(
-                Icons.chevron_left_rounded,
-                size: 26,
-                color: palette.textPrimary,
-              ),
-            ),
+          FxIconButton(
+            icon: Icons.chevron_left_rounded,
+            tooltip: MaterialLocalizations.of(context).backButtonTooltip,
+            onPressed: () => Navigator.of(context).maybePop(),
           ),
           Expanded(
             child: Text(
@@ -164,17 +140,10 @@ class _RecurringPageState extends State<RecurringPage> {
               style: FxTypography.title,
             ),
           ),
-          InkResponse(
-            onTap: () => _openEditor(),
-            radius: 22,
-            child: Padding(
-              padding: const EdgeInsets.all(FxSpacing.xs),
-              child: Icon(
-                Icons.add_rounded,
-                size: 26,
-                color: palette.textPrimary,
-              ),
-            ),
+          FxIconButton(
+            icon: Icons.add_rounded,
+            tooltip: S.of(context).recurringAddRule,
+            onPressed: () => _openEditor(),
           ),
         ],
       ),
@@ -192,6 +161,7 @@ class _RecurringPageState extends State<RecurringPage> {
       case RecurringStatus.error:
         return FxStateView.error(
           message: state.errorMessage,
+          retryLabel: S.of(context).commonRetry,
           onRetry: () => _bloc.add(const RecurringLoaded()),
         );
       case RecurringStatus.empty:
@@ -220,14 +190,21 @@ class _RecurringPageState extends State<RecurringPage> {
               FxSpacing.xxxl,
             ),
             itemCount: state.rules.length,
-            itemBuilder: (context, i) => _ruleCard(context, state.rules[i]),
+            itemBuilder: (context, i) =>
+                _ruleCard(context, state.rules[i], state.pendingToggleIds),
           ),
         );
     }
   }
 
-  Widget _ruleCard(BuildContext context, RecurringRuleVo rule) {
+  Widget _ruleCard(
+    BuildContext context,
+    RecurringRuleVo rule,
+    Set<int> pendingToggleIds,
+  ) {
     final palette = FxPalette.of(context);
+    final pending =
+        rule.ruleId != null && pendingToggleIds.contains(rule.ruleId);
     return Padding(
       padding: const EdgeInsets.only(bottom: FxSpacing.md),
       child: FxCard(
@@ -251,8 +228,10 @@ class _RecurringPageState extends State<RecurringPage> {
                 Switch.adaptive(
                   value: rule.enable,
                   activeColor: palette.primary,
-                  onChanged: (v) =>
-                      _bloc.add(RecurringToggled(rule: rule, enable: v)),
+                  onChanged: pending
+                      ? null
+                      : (v) =>
+                            _bloc.add(RecurringToggled(rule: rule, enable: v)),
                 ),
                 _menu(context, rule),
               ],

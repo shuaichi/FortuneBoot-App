@@ -4,6 +4,7 @@ import 'package:fortuneboot/core/network/fx_api.dart';
 import 'package:fortuneboot/features/manage_shared/manage_scaffold.dart';
 import 'package:fortuneboot/features/members/data/member_models.dart';
 import 'package:fortuneboot/features/members/data/member_service.dart';
+import 'package:fortuneboot/generated/l10n.dart';
 import 'package:stream_transform/stream_transform.dart';
 
 part 'members_event.dart';
@@ -93,9 +94,12 @@ class MembersBloc extends Bloc<MembersEvent, MembersState> {
       emit(
         state.copyWith(status: MembersStatus.error, errorMessage: e.message),
       );
-    } on Object catch (e) {
+    } on Object {
       emit(
-        state.copyWith(status: MembersStatus.error, errorMessage: e.toString()),
+        state.copyWith(
+          status: MembersStatus.error,
+          errorMessage: S.current.dashboardLoadFailed,
+        ),
       );
     }
   }
@@ -126,8 +130,9 @@ class MembersBloc extends Bloc<MembersEvent, MembersState> {
       emit(
         state.copyWith(
           members: original,
-          toastMessage:
-              '启用切换失败：${e is FxApiException ? e.message : e.toString()}',
+          toastMessage: e is FxApiException
+              ? e.message
+              : S.current.profileSaveFailedRetry,
         ),
       );
     }

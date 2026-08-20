@@ -39,6 +39,9 @@ class CronSpec {
   /// 每月/每年：几号（1-31，monthly/yearly 生效）。
   final int dayOfMonth;
 
+  /// 每月/每年：是否使用 Spring cron 的 L（月末）语义。
+  final bool lastDayOfMonth;
+
   /// 每年：几月（1-12，yearly 生效）。
   final int month;
 
@@ -48,6 +51,7 @@ class CronSpec {
     this.minute = 0,
     this.weekdays = const {CronWeekday.mon},
     this.dayOfMonth = 1,
+    this.lastDayOfMonth = false,
     this.month = 1,
   });
 
@@ -57,6 +61,7 @@ class CronSpec {
     int? minute,
     Set<CronWeekday>? weekdays,
     int? dayOfMonth,
+    bool? lastDayOfMonth,
     int? month,
   }) {
     return CronSpec(
@@ -65,6 +70,7 @@ class CronSpec {
       minute: minute ?? this.minute,
       weekdays: weekdays ?? this.weekdays,
       dayOfMonth: dayOfMonth ?? this.dayOfMonth,
+      lastDayOfMonth: lastDayOfMonth ?? this.lastDayOfMonth,
       month: month ?? this.month,
     );
   }
@@ -89,9 +95,11 @@ abstract final class CronBuilder {
         final dow = days.map((d) => d.token).join(',');
         return '$s $m $h ? * $dow';
       case CronFrequency.monthly:
-        return '$s $m $h ${_clampDom(spec.dayOfMonth)} * ?';
+        final dom = spec.lastDayOfMonth ? 'L' : '${_clampDom(spec.dayOfMonth)}';
+        return '$s $m $h $dom * ?';
       case CronFrequency.yearly:
-        return '$s $m $h ${_clampDom(spec.dayOfMonth)} ${_clampMonth(spec.month)} ?';
+        final dom = spec.lastDayOfMonth ? 'L' : '${_clampDom(spec.dayOfMonth)}';
+        return '$s $m $h $dom ${_clampMonth(spec.month)} ?';
     }
   }
 
@@ -112,11 +120,7 @@ abstract final class CronBuilder {
 
     // 每天：日/月通配，周通配。
     if (_isWild(dom) && _isWild(mon) && _isWild(dow)) {
-      return CronSpec(
-        frequency: CronFrequency.daily,
-        hour: hour,
-        minute: min,
-      );
+      return CronSpec(frequency: CronFrequency.daily, hour: hour, minute: min);
     }
     // 每周：日通配、月通配、周为具体星期集合。
     if (_isWild(dom) && _isWild(mon) && !_isWild(dow)) {
@@ -129,18 +133,20 @@ abstract final class CronBuilder {
         weekdays: days,
       );
     }
-    final domValue = int.tryParse(dom);
+    final lastDayOfMonth = dom.toUpperCase() == 'L';
+    final domValue = lastDayOfMonth ? 31 : int.tryParse(dom);
     if (domValue == null || domValue < 1 || domValue > 31) return null;
-    // 每月：具体日、月通配、周通配。
+    // 每月：具体日/月末、月通配、周通配。
     if (_isWild(mon) && _isWild(dow)) {
       return CronSpec(
         frequency: CronFrequency.monthly,
         hour: hour,
         minute: min,
         dayOfMonth: domValue,
+        lastDayOfMonth: lastDayOfMonth,
       );
     }
-    // 每年：具体日 + 具体月、周通配。
+    // 每年：具体日/月末 + 具体月、周通配。
     final monValue = int.tryParse(mon);
     if (monValue != null && monValue >= 1 && monValue <= 12 && _isWild(dow)) {
       return CronSpec(
@@ -148,6 +154,7 @@ abstract final class CronBuilder {
         hour: hour,
         minute: min,
         dayOfMonth: domValue,
+        lastDayOfMonth: lastDayOfMonth,
         month: monValue,
       );
     }

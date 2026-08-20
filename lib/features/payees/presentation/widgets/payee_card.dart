@@ -96,13 +96,24 @@ class PayeeCard extends StatelessWidget {
               ],
             ),
           ),
-          InkResponse(
-            radius: 20,
-            onTap: onMenu,
-            child: Icon(
-              Icons.more_horiz_rounded,
-              size: 20,
-              color: palette.textSecondary,
+          Semantics(
+            button: true,
+            label: MaterialLocalizations.of(context).showMenuTooltip,
+            child: Tooltip(
+              message: MaterialLocalizations.of(context).showMenuTooltip,
+              child: InkResponse(
+                radius: 24,
+                onTap: onMenu,
+                child: SizedBox(
+                  width: 48,
+                  height: 48,
+                  child: Icon(
+                    Icons.more_horiz_rounded,
+                    size: 20,
+                    color: palette.textSecondary,
+                  ),
+                ),
+              ),
             ),
           ),
         ],

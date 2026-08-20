@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fortuneboot/core/feedback/fx_feedback.dart';
 import 'package:fortuneboot/core/network/fx_api.dart';
 import 'package:fortuneboot/core/session/session_cubit.dart';
 import 'package:fortuneboot/features/manage_shared/manage_menu.dart';
@@ -30,9 +31,7 @@ class _TagsPageState extends State<TagsPage> {
   int? get _bookId => context.read<SessionCubit>().state.currentBookId;
 
   void _showToast(String message) {
-    ScaffoldMessenger.of(context)
-      ..hideCurrentSnackBar()
-      ..showSnackBar(SnackBar(content: Text(message)));
+    FxFeedback.info(context, message: message);
   }
 
   /// 展平树以供父级选择。
@@ -95,9 +94,11 @@ class _TagsPageState extends State<TagsPage> {
       final ok = await confirmManageAction(
         context,
         title: S.of(context).tagsMoveToRecycleBin,
-        message: S.of(context).tagsMoveToRecycleBinConfirm(
-          node.tagName ?? S.of(context).tagsThisTag,
-        ),
+        message: S
+            .of(context)
+            .tagsMoveToRecycleBinConfirm(
+              node.tagName ?? S.of(context).tagsThisTag,
+            ),
         confirmLabel: S.of(context).tagsMove,
       );
       if (ok != true) return;
@@ -110,7 +111,10 @@ class _TagsPageState extends State<TagsPage> {
       }
       if (mounted) _bloc.add(const TagsMutated());
     } on Object catch (e) {
-      _showToast(e is FxApiException ? e.message : e.toString());
+      if (!mounted) return;
+      _showToast(
+        e is FxApiException ? e.message : S.of(context).profileSaveFailedRetry,
+      );
     }
   }
 
@@ -120,9 +124,11 @@ class _TagsPageState extends State<TagsPage> {
     final ok = await confirmManageAction(
       context,
       title: S.of(context).tagsDeletePermanently,
-      message: S.of(context).tagsDeletePermanentlyConfirm(
-        node.tagName ?? S.of(context).tagsThisTag,
-      ),
+      message: S
+          .of(context)
+          .tagsDeletePermanentlyConfirm(
+            node.tagName ?? S.of(context).tagsThisTag,
+          ),
       confirmLabel: S.of(context).tagsDelete,
     );
     if (ok != true) return;
@@ -130,7 +136,10 @@ class _TagsPageState extends State<TagsPage> {
       await _service.remove(bookId: bookId, tagId: node.tagId!);
       if (mounted) _bloc.add(const TagsMutated());
     } on Object catch (e) {
-      _showToast(e is FxApiException ? e.message : e.toString());
+      if (!mounted) return;
+      _showToast(
+        e is FxApiException ? e.message : S.of(context).profileSaveFailedRetry,
+      );
     }
   }
 
@@ -153,6 +162,7 @@ class _TagsPageState extends State<TagsPage> {
           return ManageScaffold(
             title: S.of(context).tagsTitle,
             searchHint: S.of(context).tagsSearchHint,
+            addTooltip: S.of(context).tagsAdd,
             onAdd: () => _openForm(),
             onSearch: (kw) => _bloc.add(TagsSearchChanged(kw)),
             tab: state.tab,
@@ -175,6 +185,7 @@ class _TagsPageState extends State<TagsPage> {
       case TagsStatus.error:
         return FxStateView.error(
           message: state.errorMessage,
+          retryLabel: S.of(context).commonRetry,
           onRetry: () => _bloc.add(const TagsLoaded()),
         );
       case TagsStatus.empty:

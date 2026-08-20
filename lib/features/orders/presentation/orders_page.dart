@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fortuneboot/core/network/fx_api.dart';
+import 'package:fortuneboot/core/feedback/fx_feedback.dart';
 import 'package:fortuneboot/core/session/session_cubit.dart';
 import 'package:fortuneboot/features/orders/data/orders_models.dart';
 import 'package:fortuneboot/features/orders/data/orders_service.dart';
 import 'package:fortuneboot/features/orders/presentation/bloc/orders_bloc.dart';
 import 'package:fortuneboot/features/orders/presentation/widgets/order_form_sheet.dart';
 import 'package:fortuneboot/fx/components/fx_card.dart';
+import 'package:fortuneboot/fx/components/fx_confirm_sheet.dart';
+import 'package:fortuneboot/fx/components/fx_icon_button.dart';
 import 'package:fortuneboot/fx/components/fx_money_text.dart';
 import 'package:fortuneboot/fx/components/fx_sheet.dart';
 import 'package:fortuneboot/fx/components/fx_state_view.dart';
@@ -33,9 +35,7 @@ class _OrdersPageState extends State<OrdersPage> {
   String? get _currency => context.read<SessionCubit>().state.defaultCurrency;
 
   void _showToast(String message) {
-    ScaffoldMessenger.of(context)
-      ..hideCurrentSnackBar()
-      ..showSnackBar(SnackBar(content: Text(message)));
+    FxFeedback.info(context, message: message);
   }
 
   Future<void> _openForm({FortuneFinanceOrderVo? order}) async {
@@ -59,39 +59,22 @@ class _OrdersPageState extends State<OrdersPage> {
     final bookId = _bookId;
     final orderId = order.orderId;
     if (bookId == null || orderId == null) return;
-    final ok = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(S.of(context).ordersRemoveTitle),
-        content: Text(
-          S
-              .of(context)
-              .ordersRemoveMessage(
-                order.title ?? S.of(context).ordersThisOrder,
-              ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(false),
-            child: Text(S.of(context).commonCancel),
-          ),
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(true),
-            child: Text(
-              S.of(context).ordersDelete,
-              style: TextStyle(color: FxPalette.of(ctx).danger),
-            ),
-          ),
-        ],
-      ),
+    final ok = await FxConfirmSheet.show(
+      context,
+      title: S.of(context).ordersRemoveTitle,
+      message: S
+          .of(context)
+          .ordersRemoveMessage(order.title ?? S.of(context).ordersThisOrder),
+      confirmLabel: S.of(context).ordersDelete,
+      cancelLabel: S.of(context).commonCancel,
+      destructive: true,
+      failureMessage: S.of(context).profileSaveFailedRetry,
+      onConfirm: () async {
+        await _service.remove(bookId: bookId, orderId: orderId);
+        return true;
+      },
     );
-    if (ok != true) return;
-    try {
-      await _service.remove(bookId: bookId, orderId: orderId);
-      if (mounted) _bloc.add(const OrdersMutated());
-    } on Object catch (e) {
-      _showToast(e is FxApiException ? e.message : e.toString());
-    }
+    if (ok == true && mounted) _bloc.add(const OrdersMutated());
   }
 
   @override
@@ -127,7 +110,6 @@ class _OrdersPageState extends State<OrdersPage> {
   }
 
   Widget _buildHeader(BuildContext context) {
-    final palette = FxPalette.of(context);
     return Padding(
       padding: const EdgeInsets.fromLTRB(
         FxSpacing.sm,
@@ -137,32 +119,18 @@ class _OrdersPageState extends State<OrdersPage> {
       ),
       child: Row(
         children: [
-          InkResponse(
-            onTap: () => Navigator.of(context).maybePop(),
-            radius: 22,
-            child: Padding(
-              padding: const EdgeInsets.all(FxSpacing.xs),
-              child: Icon(
-                Icons.chevron_left_rounded,
-                size: 26,
-                color: palette.textPrimary,
-              ),
-            ),
+          FxIconButton(
+            icon: Icons.chevron_left_rounded,
+            tooltip: MaterialLocalizations.of(context).backButtonTooltip,
+            onPressed: () => Navigator.of(context).maybePop(),
           ),
           Expanded(
             child: Text(S.of(context).ordersTitle, style: FxTypography.title),
           ),
-          InkResponse(
-            onTap: () => _openForm(),
-            radius: 22,
-            child: Padding(
-              padding: const EdgeInsets.all(FxSpacing.xs),
-              child: Icon(
-                Icons.add_rounded,
-                size: 26,
-                color: palette.textPrimary,
-              ),
-            ),
+          FxIconButton(
+            icon: Icons.add_rounded,
+            tooltip: S.of(context).ordersAddTitle,
+            onPressed: () => _openForm(),
           ),
         ],
       ),
@@ -180,6 +148,7 @@ class _OrdersPageState extends State<OrdersPage> {
       case OrdersStatus.error:
         return FxStateView.error(
           message: state.errorMessage,
+          retryLabel: S.of(context).commonRetry,
           onRetry: () => _bloc.add(const OrdersLoaded()),
         );
       case OrdersStatus.empty:
@@ -354,22 +323,29 @@ class _OrdersPageState extends State<OrdersPage> {
   }) {
     final palette = FxPalette.of(context);
     final color = danger ? palette.danger : palette.primary;
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: FxSpacing.md,
-          vertical: FxSpacing.xs,
-        ),
-        decoration: BoxDecoration(
-          color: color.withValues(alpha: 0.1),
-          borderRadius: FxRadius.pillBorder,
-        ),
-        child: Text(
-          label,
-          style: FxTypography.label.copyWith(
-            color: color,
-            fontWeight: FontWeight.w600,
+    return Semantics(
+      button: true,
+      label: label,
+      child: Tooltip(
+        message: label,
+        child: GestureDetector(
+          onTap: onTap,
+          child: Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: FxSpacing.md,
+              vertical: FxSpacing.xs,
+            ),
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.1),
+              borderRadius: FxRadius.pillBorder,
+            ),
+            child: Text(
+              label,
+              style: FxTypography.label.copyWith(
+                color: color,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
           ),
         ),
       ),

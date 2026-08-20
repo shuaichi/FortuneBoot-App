@@ -71,13 +71,24 @@ class MemberCard extends StatelessWidget {
             ),
             _statusChip(context, member.enable),
             const SizedBox(width: FxSpacing.sm),
-            InkResponse(
-              radius: 20,
-              onTap: onMenu,
-              child: Icon(
-                Icons.more_horiz_rounded,
-                size: 20,
-                color: palette.textSecondary,
+            Semantics(
+              button: true,
+              label: MaterialLocalizations.of(context).showMenuTooltip,
+              child: Tooltip(
+                message: MaterialLocalizations.of(context).showMenuTooltip,
+                child: InkResponse(
+                  radius: 24,
+                  onTap: onMenu,
+                  child: SizedBox(
+                    width: 48,
+                    height: 48,
+                    child: Icon(
+                      Icons.more_horiz_rounded,
+                      size: 20,
+                      color: palette.textSecondary,
+                    ),
+                  ),
+                ),
               ),
             ),
           ],
@@ -96,7 +107,10 @@ class MemberCard extends StatelessWidget {
     final palette = FxPalette.of(context);
     final color = enable ? palette.success : palette.textTertiary;
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: FxSpacing.sm, vertical: 2),
+      padding: const EdgeInsets.symmetric(
+        horizontal: FxSpacing.sm,
+        vertical: 2,
+      ),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.12),
         borderRadius: FxRadius.pillBorder,

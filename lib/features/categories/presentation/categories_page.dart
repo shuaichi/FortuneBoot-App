@@ -89,9 +89,11 @@ class _CategoriesPageState extends State<CategoriesPage> {
       final ok = await confirmManageAction(
         context,
         title: S.of(context).categoriesMoveToRecycleBin,
-        message: S.of(context).categoriesMoveToRecycleBinConfirm(
-          node.categoryName ?? S.of(context).categoriesThisCategory,
-        ),
+        message: S
+            .of(context)
+            .categoriesMoveToRecycleBinConfirm(
+              node.categoryName ?? S.of(context).categoriesThisCategory,
+            ),
         confirmLabel: S.of(context).categoriesMove,
       );
       if (ok != true) return;
@@ -107,7 +109,10 @@ class _CategoriesPageState extends State<CategoriesPage> {
       }
       if (mounted) _bloc.add(const CategoriesMutated());
     } on Object catch (e) {
-      _showToast(e is FxApiException ? e.message : e.toString());
+      if (!mounted) return;
+      _showToast(
+        e is FxApiException ? e.message : S.of(context).profileSaveFailedRetry,
+      );
     }
   }
 
@@ -117,9 +122,11 @@ class _CategoriesPageState extends State<CategoriesPage> {
     final ok = await confirmManageAction(
       context,
       title: S.of(context).categoriesDeletePermanently,
-      message: S.of(context).categoriesDeletePermanentlyConfirm(
-        node.categoryName ?? S.of(context).categoriesThisCategory,
-      ),
+      message: S
+          .of(context)
+          .categoriesDeletePermanentlyConfirm(
+            node.categoryName ?? S.of(context).categoriesThisCategory,
+          ),
       confirmLabel: S.of(context).categoriesDelete,
     );
     if (ok != true) return;
@@ -127,7 +134,10 @@ class _CategoriesPageState extends State<CategoriesPage> {
       await _service.remove(bookId: bookId, categoryId: node.categoryId!);
       if (mounted) _bloc.add(const CategoriesMutated());
     } on Object catch (e) {
-      _showToast(e is FxApiException ? e.message : e.toString());
+      if (!mounted) return;
+      _showToast(
+        e is FxApiException ? e.message : S.of(context).profileSaveFailedRetry,
+      );
     }
   }
 
@@ -150,6 +160,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
           return ManageScaffold(
             title: S.of(context).categoriesTitle,
             searchHint: S.of(context).categoriesSearchHint,
+            addTooltip: S.of(context).categoriesAdd,
             onAdd: () => _openForm(),
             onSearch: (kw) => _bloc.add(CategoriesSearchChanged(kw)),
             tab: state.tab,
@@ -163,7 +174,9 @@ class _CategoriesPageState extends State<CategoriesPage> {
 
   Widget _buildBody(CategoriesState state, int? bookId) {
     if (bookId == null) {
-      return FxStateView.empty(message: S.of(context).categoriesSelectBookFirst);
+      return FxStateView.empty(
+        message: S.of(context).categoriesSelectBookFirst,
+      );
     }
     switch (state.status) {
       case CategoriesStatus.initial:
@@ -172,6 +185,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
       case CategoriesStatus.error:
         return FxStateView.error(
           message: state.errorMessage,
+          retryLabel: S.of(context).commonRetry,
           onRetry: () => _bloc.add(const CategoriesLoaded()),
         );
       case CategoriesStatus.empty:
@@ -190,6 +204,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
       );
     }
     final inRecycle = state.tab.recycleBin;
+    final forceExpanded = state.keyword.trim().isNotEmpty;
     final finance = FxFinanceColors.of(context);
     return RefreshIndicator(
       onRefresh: () async => _bloc.add(const CategoriesLoaded()),
@@ -209,6 +224,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
               expense,
               1,
               inRecycle,
+              forceExpanded,
             ),
           if (income.isNotEmpty)
             _section(
@@ -217,6 +233,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
               income,
               2,
               inRecycle,
+              forceExpanded,
             ),
         ],
       ),
@@ -229,6 +246,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
     List<FortuneCategoryVo> roots,
     int type,
     bool inRecycle,
+    bool forceExpanded,
   ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -264,6 +282,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
           CategoryTile(
             node: node,
             typeTint: tint,
+            forceExpanded: forceExpanded,
             onTap: (n) => _openForm(category: n),
             onMenu: _openMenu,
             onAddChild: inRecycle

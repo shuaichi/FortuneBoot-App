@@ -16,7 +16,9 @@ import 'package:fortuneboot/features/books/presentation/pages/groups_tab.dart';
 import 'package:fortuneboot/features/books/presentation/widgets/book_form_sheet.dart';
 import 'package:fortuneboot/features/books/presentation/widgets/destructive_confirm_sheet.dart';
 import 'package:fortuneboot/features/books/presentation/widgets/group_form_sheet.dart';
+import 'package:fortuneboot/core/feedback/fx_feedback.dart';
 import 'package:fortuneboot/fx/components/fx_button.dart';
+import 'package:fortuneboot/fx/components/fx_icon_button.dart';
 import 'package:fortuneboot/fx/components/fx_segmented.dart';
 import 'package:fortuneboot/fx/components/fx_sheet.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
@@ -33,10 +35,16 @@ class BooksManageArgs {
 }
 
 class BooksPage extends StatefulWidget {
-  const BooksPage({super.key, this.initialTab = BooksTab.groups, this.groupId});
+  const BooksPage({
+    super.key,
+    this.initialTab = BooksTab.groups,
+    this.groupId,
+    this.restoreLastTab = true,
+  });
 
   final BooksTab initialTab;
   final int? groupId;
+  final bool restoreLastTab;
 
   @override
   State<BooksPage> createState() => _BooksPageState();
@@ -60,7 +68,7 @@ class _BooksPageState extends State<BooksPage> {
   }
 
   Future<void> _loadLastTab() async {
-    if (widget.groupId != null) return;
+    if (!widget.restoreLastTab || widget.groupId != null) return;
     final prefs = await SharedPreferences.getInstance();
     final raw = prefs.getString(_lastTabKey);
     if (!mounted || raw == null) return;
@@ -78,9 +86,12 @@ class _BooksPageState extends State<BooksPage> {
   }
 
   void _showToast(String message) {
-    ScaffoldMessenger.of(context)
-      ..hideCurrentSnackBar()
-      ..showSnackBar(SnackBar(content: Text(message)));
+    FxFeedback.info(context, message: message);
+  }
+
+  String _errorMessage(Object error) {
+    if (error is FxApiException) return error.message;
+    return S.of(context).profileSaveFailedRetry;
   }
 
   Future<void> _syncAfterWrite() async {
@@ -104,7 +115,7 @@ class _BooksPageState extends State<BooksPage> {
       }
     } on Object catch (e) {
       if (!mounted) return;
-      _showToast(e is FxApiException ? e.message : e.toString());
+      _showToast(_errorMessage(e));
     }
   }
 
@@ -133,8 +144,8 @@ class _BooksPageState extends State<BooksPage> {
 
   Future<void> _openGroupDetail(ManagedGroup group) async {
     await Navigator.of(context).push<void>(
-      MaterialPageRoute(
-        builder: (_) => GroupDetailPage(
+      PageRouteBuilder<void>(
+        pageBuilder: (_, _, _) => GroupDetailPage(
           group: group,
           service: _service,
           capabilities: _bloc.state.capabilitiesFor(group.groupId),
@@ -158,8 +169,8 @@ class _BooksPageState extends State<BooksPage> {
   Future<void> _openBookDetail(FortuneBookVo book) async {
     final state = _bloc.state;
     await Navigator.of(context).push<void>(
-      MaterialPageRoute(
-        builder: (_) => BookDetailPage(
+      PageRouteBuilder<void>(
+        pageBuilder: (_, _, _) => BookDetailPage(
           book: book,
           group: state.selectedManagedGroup,
           service: _service,
@@ -596,14 +607,10 @@ class _Header extends StatelessWidget {
       ),
       child: Row(
         children: [
-          InkResponse(
-            onTap: onBack,
-            radius: 24,
-            child: const SizedBox(
-              width: 44,
-              height: 44,
-              child: Icon(Icons.chevron_left_rounded, size: 30),
-            ),
+          FxIconButton(
+            icon: Icons.chevron_left_rounded,
+            tooltip: MaterialLocalizations.of(context).backButtonTooltip,
+            onPressed: onBack,
           ),
           Expanded(
             child: Column(

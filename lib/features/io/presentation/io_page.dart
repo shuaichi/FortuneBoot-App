@@ -5,10 +5,13 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fortuneboot/core/feedback/fx_feedback.dart';
 import 'package:fortuneboot/core/network/fx_api.dart';
+import 'package:fortuneboot/core/session/bill_mutations.dart';
 import 'package:fortuneboot/core/session/session_cubit.dart';
 import 'package:fortuneboot/features/io/data/io_service.dart';
 import 'package:fortuneboot/fx/components/fx_button.dart';
+import 'package:fortuneboot/fx/components/fx_icon_button.dart';
 import 'package:fortuneboot/fx/components/fx_card.dart';
 import 'package:fortuneboot/fx/components/fx_sheet.dart';
 import 'package:fortuneboot/fx/components/fx_state_view.dart';
@@ -39,11 +42,13 @@ class _IoPageState extends State<IoPage> {
 
   int? get _bookId => context.read<SessionCubit>().state.currentBookId;
 
+  bool get _busy => _exporting || _downloadingTemplate || _importing;
+
   void _showToast(String message) {
-    ScaffoldMessenger.of(context)
-      ..hideCurrentSnackBar()
-      ..showSnackBar(SnackBar(content: Text(message)));
+    FxFeedback.info(context, message: message);
   }
+
+  bool _isCurrentBook(int bookId) => _bookId == bookId;
 
   /// 保存字节流：Web 触发下载；移动端存临时目录并返回路径。
   Future<String?> _saveBytes(BytesResult res) async {
@@ -61,10 +66,11 @@ class _IoPageState extends State<IoPage> {
     final path = '${dir.path}/${res.filename}';
     final file = File(path);
     await file.writeAsBytes(res.bytes, flush: true);
-    return s.ioSavedTo(path);
+    return s.ioSavedTo(res.filename);
   }
 
   Future<void> _export() async {
+    if (_busy) return;
     final bookId = _bookId;
     if (bookId == null) {
       _showToast(S.of(context).ioSelectBookFirst);
@@ -75,8 +81,9 @@ class _IoPageState extends State<IoPage> {
     try {
       // 最简筛选：仅 bookId。可扩展为携带当前 Bills 页筛选条件。
       final res = await _service.exportBills({'bookId': bookId});
+      if (!mounted || !_isCurrentBook(bookId)) return;
       final msg = await _saveBytes(res);
-      if (!mounted) return;
+      if (!mounted || !_isCurrentBook(bookId)) return;
       _showToast(msg ?? noDataMsg);
     } on Object catch (e) {
       if (mounted) _showToast(_err(e));
@@ -86,6 +93,7 @@ class _IoPageState extends State<IoPage> {
   }
 
   Future<void> _downloadTemplate() async {
+    if (_busy) return;
     final bookId = _bookId;
     if (bookId == null) {
       _showToast(S.of(context).ioSelectBookFirst);
@@ -95,8 +103,9 @@ class _IoPageState extends State<IoPage> {
     setState(() => _downloadingTemplate = true);
     try {
       final res = await _service.downloadTemplate(bookId);
+      if (!mounted || !_isCurrentBook(bookId)) return;
       final msg = await _saveBytes(res);
-      if (!mounted) return;
+      if (!mounted || !_isCurrentBook(bookId)) return;
       _showToast(msg ?? failedMsg);
     } on Object catch (e) {
       if (mounted) _showToast(_err(e));
@@ -106,6 +115,7 @@ class _IoPageState extends State<IoPage> {
   }
 
   Future<void> _import() async {
+    if (_busy) return;
     final bookId = _bookId;
     if (bookId == null) {
       _showToast(S.of(context).ioSelectBookFirst);
@@ -117,24 +127,36 @@ class _IoPageState extends State<IoPage> {
       allowedExtensions: const ['xlsx', 'xls'],
       withData: true,
     );
-    if (picked == null || picked.files.isEmpty) return;
+    if (!mounted || !_isCurrentBook(bookId)) return;
+    if (picked == null || picked.files.isEmpty) {
+      _showToast(S.of(context).commonCancel);
+      return;
+    }
     final file = picked.files.first;
-    final bytes =
-        file.bytes ??
-        (file.path != null ? await File(file.path!).readAsBytes() : null);
-    if (bytes == null) {
+    final extension = file.name.split('.').last.toLowerCase();
+    if (extension != 'xlsx' && extension != 'xls') {
       _showToast(readFailedMsg);
       return;
     }
 
     setState(() => _importing = true);
     try {
+      final bytes =
+          file.bytes ??
+          (file.path != null ? await File(file.path!).readAsBytes() : null);
+      if (!mounted || !_isCurrentBook(bookId)) return;
+      if (bytes == null) {
+        _showToast(readFailedMsg);
+        return;
+      }
       final outcome = await _service.importBills(
         bookId: bookId,
         fileBytes: bytes,
         filename: file.name,
       );
-      if (!mounted) return;
+      if (!mounted || !_isCurrentBook(bookId)) return;
+      final imported = outcome.result?.successCount ?? 0;
+      if (imported > 0) BillMutations.bump();
       await _showImportResult(outcome);
     } on Object catch (e) {
       if (mounted) _showToast(_err(e));
@@ -158,7 +180,8 @@ class _IoPageState extends State<IoPage> {
     );
   }
 
-  String _err(Object e) => e is FxApiException ? e.message : e.toString();
+  String _err(Object e) =>
+      e is FxApiException ? e.message : S.of(context).profileSaveFailedRetry;
 
   @override
   Widget build(BuildContext context) {
@@ -184,7 +207,6 @@ class _IoPageState extends State<IoPage> {
   }
 
   Widget _buildHeader(BuildContext context) {
-    final palette = FxPalette.of(context);
     return Padding(
       padding: const EdgeInsets.fromLTRB(
         FxSpacing.sm,
@@ -194,23 +216,13 @@ class _IoPageState extends State<IoPage> {
       ),
       child: Row(
         children: [
-          InkResponse(
-            onTap: () => Navigator.of(context).maybePop(),
-            radius: 22,
-            child: Padding(
-              padding: const EdgeInsets.all(FxSpacing.xs),
-              child: Icon(
-                Icons.chevron_left_rounded,
-                size: 26,
-                color: palette.textPrimary,
-              ),
-            ),
+          FxIconButton(
+            icon: Icons.chevron_left_rounded,
+            tooltip: MaterialLocalizations.of(context).backButtonTooltip,
+            onPressed: () => Navigator.of(context).maybePop(),
           ),
           Expanded(
-            child: Text(
-              S.of(context).ioTitle,
-              style: FxTypography.title,
-            ),
+            child: Text(S.of(context).ioTitle, style: FxTypography.title),
           ),
         ],
       ),
@@ -230,7 +242,7 @@ class _IoPageState extends State<IoPage> {
           subtitle: S.of(context).ioExportBillsSubtitle,
           buttonLabel: S.of(context).ioExport,
           loading: _exporting,
-          onTap: _export,
+          onTap: _busy ? null : _export,
         ),
         const SizedBox(height: FxSpacing.md),
         _actionCard(
@@ -240,7 +252,7 @@ class _IoPageState extends State<IoPage> {
           subtitle: S.of(context).ioDownloadTemplateSubtitle,
           buttonLabel: S.of(context).ioDownloadTemplate,
           loading: _downloadingTemplate,
-          onTap: _downloadTemplate,
+          onTap: _busy ? null : _downloadTemplate,
         ),
         const SizedBox(height: FxSpacing.md),
         _actionCard(
@@ -250,7 +262,7 @@ class _IoPageState extends State<IoPage> {
           subtitle: S.of(context).ioImportBillsSubtitle,
           buttonLabel: S.of(context).ioSelectFileImport,
           loading: _importing,
-          onTap: _import,
+          onTap: _busy ? null : _import,
         ),
       ],
     );
@@ -263,49 +275,54 @@ class _IoPageState extends State<IoPage> {
     required String subtitle,
     required String buttonLabel,
     required bool loading,
-    required VoidCallback onTap,
+    required VoidCallback? onTap,
   }) {
-    return FxCard(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                  color: tint.withValues(alpha: 0.12),
-                  borderRadius: FxRadius.tileBorder,
+    return Semantics(
+      button: true,
+      enabled: onTap != null && !loading,
+      label: title,
+      child: FxCard(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: tint.withValues(alpha: 0.12),
+                    borderRadius: FxRadius.tileBorder,
+                  ),
+                  child: Icon(icon, color: tint),
                 ),
-                child: Icon(icon, color: tint),
-              ),
-              const SizedBox(width: FxSpacing.md),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(title, style: FxTypography.bodyStrong),
-                    const SizedBox(height: 2),
-                    Text(
-                      subtitle,
-                      style: FxTypography.caption.copyWith(
-                        color: FxPalette.of(context).textTertiary,
+                const SizedBox(width: FxSpacing.md),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(title, style: FxTypography.bodyStrong),
+                      const SizedBox(height: 2),
+                      Text(
+                        subtitle,
+                        style: FxTypography.caption.copyWith(
+                          color: FxPalette.of(context).textTertiary,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            ],
-          ),
-          const SizedBox(height: FxSpacing.md),
-          FxButton(
-            label: buttonLabel,
-            expand: true,
-            loading: loading,
-            onPressed: loading ? null : onTap,
-          ),
-        ],
+              ],
+            ),
+            const SizedBox(height: FxSpacing.md),
+            FxButton(
+              label: buttonLabel,
+              expand: true,
+              loading: loading,
+              onPressed: loading ? null : onTap,
+            ),
+          ],
+        ),
       ),
     );
   }

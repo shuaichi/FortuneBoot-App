@@ -5,6 +5,7 @@ import 'package:fortuneboot/core/session/session_models.dart';
 import 'package:fortuneboot/features/books/data/books_manage_models.dart';
 import 'package:fortuneboot/features/books/data/books_service.dart';
 import 'package:fortuneboot/features/books/domain/books_manage_capabilities.dart';
+import 'package:fortuneboot/generated/l10n.dart';
 
 part 'books_event.dart';
 part 'books_state.dart';
@@ -73,9 +74,12 @@ class BooksBloc extends Bloc<BooksEvent, BooksState> {
       if (selectedId != null) await _loadBooks(emit, selectedId);
     } on FxApiException catch (e) {
       emit(state.copyWith(status: BooksStatus.error, errorMessage: e.message));
-    } on Object catch (e) {
+    } on Object {
       emit(
-        state.copyWith(status: BooksStatus.error, errorMessage: e.toString()),
+        state.copyWith(
+          status: BooksStatus.error,
+          errorMessage: S.current.dashboardLoadFailed,
+        ),
       );
     }
   }
@@ -98,9 +102,12 @@ class BooksBloc extends Bloc<BooksEvent, BooksState> {
       await _loadBooks(emit, event.groupId);
     } on FxApiException catch (e) {
       emit(state.copyWith(status: BooksStatus.error, errorMessage: e.message));
-    } on Object catch (e) {
+    } on Object {
       emit(
-        state.copyWith(status: BooksStatus.error, errorMessage: e.toString()),
+        state.copyWith(
+          status: BooksStatus.error,
+          errorMessage: S.current.dashboardLoadFailed,
+        ),
       );
     }
   }

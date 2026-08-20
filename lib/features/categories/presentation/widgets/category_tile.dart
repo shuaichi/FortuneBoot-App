@@ -15,6 +15,8 @@ class CategoryTile extends StatefulWidget {
   final void Function(FortuneCategoryVo) onMenu;
   final void Function(FortuneCategoryVo, bool)? onEnableToggle;
   final void Function(FortuneCategoryVo parent)? onAddChild;
+  final bool? initiallyExpanded;
+  final bool forceExpanded;
 
   const CategoryTile({
     super.key,
@@ -25,6 +27,8 @@ class CategoryTile extends StatefulWidget {
     this.depth = 0,
     this.onEnableToggle,
     this.onAddChild,
+    this.initiallyExpanded,
+    this.forceExpanded = false,
   });
 
   @override
@@ -32,13 +36,14 @@ class CategoryTile extends StatefulWidget {
 }
 
 class _CategoryTileState extends State<CategoryTile> {
-  bool _expanded = true;
+  late bool _expanded = widget.initiallyExpanded ?? widget.depth == 0;
 
   @override
   Widget build(BuildContext context) {
     final palette = FxPalette.of(context);
     final node = widget.node;
     final hasChildren = node.children.isNotEmpty;
+    final expanded = widget.forceExpanded || _expanded;
     final isRoot = widget.depth == 0;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -73,15 +78,34 @@ class _CategoryTileState extends State<CategoryTile> {
                   child: Row(
                     children: [
                       if (hasChildren)
-                        InkResponse(
-                          radius: 18,
-                          onTap: () => setState(() => _expanded = !_expanded),
-                          child: Icon(
-                            _expanded
-                                ? Icons.expand_more_rounded
-                                : Icons.chevron_right_rounded,
-                            size: 20,
-                            color: palette.textSecondary,
+                        Semantics(
+                          button: true,
+                          expanded: expanded,
+                          label:
+                              node.categoryName ??
+                              S.of(context).categoriesUnnamed,
+                          child: Tooltip(
+                            message:
+                                node.categoryName ??
+                                S.of(context).categoriesUnnamed,
+                            child: InkResponse(
+                              radius: 24,
+                              onTap: widget.forceExpanded
+                                  ? null
+                                  : () =>
+                                        setState(() => _expanded = !_expanded),
+                              child: SizedBox(
+                                width: 44,
+                                height: 44,
+                                child: Icon(
+                                  expanded
+                                      ? Icons.expand_more_rounded
+                                      : Icons.chevron_right_rounded,
+                                  size: 20,
+                                  color: palette.textSecondary,
+                                ),
+                              ),
+                            ),
                           ),
                         )
                       else
@@ -126,22 +150,48 @@ class _CategoryTileState extends State<CategoryTile> {
                         ),
                       ),
                       if (widget.onAddChild != null && widget.depth == 0)
-                        InkResponse(
-                          radius: 18,
-                          onTap: () => widget.onAddChild!(node),
-                          child: Icon(
-                            Icons.add_rounded,
-                            size: 20,
-                            color: palette.textSecondary,
+                        Semantics(
+                          button: true,
+                          label: S.of(context).categoriesAdd,
+                          child: Tooltip(
+                            message: S.of(context).categoriesAdd,
+                            child: InkResponse(
+                              radius: 24,
+                              onTap: () => widget.onAddChild!(node),
+                              child: SizedBox(
+                                width: 44,
+                                height: 44,
+                                child: Icon(
+                                  Icons.add_rounded,
+                                  size: 20,
+                                  color: palette.textSecondary,
+                                ),
+                              ),
+                            ),
                           ),
                         ),
-                      InkResponse(
-                        radius: 18,
-                        onTap: () => widget.onMenu(node),
-                        child: Icon(
-                          Icons.more_horiz_rounded,
-                          size: 20,
-                          color: palette.textSecondary,
+                      Semantics(
+                        button: true,
+                        label: MaterialLocalizations.of(
+                          context,
+                        ).showMenuTooltip,
+                        child: Tooltip(
+                          message: MaterialLocalizations.of(
+                            context,
+                          ).showMenuTooltip,
+                          child: InkResponse(
+                            radius: 24,
+                            onTap: () => widget.onMenu(node),
+                            child: SizedBox(
+                              width: 44,
+                              height: 44,
+                              child: Icon(
+                                Icons.more_horiz_rounded,
+                                size: 20,
+                                color: palette.textSecondary,
+                              ),
+                            ),
+                          ),
                         ),
                       ),
                     ],
@@ -151,7 +201,7 @@ class _CategoryTileState extends State<CategoryTile> {
             ),
           ),
         ),
-        if (hasChildren && _expanded) ...[
+        if (hasChildren && expanded) ...[
           const SizedBox(height: FxSpacing.xs),
           for (final child in node.children) ...[
             CategoryTile(
@@ -161,6 +211,7 @@ class _CategoryTileState extends State<CategoryTile> {
               onTap: widget.onTap,
               onMenu: widget.onMenu,
               onEnableToggle: widget.onEnableToggle,
+              forceExpanded: widget.forceExpanded,
             ),
             const SizedBox(height: FxSpacing.xs),
           ],

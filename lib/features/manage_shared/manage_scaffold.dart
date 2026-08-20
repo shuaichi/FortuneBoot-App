@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fortuneboot/fx/components/fx_icon_button.dart';
 import 'package:fortuneboot/fx/components/fx_segmented.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
@@ -42,6 +43,10 @@ class ManageScaffold extends StatefulWidget {
   final ManageTab tab;
   final ValueChanged<ManageTab> onTabChanged;
   final Widget body;
+  final String? backTooltip;
+  final String? searchTooltip;
+  final String? closeSearchTooltip;
+  final String? addTooltip;
 
   const ManageScaffold({
     super.key,
@@ -52,6 +57,10 @@ class ManageScaffold extends StatefulWidget {
     required this.onTabChanged,
     required this.body,
     this.searchHint,
+    this.backTooltip,
+    this.searchTooltip,
+    this.closeSearchTooltip,
+    this.addTooltip,
   });
 
   @override
@@ -122,6 +131,9 @@ class _ManageScaffoldState extends State<ManageScaffold> {
   }
 
   Widget _buildHeader() {
+    final localizations = MaterialLocalizations.of(context);
+    final searchHint =
+        widget.searchHint ?? S.of(context).manageSharedSearchHint;
     return Padding(
       padding: const EdgeInsets.fromLTRB(
         FxSpacing.sm,
@@ -131,17 +143,25 @@ class _ManageScaffoldState extends State<ManageScaffold> {
       ),
       child: Row(
         children: [
-          _iconButton(
-            Icons.chevron_left_rounded,
-            () => Navigator.of(context).maybePop(),
+          FxIconButton(
+            icon: Icons.chevron_left_rounded,
+            tooltip: widget.backTooltip ?? localizations.backButtonTooltip,
+            onPressed: () => Navigator.of(context).maybePop(),
           ),
           Expanded(child: Text(widget.title, style: FxTypography.title)),
-          _iconButton(
-            _searching ? Icons.search_off_rounded : Icons.search_rounded,
-            _toggleSearch,
+          FxIconButton(
+            icon: _searching ? Icons.search_off_rounded : Icons.search_rounded,
+            tooltip: _searching
+                ? widget.closeSearchTooltip ?? localizations.closeButtonTooltip
+                : widget.searchTooltip ?? searchHint,
+            onPressed: _toggleSearch,
           ),
           const SizedBox(width: FxSpacing.xs),
-          _iconButton(Icons.add_rounded, widget.onAdd),
+          FxIconButton(
+            icon: Icons.add_rounded,
+            tooltip: widget.addTooltip ?? widget.title,
+            onPressed: widget.onAdd,
+          ),
         ],
       ),
     );
@@ -175,18 +195,6 @@ class _ManageScaffoldState extends State<ManageScaffold> {
             borderSide: BorderSide.none,
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _iconButton(IconData icon, VoidCallback onTap) {
-    final palette = FxPalette.of(context);
-    return InkResponse(
-      onTap: onTap,
-      radius: 22,
-      child: Padding(
-        padding: const EdgeInsets.all(FxSpacing.xs),
-        child: Icon(icon, size: 26, color: palette.textPrimary),
       ),
     );
   }

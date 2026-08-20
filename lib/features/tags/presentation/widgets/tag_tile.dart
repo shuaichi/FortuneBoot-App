@@ -111,13 +111,28 @@ class _TagTileState extends State<TagTile> {
                       ),
                       _capDots(context, node),
                       const SizedBox(width: FxSpacing.sm),
-                      InkResponse(
-                        radius: 18,
-                        onTap: () => widget.onMenu(node),
-                        child: Icon(
-                          Icons.more_horiz_rounded,
-                          size: 20,
-                          color: palette.textSecondary,
+                      Semantics(
+                        button: true,
+                        label: MaterialLocalizations.of(
+                          context,
+                        ).showMenuTooltip,
+                        child: Tooltip(
+                          message: MaterialLocalizations.of(
+                            context,
+                          ).showMenuTooltip,
+                          child: InkResponse(
+                            radius: 24,
+                            onTap: () => widget.onMenu(node),
+                            child: SizedBox(
+                              width: 48,
+                              height: 48,
+                              child: Icon(
+                                Icons.more_horiz_rounded,
+                                size: 20,
+                                color: palette.textSecondary,
+                              ),
+                            ),
+                          ),
                         ),
                       ),
                     ],

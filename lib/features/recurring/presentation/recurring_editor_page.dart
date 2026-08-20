@@ -9,6 +9,7 @@ import 'package:fortuneboot/features/recurring/data/template_options_service.dar
 import 'package:fortuneboot/features/recurring/presentation/widgets/cron_schedule_editor.dart';
 import 'package:fortuneboot/features/shared/data/bill_models.dart';
 import 'package:fortuneboot/fx/components/fx_button.dart';
+import 'package:fortuneboot/fx/components/fx_icon_button.dart';
 import 'package:fortuneboot/fx/components/fx_state_view.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
@@ -240,7 +241,35 @@ class _RecurringEditorPageState extends State<RecurringEditorPage> {
     return req;
   }
 
+  Future<bool> _validateCronForSubmit() async {
+    final cron = _cronCtrl.text.trim();
+    if (cron.isEmpty) return false;
+    _cronDebounce?.cancel();
+    setState(() {
+      _cronChecking = true;
+      _cronValid = null;
+    });
+    try {
+      final ok = await _service.checkCronExpression(cron);
+      if (!mounted) return false;
+      setState(() {
+        _cronValid = ok;
+        _cronChecking = false;
+      });
+      return ok;
+    } on Object {
+      if (mounted) {
+        setState(() {
+          _cronValid = false;
+          _cronChecking = false;
+        });
+      }
+      return false;
+    }
+  }
+
   Future<void> _submit() async {
+    if (_submitting) return;
     if (_nameCtrl.text.trim().isEmpty) {
       setState(() => _error = S.of(context).recurringRuleNameRequired);
       return;
@@ -249,9 +278,13 @@ class _RecurringEditorPageState extends State<RecurringEditorPage> {
       setState(() => _error = S.of(context).recurringCronRequired);
       return;
     }
-    if (_cronValid == false) {
-      setState(() => _error = S.of(context).recurringCronInvalidFix);
-      return;
+    if (_cronValid != true) {
+      final ok = await _validateCronForSubmit();
+      if (!mounted) return;
+      if (!ok) {
+        setState(() => _error = S.of(context).recurringCronInvalidFix);
+        return;
+      }
     }
     if (double.tryParse(_amountCtrl.text.trim()) == null) {
       setState(() => _error = S.of(context).recurringAmountRequired);
@@ -296,7 +329,9 @@ class _RecurringEditorPageState extends State<RecurringEditorPage> {
       if (mounted) {
         setState(() {
           _submitting = false;
-          _error = e is FxApiException ? e.message : e.toString();
+          _error = e is FxApiException
+              ? e.message
+              : S.of(context).profileSaveFailedRetry;
         });
       }
     }
@@ -329,17 +364,11 @@ class _RecurringEditorPageState extends State<RecurringEditorPage> {
       ),
       child: Row(
         children: [
-          InkResponse(
-            onTap: () => Navigator.of(context).maybePop(),
-            radius: 22,
-            child: Padding(
-              padding: const EdgeInsets.all(FxSpacing.xs),
-              child: Icon(
-                Icons.chevron_left_rounded,
-                size: 26,
-                color: palette.textPrimary,
-              ),
-            ),
+          FxIconButton(
+            icon: Icons.chevron_left_rounded,
+            tooltip: MaterialLocalizations.of(context).backButtonTooltip,
+            onPressed: () => Navigator.of(context).maybePop(),
+            color: palette.textPrimary,
           ),
           Expanded(
             child: Text(
@@ -358,7 +387,11 @@ class _RecurringEditorPageState extends State<RecurringEditorPage> {
     final palette = FxPalette.of(context);
     if (_loadingOptions) return FxStateView.loading();
     if (_optionsError != null) {
-      return FxStateView.error(message: _optionsError, onRetry: _loadOptions);
+      return FxStateView.error(
+        message: _optionsError,
+        retryLabel: S.of(context).commonRetry,
+        onRetry: _loadOptions,
+      );
     }
     return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(
@@ -552,7 +585,7 @@ class _RecurringEditorPageState extends State<RecurringEditorPage> {
               setState(() {
                 _cronSpec = spec;
                 _cronCtrl.text = CronBuilder.build(spec);
-                _cronValid = true; // 可视化生成的 cron 恒有效。
+                _cronValid = null;
               });
             },
           ),

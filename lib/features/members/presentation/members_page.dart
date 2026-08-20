@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fortuneboot/core/feedback/fx_feedback.dart';
 import 'package:fortuneboot/core/network/fx_api.dart';
 import 'package:fortuneboot/core/session/session_cubit.dart';
 import 'package:fortuneboot/features/manage_shared/manage_menu.dart';
@@ -30,9 +31,7 @@ class _MembersPageState extends State<MembersPage> {
   int? get _bookId => context.read<SessionCubit>().state.currentBookId;
 
   void _showToast(String message) {
-    ScaffoldMessenger.of(context)
-      ..hideCurrentSnackBar()
-      ..showSnackBar(SnackBar(content: Text(message)));
+    FxFeedback.info(context, message: message);
   }
 
   Future<void> _openForm({FortuneMemberVo? member}) async {
@@ -76,9 +75,11 @@ class _MembersPageState extends State<MembersPage> {
       final ok = await confirmManageAction(
         context,
         title: S.of(context).membersMoveToRecycleBin,
-        message: S.of(context).membersMoveToRecycleBinConfirm(
-          member.memberName ?? S.of(context).membersThisMember,
-        ),
+        message: S
+            .of(context)
+            .membersMoveToRecycleBinConfirm(
+              member.memberName ?? S.of(context).membersThisMember,
+            ),
         confirmLabel: S.of(context).membersMove,
       );
       if (ok != true) return;
@@ -94,7 +95,10 @@ class _MembersPageState extends State<MembersPage> {
       }
       if (mounted) _bloc.add(const MembersMutated());
     } on Object catch (e) {
-      _showToast(e is FxApiException ? e.message : e.toString());
+      if (!mounted) return;
+      _showToast(
+        e is FxApiException ? e.message : S.of(context).profileSaveFailedRetry,
+      );
     }
   }
 
@@ -104,9 +108,11 @@ class _MembersPageState extends State<MembersPage> {
     final ok = await confirmManageAction(
       context,
       title: S.of(context).membersDeletePermanently,
-      message: S.of(context).membersDeletePermanentlyConfirm(
-        member.memberName ?? S.of(context).membersThisMember,
-      ),
+      message: S
+          .of(context)
+          .membersDeletePermanentlyConfirm(
+            member.memberName ?? S.of(context).membersThisMember,
+          ),
       confirmLabel: S.of(context).membersDelete,
     );
     if (ok != true) return;
@@ -114,7 +120,10 @@ class _MembersPageState extends State<MembersPage> {
       await _service.remove(bookId: bookId, memberId: member.memberId!);
       if (mounted) _bloc.add(const MembersMutated());
     } on Object catch (e) {
-      _showToast(e is FxApiException ? e.message : e.toString());
+      if (!mounted) return;
+      _showToast(
+        e is FxApiException ? e.message : S.of(context).profileSaveFailedRetry,
+      );
     }
   }
 
@@ -137,6 +146,7 @@ class _MembersPageState extends State<MembersPage> {
           return ManageScaffold(
             title: S.of(context).membersTitle,
             searchHint: S.of(context).membersSearchHint,
+            addTooltip: S.of(context).membersAdd,
             onAdd: () => _openForm(),
             onSearch: (kw) => _bloc.add(MembersSearchChanged(kw)),
             tab: state.tab,
@@ -159,6 +169,7 @@ class _MembersPageState extends State<MembersPage> {
       case MembersStatus.error:
         return FxStateView.error(
           message: state.errorMessage,
+          retryLabel: S.of(context).commonRetry,
           onRetry: () => _bloc.add(const MembersLoaded()),
         );
       case MembersStatus.empty:

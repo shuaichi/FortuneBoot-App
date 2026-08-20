@@ -33,7 +33,11 @@ Widget _buildBooksPage(Object? args, BooksTab fallbackTab) {
         create: (_) =>
             BooksBloc(initialGroupId: initialGroupId)
               ..add(BooksLoaded(selectedGroupId: initialGroupId)),
-        child: BooksPage(initialTab: initialTab, groupId: groupId),
+        child: BooksPage(
+          initialTab: initialTab,
+          groupId: groupId,
+          restoreLastTab: false,
+        ),
       );
     },
   );

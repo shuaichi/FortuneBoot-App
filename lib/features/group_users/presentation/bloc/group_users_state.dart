@@ -7,12 +7,14 @@ class GroupUsersState extends Equatable {
   final List<GroupUserVo> users;
   final List<RoleTypeOption> roleTypes;
   final String? errorMessage;
+  final int? groupId;
 
   const GroupUsersState({
     this.status = GroupUsersStatus.initial,
     this.users = const [],
     this.roleTypes = const [],
     this.errorMessage,
+    this.groupId,
   });
 
   /// owner 角色：约定 RoleTypeEnum 中 value 最小者为所有者（后端枚举 owner 排首位）。
@@ -27,15 +29,18 @@ class GroupUsersState extends Equatable {
     List<GroupUserVo>? users,
     List<RoleTypeOption>? roleTypes,
     String? errorMessage,
+    int? groupId,
+    bool clearGroupId = false,
   }) {
     return GroupUsersState(
       status: status ?? this.status,
       users: users ?? this.users,
       roleTypes: roleTypes ?? this.roleTypes,
       errorMessage: errorMessage,
+      groupId: clearGroupId ? null : groupId ?? this.groupId,
     );
   }
 
   @override
-  List<Object?> get props => [status, users, roleTypes, errorMessage];
+  List<Object?> get props => [status, users, roleTypes, errorMessage, groupId];
 }

@@ -32,6 +32,7 @@ class GroupsTab extends StatelessWidget {
         if (state.status == BooksStatus.error && state.groups.isEmpty) {
           return FxStateView.error(
             message: state.errorMessage,
+            retryLabel: S.of(context).commonRetry,
             onRetry: () => context.read<BooksBloc>().add(const BooksLoaded()),
           );
         }

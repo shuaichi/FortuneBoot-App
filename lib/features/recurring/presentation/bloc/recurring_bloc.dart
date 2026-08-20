@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fortuneboot/core/network/fx_api.dart';
 import 'package:fortuneboot/features/recurring/data/recurring_models.dart';
 import 'package:fortuneboot/features/recurring/data/recurring_service.dart';
+import 'package:fortuneboot/generated/l10n.dart';
 
 part 'recurring_event.dart';
 part 'recurring_state.dart';
@@ -45,11 +46,11 @@ class RecurringBloc extends Bloc<RecurringEvent, RecurringState> {
       emit(
         state.copyWith(status: RecurringStatus.error, errorMessage: e.message),
       );
-    } on Object catch (e) {
+    } on Object {
       emit(
         state.copyWith(
           status: RecurringStatus.error,
-          errorMessage: e.toString(),
+          errorMessage: S.current.dashboardLoadFailed,
         ),
       );
     }
@@ -63,11 +64,14 @@ class RecurringBloc extends Bloc<RecurringEvent, RecurringState> {
     final ruleId = event.rule.ruleId;
     if (bookId == null || ruleId == null) return;
 
+    if (state.pendingToggleIds.contains(ruleId)) return;
+
     final original = state.rules;
     final optimistic = original
         .map((r) => r.ruleId == ruleId ? _copyEnable(r, event.enable) : r)
         .toList();
-    emit(state.copyWith(rules: optimistic));
+    final pending = {...state.pendingToggleIds, ruleId};
+    emit(state.copyWith(rules: optimistic, pendingToggleIds: pending));
 
     try {
       await _service.toggleRule(
@@ -75,12 +79,25 @@ class RecurringBloc extends Bloc<RecurringEvent, RecurringState> {
         ruleId: ruleId,
         enable: event.enable,
       );
+      final fresh = await _service.getRules(bookId: bookId);
+      emit(
+        state.copyWith(
+          status: fresh.isEmpty
+              ? RecurringStatus.empty
+              : RecurringStatus.loaded,
+          rules: fresh,
+          pendingToggleIds: {...state.pendingToggleIds}..remove(ruleId),
+        ),
+      );
     } on Object catch (e) {
       emit(
         state.copyWith(
           rules: original,
-          toastMessage:
-              '切换失败：${e is FxApiException ? e.message : e.toString()}',
+          pendingToggleIds: {...state.pendingToggleIds}..remove(ruleId),
+          toastMessage: e is FxApiException
+              ? e.message
+              : S.current.profileSaveFailedRetry,
+          toastSerial: state.toastSerial + 1,
         ),
       );
     }
