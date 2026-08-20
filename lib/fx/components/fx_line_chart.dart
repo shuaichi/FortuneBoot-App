@@ -1,8 +1,8 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:fortuneboot/core/money/fx_money_formatter.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
-import 'package:intl/intl.dart';
 
 class FxLinePoint {
   final String name;
@@ -29,6 +29,8 @@ class FxLineChart extends StatelessWidget {
   final bool curved;
   final String Function(String name)? labelBuilder;
   final String Function(double value)? valueFormatter;
+  final FxAmountVisibility visibility;
+  final String? locale;
 
   const FxLineChart({
     super.key,
@@ -40,6 +42,8 @@ class FxLineChart extends StatelessWidget {
     this.curved = true,
     this.labelBuilder,
     this.valueFormatter,
+    this.visibility = FxAmountVisibility.visible,
+    this.locale,
   });
 
   @override
@@ -156,14 +160,19 @@ class FxLineChart extends StatelessWidget {
     );
   }
 
-  String _formatValue(double value) =>
-      valueFormatter?.call(value) ?? NumberFormat('#,##0.##').format(value);
-
-  static String _compact(double v) {
-    if (v.abs() >= 10000) return '${(v / 10000).toStringAsFixed(1)}w';
-    if (v.abs() >= 1000) return '${(v / 1000).toStringAsFixed(1)}k';
-    return v.toStringAsFixed(0);
+  String _formatValue(double value) {
+    if (visibility == FxAmountVisibility.hidden) {
+      return FxMoneyFormatter.hiddenPlaceholder;
+    }
+    return valueFormatter?.call(value) ??
+        FxMoneyFormatter.format(value, locale: locale, decimalDigits: 2);
   }
+
+  String _compact(double value) => FxMoneyFormatter.formatCompact(
+    value,
+    locale: locale,
+    visibility: visibility,
+  );
 
   static String _shortLabel(String name) {
     final parts = name.split('-');

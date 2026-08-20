@@ -5,6 +5,7 @@ import 'package:fortuneboot/core/navigation/routes.dart';
 import 'package:fortuneboot/generated/l10n.dart';
 import 'package:fortuneboot/login/auth_version_source.dart';
 import 'package:fortuneboot/login/model/users.dart';
+import 'package:fortuneboot/login/server/server_endpoint.dart';
 import 'package:fortuneboot/login/view/login_screen.dart';
 import 'package:fortuneboot/util/dio_client.dart';
 
@@ -27,8 +28,16 @@ class _AuthVersionGateState extends State<AuthVersionGate> {
       return const _AuthGateState.missingConfiguration();
     }
 
-    final portSegment = port?.isNotEmpty == true ? ':$port' : '';
-    DioClient().updateBaseUrl('$protocol://$domain$portSegment/prod-api');
+    try {
+      final endpoint = ServerEndpoint.parse(
+        protocol: protocol!,
+        host: domain!,
+        port: port,
+      );
+      DioClient().updateBaseUrl(endpoint.apiBaseUri.toString());
+    } on ServerEndpointFormatException {
+      return const _AuthGateState.missingConfiguration();
+    }
     try {
       final check = await AuthVersionChecker(
         source: LoginApiVersionSource(),

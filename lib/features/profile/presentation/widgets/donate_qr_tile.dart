@@ -46,12 +46,20 @@ class _DonateQrTileState extends State<DonateQrTile> {
       _isSaving = true;
       _result = null;
     });
-    final result = await widget.onSave(widget.assetPath, widget.fileName);
-    if (!mounted) return;
-    setState(() {
-      _isSaving = false;
-      _result = result;
-    });
+    try {
+      final result = await widget.onSave(widget.assetPath, widget.fileName);
+      if (!mounted) return;
+      setState(() {
+        _isSaving = false;
+        _result = result;
+      });
+    } on Object {
+      if (!mounted) return;
+      setState(() {
+        _isSaving = false;
+        _result = ImageSaveResult.failed;
+      });
+    }
   }
 
   @override
@@ -139,21 +147,29 @@ class _DonateQrTileState extends State<DonateQrTile> {
             ),
           ),
         ),
+        TextButton.icon(
+          onPressed: _isSaving ? null : _save,
+          icon: const Icon(Icons.save_alt_rounded),
+          label: const Icon(Icons.save_alt_rounded),
+        ),
         if (feedback != null) ...[
           const SizedBox(height: FxSpacing.xs),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(feedback.icon, size: 14, color: feedback.color),
-              const SizedBox(width: FxSpacing.xs),
-              Flexible(
-                child: Text(
-                  feedback.message,
-                  textAlign: TextAlign.center,
-                  style: FxTypography.caption.copyWith(color: feedback.color),
+          Semantics(
+            liveRegion: true,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(feedback.icon, size: 14, color: feedback.color),
+                const SizedBox(width: FxSpacing.xs),
+                Flexible(
+                  child: Text(
+                    feedback.message,
+                    textAlign: TextAlign.center,
+                    style: FxTypography.caption.copyWith(color: feedback.color),
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ],
       ],

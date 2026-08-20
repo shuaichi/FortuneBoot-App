@@ -23,6 +23,7 @@ import 'package:fortuneboot/features/recurring/recurring_registration.dart';
 import 'package:fortuneboot/features/stats/stats_registration.dart';
 import 'package:fortuneboot/features/tags/tags_registration.dart';
 import 'package:fortuneboot/login/model/users.dart';
+import 'package:fortuneboot/login/server/server_endpoint.dart';
 import 'package:fortuneboot/util/dio_client.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -75,13 +76,17 @@ void _restoreDioClientFromStorage(SharedPreferences prefs) {
   final protocol = prefs.getString(UserDataSingleton.baseUrlProtocol);
   final domain = prefs.getString(UserDataSingleton.baseUrlDomain);
   final port = prefs.getString(UserDataSingleton.baseUrlPort);
-  if (protocol != null &&
-      protocol.isNotEmpty &&
-      domain != null &&
-      domain.isNotEmpty &&
-      port != null &&
-      port.isNotEmpty) {
-    DioClient().updateBaseUrl('$protocol://$domain:$port/prod-api');
+  if (protocol != null && domain != null) {
+    try {
+      final endpoint = ServerEndpoint.parse(
+        protocol: protocol,
+        host: domain,
+        port: port,
+      );
+      DioClient().updateBaseUrl(endpoint.apiBaseUri.toString());
+    } on ServerEndpointFormatException {
+      // Keep the persisted values for correction in the configuration screen.
+    }
   }
 
   final tokenRaw = prefs.getString(UserDataSingleton.userToken);
@@ -96,4 +101,3 @@ void _restoreDioClientFromStorage(SharedPreferences prefs) {
     }
   }
 }
-

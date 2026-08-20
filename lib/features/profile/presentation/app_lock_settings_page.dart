@@ -1,7 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fortuneboot/core/app_lock/app_lock_cubit.dart';
+import 'package:fortuneboot/core/feedback/fx_feedback.dart';
 import 'package:fortuneboot/core/app_lock/app_lock_models.dart';
 import 'package:fortuneboot/core/app_lock/pattern_path_resolver.dart';
 import 'package:fortuneboot/core/app_lock/presentation/pattern_lock_grid.dart';
@@ -96,6 +98,11 @@ class _AppLockSettingsPageState extends State<AppLockSettingsPage> {
                 enableSuggestions: false,
                 autocorrect: false,
                 keyboardType: TextInputType.number,
+                maxLength: 12,
+                inputFormatters: [
+                  FilteringTextInputFormatter.digitsOnly,
+                  LengthLimitingTextInputFormatter(12),
+                ],
                 decoration: InputDecoration(
                   labelText: s.appLockPinSetupLabel,
                   border: const OutlineInputBorder(),
@@ -108,6 +115,11 @@ class _AppLockSettingsPageState extends State<AppLockSettingsPage> {
                 enableSuggestions: false,
                 autocorrect: false,
                 keyboardType: TextInputType.number,
+                maxLength: 12,
+                inputFormatters: [
+                  FilteringTextInputFormatter.digitsOnly,
+                  LengthLimitingTextInputFormatter(12),
+                ],
                 decoration: InputDecoration(
                   labelText: s.appLockConfirmCredentialLabel,
                   border: const OutlineInputBorder(),
@@ -141,9 +153,25 @@ class _AppLockSettingsPageState extends State<AppLockSettingsPage> {
               ),
               if (_patternError != null) ...[
                 const SizedBox(height: 8),
-                Text(
-                  _patternError!,
-                  style: TextStyle(color: Theme.of(context).colorScheme.error),
+                Semantics(
+                  liveRegion: true,
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.error_outline_rounded,
+                        color: Theme.of(context).colorScheme.error,
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          _patternError!,
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.error,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ],
               TextButton(
@@ -385,8 +413,6 @@ class _AppLockSettingsPageState extends State<AppLockSettingsPage> {
   }
 
   void _showMessage(String message) {
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(message)));
+    FxFeedback.error(context, message: message);
   }
 }

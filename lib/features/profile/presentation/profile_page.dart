@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fortuneboot/core/app_lock/app_lock_cubit.dart';
+import 'package:fortuneboot/core/feedback/fx_feedback.dart';
 import 'package:fortuneboot/core/navigation/app_router.dart';
 import 'package:fortuneboot/core/navigation/routes.dart';
 import 'package:fortuneboot/core/preferences/locale_preferences.dart';
@@ -44,10 +45,12 @@ class ProfilePage extends StatelessWidget {
 class _ProfileView extends StatelessWidget {
   const _ProfileView();
 
-  void _toast(BuildContext context, String message) {
-    ScaffoldMessenger.of(context)
-      ..hideCurrentSnackBar()
-      ..showSnackBar(SnackBar(content: Text(message)));
+  void _toast(
+    BuildContext context,
+    String message, {
+    FxFeedbackTone tone = FxFeedbackTone.info,
+  }) {
+    FxFeedback.show(context, message: message, tone: tone);
   }
 
   Future<void> _openEdit(BuildContext context, UserProfile profile) async {
@@ -604,9 +607,9 @@ class _ProfileView extends StatelessWidget {
     try {
       await ProfileService().refreshCurrency();
       if (context.mounted) _toast(context, s.profileCurrencyRefreshed);
-    } on Object catch (e) {
+    } on Object {
       if (context.mounted) {
-        _toast(context, s.profileCurrencyRefreshFailed(e.toString()));
+        _toast(context, s.profileSaveFailedRetry, tone: FxFeedbackTone.error);
       }
     }
   }

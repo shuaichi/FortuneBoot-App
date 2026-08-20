@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fortuneboot/core/app_lock/app_lock_cubit.dart';
 import 'package:fortuneboot/core/app_lock/app_lock_models.dart';
@@ -56,101 +57,116 @@ class _AppLockScreenState extends State<_AppLockScreen> {
     return Material(
       color: palette.canvas,
       child: SafeArea(
-        child: Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 360),
-            child: Padding(
-              padding: const EdgeInsets.all(24),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.lock_rounded, color: palette.primary, size: 48),
-                  const SizedBox(height: 20),
-                  Text(
-                    s.appLockGateTitle,
-                    style: Theme.of(context).textTheme.headlineSmall,
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    state.status == AppLockStatus.setupRequired
-                        ? s.appLockSetupRequiredDescription
-                        : isPin
-                        ? s.appLockEnterPinDescription
-                        : s.appLockEnterPatternDescription,
-                    textAlign: TextAlign.center,
-                  ),
-                  if (state.status == AppLockStatus.locked) ...[
-                    const SizedBox(height: 24),
-                    if (isPin) ...[
-                      TextField(
-                        controller: _controller,
-                        autofocus: true,
-                        obscureText: true,
-                        enableSuggestions: false,
-                        autocorrect: false,
-                        keyboardType: TextInputType.number,
-                        decoration: InputDecoration(
-                          errorText: _failureMessage(state.failure, s),
-                          hintText: s.appLockPinHint,
-                          border: const OutlineInputBorder(),
+        child: Semantics(
+          scopesRoute: true,
+          namesRoute: true,
+          explicitChildNodes: true,
+          label: s.appLockGateTitle,
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 360),
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.lock_rounded, color: palette.primary, size: 48),
+                    const SizedBox(height: 20),
+                    Text(
+                      s.appLockGateTitle,
+                      style: Theme.of(context).textTheme.headlineSmall,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      state.status == AppLockStatus.setupRequired
+                          ? s.appLockSetupRequiredDescription
+                          : isPin
+                          ? s.appLockEnterPinDescription
+                          : s.appLockEnterPatternDescription,
+                      textAlign: TextAlign.center,
+                    ),
+                    if (state.status == AppLockStatus.locked) ...[
+                      const SizedBox(height: 24),
+                      if (isPin) ...[
+                        TextField(
+                          controller: _controller,
+                          autofocus: true,
+                          obscureText: true,
+                          enableSuggestions: false,
+                          autocorrect: false,
+                          keyboardType: TextInputType.number,
+                          maxLength: 12,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly,
+                            LengthLimitingTextInputFormatter(12),
+                          ],
+                          decoration: InputDecoration(
+                            errorText: _failureMessage(state.failure, s),
+                            hintText: s.appLockPinHint,
+                            counterText: '',
+                            border: const OutlineInputBorder(),
+                          ),
+                          onSubmitted: (_) => _unlock(),
                         ),
-                        onSubmitted: (_) => _unlock(),
-                      ),
-                      const SizedBox(height: 12),
-                      FilledButton(
-                        onPressed: _unlock,
-                        child: Text(s.appLockUnlock),
-                      ),
-                    ] else ...[
-                      Text(
-                        s.appLockDrawPattern,
-                        style: Theme.of(context).textTheme.titleMedium,
-                      ),
-                      const SizedBox(height: 12),
-                      PatternLockGrid(
-                        key: const Key('app-lock-pattern-grid'),
-                        enabled: !state.isAuthenticating,
-                        error:
-                            state.failure == AppLockFailure.invalidCredential,
-                        resetToken: _patternResetToken,
-                        semanticLabel: s.appLockPatternAccessibilityLabel,
-                        minimumPointsMessage: s.appLockPatternMinimumPoints,
-                        progressSemanticLabel: s.appLockPatternProgress,
-                        nodeSemanticLabel: (row, column, selected) =>
-                            s.appLockPatternNodeAccessibility(
-                              row + 1,
-                              column + 1,
-                              selected
-                                  ? s.appLockPatternNodeSelected
-                                  : s.appLockPatternNodeUnselected,
-                            ),
-                        onCompleted: _unlockPattern,
-                      ),
-                      if (state.failure != null) ...[
-                        const SizedBox(height: 8),
+                        const SizedBox(height: 12),
+                        FilledButton(
+                          onPressed: _unlock,
+                          child: Text(s.appLockUnlock),
+                        ),
+                      ] else ...[
                         Text(
-                          _failureMessage(state.failure, s) ?? '',
-                          style: TextStyle(color: palette.danger),
+                          s.appLockDrawPattern,
+                          style: Theme.of(context).textTheme.titleMedium,
+                        ),
+                        const SizedBox(height: 12),
+                        PatternLockGrid(
+                          key: const Key('app-lock-pattern-grid'),
+                          enabled: !state.isAuthenticating,
+                          error:
+                              state.failure == AppLockFailure.invalidCredential,
+                          resetToken: _patternResetToken,
+                          semanticLabel: s.appLockPatternAccessibilityLabel,
+                          minimumPointsMessage: s.appLockPatternMinimumPoints,
+                          progressSemanticLabel: s.appLockPatternProgress,
+                          nodeSemanticLabel: (row, column, selected) =>
+                              s.appLockPatternNodeAccessibility(
+                                row + 1,
+                                column + 1,
+                                selected
+                                    ? s.appLockPatternNodeSelected
+                                    : s.appLockPatternNodeUnselected,
+                              ),
+                          onCompleted: _unlockPattern,
+                        ),
+                        if (state.failure != null) ...[
+                          const SizedBox(height: 8),
+                          Semantics(
+                            liveRegion: true,
+                            child: Text(
+                              _failureMessage(state.failure, s) ?? '',
+                              style: TextStyle(color: palette.danger),
+                            ),
+                          ),
+                        ],
+                      ],
+                      if (state.settings?.biometricEnabled == true) ...[
+                        const SizedBox(height: 8),
+                        TextButton.icon(
+                          onPressed: state.isAuthenticating
+                              ? null
+                              : () => context
+                                    .read<AppLockCubit>()
+                                    .unlockWithBiometrics(
+                                      localizedReason:
+                                          s.appLockBiometricLocalizedReason,
+                                    ),
+                          icon: const Icon(Icons.fingerprint_rounded),
+                          label: Text(s.appLockUseBiometrics),
                         ),
                       ],
                     ],
-                    if (state.settings?.biometricEnabled == true) ...[
-                      const SizedBox(height: 8),
-                      TextButton.icon(
-                        onPressed: state.isAuthenticating
-                            ? null
-                            : () => context
-                                  .read<AppLockCubit>()
-                                  .unlockWithBiometrics(
-                                    localizedReason:
-                                        s.appLockBiometricLocalizedReason,
-                                  ),
-                        icon: const Icon(Icons.fingerprint_rounded),
-                        label: Text(s.appLockUseBiometrics),
-                      ),
-                    ],
                   ],
-                ],
+                ),
               ),
             ),
           ),

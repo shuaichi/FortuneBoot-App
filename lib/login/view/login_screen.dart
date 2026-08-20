@@ -8,6 +8,7 @@ import 'package:flutter_login/flutter_login.dart';
 import 'package:fortuneboot/core/app_constants.dart';
 import 'package:fortuneboot/core/app_lock/app_lock_cubit.dart';
 import 'package:fortuneboot/core/auth/auth_version_checker.dart';
+import 'package:fortuneboot/login/auth/password_policy.dart';
 import 'package:fortuneboot/login/auth_version_source.dart';
 import 'package:fortuneboot/login/model/login_model.dart';
 import 'package:fortuneboot/request/login_request.dart';
@@ -57,29 +58,28 @@ class LoginScreen extends StatelessWidget {
      *  "captchaCodeImg": "string"
      *}
      */
-    debugPrint('验证码开关响应已返回');
-    Map<String, dynamic> capDic = Map<String, dynamic>.from(
-      capImgRes.data as Map,
-    );
-    bool isCaptchaOn = capDic['isCaptchaOn'] as bool;
-    Map? userResDic = {};
+    final capDic = capImgRes.data is Map
+        ? Map<String, dynamic>.from(capImgRes.data as Map)
+        : <String, dynamic>{};
+    final isCaptchaOn = capDic['isCaptchaOn'] == true;
+    Map<String, dynamic>? userResDic;
     if (isCaptchaOn) {
-      userResDic = await showCaptchaDialog(capDic);
+      final captchaResult = await showCaptchaDialog(capDic);
+      userResDic = captchaResult == null
+          ? null
+          : Map<String, dynamic>.from(captchaResult);
       if (userResDic == null) {
-        return '验证码错误或未输入验证码';
+        return S.current.default_comment;
       }
     }
-    debugPrint('验证码已提交');
-    var rsaKey = await loginService.getRsaPublicKey();
+    final rsaKey = await loginService.getRsaPublicKey();
     /**
      * "data": "string"
      */
-    debugPrint('rsa公钥 $rsaKey');
     try {
       String userName = data.name;
       String password = data.password;
-      String formattedPublicKey = formatPublicKey(rsaKey.data as String);
-      debugPrint('公钥: $formattedPublicKey');
+      final formattedPublicKey = formatPublicKey(rsaKey.data as String);
       var publicKey =
           RSAKeyParser().parse(formattedPublicKey) as PC.RSAPublicKey;
       final encrypter = Encrypter(RSA(publicKey: publicKey));
@@ -87,13 +87,12 @@ class LoginScreen extends StatelessWidget {
       Login loginRequest = Login(
         userName,
         encrypted,
-        userResDic['captchaUserInput'] as String? ?? "",
-        userResDic['captchaCodeKey'] as String? ?? "",
+        userResDic?['captchaUserInput'] as String? ?? '',
+        userResDic?['captchaCodeKey'] as String? ?? '',
       );
       return loginService
           .login(loginRequest)
           .then((value) {
-            debugPrint('登录响应码: ${value.code}');
             if (value.code == 0) {
               if (value.data is Map) {
                 var responseData = Map<String, dynamic>.from(
@@ -104,7 +103,7 @@ class LoginScreen extends StatelessWidget {
                 );
                 var token = responseData["token"] as String? ?? "";
                 if (token.isEmpty) {
-                  return '登录失败：服务端未返回 token';
+                  return S.current.default_comment;
                 }
                 var userToken = {
                   "Cookie":
@@ -115,19 +114,14 @@ class LoginScreen extends StatelessWidget {
                 var user = UserDataSingleton();
                 user.setMap(UserDataSingleton.userInfo, userInfo);
                 user.setMap(UserDataSingleton.userToken, userToken);
-                debugPrint('登录用户信息已保存: $user');
               }
               return null;
             }
-            return value.msg ?? '注册失败';
+            return S.current.default_comment;
           })
-          .catchError((err) {
-            debugPrint(err.toString());
-            return 'service error: $err';
-          });
-    } catch (e) {
-      debugPrint(e.toString());
-      return 'service error: $e';
+          .catchError((_) => S.current.default_comment);
+    } on Object {
+      return S.current.default_comment;
     }
   }
 
@@ -227,20 +221,11 @@ class LoginScreen extends StatelessWidget {
     }
   }
 
-  Future<String?> _recoverPassword(String name) {
-    return Future.delayed(loginTime).then((_) {
-      if (!mockUsers.containsKey(name)) {
-        return S.current.user_not_exist;
-      }
-      return null;
-    });
-  }
+  Future<String?> _recoverPassword(String name) async =>
+      S.current.default_comment;
 
-  Future<String?> _signupConfirm(String error, LoginData data) {
-    return Future.delayed(loginTime).then((_) {
-      return null;
-    });
-  }
+  Future<String?> _signupConfirm(String error, LoginData data) async =>
+      S.current.default_comment;
 
   String _apiVersionFailureMessage(
     BuildContext context,
@@ -334,10 +319,7 @@ class LoginScreen extends StatelessWidget {
         if (value!.isEmpty) {
           return S.of(context).password_is_empty;
         }
-        final passwordRegExp = RegExp(
-          r'^(?![0-9]+$)(?![a-z]+$)(?![A-Z]+$)(?!([^(0-9a-zA-Z)]|[()])+$)(?!^.*[\u4E00-\u9FA5].*$)([^(0-9a-zA-Z)]|[()]|[a-z]|[A-Z]|[0-9]){8,18}$',
-        );
-        if (!passwordRegExp.hasMatch(value)) {
+        if (!PasswordPolicy.isValid(value)) {
           return '密码必须包含字母、数字或特殊字符，长度8-18位，不能包含中文';
         }
         return null;

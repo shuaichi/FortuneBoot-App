@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fortuneboot/core/feedback/fx_feedback.dart';
 import 'package:fortuneboot/core/preferences/finance_color_preferences.dart';
 import 'package:fortuneboot/core/preferences/preferences_cubit.dart';
 import 'package:fortuneboot/fx/components/fx_button.dart';
@@ -48,9 +49,7 @@ class _FinanceColorEditorState extends State<FinanceColorEditor> {
     if (ok) {
       Navigator.of(context).pop();
     } else {
-      ScaffoldMessenger.of(context)
-        ..hideCurrentSnackBar()
-        ..showSnackBar(SnackBar(content: Text(saveFailedMsg)));
+      FxFeedback.error(context, message: saveFailedMsg);
     }
   }
 
@@ -155,28 +154,42 @@ class _FinanceColorEditorState extends State<FinanceColorEditor> {
             runSpacing: FxSpacing.sm,
             children: [
               for (final s in _swatches)
-                GestureDetector(
-                  onTap: () => onPick(Color(s).toARGB32()),
-                  child: Container(
-                    width: 32,
-                    height: 32,
-                    decoration: BoxDecoration(
-                      color: Color(s),
+                Semantics(
+                  button: true,
+                  selected: current == Color(s).toARGB32(),
+                  label:
+                      '$label #${s.toRadixString(16).substring(2).toUpperCase()}',
+                  child: Material(
+                    color: Colors.transparent,
+                    borderRadius: FxRadius.tileBorder,
+                    child: InkWell(
                       borderRadius: FxRadius.tileBorder,
-                      border: Border.all(
-                        color: current == Color(s).toARGB32()
-                            ? palette.textPrimary
-                            : Colors.transparent,
-                        width: 2,
+                      onTap: () => onPick(Color(s).toARGB32()),
+                      child: SizedBox(
+                        width: 48,
+                        height: 48,
+                        child: Container(
+                          margin: const EdgeInsets.all(FxSpacing.xs),
+                          decoration: BoxDecoration(
+                            color: Color(s),
+                            borderRadius: FxRadius.tileBorder,
+                            border: Border.all(
+                              color: current == Color(s).toARGB32()
+                                  ? palette.textPrimary
+                                  : Colors.transparent,
+                              width: 2,
+                            ),
+                          ),
+                          child: current == Color(s).toARGB32()
+                              ? const Icon(
+                                  Icons.check_rounded,
+                                  size: 18,
+                                  color: Colors.white,
+                                )
+                              : null,
+                        ),
                       ),
                     ),
-                    child: current == Color(s).toARGB32()
-                        ? const Icon(
-                            Icons.check_rounded,
-                            size: 18,
-                            color: Colors.white,
-                          )
-                        : null,
                   ),
                 ),
             ],

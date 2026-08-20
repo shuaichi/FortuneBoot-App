@@ -8,6 +8,7 @@ import 'package:fortuneboot/core/shell/main_shell.dart';
 import 'package:fortuneboot/generated/l10n.dart';
 import 'package:fortuneboot/login/auth_version_source.dart';
 import 'package:fortuneboot/login/model/users.dart';
+import 'package:fortuneboot/login/server/server_endpoint.dart';
 import 'package:fortuneboot/util/dio_client.dart';
 
 sealed class MainAccessResult {
@@ -51,8 +52,12 @@ class _MainVersionGateState extends State<MainVersionGate> {
         );
       }
 
-      final portSegment = port?.isNotEmpty == true ? ':$port' : '';
-      DioClient().updateBaseUrl('$protocol://$domain$portSegment/prod-api');
+      final endpoint = ServerEndpoint.parse(
+        protocol: protocol!,
+        host: domain!,
+        port: port,
+      );
+      DioClient().updateBaseUrl(endpoint.apiBaseUri.toString());
       DioClient().setAuthHeader(token!);
 
       final check = await AuthVersionChecker(

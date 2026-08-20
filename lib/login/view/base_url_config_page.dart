@@ -10,6 +10,7 @@ import 'package:fortuneboot/core/preferences/locale_preferences.dart';
 import 'package:fortuneboot/core/preferences/preferences_cubit.dart';
 import 'package:fortuneboot/login/auth_version_source.dart';
 import 'package:fortuneboot/login/model/users.dart';
+import 'package:fortuneboot/login/server/server_endpoint.dart';
 import 'package:fortuneboot/generated/l10n.dart';
 import 'package:fortuneboot/util/dio_client.dart';
 
@@ -60,11 +61,9 @@ class _BaseUrlConfigPageState extends State<BaseUrlConfigPage> {
       UserDataSingleton.baseUrlProtocol,
     );
 
-    if (baseUrlDomain?.isNotEmpty == true &&
-        baseUrlPort?.isNotEmpty == true &&
-        baseProtocol?.isNotEmpty == true) {
+    if (baseUrlDomain?.isNotEmpty == true && baseProtocol?.isNotEmpty == true) {
       _domainController.text = baseUrlDomain!;
-      _portController.text = baseUrlPort!;
+      _portController.text = baseUrlPort ?? '';
       _protocol = baseProtocol!;
     }
     var userInfo = await UserDataSingleton().getMap(UserDataSingleton.userInfo);
@@ -75,11 +74,13 @@ class _BaseUrlConfigPageState extends State<BaseUrlConfigPage> {
     if ((userInfo?.isNotEmpty == true) &&
         (userToken?.isNotEmpty == true) &&
         (baseUrlDomain?.isNotEmpty == true) &&
-        (baseUrlPort?.isNotEmpty == true) &&
         (baseProtocol?.isNotEmpty == true)) {
-      // 跳登录页
-      final baseUrl = '$baseProtocol://$baseUrlDomain:$baseUrlPort';
-      DioClient().updateBaseUrl('$baseUrl/prod-api');
+      final endpoint = ServerEndpoint.parse(
+        protocol: baseProtocol!,
+        host: baseUrlDomain!,
+        port: baseUrlPort,
+      );
+      DioClient().updateBaseUrl(endpoint.apiBaseUri.toString());
       final check = await _checkApiVersion();
       if (!mounted) return;
       if (!check.isCompatible) {
@@ -146,6 +147,14 @@ class _BaseUrlConfigPageState extends State<BaseUrlConfigPage> {
     } on Exception {
       return false;
     }
+  }
+
+  @override
+  void dispose() {
+    _authMode.dispose();
+    _domainController.dispose();
+    _portController.dispose();
+    super.dispose();
   }
 
   @override
@@ -463,27 +472,28 @@ class _BaseUrlConfigPageState extends State<BaseUrlConfigPage> {
       HapticFeedback.mediumImpact(); // 提交时中等力度震动反馈
       setState(() => _isConnecting = true);
 
-      DioClient().clearAuthHeader();
-      var baseUrl = '$_protocol://${_domainController.text}';
-      if (_portController.text.isNotEmpty) {
-        baseUrl += ':${_portController.text}';
+      final endpoint = _parseEndpoint();
+      if (endpoint == null) {
+        setState(() => _isConnecting = false);
+        return;
       }
-      DioClient().updateBaseUrl('$baseUrl/prod-api');
+      DioClient().clearAuthHeader();
+      DioClient().updateBaseUrl(endpoint.apiBaseUri.toString());
       try {
         final check = await _checkApiVersion();
         if (!mounted) return;
         if (check.isCompatible) {
           UserDataSingleton().setStr(
             UserDataSingleton.baseUrlDomain,
-            _domainController.text,
+            endpoint.host,
           );
           UserDataSingleton().setStr(
             UserDataSingleton.baseUrlPort,
-            _portController.text,
+            endpoint.storedPort,
           );
           UserDataSingleton().setStr(
             UserDataSingleton.baseUrlProtocol,
-            _protocol,
+            endpoint.protocol,
           );
 
           if (!mounted) return;
@@ -496,6 +506,19 @@ class _BaseUrlConfigPageState extends State<BaseUrlConfigPage> {
       } finally {
         if (mounted) setState(() => _isConnecting = false);
       }
+    }
+  }
+
+  ServerEndpoint? _parseEndpoint() {
+    try {
+      return ServerEndpoint.parse(
+        protocol: _protocol,
+        host: _domainController.text,
+        port: _portController.text,
+      );
+    } on ServerEndpointFormatException {
+      _showErrorDialog(S.current.serverConnectionFailed);
+      return null;
     }
   }
 

@@ -1,9 +1,9 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:fortuneboot/core/money/fx_money_formatter.dart';
 import 'package:fortuneboot/fx/components/fx_chart_palette.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
-import 'package:intl/intl.dart';
 
 class FxBarItem {
   final String name;
@@ -21,6 +21,8 @@ class FxBarChart extends StatelessWidget {
   final int topN;
   final String unnamedLabel;
   final String Function(double value)? valueFormatter;
+  final FxAmountVisibility visibility;
+  final String? locale;
 
   const FxBarChart({
     super.key,
@@ -30,6 +32,8 @@ class FxBarChart extends StatelessWidget {
     this.topN = 10,
     this.unnamedLabel = '未命名',
     this.valueFormatter,
+    this.visibility = FxAmountVisibility.visible,
+    this.locale,
   });
 
   @override
@@ -116,6 +120,11 @@ class FxBarChart extends StatelessWidget {
     );
   }
 
-  String _formatValue(double value) =>
-      valueFormatter?.call(value) ?? NumberFormat('#,##0.##').format(value);
+  String _formatValue(double value) {
+    if (visibility == FxAmountVisibility.hidden) {
+      return FxMoneyFormatter.hiddenPlaceholder;
+    }
+    return valueFormatter?.call(value) ??
+        FxMoneyFormatter.format(value, locale: locale, decimalDigits: 2);
+  }
 }

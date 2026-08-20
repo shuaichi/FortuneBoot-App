@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:fortuneboot/core/network/fx_api.dart';
+import 'package:fortuneboot/core/feedback/fx_feedback.dart';
 import 'package:fortuneboot/features/profile/data/profile_models.dart';
 import 'package:fortuneboot/features/profile/data/profile_service.dart';
 import 'package:fortuneboot/fx/components/fx_button.dart';
@@ -59,11 +59,8 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
     return widget.profile.username ?? S.of(context).profileNotLoggedIn;
   }
 
-  void _toast(String message) {
-    if (!mounted) return;
-    ScaffoldMessenger.of(context)
-      ..hideCurrentSnackBar()
-      ..showSnackBar(SnackBar(content: Text(message)));
+  void _toast(String message, {FxFeedbackTone tone = FxFeedbackTone.info}) {
+    FxFeedback.show(context, message: message, tone: tone);
   }
 
   Future<void> _pickAvatar() async {
@@ -90,14 +87,10 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
         _dirty = true;
       });
       _toast(s.profileAvatarUpdated);
-    } on FxApiException catch (e) {
+    } on Object {
       if (!mounted) return;
       setState(() => _uploadingAvatar = false);
-      _toast(e.message);
-    } on Object catch (e) {
-      if (!mounted) return;
-      setState(() => _uploadingAvatar = false);
-      _toast(s.profileUploadFailed(e.toString()));
+      _toast(s.profileSaveFailedRetry, tone: FxFeedbackTone.error);
     }
   }
 
@@ -486,7 +479,7 @@ class _ProfileDetailsEditSheetState extends State<_ProfileDetailsEditSheet> {
   late final TextEditingController _nicknameCtrl;
   late final TextEditingController _phoneCtrl;
   late final TextEditingController _emailCtrl;
-  late int _sex;
+  int? _sex;
   bool _saving = false;
 
   @override
@@ -495,7 +488,7 @@ class _ProfileDetailsEditSheetState extends State<_ProfileDetailsEditSheet> {
     _nicknameCtrl = TextEditingController(text: widget.profile.nickname ?? '');
     _phoneCtrl = TextEditingController(text: widget.profile.phoneNumber ?? '');
     _emailCtrl = TextEditingController(text: widget.profile.email ?? '');
-    _sex = widget.profile.sex ?? 1;
+    _sex = widget.profile.sex;
   }
 
   @override
@@ -523,26 +516,17 @@ class _ProfileDetailsEditSheetState extends State<_ProfileDetailsEditSheet> {
         email: _emailCtrl.text.trim(),
       );
       if (!mounted) return;
-      final messenger = ScaffoldMessenger.of(context);
       Navigator.of(context).pop(true);
-      messenger
-        ..hideCurrentSnackBar()
-        ..showSnackBar(SnackBar(content: Text(s.profileSaved)));
-    } on FxApiException catch (e) {
+      FxFeedback.success(context, message: s.profileSaved);
+    } on Object {
       if (!mounted) return;
       setState(() => _saving = false);
-      _toast(e.message);
-    } on Object catch (e) {
-      if (!mounted) return;
-      setState(() => _saving = false);
-      _toast(s.profileSaveFailed(e.toString()));
+      _toast(s.profileSaveFailedRetry, tone: FxFeedbackTone.error);
     }
   }
 
-  void _toast(String message) {
-    ScaffoldMessenger.of(context)
-      ..hideCurrentSnackBar()
-      ..showSnackBar(SnackBar(content: Text(message)));
+  void _toast(String message, {FxFeedbackTone tone = FxFeedbackTone.info}) {
+    FxFeedback.show(context, message: message, tone: tone);
   }
 
   @override
@@ -659,6 +643,7 @@ class _ProfileDetailsEditSheetState extends State<_ProfileDetailsEditSheet> {
           ),
           child: Row(
             children: [
+              _genderOption('-', null),
               _genderOption(s.profileSexMale, 1),
               _genderOption(s.profileSexFemale, 0),
             ],
@@ -668,7 +653,7 @@ class _ProfileDetailsEditSheetState extends State<_ProfileDetailsEditSheet> {
     );
   }
 
-  Widget _genderOption(String label, int value) {
+  Widget _genderOption(String label, int? value) {
     final palette = FxPalette.of(context);
     final selected = _sex == value;
     return Expanded(
@@ -753,22 +738,13 @@ class _PasswordSheetState extends State<_PasswordSheet> {
         newPassword: encNew,
       );
       if (!mounted) return;
-      final messenger = ScaffoldMessenger.of(context);
       Navigator.of(context).pop();
-      messenger
-        ..hideCurrentSnackBar()
-        ..showSnackBar(SnackBar(content: Text(s.profilePasswordChanged)));
-    } on FxApiException catch (e) {
+      FxFeedback.success(context, message: s.profilePasswordChanged);
+    } on Object {
       if (!mounted) return;
       setState(() {
         _submitting = false;
-        _error = e.message;
-      });
-    } on Object catch (e) {
-      if (!mounted) return;
-      setState(() {
-        _submitting = false;
-        _error = s.profilePasswordChangeFailed(e.toString());
+        _error = s.profileSaveFailedRetry;
       });
     }
   }

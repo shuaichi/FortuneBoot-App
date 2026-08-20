@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fortuneboot/core/money/fx_money_formatter.dart';
 import 'package:fortuneboot/core/navigation/app_router.dart';
+import 'package:fortuneboot/core/preferences/preferences_cubit.dart';
 import 'package:fortuneboot/core/navigation/routes.dart';
 import 'package:fortuneboot/features/dashboard/data/dashboard_models.dart';
 import 'package:fortuneboot/features/dashboard/presentation/bloc/dashboard_bloc.dart';
@@ -49,6 +52,11 @@ class TrendCard extends StatelessWidget {
     }
 
     final finance = FxFinanceColors.of(context);
+    final visibility = context.select<PreferencesCubit, FxAmountVisibility>(
+      (cubit) => cubit.state.dashboard.hideAmounts
+          ? FxAmountVisibility.hidden
+          : FxAmountVisibility.visible,
+    );
     return FxCard(
       onTap: canRender
           ? () => AppRouter.push<void>(context, Routes.stats)
@@ -68,6 +76,8 @@ class TrendCard extends StatelessWidget {
                 ? FxLineChart(
                     height: 120,
                     showAxes: false,
+                    visibility: visibility,
+                    locale: Localizations.localeOf(context).toString(),
                     series: [
                       if (expenseSection.isReady)
                         FxLineSeries(

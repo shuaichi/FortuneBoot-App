@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fortuneboot/core/network/fx_api.dart';
+import 'package:fortuneboot/core/errors/fx_failure_mapper.dart';
 import 'package:fortuneboot/features/profile/data/profile_models.dart';
 import 'package:fortuneboot/features/profile/data/profile_service.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -29,14 +29,9 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     try {
       final profile = await _service.getProfile();
       emit(state.copyWith(status: ProfileStatus.ready, profile: profile));
-    } on FxApiException catch (e) {
-      emit(
-        state.copyWith(status: ProfileStatus.error, errorMessage: e.message),
-      );
-    } on Object catch (e) {
-      emit(
-        state.copyWith(status: ProfileStatus.error, errorMessage: e.toString()),
-      );
+    } on Object catch (error) {
+      FxFailureMapper.map(error);
+      emit(state.copyWith(status: ProfileStatus.error, errorMessage: null));
     }
     // 应用信息独立拉取，失败不影响资料展示。
     await _loadAbout(emit);

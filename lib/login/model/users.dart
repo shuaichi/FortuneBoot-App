@@ -2,13 +2,6 @@ import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
-const mockUsers = {
-  'dribbble@gmail.com': '12345',
-  'hunter@gmail.com': 'hunter',
-  'near.huscarl@gmail.com': 'subscribe to pewdiepie',
-  '@.com': '.',
-};
-
 class UserDataSingleton {
   static const String userInfo = 'userInfo';
   static const String userToken = 'userToken';

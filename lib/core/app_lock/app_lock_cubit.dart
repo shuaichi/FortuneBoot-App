@@ -147,18 +147,26 @@ class AppLockCubit extends Cubit<AppLockState> {
     if (settings == null || !settings.biometricEnabled || !state.isLocked) {
       return BiometricResult.unavailable;
     }
-    if (state.isAuthenticating ||
-        !await _biometricAuthenticator.isAvailable()) {
+    if (state.isAuthenticating || !_hasAuthenticatedSession) {
+      return BiometricResult.unavailable;
+    }
+    final operationVersion = ++_operationVersion;
+    if (!await _biometricAuthenticator.isAvailable() ||
+        isClosed ||
+        operationVersion != _operationVersion ||
+        !_hasAuthenticatedSession ||
+        !state.isLocked) {
       return BiometricResult.unavailable;
     }
     _resetBiometricLifecycleTracking();
-    final operationVersion = ++_operationVersion;
     emit(state.copyWith(isAuthenticating: true, clearFailure: true));
     final result = await _biometricAuthenticator.authenticate(
       localizedReason: localizedReason,
     );
     if (isClosed ||
         operationVersion != _operationVersion ||
+        !_hasAuthenticatedSession ||
+        !state.isLocked ||
         !state.isAuthenticating) {
       if (!state.isAuthenticating) {
         _resetBiometricLifecycleTracking();
