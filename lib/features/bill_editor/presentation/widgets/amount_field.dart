@@ -28,6 +28,22 @@ class AmountField extends StatefulWidget {
   State<AmountField> createState() => _AmountFieldState();
 }
 
+class _AmountTextInputFormatter extends TextInputFormatter {
+  static final _valid = RegExp(r'^-?\d*\.?\d{0,2}$');
+
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    final text = newValue.text;
+    if (text.isEmpty || text == '-' || text == '-.' || _valid.hasMatch(text)) {
+      return newValue;
+    }
+    return oldValue;
+  }
+}
+
 class _AmountFieldState extends State<AmountField> {
   late final TextEditingController _controller;
 
@@ -96,11 +112,10 @@ class _AmountFieldState extends State<AmountField> {
               child: TextField(
                 controller: _controller,
                 keyboardType: const TextInputType.numberWithOptions(
+                  signed: true,
                   decimal: true,
                 ),
-                inputFormatters: [
-                  FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}')),
-                ],
+                inputFormatters: [_AmountTextInputFormatter()],
                 style: FxTypography.money.copyWith(
                   fontSize: fontSize,
                   fontWeight: FontWeight.w700,

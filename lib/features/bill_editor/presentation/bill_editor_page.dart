@@ -17,6 +17,7 @@ import 'package:fortuneboot/features/shared/data/bill_models.dart';
 import 'package:fortuneboot/features/shared/data/bill_service.dart';
 import 'package:fortuneboot/fx/components/fx_button.dart';
 import 'package:fortuneboot/fx/components/fx_card.dart';
+import 'package:fortuneboot/fx/components/fx_confirm_sheet.dart';
 import 'package:fortuneboot/fx/components/fx_date_picker.dart';
 import 'package:fortuneboot/fx/components/fx_icon_button.dart';
 import 'package:fortuneboot/fx/components/fx_segmented.dart';
@@ -29,8 +30,53 @@ import 'package:fortuneboot/fx/tree/fx_tree_picker.dart';
 import 'package:fortuneboot/generated/l10n.dart';
 
 /// BillEditor 记账表单页。
-class BillEditorPage extends StatelessWidget {
+class BillEditorPage extends StatefulWidget {
   const BillEditorPage({super.key});
+
+  @override
+  State<BillEditorPage> createState() => _BillEditorPageState();
+}
+
+class _BillEditorPageState extends State<BillEditorPage> {
+  BillEditorState? _baseline;
+  var _submitSuccess = false;
+
+  bool _isDirty(BillEditorState state) {
+    final baseline = _baseline;
+    if (baseline == null) return false;
+
+    return state.billType != baseline.billType ||
+        state.transferAmount != baseline.transferAmount ||
+        !_listEquals(state.categoryRows, baseline.categoryRows) ||
+        state.accountId != baseline.accountId ||
+        state.toAccountId != baseline.toAccountId ||
+        state.payeeId != baseline.payeeId ||
+        state.tradeTime != baseline.tradeTime ||
+        !_listEquals(state.tagIds, baseline.tagIds) ||
+        !_listEquals(state.memberIds, baseline.memberIds) ||
+        state.orderId != baseline.orderId ||
+        !_listEquals(state.extras, baseline.extras) ||
+        !_fileListsHaveSamePaths(state.attachments, baseline.attachments) ||
+        state.title != baseline.title ||
+        state.titleTouched != baseline.titleTouched ||
+        state.remark != baseline.remark ||
+        state.confirm != baseline.confirm ||
+        state.include != baseline.include;
+  }
+
+  bool _fileListsHaveSamePaths(List<File> a, List<File> b) => _listEquals(
+    a.map((file) => file.path).toList(),
+    b.map((file) => file.path).toList(),
+  );
+
+  bool _listEquals<T>(List<T> a, List<T> b) {
+    if (identical(a, b)) return true;
+    if (a.length != b.length) return false;
+    for (var i = 0; i < a.length; i += 1) {
+      if (a[i] != b[i]) return false;
+    }
+    return true;
+  }
 
   String _validationMessage(BuildContext context, BillValidationError e) {
     final s = S.of(context);
@@ -58,12 +104,35 @@ class BillEditorPage extends StatelessWidget {
     }
   }
 
+  Future<void> _confirmPop(BillEditorState state) async {
+    if (_submitSuccess || !_isDirty(state)) {
+      Navigator.of(context).pop();
+      return;
+    }
+
+    final s = S.of(context);
+    final confirmed = await FxConfirmSheet.show(
+      context,
+      title: s.billEditorDiscardTitle,
+      message: s.billEditorDiscardMessage,
+      confirmLabel: s.billEditorDiscardConfirm,
+      cancelLabel: s.commonCancel,
+      destructive: true,
+      onConfirm: () async => true,
+    );
+    if (!mounted) return;
+    if (confirmed == true) {
+      Navigator.of(context).pop();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<BillEditorBloc, BillEditorState>(
       listenWhen: (a, b) => a.submitStatus != b.submitStatus,
       listener: (context, state) {
         if (state.submitStatus == SubmitStatus.success) {
+          _submitSuccess = true;
           BillMutations.bump();
           Navigator.of(context).pop(true);
         } else if (state.submitStatus == SubmitStatus.failure) {
@@ -74,38 +143,49 @@ class BillEditorPage extends StatelessWidget {
         }
       },
       builder: (context, state) {
+        if (state.status == EditorStatus.ready && _baseline == null) {
+          _baseline = state;
+        }
         final palette = FxPalette.of(context);
-        return Scaffold(
-          backgroundColor: palette.canvas,
-          appBar: AppBar(
-            backgroundColor: palette.surface,
-            elevation: 0,
-            scrolledUnderElevation: 0.5,
-            title: Text(
-              state.mode == 'edit'
-                  ? S.of(context).billEditorEditTitle
-                  : S.of(context).billEditorNewTitle,
-              style: FxTypography.title,
-            ),
-            leading: FxIconButton(
-              icon: Icons.close_rounded,
-              tooltip: S.of(context).commonCancel,
-              color: palette.textPrimary,
-              onPressed: () => Navigator.of(context).maybePop(),
-            ),
-          ),
-          body: switch (state.status) {
-            EditorStatus.loading => FxStateView.loading(),
-            EditorStatus.error => FxStateView.error(
-              message: state.loadError ?? S.of(context).profileLoadFailed,
-              onRetry: () =>
-                  context.read<BillEditorBloc>().add(const BillEditorRetried()),
-            ),
-            EditorStatus.ready => _EditorBody(state: state),
+        return PopScope(
+          canPop: _submitSuccess || !_isDirty(state),
+          onPopInvokedWithResult: (didPop, result) async {
+            if (didPop) return;
+            await _confirmPop(state);
           },
-          bottomNavigationBar: state.status == EditorStatus.ready
-              ? _SubmitBar(state: state)
-              : null,
+          child: Scaffold(
+            backgroundColor: palette.canvas,
+            appBar: AppBar(
+              backgroundColor: palette.surface,
+              elevation: 0,
+              scrolledUnderElevation: 0.5,
+              title: Text(
+                state.mode == 'edit'
+                    ? S.of(context).billEditorEditTitle
+                    : S.of(context).billEditorNewTitle,
+                style: FxTypography.title,
+              ),
+              leading: FxIconButton(
+                icon: Icons.close_rounded,
+                tooltip: S.of(context).commonCancel,
+                color: palette.textPrimary,
+                onPressed: () => Navigator.of(context).maybePop(),
+              ),
+            ),
+            body: switch (state.status) {
+              EditorStatus.loading => FxStateView.loading(),
+              EditorStatus.error => FxStateView.error(
+                message: state.loadError ?? S.of(context).profileLoadFailed,
+                onRetry: () => context.read<BillEditorBloc>().add(
+                  const BillEditorRetried(),
+                ),
+              ),
+              EditorStatus.ready => _EditorBody(state: state),
+            },
+            bottomNavigationBar: state.status == EditorStatus.ready
+                ? _SubmitBar(state: state)
+                : null,
+          ),
         );
       },
     );

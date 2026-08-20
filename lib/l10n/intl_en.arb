@@ -481,6 +481,9 @@
   "billEditorIncludeSubtitle": "When off, excluded from income/expense stats",
   "billEditorSaveEdit": "Save changes",
   "billEditorSaveNew": "Save bill",
+  "billEditorDiscardTitle": "Discard changes?",
+  "billEditorDiscardMessage": "The information you entered will be lost. This action cannot be undone.",
+  "billEditorDiscardConfirm": "Discard",
   "billEditorAttachments": "Attachments",
   "billEditorSelectedCount": "{count} selected",
   "@billEditorSelectedCount": {
@@ -1413,7 +1416,7 @@
   "billEditorValidateTransferSame": "Source and destination must differ",
   "billEditorValidateCategoryRequired": "Add a category",
   "billEditorValidateCategorySelect": "Select a category",
-  "billEditorValidateCategoryAmount": "Category amount must be greater than 0",
+  "billEditorValidateCategoryAmount": "Category amount cannot be 0",
   "billEditorValidateAccount": "Select an account",
   "billEditorValidateOrder": "Select a related reimbursement order",
   "billEditorValidateTitle": "Enter a title",

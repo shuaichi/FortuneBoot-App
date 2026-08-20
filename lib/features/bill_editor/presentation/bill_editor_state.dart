@@ -146,7 +146,7 @@ class BillEditorState extends Equatable {
   /// 校验：可提交则返回 null，否则返回语义化错误（展示层本地化文案）。
   BillValidationError? get validationError {
     if (isTransfer) {
-      if (transferAmount <= 0) {
+      if (transferAmount == 0) {
         return BillValidationError.transferAmountRequired;
       }
       if (accountId == null) return BillValidationError.transferFromRequired;
@@ -160,7 +160,7 @@ class BillEditorState extends Equatable {
         if (r.categoryId == null) {
           return BillValidationError.categorySelectRequired;
         }
-        if (r.amount <= 0) return BillValidationError.categoryAmountPositive;
+        if (r.amount == 0) return BillValidationError.categoryAmountPositive;
       }
       if (accountId == null) return BillValidationError.accountRequired;
       if (showOrder && orderId == null) {

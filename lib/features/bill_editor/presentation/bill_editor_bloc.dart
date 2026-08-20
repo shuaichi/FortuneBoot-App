@@ -491,7 +491,7 @@ class BillEditorBloc extends Bloc<BillEditorEvent, BillEditorState> {
 
     if (s.showExtras && s.extras.isNotEmpty) {
       json['extras'] = s.extras
-          .where((e) => e.amount > 0)
+          .where((e) => e.amount != 0)
           .map(
             (e) => {
               'extraType': e.extraType,

@@ -483,6 +483,9 @@
   "billEditorIncludeSubtitle": "关闭后不参与收支统计",
   "billEditorSaveEdit": "保存修改",
   "billEditorSaveNew": "保存账单",
+  "billEditorDiscardTitle": "丢弃修改？",
+  "billEditorDiscardMessage": "已填写的内容将丢失，此操作无法撤销。",
+  "billEditorDiscardConfirm": "丢弃",
   "billEditorAttachments": "附件",
   "billEditorSelectedCount": "已选 {count} 张",
   "@billEditorSelectedCount": {
@@ -1415,7 +1418,7 @@
   "billEditorValidateTransferSame": "转出与转入账户不能相同",
   "billEditorValidateCategoryRequired": "请添加分类",
   "billEditorValidateCategorySelect": "请选择分类",
-  "billEditorValidateCategoryAmount": "分类金额需大于 0",
+  "billEditorValidateCategoryAmount": "分类金额不能为 0",
   "billEditorValidateAccount": "请选择账户",
   "billEditorValidateOrder": "请选择关联报销单",
   "billEditorValidateTitle": "请填写标题",
