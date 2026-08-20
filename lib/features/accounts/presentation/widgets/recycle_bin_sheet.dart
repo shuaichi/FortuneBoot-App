@@ -6,6 +6,7 @@ import 'package:fortuneboot/core/preferences/preferences_cubit.dart';
 import 'package:fortuneboot/features/accounts/data/account_models.dart';
 import 'package:fortuneboot/features/accounts/data/account_service.dart';
 import 'package:fortuneboot/features/accounts/presentation/widgets/account_menu.dart';
+import 'package:fortuneboot/fx/components/fx_icon_button.dart';
 import 'package:fortuneboot/fx/components/fx_money_text.dart';
 import 'package:fortuneboot/fx/components/fx_state_view.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
@@ -182,9 +183,11 @@ class _RecycleBinSheetState extends State<RecycleBinSheet> {
             onPressed: () => _putBack(a),
             child: Text(S.of(context).accountsRestore),
           ),
-          IconButton(
+          FxIconButton(
+            icon: Icons.delete_forever_rounded,
+            tooltip: S.of(context).accountsDelete,
+            color: palette.danger,
             onPressed: () => _remove(a),
-            icon: Icon(Icons.delete_forever_rounded, color: palette.danger),
           ),
         ],
       ),

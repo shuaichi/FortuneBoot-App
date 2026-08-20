@@ -147,10 +147,16 @@ class _DonateQrTileState extends State<DonateQrTile> {
             ),
           ),
         ),
-        TextButton.icon(
-          onPressed: _isSaving ? null : _save,
-          icon: const Icon(Icons.save_alt_rounded),
-          label: const Icon(Icons.save_alt_rounded),
+        SizedBox(
+          height: 48,
+          child: Tooltip(
+            message: strings.commonSave,
+            child: TextButton.icon(
+              onPressed: _isSaving ? null : _save,
+              icon: const Icon(Icons.save_alt_rounded),
+              label: Text(strings.commonSave),
+            ),
+          ),
         ),
         if (feedback != null) ...[
           const SizedBox(height: FxSpacing.xs),

@@ -157,6 +157,37 @@ void main() {
     expect(find.text('已保存到相册'), findsOneWidget);
   });
 
+  testWidgets('save button has localized text, tooltip, and a 48dp target', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      _testApp(
+        tile: _tile(
+          assetPath: _wechatAsset,
+          fileName: 'fortuneboot_donate_wechat.jpg',
+          onSave: (_, _) async => ImageSaveResult.saved,
+        ),
+      ),
+    );
+
+    final label = find.text('保存');
+    expect(label, findsOneWidget);
+    final target = find.ancestor(
+      of: label,
+      matching: find.byWidgetPredicate(
+        (widget) => widget is SizedBox && widget.height == 48,
+      ),
+    );
+    expect(target, findsOneWidget);
+    expect(tester.getSize(target).height, 48);
+    expect(
+      find.byWidgetPredicate(
+        (widget) => widget is Tooltip && widget.message == '保存',
+      ),
+      findsOneWidget,
+    );
+  });
+
   testWidgets('tap on a QR does not request saving', (tester) async {
     var saveCount = 0;
 

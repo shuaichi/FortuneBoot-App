@@ -8,6 +8,7 @@ import 'package:fortuneboot/features/books/domain/books_manage_guards.dart';
 import 'package:fortuneboot/features/books/presentation/widgets/default_account_sheet.dart';
 import 'package:fortuneboot/fx/components/fx_button.dart';
 import 'package:fortuneboot/fx/components/fx_card.dart';
+import 'package:fortuneboot/fx/components/fx_icon_button.dart';
 import 'package:fortuneboot/fx/components/fx_sheet.dart';
 import 'package:fortuneboot/fx/components/fx_state_view.dart';
 import 'package:fortuneboot/fx/components/fx_tag_chip.dart';
@@ -165,9 +166,10 @@ class _BookDetailPageState extends State<BookDetailPage> {
         title: Text(S.of(context).booksBookDetailTitle),
         actions: [
           if (widget.capabilities.canEdit && !widget.inRecycleBin)
-            IconButton(
+            FxIconButton(
+              icon: Icons.edit_rounded,
+              tooltip: S.of(context).booksEditBook,
               onPressed: widget.onChanged,
-              icon: const Icon(Icons.edit_rounded),
             ),
         ],
       ),

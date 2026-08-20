@@ -1,18 +1,15 @@
 import 'package:fortuneboot/core/network/fx_api.dart';
 
-/// 单据类型。
+/// 当前客户端支持的报销单类型。
 ///
-/// TODO(后端确认): type/typeDesc 的 int 值文档未定义，此处为经验映射
-/// （垫付=1 / 报销=2）。列表展示优先用后端 [FortuneFinanceOrderVo.typeDesc]；
-/// 仅“新增”时用本枚举提供选项与传值。若后端提供类型枚举接口应改为动态消费。
+/// 后端枚举值 1 为报销单；2（借出单）和 3（借入单）为预留类型，
+/// 当前客户端不展示也不提交。
 enum FinanceOrderType {
-  advance(1, '垫付'),
-  reimburse(2, '报销');
+  reimbursement(1);
 
-  const FinanceOrderType(this.value, this.label);
+  const FinanceOrderType(this.value);
 
   final int value;
-  final String label;
 }
 
 /// 单据 VO。
@@ -56,6 +53,8 @@ class FortuneFinanceOrderVo {
     final desc = statusDesc ?? '';
     return desc.contains('关闭') || desc.contains('已关');
   }
+
+  bool get isReimbursementOrder => type == FinanceOrderType.reimbursement.value;
 
   factory FortuneFinanceOrderVo.fromJson(Map<String, dynamic> json) {
     return FortuneFinanceOrderVo(

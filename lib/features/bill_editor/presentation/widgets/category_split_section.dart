@@ -4,6 +4,7 @@ import 'package:fortuneboot/features/bill_editor/data/editor_options_service.dar
 import 'package:fortuneboot/features/bill_editor/presentation/bill_editor_bloc.dart';
 import 'package:fortuneboot/features/bill_editor/presentation/widgets/amount_field.dart';
 import 'package:fortuneboot/fx/components/fx_card.dart';
+import 'package:fortuneboot/fx/components/fx_icon_button.dart';
 import 'package:fortuneboot/fx/tree/fx_tree_picker.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
@@ -207,12 +208,10 @@ class _CategoryRow extends StatelessWidget {
             ),
           ),
           if (canRemove)
-            IconButton(
-              icon: Icon(
-                Icons.remove_circle_outline_rounded,
-                size: 20,
-                color: palette.textTertiary,
-              ),
+            FxIconButton(
+              icon: Icons.remove_circle_outline_rounded,
+              tooltip: S.of(context).accountsDelete,
+              color: palette.textTertiary,
               onPressed: onRemove,
             ),
         ],

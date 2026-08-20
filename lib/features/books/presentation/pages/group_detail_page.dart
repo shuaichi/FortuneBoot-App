@@ -7,6 +7,7 @@ import 'package:fortuneboot/features/books/domain/books_manage_capabilities.dart
 import 'package:fortuneboot/features/books/presentation/widgets/invite_member_sheet.dart';
 import 'package:fortuneboot/fx/components/fx_button.dart';
 import 'package:fortuneboot/fx/components/fx_card.dart';
+import 'package:fortuneboot/fx/components/fx_icon_button.dart';
 import 'package:fortuneboot/fx/components/fx_sheet.dart';
 import 'package:fortuneboot/fx/components/fx_state_view.dart';
 import 'package:fortuneboot/fx/components/fx_tag_chip.dart';
@@ -147,9 +148,10 @@ class _GroupDetailPageState extends State<GroupDetailPage> {
         title: Text(S.of(context).booksGroupDetailTitle),
         actions: [
           if (widget.capabilities.canEdit)
-            IconButton(
+            FxIconButton(
+              icon: Icons.edit_rounded,
+              tooltip: S.of(context).booksEditGroup,
               onPressed: widget.onChanged,
-              icon: const Icon(Icons.edit_rounded),
             ),
         ],
       ),

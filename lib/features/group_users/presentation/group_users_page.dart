@@ -249,14 +249,11 @@ class _GroupUsersPageState extends State<GroupUsersPage> {
             // 移除按钮仅 owner 可见，且不允许移除其它 owner。
             if (owner && !_memberIsOwner(user, state)) ...[
               const SizedBox(width: FxSpacing.xs),
-              IconButton(
+              FxIconButton(
+                icon: Icons.person_remove_alt_1_rounded,
                 tooltip: S.of(context).groupUsersRemove,
+                color: palette.danger,
                 onPressed: () => _remove(user),
-                icon: Icon(
-                  Icons.person_remove_alt_1_rounded,
-                  color: palette.danger,
-                  size: 20,
-                ),
               ),
             ],
           ],

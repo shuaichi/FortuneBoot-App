@@ -46,11 +46,18 @@ class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
     }
     emit(state.copyWith(status: OrdersStatus.loading));
     try {
-      final page = await _service.getPage(bookId: bookId, pageSize: 200);
+      final page = await _service.getPage(
+        bookId: bookId,
+        pageSize: 200,
+        type: FinanceOrderType.reimbursement.value,
+      );
+      final orders = page.rows
+          .where((order) => order.isReimbursementOrder)
+          .toList();
       emit(
         state.copyWith(
-          status: page.rows.isEmpty ? OrdersStatus.empty : OrdersStatus.loaded,
-          orders: page.rows,
+          status: orders.isEmpty ? OrdersStatus.empty : OrdersStatus.loaded,
+          orders: orders,
         ),
       );
     } on FxApiException catch (e) {

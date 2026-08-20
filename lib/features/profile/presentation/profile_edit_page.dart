@@ -6,6 +6,7 @@ import 'package:fortuneboot/features/profile/data/profile_models.dart';
 import 'package:fortuneboot/features/profile/data/profile_service.dart';
 import 'package:fortuneboot/fx/components/fx_button.dart';
 import 'package:fortuneboot/fx/components/fx_card.dart';
+import 'package:fortuneboot/fx/components/fx_icon_button.dart';
 import 'package:fortuneboot/fx/components/fx_list_item.dart';
 import 'package:fortuneboot/fx/components/fx_sheet.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
@@ -146,9 +147,10 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
           elevation: 0,
           centerTitle: true,
           title: Text(s.profileDetailsTitle, style: FxTypography.title),
-          leading: IconButton(
+          leading: FxIconButton(
+            icon: Icons.arrow_back_rounded,
             tooltip: s.profileBack,
-            icon: Icon(Icons.arrow_back_rounded, color: palette.textPrimary),
+            color: palette.textPrimary,
             onPressed: () => Navigator.of(context).pop(_dirty),
           ),
         ),

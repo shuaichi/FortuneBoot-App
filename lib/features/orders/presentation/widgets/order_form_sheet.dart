@@ -31,7 +31,6 @@ class OrderFormSheet extends StatefulWidget {
 class _OrderFormSheetState extends State<OrderFormSheet> {
   late final TextEditingController _titleCtrl;
   late final TextEditingController _remarkCtrl;
-  late FinanceOrderType _type;
 
   bool _submitting = false;
   String? _error;
@@ -42,10 +41,6 @@ class _OrderFormSheetState extends State<OrderFormSheet> {
     final o = widget.order;
     _titleCtrl = TextEditingController(text: o?.title ?? '');
     _remarkCtrl = TextEditingController(text: o?.remark ?? '');
-    _type = FinanceOrderType.values.firstWhere(
-      (t) => t.value == o?.type,
-      orElse: () => FinanceOrderType.advance,
-    );
   }
 
   @override
@@ -72,14 +67,14 @@ class _OrderFormSheetState extends State<OrderFormSheet> {
           bookId: widget.bookId,
           orderId: widget.order!.orderId!,
           title: title,
-          type: _type.value,
+          type: FinanceOrderType.reimbursement.value,
           remark: remark,
         );
       } else {
         await widget.service.add(
           bookId: widget.bookId,
           title: title,
-          type: _type.value,
+          type: FinanceOrderType.reimbursement.value,
           remark: remark,
         );
       }
@@ -114,42 +109,22 @@ class _OrderFormSheetState extends State<OrderFormSheet> {
           ),
           const SizedBox(height: FxSpacing.md),
           _label(S.of(context).ordersType),
-          Wrap(
-            spacing: FxSpacing.sm,
-            children: FinanceOrderType.values.map((t) {
-              final selected = _type == t;
-              return GestureDetector(
-                onTap: () => setState(() => _type = t),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: FxSpacing.md,
-                    vertical: FxSpacing.sm,
-                  ),
-                  decoration: BoxDecoration(
-                    color: selected
-                        ? palette.primaryContainer
-                        : palette.surfaceMuted,
-                    borderRadius: FxRadius.pillBorder,
-                    border: Border.all(
-                      color: selected ? palette.primary : palette.border,
-                    ),
-                  ),
-                  child: Text(
-                    t.label,
-                    style: FxTypography.label.copyWith(
-                      color: selected ? palette.primary : palette.textSecondary,
-                      fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
-                    ),
-                  ),
-                ),
-              );
-            }).toList(),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: FxSpacing.xs),
+          Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: FxSpacing.md,
+              vertical: FxSpacing.sm,
+            ),
+            decoration: BoxDecoration(
+              color: palette.primaryContainer,
+              borderRadius: FxRadius.pillBorder,
+              border: Border.all(color: palette.primary),
+            ),
             child: Text(
-              'TODO(后端确认): 类型 int 值文档未定义，暂用 垫付1/报销2。',
-              style: FxTypography.caption.copyWith(color: palette.textTertiary),
+              S.of(context).ordersTypeReimbursement,
+              style: FxTypography.label.copyWith(
+                color: palette.primary,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ),
           const SizedBox(height: FxSpacing.md),

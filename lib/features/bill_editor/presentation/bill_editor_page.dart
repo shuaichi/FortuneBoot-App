@@ -18,6 +18,7 @@ import 'package:fortuneboot/features/shared/data/bill_service.dart';
 import 'package:fortuneboot/fx/components/fx_button.dart';
 import 'package:fortuneboot/fx/components/fx_card.dart';
 import 'package:fortuneboot/fx/components/fx_date_picker.dart';
+import 'package:fortuneboot/fx/components/fx_icon_button.dart';
 import 'package:fortuneboot/fx/components/fx_segmented.dart';
 import 'package:fortuneboot/fx/components/fx_state_view.dart';
 import 'package:fortuneboot/fx/components/fx_tag_chip.dart';
@@ -86,9 +87,10 @@ class BillEditorPage extends StatelessWidget {
                   : S.of(context).billEditorNewTitle,
               style: FxTypography.title,
             ),
-            leading: IconButton(
+            leading: FxIconButton(
+              icon: Icons.close_rounded,
               tooltip: S.of(context).commonCancel,
-              icon: Icon(Icons.close_rounded, color: palette.textPrimary),
+              color: palette.textPrimary,
               onPressed: () => Navigator.of(context).maybePop(),
             ),
           ),

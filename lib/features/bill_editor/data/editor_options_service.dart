@@ -1,4 +1,5 @@
 import 'package:fortuneboot/core/network/fx_api.dart';
+import 'package:fortuneboot/features/orders/data/orders_models.dart';
 
 /// 账户选项（按 can* 过滤可用性）。
 class AccountOption {
@@ -152,13 +153,17 @@ class PayeeOption {
 class OrderOption {
   final int? orderId;
   final String? title;
+  final int? type;
   final String? typeDesc;
 
-  const OrderOption({this.orderId, this.title, this.typeDesc});
+  const OrderOption({this.orderId, this.title, this.type, this.typeDesc});
+
+  bool get isReimbursementOrder => type == FinanceOrderType.reimbursement.value;
 
   factory OrderOption.fromJson(Map<String, dynamic> json) => OrderOption(
     orderId: FxApi.asId(json['orderId']),
     title: json['title']?.toString(),
+    type: FxApi.asId(json['type']),
     typeDesc: json['typeDesc']?.toString(),
   );
 }
@@ -197,6 +202,9 @@ List<T> _mapNodes<T>(dynamic v, T Function(Map<String, dynamic>) f) {
 /// BillEditor 选项数据服务：拉取分类/账户/标签/成员/交易对象/单据。
 class EditorOptionsService {
   final FxApi _api = FxApi.instance;
+
+  static List<OrderOption> reimbursementOrders(Iterable<OrderOption> orders) =>
+      orders.where((order) => order.isReimbursementOrder).toList();
 
   static List<T> _list<T>(dynamic data, T Function(Map<String, dynamic>) f) {
     if (data is List) {
@@ -250,7 +258,7 @@ class EditorOptionsService {
     final data = await _api.get(
       '/fortune/finance/order/$bookId/getUsingFinanceOrderList',
     );
-    return _list(data, OrderOption.fromJson);
+    return reimbursementOrders(_list(data, OrderOption.fromJson));
   }
 
   /// 并发拉取全部选项。
