@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tree/fx_tree_picker.dart';
+import 'package:fortuneboot/generated/l10n.dart';
 
 @immutable
 class _Node {
@@ -20,6 +22,13 @@ const _tree = [
 Widget _picker({bool initiallyCollapsed = false}) {
   return MaterialApp(
     theme: FxTheme.light,
+    localizationsDelegates: const [
+      GlobalMaterialLocalizations.delegate,
+      GlobalWidgetsLocalizations.delegate,
+      GlobalCupertinoLocalizations.delegate,
+      S.delegate,
+    ],
+    supportedLocales: S.delegate.supportedLocales,
     home: Scaffold(
       body: FxTreePicker<_Node>(
         roots: _tree,
@@ -32,7 +41,38 @@ Widget _picker({bool initiallyCollapsed = false}) {
   );
 }
 
+Widget _localizedPicker(Locale locale) {
+  return MaterialApp(
+    locale: locale,
+    theme: FxTheme.light,
+    localizationsDelegates: const [
+      GlobalMaterialLocalizations.delegate,
+      GlobalWidgetsLocalizations.delegate,
+      GlobalCupertinoLocalizations.delegate,
+      S.delegate,
+    ],
+    supportedLocales: S.delegate.supportedLocales,
+    home: Scaffold(
+      body: FxTreePicker<_Node>(
+        roots: _tree,
+        childrenOf: (node) => node.children,
+        labelOf: (node) => node.label,
+        idOf: (node) => node.id,
+      ),
+    ),
+  );
+}
+
 void main() {
+  testWidgets('localizes picker chrome in English', (tester) async {
+    await tester.pumpWidget(_localizedPicker(const Locale('en')));
+
+    expect(find.text('Select'), findsOneWidget);
+    expect(find.text('Clear'), findsOneWidget);
+    expect(find.text('Search'), findsOneWidget);
+    expect(find.text('选择'), findsNothing);
+  });
+
   group('FxTreePicker initiallyCollapsed', () {
     testWidgets('keeps all branches expanded by default', (tester) async {
       await tester.pumpWidget(_picker());
@@ -67,6 +107,13 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           theme: FxTheme.light,
+          localizationsDelegates: const [
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+            S.delegate,
+          ],
+          supportedLocales: S.delegate.supportedLocales,
           home: Scaffold(
             body: FxTreePicker<_Node>(
               roots: _tree,

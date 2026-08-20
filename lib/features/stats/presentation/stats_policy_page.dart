@@ -66,7 +66,7 @@ class _StatsPolicyPageState extends State<StatsPolicyPage> {
           }
           if (snapshot.hasError) {
             return FxStateView.error(
-              message: snapshot.error.toString(),
+              message: S.of(context).dashboardLoadFailed,
               onRetry: _reload,
             );
           }

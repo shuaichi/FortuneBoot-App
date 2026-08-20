@@ -5,6 +5,8 @@ import 'package:fortuneboot/core/navigation/routes.dart';
 import 'package:fortuneboot/core/preferences/preferences_cubit.dart';
 import 'package:fortuneboot/core/session/bill_mutations.dart';
 import 'package:fortuneboot/core/session/session_cubit.dart';
+import 'package:fortuneboot/core/shell/main_shell.dart';
+import 'package:fortuneboot/features/shared/data/bill_models.dart';
 import 'package:fortuneboot/features/stats/presentation/bloc/stats_bloc.dart';
 import 'package:fortuneboot/features/stats/presentation/widgets/stats_formatters.dart';
 import 'package:fortuneboot/features/stats/presentation/widgets/stats_income_expense_calendar_card.dart';
@@ -142,6 +144,22 @@ class _Body extends StatelessWidget {
                   onDrillDown: (view, anchor) => bloc.add(
                     StatsCalendarDrilledDown(view: view, anchor: anchor),
                   ),
+                  onBillsRequested: (date) {
+                    final statsBookId = bloc.bookId;
+                    final session = context.read<SessionCubit>().state;
+                    if (statsBookId == null ||
+                        session.currentBookId != statsBookId) {
+                      return;
+                    }
+                    MainShell.openBills(
+                      context,
+                      BillsEntryRequest(
+                        bookId: statsBookId,
+                        groupId: session.currentGroupId,
+                        dateRange: BillDateRange(start: date, end: date),
+                      ),
+                    );
+                  },
                   onRetry: () => bloc.add(const StatsCalendarRetried()),
                 ),
                 const SizedBox(height: FxSpacing.md),

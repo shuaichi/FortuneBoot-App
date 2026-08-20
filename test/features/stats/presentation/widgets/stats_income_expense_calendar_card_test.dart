@@ -38,6 +38,24 @@ void main() {
     expect(find.bySemanticsLabel(RegExp('1234')), findsNothing);
   });
 
+  testWidgets('opens same-day bills from the day summary', (tester) async {
+    DateTime? requestedDate;
+    await tester.pumpWidget(
+      _harness(
+        child: _calendar(
+          view: IncomeExpenseCalendarView.month,
+          onBillsRequested: (date) => requestedDate = date,
+        ),
+      ),
+    );
+
+    await tester.tap(find.text('20'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('View bills for this day'));
+
+    expect(requestedDate, DateTime(2026, 8, 20));
+  });
+
   testWidgets('drills year months and history years to precise anchors', (
     tester,
   ) async {
@@ -126,6 +144,7 @@ Widget _calendar({
   required IncomeExpenseCalendarView view,
   IncomeExpenseCalendarResponse? response,
   void Function(IncomeExpenseCalendarView view, DateTime anchor)? onDrillDown,
+  ValueChanged<DateTime>? onBillsRequested,
 }) {
   return Scaffold(
     body: SingleChildScrollView(
@@ -139,6 +158,7 @@ Widget _calendar({
         onViewChanged: (_) {},
         onNavigate: (_) {},
         onDrillDown: onDrillDown ?? (_, _) {},
+        onBillsRequested: onBillsRequested ?? (_) {},
         onRetry: () {},
       ),
     ),

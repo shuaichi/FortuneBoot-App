@@ -22,6 +22,7 @@ class StatsIncomeExpenseCalendarCard extends StatelessWidget {
     required this.onViewChanged,
     required this.onNavigate,
     required this.onDrillDown,
+    required this.onBillsRequested,
     required this.onRetry,
   });
 
@@ -33,6 +34,7 @@ class StatsIncomeExpenseCalendarCard extends StatelessWidget {
   final ValueChanged<int> onNavigate;
   final void Function(IncomeExpenseCalendarView view, DateTime anchor)
   onDrillDown;
+  final ValueChanged<DateTime> onBillsRequested;
   final VoidCallback onRetry;
 
   @override
@@ -84,6 +86,7 @@ class StatsIncomeExpenseCalendarCard extends StatelessWidget {
               anchor: anchor,
               currencyCode: currencyCode,
               onDrillDown: onDrillDown,
+              onBillsRequested: onBillsRequested,
             ),
           },
         ],
@@ -147,6 +150,7 @@ class _CalendarContent extends StatelessWidget {
     required this.anchor,
     required this.currencyCode,
     required this.onDrillDown,
+    required this.onBillsRequested,
   });
 
   final IncomeExpenseCalendarResponse response;
@@ -155,6 +159,7 @@ class _CalendarContent extends StatelessWidget {
   final String? currencyCode;
   final void Function(IncomeExpenseCalendarView view, DateTime anchor)
   onDrillDown;
+  final ValueChanged<DateTime> onBillsRequested;
 
   @override
   Widget build(BuildContext context) {
@@ -163,6 +168,7 @@ class _CalendarContent extends StatelessWidget {
         anchor: anchor,
         items: response.items,
         currencyCode: currencyCode,
+        onBillsRequested: onBillsRequested,
       );
     }
     return _PeriodGrid(
@@ -180,11 +186,13 @@ class _MonthCalendar extends StatelessWidget {
     required this.anchor,
     required this.items,
     required this.currencyCode,
+    required this.onBillsRequested,
   });
 
   final DateTime anchor;
   final List<IncomeExpenseCalendarBucket> items;
   final String? currencyCode;
+  final ValueChanged<DateTime> onBillsRequested;
 
   @override
   Widget build(BuildContext context) {
@@ -207,6 +215,7 @@ class _MonthCalendar extends StatelessWidget {
           date: DateTime(anchor.year, anchor.month, day),
           bucket: days[day] ?? const IncomeExpenseCalendarBucket(),
           currencyCode: currencyCode,
+          onBillsRequested: onBillsRequested,
         ),
     ];
     return LayoutBuilder(
@@ -296,11 +305,13 @@ class _DayCell extends StatelessWidget {
     required this.date,
     required this.bucket,
     required this.currencyCode,
+    required this.onBillsRequested,
   });
 
   final DateTime date;
   final IncomeExpenseCalendarBucket bucket;
   final String? currencyCode;
+  final ValueChanged<DateTime> onBillsRequested;
 
   @override
   Widget build(BuildContext context) {
@@ -319,7 +330,13 @@ class _DayCell extends StatelessWidget {
       label: summary,
       child: InkWell(
         borderRadius: BorderRadius.circular(8),
-        onTap: () => _showDaySummary(context, date, bucket, currencyCode),
+        onTap: () => _showDaySummary(
+          context,
+          date,
+          bucket,
+          currencyCode,
+          onBillsRequested,
+        ),
         child: Container(
           padding: const EdgeInsets.all(3),
           decoration: BoxDecoration(
@@ -554,6 +571,7 @@ void _showDaySummary(
   DateTime date,
   IncomeExpenseCalendarBucket bucket,
   String? currencyCode,
+  ValueChanged<DateTime> onBillsRequested,
 ) {
   final s = S.of(context);
   final finance = FxFinanceColors.of(context);
@@ -595,6 +613,17 @@ void _showDaySummary(
           ),
           const SizedBox(height: FxSpacing.md),
           Text(s.statsCalendarTotalCount(bucket.totalCount)),
+          const SizedBox(height: FxSpacing.lg),
+          SizedBox(
+            width: double.infinity,
+            child: FilledButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                onBillsRequested(date);
+              },
+              child: Text(s.statsCalendarViewBills),
+            ),
+          ),
         ],
       ),
     ),

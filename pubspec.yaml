@@ -73,6 +73,7 @@ dev_dependencies:
   lint: ^2.1.2
   retrofit_generator: ^10.0.6
   flutter_launcher_icons: ^0.14.4
+  intl_utils: 2.8.14
 
 # flutter pub run flutter_launcher_icons
 flutter_icons:

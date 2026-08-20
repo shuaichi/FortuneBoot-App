@@ -38,6 +38,8 @@ class StatsBloc extends Bloc<StatsEvent, StatsState> {
   int _loadVersion = 0;
   int _calendarLoadVersion = 0;
 
+  int? get bookId => _bookId;
+
   StatsBloc({
     StatsService? statsService,
     BillService? billService,

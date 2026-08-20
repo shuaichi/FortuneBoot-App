@@ -6,6 +6,7 @@ import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
+import 'package:fortuneboot/generated/l10n.dart';
 
 /// 统一日期 / 日期时间选择器：FxSheet 风格底部弹层 + Cupertino 滚轮 + 快捷项。
 ///
@@ -18,7 +19,7 @@ Future<DateTime?> showFxDateTimePicker(
   DateTime? initial,
   DateTime? firstDate,
   DateTime? lastDate,
-  String title = '选择时间',
+  String? title,
 }) {
   return _showFxPicker(
     context,
@@ -26,7 +27,7 @@ Future<DateTime?> showFxDateTimePicker(
     initial: initial,
     firstDate: firstDate,
     lastDate: lastDate,
-    title: title,
+    title: title ?? S.of(context).fxDatePickerDateTimeTitle,
   );
 }
 
@@ -35,7 +36,7 @@ Future<DateTime?> showFxDatePicker(
   DateTime? initial,
   DateTime? firstDate,
   DateTime? lastDate,
-  String title = '选择日期',
+  String? title,
 }) {
   return _showFxPicker(
     context,
@@ -43,7 +44,7 @@ Future<DateTime?> showFxDatePicker(
     initial: initial,
     firstDate: firstDate,
     lastDate: lastDate,
-    title: title,
+    title: title ?? S.of(context).fxDatePickerDateTitle,
   );
 }
 
@@ -143,10 +144,10 @@ class _FxDatePickerSheetState extends State<_FxDatePickerSheet> {
                     color: palette.textPrimary,
                   ),
                 ),
-                GestureDetector(
-                  onTap: () => Navigator.of(context).pop(_value),
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(_value),
                   child: Text(
-                    '完成',
+                    S.of(context).fxDatePickerDone,
                     style: FxTypography.bodyStrong.copyWith(
                       color: palette.primary,
                     ),
@@ -161,15 +162,19 @@ class _FxDatePickerSheetState extends State<_FxDatePickerSheet> {
             child: Wrap(
               spacing: FxSpacing.sm,
               children: [
-                _quickChip(palette, '今天', () => _setQuick(now)),
                 _quickChip(
                   palette,
-                  '昨天',
+                  S.of(context).fxDatePickerToday,
+                  () => _setQuick(now),
+                ),
+                _quickChip(
+                  palette,
+                  S.of(context).fxDatePickerYesterday,
                   () => _setQuick(now.subtract(const Duration(days: 1))),
                 ),
                 _quickChip(
                   palette,
-                  '本月初',
+                  S.of(context).fxDatePickerStartOfMonth,
                   () => _setQuick(DateTime(now.year, now.month, 1)),
                 ),
               ],
@@ -207,7 +212,7 @@ class _FxDatePickerSheetState extends State<_FxDatePickerSheet> {
               FxSpacing.lg,
             ),
             child: FxButton(
-              label: '确定',
+              label: S.of(context).commonConfirm,
               expand: true,
               onPressed: () => Navigator.of(context).pop(_value),
             ),
@@ -218,24 +223,32 @@ class _FxDatePickerSheetState extends State<_FxDatePickerSheet> {
   }
 
   Widget _quickChip(FxPalette palette, String label, VoidCallback onTap) {
-    return GestureDetector(
-      onTap: () {
-        HapticFeedback.selectionClick();
-        onTap();
-      },
-      child: Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: FxSpacing.md,
-          vertical: FxSpacing.xs,
-        ),
-        decoration: BoxDecoration(
-          color: palette.surfaceMuted,
-          borderRadius: FxRadius.pillBorder,
-          border: Border.all(color: palette.border),
-        ),
-        child: Text(
-          label,
-          style: FxTypography.caption.copyWith(color: palette.textSecondary),
+    return Material(
+      color: Colors.transparent,
+      borderRadius: FxRadius.pillBorder,
+      child: InkWell(
+        borderRadius: FxRadius.pillBorder,
+        onTap: () {
+          HapticFeedback.selectionClick();
+          onTap();
+        },
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(minHeight: 48),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: FxSpacing.md),
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: palette.surfaceMuted,
+              borderRadius: FxRadius.pillBorder,
+              border: Border.all(color: palette.border),
+            ),
+            child: Text(
+              label,
+              style: FxTypography.caption.copyWith(
+                color: palette.textSecondary,
+              ),
+            ),
+          ),
         ),
       ),
     );

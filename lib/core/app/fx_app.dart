@@ -101,7 +101,7 @@ class _FxAppViewState extends State<_FxAppView> with WidgetsBindingObserver {
         AppLocale.value = locale;
         return MaterialApp(
           navigatorKey: appNavigatorKey,
-          title: '好记',
+          onGenerateTitle: (context) => S.of(context).appTitle,
           debugShowCheckedModeBanner: false,
           theme: FxTheme.buildLight(financeColors: financeColors),
           darkTheme: FxTheme.buildDark(financeColors: financeColors),

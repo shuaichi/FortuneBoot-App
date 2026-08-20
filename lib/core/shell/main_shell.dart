@@ -6,6 +6,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fortuneboot/core/navigation/app_router.dart';
 import 'package:fortuneboot/core/navigation/routes.dart';
 import 'package:fortuneboot/core/session/session_cubit.dart';
+import 'package:fortuneboot/core/shell/bills_navigation_controller.dart';
+import 'package:fortuneboot/features/shared/data/bill_models.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
 import 'package:fortuneboot/generated/l10n.dart';
@@ -37,16 +39,36 @@ class MainShell extends StatefulWidget {
     state._selectTab(tab);
   }
 
+  static void openBills(BuildContext context, BillsEntryRequest request) {
+    final state = context.findAncestorStateOfType<_MainShellState>();
+    if (state == null) {
+      throw FlutterError('MainShell.openBills must be called below MainShell.');
+    }
+    state._openBills(request);
+  }
+
   @override
   State<MainShell> createState() => _MainShellState();
 }
 
 class _MainShellState extends State<MainShell> {
+  final _billsNavigation = BillsNavigationController();
   var _index = MainShellTab.dashboard.index;
 
   void _selectTab(MainShellTab tab) {
     if (_index == tab.index) return;
     setState(() => _index = tab.index);
+  }
+
+  void _openBills(BillsEntryRequest request) {
+    _billsNavigation.open(request);
+    _selectTab(MainShellTab.bills);
+  }
+
+  @override
+  void dispose() {
+    _billsNavigation.dispose();
+    super.dispose();
   }
 
   @override
@@ -84,24 +106,27 @@ class _MainShellState extends State<MainShell> {
       _slot(MainShellSlots.profile, s.navProfile),
     ];
 
-    return Scaffold(
-      body: IndexedStack(index: _index, children: pages),
-      floatingActionButton: FloatingActionButton(
-        tooltip: s.dashboardQuickAdd,
-        backgroundColor: FxPalette.of(context).primary,
-        foregroundColor: FxPalette.of(context).onPrimary,
-        elevation: 2,
-        shape: const CircleBorder(),
-        onPressed: () {
-          HapticFeedback.selectionClick();
-          AppRouter.push<void>(context, Routes.billEditor);
-        },
-        child: const Icon(Icons.add_rounded, size: 30),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: _FxBottomBar(
-        index: _index,
-        onChanged: (index) => _selectTab(MainShellTab.values[index]),
+    return BillsNavigationScope(
+      controller: _billsNavigation,
+      child: Scaffold(
+        body: IndexedStack(index: _index, children: pages),
+        floatingActionButton: FloatingActionButton(
+          tooltip: s.dashboardQuickAdd,
+          backgroundColor: FxPalette.of(context).primary,
+          foregroundColor: FxPalette.of(context).onPrimary,
+          elevation: 2,
+          shape: const CircleBorder(),
+          onPressed: () {
+            HapticFeedback.selectionClick();
+            AppRouter.push<void>(context, Routes.billEditor);
+          },
+          child: const Icon(Icons.add_rounded, size: 30),
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        bottomNavigationBar: _FxBottomBar(
+          index: _index,
+          onChanged: (index) => _selectTab(MainShellTab.values[index]),
+        ),
       ),
     );
   }

@@ -1521,5 +1521,38 @@
     "placeholders": {
       "date": {}
     }
-  }
+  },
+  "appTitle": "好记",
+  "fxDatePickerDateTitle": "选择日期",
+  "fxDatePickerDateTimeTitle": "选择日期和时间",
+  "fxDatePickerToday": "今天",
+  "fxDatePickerYesterday": "昨天",
+  "fxDatePickerStartOfMonth": "本月初",
+  "fxDatePickerDone": "完成",
+  "fxTreePickerTitle": "选择",
+  "fxTreePickerClear": "清空",
+  "fxTreePickerDone": "完成",
+  "fxTreePickerSearch": "搜索",
+  "fxTreePickerNoMatches": "无匹配项",
+  "fxTreePickerConfirm": "确定（{count}）",
+  "fxTreePickerExpand": "展开 {label}",
+  "@fxTreePickerExpand": {
+    "placeholders": {
+      "label": {}
+    }
+  },
+  "fxTreePickerCollapse": "收起 {label}",
+  "@fxTreePickerCollapse": {
+    "placeholders": {
+      "label": {}
+    }
+  },
+  "@fxTreePickerConfirm": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "statsCalendarViewBills": "查看当天账单",
+  "base64ImageEmpty": "图片数据为空",
+  "base64ImageInvalid": "图片解析失败"
 }

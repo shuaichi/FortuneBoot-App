@@ -7,6 +7,7 @@ import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
+import 'package:fortuneboot/generated/l10n.dart';
 
 /// 树形选择器：展开/收起、缩进、路径、搜索、清空。支持单选与多选。
 ///
@@ -22,7 +23,7 @@ class FxTreePicker<T> extends StatefulWidget {
   final bool multiSelect;
   final bool leafOnly;
   final bool initiallyCollapsed;
-  final String title;
+  final String? title;
 
   const FxTreePicker({
     super.key,
@@ -34,7 +35,7 @@ class FxTreePicker<T> extends StatefulWidget {
     this.multiSelect = false,
     this.leafOnly = false,
     this.initiallyCollapsed = false,
-    this.title = '选择',
+    this.title,
   });
 
   /// 弹出选择器，返回选中的节点列表（取消返回 null）。
@@ -48,7 +49,7 @@ class FxTreePicker<T> extends StatefulWidget {
     bool multiSelect = false,
     bool leafOnly = false,
     bool initiallyCollapsed = false,
-    String title = '选择',
+    String? title,
   }) {
     final palette = FxPalette.of(context);
     return showModalBottomSheet<List<T>>(
@@ -157,6 +158,7 @@ class _FxTreePickerState<T> extends State<FxTreePicker<T>> {
   @override
   Widget build(BuildContext context) {
     final palette = FxPalette.of(context);
+    final s = S.of(context);
     final visible = _visible;
     return SafeArea(
       top: false,
@@ -180,17 +182,17 @@ class _FxTreePickerState<T> extends State<FxTreePicker<T>> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  widget.title,
+                  widget.title ?? s.fxTreePickerTitle,
                   style: FxTypography.title.copyWith(
                     color: palette.textPrimary,
                   ),
                 ),
                 Row(
                   children: [
-                    GestureDetector(
-                      onTap: () => setState(() => _selected.clear()),
+                    TextButton(
+                      onPressed: () => setState(() => _selected.clear()),
                       child: Text(
-                        '清空',
+                        s.fxTreePickerClear,
                         style: FxTypography.body.copyWith(
                           color: palette.textSecondary,
                         ),
@@ -198,10 +200,10 @@ class _FxTreePickerState<T> extends State<FxTreePicker<T>> {
                     ),
                     if (widget.multiSelect) ...[
                       const SizedBox(width: FxSpacing.lg),
-                      GestureDetector(
-                        onTap: _confirm,
+                      TextButton(
+                        onPressed: _confirm,
                         child: Text(
-                          '完成',
+                          s.fxTreePickerDone,
                           style: FxTypography.bodyStrong.copyWith(
                             color: palette.primary,
                           ),
@@ -220,7 +222,7 @@ class _FxTreePickerState<T> extends State<FxTreePicker<T>> {
               onChanged: (v) => setState(() => _query = v),
               style: FxTypography.body.copyWith(color: palette.textPrimary),
               decoration: InputDecoration(
-                hintText: '搜索',
+                hintText: s.fxTreePickerSearch,
                 prefixIcon: Icon(
                   Icons.search_rounded,
                   color: palette.textTertiary,
@@ -243,7 +245,7 @@ class _FxTreePickerState<T> extends State<FxTreePicker<T>> {
             child: visible.isEmpty
                 ? Center(
                     child: Text(
-                      '无匹配项',
+                      s.fxTreePickerNoMatches,
                       style: FxTypography.caption.copyWith(
                         color: palette.textTertiary,
                       ),
@@ -264,7 +266,7 @@ class _FxTreePickerState<T> extends State<FxTreePicker<T>> {
                 FxSpacing.lg,
               ),
               child: FxButton(
-                label: '确定（${_selected.length}）',
+                label: s.fxTreePickerConfirm(_selected.length),
                 expand: true,
                 onPressed: _confirm,
               ),
@@ -294,24 +296,38 @@ class _FxTreePickerState<T> extends State<FxTreePicker<T>> {
         child: Row(
           children: [
             if (f.hasChildren && !searching)
-              GestureDetector(
-                onTap: () => setState(() {
-                  if (collapsed) {
-                    _collapsed.remove(f);
-                  } else {
-                    _collapsed.add(f);
-                  }
-                }),
-                child: Icon(
-                  collapsed
-                      ? Icons.chevron_right_rounded
-                      : Icons.expand_more_rounded,
-                  size: 20,
-                  color: palette.textTertiary,
+              SizedBox(
+                width: 48,
+                height: 48,
+                child: Semantics(
+                  expanded: !collapsed,
+                  child: IconButton(
+                    tooltip: collapsed
+                        ? S
+                              .of(context)
+                              .fxTreePickerExpand(widget.labelOf(f.node))
+                        : S
+                              .of(context)
+                              .fxTreePickerCollapse(widget.labelOf(f.node)),
+                    onPressed: () => setState(() {
+                      if (collapsed) {
+                        _collapsed.remove(f);
+                      } else {
+                        _collapsed.add(f);
+                      }
+                    }),
+                    icon: Icon(
+                      collapsed
+                          ? Icons.chevron_right_rounded
+                          : Icons.expand_more_rounded,
+                      size: 20,
+                      color: palette.textTertiary,
+                    ),
+                  ),
                 ),
               )
             else
-              const SizedBox(width: 20),
+              const SizedBox(width: 48),
             const SizedBox(width: FxSpacing.sm),
             Expanded(
               child: Column(

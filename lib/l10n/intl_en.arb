@@ -1519,5 +1519,38 @@
     "placeholders": {
       "date": {}
     }
-  }
+  },
+  "appTitle": "FortuneBoot",
+  "fxDatePickerDateTitle": "Select date",
+  "fxDatePickerDateTimeTitle": "Select date and time",
+  "fxDatePickerToday": "Today",
+  "fxDatePickerYesterday": "Yesterday",
+  "fxDatePickerStartOfMonth": "Start of month",
+  "fxDatePickerDone": "Done",
+  "fxTreePickerTitle": "Select",
+  "fxTreePickerClear": "Clear",
+  "fxTreePickerDone": "Done",
+  "fxTreePickerSearch": "Search",
+  "fxTreePickerNoMatches": "No matches",
+  "fxTreePickerConfirm": "Confirm ({count})",
+  "fxTreePickerExpand": "Expand {label}",
+  "@fxTreePickerExpand": {
+    "placeholders": {
+      "label": {}
+    }
+  },
+  "fxTreePickerCollapse": "Collapse {label}",
+  "@fxTreePickerCollapse": {
+    "placeholders": {
+      "label": {}
+    }
+  },
+  "@fxTreePickerConfirm": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "statsCalendarViewBills": "View bills for this day",
+  "base64ImageEmpty": "Image data is empty",
+  "base64ImageInvalid": "Could not read the image"
 }

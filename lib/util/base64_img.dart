@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
+import 'package:fortuneboot/generated/l10n.dart';
 import 'package:fortuneboot/util/svg_painter.dart';
 
 import 'package:fortuneboot/util/base64_svg_native.dart'
@@ -23,7 +24,7 @@ class Base64Image extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (base64String.isEmpty) {
-      return errorWidget ?? const Text("图片数据为空");
+      return errorWidget ?? Text(S.of(context).base64ImageEmpty);
     }
 
     try {
@@ -46,7 +47,7 @@ class Base64Image extends StatelessWidget {
       pureBase64 = pureBase64.trim();
 
       if (pureBase64.isEmpty) {
-        return errorWidget ?? const Text("图片数据为空");
+        return errorWidget ?? Text(S.of(context).base64ImageEmpty);
       }
 
       final Uint8List bytes = base64Decode(pureBase64);
@@ -78,10 +79,10 @@ class Base64Image extends StatelessWidget {
         );
       }
     } on FormatException catch (_) {
-      return errorWidget ?? const Text("图片解析失败");
+      return errorWidget ?? Text(S.of(context).base64ImageInvalid);
     } catch (e) {
       debugPrint('[Base64Image] Exception: $e');
-      return errorWidget ?? const Text("图片解析失败");
+      return errorWidget ?? Text(S.of(context).base64ImageInvalid);
     }
   }
 }

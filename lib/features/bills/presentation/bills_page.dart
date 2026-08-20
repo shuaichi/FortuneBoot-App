@@ -6,6 +6,7 @@ import 'package:fortuneboot/core/navigation/routes.dart';
 import 'package:fortuneboot/core/preferences/preferences_cubit.dart';
 import 'package:fortuneboot/core/session/bill_mutations.dart';
 import 'package:fortuneboot/core/session/session_cubit.dart';
+import 'package:fortuneboot/core/shell/bills_navigation_controller.dart';
 import 'package:fortuneboot/core/time/month_window_resolver.dart';
 import 'package:fortuneboot/features/bills/presentation/bloc/bills_bloc.dart';
 import 'package:fortuneboot/features/bills/presentation/widgets/bill_tile.dart';
@@ -41,6 +42,8 @@ class _BillsPageState extends State<BillsPage> {
 
   final ScrollController _scrollController = ScrollController();
   late final BillService _service;
+  BillsNavigationController? _billsNavigation;
+  var _lastNavigationRevision = 0;
 
   /// 时间流当前可见账期锚点；null 时回退当前选择账期（state.month）。
   final ValueNotifier<DateTime?> _visibleAnchor = ValueNotifier<DateTime?>(
@@ -88,6 +91,25 @@ class _BillsPageState extends State<BillsPage> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final navigation = BillsNavigationScope.maybeOf(context);
+    if (navigation != _billsNavigation) {
+      _billsNavigation?.removeListener(_consumeNavigationRequest);
+      _billsNavigation = navigation;
+      _billsNavigation?.addListener(_consumeNavigationRequest);
+    }
+    _consumeNavigationRequest();
+  }
+
+  void _consumeNavigationRequest() {
+    final request = _billsNavigation?.request;
+    if (request == null || request.revision <= _lastNavigationRevision) return;
+    _lastNavigationRevision = request.revision;
+    _bloc.add(BillsEntryApplied(request.entryRequest));
+  }
+
+  @override
   void didUpdateWidget(BillsPage oldWidget) {
     super.didUpdateWidget(oldWidget);
     final request = widget.entryRequest;
@@ -98,6 +120,7 @@ class _BillsPageState extends State<BillsPage> {
 
   @override
   void dispose() {
+    _billsNavigation?.removeListener(_consumeNavigationRequest);
     BillMutations.revision.removeListener(_onExternalMutation);
     _visibleAnchor.dispose();
     _scrollController

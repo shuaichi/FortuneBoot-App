@@ -1,5 +1,6 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:fortuneboot/core/money/fx_money_formatter.dart';
 import 'package:fortuneboot/fx/components/fx_chart_palette.dart';
 import 'package:fortuneboot/fx/components/fx_money_text.dart';
 import 'package:fortuneboot/fx/components/fx_progress_bar.dart';
@@ -219,7 +220,10 @@ class _SliceList extends StatelessWidget {
             ),
             const SizedBox(width: FxSpacing.sm),
             Text(
-              '${slice.percent.toStringAsFixed(0)}%',
+              FxMoneyFormatter.formatPercent(
+                slice.percent,
+                locale: Localizations.localeOf(context).toString(),
+              ),
               style: FxTypography.caption.copyWith(color: palette.textTertiary),
             ),
             if (slice.count != null) ...[

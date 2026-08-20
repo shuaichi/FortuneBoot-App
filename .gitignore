@@ -156,5 +156,8 @@ android/keystore/
 
 # Local agent and audit artifacts
 *.md
+#!docs/ux-audit-2026-08-19.md
+#!docs/ux-fix-prompts/08-l10n-integration-quality-report.md
+#!docs/quality-gate-exceptions.md
 /.skillflow/
 /.xcross/

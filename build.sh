@@ -170,17 +170,11 @@ run_flutter pub get
 if [ "$skipGen" = false ]; then
     echo "📝 执行代码生成..."
 
-    # 检查 intl_utils 是否已安装
-    if ! flutter pub global list | grep -q "intl_utils"; then
-        echo "📦 安装 intl_utils..."
-        flutter pub global activate intl_utils
-    fi
-
     # 生成 JSON 序列化代码和 Retrofit API 代码
     dart run build_runner build
 
-    # 生成国际化文件
-    flutter pub global run intl_utils:generate
+    # 使用 pubspec.lock 锁定的生成器版本生成国际化文件。
+    dart run tool/generate_l10n.dart
 
     echo "✅ 代码生成完成"
 else
