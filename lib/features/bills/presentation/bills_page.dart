@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fortuneboot/core/feedback/fx_feedback.dart';
 import 'package:fortuneboot/core/navigation/app_router.dart';
 import 'package:fortuneboot/core/navigation/routes.dart';
 import 'package:fortuneboot/core/preferences/preferences_cubit.dart';
@@ -15,6 +16,7 @@ import 'package:fortuneboot/features/shared/data/bill_models.dart';
 import 'package:fortuneboot/features/shared/data/bill_service.dart';
 import 'package:fortuneboot/features/shared/presentation/bills/bill_delete_confirmation.dart';
 import 'package:fortuneboot/features/shared/presentation/bills/bill_detail_flow.dart';
+import 'package:fortuneboot/fx/components/fx_icon_button.dart';
 import 'package:fortuneboot/fx/components/fx_money_text.dart';
 import 'package:fortuneboot/fx/components/fx_sheet.dart';
 import 'package:fortuneboot/fx/components/fx_state_view.dart';
@@ -302,30 +304,6 @@ class _BillsPageState extends State<BillsPage> {
     return confirmed;
   }
 
-  void _handleBillAction(FortuneBillVo bill, BillTileAction action) {
-    switch (action) {
-      case BillTileAction.copy:
-        _goCopy(bill);
-        break;
-      case BillTileAction.toggleConfirm:
-        final billId = bill.billId;
-        final bookId = _activeBookId;
-        if (billId != null && bookId != null) {
-          _bloc.add(
-            BillsConfirmToggled(
-              bookId: bookId,
-              billId: billId,
-              confirm: !bill.confirm,
-            ),
-          );
-        }
-        break;
-      case BillTileAction.delete:
-        _confirmDelete(bill);
-        break;
-    }
-  }
-
   /// 右滑复制：跳 BillEditor，约定 Map 参数 {'mode':'copy','bill': vo}。
   void _goCopy(FortuneBillVo bill) {
     AppRouter.push<void>(
@@ -346,6 +324,9 @@ class _BillsPageState extends State<BillsPage> {
     );
     final hideAmounts = context.select<PreferencesCubit, bool>(
       (cubit) => cubit.state.dashboard.hideAmounts,
+    );
+    final monthStartDay = context.select<PreferencesCubit, int>(
+      (cubit) => cubit.state.billing.monthStartDay,
     );
     final request = widget.entryRequest;
     final bookId = request?.bookId ?? sessionBookId;
@@ -374,13 +355,30 @@ class _BillsPageState extends State<BillsPage> {
                         final effective = anchor ?? state.month;
                         return Column(
                           children: [
-                            _buildHeader(state, effective),
-                            _buildSummaryBar(state, effective, hideAmounts),
+                            _buildHeader(
+                              state,
+                              effective,
+                              hideAmounts,
+                              monthStartDay,
+                            ),
+                            _buildSummaryBar(
+                              state,
+                              effective,
+                              hideAmounts,
+                              monthStartDay,
+                            ),
                           ],
                         );
                       },
                     ),
-                    Expanded(child: _buildBody(state, bookId, hideAmounts)),
+                    Expanded(
+                      child: _buildBody(
+                        state,
+                        bookId,
+                        hideAmounts,
+                        monthStartDay,
+                      ),
+                    ),
                   ],
                 );
               },
@@ -391,17 +389,17 @@ class _BillsPageState extends State<BillsPage> {
     );
   }
 
-  Widget _buildHeader(BillsState state, DateTime anchor) {
+  Widget _buildHeader(
+    BillsState state,
+    DateTime anchor,
+    bool hideAmounts,
+    int monthStartDay,
+  ) {
     final palette = FxPalette.of(context);
     final activeCount = state.filter.activeCount;
     final canNavigateOlder = state.hasMore && !state.isLoadingMore;
     final canNavigateNewer =
         (_visibleAnchor.value ?? state.month) != state.month;
-    final monthStartDay = context
-        .watch<PreferencesCubit>()
-        .state
-        .billing
-        .monthStartDay;
     final window = MonthWindowResolver.resolveForAnchor(anchor, monthStartDay);
     final rangeLabel =
         '${_rangeFormat.format(window.start)} - '
@@ -451,6 +449,8 @@ class _BillsPageState extends State<BillsPage> {
           ),
           const SizedBox(width: FxSpacing.sm),
           _filterButton(state, activeCount),
+          const SizedBox(width: FxSpacing.xs),
+          _amountVisibilityButton(hideAmounts),
         ],
       ),
     );
@@ -486,6 +486,27 @@ class _BillsPageState extends State<BillsPage> {
         ),
       ),
     );
+  }
+
+  Widget _amountVisibilityButton(bool hidden) {
+    final tooltip = hidden
+        ? S.of(context).commonShowAmounts
+        : S.of(context).commonHideAmounts;
+    return FxIconButton(
+      icon: hidden ? Icons.visibility_off_rounded : Icons.visibility_rounded,
+      tooltip: tooltip,
+      onPressed: () => _toggleAmountVisibility(hidden),
+    );
+  }
+
+  Future<void> _toggleAmountVisibility(bool hidden) async {
+    HapticFeedback.selectionClick();
+    final saved = await context.read<PreferencesCubit>().setHideAmounts(
+      !hidden,
+    );
+    if (!saved && mounted) {
+      FxFeedback.error(context, message: S.of(context).profileSaveFailedRetry);
+    }
   }
 
   Widget _filterButton(BillsState state, int activeCount) {
@@ -540,13 +561,15 @@ class _BillsPageState extends State<BillsPage> {
     );
   }
 
-  Widget _buildSummaryBar(BillsState state, DateTime anchor, bool hideAmounts) {
+  Widget _buildSummaryBar(
+    BillsState state,
+    DateTime anchor,
+    bool hideAmounts,
+    int monthStartDay,
+  ) {
     final palette = FxPalette.of(context);
     final finance = FxFinanceColors.of(context);
-    final stats = state.summaryForAnchor(
-      anchor,
-      context.watch<PreferencesCubit>().state.billing.monthStartDay,
-    );
+    final stats = state.summaryForAnchor(anchor, monthStartDay);
     if (!state.isSummaryAvailable || state.statistics == null) {
       return const SizedBox.shrink();
     }
@@ -634,7 +657,12 @@ class _BillsPageState extends State<BillsPage> {
     margin: const EdgeInsets.symmetric(horizontal: FxSpacing.sm),
   );
 
-  Widget _buildBody(BillsState state, int? bookId, bool hideAmounts) {
+  Widget _buildBody(
+    BillsState state,
+    int? bookId,
+    bool hideAmounts,
+    int monthStartDay,
+  ) {
     if (bookId == null) {
       return FxStateView.empty(message: S.of(context).billsSelectBookFirst);
     }
@@ -664,16 +692,11 @@ class _BillsPageState extends State<BillsPage> {
             ),
           );
         }
-        return _buildList(state, hideAmounts);
+        return _buildList(state, hideAmounts, monthStartDay);
     }
   }
 
-  Widget _buildList(BillsState state, bool hideAmounts) {
-    final monthStartDay = context
-        .watch<PreferencesCubit>()
-        .state
-        .billing
-        .monthStartDay;
+  Widget _buildList(BillsState state, bool hideAmounts, int monthStartDay) {
     final groups = state.monthGroups(monthStartDay);
     // 重建探针 key 集合，仅保留当前分组锚点。
     final anchors = groups.map((g) => g.window.anchorMonth).toSet();
@@ -892,7 +915,6 @@ class _BillsPageState extends State<BillsPage> {
           bill: bill,
           masked: hideAmounts,
           onTap: () => _openDetail(bill),
-          onAction: (action) => _handleBillAction(bill, action),
         ),
       ),
     );

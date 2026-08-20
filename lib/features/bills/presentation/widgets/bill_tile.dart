@@ -10,20 +10,16 @@ import 'package:fortuneboot/fx/tokens/fx_typography.dart';
 import 'package:fortuneboot/generated/l10n.dart';
 import 'package:intl/intl.dart';
 
-enum BillTileAction { copy, toggleConfirm, delete }
-
 /// 单条账单行：左图标徽标 + 标题/副行，右金额/时间/附件/标签。
 class BillTile extends StatelessWidget {
   final FortuneBillVo bill;
   final VoidCallback? onTap;
-  final ValueChanged<BillTileAction>? onAction;
   final bool masked;
 
   const BillTile({
     super.key,
     required this.bill,
     this.onTap,
-    this.onAction,
     this.masked = false,
   });
 
@@ -142,30 +138,7 @@ class BillTile extends StatelessWidget {
                 ],
               ),
             ),
-            const SizedBox(width: FxSpacing.sm),
-            if (onAction != null)
-              PopupMenuButton<BillTileAction>(
-                tooltip: MaterialLocalizations.of(context).moreButtonTooltip,
-                onSelected: onAction,
-                itemBuilder: (context) => [
-                  PopupMenuItem(
-                    value: BillTileAction.copy,
-                    child: Text(S.of(context).billsCopy),
-                  ),
-                  PopupMenuItem(
-                    value: BillTileAction.toggleConfirm,
-                    child: Text(
-                      bill.confirm
-                          ? S.of(context).billsUnconfirm
-                          : S.of(context).confirm,
-                    ),
-                  ),
-                  PopupMenuItem(
-                    value: BillTileAction.delete,
-                    child: Text(S.of(context).billsDelete),
-                  ),
-                ],
-              ),
+            const SizedBox(width: FxSpacing.md),
             Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [

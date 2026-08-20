@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fortuneboot/core/feedback/fx_feedback.dart';
+import 'package:fortuneboot/core/preferences/preferences_cubit.dart';
 import 'package:fortuneboot/core/session/session_cubit.dart';
 import 'package:fortuneboot/features/orders/data/orders_models.dart';
 import 'package:fortuneboot/features/orders/data/orders_service.dart';
@@ -82,6 +83,9 @@ class _OrdersPageState extends State<OrdersPage> {
     final bookId = context.select<SessionCubit, int?>(
       (c) => c.state.currentBookId,
     );
+    final hideAmounts = context.select<PreferencesCubit, bool>(
+      (cubit) => cubit.state.dashboard.hideAmounts,
+    );
     return _BookSync(
       bookId: bookId,
       child: Scaffold(
@@ -99,7 +103,7 @@ class _OrdersPageState extends State<OrdersPage> {
               return Column(
                 children: [
                   _buildHeader(context),
-                  Expanded(child: _buildBody(state, bookId)),
+                  Expanded(child: _buildBody(state, bookId, hideAmounts)),
                 ],
               );
             },
@@ -137,7 +141,7 @@ class _OrdersPageState extends State<OrdersPage> {
     );
   }
 
-  Widget _buildBody(OrdersState state, int? bookId) {
+  Widget _buildBody(OrdersState state, int? bookId, bool hideAmounts) {
     if (bookId == null) {
       return FxStateView.empty(message: S.of(context).ordersSelectBookFirst);
     }
@@ -178,13 +182,18 @@ class _OrdersPageState extends State<OrdersPage> {
             ),
             itemCount: state.orders.length,
             separatorBuilder: (_, i) => const SizedBox(height: FxSpacing.md),
-            itemBuilder: (context, i) => _orderCard(context, state.orders[i]),
+            itemBuilder: (context, i) =>
+                _orderCard(context, state.orders[i], hideAmounts),
           ),
         );
     }
   }
 
-  Widget _orderCard(BuildContext context, FortuneFinanceOrderVo order) {
+  Widget _orderCard(
+    BuildContext context,
+    FortuneFinanceOrderVo order,
+    bool hideAmounts,
+  ) {
     final palette = FxPalette.of(context);
     final finance = FxFinanceColors.of(context);
     return FxCard(
@@ -229,12 +238,14 @@ class _OrdersPageState extends State<OrdersPage> {
                       label: S.of(context).ordersOutLabel,
                       amount: order.outAmount ?? 0,
                       color: finance.expense,
+                      masked: hideAmounts,
                     ),
                     _amountInline(
                       context,
                       label: S.of(context).ordersInLabel,
                       amount: order.inAmount ?? 0,
                       color: finance.income,
+                      masked: hideAmounts,
                     ),
                   ],
                 ),
@@ -266,6 +277,7 @@ class _OrdersPageState extends State<OrdersPage> {
     required String label,
     required double amount,
     required Color color,
+    required bool masked,
   }) {
     final palette = FxPalette.of(context);
     return Row(
@@ -280,6 +292,7 @@ class _OrdersPageState extends State<OrdersPage> {
           currencyCode: _currency,
           fontSize: 13,
           color: color,
+          masked: masked,
         ),
       ],
     );

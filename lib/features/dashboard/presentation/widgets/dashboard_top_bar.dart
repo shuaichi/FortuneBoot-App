@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fortuneboot/core/feedback/fx_feedback.dart';
+import 'package:fortuneboot/core/preferences/preferences_cubit.dart';
 import 'package:fortuneboot/core/session/session_cubit.dart';
 import 'package:fortuneboot/core/session/widgets/session_switcher_sheet.dart';
+import 'package:fortuneboot/fx/components/fx_icon_button.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
@@ -78,6 +81,8 @@ class DashboardTopBar extends StatelessWidget {
             ),
           ),
           const SizedBox(width: FxSpacing.md),
+          const _AmountVisibilityAction(),
+          const SizedBox(width: FxSpacing.xs),
           _AvatarAction(onTap: onAvatarTap),
         ],
       ),
@@ -87,6 +92,36 @@ class DashboardTopBar extends StatelessWidget {
   void _openSwitcher(BuildContext context) {
     HapticFeedback.selectionClick();
     SessionSwitcherSheet.show(context);
+  }
+}
+
+class _AmountVisibilityAction extends StatelessWidget {
+  const _AmountVisibilityAction();
+
+  @override
+  Widget build(BuildContext context) {
+    final hidden = context.select<PreferencesCubit, bool>(
+      (cubit) => cubit.state.dashboard.hideAmounts,
+    );
+    final tooltip = hidden
+        ? S.of(context).commonShowAmounts
+        : S.of(context).commonHideAmounts;
+
+    return FxIconButton(
+      icon: hidden ? Icons.visibility_off_rounded : Icons.visibility_rounded,
+      tooltip: tooltip,
+      onPressed: () => _toggle(context, hidden),
+    );
+  }
+
+  Future<void> _toggle(BuildContext context, bool hidden) async {
+    HapticFeedback.selectionClick();
+    final saved = await context.read<PreferencesCubit>().setHideAmounts(
+      !hidden,
+    );
+    if (!saved && context.mounted) {
+      FxFeedback.error(context, message: S.of(context).profileSaveFailedRetry);
+    }
   }
 }
 
