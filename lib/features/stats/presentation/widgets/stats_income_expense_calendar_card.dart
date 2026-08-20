@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fortuneboot/features/stats/data/stats_models.dart';
 import 'package:fortuneboot/features/stats/presentation/bloc/stats_bloc.dart';
+import 'package:fortuneboot/features/stats/presentation/widgets/stats_formatters.dart';
 import 'package:fortuneboot/fx/components/fx_card.dart';
 import 'package:fortuneboot/fx/components/fx_money_text.dart';
 import 'package:fortuneboot/fx/components/fx_segmented.dart';
@@ -41,7 +42,14 @@ class StatsIncomeExpenseCalendarCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          FxCardLabel(s.statsIncomeExpenseCalendar),
+          Text(
+            s.statsIncomeExpenseCalendar,
+            style: FxTypography.label.copyWith(
+              color: FxPalette.of(context).textSecondary,
+            ),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
           const SizedBox(height: FxSpacing.md),
           FxSegmented<IncomeExpenseCalendarView>(
             segments: [
@@ -63,10 +71,12 @@ class StatsIncomeExpenseCalendarCard extends StatelessWidget {
           ),
           const SizedBox(height: FxSpacing.sm),
           switch (section.status) {
-            StatsSectionStatus.loading => FxStateView.loading(),
+            StatsSectionStatus.loading => FxStateView.loading(compact: true),
             StatsSectionStatus.error => FxStateView.error(
               message: section.error,
               onRetry: onRetry,
+              retryLabel: S.of(context).commonRetry,
+              compact: true,
             ),
             StatsSectionStatus.ready => _CalendarContent(
               response: section.data!,
@@ -178,11 +188,7 @@ class _MonthCalendar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final days = <int, IncomeExpenseCalendarBucket>{
-      for (final item in items)
-        if (_dayFromPeriod(item.period) != null)
-          _dayFromPeriod(item.period)!: item,
-    };
+    final days = _mergeDayBuckets(items);
     final firstWeekday = DateTime(anchor.year, anchor.month).weekday;
     final dayCount = DateTime(anchor.year, anchor.month + 1, 0).day;
     final weekdayLabels = [
@@ -208,7 +214,8 @@ class _MonthCalendar extends StatelessWidget {
         final cellWidth = (constraints.maxWidth - 24) / 7;
         final textScale = MediaQuery.textScalerOf(context).scale(1);
         final minimumHeight = 72 * textScale;
-        final dayCellHeight = cellWidth.clamp(minimumHeight, 96.0 * textScale);
+        final maxHeight = 120.0 * textScale;
+        final dayCellHeight = cellWidth.clamp(minimumHeight, maxHeight);
         return Column(
           children: [
             Row(
@@ -248,14 +255,39 @@ class _MonthCalendar extends StatelessWidget {
     );
   }
 
+  Map<int, IncomeExpenseCalendarBucket> _mergeDayBuckets(
+    List<IncomeExpenseCalendarBucket> items,
+  ) {
+    final merged = <int, IncomeExpenseCalendarBucket>{};
+    for (final item in items) {
+      final day = _dayFromPeriod(item.period);
+      if (day == null) continue;
+      final existing = merged[day];
+      merged[day] = existing == null
+          ? item
+          : IncomeExpenseCalendarBucket(
+              period: item.period,
+              income: existing.income + item.income,
+              expense: existing.expense + item.expense,
+              incomeCount: existing.incomeCount + item.incomeCount,
+              expenseCount: existing.expenseCount + item.expenseCount,
+            );
+    }
+    return merged;
+  }
+
   int? _dayFromPeriod(String period) {
-    final date = DateTime.tryParse(period);
-    if (date == null ||
-        date.year != anchor.year ||
-        date.month != anchor.month) {
+    final parts = period.split('-');
+    if (parts.length != 3) return null;
+    final year = int.tryParse(parts[0]);
+    final month = int.tryParse(parts[1]);
+    final day = int.tryParse(parts[2]);
+    if (year != anchor.year || month != anchor.month || day == null) {
       return null;
     }
-    return date.day;
+    final maxDay = DateTime(anchor.year, anchor.month + 1, 0).day;
+    if (day < 1 || day > maxDay) return null;
+    return day;
   }
 }
 
@@ -275,10 +307,12 @@ class _DayCell extends StatelessWidget {
     final palette = FxPalette.of(context);
     final finance = FxFinanceColors.of(context);
     final s = S.of(context);
+    final locale = Localizations.localeOf(context).toString();
+    final formats = StatsFormatters.of(context, currencyCode: currencyCode);
     final summary =
-        '${DateFormat.yMMMd(Localizations.localeOf(context).toString()).format(date)}: '
-        '${s.statsCalendarIncome} ${bucket.income}, '
-        '${s.statsCalendarExpense} ${bucket.expense}, '
+        '${DateFormat.yMMMd(locale).format(date)}: '
+        '${s.statsCalendarIncome} ${formats.money(bucket.income)}, '
+        '${s.statsCalendarExpense} ${formats.money(bucket.expense)}, '
         '${s.statsCalendarTotalCount(bucket.totalCount)}';
     return Semantics(
       button: true,
@@ -298,16 +332,40 @@ class _DayCell extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                '$date'.split(' ').first.split('-').last,
+                DateFormat.d(locale).format(date),
                 style: FxTypography.caption,
               ),
-              const Spacer(),
-              _CompactAmount('↑', bucket.income, finance.income),
-              _CompactAmount('↓', bucket.expense, finance.expense),
-              Text(
-                '${bucket.totalCount}',
-                style: FxTypography.caption.copyWith(
-                  color: palette.textTertiary,
+              Expanded(
+                child: Align(
+                  alignment: Alignment.bottomLeft,
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: Alignment.bottomLeft,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        _CompactAmount(
+                          '↑',
+                          bucket.income,
+                          currencyCode,
+                          finance.income,
+                        ),
+                        _CompactAmount(
+                          '↓',
+                          bucket.expense,
+                          currencyCode,
+                          finance.expense,
+                        ),
+                        Text(
+                          '${bucket.totalCount}',
+                          style: FxTypography.caption.copyWith(
+                            color: palette.textTertiary,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
               ),
             ],
@@ -319,19 +377,24 @@ class _DayCell extends StatelessWidget {
 }
 
 class _CompactAmount extends StatelessWidget {
-  const _CompactAmount(this.prefix, this.amount, this.color);
+  const _CompactAmount(this.prefix, this.amount, this.currencyCode, this.color);
 
   final String prefix;
   final double amount;
+  final String? currencyCode;
   final Color color;
 
   @override
-  Widget build(BuildContext context) => Text(
-    '$prefix${amount == 0 ? '—' : amount.toStringAsFixed(0)}',
-    style: FxTypography.caption.copyWith(color: color, fontSize: 9),
-    maxLines: 1,
-    overflow: TextOverflow.ellipsis,
-  );
+  Widget build(BuildContext context) {
+    final formats = StatsFormatters.of(context, currencyCode: currencyCode);
+    final value = amount == 0 ? '—' : formats.compact(amount);
+    return Text(
+      '$prefix$value',
+      style: FxTypography.caption.copyWith(color: color, fontSize: 9),
+      maxLines: 1,
+      overflow: TextOverflow.ellipsis,
+    );
+  }
 }
 
 class _PeriodGrid extends StatelessWidget {
@@ -352,7 +415,7 @@ class _PeriodGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final itemsByPeriod = {for (final item in items) item.period: item};
+    final itemsByPeriod = _mergeBucketsByPeriod(items);
     final periods = view == IncomeExpenseCalendarView.year
         ? List.generate(12, (index) => DateTime(anchor.year, index + 1))
         : List.generate(5, (index) => DateTime(anchor.year - 4 + index));
@@ -390,6 +453,38 @@ class _PeriodGrid extends StatelessWidget {
     );
   }
 
+  Map<String, IncomeExpenseCalendarBucket> _mergeBucketsByPeriod(
+    List<IncomeExpenseCalendarBucket> items,
+  ) {
+    final merged = <String, IncomeExpenseCalendarBucket>{};
+    for (final item in items) {
+      if (!_isValidPeriod(item.period)) continue;
+      final existing = merged[item.period];
+      merged[item.period] = existing == null
+          ? item
+          : IncomeExpenseCalendarBucket(
+              period: item.period,
+              income: existing.income + item.income,
+              expense: existing.expense + item.expense,
+              incomeCount: existing.incomeCount + item.incomeCount,
+              expenseCount: existing.expenseCount + item.expenseCount,
+            );
+    }
+    return merged;
+  }
+
+  bool _isValidPeriod(String period) {
+    if (view == IncomeExpenseCalendarView.year) {
+      final parts = period.split('-');
+      if (parts.length != 2) return false;
+      final year = int.tryParse(parts[0]);
+      final month = int.tryParse(parts[1]);
+      return year == anchor.year && month != null && month >= 1 && month <= 12;
+    }
+    final year = int.tryParse(period);
+    return year != null && year >= anchor.year - 4 && year <= anchor.year;
+  }
+
   String _periodKey(DateTime date) => view == IncomeExpenseCalendarView.year
       ? DateFormat('yyyy-MM').format(date)
       : DateFormat('yyyy').format(date);
@@ -419,11 +514,12 @@ class _PeriodCell extends StatelessWidget {
             Localizations.localeOf(context).toString(),
           ).format(date)
         : DateFormat.y(Localizations.localeOf(context).toString()).format(date);
+    final formats = StatsFormatters.of(context, currencyCode: currencyCode);
     return Semantics(
       button: true,
       label:
-          '$label, ${S.of(context).statsCalendarIncome} ${bucket.income}, '
-          '${S.of(context).statsCalendarExpense} ${bucket.expense}',
+          '$label, ${S.of(context).statsCalendarIncome} ${formats.money(bucket.income)}, '
+          '${S.of(context).statsCalendarExpense} ${formats.money(bucket.expense)}',
       child: InkWell(
         borderRadius: BorderRadius.circular(12),
         onTap: onTap,
@@ -438,8 +534,13 @@ class _PeriodCell extends StatelessWidget {
             children: [
               Text(label, style: FxTypography.label),
               const Spacer(),
-              _CompactAmount('↑', bucket.income, finance.income),
-              _CompactAmount('↓', bucket.expense, finance.expense),
+              _CompactAmount('↑', bucket.income, currencyCode, finance.income),
+              _CompactAmount(
+                '↓',
+                bucket.expense,
+                currencyCode,
+                finance.expense,
+              ),
             ],
           ),
         ),
@@ -514,10 +615,18 @@ class _SummaryRow extends StatelessWidget {
   final String? currencyCode;
 
   @override
-  Widget build(BuildContext context) => Row(
-    children: [
-      Expanded(child: Text(label, style: FxTypography.body)),
-      FxMoneyText(amount: amount, currencyCode: currencyCode, color: color),
-    ],
-  );
+  Widget build(BuildContext context) {
+    final formats = StatsFormatters.of(context, currencyCode: currencyCode);
+    return Row(
+      children: [
+        Expanded(child: Text(label, style: FxTypography.body)),
+        FxMoneyText(
+          amount: amount,
+          currencyCode: currencyCode,
+          color: color,
+          masked: formats.masked,
+        ),
+      ],
+    );
+  }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fortuneboot/features/shared/data/bill_service.dart';
 import 'package:fortuneboot/features/stats/presentation/bloc/stats_bloc.dart';
+import 'package:fortuneboot/features/stats/presentation/widgets/stats_privacy.dart';
 import 'package:fortuneboot/fx/components/fx_card.dart';
 import 'package:fortuneboot/fx/components/fx_money_text.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
@@ -24,6 +25,7 @@ class StatsOverviewBar extends StatelessWidget {
     final data = section.isReady ? section.data! : const BillStatistics();
     final palette = FxPalette.of(context);
     final finance = FxFinanceColors.of(context);
+    final masked = StatsPrivacy.hideAmountsOf(context);
     return FxCard(
       child: Row(
         children: [
@@ -32,6 +34,7 @@ class StatsOverviewBar extends StatelessWidget {
             S.of(context).statsExpense,
             data.expense,
             finance.expense,
+            masked,
           ),
           _divider(palette),
           _cell(
@@ -39,6 +42,7 @@ class StatsOverviewBar extends StatelessWidget {
             S.of(context).statsIncome,
             data.income,
             finance.income,
+            masked,
           ),
           _divider(palette),
           _cell(
@@ -46,13 +50,20 @@ class StatsOverviewBar extends StatelessWidget {
             S.of(context).statsSurplus,
             data.surplus,
             palette.textPrimary,
+            masked,
           ),
         ],
       ),
     );
   }
 
-  Widget _cell(BuildContext context, String label, double amount, Color color) {
+  Widget _cell(
+    BuildContext context,
+    String label,
+    double amount,
+    Color color,
+    bool masked,
+  ) {
     return Expanded(
       child: Column(
         children: [
@@ -68,6 +79,7 @@ class StatsOverviewBar extends StatelessWidget {
             currencyCode: currencyCode,
             color: color,
             fontWeight: FontWeight.w700,
+            masked: masked,
           ),
         ],
       ),

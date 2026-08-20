@@ -3,6 +3,7 @@ import 'package:fortuneboot/features/stats/presentation/bloc/stats_bloc.dart';
 import 'package:fortuneboot/fx/components/fx_card.dart';
 import 'package:fortuneboot/fx/components/fx_state_view.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
+import 'package:fortuneboot/generated/l10n.dart';
 
 /// 图表卡基座：FxCard + 标题 + 区块态（loading/error/ready）兜底。
 class StatsCardShell<T> extends StatelessWidget {
@@ -31,18 +32,23 @@ class StatsCardShell<T> extends StatelessWidget {
         children: [
           FxCardLabel(label),
           const SizedBox(height: FxSpacing.md),
-          SizedBox(height: height, child: _body()),
+          SizedBox(height: height, child: _body(context)),
         ],
       ),
     );
   }
 
-  Widget _body() {
+  Widget _body(BuildContext context) {
     switch (section.status) {
       case StatsSectionStatus.loading:
-        return FxStateView.loading();
+        return FxStateView.loading(compact: true);
       case StatsSectionStatus.error:
-        return FxStateView.error(message: section.error, onRetry: onRetry);
+        return FxStateView.error(
+          message: section.error,
+          onRetry: onRetry,
+          retryLabel: S.of(context).commonRetry,
+          compact: true,
+        );
       case StatsSectionStatus.ready:
         return builder(section.data as T);
     }

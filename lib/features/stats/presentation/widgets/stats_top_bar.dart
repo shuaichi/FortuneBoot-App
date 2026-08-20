@@ -14,12 +14,12 @@ import 'package:intl/intl.dart';
 class StatsTopBar extends StatelessWidget {
   const StatsTopBar({super.key});
 
-  static final DateFormat _day = DateFormat('M月d日');
-
   @override
   Widget build(BuildContext context) {
     final state = context.watch<StatsBloc>().state;
     final bloc = context.read<StatsBloc>();
+    final locale = Localizations.localeOf(context).toString();
+    final day = DateFormat.Md(locale);
 
     return Container(
       color: FxPalette.of(context).canvas,
@@ -34,33 +34,41 @@ class StatsTopBar extends StatelessWidget {
         children: [
           Text(S.of(context).statsTitle, style: FxTypography.titleLarge),
           const SizedBox(height: FxSpacing.md),
-          Row(
+          Wrap(
+            spacing: FxSpacing.sm,
+            runSpacing: FxSpacing.sm,
             children: [
               _RangeChip(
                 label: S.of(context).statsRangeWeek,
+                semanticsLabel: S.of(context).statsRangeWeek,
                 selected: state.range == StatsRange.week,
                 onTap: () => bloc.add(const StatsRangeChanged(StatsRange.week)),
               ),
-              const SizedBox(width: FxSpacing.sm),
               _RangeChip(
                 label: S.of(context).statsRangePeriod,
+                semanticsLabel: S.of(context).statsRangePeriod,
                 selected: state.range == StatsRange.month,
                 onTap: () =>
                     bloc.add(const StatsRangeChanged(StatsRange.month)),
               ),
-              const SizedBox(width: FxSpacing.sm),
               _RangeChip(
                 label: S.of(context).statsRangeYear,
+                semanticsLabel: S.of(context).statsRangeYear,
                 selected: state.range == StatsRange.year,
                 onTap: () => bloc.add(const StatsRangeChanged(StatsRange.year)),
               ),
-              const SizedBox(width: FxSpacing.sm),
               _RangeChip(
                 label:
                     state.range == StatsRange.custom &&
                         state.customStart != null &&
                         state.customEnd != null
-                    ? '${_day.format(state.customStart!)}-${_day.format(state.customEnd!)}'
+                    ? '${day.format(state.customStart!)}-${day.format(state.customEnd!)}'
+                    : S.of(context).statsRangeCustom,
+                semanticsLabel:
+                    state.range == StatsRange.custom &&
+                        state.customStart != null &&
+                        state.customEnd != null
+                    ? '${S.of(context).statsRangeCustom} ${DateFormat.yMMMd(locale).format(state.customStart!)} - ${DateFormat.yMMMd(locale).format(state.customEnd!)}'
                     : S.of(context).statsRangeCustom,
                 selected: state.range == StatsRange.custom,
                 onTap: () => _pickCustom(context, bloc),
@@ -97,6 +105,7 @@ class StatsTopBar extends StatelessWidget {
       lastDate: DateTime(now.year + 1, 12, 31),
       initialDateRange: initial,
     );
+    if (!context.mounted || bloc.isClosed) return;
     if (picked != null) {
       bloc.add(
         StatsRangeChanged(
@@ -111,11 +120,13 @@ class StatsTopBar extends StatelessWidget {
 
 class _RangeChip extends StatelessWidget {
   final String label;
+  final String semanticsLabel;
   final bool selected;
   final VoidCallback onTap;
 
   const _RangeChip({
     required this.label,
+    required this.semanticsLabel,
     required this.selected,
     required this.onTap,
   });
@@ -123,27 +134,37 @@ class _RangeChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final palette = FxPalette.of(context);
-    return GestureDetector(
-      onTap: () {
-        if (!selected) HapticFeedback.selectionClick();
-        onTap();
-      },
-      behavior: HitTestBehavior.opaque,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 180),
-        padding: const EdgeInsets.symmetric(
-          horizontal: FxSpacing.md,
-          vertical: FxSpacing.sm,
-        ),
-        decoration: BoxDecoration(
-          color: selected ? palette.primary : palette.surface,
+    return Semantics(
+      button: true,
+      selected: selected,
+      label: semanticsLabel,
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: FxRadius.pillBorder,
+        child: InkWell(
           borderRadius: FxRadius.pillBorder,
-        ),
-        child: Text(
-          label,
-          style: FxTypography.label.copyWith(
-            color: selected ? palette.onPrimary : palette.textSecondary,
-            fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
+          onTap: () {
+            if (!selected) HapticFeedback.selectionClick();
+            onTap();
+          },
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 180),
+            constraints: const BoxConstraints(minHeight: 48),
+            padding: const EdgeInsets.symmetric(
+              horizontal: FxSpacing.md,
+              vertical: FxSpacing.sm,
+            ),
+            decoration: BoxDecoration(
+              color: selected ? palette.primary : palette.surface,
+              borderRadius: FxRadius.pillBorder,
+            ),
+            child: Text(
+              label,
+              style: FxTypography.label.copyWith(
+                color: selected ? palette.onPrimary : palette.textSecondary,
+                fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
+              ),
+            ),
           ),
         ),
       ),

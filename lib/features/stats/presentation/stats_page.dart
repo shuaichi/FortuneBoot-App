@@ -6,9 +6,11 @@ import 'package:fortuneboot/core/preferences/preferences_cubit.dart';
 import 'package:fortuneboot/core/session/bill_mutations.dart';
 import 'package:fortuneboot/core/session/session_cubit.dart';
 import 'package:fortuneboot/features/stats/presentation/bloc/stats_bloc.dart';
+import 'package:fortuneboot/features/stats/presentation/widgets/stats_formatters.dart';
 import 'package:fortuneboot/features/stats/presentation/widgets/stats_income_expense_calendar_card.dart';
 import 'package:fortuneboot/features/stats/presentation/widgets/stats_overview_bar.dart';
 import 'package:fortuneboot/features/stats/presentation/widgets/stats_pie_card.dart';
+import 'package:fortuneboot/features/stats/presentation/widgets/stats_privacy.dart';
 import 'package:fortuneboot/features/stats/presentation/widgets/stats_tag_card.dart';
 import 'package:fortuneboot/features/stats/presentation/widgets/stats_top_bar.dart';
 import 'package:fortuneboot/features/stats/presentation/widgets/stats_trend_card.dart';
@@ -83,6 +85,7 @@ class _StatsPageState extends State<StatsPage> {
 class _Body extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    var refreshVersion = 0;
     return BlocBuilder<StatsBloc, StatsState>(
       builder: (context, state) {
         if (!state.hasBook) {
@@ -92,66 +95,92 @@ class _Body extends StatelessWidget {
         final bloc = context.read<StatsBloc>();
         void retry() => bloc.add(const StatsRefreshed());
         final currency = state.currencyCode;
+        final hideAmounts = context.select(
+          (PreferencesCubit cubit) => cubit.state.dashboard.hideAmounts,
+        );
 
-        return RefreshIndicator(
-          onRefresh: () async => bloc.add(const StatsRefreshed()),
-          child: ListView(
-            physics: const AlwaysScrollableScrollPhysics(),
-            padding: const EdgeInsets.fromLTRB(
-              FxSpacing.lg,
-              FxSpacing.sm,
-              FxSpacing.lg,
-              FxSpacing.xxxl,
-            ),
-            children: [
-              const _StatsEntryCard(),
-              const SizedBox(height: FxSpacing.md),
-              StatsOverviewBar(section: state.overview, currencyCode: currency),
-              const SizedBox(height: FxSpacing.md),
-              StatsIncomeExpenseCalendarCard(
-                section: state.calendar,
-                view: state.calendarView,
-                anchor: state.calendarAnchor,
-                currencyCode: currency,
-                onViewChanged: (view) =>
-                    bloc.add(StatsCalendarViewChanged(view)),
-                onNavigate: (delta) => bloc.add(StatsCalendarNavigate(delta)),
-                onDrillDown: (view, anchor) => bloc.add(
-                  StatsCalendarDrilledDown(view: view, anchor: anchor),
+        return StatsPrivacy(
+          hideAmounts: hideAmounts,
+          child: RefreshIndicator(
+            onRefresh: () async {
+              final current = ++refreshVersion;
+              bloc.add(const StatsRefreshed());
+              await bloc.stream.firstWhere(
+                (next) =>
+                    current == refreshVersion &&
+                    next.overview.status != StatsSectionStatus.loading &&
+                    next.trends.status != StatsSectionStatus.loading &&
+                    next.categories.status != StatsSectionStatus.loading &&
+                    next.tags.status != StatsSectionStatus.loading &&
+                    next.payees.status != StatsSectionStatus.loading,
+              );
+            },
+            child: ListView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: const EdgeInsets.fromLTRB(
+                FxSpacing.lg,
+                FxSpacing.sm,
+                FxSpacing.lg,
+                FxSpacing.xxxl,
+              ),
+              children: [
+                const _StatsEntryCard(),
+                const SizedBox(height: FxSpacing.md),
+                StatsOverviewBar(
+                  section: state.overview,
+                  currencyCode: currency,
                 ),
-                onRetry: () => bloc.add(const StatsCalendarRetried()),
-              ),
-              const SizedBox(height: FxSpacing.md),
-              _StatsInsightCard(state: state, currencyCode: currency),
-              const SizedBox(height: FxSpacing.md),
-              _StatsDimensionPreviewCard(state: state, currencyCode: currency),
-              const SizedBox(height: FxSpacing.md),
-              StatsTrendCard(
-                section: state.trends,
-                type: state.type,
-                onRetry: retry,
-              ),
-              const SizedBox(height: FxSpacing.md),
-              StatsPieCard(
-                label: _categoryLabel(context, state.type),
-                section: state.categories,
-                currencyCode: currency,
-                onRetry: retry,
-              ),
-              const SizedBox(height: FxSpacing.md),
-              StatsTagCard(
-                label: _tagLabel(context, state.type),
-                section: state.tags,
-                onRetry: retry,
-              ),
-              const SizedBox(height: FxSpacing.md),
-              StatsPieCard(
-                label: _payeeLabel(context, state.type),
-                section: state.payees,
-                currencyCode: currency,
-                onRetry: retry,
-              ),
-            ],
+                const SizedBox(height: FxSpacing.md),
+                StatsIncomeExpenseCalendarCard(
+                  section: state.calendar,
+                  view: state.calendarView,
+                  anchor: state.calendarAnchor,
+                  currencyCode: currency,
+                  onViewChanged: (view) =>
+                      bloc.add(StatsCalendarViewChanged(view)),
+                  onNavigate: (delta) => bloc.add(StatsCalendarNavigate(delta)),
+                  onDrillDown: (view, anchor) => bloc.add(
+                    StatsCalendarDrilledDown(view: view, anchor: anchor),
+                  ),
+                  onRetry: () => bloc.add(const StatsCalendarRetried()),
+                ),
+                const SizedBox(height: FxSpacing.md),
+                _StatsInsightCard(state: state, currencyCode: currency),
+                const SizedBox(height: FxSpacing.md),
+                _StatsDimensionPreviewCard(
+                  state: state,
+                  currencyCode: currency,
+                ),
+                const SizedBox(height: FxSpacing.md),
+                StatsTrendCard(
+                  section: state.trends,
+                  type: state.type,
+                  currencyCode: currency,
+                  onRetry: retry,
+                ),
+                const SizedBox(height: FxSpacing.md),
+                StatsPieCard(
+                  label: _categoryLabel(context, state.type),
+                  section: state.categories,
+                  currencyCode: currency,
+                  onRetry: retry,
+                ),
+                const SizedBox(height: FxSpacing.md),
+                StatsTagCard(
+                  label: _tagLabel(context, state.type),
+                  section: state.tags,
+                  currencyCode: currency,
+                  onRetry: retry,
+                ),
+                const SizedBox(height: FxSpacing.md),
+                StatsPieCard(
+                  label: _payeeLabel(context, state.type),
+                  section: state.payees,
+                  currencyCode: currency,
+                  onRetry: retry,
+                ),
+              ],
+            ),
           ),
         );
       },
@@ -248,6 +277,7 @@ class _StatsInsightCard extends StatelessWidget {
     if (stats == null) return const SizedBox.shrink();
     final finance = FxFinanceColors.of(context);
     final palette = FxPalette.of(context);
+    final formats = StatsFormatters.of(context, currencyCode: currencyCode);
     final totalFlow = stats.income + stats.expense;
     final expenseRatio = totalFlow <= 0 ? 0.0 : stats.expense / totalFlow;
     return FxCard(
@@ -281,7 +311,7 @@ class _StatsInsightCard extends StatelessWidget {
           FxProgressBar(value: expenseRatio, color: finance.expense, height: 7),
           const SizedBox(height: FxSpacing.xs),
           Text(
-            '${S.of(context).statsExpense} ${(expenseRatio * 100).toStringAsFixed(0)}% · ${S.of(context).statsSurplus}',
+            '${S.of(context).statsExpense} ${formats.percent(expenseRatio * 100)} · ${S.of(context).statsSurplus}',
             style: FxTypography.caption.copyWith(color: palette.textTertiary),
           ),
           const SizedBox(height: FxSpacing.xs),
@@ -291,6 +321,7 @@ class _StatsInsightCard extends StatelessWidget {
             showSign: true,
             colorBySign: true,
             fontSize: 14,
+            masked: formats.masked,
           ),
         ],
       ),
@@ -371,6 +402,7 @@ class _InsightAmount extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final palette = FxPalette.of(context);
+    final masked = StatsPrivacy.hideAmountsOf(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -384,6 +416,7 @@ class _InsightAmount extends StatelessWidget {
           currencyCode: currencyCode,
           color: color,
           fontSize: 18,
+          masked: masked,
         ),
       ],
     );
@@ -408,6 +441,7 @@ class _DimensionRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final palette = FxPalette.of(context);
+    final formats = StatsFormatters.of(context, currencyCode: currencyCode);
     final displayName = name == null || name!.isEmpty
         ? S.of(context).statsNoRecordsThisPeriod
         : name!;
@@ -444,10 +478,11 @@ class _DimensionRow extends StatelessWidget {
                 currencyCode: currencyCode,
                 fontSize: 13,
                 color: palette.textPrimary,
+                masked: formats.masked,
               ),
               if (percent != null)
                 Text(
-                  '${percent!.toStringAsFixed(0)}%',
+                  formats.percent(percent!),
                   style: FxTypography.caption.copyWith(
                     color: palette.textTertiary,
                   ),

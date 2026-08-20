@@ -1,20 +1,35 @@
 import 'package:flutter/material.dart';
-import 'package:fortuneboot/fx/tokens/fx_colors.dart';
+import 'package:fortuneboot/fx/components/fx_chart_palette.dart';
+import 'package:fortuneboot/fx/theme/fx_theme.dart';
 
-/// 图表切片配色：饼图/柱图按索引循环取色，全部来自 fx 色板，杜绝硬编码。
+/// Stats-only chart color resolver.
+///
+/// Financial series use semantic finance colors. Free-form category/tag/account
+/// labels use a deterministic hash so the same label keeps the same color when
+/// ranking order changes.
 abstract final class StatsPalette {
-  static const List<Color> slices = <Color>[
-    FxColors.primary,
-    FxColors.income,
-    FxColors.adjust,
-    FxColors.transfer,
-    FxColors.info,
-    FxColors.expense,
-    Color(0xFF14B8A6), // teal
-    Color(0xFFEC4899), // pink
-  ];
+  static Color income(BuildContext context) =>
+      FxFinanceColors.of(context).income;
 
-  static Color colorAt(int index) => slices[index % slices.length];
+  static Color expense(BuildContext context) =>
+      FxFinanceColors.of(context).expense;
+
+  static Color transfer(BuildContext context) =>
+      FxFinanceColors.of(context).transfer;
+
+  static Color adjust(BuildContext context) =>
+      FxFinanceColors.of(context).adjust;
+
+  static Color stableFor(String key, {int? id}) {
+    final seed = id?.hashCode ?? key.trim().toLowerCase().hashCode;
+    return FxChartPalette.colorAt(seed.abs());
+  }
+
+  static Color liabilityVariant(BuildContext context, String key, {int? id}) {
+    final base = expense(context);
+    final alpha = 0.58 + (stableFor(key, id: id).hashCode.abs() % 4) * 0.1;
+    return base.withValues(alpha: alpha.clamp(0.58, 0.88));
+  }
 
   const StatsPalette._();
 }

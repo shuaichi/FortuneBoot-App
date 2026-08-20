@@ -99,6 +99,7 @@ class StatsBloc extends Bloc<StatsEvent, StatsState> {
     Emitter<StatsState> emit,
   ) async {
     if (_bookId == null) return;
+    emit(_resetLoading(state));
     await _loadAll(emit);
   }
 
