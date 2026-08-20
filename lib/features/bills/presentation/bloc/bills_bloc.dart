@@ -36,6 +36,7 @@ class BillsBloc extends Bloc<BillsEvent, BillsState> {
       transformer: restartable(),
     );
     on<BillsFilterApplied>(_onFilterApplied, transformer: restartable());
+    on<BillsErrorMessageCleared>(_onErrorMessageCleared);
     on<BillsBillDeleted>(_onDeleted);
     on<BillsConfirmToggled>(_onConfirmToggled);
     on<BillsIncludeToggled>(_onIncludeToggled);
@@ -182,6 +183,14 @@ class BillsBloc extends Bloc<BillsEvent, BillsState> {
       ),
     );
     await _loadFirstPage(emit);
+  }
+
+  void _onErrorMessageCleared(
+    BillsErrorMessageCleared event,
+    Emitter<BillsState> emit,
+  ) {
+    if (state.errorMessage == null) return;
+    emit(state.copyWith());
   }
 
   bool get _canShowCompleteStatistics {
@@ -348,11 +357,21 @@ class BillsBloc extends Bloc<BillsEvent, BillsState> {
       );
     } on FxApiException catch (error) {
       if (version == _loadVersion && bookId == _bookId) {
-        emit(state.copyWith(errorMessage: error.message));
+        emit(
+          state.copyWith(
+            errorMessage: error.message,
+            bumpErrorMessageSerial: true,
+          ),
+        );
       }
     } on Exception {
       if (version == _loadVersion && bookId == _bookId) {
-        emit(state.copyWith());
+        emit(
+          state.copyWith(
+            errorMessage: '删除失败，请稍后重试',
+            bumpErrorMessageSerial: true,
+          ),
+        );
       }
     }
   }
@@ -388,11 +407,21 @@ class BillsBloc extends Bloc<BillsEvent, BillsState> {
       );
     } on FxApiException catch (error) {
       if (version == _loadVersion && bookId == _bookId) {
-        emit(state.copyWith(errorMessage: error.message));
+        emit(
+          state.copyWith(
+            errorMessage: error.message,
+            bumpErrorMessageSerial: true,
+          ),
+        );
       }
     } on Exception {
       if (version == _loadVersion && bookId == _bookId) {
-        emit(state.copyWith());
+        emit(
+          state.copyWith(
+            errorMessage: '操作失败，请稍后重试',
+            bumpErrorMessageSerial: true,
+          ),
+        );
       }
     }
   }
@@ -428,11 +457,21 @@ class BillsBloc extends Bloc<BillsEvent, BillsState> {
       );
     } on FxApiException catch (error) {
       if (version == _loadVersion && bookId == _bookId) {
-        emit(state.copyWith(errorMessage: error.message));
+        emit(
+          state.copyWith(
+            errorMessage: error.message,
+            bumpErrorMessageSerial: true,
+          ),
+        );
       }
     } on Exception {
       if (version == _loadVersion && bookId == _bookId) {
-        emit(state.copyWith());
+        emit(
+          state.copyWith(
+            errorMessage: '操作失败，请稍后重试',
+            bumpErrorMessageSerial: true,
+          ),
+        );
       }
     }
   }

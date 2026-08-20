@@ -333,14 +333,29 @@ class _BillsPageState extends State<BillsPage> {
 
     return _BookSync(
       bookId: bookId,
-      child: BlocListener<PreferencesCubit, PreferencesState>(
-        listenWhen: (prev, next) =>
-            prev.billing.monthStartDay != next.billing.monthStartDay,
-        listener: (context, preferences) {
-          _bloc.add(
-            BillsMonthStartDayChanged(preferences.billing.monthStartDay),
-          );
-        },
+      child: MultiBlocListener(
+        listeners: [
+          BlocListener<PreferencesCubit, PreferencesState>(
+            listenWhen: (prev, next) =>
+                prev.billing.monthStartDay != next.billing.monthStartDay,
+            listener: (context, preferences) {
+              _bloc.add(
+                BillsMonthStartDayChanged(preferences.billing.monthStartDay),
+              );
+            },
+          ),
+          BlocListener<BillsBloc, BillsState>(
+            listenWhen: (prev, next) {
+              return prev.errorMessageSerial != next.errorMessageSerial &&
+                  next.errorMessage != null &&
+                  next.status == BillsStatus.loaded;
+            },
+            listener: (context, state) {
+              FxFeedback.error(context, message: state.errorMessage!);
+              _bloc.add(const BillsErrorMessageCleared());
+            },
+          ),
+        ],
         child: Scaffold(
           backgroundColor: palette.canvas,
           body: SafeArea(

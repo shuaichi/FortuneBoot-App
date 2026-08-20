@@ -51,6 +51,7 @@ class BillsState extends Equatable {
   final bool isSummaryAvailable;
   final Map<DateTime, BillStatistics> monthStatistics;
   final String? errorMessage;
+  final int errorMessageSerial;
   final String? paginationErrorMessage;
 
   BillsState({
@@ -66,6 +67,7 @@ class BillsState extends Equatable {
     this.isSummaryAvailable = false,
     this.monthStatistics = const {},
     this.errorMessage,
+    this.errorMessageSerial = 0,
     this.paginationErrorMessage,
   }) : filter = filter ?? BillsFilter.empty;
 
@@ -152,6 +154,7 @@ class BillsState extends Equatable {
     Map<DateTime, BillStatistics>? monthStatistics,
     bool clearStatistics = false,
     String? errorMessage,
+    bool bumpErrorMessageSerial = false,
     String? paginationErrorMessage,
     bool clearPaginationError = false,
   }) {
@@ -170,6 +173,9 @@ class BillsState extends Equatable {
           : (isSummaryAvailable ?? this.isSummaryAvailable),
       monthStatistics: monthStatistics ?? this.monthStatistics,
       errorMessage: errorMessage,
+      errorMessageSerial: bumpErrorMessageSerial
+          ? errorMessageSerial + 1
+          : errorMessageSerial,
       paginationErrorMessage: clearPaginationError
           ? null
           : (paginationErrorMessage ?? this.paginationErrorMessage),
@@ -190,6 +196,7 @@ class BillsState extends Equatable {
     isSummaryAvailable,
     monthStatistics,
     errorMessage,
+    errorMessageSerial,
     paginationErrorMessage,
   ];
 }

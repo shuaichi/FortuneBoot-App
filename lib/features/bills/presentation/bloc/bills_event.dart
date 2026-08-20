@@ -69,6 +69,11 @@ final class BillsFilterApplied extends BillsEvent {
   List<Object?> get props => [filter];
 }
 
+/// 清除一次性错误提示。
+final class BillsErrorMessageCleared extends BillsEvent {
+  const BillsErrorMessageCleared();
+}
+
 /// 删除一条账单。
 final class BillsBillDeleted extends BillsEvent {
   const BillsBillDeleted({required this.bookId, required this.billId});
