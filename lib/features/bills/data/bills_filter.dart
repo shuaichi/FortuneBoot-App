@@ -1,9 +1,9 @@
-import 'package:equatable/equatable.dart';
+import 'dart:collection';
 
-/// 账单列表筛选条件（本轮支持：类型多选 / 金额区间 / 确认 / 统计）。
-///
-/// 分类、标签、账户、交易对象的候选依赖尚未落地的管理模块 service，
-/// 故本轮暂不接入 UI（预留字段，见 [categoryIds] / [tagIds] TODO）。
+import 'package:equatable/equatable.dart';
+import 'package:fortuneboot/features/shared/data/bill_models.dart';
+
+/// 账单列表筛选条件。
 class BillsFilter extends Equatable {
   /// 账单类型多选（1支出 2收入 3转账 7垫付 8报销）。空表示不限。
   final Set<int> billTypes;
@@ -16,25 +16,30 @@ class BillsFilter extends Equatable {
   /// 统计状态：null 不限、true 统计、false 不统计。
   final bool? include;
 
-  // TODO(bills): 待 categories/tags/accounts/payees 管理模块 service 落地后接入。
   final List<int>? categoryIds;
   final List<int>? tagIds;
   final int? accountId;
   final int? payeeId;
+  final BillDateRange? dateRange;
 
-  const BillsFilter({
-    this.billTypes = const {},
+  BillsFilter({
+    Set<int> billTypes = const {},
     this.amountMin,
     this.amountMax,
     this.confirm,
     this.include,
-    this.categoryIds,
-    this.tagIds,
+    List<int>? categoryIds,
+    List<int>? tagIds,
     this.accountId,
     this.payeeId,
-  });
+    this.dateRange,
+  }) : billTypes = UnmodifiableSetView(Set<int>.of(billTypes)),
+       categoryIds = categoryIds == null
+           ? null
+           : List.unmodifiable(categoryIds),
+       tagIds = tagIds == null ? null : List.unmodifiable(tagIds);
 
-  static const BillsFilter empty = BillsFilter();
+  static final BillsFilter empty = BillsFilter();
 
   /// 已激活的筛选条件数（用于筛选图标角标）。
   int get activeCount {
@@ -47,6 +52,7 @@ class BillsFilter extends Equatable {
     if (payeeId != null) n++;
     if (categoryIds != null && categoryIds!.isNotEmpty) n++;
     if (tagIds != null && tagIds!.isNotEmpty) n++;
+    if (dateRange != null) n++;
     return n;
   }
 
@@ -62,17 +68,28 @@ class BillsFilter extends Equatable {
     List<int>? tagIds,
     int? accountId,
     int? payeeId,
+    BillDateRange? dateRange,
+    bool clearAmountMin = false,
+    bool clearAmountMax = false,
+    bool clearConfirm = false,
+    bool clearInclude = false,
+    bool clearCategoryIds = false,
+    bool clearTagIds = false,
+    bool clearAccountId = false,
+    bool clearPayeeId = false,
+    bool clearDateRange = false,
   }) {
     return BillsFilter(
       billTypes: billTypes ?? this.billTypes,
-      amountMin: amountMin ?? this.amountMin,
-      amountMax: amountMax ?? this.amountMax,
-      confirm: confirm ?? this.confirm,
-      include: include ?? this.include,
-      categoryIds: categoryIds ?? this.categoryIds,
-      tagIds: tagIds ?? this.tagIds,
-      accountId: accountId ?? this.accountId,
-      payeeId: payeeId ?? this.payeeId,
+      amountMin: clearAmountMin ? null : (amountMin ?? this.amountMin),
+      amountMax: clearAmountMax ? null : (amountMax ?? this.amountMax),
+      confirm: clearConfirm ? null : (confirm ?? this.confirm),
+      include: clearInclude ? null : (include ?? this.include),
+      categoryIds: clearCategoryIds ? null : (categoryIds ?? this.categoryIds),
+      tagIds: clearTagIds ? null : (tagIds ?? this.tagIds),
+      accountId: clearAccountId ? null : (accountId ?? this.accountId),
+      payeeId: clearPayeeId ? null : (payeeId ?? this.payeeId),
+      dateRange: clearDateRange ? null : (dateRange ?? this.dateRange),
     );
   }
 
@@ -87,5 +104,6 @@ class BillsFilter extends Equatable {
     tagIds,
     accountId,
     payeeId,
+    dateRange,
   ];
 }

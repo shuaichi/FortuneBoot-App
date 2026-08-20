@@ -28,14 +28,15 @@ void main() {
         ],
       );
 
-      final summary = state.visibleSummaryStatistics(1);
+      final summary = state.summaryForAnchor(visibleMonth, 1);
 
       expect(summary.expense, 123);
       expect(summary.income, 0);
       expect(summary.surplus, -123);
     });
 
-    test('does not skip to later visible month statistics', () {
+    test('falls back when the visible anchor has no month statistics', () {
+      final visibleMonth = DateTime(2026, 5);
       final state = BillsState(
         status: BillsStatus.loaded,
         month: DateTime(2026, 8),
@@ -53,7 +54,7 @@ void main() {
         ],
       );
 
-      final summary = state.visibleSummaryStatistics(1);
+      final summary = state.summaryForAnchor(visibleMonth, 1);
 
       expect(summary.expense, 12);
       expect(summary.income, 34);
@@ -63,6 +64,7 @@ void main() {
     test(
       'falls back to current window statistics when no month group is visible',
       () {
+        final visibleMonth = DateTime(2026, 5);
         final state = BillsState(
           status: BillsStatus.loaded,
           month: DateTime(2026, 8),
@@ -73,7 +75,7 @@ void main() {
           ),
         );
 
-        final summary = state.visibleSummaryStatistics(1);
+        final summary = state.summaryForAnchor(visibleMonth, 1);
 
         expect(summary.expense, 12);
         expect(summary.income, 34);

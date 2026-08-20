@@ -27,6 +27,21 @@ final class BillsNextPageRequested extends BillsEvent {
   const BillsNextPageRequested();
 }
 
+/// 重试最近一次追加分页，不重置已加载记录。
+final class BillsPaginationRetried extends BillsEvent {
+  const BillsPaginationRetried();
+}
+
+/// 应用跨页面传入的账本与日期范围。
+final class BillsEntryApplied extends BillsEvent {
+  const BillsEntryApplied(this.request);
+
+  final BillsEntryRequest request;
+
+  @override
+  List<Object?> get props => [request];
+}
+
 /// 切换到上一账期 / 下一账期（delta = -1 / +1）。
 final class BillsMonthChanged extends BillsEvent {
   final int delta;
@@ -56,29 +71,43 @@ final class BillsFilterApplied extends BillsEvent {
 
 /// 删除一条账单。
 final class BillsBillDeleted extends BillsEvent {
+  const BillsBillDeleted({required this.bookId, required this.billId});
+
+  final int bookId;
   final int billId;
-  const BillsBillDeleted(this.billId);
 
   @override
-  List<Object?> get props => [billId];
+  List<Object?> get props => [bookId, billId];
 }
 
 /// 切换确认状态（confirm=true 确认，false 取消确认）。
 final class BillsConfirmToggled extends BillsEvent {
+  const BillsConfirmToggled({
+    required this.bookId,
+    required this.billId,
+    required this.confirm,
+  });
+
+  final int bookId;
   final int billId;
   final bool confirm;
-  const BillsConfirmToggled(this.billId, {required this.confirm});
 
   @override
-  List<Object?> get props => [billId, confirm];
+  List<Object?> get props => [bookId, billId, confirm];
 }
 
 /// 切换统计（include=true 计入统计，false 不计入）。
 final class BillsIncludeToggled extends BillsEvent {
+  const BillsIncludeToggled({
+    required this.bookId,
+    required this.billId,
+    required this.include,
+  });
+
+  final int bookId;
   final int billId;
   final bool include;
-  const BillsIncludeToggled(this.billId, {required this.include});
 
   @override
-  List<Object?> get props => [billId, include];
+  List<Object?> get props => [bookId, billId, include];
 }

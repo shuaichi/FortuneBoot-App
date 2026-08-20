@@ -28,6 +28,8 @@ class BillsBloc extends Bloc<BillsEvent, BillsState> {
     on<BillsBookChanged>(_onBookChanged, transformer: restartable());
     on<BillsRefreshed>(_onRefreshed, transformer: restartable());
     on<BillsNextPageRequested>(_onNextPage, transformer: droppable());
+    on<BillsPaginationRetried>(_onPaginationRetried, transformer: droppable());
+    on<BillsEntryApplied>(_onEntryApplied, transformer: restartable());
     on<BillsMonthChanged>(_onMonthChanged, transformer: restartable());
     on<BillsMonthStartDayChanged>(
       _onMonthStartDayChanged,
@@ -60,15 +62,18 @@ class BillsBloc extends Bloc<BillsEvent, BillsState> {
   MonthWindow get _window =>
       MonthWindowResolver.resolveForAnchor(state.month, _monthStartDay);
 
-  String get _windowStart => BillService.dayFormat.format(_window.start);
-
-  String get _windowEnd => BillService.dayFormat.format(_window.end);
+  BillDateRange get _effectiveDateRange =>
+      state.filter.dateRange ??
+      BillDateRange(start: _window.start, end: _window.end);
 
   BillQuery _buildQuery(int pageNum) {
     final f = state.filter;
+    final range = _effectiveDateRange;
     return BillQuery(
       bookId: _bookId!,
       pageNum: pageNum,
+      tradeTimeStartTime: range.startDate,
+      tradeTimeEndTime: range.endDate,
       billTypes: f.billTypes.isEmpty ? null : f.billTypes.toList(),
       amountMin: f.amountMin,
       amountMax: f.amountMax,
@@ -97,12 +102,59 @@ class BillsBloc extends Bloc<BillsEvent, BillsState> {
     await _loadFirstPage(emit, refresh: state.status == BillsStatus.loaded);
   }
 
+  Future<void> _onPaginationRetried(
+    BillsPaginationRetried event,
+    Emitter<BillsState> emit,
+  ) async {
+    await _onNextPage(const BillsNextPageRequested(), emit);
+  }
+
+  Future<void> _onEntryApplied(
+    BillsEntryApplied event,
+    Emitter<BillsState> emit,
+  ) async {
+    final bookId = event.request.bookId;
+    if (bookId == null) return;
+    _bookId = bookId;
+    final range = event.request.dateRange;
+    final month = range == null
+        ? state.month
+        : MonthWindowResolver.resolveCurrent(
+            range.start,
+            _monthStartDay,
+          ).anchorMonth;
+    emit(
+      state.copyWith(
+        month: month,
+        filter: state.filter.copyWith(
+          dateRange: range,
+          clearDateRange: range == null,
+        ),
+        monthStatistics: const {},
+        clearStatistics: true,
+        clearPaginationError: true,
+      ),
+    );
+    await _loadFirstPage(emit);
+  }
+
   Future<void> _onMonthChanged(
     BillsMonthChanged event,
     Emitter<BillsState> emit,
   ) async {
     final m = MonthWindowResolver.shift(state.month, event.delta);
-    emit(state.copyWith(month: m, monthStatistics: const {}));
+    final window = MonthWindowResolver.resolveForAnchor(m, _monthStartDay);
+    emit(
+      state.copyWith(
+        month: m,
+        filter: state.filter.copyWith(
+          dateRange: BillDateRange(start: window.start, end: window.end),
+        ),
+        monthStatistics: const {},
+        clearStatistics: true,
+        clearPaginationError: true,
+      ),
+    );
     await _loadFirstPage(emit);
   }
 
@@ -116,7 +168,10 @@ class BillsBloc extends Bloc<BillsEvent, BillsState> {
     emit(
       state.copyWith(
         month: _initialMonth(DateTime.now(), day),
+        filter: state.filter.copyWith(clearDateRange: true),
         monthStatistics: const {},
+        clearStatistics: true,
+        clearPaginationError: true,
       ),
     );
     await _loadFirstPage(emit);
@@ -126,8 +181,28 @@ class BillsBloc extends Bloc<BillsEvent, BillsState> {
     BillsFilterApplied event,
     Emitter<BillsState> emit,
   ) async {
-    emit(state.copyWith(filter: event.filter, monthStatistics: const {}));
+    emit(
+      state.copyWith(
+        filter: event.filter,
+        monthStatistics: const {},
+        clearStatistics: true,
+        clearPaginationError: true,
+      ),
+    );
     await _loadFirstPage(emit);
+  }
+
+  bool get _canShowCompleteStatistics {
+    final filter = state.filter;
+    return filter.billTypes.isEmpty &&
+        filter.amountMin == null &&
+        filter.amountMax == null &&
+        filter.confirm == null &&
+        filter.include == null &&
+        (filter.categoryIds == null || filter.categoryIds!.isEmpty) &&
+        (filter.tagIds == null || filter.tagIds!.isEmpty) &&
+        filter.accountId == null &&
+        filter.payeeId == null;
   }
 
   /// 首页加载：拉第一页 + 月度统计。[refresh] 时保留旧列表避免闪烁。
@@ -143,6 +218,7 @@ class BillsBloc extends Bloc<BillsEvent, BillsState> {
           bills: const [],
           total: 0,
           hasMore: false,
+          isLoadingMore: false,
           clearStatistics: true,
           monthStatistics: const {},
         ),
@@ -154,12 +230,17 @@ class BillsBloc extends Bloc<BillsEvent, BillsState> {
       state.copyWith(
         status: refresh ? BillsStatus.loaded : BillsStatus.loading,
         isRefreshing: refresh,
+        isLoadingMore: false,
       ),
     );
     try {
-      final page = await _service.getPage(_buildQuery(1));
-      final stats = await _fetchStatistics();
-      final monthStats = await _fetchMonthStatistics(page.rows, refresh: true);
+      final pageFuture = _service.getPage(_buildQuery(1));
+      final statsFuture = _canShowCompleteStatistics
+          ? _fetchStatistics()
+          : Future<BillStatistics?>.value(null);
+      final results = await Future.wait([pageFuture, statsFuture]);
+      final page = results[0] as BillPage;
+      final stats = results[1] as BillStatistics?;
       if (version != _loadVersion) return;
       _loadedPages = 1;
       emit(
@@ -168,25 +249,31 @@ class BillsBloc extends Bloc<BillsEvent, BillsState> {
           bills: page.rows,
           total: page.total,
           hasMore: page.rows.length < page.total && page.rows.isNotEmpty,
+          isLoadingMore: false,
           isRefreshing: false,
           statistics: stats,
-          monthStatistics: monthStats,
+          isSummaryAvailable: _canShowCompleteStatistics && stats != null,
+          monthStatistics: const {},
+          clearPaginationError: true,
         ),
       );
-    } on FxApiException catch (e) {
+    } on FxApiException catch (error) {
+      if (version != _loadVersion) return;
       emit(
         state.copyWith(
-          status: BillsStatus.error,
+          status: refresh ? BillsStatus.loaded : BillsStatus.error,
           isRefreshing: false,
-          errorMessage: e.message,
+          isLoadingMore: false,
+          errorMessage: error.message,
         ),
       );
-    } catch (e) {
+    } on Exception {
+      if (version != _loadVersion) return;
       emit(
         state.copyWith(
-          status: BillsStatus.error,
+          status: refresh ? BillsStatus.loaded : BillsStatus.error,
           isRefreshing: false,
-          errorMessage: e.toString(),
+          isLoadingMore: false,
         ),
       );
     }
@@ -203,7 +290,7 @@ class BillsBloc extends Bloc<BillsEvent, BillsState> {
       return;
     }
     final version = _loadVersion;
-    emit(state.copyWith(isLoadingMore: true));
+    emit(state.copyWith(isLoadingMore: true, clearPaginationError: true));
     final nextPage = _loadedPages + 1;
     try {
       final page = await _service.getPage(_buildQuery(nextPage));
@@ -212,7 +299,9 @@ class BillsBloc extends Bloc<BillsEvent, BillsState> {
       final seen = state.bills.map((b) => b.billId).toSet();
       final fresh = page.rows.where((b) => seen.add(b.billId)).toList();
       final merged = [...state.bills, ...fresh];
-      final monthStats = await _fetchMonthStatistics(merged);
+      final monthStats = _canShowCompleteStatistics
+          ? await _fetchMonthStatistics(merged)
+          : const <DateTime, BillStatistics>{};
       if (version != _loadVersion) return;
       _loadedPages = nextPage;
       emit(
@@ -224,10 +313,17 @@ class BillsBloc extends Bloc<BillsEvent, BillsState> {
           monthStatistics: monthStats,
         ),
       );
-    } on FxApiException catch (_) {
-      emit(state.copyWith(isLoadingMore: false, hasMore: false));
-    } catch (_) {
-      emit(state.copyWith(isLoadingMore: false, hasMore: false));
+    } on FxApiException catch (error) {
+      if (version != _loadVersion) return;
+      emit(
+        state.copyWith(
+          isLoadingMore: false,
+          paginationErrorMessage: error.message,
+        ),
+      );
+    } on Exception {
+      if (version != _loadVersion) return;
+      emit(state.copyWith(isLoadingMore: false, paginationErrorMessage: ''));
     }
   }
 
@@ -235,53 +331,118 @@ class BillsBloc extends Bloc<BillsEvent, BillsState> {
     BillsBillDeleted event,
     Emitter<BillsState> emit,
   ) async {
-    if (_bookId == null) return;
-    await _service.remove(bookId: _bookId!, billId: event.billId);
-    BillMutations.bump();
-    final remaining = state.bills
-        .where((b) => b.billId != event.billId)
-        .toList();
-    final stats = await _fetchStatistics();
-    final monthStats = await _fetchMonthStatistics(remaining, refresh: true);
-    emit(
-      state.copyWith(
-        bills: remaining,
-        total: (state.total - 1).clamp(0, 1 << 31),
-        statistics: stats,
-        monthStatistics: monthStats,
-      ),
-    );
+    final bookId = _bookId;
+    final version = _loadVersion;
+    if (bookId == null || event.bookId != bookId) return;
+    try {
+      await _service.remove(bookId: bookId, billId: event.billId);
+      if (version != _loadVersion || bookId != _bookId) return;
+      BillMutations.bump();
+      final remaining = state.bills
+          .where((bill) => bill.billId != event.billId)
+          .toList();
+      final stats = _canShowCompleteStatistics
+          ? await _fetchStatistics()
+          : null;
+      if (version != _loadVersion || bookId != _bookId) return;
+      emit(
+        state.copyWith(
+          bills: remaining,
+          total: (state.total - 1).clamp(0, 1 << 31),
+          statistics: stats,
+          isSummaryAvailable: _canShowCompleteStatistics && stats != null,
+          monthStatistics: const {},
+        ),
+      );
+    } on FxApiException catch (error) {
+      if (version == _loadVersion && bookId == _bookId) {
+        emit(state.copyWith(errorMessage: error.message));
+      }
+    } on Exception {
+      if (version == _loadVersion && bookId == _bookId) {
+        emit(state.copyWith());
+      }
+    }
   }
 
   Future<void> _onConfirmToggled(
     BillsConfirmToggled event,
     Emitter<BillsState> emit,
   ) async {
-    if (_bookId == null) return;
-    if (event.confirm) {
-      await _service.confirm(bookId: _bookId!, billId: event.billId);
-    } else {
-      await _service.unConfirm(bookId: _bookId!, billId: event.billId);
+    final bookId = _bookId;
+    final version = _loadVersion;
+    if (bookId == null || event.bookId != bookId) return;
+    try {
+      if (event.confirm) {
+        await _service.confirm(bookId: bookId, billId: event.billId);
+      } else {
+        await _service.unConfirm(bookId: bookId, billId: event.billId);
+      }
+      if (version != _loadVersion || bookId != _bookId) return;
+      BillMutations.bump();
+      if (state.filter.confirm != null) {
+        await _loadFirstPage(emit, refresh: true);
+        return;
+      }
+      final stats = _canShowCompleteStatistics
+          ? await _fetchStatistics()
+          : null;
+      if (version != _loadVersion || bookId != _bookId) return;
+      await _patchLocal(
+        emit,
+        event.billId,
+        confirm: event.confirm,
+        stats: stats,
+      );
+    } on FxApiException catch (error) {
+      if (version == _loadVersion && bookId == _bookId) {
+        emit(state.copyWith(errorMessage: error.message));
+      }
+    } on Exception {
+      if (version == _loadVersion && bookId == _bookId) {
+        emit(state.copyWith());
+      }
     }
-    // 确认状态影响是否计入余额/统计，需重拉汇总并通知其它页刷新。
-    final stats = await _fetchStatistics();
-    BillMutations.bump();
-    await _patchLocal(emit, event.billId, confirm: event.confirm, stats: stats);
   }
 
   Future<void> _onIncludeToggled(
     BillsIncludeToggled event,
     Emitter<BillsState> emit,
   ) async {
-    if (_bookId == null) return;
-    if (event.include) {
-      await _service.include(bookId: _bookId!, billId: event.billId);
-    } else {
-      await _service.exclude(bookId: _bookId!, billId: event.billId);
+    final bookId = _bookId;
+    final version = _loadVersion;
+    if (bookId == null || event.bookId != bookId) return;
+    try {
+      if (event.include) {
+        await _service.include(bookId: bookId, billId: event.billId);
+      } else {
+        await _service.exclude(bookId: bookId, billId: event.billId);
+      }
+      if (version != _loadVersion || bookId != _bookId) return;
+      BillMutations.bump();
+      if (state.filter.include != null) {
+        await _loadFirstPage(emit, refresh: true);
+        return;
+      }
+      final stats = _canShowCompleteStatistics
+          ? await _fetchStatistics()
+          : null;
+      if (version != _loadVersion || bookId != _bookId) return;
+      await _patchLocal(
+        emit,
+        event.billId,
+        include: event.include,
+        stats: stats,
+      );
+    } on FxApiException catch (error) {
+      if (version == _loadVersion && bookId == _bookId) {
+        emit(state.copyWith(errorMessage: error.message));
+      }
+    } on Exception {
+      if (version == _loadVersion && bookId == _bookId) {
+        emit(state.copyWith());
+      }
     }
-    final stats = await _fetchStatistics();
-    BillMutations.bump();
-    await _patchLocal(emit, event.billId, include: event.include, stats: stats);
   }
 
   /// 局部更新一条账单的状态字段（不重拉列表）。
@@ -299,11 +460,14 @@ class BillsBloc extends Bloc<BillsEvent, BillsState> {
               : b,
         )
         .toList();
-    final monthStats = await _fetchMonthStatistics(updated, refresh: true);
+    final monthStats = _canShowCompleteStatistics
+        ? await _fetchMonthStatistics(updated, refresh: true)
+        : const <DateTime, BillStatistics>{};
     emit(
       state.copyWith(
         bills: updated,
         statistics: stats,
+        isSummaryAvailable: _canShowCompleteStatistics && stats != null,
         monthStatistics: monthStats,
       ),
     );
@@ -311,11 +475,12 @@ class BillsBloc extends Bloc<BillsEvent, BillsState> {
 
   Future<BillStatistics?> _fetchStatistics() async {
     if (_bookId == null) return null;
+    final range = _effectiveDateRange;
     try {
       return await _service.getStatistics(
         bookId: _bookId!,
-        tradeTimeStartTime: _windowStart,
-        tradeTimeEndTime: _windowEnd,
+        tradeTimeStartTime: range.startDate,
+        tradeTimeEndTime: range.endDate,
       );
     } on FxApiException catch (_) {
       return state.statistics;
@@ -329,7 +494,9 @@ class BillsBloc extends Bloc<BillsEvent, BillsState> {
     bool refresh = false,
   }) async {
     final bookId = _bookId;
-    if (bookId == null || bills.isEmpty) return const {};
+    if (bookId == null || bills.isEmpty || state.filter.dateRange != null) {
+      return const {};
+    }
     final result = refresh
         ? <DateTime, BillStatistics>{}
         : Map<DateTime, BillStatistics>.of(state.monthStatistics);

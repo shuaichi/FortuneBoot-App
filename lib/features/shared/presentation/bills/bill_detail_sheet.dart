@@ -2,7 +2,9 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fortuneboot/core/icon/fx_icon_badge.dart';
+import 'package:fortuneboot/core/preferences/preferences_cubit.dart';
 import 'package:fortuneboot/core/icon/smart_category_engine.dart';
 import 'package:fortuneboot/features/shared/data/bill_models.dart';
 import 'package:fortuneboot/features/shared/data/bill_service.dart';
@@ -23,8 +25,6 @@ class BillDetailSheet extends StatefulWidget {
   final BillService service;
 
   const BillDetailSheet({super.key, required this.bill, required this.service});
-
-  static final DateFormat _dateTimeFormat = DateFormat('M月d日 HH:mm');
 
   @override
   State<BillDetailSheet> createState() => _BillDetailSheetState();
@@ -80,25 +80,38 @@ class _BillDetailSheetState extends State<BillDetailSheet> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _header(context),
+          BlocSelector<PreferencesCubit, PreferencesState, bool>(
+            selector: (state) => state.dashboard.hideAmounts,
+            builder: (context, hideAmounts) => _header(context, hideAmounts),
+          ),
           const SizedBox(height: FxSpacing.lg),
           Divider(height: 1, color: palette.border),
           const SizedBox(height: FxSpacing.md),
-          ..._infoRows(context),
+          BlocSelector<PreferencesCubit, PreferencesState, bool>(
+            selector: (state) => state.dashboard.hideAmounts,
+            builder: (context, hideAmounts) => Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: _infoRows(context, hideAmounts),
+            ),
+          ),
           const SizedBox(height: FxSpacing.lg),
         ],
       ),
     );
   }
 
-  Widget _header(BuildContext context) {
+  Widget _header(BuildContext context, bool hideAmounts) {
     final color = FxFinanceColors.of(context).forBillType(_bill.billType);
     final catLine = <String>[];
     if (_bill.primaryCategoryName.isNotEmpty) {
       catLine.add(_bill.primaryCategoryName);
     }
     if (_bill.tradeTime != null) {
-      catLine.add(BillDetailSheet._dateTimeFormat.format(_bill.tradeTime!));
+      catLine.add(
+        DateFormat.yMMMd(
+          Localizations.localeOf(context).toString(),
+        ).add_Hm().format(_bill.tradeTime!),
+      );
     }
     if (!_isTransfer &&
         _bill.accountName != null &&
@@ -137,12 +150,13 @@ class _BillDetailSheetState extends State<BillDetailSheet> {
           fontSize: 22,
           fontWeight: FontWeight.w700,
           color: color,
+          masked: hideAmounts,
         ),
       ],
     );
   }
 
-  List<Widget> _infoRows(BuildContext context) {
+  List<Widget> _infoRows(BuildContext context, bool hideAmounts) {
     final rows = <Widget>[];
 
     // 多分类拆分
@@ -157,6 +171,7 @@ class _BillDetailSheetState extends State<BillDetailSheet> {
               currencyCode: _bill.currencyCode,
               billType: _bill.billType,
               fontSize: 14,
+              masked: hideAmounts,
             ),
           ),
         );
@@ -185,6 +200,7 @@ class _BillDetailSheetState extends State<BillDetailSheet> {
               amount: _bill.convertedAmount!,
               currencyCode: _bill.toCurrencyCode ?? _bill.currencyCode,
               fontSize: 14,
+              masked: hideAmounts,
             ),
           ),
         );
@@ -207,7 +223,10 @@ class _BillDetailSheetState extends State<BillDetailSheet> {
             alignment: WrapAlignment.end,
             spacing: FxSpacing.xs,
             runSpacing: FxSpacing.xs,
-            children: tags.map((t) => FxTagChip(label: t)).toList(),
+            children: [
+              ...tags.take(3).map((tag) => FxTagChip(label: tag)),
+              if (tags.length > 3) FxTagChip(label: '+${tags.length - 3}'),
+            ],
           ),
         ),
       );
@@ -232,6 +251,7 @@ class _BillDetailSheetState extends State<BillDetailSheet> {
               amount: e.amount,
               currencyCode: _bill.currencyCode,
               fontSize: 14,
+              masked: hideAmounts,
             ),
           ),
         );
@@ -310,6 +330,12 @@ class _BillDetailSheetState extends State<BillDetailSheet> {
     );
   }
 
+  void _retryFiles() {
+    final billId = _bill.billId;
+    if (billId == null) return;
+    setState(() => _filesFuture = widget.service.getFiles(billId));
+  }
+
   Widget _filesView() {
     return FutureBuilder<List<BillFileVo>>(
       future: _filesFuture,
@@ -322,6 +348,24 @@ class _BillDetailSheetState extends State<BillDetailSheet> {
               width: 20,
               child: CircularProgressIndicator(strokeWidth: 2),
             ),
+          );
+        }
+        if (snapshot.hasError) {
+          return Row(
+            children: [
+              Expanded(
+                child: Text(
+                  S.of(context).dashboardLoadFailed,
+                  style: FxTypography.caption.copyWith(
+                    color: FxPalette.of(context).textTertiary,
+                  ),
+                ),
+              ),
+              TextButton(
+                onPressed: _retryFiles,
+                child: Text(S.of(context).commonRetry),
+              ),
+            ],
           );
         }
         final files = snapshot.data ?? const <BillFileVo>[];
@@ -343,27 +387,47 @@ class _BillDetailSheetState extends State<BillDetailSheet> {
   }
 
   Widget _fileThumb(BuildContext context, BillFileVo file) {
-    final palette = FxPalette.of(context);
     final bytes = _decode(file.fileData);
     final isImage = (file.contentType ?? '').startsWith('image/');
     if (isImage && bytes != null) {
-      return GestureDetector(
-        onTap: () => _previewImage(bytes, file.originalName),
-        child: ClipRRect(
-          borderRadius: FxRadius.tileBorder,
-          child: Image.memory(bytes, width: 72, height: 72, fit: BoxFit.cover),
+      return Semantics(
+        button: true,
+        label: file.originalName ?? S.of(context).billsAttachments,
+        child: GestureDetector(
+          onTap: () => _previewImage(bytes, file.originalName),
+          child: ClipRRect(
+            borderRadius: FxRadius.tileBorder,
+            child: Image.memory(
+              bytes,
+              width: 72,
+              height: 72,
+              fit: BoxFit.cover,
+              errorBuilder: (_, _, _) => _fileFallback(file),
+            ),
+          ),
         ),
       );
     }
-    return Container(
-      width: 72,
-      height: 72,
-      decoration: BoxDecoration(
-        color: palette.surfaceMuted,
-        borderRadius: FxRadius.tileBorder,
+    return _fileFallback(file);
+  }
+
+  Widget _fileFallback(BillFileVo file) {
+    final palette = FxPalette.of(context);
+    return Semantics(
+      label: file.originalName ?? S.of(context).billsAttachments,
+      child: Container(
+        width: 72,
+        height: 72,
+        decoration: BoxDecoration(
+          color: palette.surfaceMuted,
+          borderRadius: FxRadius.tileBorder,
+        ),
+        alignment: Alignment.center,
+        child: Icon(
+          Icons.insert_drive_file_rounded,
+          color: palette.textTertiary,
+        ),
       ),
-      alignment: Alignment.center,
-      child: Icon(Icons.insert_drive_file_rounded, color: palette.textTertiary),
     );
   }
 
@@ -386,7 +450,19 @@ class _BillDetailSheetState extends State<BillDetailSheet> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Flexible(child: InteractiveViewer(child: Image.memory(bytes))),
+            Flexible(
+              child: Semantics(
+                image: true,
+                label: name ?? S.of(context).billsAttachments,
+                child: InteractiveViewer(
+                  child: Image.memory(
+                    bytes,
+                    errorBuilder: (_, _, _) =>
+                        _fileFallback(BillFileVo(originalName: name)),
+                  ),
+                ),
+              ),
+            ),
             Padding(
               padding: const EdgeInsets.all(FxSpacing.sm),
               child: FxButton.text(

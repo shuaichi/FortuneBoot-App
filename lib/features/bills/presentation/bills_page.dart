@@ -12,6 +12,7 @@ import 'package:fortuneboot/features/bills/presentation/widgets/bill_tile.dart';
 import 'package:fortuneboot/features/bills/presentation/widgets/bills_filter_sheet.dart';
 import 'package:fortuneboot/features/shared/data/bill_models.dart';
 import 'package:fortuneboot/features/shared/data/bill_service.dart';
+import 'package:fortuneboot/features/shared/presentation/bills/bill_delete_confirmation.dart';
 import 'package:fortuneboot/features/shared/presentation/bills/bill_detail_flow.dart';
 import 'package:fortuneboot/fx/components/fx_money_text.dart';
 import 'package:fortuneboot/fx/components/fx_sheet.dart';
@@ -25,15 +26,21 @@ import 'package:intl/intl.dart';
 
 /// 账单列表页（MainShell 账单 tab）。
 class BillsPage extends StatefulWidget {
-  const BillsPage({super.key});
+  const BillsPage({super.key, this.entryRequest, this.detailService});
+
+  final BillsEntryRequest? entryRequest;
+  final BillService? detailService;
 
   @override
   State<BillsPage> createState() => _BillsPageState();
 }
 
 class _BillsPageState extends State<BillsPage> {
+  static const _paginationTriggerDistance = 240.0;
+  static const _headerAnchorOffset = 120.0;
+
   final ScrollController _scrollController = ScrollController();
-  final BillService _service = BillService();
+  late final BillService _service;
 
   /// 时间流当前可见账期锚点；null 时回退当前选择账期（state.month）。
   final ValueNotifier<DateTime?> _visibleAnchor = ValueNotifier<DateTime?>(
@@ -46,9 +53,11 @@ class _BillsPageState extends State<BillsPage> {
   GlobalKey _monthKeyFor(DateTime anchor) =>
       _monthKeys.putIfAbsent(anchor, () => GlobalKey());
 
-  static final DateFormat _monthFormat = DateFormat('yyyy年M月');
-  static final DateFormat _dayFormat = DateFormat('M月d日');
-  static final DateFormat _rangeFormat = DateFormat('M月d日');
+  String get _localeName => Localizations.localeOf(context).toString();
+
+  DateFormat get _monthFormat => DateFormat.yMMMM(_localeName);
+  DateFormat get _dayFormat => DateFormat.MMMd(_localeName);
+  DateFormat get _rangeFormat => DateFormat.MMMd(_localeName);
 
   List<String> _weekdays(BuildContext context) => [
     S.of(context).billsWeekdayMon,
@@ -68,8 +77,23 @@ class _BillsPageState extends State<BillsPage> {
   @override
   void initState() {
     super.initState();
+    _service = widget.detailService ?? BillService();
     _scrollController.addListener(_onScroll);
     BillMutations.revision.addListener(_onExternalMutation);
+    if (widget.entryRequest case final request?) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _bloc.add(BillsEntryApplied(request));
+      });
+    }
+  }
+
+  @override
+  void didUpdateWidget(BillsPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    final request = widget.entryRequest;
+    if (oldWidget.entryRequest != request && request != null) {
+      _bloc.add(BillsEntryApplied(request));
+    }
   }
 
   @override
@@ -90,7 +114,8 @@ class _BillsPageState extends State<BillsPage> {
   void _onScroll() {
     if (!_scrollController.hasClients) return;
     final position = _scrollController.position;
-    if (position.pixels >= position.maxScrollExtent - 240) {
+    if (position.pixels >=
+        position.maxScrollExtent - _paginationTriggerDistance) {
       context.read<BillsBloc>().add(const BillsNextPageRequested());
     }
     _updateVisibleAnchor();
@@ -123,7 +148,7 @@ class _BillsPageState extends State<BillsPage> {
   /// 顶栏下沿的 y 阈值：探针 dy 小于它即视为"已进入顶部区域"。
   double get _anchorThreshold {
     final topPad = MediaQuery.of(context).padding.top;
-    return topPad + 120;
+    return topPad + _headerAnchorOffset;
   }
 
   DateTime? _firstAnchor() {
@@ -175,7 +200,10 @@ class _BillsPageState extends State<BillsPage> {
     try {
       await _bloc.stream
           .firstWhere(
-            (s) => s.bills.length != before || (!s.hasMore && !s.isLoadingMore),
+            (s) =>
+                s.bills.length != before ||
+                s.paginationErrorMessage != null ||
+                (!s.hasMore && !s.isLoadingMore),
           )
           .timeout(const Duration(seconds: 6));
     } on Object {
@@ -193,10 +221,9 @@ class _BillsPageState extends State<BillsPage> {
       if (!mounted) return;
       ctx = _monthKeys[_normalizeAnchor(anchor)]?.currentContext;
     }
-    final target = ctx;
-    if (target == null || !mounted) return;
+    if (ctx == null || !mounted) return;
     await Scrollable.ensureVisible(
-      target,
+      ctx,
       duration: FxMotion.normal,
       curve: FxMotion.standard,
     );
@@ -206,8 +233,17 @@ class _BillsPageState extends State<BillsPage> {
   BillsBloc get _bloc => context.read<BillsBloc>();
 
   Future<void> _refresh() async {
+    final completion = _bloc.stream.firstWhere(
+      (state) =>
+          !state.isRefreshing &&
+          (state.status == BillsStatus.loaded ||
+              state.status == BillsStatus.error),
+    );
     _bloc.add(const BillsRefreshed());
+    await completion;
   }
+
+  int? get _activeBookId => _bloc.bookId;
 
   void _openFilter(BillsState state) {
     FxSheet.show<void>(
@@ -215,6 +251,10 @@ class _BillsPageState extends State<BillsPage> {
       title: S.of(context).billsFilterTitle,
       child: BillsFilterSheet(
         initial: state.filter,
+        bookId: _activeBookId,
+        groupId:
+            widget.entryRequest?.groupId ??
+            context.read<SessionCubit>().state.currentGroupId,
         onApply: (filter) {
           Navigator.of(context).pop();
           _bloc.add(BillsFilterApplied(filter));
@@ -224,93 +264,43 @@ class _BillsPageState extends State<BillsPage> {
   }
 
   void _openDetail(FortuneBillVo bill) {
-    BillDetailFlow(service: _service).show(
-      context,
-      bookId: context.read<SessionCubit>().state.currentBookId,
-      bill: bill,
-    );
+    BillDetailFlow(
+      service: _service,
+    ).show(context, bookId: _activeBookId, bill: bill);
   }
 
   Future<bool> _confirmDelete(FortuneBillVo bill) async {
     if (bill.billId == null) return false;
-    final palette = FxPalette.of(context);
-    final ok =
-        await FxSheet.show<bool>(
-          context,
-          title: S.of(context).billsDeleteTitle,
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(
-              FxSpacing.lg,
-              0,
-              FxSpacing.lg,
-              FxSpacing.xl,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Text(
-                  S
-                      .of(context)
-                      .billsDeleteConfirm(
-                        bill.title ?? bill.primaryCategoryName,
-                      ),
-                  style: FxTypography.body,
-                ),
-                const SizedBox(height: FxSpacing.xl),
-                Row(
-                  children: [
-                    Expanded(
-                      child: _sheetButton(
-                        S.of(context).commonCancel,
-                        onTap: () => Navigator.of(context).pop(false),
-                        color: palette.surfaceMuted,
-                        fg: palette.textSecondary,
-                      ),
-                    ),
-                    const SizedBox(width: FxSpacing.md),
-                    Expanded(
-                      child: _sheetButton(
-                        S.of(context).billsDelete,
-                        onTap: () => Navigator.of(context).pop(true),
-                        color: palette.danger,
-                        fg: Colors.white,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ) ??
-        false;
-    if (ok && mounted) {
-      _bloc.add(BillsBillDeleted(bill.billId!));
+    final bookId = _activeBookId;
+    final confirmed = await showBillDeleteConfirmation(context, bill);
+    if (confirmed && mounted && bookId != null) {
+      _bloc.add(BillsBillDeleted(bookId: bookId, billId: bill.billId!));
     }
-    return ok;
+    return confirmed;
   }
 
-  Widget _sheetButton(
-    String label, {
-    required VoidCallback onTap,
-    required Color color,
-    required Color fg,
-  }) {
-    return Material(
-      color: color,
-      borderRadius: FxRadius.tileBorder,
-      child: InkWell(
-        borderRadius: FxRadius.tileBorder,
-        onTap: onTap,
-        child: Container(
-          height: 48,
-          alignment: Alignment.center,
-          child: Text(
-            label,
-            style: FxTypography.bodyStrong.copyWith(color: fg),
-          ),
-        ),
-      ),
-    );
+  void _handleBillAction(FortuneBillVo bill, BillTileAction action) {
+    switch (action) {
+      case BillTileAction.copy:
+        _goCopy(bill);
+        break;
+      case BillTileAction.toggleConfirm:
+        final billId = bill.billId;
+        final bookId = _activeBookId;
+        if (billId != null && bookId != null) {
+          _bloc.add(
+            BillsConfirmToggled(
+              bookId: bookId,
+              billId: billId,
+              confirm: !bill.confirm,
+            ),
+          );
+        }
+        break;
+      case BillTileAction.delete:
+        _confirmDelete(bill);
+        break;
+    }
   }
 
   /// 右滑复制：跳 BillEditor，约定 Map 参数 {'mode':'copy','bill': vo}。
@@ -328,9 +318,14 @@ class _BillsPageState extends State<BillsPage> {
   Widget build(BuildContext context) {
     final palette = FxPalette.of(context);
     // 订阅 book 变化，自动重拉。
-    final bookId = context.select<SessionCubit, int?>(
+    final sessionBookId = context.select<SessionCubit, int?>(
       (c) => c.state.currentBookId,
     );
+    final hideAmounts = context.select<PreferencesCubit, bool>(
+      (cubit) => cubit.state.dashboard.hideAmounts,
+    );
+    final request = widget.entryRequest;
+    final bookId = request?.bookId ?? sessionBookId;
 
     return _BookSync(
       bookId: bookId,
@@ -357,12 +352,12 @@ class _BillsPageState extends State<BillsPage> {
                         return Column(
                           children: [
                             _buildHeader(state, effective),
-                            _buildSummaryBar(state, effective),
+                            _buildSummaryBar(state, effective, hideAmounts),
                           ],
                         );
                       },
                     ),
-                    Expanded(child: _buildBody(state, bookId)),
+                    Expanded(child: _buildBody(state, bookId, hideAmounts)),
                   ],
                 );
               },
@@ -376,6 +371,9 @@ class _BillsPageState extends State<BillsPage> {
   Widget _buildHeader(BillsState state, DateTime anchor) {
     final palette = FxPalette.of(context);
     final activeCount = state.filter.activeCount;
+    final canNavigateOlder = state.hasMore && !state.isLoadingMore;
+    final canNavigateNewer =
+        (_visibleAnchor.value ?? state.month) != state.month;
     final monthStartDay = context
         .watch<PreferencesCubit>()
         .state
@@ -394,9 +392,12 @@ class _BillsPageState extends State<BillsPage> {
       ),
       child: Row(
         children: [
-          _iconButton(Icons.chevron_left_rounded, () {
-            _navigateMonth(-1);
-          }),
+          _iconButton(
+            Icons.chevron_left_rounded,
+            tooltip: MaterialLocalizations.of(context).previousPageTooltip,
+            enabled: canNavigateOlder,
+            onTap: () => _navigateMonth(-1),
+          ),
           Expanded(
             child: Center(
               child: Column(
@@ -419,9 +420,12 @@ class _BillsPageState extends State<BillsPage> {
               ),
             ),
           ),
-          _iconButton(Icons.chevron_right_rounded, () {
-            _navigateMonth(1);
-          }),
+          _iconButton(
+            Icons.chevron_right_rounded,
+            tooltip: MaterialLocalizations.of(context).nextPageTooltip,
+            enabled: canNavigateNewer,
+            onTap: () => _navigateMonth(1),
+          ),
           const SizedBox(width: FxSpacing.sm),
           _filterButton(state, activeCount),
         ],
@@ -429,69 +433,100 @@ class _BillsPageState extends State<BillsPage> {
     );
   }
 
-  Widget _iconButton(IconData icon, VoidCallback onTap) {
+  Widget _iconButton(
+    IconData icon, {
+    required String tooltip,
+    required bool enabled,
+    required VoidCallback onTap,
+  }) {
     final palette = FxPalette.of(context);
-    return InkResponse(
-      onTap: onTap,
-      radius: 22,
-      child: Padding(
-        padding: const EdgeInsets.all(FxSpacing.xs),
-        child: Icon(icon, size: 26, color: palette.textPrimary),
+    return Semantics(
+      button: true,
+      enabled: enabled,
+      label: tooltip,
+      child: Tooltip(
+        message: tooltip,
+        child: InkResponse(
+          onTap: enabled ? onTap : null,
+          radius: 22,
+          child: SizedBox(
+            width: 48,
+            height: 48,
+            child: Center(
+              child: Icon(
+                icon,
+                size: 26,
+                color: enabled ? palette.textPrimary : palette.textTertiary,
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }
 
   Widget _filterButton(BillsState state, int activeCount) {
     final palette = FxPalette.of(context);
-    return InkResponse(
-      onTap: () => _openFilter(state),
-      radius: 22,
-      child: Stack(
-        clipBehavior: Clip.none,
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(FxSpacing.xs),
-            child: Icon(
-              Icons.tune_rounded,
-              size: 24,
-              color: palette.textPrimary,
+    return Semantics(
+      button: true,
+      label: S.of(context).billsFilterTitle,
+      value: activeCount == 0 ? null : '$activeCount',
+      child: Tooltip(
+        message: S.of(context).billsFilterTitle,
+        child: InkResponse(
+          onTap: () => _openFilter(state),
+          radius: 22,
+          child: SizedBox(
+            width: 48,
+            height: 48,
+            child: Stack(
+              clipBehavior: Clip.none,
+              children: [
+                const Center(child: Icon(Icons.tune_rounded, size: 24)),
+                if (activeCount > 0)
+                  Positioned(
+                    right: 0,
+                    top: 0,
+                    child: Container(
+                      padding: const EdgeInsets.all(4),
+                      decoration: BoxDecoration(
+                        color: palette.primary,
+                        shape: BoxShape.circle,
+                      ),
+                      constraints: const BoxConstraints(
+                        minWidth: 16,
+                        minHeight: 16,
+                      ),
+                      child: Text(
+                        '$activeCount',
+                        textAlign: TextAlign.center,
+                        style: FxTypography.caption.copyWith(
+                          color: Colors.white,
+                          fontSize: 10,
+                          height: 1,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
             ),
           ),
-          if (activeCount > 0)
-            Positioned(
-              right: 0,
-              top: 0,
-              child: Container(
-                padding: const EdgeInsets.all(4),
-                decoration: BoxDecoration(
-                  color: palette.primary,
-                  shape: BoxShape.circle,
-                ),
-                constraints: const BoxConstraints(minWidth: 16, minHeight: 16),
-                child: Text(
-                  '$activeCount',
-                  textAlign: TextAlign.center,
-                  style: FxTypography.caption.copyWith(
-                    color: Colors.white,
-                    fontSize: 10,
-                    height: 1,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-            ),
-        ],
+        ),
       ),
     );
   }
 
-  Widget _buildSummaryBar(BillsState state, DateTime anchor) {
+  Widget _buildSummaryBar(BillsState state, DateTime anchor, bool hideAmounts) {
     final palette = FxPalette.of(context);
     final finance = FxFinanceColors.of(context);
     final stats = state.summaryForAnchor(
       anchor,
       context.watch<PreferencesCubit>().state.billing.monthStartDay,
     );
+    if (!state.isSummaryAvailable || state.statistics == null) {
+      return const SizedBox.shrink();
+    }
     return Container(
       margin: const EdgeInsets.fromLTRB(
         FxSpacing.lg,
@@ -520,21 +555,33 @@ class _BillsPageState extends State<BillsPage> {
             S.of(context).billsExpense,
             stats.expense,
             finance.expense,
+            masked: hideAmounts,
           ),
           _divider(),
-          _summaryItem(S.of(context).billsIncome, stats.income, finance.income),
+          _summaryItem(
+            S.of(context).billsIncome,
+            stats.income,
+            finance.income,
+            masked: hideAmounts,
+          ),
           _divider(),
           _summaryItem(
             S.of(context).billsBalance,
             stats.surplus,
             palette.textPrimary,
+            masked: hideAmounts,
           ),
         ],
       ),
     );
   }
 
-  Widget _summaryItem(String label, double amount, Color color) {
+  Widget _summaryItem(
+    String label,
+    double amount,
+    Color color, {
+    required bool masked,
+  }) {
     return Expanded(
       child: Column(
         children: [
@@ -550,6 +597,7 @@ class _BillsPageState extends State<BillsPage> {
             color: color,
             fontSize: 15,
             fontWeight: FontWeight.w700,
+            masked: masked,
           ),
         ],
       ),
@@ -563,7 +611,7 @@ class _BillsPageState extends State<BillsPage> {
     margin: const EdgeInsets.symmetric(horizontal: FxSpacing.sm),
   );
 
-  Widget _buildBody(BillsState state, int? bookId) {
+  Widget _buildBody(BillsState state, int? bookId, bool hideAmounts) {
     if (bookId == null) {
       return FxStateView.empty(message: S.of(context).billsSelectBookFirst);
     }
@@ -593,11 +641,11 @@ class _BillsPageState extends State<BillsPage> {
             ),
           );
         }
-        return _buildList(state);
+        return _buildList(state, hideAmounts);
     }
   }
 
-  Widget _buildList(BillsState state) {
+  Widget _buildList(BillsState state, bool hideAmounts) {
     final monthStartDay = context
         .watch<PreferencesCubit>()
         .state
@@ -624,12 +672,14 @@ class _BillsPageState extends State<BillsPage> {
                 height: 0,
               ),
             ),
-            if (i > 0) SliverToBoxAdapter(child: _monthHeader(groups[i])),
+            if (i > 0)
+              SliverToBoxAdapter(child: _monthHeader(groups[i], hideAmounts)),
             for (final group in groups[i].dayGroups)
               SliverStickyGroup(
                 header: _dayHeader(group),
                 children: [
-                  for (final bill in group.bills) _dismissibleTile(bill),
+                  for (final bill in group.bills)
+                    _dismissibleTile(bill, hideAmounts),
                 ],
               ),
           ],
@@ -645,6 +695,18 @@ class _BillsPageState extends State<BillsPage> {
                   ),
                 ),
               ),
+            )
+          else if (state.paginationErrorMessage != null)
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.all(FxSpacing.lg),
+                child: Center(
+                  child: TextButton(
+                    onPressed: () => _bloc.add(const BillsPaginationRetried()),
+                    child: Text(S.of(context).commonRetry),
+                  ),
+                ),
+              ),
             ),
           const SliverToBoxAdapter(child: SizedBox(height: FxSpacing.xxxl * 2)),
         ],
@@ -652,7 +714,7 @@ class _BillsPageState extends State<BillsPage> {
     );
   }
 
-  Widget _monthHeader(BillMonthGroup group) {
+  Widget _monthHeader(BillMonthGroup group, bool hideAmounts) {
     final palette = FxPalette.of(context);
     final finance = FxFinanceColors.of(context);
     final stats = group.statistics;
@@ -711,16 +773,19 @@ class _BillsPageState extends State<BillsPage> {
                     S.of(context).billsExpense,
                     stats.expense,
                     finance.expense,
+                    masked: hideAmounts,
                   ),
                   _miniSummary(
                     S.of(context).billsIncome,
                     stats.income,
                     finance.income,
+                    masked: hideAmounts,
                   ),
                   _miniSummary(
                     S.of(context).billsBalance,
                     stats.surplus,
                     palette.textPrimary,
+                    masked: hideAmounts,
                   ),
                 ],
               ),
@@ -731,7 +796,12 @@ class _BillsPageState extends State<BillsPage> {
     );
   }
 
-  Widget _miniSummary(String label, double amount, Color color) {
+  Widget _miniSummary(
+    String label,
+    double amount,
+    Color color, {
+    required bool masked,
+  }) {
     return Expanded(
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -748,6 +818,7 @@ class _BillsPageState extends State<BillsPage> {
               color: color,
               fontSize: 12,
               fontWeight: FontWeight.w700,
+              masked: masked,
             ),
           ),
         ],
@@ -756,13 +827,6 @@ class _BillsPageState extends State<BillsPage> {
   }
 
   Widget _dayHeader(BillDayGroup group) {
-    final dayExpense = group.bills
-        .where((b) => _isExpenseType(b.billType))
-        .fold<double>(0, (s, b) => s + b.displayAmount.abs());
-    final dayIncome = group.bills
-        .where((b) => b.billType == FxBillType.income.value)
-        .fold<double>(0, (s, b) => s + b.displayAmount.abs());
-
     return Container(
       color: FxPalette.of(context).canvas,
       padding: const EdgeInsets.fromLTRB(
@@ -771,44 +835,17 @@ class _BillsPageState extends State<BillsPage> {
         FxSpacing.lg,
         FxSpacing.xs,
       ),
-      child: Row(
-        children: [
-          Text(
-            _dayLabel(group.day),
-            style: FxTypography.label.copyWith(
-              color: FxPalette.of(context).textSecondary,
-            ),
-          ),
-          const Spacer(),
-          if (dayExpense > 0)
-            Text(
-              S.of(context).billsDayExpense(_compact(dayExpense)),
-              style: FxTypography.caption.copyWith(
-                color: FxPalette.of(context).textTertiary,
-              ),
-            ),
-          if (dayIncome > 0) ...[
-            const SizedBox(width: FxSpacing.sm),
-            Text(
-              S.of(context).billsDayIncome(_compact(dayIncome)),
-              style: FxTypography.caption.copyWith(
-                color: FxPalette.of(context).textTertiary,
-              ),
-            ),
-          ],
-        ],
+      alignment: Alignment.centerLeft,
+      child: Text(
+        _dayLabel(group.day),
+        style: FxTypography.label.copyWith(
+          color: FxPalette.of(context).textSecondary,
+        ),
       ),
     );
   }
 
-  bool _isExpenseType(int? billType) =>
-      billType == FxBillType.expense.value ||
-      billType == FxBillType.advance.value ||
-      billType == FxBillType.reimburse.value;
-
-  String _compact(double v) => NumberFormat('#,##0.##').format(v);
-
-  Widget _dismissibleTile(FortuneBillVo bill) {
+  Widget _dismissibleTile(FortuneBillVo bill, bool hideAmounts) {
     final palette = FxPalette.of(context);
     final tile = Container(
       margin: const EdgeInsets.symmetric(
@@ -828,7 +865,12 @@ class _BillsPageState extends State<BillsPage> {
       ),
       child: ClipRRect(
         borderRadius: FxRadius.cardBorder,
-        child: BillTile(bill: bill, onTap: () => _openDetail(bill)),
+        child: BillTile(
+          bill: bill,
+          masked: hideAmounts,
+          onTap: () => _openDetail(bill),
+          onAction: (action) => _handleBillAction(bill, action),
+        ),
       ),
     );
 

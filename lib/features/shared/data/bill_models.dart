@@ -1,6 +1,46 @@
 import 'package:flutter/widgets.dart';
+import 'package:equatable/equatable.dart';
 import 'package:fortuneboot/core/network/fx_api.dart';
 import 'package:fortuneboot/generated/l10n.dart';
+import 'package:intl/intl.dart';
+
+/// 跨页面传递的账单日期闭区间。
+///
+/// API 仅接受自然日字符串，因此范围在创建时被归一化为当天开始和结束。
+class BillDateRange extends Equatable {
+  BillDateRange({required DateTime start, required DateTime end})
+    : start = DateTime(start.year, start.month, start.day),
+      end = DateTime(end.year, end.month, end.day, 23, 59, 59, 999, 999) {
+    if (this.end.isBefore(this.start)) {
+      throw ArgumentError.value(end, 'end', 'must not be before start');
+    }
+  }
+
+  final DateTime start;
+  final DateTime end;
+
+  static final DateFormat _dayFormat = DateFormat('yyyy-MM-dd');
+
+  String get startDate => _dayFormat.format(start);
+  String get endDate => _dayFormat.format(end);
+
+  @override
+  List<Object> get props => [start, end];
+}
+
+/// Calendar 等调用方进入 Bills 时使用的稳定参数契约。
+///
+/// [groupId] 是调用方上下文校验信息；后端账单查询只能使用 [bookId]。
+class BillsEntryRequest extends Equatable {
+  const BillsEntryRequest({this.bookId, this.groupId, this.dateRange});
+
+  final int? bookId;
+  final int? groupId;
+  final BillDateRange? dateRange;
+
+  @override
+  List<Object?> get props => [bookId, groupId, dateRange];
+}
 
 /// 账单类型：1支出 2收入 3转账 4余额调整 7垫付 8报销（后端跳号，无5/6）。
 enum FxBillType {

@@ -10,14 +10,22 @@ import 'package:fortuneboot/fx/tokens/fx_typography.dart';
 import 'package:fortuneboot/generated/l10n.dart';
 import 'package:intl/intl.dart';
 
+enum BillTileAction { copy, toggleConfirm, delete }
+
 /// 单条账单行：左图标徽标 + 标题/副行，右金额/时间/附件/标签。
 class BillTile extends StatelessWidget {
   final FortuneBillVo bill;
   final VoidCallback? onTap;
+  final ValueChanged<BillTileAction>? onAction;
+  final bool masked;
 
-  const BillTile({super.key, required this.bill, this.onTap});
-
-  static final DateFormat _timeFormat = DateFormat('HH:mm');
+  const BillTile({
+    super.key,
+    required this.bill,
+    this.onTap,
+    this.onAction,
+    this.masked = false,
+  });
 
   BillIconInput get _iconInput => BillIconInput(
     billType: bill.billType,
@@ -101,7 +109,10 @@ class BillTile extends StatelessWidget {
                       ],
                       if (!bill.confirm) ...[
                         const SizedBox(width: FxSpacing.xs),
-                        _flagDot(S.of(context).billsPendingConfirm, palette.warning),
+                        _flagDot(
+                          S.of(context).billsPendingConfirm,
+                          palette.warning,
+                        ),
                       ],
                     ],
                   ),
@@ -121,16 +132,40 @@ class BillTile extends StatelessWidget {
                     Wrap(
                       spacing: FxSpacing.xs,
                       runSpacing: FxSpacing.xs,
-                      children: tags
-                          .take(3)
-                          .map((t) => FxTagChip(label: t))
-                          .toList(),
+                      children: [
+                        ...tags.take(3).map((tag) => FxTagChip(label: tag)),
+                        if (tags.length > 3)
+                          FxTagChip(label: '+${tags.length - 3}'),
+                      ],
                     ),
                   ],
                 ],
               ),
             ),
             const SizedBox(width: FxSpacing.sm),
+            if (onAction != null)
+              PopupMenuButton<BillTileAction>(
+                tooltip: MaterialLocalizations.of(context).moreButtonTooltip,
+                onSelected: onAction,
+                itemBuilder: (context) => [
+                  PopupMenuItem(
+                    value: BillTileAction.copy,
+                    child: Text(S.of(context).billsCopy),
+                  ),
+                  PopupMenuItem(
+                    value: BillTileAction.toggleConfirm,
+                    child: Text(
+                      bill.confirm
+                          ? S.of(context).billsUnconfirm
+                          : S.of(context).confirm,
+                    ),
+                  ),
+                  PopupMenuItem(
+                    value: BillTileAction.delete,
+                    child: Text(S.of(context).billsDelete),
+                  ),
+                ],
+              ),
             Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
@@ -139,11 +174,14 @@ class BillTile extends StatelessWidget {
                   currencyCode: bill.currencyCode,
                   billType: bill.billType,
                   showSign: true,
+                  masked: masked,
                 ),
                 if (bill.tradeTime != null) ...[
                   const SizedBox(height: 2),
                   Text(
-                    _timeFormat.format(bill.tradeTime!),
+                    DateFormat.Hm(
+                      Localizations.localeOf(context).toString(),
+                    ).format(bill.tradeTime!),
                     style: FxTypography.caption.copyWith(
                       color: FxPalette.of(context).textTertiary,
                     ),

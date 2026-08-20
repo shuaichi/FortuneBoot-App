@@ -48,22 +48,26 @@ class BillsState extends Equatable {
   final bool isRefreshing;
 
   final BillStatistics? statistics;
+  final bool isSummaryAvailable;
   final Map<DateTime, BillStatistics> monthStatistics;
   final String? errorMessage;
+  final String? paginationErrorMessage;
 
-  const BillsState({
+  BillsState({
     this.status = BillsStatus.initial,
     required this.month,
-    this.filter = BillsFilter.empty,
+    BillsFilter? filter,
     this.bills = const [],
     this.total = 0,
     this.hasMore = false,
     this.isLoadingMore = false,
     this.isRefreshing = false,
     this.statistics,
+    this.isSummaryAvailable = false,
     this.monthStatistics = const {},
     this.errorMessage,
-  });
+    this.paginationErrorMessage,
+  }) : filter = filter ?? BillsFilter.empty;
 
   factory BillsState.initial(DateTime month) =>
       BillsState(month: DateTime(month.year, month.month));
@@ -144,9 +148,12 @@ class BillsState extends Equatable {
     bool? isLoadingMore,
     bool? isRefreshing,
     BillStatistics? statistics,
+    bool? isSummaryAvailable,
     Map<DateTime, BillStatistics>? monthStatistics,
     bool clearStatistics = false,
     String? errorMessage,
+    String? paginationErrorMessage,
+    bool clearPaginationError = false,
   }) {
     return BillsState(
       status: status ?? this.status,
@@ -158,8 +165,14 @@ class BillsState extends Equatable {
       isLoadingMore: isLoadingMore ?? this.isLoadingMore,
       isRefreshing: isRefreshing ?? this.isRefreshing,
       statistics: clearStatistics ? null : (statistics ?? this.statistics),
+      isSummaryAvailable: clearStatistics
+          ? false
+          : (isSummaryAvailable ?? this.isSummaryAvailable),
       monthStatistics: monthStatistics ?? this.monthStatistics,
       errorMessage: errorMessage,
+      paginationErrorMessage: clearPaginationError
+          ? null
+          : (paginationErrorMessage ?? this.paginationErrorMessage),
     );
   }
 
@@ -174,7 +187,9 @@ class BillsState extends Equatable {
     isLoadingMore,
     isRefreshing,
     statistics,
+    isSummaryAvailable,
     monthStatistics,
     errorMessage,
+    paginationErrorMessage,
   ];
 }

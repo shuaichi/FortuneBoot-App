@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:fortuneboot/core/preferences/preferences_cubit.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fortuneboot/features/shared/data/bill_models.dart';
 import 'package:fortuneboot/features/shared/presentation/bills/bill_detail_flow.dart';
@@ -14,28 +16,7 @@ void main() {
   ) async {
     const bill = FortuneBillVo(billId: 1, title: '午餐', amount: 28, billType: 1);
 
-    await tester.pumpWidget(
-      MaterialApp(
-        theme: FxTheme.light,
-        locale: const Locale('zh'),
-        localizationsDelegates: const [
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
-          S.delegate,
-        ],
-        supportedLocales: S.delegate.supportedLocales,
-        home: Builder(
-          builder: (context) => Scaffold(
-            body: ElevatedButton(
-              onPressed: () =>
-                  BillDetailFlow().show(context, bookId: 1, bill: bill),
-              child: const Text('打开详情'),
-            ),
-          ),
-        ),
-      ),
-    );
+    await tester.pumpWidget(_detailHarness(bill));
 
     await tester.tap(find.text('打开详情'));
     await tester.pumpAndSettle();
@@ -174,22 +155,25 @@ void main() {
 }
 
 Widget _detailHarness(FortuneBillVo bill) {
-  return MaterialApp(
-    theme: FxTheme.light,
-    locale: const Locale('zh'),
-    localizationsDelegates: const [
-      GlobalMaterialLocalizations.delegate,
-      GlobalWidgetsLocalizations.delegate,
-      GlobalCupertinoLocalizations.delegate,
-      S.delegate,
-    ],
-    supportedLocales: S.delegate.supportedLocales,
-    home: Builder(
-      builder: (context) => Scaffold(
-        body: ElevatedButton(
-          onPressed: () =>
-              BillDetailFlow().show(context, bookId: 1, bill: bill),
-          child: const Text('打开详情'),
+  return BlocProvider(
+    create: (_) => PreferencesCubit(),
+    child: MaterialApp(
+      theme: FxTheme.light,
+      locale: const Locale('zh'),
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+        S.delegate,
+      ],
+      supportedLocales: S.delegate.supportedLocales,
+      home: Builder(
+        builder: (context) => Scaffold(
+          body: ElevatedButton(
+            onPressed: () =>
+                BillDetailFlow().show(context, bookId: 1, bill: bill),
+            child: const Text('打开详情'),
+          ),
         ),
       ),
     ),

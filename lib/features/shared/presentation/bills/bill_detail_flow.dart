@@ -5,18 +5,16 @@ import 'package:fortuneboot/core/network/fx_api.dart';
 import 'package:fortuneboot/core/session/bill_mutations.dart';
 import 'package:fortuneboot/features/shared/data/bill_models.dart';
 import 'package:fortuneboot/features/shared/data/bill_service.dart';
+import 'package:fortuneboot/features/shared/presentation/bills/bill_delete_confirmation.dart';
 import 'package:fortuneboot/features/shared/presentation/bills/bill_detail_sheet.dart';
 import 'package:fortuneboot/fx/components/fx_sheet.dart';
-import 'package:fortuneboot/fx/theme/fx_theme.dart';
-import 'package:fortuneboot/fx/tokens/fx_radius.dart';
-import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
-import 'package:fortuneboot/fx/tokens/fx_typography.dart';
 import 'package:fortuneboot/generated/l10n.dart';
 
 class BillDetailFlow {
   BillDetailFlow({BillService? service}) : _service = service ?? BillService();
 
   final BillService _service;
+  final Set<int> _pendingBillIds = <int>{};
 
   void show(
     BuildContext context, {
@@ -69,24 +67,27 @@ class BillDetailFlow {
   }) async {
     Navigator.of(context).pop();
     final billId = bill.billId;
-    if (bookId == null || billId == null) {
+    if (bookId == null || billId == null || _pendingBillIds.contains(billId)) {
       return;
     }
 
-    final confirmed = await _confirmDelete(context, bill);
+    final confirmed = await showBillDeleteConfirmation(context, bill);
     if (!confirmed || !context.mounted) {
       return;
     }
 
+    _pendingBillIds.add(billId);
     try {
       await _service.remove(bookId: bookId, billId: billId);
       BillMutations.bump();
     } on FxApiException catch (error) {
       if (context.mounted) _showError(context, error.message);
-    } on Exception catch (_) {
+    } on Exception {
       if (context.mounted) {
         _showError(context, S.of(context).dashboardLoadFailed);
       }
+    } finally {
+      _pendingBillIds.remove(billId);
     }
   }
 
@@ -98,10 +99,11 @@ class BillDetailFlow {
   }) async {
     Navigator.of(context).pop();
     final billId = bill.billId;
-    if (bookId == null || billId == null) {
+    if (bookId == null || billId == null || _pendingBillIds.contains(billId)) {
       return;
     }
 
+    _pendingBillIds.add(billId);
     try {
       if (confirm) {
         await _service.confirm(bookId: bookId, billId: billId);
@@ -111,102 +113,18 @@ class BillDetailFlow {
       BillMutations.bump();
     } on FxApiException catch (error) {
       if (context.mounted) _showError(context, error.message);
-    } on Exception catch (_) {
+    } on Exception {
       if (context.mounted) {
         _showError(context, S.of(context).dashboardLoadFailed);
       }
+    } finally {
+      _pendingBillIds.remove(billId);
     }
-  }
-
-  Future<bool> _confirmDelete(BuildContext context, FortuneBillVo bill) async {
-    final palette = FxPalette.of(context);
-    return await FxSheet.show<bool>(
-          context,
-          title: S.of(context).billsDeleteTitle,
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(
-              FxSpacing.lg,
-              0,
-              FxSpacing.lg,
-              FxSpacing.xl,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Text(
-                  S
-                      .of(context)
-                      .billsDeleteConfirm(
-                        bill.title ?? bill.primaryCategoryName,
-                      ),
-                  style: FxTypography.body,
-                ),
-                const SizedBox(height: FxSpacing.xl),
-                Row(
-                  children: [
-                    Expanded(
-                      child: _SheetButton(
-                        label: S.of(context).commonCancel,
-                        onTap: () => Navigator.of(context).pop(false),
-                        color: palette.surfaceMuted,
-                        foregroundColor: palette.textSecondary,
-                      ),
-                    ),
-                    const SizedBox(width: FxSpacing.md),
-                    Expanded(
-                      child: _SheetButton(
-                        label: S.of(context).billsDelete,
-                        onTap: () => Navigator.of(context).pop(true),
-                        color: palette.danger,
-                        foregroundColor: Colors.white,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ) ??
-        false;
   }
 
   void _showError(BuildContext context, String message) {
     ScaffoldMessenger.of(
       context,
     ).showSnackBar(SnackBar(content: Text(message)));
-  }
-}
-
-class _SheetButton extends StatelessWidget {
-  const _SheetButton({
-    required this.label,
-    required this.onTap,
-    required this.color,
-    required this.foregroundColor,
-  });
-
-  final String label;
-  final VoidCallback onTap;
-  final Color color;
-  final Color foregroundColor;
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: color,
-      borderRadius: FxRadius.tileBorder,
-      child: InkWell(
-        borderRadius: FxRadius.tileBorder,
-        onTap: onTap,
-        child: Container(
-          height: 48,
-          alignment: Alignment.center,
-          child: Text(
-            label,
-            style: FxTypography.bodyStrong.copyWith(color: foregroundColor),
-          ),
-        ),
-      ),
-    );
   }
 }
