@@ -95,6 +95,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
               node.categoryName ?? S.of(context).categoriesThisCategory,
             ),
         confirmLabel: S.of(context).categoriesMove,
+        objectName: node.categoryName ?? S.of(context).categoriesThisCategory,
       );
       if (ok != true) return;
     }
@@ -128,6 +129,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
             node.categoryName ?? S.of(context).categoriesThisCategory,
           ),
       confirmLabel: S.of(context).categoriesDelete,
+      objectName: node.categoryName ?? S.of(context).categoriesThisCategory,
     );
     if (ok != true) return;
     try {

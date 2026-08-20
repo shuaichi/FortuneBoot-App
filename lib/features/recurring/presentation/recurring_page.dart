@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fortuneboot/core/feedback/fx_feedback.dart';
 import 'package:fortuneboot/core/session/session_cubit.dart';
+import 'package:fortuneboot/features/books/presentation/widgets/destructive_confirm_sheet.dart';
 import 'package:fortuneboot/features/recurring/data/cron_builder.dart';
 import 'package:fortuneboot/features/recurring/data/recurring_models.dart';
 import 'package:fortuneboot/features/recurring/data/recurring_service.dart';
@@ -10,7 +11,6 @@ import 'package:fortuneboot/features/recurring/presentation/recurring_editor_pag
 import 'package:fortuneboot/features/recurring/presentation/widgets/cron_schedule_editor.dart';
 import 'package:fortuneboot/features/recurring/presentation/widgets/recurring_log_sheet.dart';
 import 'package:fortuneboot/fx/components/fx_card.dart';
-import 'package:fortuneboot/fx/components/fx_confirm_sheet.dart';
 import 'package:fortuneboot/fx/components/fx_icon_button.dart';
 import 'package:fortuneboot/fx/components/fx_sheet.dart';
 import 'package:fortuneboot/fx/components/fx_state_view.dart';
@@ -30,6 +30,7 @@ class RecurringPage extends StatefulWidget {
 
 class _RecurringPageState extends State<RecurringPage> {
   final RecurringService _service = RecurringService();
+  int? _removingRuleId;
 
   RecurringBloc get _bloc => context.read<RecurringBloc>();
 
@@ -72,8 +73,10 @@ class _RecurringPageState extends State<RecurringPage> {
 
   Future<void> _remove(RecurringRuleVo rule) async {
     final bookId = _bookId;
-    if (bookId == null || rule.ruleId == null) return;
-    final ok = await FxConfirmSheet.show(
+    if (bookId == null || rule.ruleId == null || _removingRuleId != null) {
+      return;
+    }
+    final ok = await DestructiveConfirmSheet.show(
       context,
       title: S.of(context).recurringRemoveTitle,
       message: S
@@ -81,16 +84,20 @@ class _RecurringPageState extends State<RecurringPage> {
           .recurringRemoveMessage(
             rule.ruleName ?? S.of(context).recurringThisRule,
           ),
+      subMessage: S.of(context).confirmDestructiveWarning,
       confirmLabel: S.of(context).recurringDelete,
       cancelLabel: S.of(context).commonCancel,
-      destructive: true,
-      failureMessage: S.of(context).profileSaveFailedRetry,
-      onConfirm: () async {
-        await _service.removeRule(bookId: bookId, ruleId: rule.ruleId!);
-        return true;
-      },
     );
-    if (ok == true && mounted) _bloc.add(const RecurringMutated());
+    if (ok != true || !mounted) return;
+    setState(() => _removingRuleId = rule.ruleId);
+    try {
+      await _service.removeRule(bookId: bookId, ruleId: rule.ruleId!);
+      if (mounted) _bloc.add(const RecurringMutated());
+    } on Object {
+      if (mounted) _showToast(S.of(context).profileSaveFailedRetry);
+    } finally {
+      if (mounted) setState(() => _removingRuleId = null);
+    }
   }
 
   @override
@@ -329,16 +336,18 @@ class _RecurringPageState extends State<RecurringPage> {
     final palette = FxPalette.of(context);
     return PopupMenuButton<String>(
       icon: Icon(Icons.more_vert_rounded, color: palette.textSecondary),
-      onSelected: (v) {
-        switch (v) {
-          case 'edit':
-            _openEditor(rule: rule);
-          case 'logs':
-            _openLogs(rule);
-          case 'remove':
-            _remove(rule);
-        }
-      },
+      onSelected: _removingRuleId == null
+          ? (v) {
+              switch (v) {
+                case 'edit':
+                  _openEditor(rule: rule);
+                case 'logs':
+                  _openLogs(rule);
+                case 'remove':
+                  _remove(rule);
+              }
+            }
+          : null,
       itemBuilder: (context) => [
         PopupMenuItem(value: 'edit', child: Text(S.of(context).recurringEdit)),
         PopupMenuItem(value: 'logs', child: Text(S.of(context).recurringLogs)),

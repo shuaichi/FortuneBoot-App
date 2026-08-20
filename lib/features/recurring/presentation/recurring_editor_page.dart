@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:fortuneboot/core/network/fx_api.dart';
+import 'package:fortuneboot/features/books/presentation/widgets/destructive_confirm_sheet.dart';
 import 'package:fortuneboot/features/recurring/data/cron_builder.dart';
 import 'package:fortuneboot/features/recurring/data/recurring_models.dart';
 import 'package:fortuneboot/features/recurring/data/recurring_service.dart';
@@ -193,6 +194,8 @@ class _RecurringEditorPageState extends State<RecurringEditorPage> {
 
   // ---- cron 实时校验 ----
 
+  int _cronValidationRevision = 0;
+
   void _onCronChanged(String value) {
     _cronDebounce?.cancel();
     setState(() {
@@ -200,24 +203,24 @@ class _RecurringEditorPageState extends State<RecurringEditorPage> {
       _cronChecking = false;
     });
     final cron = value.trim();
+    final validationRevision = ++_cronValidationRevision;
     if (cron.isEmpty) return;
     _cronDebounce = Timer(const Duration(milliseconds: 500), () async {
+      if (!mounted || validationRevision != _cronValidationRevision) return;
       setState(() => _cronChecking = true);
       try {
         final ok = await _service.checkCronExpression(cron);
-        if (mounted && _cronCtrl.text.trim() == cron) {
-          setState(() {
-            _cronValid = ok;
-            _cronChecking = false;
-          });
-        }
+        if (!mounted || validationRevision != _cronValidationRevision) return;
+        setState(() {
+          _cronValid = _cronCtrl.text.trim() == cron ? ok : null;
+          _cronChecking = false;
+        });
       } on Object {
-        if (mounted) {
-          setState(() {
-            _cronValid = false;
-            _cronChecking = false;
-          });
-        }
+        if (!mounted || validationRevision != _cronValidationRevision) return;
+        setState(() {
+          _cronValid = false;
+          _cronChecking = false;
+        });
       }
     });
   }
@@ -529,6 +532,36 @@ class _RecurringEditorPageState extends State<RecurringEditorPage> {
     );
   }
 
+  Future<void> _toggleCronMode() async {
+    if (!_cronAdvanced) {
+      setState(() => _cronAdvanced = true);
+      return;
+    }
+
+    final parsed = CronBuilder.tryParse(_cronCtrl.text);
+    if (parsed == null) {
+      final confirmed = await DestructiveConfirmSheet.show(
+        context,
+        title: S.of(context).recurringDiscardCustomCronTitle,
+        message: S.of(context).recurringDiscardCustomCronMessage,
+        subMessage: S.of(context).recurringDiscardCustomCronWarning,
+        confirmLabel: S.of(context).recurringUseVisual,
+        cancelLabel: S.of(context).commonCancel,
+      );
+      if (!confirmed || !mounted) return;
+    }
+
+    _cronDebounce?.cancel();
+    _cronValidationRevision++;
+    setState(() {
+      _cronAdvanced = false;
+      if (parsed != null) _cronSpec = parsed;
+      _cronCtrl.text = CronBuilder.build(_cronSpec);
+      _cronValid = null;
+      _cronChecking = false;
+    });
+  }
+
   Widget _cronField(BuildContext context) {
     final palette = FxPalette.of(context);
     return Column(
@@ -539,18 +572,7 @@ class _RecurringEditorPageState extends State<RecurringEditorPage> {
             _label(context, S.of(context).recurringSchedule),
             const Spacer(),
             GestureDetector(
-              onTap: () {
-                setState(() {
-                  _cronAdvanced = !_cronAdvanced;
-                  if (!_cronAdvanced) {
-                    // 回到可视化：当前 cron 可解析则同步规格，否则用现有规格重建。
-                    final parsed = CronBuilder.tryParse(_cronCtrl.text);
-                    if (parsed != null) _cronSpec = parsed;
-                    _cronCtrl.text = CronBuilder.build(_cronSpec);
-                    _cronValid = null;
-                  }
-                });
-              },
+              onTap: _toggleCronMode,
               child: Text(
                 _cronAdvanced
                     ? S.of(context).recurringUseVisual

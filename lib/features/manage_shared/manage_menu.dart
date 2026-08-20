@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fortuneboot/features/books/presentation/widgets/destructive_confirm_sheet.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
@@ -97,85 +98,21 @@ Widget _item(
 }
 
 /// 危险操作二次确认（回收站/删除通用）。返回 true 表示确认。
-Future<bool?> confirmManageAction(
+Future<bool> confirmManageAction(
   BuildContext context, {
   required String title,
   required String message,
   required String confirmLabel,
+  required String objectName,
 }) {
-  return showModalBottomSheet<bool>(
-    context: context,
-    backgroundColor: FxPalette.of(context).surface,
-    shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(top: FxRadius.sheetRadius),
-    ),
-    builder: (ctx) {
-      return SafeArea(
-        top: false,
-        child: Padding(
-          padding: const EdgeInsets.all(FxSpacing.lg),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Text(title, style: FxTypography.title),
-              const SizedBox(height: FxSpacing.sm),
-              Text(message, style: FxTypography.body),
-              const SizedBox(height: FxSpacing.xl),
-              Row(
-                children: [
-                  Expanded(
-                    child: _confirmBtn(
-                      S.of(ctx).commonCancel,
-                      onTap: () => Navigator.of(ctx).pop(false),
-                      color: FxPalette.of(ctx).surfaceMuted,
-                      fg: FxPalette.of(ctx).textSecondary,
-                    ),
-                  ),
-                  const SizedBox(width: FxSpacing.md),
-                  Expanded(
-                    child: _confirmBtn(
-                      confirmLabel,
-                      onTap: () => Navigator.of(ctx).pop(true),
-                      color: FxPalette.of(ctx).danger,
-                      fg: Colors.white,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      );
-    },
-  );
-}
-
-Widget _confirmBtn(
-  String label, {
-  required VoidCallback onTap,
-  required Color color,
-  required Color fg,
-}) {
-  return Semantics(
-    button: true,
-    label: label,
-    child: Material(
-      color: color,
-      borderRadius: FxRadius.tileBorder,
-      child: InkWell(
-        borderRadius: FxRadius.tileBorder,
-        onTap: onTap,
-        child: Container(
-          height: 48,
-          alignment: Alignment.center,
-          child: Text(
-            label,
-            style: FxTypography.bodyStrong.copyWith(color: fg),
-          ),
-        ),
-      ),
-    ),
+  return DestructiveConfirmSheet.show(
+    context,
+    title: title,
+    message: message,
+    nameToMatch: objectName,
+    checkboxLabel: S.of(context).booksDefaultDestructiveCheckbox,
+    confirmLabel: confirmLabel,
+    cancelLabel: S.of(context).commonCancel,
   );
 }
 

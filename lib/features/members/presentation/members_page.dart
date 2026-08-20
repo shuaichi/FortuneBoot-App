@@ -81,6 +81,7 @@ class _MembersPageState extends State<MembersPage> {
               member.memberName ?? S.of(context).membersThisMember,
             ),
         confirmLabel: S.of(context).membersMove,
+        objectName: member.memberName ?? S.of(context).membersThisMember,
       );
       if (ok != true) return;
     }
@@ -114,6 +115,7 @@ class _MembersPageState extends State<MembersPage> {
             member.memberName ?? S.of(context).membersThisMember,
           ),
       confirmLabel: S.of(context).membersDelete,
+      objectName: member.memberName ?? S.of(context).membersThisMember,
     );
     if (ok != true) return;
     try {

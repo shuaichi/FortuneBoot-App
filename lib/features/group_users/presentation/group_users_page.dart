@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fortuneboot/core/feedback/fx_feedback.dart';
 import 'package:fortuneboot/core/session/session_cubit.dart';
+import 'package:fortuneboot/features/books/presentation/widgets/destructive_confirm_sheet.dart';
 import 'package:fortuneboot/features/group_users/data/group_users_service.dart';
 import 'package:fortuneboot/features/group_users/presentation/bloc/group_users_bloc.dart';
 import 'package:fortuneboot/features/group_users/presentation/widgets/invite_user_sheet.dart';
 import 'package:fortuneboot/fx/components/fx_button.dart';
 import 'package:fortuneboot/fx/components/fx_card.dart';
-import 'package:fortuneboot/fx/components/fx_confirm_sheet.dart';
 import 'package:fortuneboot/fx/components/fx_icon_button.dart';
 import 'package:fortuneboot/fx/components/fx_sheet.dart';
 import 'package:fortuneboot/fx/components/fx_state_view.dart';
@@ -30,6 +30,7 @@ class GroupUsersPage extends StatefulWidget {
 
 class _GroupUsersPageState extends State<GroupUsersPage> {
   final GroupUsersService _service = GroupUsersService();
+  int? _removingRelationId;
 
   GroupUsersBloc get _bloc => context.read<GroupUsersBloc>();
 
@@ -76,22 +77,28 @@ class _GroupUsersPageState extends State<GroupUsersPage> {
   Future<void> _remove(GroupUserVo user) async {
     final relationId = user.userGroupRelationId;
     final groupId = _groupId;
-    if (relationId == null || groupId == null) return;
-    final ok = await FxConfirmSheet.show(
+    if (relationId == null || groupId == null || _removingRelationId != null) {
+      return;
+    }
+    final ok = await DestructiveConfirmSheet.show(
       context,
       title: S.of(context).groupUsersRemoveTitle,
       message: S.of(context).groupUsersRemoveConfirm(user.displayName),
+      subMessage: S.of(context).confirmDestructiveWarning,
       confirmLabel: S.of(context).groupUsersRemove,
       cancelLabel: S.of(context).commonCancel,
-      destructive: true,
-      failureMessage: S.of(context).profileSaveFailedRetry,
-      onConfirm: () async {
-        await _service.removeGroupUser(relationId);
-        return true;
-      },
     );
-    if (ok == true && mounted && _groupId == groupId) {
-      _bloc.add(const GroupUsersMutated());
+    if (ok != true || !mounted || _groupId != groupId) return;
+    setState(() => _removingRelationId = relationId);
+    try {
+      await _service.removeGroupUser(relationId);
+      if (mounted && _groupId == groupId) {
+        _bloc.add(const GroupUsersMutated());
+      }
+    } on Object {
+      if (mounted) _showToast(S.of(context).profileSaveFailedRetry);
+    } finally {
+      if (mounted) setState(() => _removingRelationId = null);
     }
   }
 
@@ -253,7 +260,9 @@ class _GroupUsersPageState extends State<GroupUsersPage> {
                 icon: Icons.person_remove_alt_1_rounded,
                 tooltip: S.of(context).groupUsersRemove,
                 color: palette.danger,
-                onPressed: () => _remove(user),
+                onPressed: _removingRelationId == null
+                    ? () => _remove(user)
+                    : null,
               ),
             ],
           ],

@@ -88,6 +88,7 @@ class _PayeesPageState extends State<PayeesPage> {
               payee.payeeName ?? S.of(context).payeesThisPayee,
             ),
         confirmLabel: S.of(context).payeesMove,
+        objectName: payee.payeeName ?? S.of(context).payeesThisPayee,
       );
       if (ok != true) return;
     }
@@ -121,6 +122,7 @@ class _PayeesPageState extends State<PayeesPage> {
             payee.payeeName ?? S.of(context).payeesThisPayee,
           ),
       confirmLabel: S.of(context).payeesDelete,
+      objectName: payee.payeeName ?? S.of(context).payeesThisPayee,
     );
     if (ok != true) return;
     try {

@@ -100,6 +100,7 @@ class _TagsPageState extends State<TagsPage> {
               node.tagName ?? S.of(context).tagsThisTag,
             ),
         confirmLabel: S.of(context).tagsMove,
+        objectName: node.tagName ?? S.of(context).tagsThisTag,
       );
       if (ok != true) return;
     }
@@ -130,6 +131,7 @@ class _TagsPageState extends State<TagsPage> {
             node.tagName ?? S.of(context).tagsThisTag,
           ),
       confirmLabel: S.of(context).tagsDelete,
+      objectName: node.tagName ?? S.of(context).tagsThisTag,
     );
     if (ok != true) return;
     try {

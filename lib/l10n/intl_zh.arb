@@ -188,6 +188,7 @@
   "mine": "我的",
   "commonSave": "保存",
   "commonCancel": "取消",
+  "confirmDestructiveWarning": "此操作不可撤销。",
   "commonConfirm": "确定",
   "commonHideAmounts": "隐藏金额",
   "commonRetry": "重试",
@@ -778,6 +779,9 @@
   "recurringAdvancedCronHint": "手动编辑 cron 表达式，适合高级用户",
   "recurringUseVisual": "使用可视化选择",
   "recurringUseAdvanced": "切换到自定义 cron",
+  "recurringDiscardCustomCronTitle": "切回可视化选择？",
+  "recurringDiscardCustomCronMessage": "当前自定义 cron 表达式无法转换为可视化规则。",
+  "recurringDiscardCustomCronWarning": "继续后将使用当前可视化规则覆盖该表达式，且无法恢复。",
   "recurringSummaryDaily": "每天 {time}",
   "@recurringSummaryDaily": {
     "placeholders": {

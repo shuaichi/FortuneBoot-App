@@ -347,15 +347,14 @@ class _BooksPageState extends State<BooksPage> {
 
   Future<void> _confirmDeleteGroup(ManagedGroup group) async {
     final name = group.name;
-    final ok = await FxSheet.show<bool>(
+    final ok = await DestructiveConfirmSheet.show(
       context,
       title: S.of(context).booksDeleteGroupTitle(name),
-      child: DestructiveConfirmSheet(
-        title: S.of(context).booksDeleteGroupTitle(name),
-        objectName: name,
-        warning: S.of(context).booksDeleteGroupWarning,
-        checkboxLabel: S.of(context).booksDeleteGroupUnderstand,
-      ),
+      message: S.of(context).booksDeleteGroupWarning,
+      nameToMatch: name,
+      checkboxLabel: S.of(context).booksDeleteGroupUnderstand,
+      confirmLabel: S.of(context).booksPermanentlyDelete,
+      cancelLabel: S.of(context).commonCancel,
     );
     if (ok == true && group.groupId != null) {
       await _run(() => _service.removeGroup(group.groupId!));
@@ -490,15 +489,14 @@ class _BooksPageState extends State<BooksPage> {
     final name = book.bookName?.trim().isNotEmpty == true
         ? book.bookName!.trim()
         : S.of(context).booksBookFallbackName;
-    final ok = await FxSheet.show<bool>(
+    final ok = await DestructiveConfirmSheet.show(
       context,
       title: S.of(context).booksDeleteBookForeverTitle(name),
-      child: DestructiveConfirmSheet(
-        title: S.of(context).booksDeleteBookForeverTitle(name),
-        objectName: name,
-        warning: S.of(context).booksDeleteBookWarning,
-        confirmLabel: S.of(context).booksDeleteForever,
-      ),
+      message: S.of(context).booksDeleteBookWarning,
+      nameToMatch: name,
+      checkboxLabel: S.of(context).booksDefaultDestructiveCheckbox,
+      confirmLabel: S.of(context).booksDeleteForever,
+      cancelLabel: S.of(context).commonCancel,
     );
     if (ok == true && book.bookId != null) {
       await _run(() => _service.removeBook(book.bookId!));

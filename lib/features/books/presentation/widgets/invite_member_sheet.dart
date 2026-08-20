@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fortuneboot/core/network/fx_api.dart';
 import 'package:fortuneboot/features/books/data/books_manage_models.dart';
+import 'package:fortuneboot/features/books/presentation/widgets/destructive_confirm_sheet.dart';
 import 'package:fortuneboot/features/books/data/books_service.dart';
 import 'package:fortuneboot/fx/components/fx_button.dart';
 import 'package:fortuneboot/fx/components/fx_state_view.dart';
@@ -77,24 +78,14 @@ class _InviteMemberSheetState extends State<InviteMemberSheet> {
       setState(() => _error = S.of(context).booksInviteInputError);
       return;
     }
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(S.of(context).booksInviteConfirmTitle),
-        content: Text(S.of(context).booksInviteConfirmMessage(username)),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(false),
-            child: Text(S.of(context).commonCancel),
-          ),
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(true),
-            child: Text(S.of(context).booksSendInvite),
-          ),
-        ],
-      ),
+    final confirmed = await DestructiveConfirmSheet.show(
+      context,
+      title: S.of(context).booksInviteConfirmTitle,
+      message: S.of(context).booksInviteConfirmMessage(username),
+      confirmLabel: S.of(context).booksSendInvite,
+      cancelLabel: S.of(context).commonCancel,
     );
-    if (confirmed != true) return;
+    if (!confirmed || !mounted) return;
     setState(() {
       _submitting = true;
       _error = null;

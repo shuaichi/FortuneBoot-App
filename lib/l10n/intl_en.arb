@@ -186,6 +186,7 @@
   "mine": "My",
   "commonSave": "Save",
   "commonCancel": "Cancel",
+  "confirmDestructiveWarning": "This action cannot be undone.",
   "commonConfirm": "Confirm",
   "commonHideAmounts": "Hide amounts",
   "commonRetry": "Retry",
@@ -776,6 +777,9 @@
   "recurringAdvancedCronHint": "Manually edit the cron expression for advanced use",
   "recurringUseVisual": "Use visual picker",
   "recurringUseAdvanced": "Switch to custom cron",
+  "recurringDiscardCustomCronTitle": "Switch to the visual picker?",
+  "recurringDiscardCustomCronMessage": "The current custom cron expression cannot be converted to a visual rule.",
+  "recurringDiscardCustomCronWarning": "Continuing will replace it with the current visual rule and cannot be undone.",
   "recurringSummaryDaily": "Every day at {time}",
   "@recurringSummaryDaily": {
     "placeholders": {
