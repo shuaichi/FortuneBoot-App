@@ -39,9 +39,7 @@ class ExtrasSection extends StatelessWidget {
             ),
             child: Text(
               S.of(context).billEditorExtras,
-              style: FxTypography.label.copyWith(
-                color: palette.textSecondary,
-              ),
+              style: FxTypography.label.copyWith(color: palette.textSecondary),
             ),
           ),
           for (int i = 0; i < state.extras.length; i++)

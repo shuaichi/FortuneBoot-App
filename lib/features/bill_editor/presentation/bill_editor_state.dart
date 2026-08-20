@@ -21,6 +21,7 @@ enum BillValidationError {
 class BillEditorState extends Equatable {
   final EditorStatus status;
   final String? loadError;
+  final FxFailure? loadFailure;
 
   final String mode; // new | edit | copy
   final int? billId;
@@ -66,8 +67,9 @@ class BillEditorState extends Equatable {
 
   final SubmitStatus submitStatus;
 
-  /// 后端/异常错误文案（已是最终展示串）。
+  /// 后端/异常错误文案（仅保留兼容，不写入原始异常）。
   final String? submitError;
+  final FxFailure? submitFailure;
 
   /// 本地校验失败（语义枚举，展示层本地化）。
   final BillValidationError? validationFailure;
@@ -75,6 +77,7 @@ class BillEditorState extends Equatable {
   const BillEditorState({
     this.status = EditorStatus.loading,
     this.loadError,
+    this.loadFailure,
     this.mode = 'new',
     this.billId,
     this.lockBillType = false,
@@ -104,6 +107,7 @@ class BillEditorState extends Equatable {
     this.options = const EditorOptions(),
     this.submitStatus = SubmitStatus.idle,
     this.submitError,
+    this.submitFailure,
     this.validationFailure,
   });
 
@@ -183,6 +187,7 @@ class BillEditorState extends Equatable {
   BillEditorState copyWith({
     EditorStatus? status,
     String? loadError,
+    FxFailure? loadFailure,
     String? mode,
     int? billId,
     bool? lockBillType,
@@ -216,11 +221,13 @@ class BillEditorState extends Equatable {
     EditorOptions? options,
     SubmitStatus? submitStatus,
     String? submitError,
+    FxFailure? submitFailure,
     BillValidationError? validationFailure,
   }) {
     return BillEditorState(
       status: status ?? this.status,
       loadError: loadError,
+      loadFailure: loadFailure,
       mode: mode ?? this.mode,
       billId: billId ?? this.billId,
       lockBillType: lockBillType ?? this.lockBillType,
@@ -252,6 +259,7 @@ class BillEditorState extends Equatable {
       options: options ?? this.options,
       submitStatus: submitStatus ?? this.submitStatus,
       submitError: submitError,
+      submitFailure: submitFailure,
       validationFailure: validationFailure,
     );
   }
@@ -260,6 +268,7 @@ class BillEditorState extends Equatable {
   List<Object?> get props => [
     status,
     loadError,
+    loadFailure,
     mode,
     billId,
     lockBillType,
@@ -289,6 +298,7 @@ class BillEditorState extends Equatable {
     options,
     submitStatus,
     submitError,
+    submitFailure,
     validationFailure,
   ];
 }

@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:fortuneboot/fx/components/fx_icon_button.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
@@ -14,11 +15,13 @@ class AttachmentGrid extends StatelessWidget {
     required this.files,
     required this.onAdd,
     required this.onRemove,
+    this.enabled = true,
   });
 
   final List<File> files;
   final VoidCallback onAdd;
   final ValueChanged<int> onRemove;
+  final bool enabled;
 
   static const double _tile = 76;
 
@@ -51,8 +54,13 @@ class AttachmentGrid extends StatelessWidget {
           runSpacing: FxSpacing.sm,
           children: [
             for (int i = 0; i < files.length; i++)
-              _Thumb(file: files[i], onRemove: () => onRemove(i)),
-            _AddTile(onTap: onAdd),
+              _Thumb(
+                file: files[i],
+                index: i,
+                enabled: enabled,
+                onRemove: () => onRemove(i),
+              ),
+            _AddTile(onTap: onAdd, enabled: enabled),
           ],
         ),
       ],
@@ -61,8 +69,15 @@ class AttachmentGrid extends StatelessWidget {
 }
 
 class _Thumb extends StatelessWidget {
-  const _Thumb({required this.file, required this.onRemove});
+  const _Thumb({
+    required this.file,
+    required this.index,
+    required this.enabled,
+    required this.onRemove,
+  });
   final File file;
+  final int index;
+  final bool enabled;
   final VoidCallback onRemove;
 
   @override
@@ -93,22 +108,13 @@ class _Thumb extends StatelessWidget {
             ),
           ),
           Positioned(
-            top: -6,
-            right: -6,
-            child: GestureDetector(
-              onTap: onRemove,
-              child: Container(
-                padding: const EdgeInsets.all(2),
-                decoration: BoxDecoration(
-                  color: palette.textPrimary,
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(
-                  Icons.close_rounded,
-                  size: 14,
-                  color: Colors.white,
-                ),
-              ),
+            top: -16,
+            right: -16,
+            child: FxIconButton(
+              icon: Icons.close_rounded,
+              tooltip: '${S.of(context).billEditorAttachments} ${index + 1}',
+              color: palette.danger,
+              onPressed: enabled ? onRemove : null,
             ),
           ),
         ],
@@ -118,24 +124,36 @@ class _Thumb extends StatelessWidget {
 }
 
 class _AddTile extends StatelessWidget {
-  const _AddTile({required this.onTap});
+  const _AddTile({required this.onTap, required this.enabled});
   final VoidCallback onTap;
+  final bool enabled;
 
   @override
   Widget build(BuildContext context) {
     final palette = FxPalette.of(context);
-    return InkWell(
-      onTap: onTap,
-      borderRadius: FxRadius.tileBorder,
-      child: Container(
-        width: AttachmentGrid._tile,
-        height: AttachmentGrid._tile,
-        decoration: BoxDecoration(
-          color: palette.surfaceMuted,
-          borderRadius: FxRadius.tileBorder,
-          border: Border.all(color: palette.border),
+    return Semantics(
+      button: true,
+      enabled: enabled,
+      label: S.of(context).billEditorAttachments,
+      child: InkWell(
+        onTap: enabled ? onTap : null,
+        borderRadius: FxRadius.tileBorder,
+        child: Container(
+          width: AttachmentGrid._tile,
+          height: AttachmentGrid._tile,
+          decoration: BoxDecoration(
+            color: palette.surfaceMuted,
+            borderRadius: FxRadius.tileBorder,
+            border: Border.all(color: palette.border),
+          ),
+          child: Tooltip(
+            message: S.of(context).billEditorAttachments,
+            child: Icon(
+              Icons.add_a_photo_outlined,
+              color: palette.textTertiary,
+            ),
+          ),
         ),
-        child: Icon(Icons.add_a_photo_outlined, color: palette.textTertiary),
       ),
     );
   }

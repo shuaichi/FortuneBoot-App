@@ -4,6 +4,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fortuneboot/core/feedback/fx_feedback.dart';
 import 'package:fortuneboot/core/session/bill_mutations.dart';
 import 'package:fortuneboot/features/bill_editor/data/editor_options_service.dart';
 import 'package:fortuneboot/features/bill_editor/presentation/bill_editor_bloc.dart';
@@ -67,12 +68,8 @@ class BillEditorPage extends StatelessWidget {
         } else if (state.submitStatus == SubmitStatus.failure) {
           final message = state.validationFailure != null
               ? _validationMessage(context, state.validationFailure!)
-              : state.submitError;
-          if (message != null) {
-            ScaffoldMessenger.of(context)
-              ..hideCurrentSnackBar()
-              ..showSnackBar(SnackBar(content: Text(message)));
-          }
+              : state.submitError ?? S.of(context).profileSaveFailedRetry;
+          FxFeedback.error(context, message: message);
         }
       },
       builder: (context, state) {
@@ -90,6 +87,7 @@ class BillEditorPage extends StatelessWidget {
               style: FxTypography.title,
             ),
             leading: IconButton(
+              tooltip: S.of(context).commonCancel,
               icon: Icon(Icons.close_rounded, color: palette.textPrimary),
               onPressed: () => Navigator.of(context).maybePop(),
             ),
@@ -97,7 +95,7 @@ class BillEditorPage extends StatelessWidget {
           body: switch (state.status) {
             EditorStatus.loading => FxStateView.loading(),
             EditorStatus.error => FxStateView.error(
-              message: state.loadError,
+              message: state.loadError ?? S.of(context).profileLoadFailed,
               onRetry: () =>
                   context.read<BillEditorBloc>().add(const BillEditorRetried()),
             ),
@@ -668,19 +666,30 @@ class _AttachmentCard extends StatelessWidget {
     return FxCard(
       child: AttachmentGrid(
         files: state.attachments,
+        enabled: state.submitStatus != SubmitStatus.submitting,
         onRemove: (i) => bloc.add(AttachmentRemoved(i)),
         onAdd: () async {
-          final result = await FilePicker.platform.pickFiles(
-            allowMultiple: true,
-            type: FileType.image,
-          );
-          if (result == null) return;
-          final files = result.paths
-              .whereType<String>()
-              .map((p) => File(p))
-              .toList();
-          if (files.isNotEmpty) {
-            bloc.add(AttachmentsAdded(files));
+          try {
+            final result = await FilePicker.platform.pickFiles(
+              allowMultiple: true,
+              type: FileType.any,
+            );
+            if (result == null || !context.mounted) return;
+            final files = result.paths
+                .whereType<String>()
+                .map(File.new)
+                .where((file) => file.existsSync())
+                .toList();
+            if (files.isNotEmpty) {
+              bloc.add(AttachmentsAdded(files));
+            }
+          } on Object {
+            if (context.mounted) {
+              FxFeedback.error(
+                context,
+                message: S.of(context).profileSaveFailedRetry,
+              );
+            }
           }
         },
       ),

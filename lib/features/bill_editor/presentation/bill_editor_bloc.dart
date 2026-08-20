@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fortuneboot/core/errors/fx_failure.dart';
+import 'package:fortuneboot/core/errors/fx_failure_mapper.dart';
 import 'package:fortuneboot/core/network/fx_api.dart';
 import 'package:fortuneboot/features/bill_editor/data/editor_options_service.dart';
 import 'package:fortuneboot/features/bill_editor/presentation/bill_editor_args.dart';
@@ -82,10 +84,13 @@ class BillEditorBloc extends Bloc<BillEditorEvent, BillEditorState> {
         next = _applyDefaultAccount(next);
       }
       emit(next);
-    } on FxApiException catch (e) {
-      emit(next.copyWith(status: EditorStatus.error, loadError: e.message));
-    } on Object catch (e) {
-      emit(next.copyWith(status: EditorStatus.error, loadError: e.toString()));
+    } on Object catch (error) {
+      emit(
+        next.copyWith(
+          status: EditorStatus.error,
+          loadFailure: FxFailureMapper.map(error),
+        ),
+      );
     }
   }
 
@@ -265,7 +270,11 @@ class BillEditorBloc extends Bloc<BillEditorEvent, BillEditorState> {
     CategoryRowRemoved event,
     Emitter<BillEditorState> emit,
   ) {
-    if (state.categoryRows.length <= 1) return;
+    if (state.categoryRows.length <= 1 ||
+        event.index < 0 ||
+        event.index >= state.categoryRows.length) {
+      return;
+    }
     final rows = [...state.categoryRows]..removeAt(event.index);
     emit(state.copyWith(categoryRows: rows));
   }
@@ -361,6 +370,7 @@ class BillEditorBloc extends Bloc<BillEditorEvent, BillEditorState> {
     ExtraRowRemoved event,
     Emitter<BillEditorState> emit,
   ) {
+    if (event.index < 0 || event.index >= state.extras.length) return;
     final extras = [...state.extras]..removeAt(event.index);
     emit(state.copyWith(extras: extras));
   }
@@ -379,13 +389,22 @@ class BillEditorBloc extends Bloc<BillEditorEvent, BillEditorState> {
     AttachmentsAdded event,
     Emitter<BillEditorState> emit,
   ) {
-    emit(state.copyWith(attachments: [...state.attachments, ...event.files]));
+    if (state.submitStatus == SubmitStatus.submitting) return;
+    final paths = state.attachments.map((file) => file.path).toSet();
+    final unique = event.files.where((file) => paths.add(file.path)).toList();
+    if (unique.isEmpty) return;
+    emit(state.copyWith(attachments: [...state.attachments, ...unique]));
   }
 
   void _onAttachmentRemoved(
     AttachmentRemoved event,
     Emitter<BillEditorState> emit,
   ) {
+    if (state.submitStatus == SubmitStatus.submitting ||
+        event.index < 0 ||
+        event.index >= state.attachments.length) {
+      return;
+    }
     final files = [...state.attachments]..removeAt(event.index);
     emit(state.copyWith(attachments: files));
   }
@@ -430,18 +449,11 @@ class BillEditorBloc extends Bloc<BillEditorEvent, BillEditorState> {
         attachmentFiles: state.attachments.isEmpty ? null : state.attachments,
       );
       emit(state.copyWith(submitStatus: SubmitStatus.success));
-    } on FxApiException catch (e) {
+    } on Object catch (error) {
       emit(
         state.copyWith(
           submitStatus: SubmitStatus.failure,
-          submitError: e.message,
-        ),
-      );
-    } on Object catch (e) {
-      emit(
-        state.copyWith(
-          submitStatus: SubmitStatus.failure,
-          submitError: e.toString(),
+          submitFailure: FxFailureMapper.map(error),
         ),
       );
     }

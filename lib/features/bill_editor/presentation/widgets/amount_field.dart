@@ -75,9 +75,7 @@ class _AmountFieldState extends State<AmountField> {
         if (widget.label != null) ...[
           Text(
             widget.label!,
-            style: FxTypography.label.copyWith(
-              color: palette.textSecondary,
-            ),
+            style: FxTypography.label.copyWith(color: palette.textSecondary),
           ),
           const SizedBox(height: FxSpacing.sm),
         ],
