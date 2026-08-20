@@ -869,6 +869,7 @@
       "time": {}
     }
   },
+  "ordersUse": "使用",
   "ordersClose": "关闭",
   "ordersReopen": "重开",
   "ordersTitleRequired": "请输入报销单标题",

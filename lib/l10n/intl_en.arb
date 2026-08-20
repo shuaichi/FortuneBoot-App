@@ -867,6 +867,7 @@
       "time": {}
     }
   },
+  "ordersUse": "Use",
   "ordersClose": "Close",
   "ordersReopen": "Reopen",
   "ordersTitleRequired": "Please enter a reimbursement order title",

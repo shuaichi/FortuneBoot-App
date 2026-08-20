@@ -12,6 +12,28 @@ enum FinanceOrderType {
   final int value;
 }
 
+/// 后端单据状态：INIT=100、USING=200、CLOSE=1000。
+enum FinanceOrderStatus {
+  init(100),
+  using(200),
+  closed(1000);
+
+  const FinanceOrderStatus(this.value);
+
+  final int value;
+}
+
+/// 后端状态机接口 action：using / close / reopen。
+enum FinanceOrderTransitionAction {
+  using('using'),
+  close('close'),
+  reopen('reopen');
+
+  const FinanceOrderTransitionAction(this.value);
+
+  final String value;
+}
+
 /// 单据 VO。
 class FortuneFinanceOrderVo {
   final int? orderId;
@@ -42,16 +64,17 @@ class FortuneFinanceOrderVo {
     this.remark,
   });
 
-  /// 是否“使用中”——用于按钮显隐。文档未给 int 值，仅按 statusDesc 文案判定；
-  /// 文案无法识别时返回 false（未知态不猜按钮），由后端兜底。
-  bool get isUsing {
-    final desc = statusDesc ?? '';
-    return desc.contains('使用');
-  }
+  bool get isInitial => status == FinanceOrderStatus.init.value;
 
-  bool get isClosed {
-    final desc = statusDesc ?? '';
-    return desc.contains('关闭') || desc.contains('已关');
+  bool get isUsing => status == FinanceOrderStatus.using.value;
+
+  bool get isClosed => status == FinanceOrderStatus.closed.value;
+
+  FinanceOrderTransitionAction? get nextTransitionAction {
+    if (isInitial) return FinanceOrderTransitionAction.using;
+    if (isUsing) return FinanceOrderTransitionAction.close;
+    if (isClosed) return FinanceOrderTransitionAction.reopen;
+    return null;
   }
 
   bool get isReimbursementOrder => type == FinanceOrderType.reimbursement.value;

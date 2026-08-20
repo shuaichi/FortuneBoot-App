@@ -81,7 +81,7 @@ class OrdersService {
     if (remark != null && remark.trim().isNotEmpty) {
       body['remark'] = remark.trim();
     }
-    return _api.post('$_base/add', data: body);
+    return _api.postForm('$_base/add', data: body);
   }
 
   /// 修改：PUT /modify（+orderId）。
@@ -101,7 +101,7 @@ class OrdersService {
     if (remark != null && remark.trim().isNotEmpty) {
       body['remark'] = remark.trim();
     }
-    return _api.put('$_base/modify', data: body);
+    return _api.putForm('$_base/modify', data: body);
   }
 
   /// 删除：DELETE /{bookId}/{orderId}/remove。

@@ -4,6 +4,32 @@ import 'package:fortuneboot/features/orders/data/orders_service.dart';
 import 'package:fortuneboot/features/orders/presentation/bloc/orders_bloc.dart';
 
 void main() {
+  test('transitions order with backend action path and reloads', () async {
+    final service = _FakeOrdersService(
+      const OrdersPage(
+        rows: [FortuneFinanceOrderVo(orderId: 1, type: 1, status: 200)],
+      ),
+    );
+    final bloc = OrdersBloc(bookId: 47, service: service);
+    addTearDown(bloc.close);
+
+    bloc.add(
+      const OrderTransitioned(
+        order: FortuneFinanceOrderVo(orderId: 99, type: 1, status: 100),
+        action: 'using',
+      ),
+    );
+    final state = await bloc.stream.firstWhere(
+      (state) => state.status == OrdersStatus.loaded,
+    );
+
+    expect(state.orders.single.orderId, 1);
+    expect(service.transitions.single.bookId, 47);
+    expect(service.transitions.single.orderId, 99);
+    expect(service.transitions.single.action, 'using');
+    expect(service.requests.single.type, FinanceOrderType.reimbursement.value);
+  });
+
   test('keeps only reimbursement orders when loading', () async {
     final service = _FakeOrdersService(
       const OrdersPage(
@@ -56,6 +82,7 @@ class _FakeOrdersService extends OrdersService {
 
   final OrdersPage _page;
   final requests = <({int? type})>[];
+  final transitions = <({int bookId, int orderId, String action})>[];
 
   @override
   Future<OrdersPage> getPage({
@@ -68,5 +95,14 @@ class _FakeOrdersService extends OrdersService {
   }) async {
     requests.add((type: type));
     return _page;
+  }
+
+  @override
+  Future<void> transition({
+    required int bookId,
+    required int orderId,
+    required String action,
+  }) async {
+    transitions.add((bookId: bookId, orderId: orderId, action: action));
   }
 }

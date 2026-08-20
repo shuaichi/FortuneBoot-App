@@ -189,121 +189,159 @@ class _OrdersPageState extends State<OrdersPage> {
     final finance = FxFinanceColors.of(context);
     return FxCard(
       onTap: () => _openForm(order: order),
-      child: Column(
+      child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Icon(
-                Icons.receipt_long_rounded,
-                size: 18,
-                color: palette.primary,
-              ),
-              const SizedBox(width: FxSpacing.sm),
-              Expanded(
-                child: Text(
-                  order.title ?? S.of(context).ordersUnnamedOrder,
-                  style: FxTypography.bodyStrong,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Icon(
+                      Icons.receipt_long_rounded,
+                      size: 18,
+                      color: palette.primary,
+                    ),
+                    const SizedBox(width: FxSpacing.sm),
+                    if ((order.typeDesc ?? '').isNotEmpty) ...[
+                      _tag(order.typeDesc!, palette.info),
+                      const SizedBox(width: FxSpacing.sm),
+                    ],
+                    Expanded(
+                      child: Text(
+                        order.title ?? S.of(context).ordersUnnamedOrder,
+                        style: FxTypography.bodyStrong,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-              if ((order.typeDesc ?? '').isNotEmpty)
-                _tag(order.typeDesc!, palette.info),
-            ],
-          ),
-          const SizedBox(height: FxSpacing.sm),
-          Row(
-            children: [
-              Text(
-                S.of(context).ordersOutLabel,
-                style: FxTypography.caption.copyWith(
-                  color: palette.textTertiary,
+                const SizedBox(height: FxSpacing.sm),
+                Wrap(
+                  spacing: FxSpacing.md,
+                  runSpacing: FxSpacing.xs,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  children: [
+                    _amountInline(
+                      context,
+                      label: S.of(context).ordersOutLabel,
+                      amount: order.outAmount ?? 0,
+                      color: finance.expense,
+                    ),
+                    _amountInline(
+                      context,
+                      label: S.of(context).ordersInLabel,
+                      amount: order.inAmount ?? 0,
+                      color: finance.income,
+                    ),
+                  ],
                 ),
-              ),
-              FxMoneyText(
-                amount: order.outAmount ?? 0,
-                currencyCode: _currency,
-                fontSize: 13,
-                color: finance.expense,
-              ),
-              const SizedBox(width: FxSpacing.md),
-              Text(
-                S.of(context).ordersInLabel,
-                style: FxTypography.caption.copyWith(
-                  color: palette.textTertiary,
-                ),
-              ),
-              FxMoneyText(
-                amount: order.inAmount ?? 0,
-                currencyCode: _currency,
-                fontSize: 13,
-                color: finance.income,
-              ),
-              const Spacer(),
-              if ((order.statusDesc ?? '').isNotEmpty)
-                _tag(
-                  order.statusDesc!,
-                  order.isUsing ? palette.success : palette.textTertiary,
-                ),
-            ],
-          ),
-          const SizedBox(height: FxSpacing.sm),
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  _timeLine(context, order),
-                  style: FxTypography.caption.copyWith(
-                    color: palette.textTertiary,
+                const SizedBox(height: FxSpacing.sm),
+                if ((order.submitTime ?? '').isNotEmpty)
+                  _timeText(
+                    context,
+                    S.of(context).ordersSubmitTime(order.submitTime!),
                   ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-              ..._actionButtons(context, order),
-            ],
+                if ((order.closeTime ?? '').isNotEmpty) ...[
+                  const SizedBox(height: FxSpacing.xs),
+                  _timeText(
+                    context,
+                    S.of(context).ordersCloseTime(order.closeTime!),
+                  ),
+                ],
+              ],
+            ),
           ),
+          const SizedBox(width: FxSpacing.md),
+          _metaActionsColumn(context, order),
         ],
       ),
     );
   }
 
-  String _timeLine(BuildContext context, FortuneFinanceOrderVo order) {
-    final parts = <String>[];
-    if ((order.submitTime ?? '').isNotEmpty) {
-      parts.add(S.of(context).ordersSubmitTime(order.submitTime!));
-    }
-    if ((order.closeTime ?? '').isNotEmpty) {
-      parts.add(S.of(context).ordersCloseTime(order.closeTime!));
-    }
-    return parts.join(' · ');
+  Widget _amountInline(
+    BuildContext context, {
+    required String label,
+    required double amount,
+    required Color color,
+  }) {
+    final palette = FxPalette.of(context);
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          label,
+          style: FxTypography.caption.copyWith(color: palette.textTertiary),
+        ),
+        FxMoneyText(
+          amount: amount,
+          currencyCode: _currency,
+          fontSize: 13,
+          color: color,
+        ),
+      ],
+    );
   }
 
-  /// 状态机按钮：使用中→[关闭]；已关闭→[重开]。附删除。
+  Widget _timeText(BuildContext context, String text) {
+    final palette = FxPalette.of(context);
+    return Text(
+      text,
+      style: FxTypography.caption.copyWith(color: palette.textTertiary),
+      maxLines: 1,
+      overflow: TextOverflow.ellipsis,
+    );
+  }
+
+  Widget _metaActionsColumn(BuildContext context, FortuneFinanceOrderVo order) {
+    final chips = <Widget>[];
+    if ((order.statusDesc ?? '').isNotEmpty) {
+      chips.add(_tag(order.statusDesc!, _statusColor(context, order)));
+    }
+    chips.addAll(_actionButtons(context, order));
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        for (var i = 0; i < chips.length; i++) ...[
+          if (i > 0) const SizedBox(height: FxSpacing.sm),
+          chips[i],
+        ],
+      ],
+    );
+  }
+
+  Color _statusColor(BuildContext context, FortuneFinanceOrderVo order) {
+    final palette = FxPalette.of(context);
+    if (order.isUsing) return palette.success;
+    if (order.isInitial) return palette.textTertiary;
+    if (order.isClosed) return palette.textTertiary;
+    return palette.textTertiary;
+  }
+
+  /// 状态机按钮：初始化→[使用]；使用中→[关闭]；已关闭→[重开]。附删除。
   List<Widget> _actionButtons(
     BuildContext context,
     FortuneFinanceOrderVo order,
   ) {
     final buttons = <Widget>[];
-    if (order.isUsing) {
+    final action = order.nextTransitionAction;
+    if (action != null) {
       buttons.add(
-        _miniButton(context, S.of(context).ordersClose, () {
-          HapticFeedback.selectionClick();
-          _bloc.add(OrderTransitioned(order: order, action: 'close'));
-        }),
+        _miniButton(
+          context,
+          _transitionLabel(context, action),
+          () {
+            HapticFeedback.selectionClick();
+            _bloc.add(OrderTransitioned(order: order, action: action.value));
+          },
+          color: _transitionColor(context, action),
+        ),
       );
-      buttons.add(const SizedBox(width: FxSpacing.sm));
-    } else if (order.isClosed) {
-      buttons.add(
-        _miniButton(context, S.of(context).ordersReopen, () {
-          HapticFeedback.selectionClick();
-          _bloc.add(OrderTransitioned(order: order, action: 'reopen'));
-        }),
-      );
-      buttons.add(const SizedBox(width: FxSpacing.sm));
     }
-    // 未知/无法识别的状态：不猜测流转按钮，仅保留删除，避免对已关闭单据非法流转。
+    // 未知状态：不猜测流转按钮，仅保留删除，避免非法流转。
     buttons.add(
       _miniButton(
         context,
@@ -315,14 +353,38 @@ class _OrdersPageState extends State<OrdersPage> {
     return buttons;
   }
 
+  String _transitionLabel(
+    BuildContext context,
+    FinanceOrderTransitionAction action,
+  ) {
+    return switch (action) {
+      FinanceOrderTransitionAction.using => S.of(context).ordersUse,
+      FinanceOrderTransitionAction.close => S.of(context).ordersClose,
+      FinanceOrderTransitionAction.reopen => S.of(context).ordersReopen,
+    };
+  }
+
+  Color _transitionColor(
+    BuildContext context,
+    FinanceOrderTransitionAction action,
+  ) {
+    final palette = FxPalette.of(context);
+    return switch (action) {
+      FinanceOrderTransitionAction.using => palette.success,
+      FinanceOrderTransitionAction.close => palette.warning,
+      FinanceOrderTransitionAction.reopen => palette.info,
+    };
+  }
+
   Widget _miniButton(
     BuildContext context,
     String label,
     VoidCallback onTap, {
     bool danger = false,
+    Color? color,
   }) {
     final palette = FxPalette.of(context);
-    final color = danger ? palette.danger : palette.primary;
+    final resolvedColor = color ?? (danger ? palette.danger : palette.primary);
     return Semantics(
       button: true,
       label: label,
@@ -336,13 +398,13 @@ class _OrdersPageState extends State<OrdersPage> {
               vertical: FxSpacing.xs,
             ),
             decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.1),
+              color: resolvedColor.withValues(alpha: 0.1),
               borderRadius: FxRadius.pillBorder,
             ),
             child: Text(
               label,
               style: FxTypography.label.copyWith(
-                color: color,
+                color: resolvedColor,
                 fontWeight: FontWeight.w600,
               ),
             ),

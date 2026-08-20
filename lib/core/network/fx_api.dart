@@ -61,8 +61,32 @@ class FxApi {
     return unwrapRaw(res);
   }
 
+  Future<dynamic> postForm(
+    String path, {
+    required Map<String, dynamic> data,
+  }) async {
+    final res = await dio.post<dynamic>(
+      path,
+      data: data,
+      options: Options(contentType: Headers.formUrlEncodedContentType),
+    );
+    return unwrapRaw(res);
+  }
+
   Future<dynamic> put(String path, {dynamic data}) async {
     final res = await dio.put<dynamic>(path, data: data);
+    return unwrapRaw(res);
+  }
+
+  Future<dynamic> putForm(
+    String path, {
+    required Map<String, dynamic> data,
+  }) async {
+    final res = await dio.put<dynamic>(
+      path,
+      data: data,
+      options: Options(contentType: Headers.formUrlEncodedContentType),
+    );
     return unwrapRaw(res);
   }
 
