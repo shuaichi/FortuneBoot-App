@@ -40,11 +40,17 @@ class _PayeesPageState extends State<PayeesPage> {
       _showToast(S.of(context).payeesSelectBookFirst);
       return;
     }
+    final formKey = GlobalKey<PayeeFormSheetState>();
     final changed = await FxSheet.show<bool>(
       context,
       title: payee == null ? S.of(context).payeesAdd : S.of(context).payeesEdit,
       expand: true,
+      submitLabel: payee == null
+          ? S.of(context).payeesCreate
+          : S.of(context).payeesSaveEdit,
+      onSubmit: () => formKey.currentState?.submit(),
       child: PayeeFormSheet(
+        key: formKey,
         service: _service,
         bookId: bookId,
         payee: payee,

@@ -105,7 +105,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
       context,
       title: S.of(context).profileEditTitle,
       expand: true,
-      expandHeightFactor: 0.82,
+      expandHeightFactor: FxSheet.pickerHeightFactor,
       child: _ProfileDetailsEditSheet(
         profile: widget.profile,
         service: _service,

@@ -274,6 +274,8 @@ class _BillsPageState extends State<BillsPage> {
     FxSheet.show<void>(
       context,
       title: S.of(context).billsFilterTitle,
+      scrollable: true,
+      maxHeightFactor: FxSheet.pickerHeightFactor,
       child: BillsFilterSheet(
         initial: state.filter,
         bookId: _activeBookId,
@@ -697,7 +699,9 @@ class _BillsPageState extends State<BillsPage> {
             child: ListView(
               children: [
                 SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.5,
+                  height:
+                      MediaQuery.of(context).size.height *
+                      FxSheet.hintHeightFactor,
                   child: FxStateView.empty(
                     message: S.of(context).billsEmpty,
                     icon: Icons.receipt_long_rounded,

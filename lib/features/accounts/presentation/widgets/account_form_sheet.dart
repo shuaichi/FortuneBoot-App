@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:fortuneboot/core/network/fx_api.dart';
 import 'package:fortuneboot/features/accounts/data/account_models.dart';
 import 'package:fortuneboot/features/accounts/data/account_service.dart';
-import 'package:fortuneboot/fx/components/fx_button.dart';
 import 'package:fortuneboot/fx/components/fx_chip.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
@@ -35,10 +34,10 @@ class AccountFormSheet extends StatefulWidget {
   bool get isEdit => account != null;
 
   @override
-  State<AccountFormSheet> createState() => _AccountFormSheetState();
+  State<AccountFormSheet> createState() => AccountFormSheetState();
 }
 
-class _AccountFormSheetState extends State<AccountFormSheet> {
+class AccountFormSheetState extends State<AccountFormSheet> {
   late final TextEditingController _nameCtrl;
   late final TextEditingController _cardNoCtrl;
   late final TextEditingController _balanceCtrl;
@@ -146,6 +145,17 @@ class _AccountFormSheetState extends State<AccountFormSheet> {
       if (apr != null) body['apr'] = apr;
     }
     return body;
+  }
+
+  String get submitLabel => widget.isEdit
+      ? S.of(context).accountsSaveChanges
+      : S.of(context).accountsCreateAccount;
+
+  bool get isSubmitting => _submitting;
+
+  Future<void> submit() {
+    if (_submitting) return Future<void>.value();
+    return _submit();
   }
 
   Future<void> _submit() async {
@@ -294,15 +304,6 @@ class _AccountFormSheetState extends State<AccountFormSheet> {
               ),
             ),
           ],
-          const SizedBox(height: FxSpacing.xl),
-          FxButton(
-            label: widget.isEdit
-                ? S.of(context).accountsSaveChanges
-                : S.of(context).accountsCreateAccount,
-            expand: true,
-            loading: _submitting,
-            onPressed: _submitting ? null : _submit,
-          ),
         ],
       ),
     );

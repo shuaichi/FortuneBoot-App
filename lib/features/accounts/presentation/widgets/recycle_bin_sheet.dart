@@ -8,6 +8,7 @@ import 'package:fortuneboot/features/accounts/data/account_service.dart';
 import 'package:fortuneboot/features/accounts/presentation/widgets/account_menu.dart';
 import 'package:fortuneboot/fx/components/fx_icon_button.dart';
 import 'package:fortuneboot/fx/components/fx_money_text.dart';
+import 'package:fortuneboot/fx/components/fx_sheet.dart';
 import 'package:fortuneboot/fx/components/fx_state_view.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
@@ -116,7 +117,7 @@ class _RecycleBinSheetState extends State<RecycleBinSheet> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.6,
+      height: MediaQuery.of(context).size.height * FxSheet.pickerHeightFactor,
       child: _buildBody(),
     );
   }

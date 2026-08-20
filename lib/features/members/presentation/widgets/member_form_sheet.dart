@@ -3,7 +3,6 @@ import 'package:fortuneboot/core/network/fx_api.dart';
 import 'package:fortuneboot/features/manage_shared/manage_menu.dart';
 import 'package:fortuneboot/features/members/data/member_models.dart';
 import 'package:fortuneboot/features/members/data/member_service.dart';
-import 'package:fortuneboot/fx/components/fx_button.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
@@ -25,10 +24,10 @@ class MemberFormSheet extends StatefulWidget {
   bool get isEdit => member != null;
 
   @override
-  State<MemberFormSheet> createState() => _MemberFormSheetState();
+  State<MemberFormSheet> createState() => MemberFormSheetState();
 }
 
-class _MemberFormSheetState extends State<MemberFormSheet> {
+class MemberFormSheetState extends State<MemberFormSheet> {
   late final TextEditingController _nameCtrl;
   late final TextEditingController _sortCtrl;
   late final TextEditingController _remarkCtrl;
@@ -53,6 +52,17 @@ class _MemberFormSheetState extends State<MemberFormSheet> {
     _sortCtrl.dispose();
     _remarkCtrl.dispose();
     super.dispose();
+  }
+
+  String get submitLabel => widget.isEdit
+      ? S.of(context).membersSaveEdit
+      : S.of(context).membersCreate;
+
+  bool get isSubmitting => _submitting;
+
+  Future<void> submit() {
+    if (_submitting) return Future<void>.value();
+    return _submit();
   }
 
   Future<void> _submit() async {
@@ -145,15 +155,6 @@ class _MemberFormSheetState extends State<MemberFormSheet> {
               style: FxTypography.caption.copyWith(color: palette.danger),
             ),
           ],
-          const SizedBox(height: FxSpacing.xl),
-          FxButton(
-            label: widget.isEdit
-                ? S.of(context).membersSaveEdit
-                : S.of(context).membersCreate,
-            expand: true,
-            loading: _submitting,
-            onPressed: _submitting ? null : _submit,
-          ),
         ],
       ),
     );

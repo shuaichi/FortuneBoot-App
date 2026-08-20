@@ -26,7 +26,7 @@ class SessionSwitcherSheet extends StatelessWidget {
       context,
       title: S.of(context).booksManageTitle,
       scrollable: true,
-      maxHeightFactor: 0.72,
+      maxHeightFactor: FxSheet.detailHeightFactor,
       child: SessionSwitcherSheet(cubit: cubit),
     );
   }

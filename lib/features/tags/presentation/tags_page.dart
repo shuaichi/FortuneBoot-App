@@ -50,11 +50,17 @@ class _TagsPageState extends State<TagsPage> {
       _showToast(S.of(context).tagsSelectBookFirst);
       return;
     }
+    final formKey = GlobalKey<TagFormSheetState>();
     final changed = await FxSheet.show<bool>(
       context,
       title: tag == null ? S.of(context).tagsAdd : S.of(context).tagsEdit,
       expand: true,
+      submitLabel: tag == null
+          ? S.of(context).tagsCreate
+          : S.of(context).tagsSaveEdit,
+      onSubmit: () => formKey.currentState?.submit(),
       child: TagFormSheet(
+        key: formKey,
         service: _service,
         bookId: bookId,
         flatTags: _flatten(_bloc.state.tree),

@@ -177,7 +177,9 @@ class _RecurringPageState extends State<RecurringPage> {
           child: ListView(
             children: [
               SizedBox(
-                height: MediaQuery.of(context).size.height * 0.5,
+                height:
+                    MediaQuery.of(context).size.height *
+                    FxSheet.hintHeightFactor,
                 child: FxStateView.empty(
                   message: S.of(context).recurringEmpty,
                   icon: Icons.autorenew_rounded,

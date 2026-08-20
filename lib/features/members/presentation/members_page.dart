@@ -40,13 +40,23 @@ class _MembersPageState extends State<MembersPage> {
       _showToast(S.of(context).membersSelectBookFirst);
       return;
     }
+    final formKey = GlobalKey<MemberFormSheetState>();
     final changed = await FxSheet.show<bool>(
       context,
       title: member == null
           ? S.of(context).membersAdd
           : S.of(context).membersEdit,
       expand: true,
-      child: MemberFormSheet(service: _service, bookId: bookId, member: member),
+      submitLabel: member == null
+          ? S.of(context).membersCreate
+          : S.of(context).membersSaveEdit,
+      onSubmit: () => formKey.currentState?.submit(),
+      child: MemberFormSheet(
+        key: formKey,
+        service: _service,
+        bookId: bookId,
+        member: member,
+      ),
     );
     if (changed == true && mounted) _bloc.add(const MembersMutated());
   }

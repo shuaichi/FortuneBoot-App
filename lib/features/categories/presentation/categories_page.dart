@@ -47,13 +47,19 @@ class _CategoriesPageState extends State<CategoriesPage> {
       _showToast(S.of(context).categoriesSelectBookFirst);
       return;
     }
+    final formKey = GlobalKey<CategoryFormSheetState>();
     final changed = await FxSheet.show<bool>(
       context,
       title: category == null
           ? S.of(context).categoriesAdd
           : S.of(context).categoriesEdit,
       expand: true,
+      submitLabel: category == null
+          ? S.of(context).categoriesCreate
+          : S.of(context).categoriesSaveEdit,
+      onSubmit: () => formKey.currentState?.submit(),
       child: CategoryFormSheet(
+        key: formKey,
         service: _service,
         bookId: bookId,
         tree: _bloc.state.tree,

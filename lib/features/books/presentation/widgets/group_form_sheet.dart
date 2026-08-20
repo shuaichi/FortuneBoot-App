@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:fortuneboot/core/network/fx_api.dart';
 import 'package:fortuneboot/core/session/session_models.dart';
 import 'package:fortuneboot/features/books/data/books_service.dart';
-import 'package:fortuneboot/fx/components/fx_button.dart';
 import 'package:fortuneboot/fx/components/fx_chip.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
@@ -20,10 +19,10 @@ class GroupFormSheet extends StatefulWidget {
   bool get isEdit => group != null;
 
   @override
-  State<GroupFormSheet> createState() => _GroupFormSheetState();
+  State<GroupFormSheet> createState() => GroupFormSheetState();
 }
 
-class _GroupFormSheetState extends State<GroupFormSheet> {
+class GroupFormSheetState extends State<GroupFormSheet> {
   late final TextEditingController _nameCtrl;
   late final TextEditingController _remarkCtrl;
   String? _currency;
@@ -63,6 +62,17 @@ class _GroupFormSheetState extends State<GroupFormSheet> {
     _nameCtrl.dispose();
     _remarkCtrl.dispose();
     super.dispose();
+  }
+
+  String get submitLabel => widget.isEdit
+      ? S.of(context).booksSaveChanges
+      : S.of(context).booksCreateGroup;
+
+  bool get isSubmitting => _submitting;
+
+  Future<void> submit() {
+    if (_submitting) return Future<void>.value();
+    return _submit();
   }
 
   Future<void> _submit() async {
@@ -155,15 +165,6 @@ class _GroupFormSheetState extends State<GroupFormSheet> {
               ),
             ),
           ],
-          const SizedBox(height: FxSpacing.xl),
-          FxButton(
-            label: widget.isEdit
-                ? S.of(context).booksSaveChanges
-                : S.of(context).booksCreateGroup,
-            expand: true,
-            loading: _submitting,
-            onPressed: _submitting ? null : _submit,
-          ),
         ],
       ),
     );

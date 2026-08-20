@@ -58,13 +58,23 @@ class _GoodsPageState extends State<GoodsPage> {
       );
       return;
     }
+    final formKey = GlobalKey<GoodsFormSheetState>();
     final changed = await FxSheet.show<bool>(
       context,
       title: goods == null
           ? S.of(context).goodsAddTitle
           : S.of(context).goodsEditTitle,
       expand: true,
-      child: GoodsFormSheet(service: _service, bookId: bookId, goods: goods),
+      submitLabel: goods == null
+          ? S.of(context).goodsAddTitle
+          : S.of(context).goodsSaveChanges,
+      onSubmit: () => formKey.currentState?.submit(),
+      child: GoodsFormSheet(
+        key: formKey,
+        service: _service,
+        bookId: bookId,
+        goods: goods,
+      ),
     );
     if (changed == true && mounted) _bloc.add(const GoodsMutated());
   }
@@ -74,8 +84,8 @@ class _GoodsPageState extends State<GoodsPage> {
       context,
       title: goods.goodsName ?? S.of(context).goodsDetailTitle,
       scrollable: true,
-      minHeightFactor: 0.4,
-      maxHeightFactor: 0.72,
+      minHeightFactor: FxSheet.hintHeightFactor,
+      maxHeightFactor: FxSheet.detailHeightFactor,
       child: GoodsDetailSheet(goods: goods, currencyCode: _currency),
     );
   }
@@ -274,7 +284,9 @@ class _GoodsPageState extends State<GoodsPage> {
                 ),
               ),
               SizedBox(
-                height: MediaQuery.of(context).size.height * 0.3,
+                height:
+                    MediaQuery.of(context).size.height *
+                    FxSheet.mediumHeightFactor,
                 child: FxStateView.empty(
                   message: S.of(context).goodsEmptyHint,
                   icon: Icons.inventory_2_outlined,

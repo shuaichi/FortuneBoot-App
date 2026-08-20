@@ -3,7 +3,6 @@ import 'package:fortuneboot/core/network/fx_api.dart';
 import 'package:fortuneboot/features/categories/data/category_models.dart';
 import 'package:fortuneboot/features/categories/data/category_service.dart';
 import 'package:fortuneboot/features/manage_shared/manage_menu.dart';
-import 'package:fortuneboot/fx/components/fx_button.dart';
 import 'package:fortuneboot/fx/components/fx_chip.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
@@ -33,10 +32,10 @@ class CategoryFormSheet extends StatefulWidget {
   bool get isEdit => category != null;
 
   @override
-  State<CategoryFormSheet> createState() => _CategoryFormSheetState();
+  State<CategoryFormSheet> createState() => CategoryFormSheetState();
 }
 
-class _CategoryFormSheetState extends State<CategoryFormSheet> {
+class CategoryFormSheetState extends State<CategoryFormSheet> {
   late final TextEditingController _nameCtrl;
   late final TextEditingController _sortCtrl;
   late final TextEditingController _remarkCtrl;
@@ -76,6 +75,17 @@ class _CategoryFormSheetState extends State<CategoryFormSheet> {
             c.categoryId != widget.category?.categoryId,
       )
       .toList();
+
+  String get submitLabel => widget.isEdit
+      ? S.of(context).categoriesSaveEdit
+      : S.of(context).categoriesCreate;
+
+  bool get isSubmitting => _submitting;
+
+  Future<void> submit() {
+    if (_submitting) return Future<void>.value();
+    return _submit();
+  }
 
   Future<void> _submit() async {
     if (_nameCtrl.text.trim().isEmpty) {
@@ -176,15 +186,6 @@ class _CategoryFormSheetState extends State<CategoryFormSheet> {
               ),
             ),
           ],
-          const SizedBox(height: FxSpacing.xl),
-          FxButton(
-            label: widget.isEdit
-                ? S.of(context).categoriesSaveEdit
-                : S.of(context).categoriesCreate,
-            expand: true,
-            loading: _submitting,
-            onPressed: _submitting ? null : _submit,
-          ),
         ],
       ),
     );

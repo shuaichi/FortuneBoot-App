@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:fortuneboot/core/network/fx_api.dart';
 import 'package:fortuneboot/features/goods/data/goods_models.dart';
 import 'package:fortuneboot/features/goods/data/goods_service.dart';
-import 'package:fortuneboot/fx/components/fx_button.dart';
 import 'package:fortuneboot/fx/components/fx_card.dart';
 import 'package:fortuneboot/fx/components/fx_chip.dart';
 import 'package:fortuneboot/fx/components/fx_date_picker.dart';
@@ -32,10 +31,10 @@ class GoodsFormSheet extends StatefulWidget {
   bool get isEdit => goods != null;
 
   @override
-  State<GoodsFormSheet> createState() => _GoodsFormSheetState();
+  State<GoodsFormSheet> createState() => GoodsFormSheetState();
 }
 
-class _GoodsFormSheetState extends State<GoodsFormSheet> {
+class GoodsFormSheetState extends State<GoodsFormSheet> {
   static final DateFormat _day = DateFormat('yyyy-MM-dd');
 
   late final TextEditingController _nameCtrl;
@@ -165,6 +164,17 @@ class _GoodsFormSheetState extends State<GoodsFormSheet> {
     final remark = _remarkCtrl.text.trim();
     if (remark.isNotEmpty) body['remark'] = remark;
     return body;
+  }
+
+  String get submitLabel => widget.isEdit
+      ? S.of(context).goodsSaveChanges
+      : S.of(context).goodsAddTitle;
+
+  bool get isSubmitting => _submitting;
+
+  Future<void> submit() {
+    if (_submitting) return Future<void>.value();
+    return _submit();
   }
 
   Future<void> _submit() async {
@@ -444,15 +454,6 @@ class _GoodsFormSheetState extends State<GoodsFormSheet> {
               style: FxTypography.caption.copyWith(color: palette.danger),
             ),
           ],
-          const SizedBox(height: FxSpacing.xl),
-          FxButton(
-            label: widget.isEdit
-                ? S.of(context).goodsSaveChanges
-                : S.of(context).goodsAddTitle,
-            expand: true,
-            loading: _submitting,
-            onPressed: _submitting ? null : _submit,
-          ),
         ],
       ),
     );

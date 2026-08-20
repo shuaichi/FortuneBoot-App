@@ -24,8 +24,8 @@ class BillDetailFlow {
     FxSheet.show<void>(
       context,
       scrollable: true,
-      minHeightFactor: 0.4,
-      maxHeightFactor: 0.72,
+      minHeightFactor: FxSheet.hintHeightFactor,
+      maxHeightFactor: FxSheet.detailHeightFactor,
       child: BillDetailSheet(bill: bill, service: _service),
       footer: BillDetailActions(
         bill: bill,

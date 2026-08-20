@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:fortuneboot/core/network/fx_api.dart';
 import 'package:fortuneboot/features/orders/data/orders_models.dart';
 import 'package:fortuneboot/features/orders/data/orders_service.dart';
-import 'package:fortuneboot/fx/components/fx_button.dart';
 import 'package:fortuneboot/fx/components/fx_chip.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
@@ -26,10 +25,10 @@ class OrderFormSheet extends StatefulWidget {
   bool get isEdit => order != null;
 
   @override
-  State<OrderFormSheet> createState() => _OrderFormSheetState();
+  State<OrderFormSheet> createState() => OrderFormSheetState();
 }
 
-class _OrderFormSheetState extends State<OrderFormSheet> {
+class OrderFormSheetState extends State<OrderFormSheet> {
   late final TextEditingController _titleCtrl;
   late final TextEditingController _remarkCtrl;
 
@@ -49,6 +48,17 @@ class _OrderFormSheetState extends State<OrderFormSheet> {
     _titleCtrl.dispose();
     _remarkCtrl.dispose();
     super.dispose();
+  }
+
+  String get submitLabel => widget.isEdit
+      ? S.of(context).ordersSaveChanges
+      : S.of(context).ordersCreateOrder;
+
+  bool get isSubmitting => _submitting;
+
+  Future<void> submit() {
+    if (_submitting) return Future<void>.value();
+    return _submit();
   }
 
   Future<void> _submit() async {
@@ -130,15 +140,6 @@ class _OrderFormSheetState extends State<OrderFormSheet> {
               style: FxTypography.caption.copyWith(color: palette.danger),
             ),
           ],
-          const SizedBox(height: FxSpacing.xl),
-          FxButton(
-            label: widget.isEdit
-                ? S.of(context).ordersSaveChanges
-                : S.of(context).ordersCreateOrder,
-            expand: true,
-            loading: _submitting,
-            onPressed: _submitting ? null : _submit,
-          ),
         ],
       ),
     );

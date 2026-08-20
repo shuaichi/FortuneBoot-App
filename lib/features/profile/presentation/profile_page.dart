@@ -528,7 +528,7 @@ class _ProfileView extends StatelessWidget {
       context,
       title: S.of(context).profileMonthStartDay,
       child: SizedBox(
-        height: MediaQuery.of(context).size.height * 0.58,
+        height: MediaQuery.of(context).size.height * FxSheet.pickerHeightFactor,
         child: ListView.builder(
           itemCount: 31,
           itemBuilder: (context, index) {
@@ -815,7 +815,7 @@ class _ProfileView extends StatelessWidget {
       context,
       title: S.of(context).profileDonate,
       scrollable: true,
-      maxHeightFactor: 0.82,
+      maxHeightFactor: FxSheet.pickerHeightFactor,
       child: Padding(
         padding: const EdgeInsets.fromLTRB(
           FxSpacing.lg,

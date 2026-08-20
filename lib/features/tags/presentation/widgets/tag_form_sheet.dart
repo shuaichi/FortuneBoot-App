@@ -3,7 +3,6 @@ import 'package:fortuneboot/core/network/fx_api.dart';
 import 'package:fortuneboot/features/manage_shared/manage_menu.dart';
 import 'package:fortuneboot/features/tags/data/tag_models.dart';
 import 'package:fortuneboot/features/tags/data/tag_service.dart';
-import 'package:fortuneboot/fx/components/fx_button.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
@@ -36,10 +35,10 @@ class TagFormSheet extends StatefulWidget {
   bool get isEdit => tag != null;
 
   @override
-  State<TagFormSheet> createState() => _TagFormSheetState();
+  State<TagFormSheet> createState() => TagFormSheetState();
 }
 
-class _TagFormSheetState extends State<TagFormSheet> {
+class TagFormSheetState extends State<TagFormSheet> {
   late final TextEditingController _nameCtrl;
   late final TextEditingController _sortCtrl;
   late final TextEditingController _remarkCtrl;
@@ -98,6 +97,16 @@ class _TagFormSheetState extends State<TagFormSheet> {
     return widget.flatTags
         .where((t) => t.tagId != null && !excluded.contains(t.tagId))
         .toList();
+  }
+
+  String get submitLabel =>
+      widget.isEdit ? S.of(context).tagsSaveEdit : S.of(context).tagsCreate;
+
+  bool get isSubmitting => _submitting;
+
+  Future<void> submit() {
+    if (_submitting) return Future<void>.value();
+    return _submit();
   }
 
   Future<void> _submit() async {
@@ -205,15 +214,6 @@ class _TagFormSheetState extends State<TagFormSheet> {
               ),
             ),
           ],
-          const SizedBox(height: FxSpacing.xl),
-          FxButton(
-            label: widget.isEdit
-                ? S.of(context).tagsSaveEdit
-                : S.of(context).tagsCreate,
-            expand: true,
-            loading: _submitting,
-            onPressed: _submitting ? null : _submit,
-          ),
         ],
       ),
     );

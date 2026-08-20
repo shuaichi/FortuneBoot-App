@@ -45,13 +45,23 @@ class _OrdersPageState extends State<OrdersPage> {
       _showToast(S.of(context).ordersSelectBookFirst);
       return;
     }
+    final formKey = GlobalKey<OrderFormSheetState>();
     final changed = await FxSheet.show<bool>(
       context,
       title: order == null
           ? S.of(context).ordersAddTitle
           : S.of(context).ordersEditTitle,
       expand: true,
-      child: OrderFormSheet(service: _service, bookId: bookId, order: order),
+      submitLabel: order == null
+          ? S.of(context).ordersCreateOrder
+          : S.of(context).ordersSaveChanges,
+      onSubmit: () => formKey.currentState?.submit(),
+      child: OrderFormSheet(
+        key: formKey,
+        service: _service,
+        bookId: bookId,
+        order: order,
+      ),
     );
     if (changed == true && mounted) _bloc.add(const OrdersMutated());
   }
@@ -161,7 +171,9 @@ class _OrdersPageState extends State<OrdersPage> {
           child: ListView(
             children: [
               SizedBox(
-                height: MediaQuery.of(context).size.height * 0.5,
+                height:
+                    MediaQuery.of(context).size.height *
+                    FxSheet.hintHeightFactor,
                 child: FxStateView.empty(
                   message: S.of(context).ordersEmpty,
                   icon: Icons.receipt_long_outlined,

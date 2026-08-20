@@ -82,13 +82,19 @@ class _AccountsPageState extends State<AccountsPage> {
       );
       return;
     }
+    final formKey = GlobalKey<AccountFormSheetState>();
     final changed = await FxSheet.show<bool>(
       context,
       title: account == null
           ? S.of(context).accountsAddTitle
           : S.of(context).accountsEditTitle,
       expand: true,
+      submitLabel: account == null
+          ? S.of(context).accountsCreateAccount
+          : S.of(context).accountsSaveChanges,
+      onSubmit: () => formKey.currentState?.submit(),
       child: AccountFormSheet(
+        key: formKey,
         service: _service,
         groupId: groupId,
         defaultCurrency: _currency,
@@ -316,7 +322,9 @@ class _AccountsPageState extends State<AccountsPage> {
                 ),
               ),
               SizedBox(
-                height: MediaQuery.of(context).size.height * 0.3,
+                height:
+                    MediaQuery.of(context).size.height *
+                    FxSheet.mediumHeightFactor,
                 child: FxStateView.empty(
                   message: S.of(context).accountsEmptyHint,
                   icon: Icons.account_balance_wallet_outlined,

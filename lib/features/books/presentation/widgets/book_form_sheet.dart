@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:fortuneboot/core/network/fx_api.dart';
 import 'package:fortuneboot/core/session/session_models.dart';
 import 'package:fortuneboot/features/books/data/books_service.dart';
-import 'package:fortuneboot/fx/components/fx_button.dart';
 import 'package:fortuneboot/fx/components/fx_chip.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
@@ -28,10 +27,10 @@ class BookFormSheet extends StatefulWidget {
   bool get isEdit => book != null;
 
   @override
-  State<BookFormSheet> createState() => _BookFormSheetState();
+  State<BookFormSheet> createState() => BookFormSheetState();
 }
 
-class _BookFormSheetState extends State<BookFormSheet> {
+class BookFormSheetState extends State<BookFormSheet> {
   late final TextEditingController _nameCtrl;
   late final TextEditingController _sortCtrl;
   late final TextEditingController _remarkCtrl;
@@ -84,6 +83,17 @@ class _BookFormSheetState extends State<BookFormSheet> {
     _sortCtrl.dispose();
     _remarkCtrl.dispose();
     super.dispose();
+  }
+
+  String get submitLabel => widget.isEdit
+      ? S.of(context).booksSaveChanges
+      : S.of(context).booksCreateBook;
+
+  bool get isSubmitting => _submitting;
+
+  Future<void> submit() {
+    if (_submitting) return Future<void>.value();
+    return _submit();
   }
 
   Future<void> _submit() async {
@@ -205,15 +215,6 @@ class _BookFormSheetState extends State<BookFormSheet> {
               ),
             ),
           ],
-          const SizedBox(height: FxSpacing.xl),
-          FxButton(
-            label: widget.isEdit
-                ? S.of(context).booksSaveChanges
-                : S.of(context).booksCreateBook,
-            expand: true,
-            loading: _submitting,
-            onPressed: _submitting ? null : _submit,
-          ),
         ],
       ),
     );

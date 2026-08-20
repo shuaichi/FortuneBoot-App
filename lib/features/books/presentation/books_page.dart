@@ -124,13 +124,22 @@ class _BooksPageState extends State<BooksPage> {
   }
 
   Future<void> _openGroupForm({ManagedGroup? group}) async {
+    final formKey = GlobalKey<GroupFormSheetState>();
     final changed = await FxSheet.show<bool>(
       context,
       title: group == null
           ? S.of(context).booksAddGroup
           : S.of(context).booksEditGroup,
       expand: true,
-      child: GroupFormSheet(service: _service, group: group?.group),
+      submitLabel: group == null
+          ? S.of(context).booksCreateGroup
+          : S.of(context).booksSaveChanges,
+      onSubmit: () => formKey.currentState?.submit(),
+      child: GroupFormSheet(
+        key: formKey,
+        service: _service,
+        group: group?.group,
+      ),
     );
     if (changed == true && mounted) {
       _showToast(
@@ -192,13 +201,19 @@ class _BooksPageState extends State<BooksPage> {
       _showToast(S.of(context).booksSelectGroupFirst);
       return;
     }
+    final formKey = GlobalKey<BookFormSheetState>();
     final changed = await FxSheet.show<bool>(
       context,
       title: book == null
           ? S.of(context).booksAddBook
           : S.of(context).booksEditBook,
       expand: true,
+      submitLabel: book == null
+          ? S.of(context).booksCreateBook
+          : S.of(context).booksSaveChanges,
+      onSubmit: () => formKey.currentState?.submit(),
       child: BookFormSheet(
+        key: formKey,
         service: _service,
         groupId: groupId,
         defaultCurrency: group?.defaultCurrency,

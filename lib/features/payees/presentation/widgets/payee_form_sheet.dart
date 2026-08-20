@@ -3,7 +3,6 @@ import 'package:fortuneboot/core/network/fx_api.dart';
 import 'package:fortuneboot/features/manage_shared/manage_menu.dart';
 import 'package:fortuneboot/features/payees/data/payee_models.dart';
 import 'package:fortuneboot/features/payees/data/payee_service.dart';
-import 'package:fortuneboot/fx/components/fx_button.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
@@ -28,10 +27,10 @@ class PayeeFormSheet extends StatefulWidget {
   bool get isEdit => payee != null;
 
   @override
-  State<PayeeFormSheet> createState() => _PayeeFormSheetState();
+  State<PayeeFormSheet> createState() => PayeeFormSheetState();
 }
 
-class _PayeeFormSheetState extends State<PayeeFormSheet> {
+class PayeeFormSheetState extends State<PayeeFormSheet> {
   late final TextEditingController _nameCtrl;
   late final TextEditingController _sortCtrl;
   late final TextEditingController _remarkCtrl;
@@ -61,6 +60,16 @@ class _PayeeFormSheetState extends State<PayeeFormSheet> {
     _sortCtrl.dispose();
     _remarkCtrl.dispose();
     super.dispose();
+  }
+
+  String get submitLabel =>
+      widget.isEdit ? S.of(context).payeesSaveEdit : S.of(context).payeesCreate;
+
+  bool get isSubmitting => _submitting;
+
+  Future<void> submit() {
+    if (_submitting) return Future<void>.value();
+    return _submit();
   }
 
   Future<void> _submit() async {
@@ -159,15 +168,6 @@ class _PayeeFormSheetState extends State<PayeeFormSheet> {
               style: FxTypography.caption.copyWith(color: palette.danger),
             ),
           ],
-          const SizedBox(height: FxSpacing.xl),
-          FxButton(
-            label: widget.isEdit
-                ? S.of(context).payeesSaveEdit
-                : S.of(context).payeesCreate,
-            expand: true,
-            loading: _submitting,
-            onPressed: _submitting ? null : _submit,
-          ),
         ],
       ),
     );
