@@ -7,6 +7,7 @@ import 'package:fortuneboot/features/goods/data/goods_models.dart';
 import 'package:fortuneboot/features/goods/data/goods_service.dart';
 import 'package:fortuneboot/fx/components/fx_button.dart';
 import 'package:fortuneboot/fx/components/fx_card.dart';
+import 'package:fortuneboot/fx/components/fx_chip.dart';
 import 'package:fortuneboot/fx/components/fx_date_picker.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
@@ -557,30 +558,7 @@ class _GoodsFormSheetState extends State<GoodsFormSheet> {
   }
 
   Widget _chip(String label, bool selected, VoidCallback onTap) {
-    final palette = FxPalette.of(context);
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: FxSpacing.md,
-          vertical: FxSpacing.sm,
-        ),
-        decoration: BoxDecoration(
-          color: selected ? palette.primaryContainer : palette.surfaceMuted,
-          borderRadius: FxRadius.pillBorder,
-          border: Border.all(
-            color: selected ? palette.primary : palette.border,
-          ),
-        ),
-        child: Text(
-          label,
-          style: FxTypography.label.copyWith(
-            color: selected ? palette.primary : palette.textSecondary,
-            fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
-          ),
-        ),
-      ),
-    );
+    return FxChip(label: label, selected: selected, onTap: onTap);
   }
 
   Widget _attachments() {

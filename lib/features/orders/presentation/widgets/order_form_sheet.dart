@@ -3,6 +3,7 @@ import 'package:fortuneboot/core/network/fx_api.dart';
 import 'package:fortuneboot/features/orders/data/orders_models.dart';
 import 'package:fortuneboot/features/orders/data/orders_service.dart';
 import 'package:fortuneboot/fx/components/fx_button.dart';
+import 'package:fortuneboot/fx/components/fx_chip.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
@@ -109,23 +110,12 @@ class _OrderFormSheetState extends State<OrderFormSheet> {
           ),
           const SizedBox(height: FxSpacing.md),
           _label(S.of(context).ordersType),
-          Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: FxSpacing.md,
-              vertical: FxSpacing.sm,
-            ),
-            decoration: BoxDecoration(
-              color: palette.primaryContainer,
-              borderRadius: FxRadius.pillBorder,
-              border: Border.all(color: palette.primary),
-            ),
-            child: Text(
-              S.of(context).ordersTypeReimbursement,
-              style: FxTypography.label.copyWith(
-                color: palette.primary,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
+          FxChip(
+            label: S.of(context).ordersTypeReimbursement,
+            selected: true,
+            enabled: false,
+            disabledOpacity: 1,
+            onTap: () {},
           ),
           const SizedBox(height: FxSpacing.md),
           _label(S.of(context).ordersRemarkOptional),

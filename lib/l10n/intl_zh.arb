@@ -1412,7 +1412,7 @@
   "billTypeReimburse": "报销",
   "billTypeFallback": "账单",
   "commonPleaseSelect": "请选择",
-  "billEditorValidateTransferAmount": "请输入转账金额",
+  "billEditorValidateTransferAmount": "转账金额不能为 0",
   "billEditorValidateTransferFrom": "请选择转出账户",
   "billEditorValidateTransferTo": "请选择转入账户",
   "billEditorValidateTransferSame": "转出与转入账户不能相同",

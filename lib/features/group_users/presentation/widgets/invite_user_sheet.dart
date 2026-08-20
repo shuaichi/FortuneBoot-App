@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fortuneboot/core/network/fx_api.dart';
 import 'package:fortuneboot/features/group_users/data/group_users_service.dart';
 import 'package:fortuneboot/fx/components/fx_button.dart';
+import 'package:fortuneboot/fx/components/fx_chip.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
@@ -147,34 +148,15 @@ class _InviteUserSheetState extends State<InviteUserSheet> {
   }
 
   Widget _roleSelector(BuildContext context) {
-    final palette = FxPalette.of(context);
     return Wrap(
       spacing: FxSpacing.sm,
       runSpacing: FxSpacing.sm,
       children: _roles.map((r) {
         final selected = r.value == _roleType;
-        return GestureDetector(
+        return FxChip(
+          label: r.label,
+          selected: selected,
           onTap: () => setState(() => _roleType = r.value),
-          child: Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: FxSpacing.md,
-              vertical: FxSpacing.sm,
-            ),
-            decoration: BoxDecoration(
-              color: selected ? palette.primaryContainer : palette.surfaceMuted,
-              borderRadius: FxRadius.pillBorder,
-              border: Border.all(
-                color: selected ? palette.primary : palette.border,
-              ),
-            ),
-            child: Text(
-              r.label,
-              style: FxTypography.label.copyWith(
-                color: selected ? palette.primary : palette.textSecondary,
-                fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
-              ),
-            ),
-          ),
         );
       }).toList(),
     );

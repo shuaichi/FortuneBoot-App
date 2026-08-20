@@ -3,6 +3,7 @@ import 'package:fortuneboot/core/network/fx_api.dart';
 import 'package:fortuneboot/features/accounts/data/account_models.dart';
 import 'package:fortuneboot/features/accounts/data/account_service.dart';
 import 'package:fortuneboot/fx/components/fx_button.dart';
+import 'package:fortuneboot/fx/components/fx_chip.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
@@ -308,44 +309,15 @@ class _AccountFormSheetState extends State<AccountFormSheet> {
   }
 
   Widget _typeSelector() {
-    final palette = FxPalette.of(context);
     return Wrap(
       spacing: FxSpacing.sm,
       children: AccountTypeMeta.ordered.map((meta) {
         final selected = meta.id == _accountType;
-        return GestureDetector(
+        return FxChip(
+          label: meta.localizedName(context),
+          icon: meta.icon,
+          selected: selected,
           onTap: () => setState(() => _accountType = meta.id),
-          child: Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: FxSpacing.md,
-              vertical: FxSpacing.sm,
-            ),
-            decoration: BoxDecoration(
-              color: selected ? palette.primaryContainer : palette.surfaceMuted,
-              borderRadius: FxRadius.pillBorder,
-              border: Border.all(
-                color: selected ? palette.primary : palette.border,
-              ),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(
-                  meta.icon,
-                  size: 16,
-                  color: selected ? palette.primary : palette.textSecondary,
-                ),
-                const SizedBox(width: FxSpacing.xs),
-                Text(
-                  meta.localizedName(context),
-                  style: FxTypography.label.copyWith(
-                    color: selected ? palette.primary : palette.textSecondary,
-                    fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
-                  ),
-                ),
-              ],
-            ),
-          ),
         );
       }).toList(),
     );

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:fortuneboot/features/recurring/data/cron_builder.dart';
+import 'package:fortuneboot/fx/components/fx_chip.dart';
 import 'package:fortuneboot/fx/components/fx_segmented.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
@@ -154,7 +154,7 @@ class CronScheduleEditor extends StatelessWidget {
                 next.add(d);
               }
               onChanged(spec.copyWith(weekdays: next));
-            });
+            }, multiSelect: true);
           }).toList(),
         ),
       ],
@@ -234,35 +234,21 @@ class CronScheduleEditor extends StatelessWidget {
     bool selected,
     VoidCallback onTap, {
     bool compact = false,
+    bool multiSelect = false,
   }) {
-    final palette = FxPalette.of(context);
-    return GestureDetector(
-      onTap: () {
-        HapticFeedback.selectionClick();
-        onTap();
-      },
-      child: Container(
-        constraints: compact ? const BoxConstraints(minWidth: 40) : null,
-        alignment: compact ? Alignment.center : null,
-        padding: EdgeInsets.symmetric(
-          horizontal: compact ? FxSpacing.sm : FxSpacing.md,
-          vertical: FxSpacing.sm,
-        ),
-        decoration: BoxDecoration(
-          color: selected ? palette.primaryContainer : palette.surfaceMuted,
-          borderRadius: FxRadius.pillBorder,
-          border: Border.all(
-            color: selected ? palette.primary : palette.border,
-          ),
-        ),
-        child: Text(
-          label,
-          style: FxTypography.label.copyWith(
-            color: selected ? palette.primary : palette.textSecondary,
-            fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
-          ),
-        ),
+    return FxChip(
+      label: label,
+      selected: selected,
+      multiSelect: multiSelect,
+      constraints: compact
+          ? const BoxConstraints(minWidth: 40, minHeight: 44)
+          : null,
+      alignment: compact ? Alignment.center : null,
+      padding: EdgeInsets.symmetric(
+        horizontal: compact ? FxSpacing.sm : FxSpacing.md,
+        vertical: FxSpacing.sm,
       ),
+      onTap: onTap,
     );
   }
 

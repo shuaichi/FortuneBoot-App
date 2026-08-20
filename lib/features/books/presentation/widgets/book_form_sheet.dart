@@ -3,6 +3,7 @@ import 'package:fortuneboot/core/network/fx_api.dart';
 import 'package:fortuneboot/core/session/session_models.dart';
 import 'package:fortuneboot/features/books/data/books_service.dart';
 import 'package:fortuneboot/fx/components/fx_button.dart';
+import 'package:fortuneboot/fx/components/fx_chip.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
@@ -225,7 +226,6 @@ class _BookFormSheetState extends State<BookFormSheet> {
     String? emptyCtrlText,
     ValueChanged<String>? onFreeText,
   }) {
-    final palette = FxPalette.of(context);
     if (items.isEmpty && onFreeText != null) {
       return TextField(
         controller: TextEditingController(text: emptyCtrlText),
@@ -238,26 +238,10 @@ class _BookFormSheetState extends State<BookFormSheet> {
       runSpacing: FxSpacing.sm,
       children: items.map((c) {
         final on = c.value == selected;
-        return GestureDetector(
+        return FxChip(
+          label: c.label,
+          selected: on,
           onTap: () => onTap(c.value),
-          child: Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: FxSpacing.md,
-              vertical: FxSpacing.sm,
-            ),
-            decoration: BoxDecoration(
-              color: on ? palette.primaryContainer : palette.surfaceMuted,
-              borderRadius: FxRadius.pillBorder,
-              border: Border.all(color: on ? palette.primary : palette.border),
-            ),
-            child: Text(
-              c.label,
-              style: FxTypography.label.copyWith(
-                color: on ? palette.primary : palette.textSecondary,
-                fontWeight: on ? FontWeight.w600 : FontWeight.w500,
-              ),
-            ),
-          ),
         );
       }).toList(),
     );

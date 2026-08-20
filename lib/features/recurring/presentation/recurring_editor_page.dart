@@ -9,6 +9,7 @@ import 'package:fortuneboot/features/recurring/data/template_options_service.dar
 import 'package:fortuneboot/features/recurring/presentation/widgets/cron_schedule_editor.dart';
 import 'package:fortuneboot/features/shared/data/bill_models.dart';
 import 'package:fortuneboot/fx/components/fx_button.dart';
+import 'package:fortuneboot/fx/components/fx_chip.dart';
 import 'package:fortuneboot/fx/components/fx_icon_button.dart';
 import 'package:fortuneboot/fx/components/fx_state_view.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
@@ -715,7 +716,7 @@ class _RecurringEditorPageState extends State<RecurringEditorPage> {
               _tagIds.add(o.id!);
             }
           });
-        });
+        }, multiSelect: true);
       }).toList(),
     );
   }
@@ -724,31 +725,14 @@ class _RecurringEditorPageState extends State<RecurringEditorPage> {
     BuildContext context,
     String label,
     bool selected,
-    VoidCallback onTap,
-  ) {
-    final palette = FxPalette.of(context);
-    return GestureDetector(
+    VoidCallback onTap, {
+    bool multiSelect = false,
+  }) {
+    return FxChip(
+      label: label,
+      selected: selected,
+      multiSelect: multiSelect,
       onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: FxSpacing.md,
-          vertical: FxSpacing.sm,
-        ),
-        decoration: BoxDecoration(
-          color: selected ? palette.primaryContainer : palette.surfaceMuted,
-          borderRadius: FxRadius.pillBorder,
-          border: Border.all(
-            color: selected ? palette.primary : palette.border,
-          ),
-        ),
-        child: Text(
-          label,
-          style: FxTypography.label.copyWith(
-            color: selected ? palette.primary : palette.textSecondary,
-            fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
-          ),
-        ),
-      ),
     );
   }
 

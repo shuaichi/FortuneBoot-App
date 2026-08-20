@@ -1410,7 +1410,7 @@
   "billTypeReimburse": "Reimburse",
   "billTypeFallback": "Bill",
   "commonPleaseSelect": "Please select",
-  "billEditorValidateTransferAmount": "Enter transfer amount",
+  "billEditorValidateTransferAmount": "Transfer amount cannot be 0",
   "billEditorValidateTransferFrom": "Select source account",
   "billEditorValidateTransferTo": "Select destination account",
   "billEditorValidateTransferSame": "Source and destination must differ",

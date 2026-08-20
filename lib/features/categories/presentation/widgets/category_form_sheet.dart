@@ -4,6 +4,7 @@ import 'package:fortuneboot/features/categories/data/category_models.dart';
 import 'package:fortuneboot/features/categories/data/category_service.dart';
 import 'package:fortuneboot/features/manage_shared/manage_menu.dart';
 import 'package:fortuneboot/fx/components/fx_button.dart';
+import 'package:fortuneboot/fx/components/fx_chip.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
@@ -201,38 +202,18 @@ class _CategoryFormSheetState extends State<CategoryFormSheet> {
   }
 
   Widget _chip(String label, int type, Color tint) {
-    final palette = FxPalette.of(context);
     final selected = _categoryType == type;
-    return GestureDetector(
-      onTap: widget.isEdit
-          ? null
-          : () => setState(() {
-              _categoryType = type;
-              _parentId = null; // 类型变了父级失效
-            }),
-      child: Opacity(
-        opacity: widget.isEdit && !selected ? 0.4 : 1,
-        child: Container(
-          padding: const EdgeInsets.symmetric(
-            horizontal: FxSpacing.md,
-            vertical: FxSpacing.sm,
-          ),
-          decoration: BoxDecoration(
-            color: selected
-                ? tint.withValues(alpha: 0.12)
-                : palette.surfaceMuted,
-            borderRadius: FxRadius.pillBorder,
-            border: Border.all(color: selected ? tint : palette.border),
-          ),
-          child: Text(
-            label,
-            style: FxTypography.label.copyWith(
-              color: selected ? tint : palette.textSecondary,
-              fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
-            ),
-          ),
-        ),
-      ),
+    return FxChip(
+      label: label,
+      selected: selected,
+      enabled: !widget.isEdit,
+      selectedColor: tint,
+      selectedBackgroundColor: tint.withValues(alpha: 0.12),
+      disabledOpacity: selected ? 1 : 0.4,
+      onTap: () => setState(() {
+        _categoryType = type;
+        _parentId = null; // 类型变了父级失效
+      }),
     );
   }
 
