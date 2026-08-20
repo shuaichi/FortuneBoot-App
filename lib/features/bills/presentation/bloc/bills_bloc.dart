@@ -62,18 +62,22 @@ class BillsBloc extends Bloc<BillsEvent, BillsState> {
   MonthWindow get _window =>
       MonthWindowResolver.resolveForAnchor(state.month, _monthStartDay);
 
-  BillDateRange get _effectiveDateRange =>
+  /// 列表默认是连续时间流；只有用户或跨页入口显式给出范围时才限制查询。
+  BillDateRange? get _queryDateRange => state.filter.dateRange;
+
+  /// 顶部账期汇总始终基于当前可见账期；与连续列表查询解耦。
+  BillDateRange get _statisticsDateRange =>
       state.filter.dateRange ??
       BillDateRange(start: _window.start, end: _window.end);
 
   BillQuery _buildQuery(int pageNum) {
     final f = state.filter;
-    final range = _effectiveDateRange;
+    final range = _queryDateRange;
     return BillQuery(
       bookId: _bookId!,
       pageNum: pageNum,
-      tradeTimeStartTime: range.startDate,
-      tradeTimeEndTime: range.endDate,
+      tradeTimeStartTime: range?.startDate,
+      tradeTimeEndTime: range?.endDate,
       billTypes: f.billTypes.isEmpty ? null : f.billTypes.toList(),
       amountMin: f.amountMin,
       amountMax: f.amountMax,
@@ -142,20 +146,8 @@ class BillsBloc extends Bloc<BillsEvent, BillsState> {
     BillsMonthChanged event,
     Emitter<BillsState> emit,
   ) async {
-    final m = MonthWindowResolver.shift(state.month, event.delta);
-    final window = MonthWindowResolver.resolveForAnchor(m, _monthStartDay);
-    emit(
-      state.copyWith(
-        month: m,
-        filter: state.filter.copyWith(
-          dateRange: BillDateRange(start: window.start, end: window.end),
-        ),
-        monthStatistics: const {},
-        clearStatistics: true,
-        clearPaginationError: true,
-      ),
-    );
-    await _loadFirstPage(emit);
+    final month = MonthWindowResolver.shift(state.month, event.delta);
+    emit(state.copyWith(month: month));
   }
 
   Future<void> _onMonthStartDayChanged(
@@ -475,7 +467,7 @@ class BillsBloc extends Bloc<BillsEvent, BillsState> {
 
   Future<BillStatistics?> _fetchStatistics() async {
     if (_bookId == null) return null;
-    final range = _effectiveDateRange;
+    final range = _statisticsDateRange;
     try {
       return await _service.getStatistics(
         bookId: _bookId!,
