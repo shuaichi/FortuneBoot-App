@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fortuneboot/core/money/fx_money_formatter.dart';
+import 'package:fortuneboot/core/preferences/preferences_cubit.dart';
 import 'package:fortuneboot/features/goods/data/goods_models.dart';
 import 'package:fortuneboot/fx/components/fx_money_text.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
@@ -18,6 +21,11 @@ class GoodsDetailSheet extends StatelessWidget {
     final palette = FxPalette.of(context);
     final finance = FxFinanceColors.of(context);
     final profit = goods.profit;
+    final hideAmounts = context
+        .watch<PreferencesCubit>()
+        .state
+        .dashboard
+        .hideAmounts;
     return Padding(
       padding: const EdgeInsets.fromLTRB(
         FxSpacing.lg,
@@ -28,12 +36,18 @@ class GoodsDetailSheet extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Row(
+          Wrap(
+            spacing: FxSpacing.md,
+            runSpacing: FxSpacing.sm,
+            crossAxisAlignment: WrapCrossAlignment.center,
             children: [
-              Expanded(
+              ConstrainedBox(
+                constraints: const BoxConstraints(minWidth: 180, maxWidth: 520),
                 child: Text(
                   goods.goodsName ?? S.of(context).goodsUnnamed,
                   style: FxTypography.title,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
               FxMoneyText(
@@ -41,6 +55,7 @@ class GoodsDetailSheet extends StatelessWidget {
                 currencyCode: currencyCode,
                 fontSize: 20,
                 color: palette.textPrimary,
+                masked: hideAmounts,
               ),
             ],
           ),
@@ -60,7 +75,7 @@ class GoodsDetailSheet extends StatelessWidget {
             _row(
               context,
               S.of(context).goodsStatDailyCost,
-              goods.dailyAverageCost!.toStringAsFixed(2),
+              _formatMoney(context, goods.dailyAverageCost!, hideAmounts),
             ),
           if ((goods.categoryName ?? '').isNotEmpty)
             _row(
@@ -100,19 +115,35 @@ class GoodsDetailSheet extends StatelessWidget {
             _row(
               context,
               S.of(context).goodsFieldSoldPrice,
-              goods.soldPrice!.toStringAsFixed(2),
+              _formatMoney(context, goods.soldPrice!, hideAmounts),
             ),
           if (profit != null)
             _row(
               context,
               S.of(context).goodsFieldProfit,
-              '${profit >= 0 ? '+' : ''}${profit.toStringAsFixed(2)}',
+              _formatMoney(context, profit, hideAmounts, showSign: true),
               valueColor: profit >= 0 ? finance.income : finance.expense,
             ),
           if ((goods.remark ?? '').isNotEmpty)
             _row(context, S.of(context).goodsFieldRemark, goods.remark!),
         ],
       ),
+    );
+  }
+
+  String _formatMoney(
+    BuildContext context,
+    double amount,
+    bool masked, {
+    bool showSign = false,
+  }) {
+    return FxMoneyFormatter.format(
+      amount,
+      locale: Localizations.localeOf(context).toString(),
+      showSign: showSign,
+      visibility: masked
+          ? FxAmountVisibility.hidden
+          : FxAmountVisibility.visible,
     );
   }
 

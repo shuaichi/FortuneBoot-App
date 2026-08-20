@@ -385,9 +385,7 @@ class _AccountFormSheetState extends State<AccountFormSheet> {
       padding: const EdgeInsets.symmetric(vertical: 2),
       child: Row(
         children: [
-          Expanded(
-            child: Text(_toggleLabel(field), style: FxTypography.body),
-          ),
+          Expanded(child: Text(_toggleLabel(field), style: FxTypography.body)),
           Switch.adaptive(
             value: value,
             activeColor: FxPalette.of(context).primary,

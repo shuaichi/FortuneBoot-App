@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fortuneboot/core/money/fx_money_formatter.dart';
 import 'package:fortuneboot/features/goods/data/goods_models.dart';
 import 'package:fortuneboot/fx/components/fx_card.dart';
 import 'package:fortuneboot/fx/components/fx_money_text.dart';
@@ -12,14 +13,18 @@ import 'package:fortuneboot/generated/l10n.dart';
 class GoodsCard extends StatelessWidget {
   final FortuneGoodsKeeperVo goods;
   final String? currencyCode;
+  final bool masked;
   final VoidCallback? onTap;
+  final VoidCallback? onMenu;
   final VoidCallback? onLongPress;
 
   const GoodsCard({
     super.key,
     required this.goods,
     this.currencyCode,
+    this.masked = false,
     this.onTap,
+    this.onMenu,
     this.onLongPress,
   });
 
@@ -35,11 +40,19 @@ class GoodsCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
-              goods.goodsName ?? S.of(context).goodsUnnamed,
-              style: FxTypography.bodyStrong,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Text(
+                    goods.goodsName ?? S.of(context).goodsUnnamed,
+                    style: FxTypography.bodyStrong,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                if (onMenu != null) _menuButton(context),
+              ],
             ),
             const SizedBox(height: FxSpacing.xs),
             FxMoneyText(
@@ -47,6 +60,7 @@ class GoodsCard extends StatelessWidget {
               currencyCode: currencyCode,
               fontSize: 18,
               color: palette.textPrimary,
+              masked: masked,
             ),
             const SizedBox(height: FxSpacing.sm),
             if (goods.holdingTime != null)
@@ -59,7 +73,17 @@ class GoodsCard extends StatelessWidget {
               _line(
                 context,
                 Icons.trending_down_rounded,
-                S.of(context).goodsDailyAvg(_money(goods.dailyAverageCost!)),
+                S
+                    .of(context)
+                    .goodsDailyAvg(
+                      FxMoneyFormatter.format(
+                        goods.dailyAverageCost!,
+                        locale: Localizations.localeOf(context).toString(),
+                        visibility: masked
+                            ? FxAmountVisibility.hidden
+                            : FxAmountVisibility.visible,
+                      ),
+                    ),
               ),
             const SizedBox(height: FxSpacing.sm),
             Wrap(
@@ -83,7 +107,25 @@ class GoodsCard extends StatelessWidget {
     );
   }
 
-  String _money(double v) => v.toStringAsFixed(2);
+  Widget _menuButton(BuildContext context) {
+    final palette = FxPalette.of(context);
+    return Semantics(
+      button: true,
+      label: S.of(context).goodsMenuDetail,
+      child: Tooltip(
+        message: S.of(context).goodsMenuDetail,
+        child: InkResponse(
+          onTap: onMenu,
+          radius: 24,
+          child: SizedBox(
+            width: 48,
+            height: 48,
+            child: Icon(Icons.more_horiz_rounded, color: palette.textTertiary),
+          ),
+        ),
+      ),
+    );
+  }
 
   Widget _line(BuildContext context, IconData icon, String text) {
     return Padding(
@@ -114,11 +156,16 @@ class GoodsCard extends StatelessWidget {
         color: color.withValues(alpha: 0.12),
         borderRadius: FxRadius.pillBorder,
       ),
-      child: Text(
-        label,
-        style: FxTypography.caption.copyWith(
-          color: color,
-          fontWeight: FontWeight.w600,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 120),
+        child: Text(
+          label,
+          style: FxTypography.caption.copyWith(
+            color: color,
+            fontWeight: FontWeight.w600,
+          ),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
         ),
       ),
     );

@@ -78,22 +78,7 @@ class DashboardTopBar extends StatelessWidget {
             ),
           ),
           const SizedBox(width: FxSpacing.md),
-          GestureDetector(
-            onTap: onAvatarTap,
-            child: Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                color: palette.primaryContainer,
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                Icons.person_rounded,
-                color: palette.primary,
-                size: 22,
-              ),
-            ),
-          ),
+          _AvatarAction(onTap: onAvatarTap),
         ],
       ),
     );
@@ -102,5 +87,35 @@ class DashboardTopBar extends StatelessWidget {
   void _openSwitcher(BuildContext context) {
     HapticFeedback.selectionClick();
     SessionSwitcherSheet.show(context);
+  }
+}
+
+class _AvatarAction extends StatelessWidget {
+  const _AvatarAction({required this.onTap});
+
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = FxPalette.of(context);
+    final avatar = Container(
+      width: 40,
+      height: 40,
+      decoration: BoxDecoration(
+        color: palette.primaryContainer,
+        shape: BoxShape.circle,
+      ),
+      child: Icon(Icons.person_rounded, color: palette.primary, size: 22),
+    );
+    if (onTap == null) {
+      return ExcludeSemantics(child: avatar);
+    }
+    return Semantics(
+      button: true,
+      child: Tooltip(
+        message: S.of(context).dashboardSelectGroup,
+        child: InkResponse(onTap: onTap, radius: 24, child: avatar),
+      ),
+    );
   }
 }

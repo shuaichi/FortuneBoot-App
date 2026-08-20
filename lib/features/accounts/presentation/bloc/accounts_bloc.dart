@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fortuneboot/core/network/fx_api.dart';
@@ -39,7 +41,16 @@ class AccountsBloc extends Bloc<AccountsEvent, AccountsState> {
     AccountsEvent event,
     Emitter<AccountsState> emit,
   ) async {
-    await _load(emit);
+    final completer = switch (event) {
+      AccountsLoaded(:final completer) => completer,
+      AccountsMutated(:final completer) => completer,
+      _ => null,
+    };
+    try {
+      await _load(emit);
+    } finally {
+      completer?.complete();
+    }
   }
 
   Future<void> _load(Emitter<AccountsState> emit) async {

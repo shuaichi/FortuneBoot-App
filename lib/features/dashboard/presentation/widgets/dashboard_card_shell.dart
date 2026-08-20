@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fortuneboot/features/dashboard/presentation/bloc/dashboard_bloc.dart';
 import 'package:fortuneboot/fx/components/fx_card.dart';
+import 'package:fortuneboot/fx/components/fx_skeleton.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
@@ -27,19 +28,37 @@ class DashboardCardShell<T> extends StatelessWidget {
     return FxCard(
       onTap: section.isReady ? onTap : null,
       child: switch (section.status) {
-        SectionStatus.loading => const Center(
-          child: SizedBox(
-            width: 22,
-            height: 22,
-            child: CircularProgressIndicator(strokeWidth: 2.2),
-          ),
-        ),
+        SectionStatus.loading => const _CardSkeleton(),
         SectionStatus.error => _CompactError(
           message: section.error ?? S.of(context).dashboardLoadFailed,
           onRetry: onRetry,
         ),
         SectionStatus.ready => builder(section.data as T),
       },
+    );
+  }
+}
+
+class _CardSkeleton extends StatelessWidget {
+  const _CardSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        FxSkeleton(width: 92, height: 14),
+        FxSkeleton(width: double.infinity, height: 26),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            FxSkeleton(width: double.infinity, height: 8),
+            SizedBox(height: FxSpacing.sm),
+            FxSkeleton(width: 120, height: 8),
+          ],
+        ),
+      ],
     );
   }
 }
@@ -68,13 +87,21 @@ class _CompactError extends StatelessWidget {
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: FxSpacing.xs),
-          GestureDetector(
-            onTap: onRetry,
-            child: Text(
-              S.of(context).commonRetry,
-              style: FxTypography.caption.copyWith(
-                color: palette.primary,
-                fontWeight: FontWeight.w600,
+          Semantics(
+            button: true,
+            child: TextButton(
+              onPressed: onRetry,
+              style: TextButton.styleFrom(
+                minimumSize: const Size(48, 36),
+                padding: const EdgeInsets.symmetric(horizontal: FxSpacing.sm),
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              ),
+              child: Text(
+                S.of(context).commonRetry,
+                style: FxTypography.caption.copyWith(
+                  color: palette.primary,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
           ),

@@ -117,9 +117,11 @@ class _BalanceAdjustSheetState extends State<BalanceAdjustSheet> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            S.of(context).accountsCurrentBalance(
-              widget.account.balance.toStringAsFixed(2),
-            ),
+            S
+                .of(context)
+                .accountsCurrentBalance(
+                  widget.account.balance.toStringAsFixed(2),
+                ),
             style: FxTypography.caption.copyWith(color: palette.textTertiary),
           ),
           const SizedBox(height: FxSpacing.md),

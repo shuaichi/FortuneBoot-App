@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -81,11 +83,15 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
     DashboardRefreshed event,
     Emitter<DashboardState> emit,
   ) async {
-    if (_bookId == null) {
-      emit(const DashboardState());
-      return;
+    try {
+      if (_bookId == null) {
+        emit(const DashboardState());
+        return;
+      }
+      await _loadAll(emit);
+    } finally {
+      event.completer?.complete();
     }
-    await _loadAll(emit);
   }
 
   Future<void> _onMonthStartDayChanged(

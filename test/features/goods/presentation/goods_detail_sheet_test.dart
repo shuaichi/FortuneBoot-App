@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:fortuneboot/core/preferences/preferences_cubit.dart';
 import 'package:fortuneboot/features/goods/data/goods_models.dart';
 import 'package:fortuneboot/features/goods/presentation/widgets/goods_detail_sheet.dart';
 import 'package:fortuneboot/fx/components/fx_sheet.dart';
@@ -38,27 +40,30 @@ void main() {
     );
 
     await tester.pumpWidget(
-      MaterialApp(
-        theme: FxTheme.light,
-        locale: const Locale('zh'),
-        localizationsDelegates: const [
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
-          S.delegate,
-        ],
-        supportedLocales: S.delegate.supportedLocales,
-        home: Builder(
-          builder: (context) => Scaffold(
-            body: ElevatedButton(
-              onPressed: () => FxSheet.show<void>(
-                context,
-                scrollable: true,
-                minHeightFactor: 0.4,
-                maxHeightFactor: 0.72,
-                child: const GoodsDetailSheet(goods: goods),
+      BlocProvider(
+        create: (_) => PreferencesCubit(),
+        child: MaterialApp(
+          theme: FxTheme.light,
+          locale: const Locale('zh'),
+          localizationsDelegates: const [
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+            S.delegate,
+          ],
+          supportedLocales: S.delegate.supportedLocales,
+          home: Builder(
+            builder: (context) => Scaffold(
+              body: ElevatedButton(
+                onPressed: () => FxSheet.show<void>(
+                  context,
+                  scrollable: true,
+                  minHeightFactor: 0.4,
+                  maxHeightFactor: 0.72,
+                  child: const GoodsDetailSheet(goods: goods),
+                ),
+                child: const Text('打开归物详情'),
               ),
-              child: const Text('打开归物详情'),
             ),
           ),
         ),

@@ -10,7 +10,12 @@ sealed class GoodsEvent extends Equatable {
 
 /// 首次加载/下拉刷新：并发拉列表 + 统计。
 class GoodsLoaded extends GoodsEvent {
-  const GoodsLoaded();
+  final Completer<void>? completer;
+
+  const GoodsLoaded({this.completer});
+
+  @override
+  List<Object?> get props => [completer];
 }
 
 /// 当前账本变化 → 重拉。
@@ -24,5 +29,10 @@ class GoodsBookChanged extends GoodsEvent {
 
 /// 写操作（新增/修改/删除）成功后要求刷新。
 class GoodsMutated extends GoodsEvent {
-  const GoodsMutated();
+  final Completer<void>? completer;
+
+  const GoodsMutated({this.completer});
+
+  @override
+  List<Object?> get props => [completer];
 }

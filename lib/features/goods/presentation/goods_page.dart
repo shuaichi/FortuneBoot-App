@@ -1,7 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fortuneboot/core/feedback/fx_feedback.dart';
 import 'package:fortuneboot/core/network/fx_api.dart';
+import 'package:fortuneboot/core/preferences/preferences_cubit.dart';
 import 'package:fortuneboot/core/session/session_cubit.dart';
 import 'package:fortuneboot/features/goods/data/goods_models.dart';
 import 'package:fortuneboot/features/goods/data/goods_service.dart';
@@ -10,6 +14,7 @@ import 'package:fortuneboot/features/goods/presentation/widgets/goods_card.dart'
 import 'package:fortuneboot/features/goods/presentation/widgets/goods_detail_sheet.dart';
 import 'package:fortuneboot/features/goods/presentation/widgets/goods_form_sheet.dart';
 import 'package:fortuneboot/fx/components/fx_card.dart';
+import 'package:fortuneboot/fx/components/fx_icon_button.dart';
 import 'package:fortuneboot/fx/components/fx_money_text.dart';
 import 'package:fortuneboot/fx/components/fx_sheet.dart';
 import 'package:fortuneboot/fx/components/fx_state_view.dart';
@@ -34,16 +39,23 @@ class _GoodsPageState extends State<GoodsPage> {
   int? get _bookId => context.read<SessionCubit>().state.currentBookId;
   String? get _currency => context.read<SessionCubit>().state.defaultCurrency;
 
-  void _showToast(String message) {
-    ScaffoldMessenger.of(context)
-      ..hideCurrentSnackBar()
-      ..showSnackBar(SnackBar(content: Text(message)));
+  Future<void> _refreshGoods() {
+    final completer = Completer<void>();
+    _bloc.add(GoodsLoaded(completer: completer));
+    return completer.future;
+  }
+
+  void _showToast(String message, {FxFeedbackTone tone = FxFeedbackTone.info}) {
+    FxFeedback.show(context, message: message, tone: tone);
   }
 
   Future<void> _openForm({FortuneGoodsKeeperVo? goods}) async {
     final bookId = _bookId;
     if (bookId == null) {
-      _showToast(S.of(context).goodsSelectBookFirst);
+      _showToast(
+        S.of(context).goodsSelectBookFirst,
+        tone: FxFeedbackTone.warning,
+      );
       return;
     }
     final changed = await FxSheet.show<bool>(
@@ -146,7 +158,10 @@ class _GoodsPageState extends State<GoodsPage> {
       await _service.remove(bookId: bookId, keeperId: keeperId);
       if (mounted) _bloc.add(const GoodsMutated());
     } on Object catch (e) {
-      _showToast(e is FxApiException ? e.message : e.toString());
+      _showToast(
+        e is FxApiException ? e.message : e.toString(),
+        tone: FxFeedbackTone.error,
+      );
     }
   }
 
@@ -215,26 +230,20 @@ class _GoodsPageState extends State<GoodsPage> {
       ),
       child: Row(
         children: [
-          _iconButton(
-            Icons.chevron_left_rounded,
-            () => Navigator.of(context).maybePop(),
+          FxIconButton(
+            icon: Icons.chevron_left_rounded,
+            tooltip: S.of(context).goodsTitle,
+            onPressed: () => Navigator.of(context).maybePop(),
           ),
           Expanded(
             child: Text(S.of(context).goodsTitle, style: FxTypography.title),
           ),
-          _iconButton(Icons.add_rounded, () => _openForm()),
+          FxIconButton(
+            icon: Icons.add_rounded,
+            tooltip: S.of(context).goodsAddTitle,
+            onPressed: () => _openForm(),
+          ),
         ],
-      ),
-    );
-  }
-
-  Widget _iconButton(IconData icon, VoidCallback onTap) {
-    return InkResponse(
-      onTap: onTap,
-      radius: 22,
-      child: Padding(
-        padding: const EdgeInsets.all(FxSpacing.xs),
-        child: Icon(icon, size: 26, color: FxPalette.of(context).textPrimary),
       ),
     );
   }
@@ -254,7 +263,7 @@ class _GoodsPageState extends State<GoodsPage> {
         );
       case GoodsViewStatus.empty:
         return RefreshIndicator(
-          onRefresh: () async => _bloc.add(const GoodsLoaded()),
+          onRefresh: _refreshGoods,
           child: ListView(
             children: [
               Padding(
@@ -281,9 +290,20 @@ class _GoodsPageState extends State<GoodsPage> {
 
   Widget _buildGrid(GoodsState state) {
     final width = MediaQuery.of(context).size.width;
-    final crossAxisCount = width >= 900 ? 4 : (width >= 600 ? 3 : 2);
+    final crossAxisCount = width >= 900
+        ? 4
+        : width >= 600
+        ? 3
+        : width >= 360
+        ? 2
+        : 1;
+    final hideAmounts = context
+        .watch<PreferencesCubit>()
+        .state
+        .dashboard
+        .hideAmounts;
     return RefreshIndicator(
-      onRefresh: () async => _bloc.add(const GoodsLoaded()),
+      onRefresh: _refreshGoods,
       child: CustomScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
         slivers: [
@@ -320,7 +340,9 @@ class _GoodsPageState extends State<GoodsPage> {
                 return GoodsCard(
                   goods: goods,
                   currencyCode: state.currencyCode,
+                  masked: hideAmounts,
                   onTap: () => _openDetail(goods),
+                  onMenu: () => _openMenu(goods),
                   onLongPress: () => _openMenu(goods),
                 );
               }, childCount: state.goods.length),
@@ -342,6 +364,11 @@ class _StatBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final palette = FxPalette.of(context);
+    final hideAmounts = context
+        .watch<PreferencesCubit>()
+        .state
+        .dashboard
+        .hideAmounts;
     return FxCard(
       child: Row(
         children: [
@@ -350,6 +377,7 @@ class _StatBar extends StatelessWidget {
             S.of(context).goodsStatAllCost,
             stats.allPrice,
             palette.textPrimary,
+            hideAmounts,
           ),
           _divider(context),
           _cell(
@@ -357,6 +385,7 @@ class _StatBar extends StatelessWidget {
             S.of(context).goodsStatActiveCost,
             stats.activePrice,
             palette.primary,
+            hideAmounts,
           ),
           _divider(context),
           _cell(
@@ -364,6 +393,7 @@ class _StatBar extends StatelessWidget {
             S.of(context).goodsStatDailyCost,
             stats.allDailyPrice,
             FxFinanceColors.of(context).income,
+            hideAmounts,
           ),
         ],
       ),
@@ -373,7 +403,13 @@ class _StatBar extends StatelessWidget {
   Widget _divider(BuildContext context) =>
       Container(width: 1, height: 32, color: FxPalette.of(context).border);
 
-  Widget _cell(BuildContext context, String label, double amount, Color color) {
+  Widget _cell(
+    BuildContext context,
+    String label,
+    double amount,
+    Color color,
+    bool hideAmounts,
+  ) {
     return Expanded(
       child: Column(
         children: [
@@ -384,11 +420,15 @@ class _StatBar extends StatelessWidget {
             ),
           ),
           const SizedBox(height: FxSpacing.xs),
-          FxMoneyText(
-            amount: amount,
-            currencyCode: currencyCode,
-            fontSize: 15,
-            color: color,
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            child: FxMoneyText(
+              amount: amount,
+              currencyCode: currencyCode,
+              fontSize: 15,
+              color: color,
+              masked: hideAmounts,
+            ),
           ),
         ],
       ),

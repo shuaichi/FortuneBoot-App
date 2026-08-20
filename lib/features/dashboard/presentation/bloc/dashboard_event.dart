@@ -20,7 +20,12 @@ final class DashboardBookChanged extends DashboardEvent {
 
 /// 首屏 / 下拉刷新：并发拉取全部卡片数据。
 final class DashboardRefreshed extends DashboardEvent {
-  const DashboardRefreshed();
+  final Completer<void>? completer;
+
+  const DashboardRefreshed({this.completer});
+
+  @override
+  List<Object?> get props => [completer];
 }
 
 /// 账单月开始日变更。

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fortuneboot/core/preferences/preferences_cubit.dart';
@@ -8,13 +10,13 @@ import 'package:fortuneboot/features/dashboard/presentation/widgets/category_top
 import 'package:fortuneboot/features/dashboard/presentation/widgets/dashboard_top_bar.dart';
 import 'package:fortuneboot/features/dashboard/presentation/widgets/month_stat_card.dart';
 import 'package:fortuneboot/features/dashboard/presentation/widgets/net_worth_card.dart';
-import 'package:fortuneboot/features/dashboard/presentation/widgets/quick_add_card.dart';
 import 'package:fortuneboot/features/dashboard/presentation/widgets/recent_bills_card.dart';
 import 'package:fortuneboot/features/dashboard/presentation/widgets/trend_card.dart';
 import 'package:fortuneboot/features/shared/presentation/bills/bill_detail_flow.dart';
 import 'package:fortuneboot/fx/components/fx_state_view.dart';
 import 'package:fortuneboot/fx/layout/fx_bento_grid.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
+import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/generated/l10n.dart';
 
 /// 看板首页：粘顶栏 + Bento 卡片网格。订阅 SessionCubit 切账本重拉。
@@ -122,16 +124,7 @@ class _Body extends StatelessWidget {
           ),
         ];
 
-        if (emptyUser) {
-          // 空态：净资产引导 + 放大的快捷记账;隐藏趋势/Top3。
-          tiles.add(
-            const FxBentoTile(
-              colSpan: 2,
-              rowSpan: 2,
-              child: QuickAddCard(enlarged: true),
-            ),
-          );
-        } else {
+        if (!emptyUser) {
           // ② 本月支出 ③ 本月收入
           tiles.add(
             FxBentoTile(
@@ -205,12 +198,14 @@ class _Body extends StatelessWidget {
         }
 
         return RefreshIndicator(
-          onRefresh: () async {
-            bloc.add(const DashboardRefreshed());
+          onRefresh: () {
+            final completer = Completer<void>();
+            bloc.add(DashboardRefreshed(completer: completer));
+            return completer.future;
           },
           child: ListView(
             physics: const AlwaysScrollableScrollPhysics(),
-            padding: EdgeInsets.zero,
+            padding: const EdgeInsets.only(bottom: FxSpacing.xxxl),
             children: [FxBentoGrid(tiles: tiles)],
           ),
         );

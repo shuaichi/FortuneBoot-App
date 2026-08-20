@@ -1,7 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fortuneboot/core/feedback/fx_feedback.dart';
 import 'package:fortuneboot/core/network/fx_api.dart';
+import 'package:fortuneboot/core/preferences/preferences_cubit.dart';
 import 'package:fortuneboot/core/session/bill_mutations.dart';
 import 'package:fortuneboot/core/session/session_cubit.dart';
 import 'package:fortuneboot/features/accounts/data/account_models.dart';
@@ -13,6 +17,7 @@ import 'package:fortuneboot/features/accounts/presentation/widgets/account_menu.
 import 'package:fortuneboot/features/accounts/presentation/widgets/balance_adjust_sheet.dart';
 import 'package:fortuneboot/features/accounts/presentation/widgets/net_worth_card.dart';
 import 'package:fortuneboot/features/accounts/presentation/widgets/recycle_bin_sheet.dart';
+import 'package:fortuneboot/fx/components/fx_icon_button.dart';
 import 'package:fortuneboot/fx/components/fx_money_text.dart';
 import 'package:fortuneboot/fx/components/fx_sheet.dart';
 import 'package:fortuneboot/fx/components/fx_state_view.dart';
@@ -54,20 +59,27 @@ class _AccountsPageState extends State<AccountsPage> {
     if (mounted) _bloc.add(const AccountsMutated());
   }
 
-  void _showToast(String message) {
-    ScaffoldMessenger.of(context)
-      ..hideCurrentSnackBar()
-      ..showSnackBar(SnackBar(content: Text(message)));
+  void _showToast(String message, {FxFeedbackTone tone = FxFeedbackTone.info}) {
+    FxFeedback.show(context, message: message, tone: tone);
   }
 
   int? get _groupId => context.read<SessionCubit>().state.currentGroupId;
   int? get _bookId => context.read<SessionCubit>().state.currentBookId;
   String? get _currency => context.read<SessionCubit>().state.defaultCurrency;
 
+  Future<void> _refreshAccounts() {
+    final completer = Completer<void>();
+    _bloc.add(AccountsLoaded(completer: completer));
+    return completer.future;
+  }
+
   Future<void> _openForm({FortuneAccountVo? account}) async {
     final groupId = _groupId;
     if (groupId == null) {
-      _showToast(S.of(context).accountsSelectBookGroup);
+      _showToast(
+        S.of(context).accountsSelectBookGroup,
+        tone: FxFeedbackTone.warning,
+      );
       return;
     }
     final changed = await FxSheet.show<bool>(
@@ -98,7 +110,10 @@ class _AccountsPageState extends State<AccountsPage> {
   Future<void> _openAdjust(FortuneAccountVo account) async {
     final bookId = _bookId;
     if (bookId == null) {
-      _showToast(S.of(context).accountsSelectBookForAdjust);
+      _showToast(
+        S.of(context).accountsSelectBookForAdjust,
+        tone: FxFeedbackTone.warning,
+      );
       return;
     }
     final ok = await FxSheet.show<bool>(
@@ -114,14 +129,20 @@ class _AccountsPageState extends State<AccountsPage> {
       _bloc.add(const AccountsMutated());
       // 余额调整会在后端生成一笔调整账单，通知看板/账单流刷新。
       BillMutations.bump();
-      _showToast(S.of(context).accountsBalanceAdjusted);
+      _showToast(
+        S.of(context).accountsBalanceAdjusted,
+        tone: FxFeedbackTone.success,
+      );
     }
   }
 
   Future<void> _openRecycleBin() async {
     final groupId = _groupId;
     if (groupId == null) {
-      _showToast(S.of(context).accountsSelectBookGroup);
+      _showToast(
+        S.of(context).accountsSelectBookGroup,
+        tone: FxFeedbackTone.warning,
+      );
       return;
     }
     await FxSheet.show<void>(
@@ -154,9 +175,11 @@ class _AccountsPageState extends State<AccountsPage> {
     final ok = await confirmDangerAction(
       context,
       title: S.of(context).accountsMoveToRecycleBinTitle,
-      message: S.of(context).accountsMoveToRecycleBinConfirm(
-        account.accountName ?? S.of(context).accountsDefaultName,
-      ),
+      message: S
+          .of(context)
+          .accountsMoveToRecycleBinConfirm(
+            account.accountName ?? S.of(context).accountsDefaultName,
+          ),
       confirmLabel: S.of(context).accountsMoveIn,
     );
     if (ok != true) return;
@@ -167,7 +190,10 @@ class _AccountsPageState extends State<AccountsPage> {
       );
       if (mounted) _bloc.add(const AccountsMutated());
     } on Object catch (e) {
-      _showToast(e is FxApiException ? e.message : e.toString());
+      _showToast(
+        e is FxApiException ? e.message : e.toString(),
+        tone: FxFeedbackTone.error,
+      );
     }
   }
 
@@ -177,9 +203,11 @@ class _AccountsPageState extends State<AccountsPage> {
     final ok = await confirmDangerAction(
       context,
       title: S.of(context).accountsDeletePermanently,
-      message: S.of(context).accountsDeleteConfirm(
-        account.accountName ?? S.of(context).accountsDefaultName,
-      ),
+      message: S
+          .of(context)
+          .accountsDeleteConfirm(
+            account.accountName ?? S.of(context).accountsDefaultName,
+          ),
       confirmLabel: S.of(context).accountsDelete,
     );
     if (ok != true) return;
@@ -187,7 +215,10 @@ class _AccountsPageState extends State<AccountsPage> {
       await _service.remove(groupId: groupId, accountId: account.accountId!);
       if (mounted) _bloc.add(const AccountsMutated());
     } on Object catch (e) {
-      _showToast(e is FxApiException ? e.message : e.toString());
+      _showToast(
+        e is FxApiException ? e.message : e.toString(),
+        tone: FxFeedbackTone.error,
+      );
     }
   }
 
@@ -235,30 +266,26 @@ class _AccountsPageState extends State<AccountsPage> {
       ),
       child: Row(
         children: [
-          _iconButton(Icons.chevron_left_rounded, () {
-            Navigator.of(context).maybePop();
-          }),
-          Expanded(
-            child: Text(
-              S.of(context).accountsTitle,
-              style: FxTypography.title,
-            ),
+          FxIconButton(
+            icon: Icons.chevron_left_rounded,
+            tooltip: S.of(context).accountsTitle,
+            onPressed: () => Navigator.of(context).maybePop(),
           ),
-          _iconButton(Icons.delete_outline_rounded, _openRecycleBin),
+          Expanded(
+            child: Text(S.of(context).accountsTitle, style: FxTypography.title),
+          ),
+          FxIconButton(
+            icon: Icons.delete_outline_rounded,
+            tooltip: S.of(context).accountsRecycleBin,
+            onPressed: _openRecycleBin,
+          ),
           const SizedBox(width: FxSpacing.xs),
-          _iconButton(Icons.add_rounded, () => _openForm()),
+          FxIconButton(
+            icon: Icons.add_rounded,
+            tooltip: S.of(context).accountsAddTitle,
+            onPressed: () => _openForm(),
+          ),
         ],
-      ),
-    );
-  }
-
-  Widget _iconButton(IconData icon, VoidCallback onTap) {
-    return InkResponse(
-      onTap: onTap,
-      radius: 22,
-      child: Padding(
-        padding: const EdgeInsets.all(FxSpacing.xs),
-        child: Icon(icon, size: 26, color: FxPalette.of(context).textPrimary),
       ),
     );
   }
@@ -278,7 +305,7 @@ class _AccountsPageState extends State<AccountsPage> {
         );
       case AccountsStatus.empty:
         return RefreshIndicator(
-          onRefresh: () async => _bloc.add(const AccountsLoaded()),
+          onRefresh: _refreshAccounts,
           child: ListView(
             children: [
               Padding(
@@ -306,7 +333,7 @@ class _AccountsPageState extends State<AccountsPage> {
   Widget _buildList(AccountsState state) {
     final groups = state.groups;
     return RefreshIndicator(
-      onRefresh: () async => _bloc.add(const AccountsLoaded()),
+      onRefresh: _refreshAccounts,
       child: CustomScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
         slivers: [
@@ -347,6 +374,11 @@ class _AccountsPageState extends State<AccountsPage> {
 
   Widget _groupHeader(AccountGroup group, String? currencyCode) {
     final palette = FxPalette.of(context);
+    final hideAmounts = context
+        .watch<PreferencesCubit>()
+        .state
+        .dashboard
+        .hideAmounts;
     return Padding(
       padding: const EdgeInsets.fromLTRB(
         FxSpacing.lg,
@@ -365,19 +397,29 @@ class _AccountsPageState extends State<AccountsPage> {
             ),
           ),
           const SizedBox(width: FxSpacing.sm),
-          Text(
-            group.meta.localizedName(context),
-            style: FxTypography.label.copyWith(
-              color: palette.textSecondary,
+          Expanded(
+            child: Text(
+              group.meta.localizedName(context),
+              style: FxTypography.label.copyWith(color: palette.textSecondary),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
           ),
-          const Spacer(),
-          FxMoneyText(
-            amount: group.subtotal,
-            currencyCode: currencyCode,
-            fontSize: 13,
-            colorBySign: group.meta.isLiability,
-            color: group.meta.isLiability ? null : palette.textPrimary,
+          Flexible(
+            child: Align(
+              alignment: AlignmentDirectional.centerEnd,
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: FxMoneyText(
+                  amount: group.subtotal,
+                  currencyCode: currencyCode,
+                  fontSize: 13,
+                  colorBySign: group.meta.isLiability,
+                  color: group.meta.isLiability ? null : palette.textPrimary,
+                  masked: hideAmounts,
+                ),
+              ),
+            ),
           ),
         ],
       ),

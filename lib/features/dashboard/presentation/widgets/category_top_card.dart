@@ -90,7 +90,9 @@ class CategoryTopCard extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              slice.name.isEmpty ? S.of(context).dashboardUncategorized : slice.name,
+              slice.name.isEmpty
+                  ? S.of(context).dashboardUncategorized
+                  : slice.name,
               style: FxTypography.bodyStrong,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,

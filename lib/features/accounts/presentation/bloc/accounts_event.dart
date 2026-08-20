@@ -10,7 +10,12 @@ sealed class AccountsEvent extends Equatable {
 
 /// 首次/切分组加载或下拉刷新：并发拉账户列表 + 净资产。
 class AccountsLoaded extends AccountsEvent {
-  const AccountsLoaded();
+  final Completer<void>? completer;
+
+  const AccountsLoaded({this.completer});
+
+  @override
+  List<Object?> get props => [completer];
 }
 
 /// SessionCubit 分组变化 → 重拉。
@@ -40,5 +45,10 @@ class AccountToggleChanged extends AccountsEvent {
 
 /// 写操作（新增/修改/余额调整/回收站/删除）成功后要求刷新列表 + 净资产。
 class AccountsMutated extends AccountsEvent {
-  const AccountsMutated();
+  final Completer<void>? completer;
+
+  const AccountsMutated({this.completer});
+
+  @override
+  List<Object?> get props => [completer];
 }
