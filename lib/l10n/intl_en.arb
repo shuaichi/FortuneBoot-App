@@ -425,6 +425,8 @@
   "billsClose": "Close",
   "billsEdit": "Edit",
   "billsUnconfirm": "Unconfirm",
+  "billsFilterByTitle": "Title",
+  "billsFilterTitleHint": "Search by bill title",
   "billsFilterBillType": "Bill type",
   "billsFilterAmountRange": "Amount range",
   "billsFilterMin": "Min",
@@ -876,14 +878,16 @@
       "time": {}
     }
   },
-  "ordersCloseTime": "Closed {time}",
-  "@ordersCloseTime": {
+  "ordersArchivedTime": "Archived {time}",
+  "@ordersArchivedTime": {
     "placeholders": {
       "time": {}
     }
   },
   "ordersUse": "Use",
-  "ordersClose": "Close",
+  "ordersArchive": "Archive",
+  "ordersArchiveTooltip": "Archived orders are excluded from statistics",
+  "ordersStatusUnrecognized": "Unrecognized order status",
   "ordersReopen": "Reopen",
   "ordersTitleRequired": "Please enter a reimbursement order title",
   "ordersOrderTitle": "Reimbursement Order Title",
@@ -1213,6 +1217,7 @@
   "appLockCurrentCredentialLabel": "Current PIN or pattern",
   "appLockVerify": "Verify",
   "appLockCredentialMismatch": "The entries do not match",
+  "appLockPinLengthInvalid": "PIN must contain 6–12 digits",
   "appLockConfigurationInvalid": "Check the PIN or pattern format and try again",
   "appLockDisableVerificationFailed": "Verification failed. Please try again.",
   "appLockFailureInvalidCredential": "Verification failed. Please try again.",

@@ -22,6 +22,9 @@ class BillsFilter extends Equatable {
   final int? payeeId;
   final BillDateRange? dateRange;
 
+  /// 标题查询关键词（按标题模糊匹配）。null/空串表示不限。
+  final String? title;
+
   BillsFilter({
     Set<int> billTypes = const {},
     this.amountMin,
@@ -33,6 +36,7 @@ class BillsFilter extends Equatable {
     this.accountId,
     this.payeeId,
     this.dateRange,
+    this.title,
   }) : billTypes = UnmodifiableSetView(Set<int>.of(billTypes)),
        categoryIds = categoryIds == null
            ? null
@@ -53,6 +57,7 @@ class BillsFilter extends Equatable {
     if (categoryIds != null && categoryIds!.isNotEmpty) n++;
     if (tagIds != null && tagIds!.isNotEmpty) n++;
     if (dateRange != null) n++;
+    if (title != null && title!.isNotEmpty) n++;
     return n;
   }
 
@@ -69,6 +74,7 @@ class BillsFilter extends Equatable {
     int? accountId,
     int? payeeId,
     BillDateRange? dateRange,
+    String? title,
     bool clearAmountMin = false,
     bool clearAmountMax = false,
     bool clearConfirm = false,
@@ -78,6 +84,7 @@ class BillsFilter extends Equatable {
     bool clearAccountId = false,
     bool clearPayeeId = false,
     bool clearDateRange = false,
+    bool clearTitle = false,
   }) {
     return BillsFilter(
       billTypes: billTypes ?? this.billTypes,
@@ -90,6 +97,7 @@ class BillsFilter extends Equatable {
       accountId: clearAccountId ? null : (accountId ?? this.accountId),
       payeeId: clearPayeeId ? null : (payeeId ?? this.payeeId),
       dateRange: clearDateRange ? null : (dateRange ?? this.dateRange),
+      title: clearTitle ? null : (title ?? this.title),
     );
   }
 
@@ -105,5 +113,6 @@ class BillsFilter extends Equatable {
     accountId,
     payeeId,
     dateRange,
+    title,
   ];
 }

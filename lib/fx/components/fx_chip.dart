@@ -20,6 +20,8 @@ class FxChip extends StatelessWidget {
     this.selectedColor,
     this.unselectedColor,
     this.selectedBackgroundColor,
+    this.unselectedTextColor,
+    this.isAction = false,
     this.disabledOpacity = 0.4,
     this.padding,
     this.constraints,
@@ -36,6 +38,8 @@ class FxChip extends StatelessWidget {
   final Color? selectedColor;
   final Color? unselectedColor;
   final Color? selectedBackgroundColor;
+  final Color? unselectedTextColor;
+  final bool isAction;
   final double disabledOpacity;
   final EdgeInsets? padding;
   final BoxConstraints? constraints;
@@ -46,7 +50,9 @@ class FxChip extends StatelessWidget {
     final palette = FxPalette.of(context);
     final effectiveSelectedColor = selectedColor ?? palette.primary;
     final effectiveUnselectedColor = unselectedColor ?? palette.surfaceMuted;
-    final fg = selected ? effectiveSelectedColor : palette.textSecondary;
+    final fg = selected
+        ? effectiveSelectedColor
+        : unselectedTextColor ?? palette.textSecondary;
     final bg = selected
         ? selectedBackgroundColor ?? palette.primaryContainer
         : effectiveUnselectedColor;
@@ -59,7 +65,7 @@ class FxChip extends StatelessWidget {
       selected: selected,
       enabled: enabled,
       label: tooltip ?? label,
-      inMutuallyExclusiveGroup: !multiSelect,
+      inMutuallyExclusiveGroup: !isAction && !multiSelect,
       child: Tooltip(
         message: tooltip ?? label,
         child: Opacity(

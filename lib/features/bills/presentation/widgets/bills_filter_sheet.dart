@@ -44,6 +44,7 @@ class _BillsFilterSheetState extends State<BillsFilterSheet> {
   late int? _accountId;
   late int? _payeeId;
   late BillDateRange? _dateRange;
+  late final TextEditingController _titleCtrl;
   late final TextEditingController _minCtrl;
   late final TextEditingController _maxCtrl;
   Future<BillsFilterOptions>? _optionsFuture;
@@ -62,6 +63,7 @@ class _BillsFilterSheetState extends State<BillsFilterSheet> {
     _accountId = widget.initial.accountId;
     _payeeId = widget.initial.payeeId;
     _dateRange = widget.initial.dateRange;
+    _titleCtrl = TextEditingController(text: widget.initial.title ?? '');
     _minCtrl = TextEditingController(
       text: widget.initial.amountMin?.toString() ?? '',
     );
@@ -73,6 +75,7 @@ class _BillsFilterSheetState extends State<BillsFilterSheet> {
 
   @override
   void dispose() {
+    _titleCtrl.dispose();
     _minCtrl.dispose();
     _maxCtrl.dispose();
     super.dispose();
@@ -97,6 +100,7 @@ class _BillsFilterSheetState extends State<BillsFilterSheet> {
       _dateRange = null;
       _minError = null;
       _maxError = null;
+      _titleCtrl.clear();
       _minCtrl.clear();
       _maxCtrl.clear();
     });
@@ -147,6 +151,7 @@ class _BillsFilterSheetState extends State<BillsFilterSheet> {
         accountId: _accountId,
         payeeId: _payeeId,
         dateRange: _dateRange,
+        title: _titleCtrl.text.trim().isEmpty ? null : _titleCtrl.text.trim(),
       ),
     );
   }
@@ -179,6 +184,9 @@ class _BillsFilterSheetState extends State<BillsFilterSheet> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          _label(S.of(context).billsFilterByTitle),
+          _titleField(),
+          const SizedBox(height: FxSpacing.lg),
           _label(S.of(context).billsFilterBillType),
           _typeChoices(),
           const SizedBox(height: FxSpacing.lg),
@@ -426,6 +434,27 @@ class _BillsFilterSheetState extends State<BillsFilterSheet> {
       ),
     ),
   );
+
+  Widget _titleField() {
+    return TextField(
+      controller: _titleCtrl,
+      style: FxTypography.body,
+      decoration: InputDecoration(
+        hintText: S.of(context).billsFilterTitleHint,
+        isDense: true,
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: FxSpacing.md,
+          vertical: FxSpacing.md,
+        ),
+        filled: true,
+        fillColor: FxPalette.of(context).surfaceMuted,
+        border: OutlineInputBorder(
+          borderRadius: FxRadius.tileBorder,
+          borderSide: BorderSide.none,
+        ),
+      ),
+    );
+  }
 
   Widget _amountField(
     TextEditingController controller,

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fortuneboot/core/feedback/fx_feedback.dart';
 import 'package:fortuneboot/core/preferences/preferences_cubit.dart';
@@ -9,6 +8,7 @@ import 'package:fortuneboot/features/orders/data/orders_service.dart';
 import 'package:fortuneboot/features/orders/presentation/bloc/orders_bloc.dart';
 import 'package:fortuneboot/features/orders/presentation/widgets/order_form_sheet.dart';
 import 'package:fortuneboot/fx/components/fx_card.dart';
+import 'package:fortuneboot/fx/components/fx_chip.dart';
 import 'package:fortuneboot/fx/components/fx_confirm_sheet.dart';
 import 'package:fortuneboot/fx/components/fx_icon_button.dart';
 import 'package:fortuneboot/fx/components/fx_money_text.dart';
@@ -271,7 +271,7 @@ class _OrdersPageState extends State<OrdersPage> {
                   const SizedBox(height: FxSpacing.xs),
                   _timeText(
                     context,
-                    S.of(context).ordersCloseTime(order.closeTime!),
+                    S.of(context).ordersArchivedTime(order.closeTime!),
                   ),
                 ],
               ],
@@ -346,33 +346,43 @@ class _OrdersPageState extends State<OrdersPage> {
     return palette.textTertiary;
   }
 
-  /// 状态机按钮：初始化→[使用]；使用中→[关闭]；已关闭→[重开]。附删除。
+  /// 状态机按钮：初始化→[使用]；使用中→[归档]；已关闭→[重开]。附删除。
   List<Widget> _actionButtons(
     BuildContext context,
     FortuneFinanceOrderVo order,
   ) {
     final buttons = <Widget>[];
     final action = order.nextTransitionAction;
-    if (action != null) {
+    if (action == null) {
       buttons.add(
-        _miniButton(
+        Text(
+          S.of(context).ordersStatusUnrecognized,
+          style: FxTypography.caption.copyWith(
+            color: FxPalette.of(context).textTertiary,
+          ),
+          textAlign: TextAlign.end,
+        ),
+      );
+    } else {
+      buttons.add(
+        _actionChip(
           context,
-          _transitionLabel(context, action),
-          () {
-            HapticFeedback.selectionClick();
-            _bloc.add(OrderTransitioned(order: order, action: action.value));
-          },
+          label: _transitionLabel(context, action),
+          tooltip: _transitionTooltip(context, action),
           color: _transitionColor(context, action),
+          onTap: () =>
+              _bloc.add(OrderTransitioned(order: order, action: action.value)),
         ),
       );
     }
     // 未知状态：不猜测流转按钮，仅保留删除，避免非法流转。
     buttons.add(
-      _miniButton(
+      _actionChip(
         context,
-        S.of(context).ordersDelete,
-        () => _remove(order),
-        danger: true,
+        label: S.of(context).ordersDelete,
+        tooltip: S.of(context).ordersDelete,
+        color: FxPalette.of(context).danger,
+        onTap: () => _remove(order),
       ),
     );
     return buttons;
@@ -384,8 +394,18 @@ class _OrdersPageState extends State<OrdersPage> {
   ) {
     return switch (action) {
       FinanceOrderTransitionAction.using => S.of(context).ordersUse,
-      FinanceOrderTransitionAction.close => S.of(context).ordersClose,
+      FinanceOrderTransitionAction.close => S.of(context).ordersArchive,
       FinanceOrderTransitionAction.reopen => S.of(context).ordersReopen,
+    };
+  }
+
+  String _transitionTooltip(
+    BuildContext context,
+    FinanceOrderTransitionAction action,
+  ) {
+    return switch (action) {
+      FinanceOrderTransitionAction.close => S.of(context).ordersArchiveTooltip,
+      _ => _transitionLabel(context, action),
     };
   }
 
@@ -401,41 +421,21 @@ class _OrdersPageState extends State<OrdersPage> {
     };
   }
 
-  Widget _miniButton(
-    BuildContext context,
-    String label,
-    VoidCallback onTap, {
-    bool danger = false,
-    Color? color,
+  Widget _actionChip(
+    BuildContext context, {
+    required String label,
+    required String tooltip,
+    required Color color,
+    required VoidCallback onTap,
   }) {
-    final palette = FxPalette.of(context);
-    final resolvedColor = color ?? (danger ? palette.danger : palette.primary);
-    return Semantics(
-      button: true,
+    return FxChip(
       label: label,
-      child: Tooltip(
-        message: label,
-        child: GestureDetector(
-          onTap: onTap,
-          child: Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: FxSpacing.md,
-              vertical: FxSpacing.xs,
-            ),
-            decoration: BoxDecoration(
-              color: resolvedColor.withValues(alpha: 0.1),
-              borderRadius: FxRadius.pillBorder,
-            ),
-            child: Text(
-              label,
-              style: FxTypography.label.copyWith(
-                color: resolvedColor,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-        ),
-      ),
+      tooltip: tooltip,
+      selected: false,
+      isAction: true,
+      unselectedColor: color.withValues(alpha: 0.1),
+      unselectedTextColor: color,
+      onTap: onTap,
     );
   }
 

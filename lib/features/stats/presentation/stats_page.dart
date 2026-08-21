@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fortuneboot/core/navigation/app_router.dart';
@@ -36,6 +38,8 @@ class StatsPage extends StatefulWidget {
 }
 
 class _StatsPageState extends State<StatsPage> {
+  Completer<void>? _refreshCompleter;
+
   @override
   void initState() {
     super.initState();
@@ -45,7 +49,38 @@ class _StatsPageState extends State<StatsPage> {
   @override
   void dispose() {
     BillMutations.revision.removeListener(_onExternalMutation);
+    _completeRefresh();
     super.dispose();
+  }
+
+  Future<void> _onRefresh() {
+    _completeRefresh();
+    final completer = Completer<void>();
+    _refreshCompleter = completer;
+    context.read<StatsBloc>().add(const StatsRefreshed());
+    return completer.future.timeout(
+      const Duration(seconds: 8),
+      onTimeout: () {
+        if (identical(_refreshCompleter, completer)) {
+          _completeRefresh();
+        }
+      },
+    );
+  }
+
+  void _completeRefresh() {
+    final completer = _refreshCompleter;
+    if (completer == null) return;
+    _refreshCompleter = null;
+    if (!completer.isCompleted) completer.complete();
+  }
+
+  bool _isAnalyticsLoading(StatsState state) {
+    return state.overview.status == StatsSectionStatus.loading ||
+        state.trends.status == StatsSectionStatus.loading ||
+        state.categories.status == StatsSectionStatus.loading ||
+        state.tags.status == StatsSectionStatus.loading ||
+        state.payees.status == StatsSectionStatus.loading;
   }
 
   /// 外部（中央 FAB 记账、编辑、确认/计入切换等）账单变更 → 重拉统计。
@@ -70,13 +105,21 @@ class _StatsPageState extends State<StatsPage> {
             StatsMonthStartDayChanged(preferences.billing.monthStartDay),
           );
         },
-        child: Scaffold(
-          backgroundColor: FxPalette.of(context).canvas,
-          body: Column(
-            children: [
-              const StatsTopBar(),
-              Expanded(child: _Body()),
-            ],
+        child: BlocListener<StatsBloc, StatsState>(
+          listenWhen: (previous, current) {
+            return _refreshCompleter != null &&
+                _isAnalyticsLoading(previous) &&
+                !_isAnalyticsLoading(current);
+          },
+          listener: (_, _) => _completeRefresh(),
+          child: Scaffold(
+            backgroundColor: FxPalette.of(context).canvas,
+            body: Column(
+              children: [
+                const StatsTopBar(),
+                Expanded(child: _Body(onRefresh: _onRefresh)),
+              ],
+            ),
           ),
         ),
       ),
@@ -85,9 +128,12 @@ class _StatsPageState extends State<StatsPage> {
 }
 
 class _Body extends StatelessWidget {
+  const _Body({required this.onRefresh});
+
+  final RefreshCallback onRefresh;
+
   @override
   Widget build(BuildContext context) {
-    var refreshVersion = 0;
     return BlocBuilder<StatsBloc, StatsState>(
       builder: (context, state) {
         if (!state.hasBook) {
@@ -104,19 +150,7 @@ class _Body extends StatelessWidget {
         return StatsPrivacy(
           hideAmounts: hideAmounts,
           child: RefreshIndicator(
-            onRefresh: () async {
-              final current = ++refreshVersion;
-              bloc.add(const StatsRefreshed());
-              await bloc.stream.firstWhere(
-                (next) =>
-                    current == refreshVersion &&
-                    next.overview.status != StatsSectionStatus.loading &&
-                    next.trends.status != StatsSectionStatus.loading &&
-                    next.categories.status != StatsSectionStatus.loading &&
-                    next.tags.status != StatsSectionStatus.loading &&
-                    next.payees.status != StatsSectionStatus.loading,
-              );
-            },
+            onRefresh: onRefresh,
             child: ListView(
               physics: const AlwaysScrollableScrollPhysics(),
               padding: const EdgeInsets.fromLTRB(

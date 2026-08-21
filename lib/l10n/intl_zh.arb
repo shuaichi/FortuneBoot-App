@@ -427,6 +427,8 @@
   "billsClose": "关闭",
   "billsEdit": "编辑",
   "billsUnconfirm": "取消确认",
+  "billsFilterByTitle": "标题",
+  "billsFilterTitleHint": "输入标题关键词搜索",
   "billsFilterBillType": "账单类型",
   "billsFilterAmountRange": "金额区间",
   "billsFilterMin": "最小",
@@ -878,14 +880,16 @@
       "time": {}
     }
   },
-  "ordersCloseTime": "关闭 {time}",
-  "@ordersCloseTime": {
+  "ordersArchivedTime": "归档 {time}",
+  "@ordersArchivedTime": {
     "placeholders": {
       "time": {}
     }
   },
   "ordersUse": "使用",
-  "ordersClose": "关闭",
+  "ordersArchive": "归档",
+  "ordersArchiveTooltip": "归档后此订单不再算入统计",
+  "ordersStatusUnrecognized": "该订单状态无法识别",
   "ordersReopen": "重开",
   "ordersTitleRequired": "请输入报销单标题",
   "ordersOrderTitle": "报销单标题",
@@ -1215,6 +1219,7 @@
   "appLockCurrentCredentialLabel": "当前密码或手势",
   "appLockVerify": "验证",
   "appLockCredentialMismatch": "两次输入不一致",
+  "appLockPinLengthInvalid": "PIN 需为 6–12 位数字",
   "appLockConfigurationInvalid": "请检查密码或手势格式后重试",
   "appLockDisableVerificationFailed": "验证失败，请重试",
   "appLockFailureInvalidCredential": "验证失败，请重试",

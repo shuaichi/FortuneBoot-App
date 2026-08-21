@@ -86,6 +86,7 @@ class BillsBloc extends Bloc<BillsEvent, BillsState> {
       include: f.include,
       accountId: f.accountId,
       payeeId: f.payeeId,
+      title: f.title,
       categoryIds: f.categoryIds,
       tagIds: f.tagIds,
     );
@@ -203,7 +204,8 @@ class BillsBloc extends Bloc<BillsEvent, BillsState> {
         (filter.categoryIds == null || filter.categoryIds!.isEmpty) &&
         (filter.tagIds == null || filter.tagIds!.isEmpty) &&
         filter.accountId == null &&
-        filter.payeeId == null;
+        filter.payeeId == null &&
+        (filter.title == null || filter.title!.isEmpty);
   }
 
   /// 首页加载：拉第一页 + 月度统计。[refresh] 时保留旧列表避免闪烁。
