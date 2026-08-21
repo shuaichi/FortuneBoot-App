@@ -95,6 +95,8 @@ class PreferencesCubit extends Cubit<PreferencesState> {
   static const String _localeCodeKey = 'fortune.preferences.locale.code';
   static const String _hideAmountsKey =
       'fortune.preferences.dashboard.hideAmounts';
+  static const String _colorPresetKey =
+      'fortune.preferences.financeColors.preset';
   static const String _colorIncomeKey =
       'fortune.preferences.financeColors.income';
   static const String _colorExpenseKey =
@@ -156,14 +158,7 @@ class PreferencesCubit extends Cubit<PreferencesState> {
           dashboard: DashboardDisplayPreferences(
             hideAmounts: prefs.getBool(_hideAmountsKey) ?? false,
           ),
-          financeColors: FinanceColorPreferences(
-            income: prefs.getInt(_colorIncomeKey) ?? defaults.income,
-            expense: prefs.getInt(_colorExpenseKey) ?? defaults.expense,
-            transfer: prefs.getInt(_colorTransferKey) ?? defaults.transfer,
-            adjust: prefs.getInt(_colorAdjustKey) ?? defaults.adjust,
-            advance: prefs.getInt(_colorAdvanceKey) ?? defaults.advance,
-            reimburse: prefs.getInt(_colorReimburseKey) ?? defaults.reimburse,
-          ),
+          financeColors: _readFinanceColors(prefs, defaults),
           screenCapture: screenCapture,
           failure: applied
               ? null
@@ -180,6 +175,37 @@ class PreferencesCubit extends Cubit<PreferencesState> {
         ),
       );
     }
+  }
+
+  FinanceColorPreferences _readFinanceColors(
+    SharedPreferences prefs,
+    FinanceColorPreferences defaults,
+  ) {
+    final income = prefs.getInt(_colorIncomeKey) ?? defaults.income;
+    final expense = prefs.getInt(_colorExpenseKey) ?? defaults.expense;
+    final transfer = prefs.getInt(_colorTransferKey) ?? defaults.transfer;
+    final adjust = prefs.getInt(_colorAdjustKey) ?? defaults.adjust;
+    final advance = prefs.getInt(_colorAdvanceKey) ?? defaults.advance;
+    final reimburse = prefs.getInt(_colorReimburseKey) ?? defaults.reimburse;
+    final preset =
+        prefs.getString(_colorPresetKey) ??
+        FinanceColorPreferences.inferPreset(
+          income: income,
+          expense: expense,
+          transfer: transfer,
+          adjust: adjust,
+          advance: advance,
+          reimburse: reimburse,
+        );
+    return FinanceColorPreferences(
+      income: income,
+      expense: expense,
+      transfer: transfer,
+      adjust: adjust,
+      advance: advance,
+      reimburse: reimburse,
+      preset: preset,
+    );
   }
 
   Future<bool> setMonthStartDay(int day) async {
@@ -299,6 +325,7 @@ class PreferencesCubit extends Cubit<PreferencesState> {
     try {
       final prefs = await _prefs;
       final results = await Future.wait([
+        prefs.setString(_colorPresetKey, colors.preset),
         prefs.setInt(_colorIncomeKey, colors.income),
         prefs.setInt(_colorExpenseKey, colors.expense),
         prefs.setInt(_colorTransferKey, colors.transfer),

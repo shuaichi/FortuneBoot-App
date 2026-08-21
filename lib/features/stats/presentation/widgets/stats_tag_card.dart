@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fortuneboot/features/stats/data/stats_models.dart';
 import 'package:fortuneboot/features/stats/presentation/bloc/stats_bloc.dart';
 import 'package:fortuneboot/features/stats/presentation/widgets/stats_card_shell.dart';
+import 'package:fortuneboot/features/stats/presentation/widgets/stats_chart_table_toggle.dart';
 import 'package:fortuneboot/features/stats/presentation/widgets/stats_formatters.dart';
 import 'package:fortuneboot/features/stats/presentation/widgets/stats_palette.dart';
 import 'package:fortuneboot/fx/components/fx_bar_chart.dart';
@@ -54,21 +55,30 @@ class StatsTagCard extends StatelessWidget {
               color: StatsPalette.stableFor(item.name, id: item.id),
             ),
         ];
-        final summary = chartItems
-            .map(
-              (item) =>
-                  '${item.name.isEmpty ? S.of(context).statsUnnamed : item.name} '
-                  '${formats.money(item.value)}',
-            )
-            .join(', ');
-        return Semantics(
-          label: '$label: $summary',
-          child: FxBarChart(
+        final labels = [
+          for (final item in chartItems)
+            '${item.name.isEmpty ? S.of(context).statsUnnamed : item.name}: '
+                '${formats.money(item.value)}',
+        ];
+        return StatsChartTableToggle(
+          rows: [
+            for (final item in chartItems)
+              StatsChartTableRow(
+                label: item.name.isEmpty
+                    ? S.of(context).statsUnnamed
+                    : item.name,
+                value: formats.money(item.value),
+                color: item.color,
+                icon: Icons.bar_chart_rounded,
+              ),
+          ],
+          chart: FxBarChart(
             items: chartItems,
             unnamedLabel: S.of(context).statsUnnamed,
             locale: formats.locale,
             visibility: formats.visibility,
             valueFormatter: formats.chartValue,
+            accessibilityLabels: labels,
           ),
         );
       },

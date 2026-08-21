@@ -2,11 +2,13 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:fortuneboot/core/money/fx_money_formatter.dart';
 import 'package:fortuneboot/fx/components/fx_chart_palette.dart';
+import 'package:fortuneboot/fx/components/fx_chart_semantics.dart';
 import 'package:fortuneboot/fx/components/fx_money_text.dart';
 import 'package:fortuneboot/fx/components/fx_progress_bar.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
+import 'package:fortuneboot/generated/l10n.dart';
 
 class FxDonutSlice {
   final String name;
@@ -36,6 +38,7 @@ class FxDonutChart extends StatelessWidget {
   final String emptyName;
   final String? centerLabel;
   final double? centerAmount;
+  final List<String>? accessibilityLabels;
 
   const FxDonutChart({
     super.key,
@@ -49,6 +52,7 @@ class FxDonutChart extends StatelessWidget {
     this.emptyName = '未分类',
     this.centerLabel,
     this.centerAmount,
+    this.accessibilityLabels,
   });
 
   @override
@@ -56,35 +60,59 @@ class FxDonutChart extends StatelessWidget {
     final positive = slices.where((s) => s.value > 0).toList();
     if (positive.isEmpty) return const SizedBox.shrink();
 
-    final chart = SizedBox(
-      width: chartSize,
-      height: chartSize,
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          PieChart(
-            PieChartData(
-              startDegreeOffset: -90,
-              sectionsSpace: 2,
-              centerSpaceRadius: centerSpaceRadius,
-              sections: [
-                for (var i = 0; i < positive.length; i++)
-                  PieChartSectionData(
-                    value: positive[i].value,
-                    color: _colorAt(i, positive[i]),
-                    radius: radius,
-                    showTitle: false,
-                  ),
-              ],
+    final chartLabels =
+        accessibilityLabels ??
+        [
+          for (final slice in positive)
+            '${slice.name.isEmpty ? emptyName : slice.name}: '
+                '${FxMoneyFormatter.format(slice.value, locale: Localizations.localeOf(context).toString(), decimalDigits: 2)}, '
+                '${FxMoneyFormatter.formatPercent(slice.percent, locale: Localizations.localeOf(context).toString())}',
+        ];
+    final chart = Semantics(
+      container: true,
+      explicitChildNodes: true,
+      child: SizedBox(
+        width: chartSize,
+        height: chartSize,
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            ExcludeSemantics(
+              child: PieChart(
+                PieChartData(
+                  startDegreeOffset: -90,
+                  sectionsSpace: 2,
+                  centerSpaceRadius: centerSpaceRadius,
+                  sections: [
+                    for (var i = 0; i < positive.length; i++)
+                      PieChartSectionData(
+                        value: positive[i].value,
+                        color: _colorAt(i, positive[i]),
+                        radius: radius,
+                        showTitle: false,
+                      ),
+                  ],
+                ),
+              ),
             ),
-          ),
-          if (centerAmount != null || centerLabel != null)
-            _CenterLabel(
-              amount: centerAmount,
-              label: centerLabel,
-              currencyCode: currencyCode,
+            if (centerAmount != null || centerLabel != null)
+              ExcludeSemantics(
+                child: _CenterLabel(
+                  amount: centerAmount,
+                  label: centerLabel,
+                  currencyCode: currencyCode,
+                ),
+              ),
+            Positioned.fill(
+              child: FxChartSemanticsOverlay(
+                labels: chartLabels,
+                hint: S
+                    .of(context)
+                    .statsDonutChartSemantics(chartLabels.length),
+              ),
             ),
-        ],
+          ],
+        ),
       ),
     );
 

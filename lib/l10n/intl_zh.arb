@@ -1277,7 +1277,42 @@
   "profileColorAdjust": "调整",
   "profileColorAdvance": "垫付",
   "profileColorReimburse": "报销",
+  "profileColorPresetDefault": "默认红绿",
+  "profileColorPresetDeuteranopia": "红绿色盲友好",
+  "profileColorPresetProtanopia": "红色盲友好",
+  "profileColorPresetTritanopia": "蓝黄色盲友好",
+  "profileColorPresetTitle": "色盲友好预设",
   "profileRestoreDefault": "恢复默认",
+  "statsViewTable": "查看表格",
+  "statsViewChart": "查看图表",
+  "statsTableItem": "项目",
+  "statsTableValue": "数值",
+  "statsTableShare": "占比",
+  "statsTableDetail": "详情",
+  "statsTableSemantics": "图表数据表，共 {count} 行",
+  "@statsTableSemantics": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "statsDonutChartSemantics": "环形图，共 {count} 项",
+  "@statsDonutChartSemantics": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "statsLineChartSemantics": "折线图，共 {count} 个数据点",
+  "@statsLineChartSemantics": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "statsBarChartSemantics": "柱状图，共 {count} 项",
+  "@statsBarChartSemantics": {
+    "placeholders": {
+      "count": {}
+    }
+  },
   "profileSaveFailedRetry": "保存失败，请重试",
   "profileLoadFailed": "资料加载失败",
   "profileNotLoggedIn": "未登录",

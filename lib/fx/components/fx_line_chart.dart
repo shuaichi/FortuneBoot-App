@@ -1,8 +1,10 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:fortuneboot/core/money/fx_money_formatter.dart';
+import 'package:fortuneboot/fx/components/fx_chart_semantics.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
+import 'package:fortuneboot/generated/l10n.dart';
 
 class FxLinePoint {
   final String name;
@@ -31,6 +33,7 @@ class FxLineChart extends StatelessWidget {
   final String Function(double value)? valueFormatter;
   final FxAmountVisibility visibility;
   final String? locale;
+  final List<String>? accessibilityLabels;
 
   const FxLineChart({
     super.key,
@@ -44,6 +47,7 @@ class FxLineChart extends StatelessWidget {
     this.valueFormatter,
     this.visibility = FxAmountVisibility.visible,
     this.locale,
+    this.accessibilityLabels,
   });
 
   @override
@@ -61,53 +65,82 @@ class FxLineChart extends StatelessWidget {
       if (maxLen > 1) maxLen - 1,
     };
 
-    return SizedBox(
-      height: height,
-      child: LineChart(
-        LineChartData(
-          minY: 0,
-          maxY: maxY <= 0 ? 1 : maxY * 1.2,
-          gridData: FlGridData(
-            show: showAxes,
-            drawVerticalLine: false,
-            horizontalInterval: maxY <= 0 ? 1 : maxY / 3,
-            getDrawingHorizontalLine: (_) =>
-                FlLine(color: palette.border, strokeWidth: 1),
-          ),
-          borderData: FlBorderData(show: false),
-          titlesData: showAxes
-              ? _titles(palette, labelIdx, maxLen)
-              : const FlTitlesData(show: false),
-          lineTouchData: LineTouchData(
-            touchTooltipData: LineTouchTooltipData(
-              getTooltipColor: (_) => palette.textPrimary,
-              getTooltipItems: (spots) => spots
-                  .map(
-                    (spot) => LineTooltipItem(
-                      _formatValue(spot.y),
-                      FxTypography.caption.copyWith(color: palette.surface),
+    final chartLabels =
+        accessibilityLabels ??
+        [
+          for (final s in series)
+            for (final point in s.points)
+              '${s.label == null ? '' : '${s.label} '} ${point.name}: ${_formatValue(point.value)}'
+                  .trim(),
+        ];
+
+    return Semantics(
+      container: true,
+      explicitChildNodes: true,
+      child: SizedBox(
+        height: height,
+        child: Stack(
+          children: [
+            ExcludeSemantics(
+              child: LineChart(
+                LineChartData(
+                  minY: 0,
+                  maxY: maxY <= 0 ? 1 : maxY * 1.2,
+                  gridData: FlGridData(
+                    show: showAxes,
+                    drawVerticalLine: false,
+                    horizontalInterval: maxY <= 0 ? 1 : maxY / 3,
+                    getDrawingHorizontalLine: (_) =>
+                        FlLine(color: palette.border, strokeWidth: 1),
+                  ),
+                  borderData: FlBorderData(show: false),
+                  titlesData: showAxes
+                      ? _titles(palette, labelIdx, maxLen)
+                      : const FlTitlesData(show: false),
+                  lineTouchData: LineTouchData(
+                    touchTooltipData: LineTouchTooltipData(
+                      getTooltipColor: (_) => palette.textPrimary,
+                      getTooltipItems: (spots) => spots
+                          .map(
+                            (spot) => LineTooltipItem(
+                              _formatValue(spot.y),
+                              FxTypography.caption.copyWith(
+                                color: palette.surface,
+                              ),
+                            ),
+                          )
+                          .toList(),
                     ),
-                  )
-                  .toList(),
-            ),
-          ),
-          lineBarsData: [
-            for (final s in series)
-              LineChartBarData(
-                spots: [
-                  for (var i = 0; i < s.points.length; i++)
-                    FlSpot(i.toDouble(), s.points[i].value),
-                ],
-                isCurved: curved,
-                preventCurveOverShooting: true,
-                color: s.color,
-                barWidth: 2.5,
-                dotData: FlDotData(show: showDots || s.points.length <= 12),
-                belowBarData: BarAreaData(
-                  show: showArea,
-                  color: s.color.withValues(alpha: 0.12),
+                  ),
+                  lineBarsData: [
+                    for (final s in series)
+                      LineChartBarData(
+                        spots: [
+                          for (var i = 0; i < s.points.length; i++)
+                            FlSpot(i.toDouble(), s.points[i].value),
+                        ],
+                        isCurved: curved,
+                        preventCurveOverShooting: true,
+                        color: s.color,
+                        barWidth: 2.5,
+                        dotData: FlDotData(
+                          show: showDots || s.points.length <= 12,
+                        ),
+                        belowBarData: BarAreaData(
+                          show: showArea,
+                          color: s.color.withValues(alpha: 0.12),
+                        ),
+                      ),
+                  ],
                 ),
               ),
+            ),
+            Positioned.fill(
+              child: FxChartSemanticsOverlay(
+                labels: chartLabels,
+                hint: S.of(context).statsLineChartSemantics(chartLabels.length),
+              ),
+            ),
           ],
         ),
       ),

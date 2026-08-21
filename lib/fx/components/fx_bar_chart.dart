@@ -2,8 +2,10 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:fortuneboot/core/money/fx_money_formatter.dart';
 import 'package:fortuneboot/fx/components/fx_chart_palette.dart';
+import 'package:fortuneboot/fx/components/fx_chart_semantics.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
+import 'package:fortuneboot/generated/l10n.dart';
 
 class FxBarItem {
   final String name;
@@ -23,6 +25,7 @@ class FxBarChart extends StatelessWidget {
   final String Function(double value)? valueFormatter;
   final FxAmountVisibility visibility;
   final String? locale;
+  final List<String>? accessibilityLabels;
 
   const FxBarChart({
     super.key,
@@ -34,6 +37,7 @@ class FxBarChart extends StatelessWidget {
     this.valueFormatter,
     this.visibility = FxAmountVisibility.visible,
     this.locale,
+    this.accessibilityLabels,
   });
 
   @override
@@ -42,78 +46,101 @@ class FxBarChart extends StatelessWidget {
     final positive = items.where((item) => item.value > 0).take(topN).toList();
     if (positive.isEmpty) return const SizedBox.shrink();
     final maxV = positive.fold<double>(0, (m, e) => e.value > m ? e.value : m);
+    final labels =
+        accessibilityLabels ??
+        [
+          for (final item in positive)
+            '${item.name.isEmpty ? unnamedLabel : item.name}: ${_formatValue(item.value)}',
+        ];
 
-    return SizedBox(
-      height: height,
-      child: BarChart(
-        BarChartData(
-          alignment: BarChartAlignment.spaceAround,
-          maxY: maxV <= 0 ? 1 : maxV * 1.15,
-          gridData: FlGridData(
-            drawVerticalLine: false,
-            horizontalInterval: maxV <= 0 ? 1 : maxV / 3,
-            getDrawingHorizontalLine: (_) =>
-                FlLine(color: palette.border, strokeWidth: 1),
-          ),
-          borderData: FlBorderData(show: false),
-          titlesData: FlTitlesData(
-            topTitles: const AxisTitles(),
-            rightTitles: const AxisTitles(),
-            leftTitles: const AxisTitles(),
-            bottomTitles: AxisTitles(
-              sideTitles: SideTitles(
-                showTitles: true,
-                reservedSize: 40,
-                getTitlesWidget: (value, meta) {
-                  final i = value.round();
-                  if (i < 0 || i >= positive.length) {
-                    return const SizedBox.shrink();
-                  }
-                  return Padding(
-                    padding: const EdgeInsets.only(top: 4),
-                    child: SizedBox(
-                      width: 48,
-                      child: Text(
-                        positive[i].name.isEmpty
-                            ? unnamedLabel
-                            : positive[i].name,
-                        style: FxTypography.caption.copyWith(
-                          color: palette.textTertiary,
-                        ),
-                        textAlign: TextAlign.center,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
+    return Semantics(
+      container: true,
+      explicitChildNodes: true,
+      child: SizedBox(
+        height: height,
+        child: Stack(
+          children: [
+            ExcludeSemantics(
+              child: BarChart(
+                BarChartData(
+                  alignment: BarChartAlignment.spaceAround,
+                  maxY: maxV <= 0 ? 1 : maxV * 1.15,
+                  gridData: FlGridData(
+                    drawVerticalLine: false,
+                    horizontalInterval: maxV <= 0 ? 1 : maxV / 3,
+                    getDrawingHorizontalLine: (_) =>
+                        FlLine(color: palette.border, strokeWidth: 1),
+                  ),
+                  borderData: FlBorderData(show: false),
+                  titlesData: FlTitlesData(
+                    topTitles: const AxisTitles(),
+                    rightTitles: const AxisTitles(),
+                    leftTitles: const AxisTitles(),
+                    bottomTitles: AxisTitles(
+                      sideTitles: SideTitles(
+                        showTitles: true,
+                        reservedSize: 40,
+                        getTitlesWidget: (value, meta) {
+                          final i = value.round();
+                          if (i < 0 || i >= positive.length) {
+                            return const SizedBox.shrink();
+                          }
+                          return Padding(
+                            padding: const EdgeInsets.only(top: 4),
+                            child: SizedBox(
+                              width: 48,
+                              child: Text(
+                                positive[i].name.isEmpty
+                                    ? unnamedLabel
+                                    : positive[i].name,
+                                style: FxTypography.caption.copyWith(
+                                  color: palette.textTertiary,
+                                ),
+                                textAlign: TextAlign.center,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          );
+                        },
                       ),
                     ),
-                  );
-                },
-              ),
-            ),
-          ),
-          barTouchData: BarTouchData(
-            touchTooltipData: BarTouchTooltipData(
-              getTooltipColor: (_) => palette.textPrimary,
-              getTooltipItem: (group, gi, rod, ri) => BarTooltipItem(
-                _formatValue(rod.toY),
-                FxTypography.caption.copyWith(color: palette.surface),
-              ),
-            ),
-          ),
-          barGroups: [
-            for (var i = 0; i < positive.length; i++)
-              BarChartGroupData(
-                x: i,
-                barRods: [
-                  BarChartRodData(
-                    toY: positive[i].value,
-                    color: positive[i].color ?? FxChartPalette.colorAt(i),
-                    width: barWidth,
-                    borderRadius: const BorderRadius.vertical(
-                      top: Radius.circular(4),
+                  ),
+                  barTouchData: BarTouchData(
+                    touchTooltipData: BarTouchTooltipData(
+                      getTooltipColor: (_) => palette.textPrimary,
+                      getTooltipItem: (group, gi, rod, ri) => BarTooltipItem(
+                        _formatValue(rod.toY),
+                        FxTypography.caption.copyWith(color: palette.surface),
+                      ),
                     ),
                   ),
-                ],
+                  barGroups: [
+                    for (var i = 0; i < positive.length; i++)
+                      BarChartGroupData(
+                        x: i,
+                        barRods: [
+                          BarChartRodData(
+                            toY: positive[i].value,
+                            color:
+                                positive[i].color ?? FxChartPalette.colorAt(i),
+                            width: barWidth,
+                            borderRadius: const BorderRadius.vertical(
+                              top: Radius.circular(4),
+                            ),
+                          ),
+                        ],
+                      ),
+                  ],
+                ),
               ),
+            ),
+            Positioned.fill(
+              child: FxChartSemanticsOverlay(
+                labels: labels,
+                hint: S.of(context).statsBarChartSemantics(labels.length),
+              ),
+            ),
           ],
         ),
       ),

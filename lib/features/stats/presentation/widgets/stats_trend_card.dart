@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fortuneboot/features/stats/data/stats_models.dart';
 import 'package:fortuneboot/features/stats/presentation/bloc/stats_bloc.dart';
 import 'package:fortuneboot/features/stats/presentation/widgets/stats_card_shell.dart';
+import 'package:fortuneboot/features/stats/presentation/widgets/stats_chart_table_toggle.dart';
 import 'package:fortuneboot/features/stats/presentation/widgets/stats_formatters.dart';
 import 'package:fortuneboot/fx/components/fx_line_chart.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
@@ -41,26 +42,32 @@ class StatsTrendCard extends StatelessWidget {
             ? finance.expense
             : finance.income;
         final formats = StatsFormatters.of(context, currencyCode: currencyCode);
-        final summary = points
-            .take(3)
-            .map((point) => '${point.name} ${formats.money(point.value)}')
-            .join(', ');
-        return Semantics(
-          label: '$label: $summary',
-          child: FxLineChart(
-            series: [
-              FxLineSeries(
+        final chartPoints = [
+          for (final point in points)
+            FxLinePoint(name: point.name, value: point.value),
+        ];
+        final labels = [
+          for (final point in points)
+            '$label ${point.name}: ${formats.money(point.value)}',
+        ];
+        return StatsChartTableToggle(
+          rows: [
+            for (final point in points)
+              StatsChartTableRow(
+                label: point.name,
+                value: formats.money(point.value),
                 color: color,
-                label: label,
-                points: [
-                  for (final point in points)
-                    FxLinePoint(name: point.name, value: point.value),
-                ],
+                icon: Icons.show_chart_rounded,
               ),
+          ],
+          chart: FxLineChart(
+            series: [
+              FxLineSeries(color: color, label: label, points: chartPoints),
             ],
             locale: formats.locale,
             visibility: formats.visibility,
             valueFormatter: formats.chartValue,
+            accessibilityLabels: labels,
           ),
         );
       },

@@ -326,7 +326,12 @@ class _StatsInsightCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: FxSpacing.md),
-          FxProgressBar(value: expenseRatio, color: finance.expense, height: 7),
+          FxProgressBar(
+            value: expenseRatio,
+            color: finance.expense,
+            height: 7,
+            semanticsLabel: S.of(context).statsExpense,
+          ),
           const SizedBox(height: FxSpacing.xs),
           Text(
             '${S.of(context).statsExpense} ${formats.percent(expenseRatio * 100)} · ${S.of(context).statsSurplus}',

@@ -5,6 +5,7 @@ import 'package:fortuneboot/core/session/bill_mutations.dart';
 import 'package:fortuneboot/core/session/session_cubit.dart';
 import 'package:fortuneboot/features/stats/data/stats_models.dart';
 import 'package:fortuneboot/features/stats/data/stats_service.dart';
+import 'package:fortuneboot/features/stats/presentation/widgets/stats_chart_table_toggle.dart';
 import 'package:fortuneboot/features/stats/presentation/widgets/stats_formatters.dart';
 import 'package:fortuneboot/features/stats/presentation/widgets/stats_load_error.dart';
 import 'package:fortuneboot/features/stats/presentation/widgets/stats_privacy.dart';
@@ -241,13 +242,31 @@ class _LoanOverviewCard extends StatelessWidget {
             if (!hasStock)
               _InlineEmpty(message: S.of(context).statsNoRecordsThisPeriod)
             else
-              FxBarChart(
-                height: 180,
-                topN: 2,
-                items: stockItems,
-                locale: formats.locale,
-                visibility: formats.visibility,
-                valueFormatter: formats.chartValue,
+              SizedBox(
+                height: 240,
+                child: StatsChartTableToggle(
+                  rows: [
+                    for (final item in stockItems)
+                      StatsChartTableRow(
+                        label: item.name,
+                        value: formats.money(item.value),
+                        color: item.color,
+                        icon: Icons.bar_chart_rounded,
+                      ),
+                  ],
+                  chart: FxBarChart(
+                    height: 180,
+                    topN: 2,
+                    items: stockItems,
+                    locale: formats.locale,
+                    visibility: formats.visibility,
+                    valueFormatter: formats.chartValue,
+                    accessibilityLabels: [
+                      for (final item in stockItems)
+                        '${item.name}: ${formats.money(item.value)}',
+                    ],
+                  ),
+                ),
               ),
             const SizedBox(height: FxSpacing.md),
             _OverdueRiskRow(loan: loan, currencyCode: currencyCode),

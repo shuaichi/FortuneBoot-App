@@ -1275,7 +1275,42 @@
   "profileColorAdjust": "Adjustment",
   "profileColorAdvance": "Advance",
   "profileColorReimburse": "Reimbursement",
+  "profileColorPresetDefault": "Default red/green",
+  "profileColorPresetDeuteranopia": "Red-green colorblind friendly",
+  "profileColorPresetProtanopia": "Protanopia friendly",
+  "profileColorPresetTritanopia": "Blue-yellow colorblind friendly",
+  "profileColorPresetTitle": "Colorblind-friendly presets",
   "profileRestoreDefault": "Restore default",
+  "statsViewTable": "View table",
+  "statsViewChart": "View chart",
+  "statsTableItem": "Item",
+  "statsTableValue": "Value",
+  "statsTableShare": "Share",
+  "statsTableDetail": "Detail",
+  "statsTableSemantics": "Chart data table, {count} rows",
+  "@statsTableSemantics": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "statsDonutChartSemantics": "Donut chart, {count} items",
+  "@statsDonutChartSemantics": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "statsLineChartSemantics": "Line chart, {count} points",
+  "@statsLineChartSemantics": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "statsBarChartSemantics": "Bar chart, {count} items",
+  "@statsBarChartSemantics": {
+    "placeholders": {
+      "count": {}
+    }
+  },
   "profileSaveFailedRetry": "Save failed, please try again",
   "profileLoadFailed": "Failed to load profile",
   "profileNotLoggedIn": "Not logged in",

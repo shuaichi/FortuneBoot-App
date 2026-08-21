@@ -5,6 +5,7 @@ import 'package:fortuneboot/core/session/bill_mutations.dart';
 import 'package:fortuneboot/core/session/session_cubit.dart';
 import 'package:fortuneboot/features/stats/data/stats_models.dart';
 import 'package:fortuneboot/features/stats/data/stats_service.dart';
+import 'package:fortuneboot/features/stats/presentation/widgets/stats_chart_table_toggle.dart';
 import 'package:fortuneboot/features/stats/presentation/widgets/stats_formatters.dart';
 import 'package:fortuneboot/features/stats/presentation/widgets/stats_load_error.dart';
 import 'package:fortuneboot/features/stats/presentation/widgets/stats_palette.dart';
@@ -270,17 +271,38 @@ class _AssetCompositionCard extends StatelessWidget {
             if (slices.isEmpty)
               _EmptyInline(message: S.of(context).dashboardNoData)
             else
-              FxDonutChart(
-                slices: slices,
-                currencyCode: data.currencyCode,
-                centerLabel: S.of(context).dashboardNetWorth,
-                centerAmount: formats.masked ? null : netWorth,
-                showList: !formats.masked,
+              SizedBox(
+                height: formats.masked ? 220 : 260,
+                child: StatsChartTableToggle(
+                  rows: [
+                    for (final slice in slices)
+                      StatsChartTableRow(
+                        label: slice.name.isEmpty
+                            ? S.of(context).statsUnnamed
+                            : slice.name,
+                        value: formats.money(slice.value),
+                        percent: formats.percent(slice.percent),
+                        color: slice.color,
+                        icon: Icons.donut_large_rounded,
+                      ),
+                  ],
+                  chart: formats.masked
+                      ? _MaskedSliceLegend(slices: slices, formats: formats)
+                      : FxDonutChart(
+                          slices: slices,
+                          currencyCode: data.currencyCode,
+                          centerLabel: S.of(context).dashboardNetWorth,
+                          centerAmount: netWorth,
+                          showList: true,
+                          accessibilityLabels: [
+                            for (final slice in slices)
+                              '${slice.name.isEmpty ? S.of(context).statsUnnamed : slice.name}: '
+                                  '${formats.money(slice.value)}, '
+                                  '${formats.percent(slice.percent)}',
+                          ],
+                        ),
+                ),
               ),
-            if (formats.masked && slices.isNotEmpty) ...[
-              const SizedBox(height: FxSpacing.md),
-              _MaskedSliceLegend(slices: slices, formats: formats),
-            ],
           ],
         ),
       ),
@@ -309,25 +331,47 @@ class _NetWorthTrendCard extends StatelessWidget {
             if (points.length < 2)
               _EmptyInline(message: S.of(context).dashboardInsufficientData)
             else
-              FxLineChart(
-                series: [
-                  FxLineSeries(
-                    points: [
-                      for (final item in points)
-                        FxLinePoint(
-                          name: item.name.isEmpty
-                              ? item.snapshotDate
-                              : item.name,
-                          value: item.netAssets,
-                        ),
+              SizedBox(
+                height: 240,
+                child: StatsChartTableToggle(
+                  rows: [
+                    for (final item in points)
+                      StatsChartTableRow(
+                        label: item.name.isEmpty
+                            ? item.snapshotDate
+                            : item.name,
+                        value: formats.money(item.netAssets),
+                        color: palette.primary,
+                        icon: Icons.show_chart_rounded,
+                      ),
+                  ],
+                  chart: FxLineChart(
+                    series: [
+                      FxLineSeries(
+                        points: [
+                          for (final item in points)
+                            FxLinePoint(
+                              name: item.name.isEmpty
+                                  ? item.snapshotDate
+                                  : item.name,
+                              value: item.netAssets,
+                            ),
+                        ],
+                        color: palette.primary,
+                        label: S.of(context).dashboardNetWorth,
+                      ),
                     ],
-                    color: palette.primary,
-                    label: S.of(context).dashboardNetWorth,
+                    locale: formats.locale,
+                    visibility: formats.visibility,
+                    valueFormatter: formats.chartValue,
+                    accessibilityLabels: [
+                      for (final item in points)
+                        '${S.of(context).dashboardNetWorth} '
+                            '${item.name.isEmpty ? item.snapshotDate : item.name}: '
+                            '${formats.money(item.netAssets)}',
+                    ],
                   ),
-                ],
-                locale: formats.locale,
-                visibility: formats.visibility,
-                valueFormatter: formats.chartValue,
+                ),
               ),
           ],
         ),
@@ -356,23 +400,47 @@ class _AccountTypeCard extends StatelessWidget {
             if (items.isEmpty)
               _EmptyInline(message: S.of(context).dashboardNoData)
             else
-              FxBarChart(
-                items: [
-                  for (final item in items)
-                    FxBarItem(
-                      name: item.accountTypeName,
-                      value: item.assets,
-                      color: StatsPalette.stableFor(
-                        item.accountTypeName,
-                        id: item.accountType,
+              SizedBox(
+                height: 240,
+                child: StatsChartTableToggle(
+                  rows: [
+                    for (final item in items)
+                      StatsChartTableRow(
+                        label: item.accountTypeName.isEmpty
+                            ? S.of(context).statsUnnamed
+                            : item.accountTypeName,
+                        value: formats.money(item.assets),
+                        color: StatsPalette.stableFor(
+                          item.accountTypeName,
+                          id: item.accountType,
+                        ),
+                        icon: Icons.bar_chart_rounded,
                       ),
-                    ),
-                ],
-                height: 180,
-                unnamedLabel: S.of(context).statsUnnamed,
-                locale: formats.locale,
-                visibility: formats.visibility,
-                valueFormatter: formats.chartValue,
+                  ],
+                  chart: FxBarChart(
+                    items: [
+                      for (final item in items)
+                        FxBarItem(
+                          name: item.accountTypeName,
+                          value: item.assets,
+                          color: StatsPalette.stableFor(
+                            item.accountTypeName,
+                            id: item.accountType,
+                          ),
+                        ),
+                    ],
+                    height: 180,
+                    unnamedLabel: S.of(context).statsUnnamed,
+                    locale: formats.locale,
+                    visibility: formats.visibility,
+                    valueFormatter: formats.chartValue,
+                    accessibilityLabels: [
+                      for (final item in items)
+                        '${item.accountTypeName.isEmpty ? S.of(context).statsUnnamed : item.accountTypeName}: '
+                            '${formats.money(item.assets)}',
+                    ],
+                  ),
+                ),
               ),
           ],
         ),

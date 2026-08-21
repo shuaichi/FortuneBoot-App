@@ -3,6 +3,7 @@ import 'package:fortuneboot/core/feedback/fx_feedback.dart';
 import 'package:fortuneboot/core/preferences/finance_color_preferences.dart';
 import 'package:fortuneboot/core/preferences/preferences_cubit.dart';
 import 'package:fortuneboot/fx/components/fx_button.dart';
+import 'package:fortuneboot/fx/components/fx_chip.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
@@ -66,35 +67,37 @@ class _FinanceColorEditorState extends State<FinanceColorEditor> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
         children: [
+          _presetPicker(),
+          const SizedBox(height: FxSpacing.lg),
           _row(
             S.of(context).profileColorIncome,
             _draft.income,
-            (c) => _update(_draft.copyWith(income: c)),
+            (c) => _update(_draft.copyWith(income: c, preset: 'custom')),
           ),
           _row(
             S.of(context).profileColorExpense,
             _draft.expense,
-            (c) => _update(_draft.copyWith(expense: c)),
+            (c) => _update(_draft.copyWith(expense: c, preset: 'custom')),
           ),
           _row(
             S.of(context).profileColorTransfer,
             _draft.transfer,
-            (c) => _update(_draft.copyWith(transfer: c)),
+            (c) => _update(_draft.copyWith(transfer: c, preset: 'custom')),
           ),
           _row(
             S.of(context).profileColorAdjust,
             _draft.adjust,
-            (c) => _update(_draft.copyWith(adjust: c)),
+            (c) => _update(_draft.copyWith(adjust: c, preset: 'custom')),
           ),
           _row(
             S.of(context).profileColorAdvance,
             _draft.advance,
-            (c) => _update(_draft.copyWith(advance: c)),
+            (c) => _update(_draft.copyWith(advance: c, preset: 'custom')),
           ),
           _row(
             S.of(context).profileColorReimburse,
             _draft.reimburse,
-            (c) => _update(_draft.copyWith(reimburse: c)),
+            (c) => _update(_draft.copyWith(reimburse: c, preset: 'custom')),
           ),
           const SizedBox(height: FxSpacing.lg),
           Row(
@@ -121,6 +124,50 @@ class _FinanceColorEditorState extends State<FinanceColorEditor> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _presetPicker() {
+    final presets = [
+      (FinanceColorPreset.defaults, S.of(context).profileColorPresetDefault),
+      (
+        FinanceColorPreset.deuteranopia,
+        S.of(context).profileColorPresetDeuteranopia,
+      ),
+      (
+        FinanceColorPreset.protanopia,
+        S.of(context).profileColorPresetProtanopia,
+      ),
+      (
+        FinanceColorPreset.tritanopia,
+        S.of(context).profileColorPresetTritanopia,
+      ),
+    ];
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          S.of(context).profileColorPresetTitle,
+          style: FxTypography.label.copyWith(
+            color: FxPalette.of(context).textSecondary,
+          ),
+        ),
+        const SizedBox(height: FxSpacing.sm),
+        Wrap(
+          spacing: FxSpacing.sm,
+          runSpacing: FxSpacing.sm,
+          children: [
+            for (final entry in presets)
+              FxChip(
+                label: entry.$2,
+                selected: _draft.preset == entry.$1.storageValue,
+                onTap: () => _update(
+                  FinanceColorPreferences.fromPreset(entry.$1.storageValue),
+                ),
+              ),
+          ],
+        ),
+      ],
     );
   }
 
