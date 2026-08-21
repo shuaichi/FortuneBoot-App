@@ -496,7 +496,17 @@
   "billEditorDiscardMessage": "已填写的内容将丢失，此操作无法撤销。",
   "billEditorDiscardConfirm": "丢弃",
   "billEditorAttachments": "附件",
-  "billEditorSelectedCount": "已选 {count} 张",
+  "billEditorAddAttachment": "添加附件",
+  "billEditorChoosePhoto": "选择照片",
+  "billEditorChooseFile": "选择文件",
+  "billEditorSelectedCount": "已选 {count} 个附件",
+  "billEditorAttachmentInvalid": "部分附件不可读取或超出大小限制",
+  "billEditorAttachmentPickFailed": "选择附件失败，请重试",
+  "billEditorAttachmentUnreadable": "附件不可读取，请重新选择后重试",
+  "billEditorAttachmentPermissionRequired": "应用缺少文件访问权限，请更新应用或联系管理员",
+  "billEditorAttachmentPluginUnavailable": "附件组件未正确加载，请重启应用后重试",
+  "billEditorSubmitNetworkFailed": "网络异常，请检查网络后重试",
+  "billEditorSubmitAuthFailed": "登录已失效，请重新登录后重试",
   "@billEditorSelectedCount": {
     "placeholders": {
       "count": {}

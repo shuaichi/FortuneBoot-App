@@ -157,11 +157,11 @@ class ExtraRowChanged extends BillEditorEvent {
 }
 
 class AttachmentsAdded extends BillEditorEvent {
-  final List<File> files;
-  const AttachmentsAdded(this.files);
+  final List<BillAttachment> attachments;
+  const AttachmentsAdded(this.attachments);
 
   @override
-  List<Object?> get props => [files.length];
+  List<Object?> get props => [attachments];
 }
 
 class AttachmentRemoved extends BillEditorEvent {

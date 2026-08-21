@@ -54,7 +54,7 @@ class BillEditorState extends Equatable {
   final String? orderTitle;
 
   final List<ExtraRow> extras;
-  final List<File> attachments;
+  final List<BillAttachment> attachments;
 
   final String title;
   final bool titleTouched; // 用户是否手改过标题
@@ -212,7 +212,7 @@ class BillEditorState extends Equatable {
     String? orderTitle,
     bool clearOrder = false,
     List<ExtraRow>? extras,
-    List<File>? attachments,
+    List<BillAttachment>? attachments,
     String? title,
     bool? titleTouched,
     String? remark,

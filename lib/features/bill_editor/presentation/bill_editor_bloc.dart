@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -9,6 +7,8 @@ import 'package:fortuneboot/core/network/fx_api.dart';
 import 'package:fortuneboot/features/bill_editor/data/editor_options_service.dart';
 import 'package:fortuneboot/features/bill_editor/presentation/bill_editor_args.dart';
 import 'package:fortuneboot/features/bill_editor/presentation/bill_editor_models.dart';
+import 'package:fortuneboot/features/shared/data/bill_attachment.dart';
+import 'package:fortuneboot/features/shared/data/bill_attachment_validator.dart';
 import 'package:fortuneboot/features/shared/data/bill_models.dart';
 import 'package:fortuneboot/features/shared/data/bill_service.dart';
 
@@ -390,8 +390,12 @@ class BillEditorBloc extends Bloc<BillEditorEvent, BillEditorState> {
     Emitter<BillEditorState> emit,
   ) {
     if (state.submitStatus == SubmitStatus.submitting) return;
-    final paths = state.attachments.map((file) => file.path).toSet();
-    final unique = event.files.where((file) => paths.add(file.path)).toList();
+    final attachmentIds = state.attachments
+        .map((attachment) => attachment.id)
+        .toSet();
+    final unique = event.attachments
+        .where((attachment) => attachmentIds.add(attachment.id))
+        .toList();
     if (unique.isEmpty) return;
     emit(state.copyWith(attachments: [...state.attachments, ...unique]));
   }
@@ -440,20 +444,29 @@ class BillEditorBloc extends Bloc<BillEditorEvent, BillEditorState> {
       return;
     }
 
-    emit(state.copyWith(submitStatus: SubmitStatus.submitting));
+    emit(
+      state.copyWith(
+        submitStatus: SubmitStatus.submitting,
+        submitFailure: null,
+        validationFailure: null,
+      ),
+    );
     try {
       final json = _buildCommand(state);
       await _billService.submit(
         json,
         modify: state.mode == 'edit',
-        attachmentFiles: state.attachments.isEmpty ? null : state.attachments,
+        attachments: state.attachments.isEmpty ? null : state.attachments,
       );
       emit(state.copyWith(submitStatus: SubmitStatus.success));
     } on Object catch (error) {
+      final failure = error is BillAttachmentValidationException
+          ? const FxFailure(kind: FxFailureKind.persistence)
+          : FxFailureMapper.map(error);
       emit(
         state.copyWith(
           submitStatus: SubmitStatus.failure,
-          submitFailure: FxFailureMapper.map(error),
+          submitFailure: failure,
         ),
       );
     }

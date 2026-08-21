@@ -1,8 +1,8 @@
 import 'dart:convert';
-import 'dart:io';
-
 import 'package:dio/dio.dart';
 import 'package:fortuneboot/core/network/fx_api.dart';
+import 'package:fortuneboot/features/shared/data/bill_attachment.dart';
+import 'package:fortuneboot/features/shared/data/bill_attachment_validator.dart';
 import 'package:fortuneboot/features/shared/data/bill_models.dart';
 import 'package:intl/intl.dart';
 
@@ -209,8 +209,11 @@ class BillService {
   Future<void> submit(
     Map<String, dynamic> data, {
     required bool modify,
-    List<dynamic>? attachmentFiles,
+    List<BillAttachment>? attachments,
   }) async {
+    final attachmentList = attachments ?? const <BillAttachment>[];
+    await const BillAttachmentValidator().inspectAll(attachmentList);
+
     final formData = FormData();
     formData.files.add(
       MapEntry(
@@ -221,32 +224,14 @@ class BillService {
         ),
       ),
     );
-    if (attachmentFiles != null) {
-      for (final file in attachmentFiles) {
-        if (file is File) {
-          formData.files.add(
-            MapEntry(
-              'files',
-              await MultipartFile.fromFile(
-                file.path,
-                filename: file.path.split(Platform.pathSeparator).last,
-              ),
-            ),
-          );
-        } else if (file is Map &&
-            file['bytes'] != null &&
-            file['name'] != null) {
-          formData.files.add(
-            MapEntry(
-              'files',
-              MultipartFile.fromBytes(
-                List<int>.from(file['bytes'] as List<dynamic>),
-                filename: file['name'].toString(),
-              ),
-            ),
-          );
-        }
-      }
+    for (final attachment in attachmentList) {
+      final file = switch (attachment) {
+        BytesBillAttachment(:final bytes, :final name) =>
+          MultipartFile.fromBytes(bytes, filename: name),
+        PathBillAttachment(:final path, :final name) =>
+          await MultipartFile.fromFile(path, filename: name),
+      };
+      formData.files.add(MapEntry('files', file));
     }
     final path = modify ? '/fortune/bill/modify' : '/fortune/bill/add';
     final res = modify

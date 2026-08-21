@@ -494,7 +494,17 @@
   "billEditorDiscardMessage": "The information you entered will be lost. This action cannot be undone.",
   "billEditorDiscardConfirm": "Discard",
   "billEditorAttachments": "Attachments",
-  "billEditorSelectedCount": "{count} selected",
+  "billEditorAddAttachment": "Add attachment",
+  "billEditorChoosePhoto": "Choose photos",
+  "billEditorChooseFile": "Choose files",
+  "billEditorSelectedCount": "{count} attachments selected",
+  "billEditorAttachmentInvalid": "Some attachments cannot be read or exceed the size limit",
+  "billEditorAttachmentPickFailed": "Could not select attachments. Please try again.",
+  "billEditorAttachmentUnreadable": "An attachment cannot be read. Please select it again.",
+  "billEditorAttachmentPermissionRequired": "File access permission is missing. Update the app or contact an administrator.",
+  "billEditorAttachmentPluginUnavailable": "The attachment component did not load correctly. Restart the app and try again.",
+  "billEditorSubmitNetworkFailed": "Network error. Check your connection and try again.",
+  "billEditorSubmitAuthFailed": "Your session has expired. Please sign in again.",
   "@billEditorSelectedCount": {
     "placeholders": {
       "count": {}

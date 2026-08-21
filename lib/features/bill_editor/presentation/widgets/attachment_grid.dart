@@ -1,6 +1,6 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
+import 'package:fortuneboot/features/bill_editor/presentation/widgets/bill_attachment_preview.dart';
+import 'package:fortuneboot/features/shared/data/bill_attachment.dart';
 import 'package:fortuneboot/fx/components/fx_icon_button.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
@@ -18,7 +18,7 @@ class AttachmentGrid extends StatelessWidget {
     this.enabled = true,
   });
 
-  final List<File> files;
+  final List<BillAttachment> files;
   final VoidCallback onAdd;
   final ValueChanged<int> onRemove;
   final bool enabled;
@@ -55,7 +55,7 @@ class AttachmentGrid extends StatelessWidget {
           children: [
             for (int i = 0; i < files.length; i++)
               _Thumb(
-                file: files[i],
+                attachment: files[i],
                 index: i,
                 enabled: enabled,
                 onRemove: () => onRemove(i),
@@ -70,12 +70,12 @@ class AttachmentGrid extends StatelessWidget {
 
 class _Thumb extends StatelessWidget {
   const _Thumb({
-    required this.file,
+    required this.attachment,
     required this.index,
     required this.enabled,
     required this.onRemove,
   });
-  final File file;
+  final BillAttachment attachment;
   final int index;
   final bool enabled;
   final VoidCallback onRemove;
@@ -83,6 +83,7 @@ class _Thumb extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final palette = FxPalette.of(context);
+    final fileName = attachment.name;
     return SizedBox(
       width: AttachmentGrid._tile,
       height: AttachmentGrid._tile,
@@ -91,20 +92,11 @@ class _Thumb extends StatelessWidget {
         children: [
           ClipRRect(
             borderRadius: FxRadius.tileBorder,
-            child: Image.file(
-              file,
-              width: AttachmentGrid._tile,
-              height: AttachmentGrid._tile,
-              fit: BoxFit.cover,
-              errorBuilder: (context, error, stack) => Container(
-                width: AttachmentGrid._tile,
-                height: AttachmentGrid._tile,
-                color: palette.surfaceMuted,
-                child: Icon(
-                  Icons.insert_drive_file_rounded,
-                  color: palette.textTertiary,
-                ),
-              ),
+            child: buildBillAttachmentPreview(
+              attachment: attachment,
+              size: AttachmentGrid._tile,
+              fileName: fileName,
+              fallback: _FileTile(fileName: fileName, palette: palette),
             ),
           ),
           Positioned(
@@ -123,6 +115,42 @@ class _Thumb extends StatelessWidget {
   }
 }
 
+class _FileTile extends StatelessWidget {
+  const _FileTile({required this.fileName, required this.palette});
+
+  final String fileName;
+  final FxPalette palette;
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      label: fileName,
+      child: Container(
+        width: AttachmentGrid._tile,
+        height: AttachmentGrid._tile,
+        color: palette.surfaceMuted,
+        padding: const EdgeInsets.all(FxSpacing.sm),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.insert_drive_file_rounded, color: palette.textTertiary),
+            const SizedBox(height: FxSpacing.xs),
+            Text(
+              fileName,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.center,
+              style: FxTypography.caption.copyWith(
+                color: palette.textSecondary,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class _AddTile extends StatelessWidget {
   const _AddTile({required this.onTap, required this.enabled});
   final VoidCallback onTap;
@@ -134,7 +162,7 @@ class _AddTile extends StatelessWidget {
     return Semantics(
       button: true,
       enabled: enabled,
-      label: S.of(context).billEditorAttachments,
+      label: S.of(context).billEditorAddAttachment,
       child: InkWell(
         onTap: enabled ? onTap : null,
         borderRadius: FxRadius.tileBorder,
@@ -147,11 +175,8 @@ class _AddTile extends StatelessWidget {
             border: Border.all(color: palette.border),
           ),
           child: Tooltip(
-            message: S.of(context).billEditorAttachments,
-            child: Icon(
-              Icons.add_a_photo_outlined,
-              color: palette.textTertiary,
-            ),
+            message: S.of(context).billEditorAddAttachment,
+            child: Icon(Icons.add_rounded, color: palette.textTertiary),
           ),
         ),
       ),

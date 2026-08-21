@@ -1,9 +1,9 @@
-import 'dart:io';
-
-import 'package:file_picker/file_picker.dart';
+import 'package:file_selector/file_selector.dart' as file_selector;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fortuneboot/core/errors/fx_failure.dart';
 import 'package:fortuneboot/core/feedback/fx_feedback.dart';
 import 'package:fortuneboot/core/session/bill_mutations.dart';
 import 'package:fortuneboot/features/bill_editor/data/editor_options_service.dart';
@@ -13,8 +13,12 @@ import 'package:fortuneboot/features/bill_editor/presentation/widgets/attachment
 import 'package:fortuneboot/features/bill_editor/presentation/widgets/category_split_section.dart';
 import 'package:fortuneboot/features/bill_editor/presentation/widgets/editor_pickers.dart';
 import 'package:fortuneboot/features/bill_editor/presentation/widgets/extras_section.dart';
+import 'package:fortuneboot/features/shared/data/bill_attachment.dart';
+import 'package:fortuneboot/features/shared/data/bill_attachment_xfile_factory.dart';
+import 'package:fortuneboot/features/shared/data/bill_attachment_validator.dart';
 import 'package:fortuneboot/features/shared/data/bill_models.dart';
 import 'package:fortuneboot/features/shared/data/bill_service.dart';
+import 'package:fortuneboot/fx/components/fx_action_sheet.dart';
 import 'package:fortuneboot/fx/components/fx_button.dart';
 import 'package:fortuneboot/fx/components/fx_card.dart';
 import 'package:fortuneboot/fx/components/fx_confirm_sheet.dart';
@@ -56,7 +60,7 @@ class _BillEditorPageState extends State<BillEditorPage> {
         !_listEquals(state.memberIds, baseline.memberIds) ||
         state.orderId != baseline.orderId ||
         !_listEquals(state.extras, baseline.extras) ||
-        !_fileListsHaveSamePaths(state.attachments, baseline.attachments) ||
+        !_attachmentsHaveSameIds(state.attachments, baseline.attachments) ||
         state.title != baseline.title ||
         state.titleTouched != baseline.titleTouched ||
         state.remark != baseline.remark ||
@@ -64,9 +68,12 @@ class _BillEditorPageState extends State<BillEditorPage> {
         state.include != baseline.include;
   }
 
-  bool _fileListsHaveSamePaths(List<File> a, List<File> b) => _listEquals(
-    a.map((file) => file.path).toList(),
-    b.map((file) => file.path).toList(),
+  bool _attachmentsHaveSameIds(
+    List<BillAttachment> a,
+    List<BillAttachment> b,
+  ) => _listEquals(
+    a.map((attachment) => attachment.id).toList(),
+    b.map((attachment) => attachment.id).toList(),
   );
 
   bool _listEquals<T>(List<T> a, List<T> b) {
@@ -104,6 +111,19 @@ class _BillEditorPageState extends State<BillEditorPage> {
     }
   }
 
+  String _submitFailureMessage(BuildContext context, FxFailure? failure) {
+    final s = S.of(context);
+    return switch (failure?.kind) {
+      FxFailureKind.network ||
+      FxFailureKind.timeout => s.billEditorSubmitNetworkFailed,
+      FxFailureKind.unauthorized ||
+      FxFailureKind.forbidden => s.billEditorSubmitAuthFailed,
+      FxFailureKind.persistence ||
+      FxFailureKind.validation => s.billEditorAttachmentUnreadable,
+      _ => s.profileSaveFailedRetry,
+    };
+  }
+
   Future<void> _confirmPop(BillEditorState state) async {
     if (_submitSuccess || !_isDirty(state)) {
       Navigator.of(context).pop();
@@ -138,7 +158,7 @@ class _BillEditorPageState extends State<BillEditorPage> {
         } else if (state.submitStatus == SubmitStatus.failure) {
           final message = state.validationFailure != null
               ? _validationMessage(context, state.validationFailure!)
-              : state.submitError ?? S.of(context).profileSaveFailedRetry;
+              : _submitFailureMessage(context, state.submitFailure);
           FxFeedback.error(context, message: message);
         }
       },
@@ -750,32 +770,235 @@ class _AttachmentCard extends StatelessWidget {
         files: state.attachments,
         enabled: state.submitStatus != SubmitStatus.submitting,
         onRemove: (i) => bloc.add(AttachmentRemoved(i)),
-        onAdd: () async {
-          try {
-            final result = await FilePicker.platform.pickFiles(
-              allowMultiple: true,
-              type: FileType.any,
-            );
-            if (result == null || !context.mounted) return;
-            final files = result.paths
-                .whereType<String>()
-                .map(File.new)
-                .where((file) => file.existsSync())
-                .toList();
-            if (files.isNotEmpty) {
-              bloc.add(AttachmentsAdded(files));
-            }
-          } on Object {
-            if (context.mounted) {
-              FxFeedback.error(
-                context,
-                message: S.of(context).profileSaveFailedRetry,
-              );
-            }
-          }
-        },
+        onAdd: () => _showAttachmentSourceSheet(context, bloc),
       ),
     );
+  }
+
+  Future<void> _showAttachmentSourceSheet(
+    BuildContext context,
+    BillEditorBloc bloc,
+  ) {
+    final s = S.of(context);
+    return FxActionSheet.show(
+      context,
+      title: s.billEditorAddAttachment,
+      actions: [
+        FxSheetAction(
+          label: s.billEditorChoosePhoto,
+          icon: Icons.photo_library_outlined,
+          onPressed: () => _pickPhotos(context, bloc),
+        ),
+        FxSheetAction(
+          label: s.billEditorChooseFile,
+          icon: Icons.attach_file_rounded,
+          onPressed: () => _pickFiles(context, bloc),
+        ),
+      ],
+    );
+  }
+
+  Future<void> _pickPhotos(BuildContext context, BillEditorBloc bloc) async {
+    try {
+      _AttachmentPickerDiagnostics.start(source: 'photo');
+      final files = await ImagePicker().pickMultiImage();
+      if (files.isEmpty) {
+        _AttachmentPickerDiagnostics.cancelledOrNoResult();
+        return;
+      }
+      final attachments = <BillAttachment>[];
+      var remainingBytes = BillAttachmentValidator.maxTotalBytes;
+      for (var index = 0; index < files.length; index += 1) {
+        final attachment = await billAttachmentFromXFile(
+          files[index],
+          selectionIndex: index,
+          remainingBytes: remainingBytes,
+        );
+        if (attachment != null) {
+          attachments.add(attachment);
+          remainingBytes -= attachment.sizeBytes;
+        }
+      }
+      if (!context.mounted) return;
+      await _addAttachments(context, bloc, attachments, source: 'photo');
+    } on PlatformException catch (error, stackTrace) {
+      _showPlatformFailure(context, error, stackTrace);
+    } on MissingPluginException catch (_, stackTrace) {
+      _showPluginFailure(context, stackTrace);
+    } on Object catch (error, stackTrace) {
+      _showUnknownFailure(context, error, stackTrace);
+    }
+  }
+
+  Future<void> _pickFiles(BuildContext context, BillEditorBloc bloc) async {
+    try {
+      _AttachmentPickerDiagnostics.start(source: 'file');
+      final files = await file_selector.openFiles();
+      if (files.isEmpty) {
+        _AttachmentPickerDiagnostics.cancelledOrNoResult();
+        return;
+      }
+      final attachments = <BillAttachment>[];
+      var remainingBytes = BillAttachmentValidator.maxTotalBytes;
+      for (var index = 0; index < files.length; index += 1) {
+        final attachment = await billAttachmentFromXFile(
+          files[index],
+          selectionIndex: index,
+          remainingBytes: remainingBytes,
+        );
+        if (attachment != null) {
+          attachments.add(attachment);
+          remainingBytes -= attachment.sizeBytes;
+        }
+      }
+      if (!context.mounted) return;
+      await _addAttachments(context, bloc, attachments, source: 'file');
+    } on PlatformException catch (error, stackTrace) {
+      _showPlatformFailure(context, error, stackTrace);
+    } on MissingPluginException catch (_, stackTrace) {
+      _showPluginFailure(context, stackTrace);
+    } on Object catch (error, stackTrace) {
+      _showUnknownFailure(context, error, stackTrace);
+    }
+  }
+
+  Future<void> _addAttachments(
+    BuildContext context,
+    BillEditorBloc bloc,
+    List<BillAttachment> attachments, {
+    required String source,
+  }) async {
+    var rejected = attachments.isEmpty;
+    final attachmentIds = state.attachments
+        .map((attachment) => attachment.id)
+        .toSet();
+    final uniqueAttachments = attachments
+        .where((attachment) => attachmentIds.add(attachment.id))
+        .toList();
+    final validator = const BillAttachmentValidator();
+    final validAttachments = <BillAttachment>[];
+    var acceptedSizeBytes = 0;
+    try {
+      for (final attachment in state.attachments) {
+        acceptedSizeBytes += (await validator.inspect(attachment)).sizeBytes;
+      }
+      for (final attachment in uniqueAttachments) {
+        try {
+          final inspection = await validator.inspect(attachment);
+          if (acceptedSizeBytes + inspection.sizeBytes >
+              BillAttachmentValidator.maxTotalBytes) {
+            rejected = true;
+            continue;
+          }
+          acceptedSizeBytes += inspection.sizeBytes;
+          validAttachments.add(attachment);
+        } on BillAttachmentValidationException {
+          rejected = true;
+        }
+      }
+    } on BillAttachmentValidationException {
+      rejected = true;
+    }
+    if (!context.mounted) return;
+    if (validAttachments.isNotEmpty) {
+      bloc.add(AttachmentsAdded(validAttachments));
+    }
+    _AttachmentPickerDiagnostics.validated(
+      source: source,
+      validFiles: validAttachments.length,
+      rejected: rejected,
+    );
+    if (rejected) {
+      FxFeedback.error(
+        context,
+        message: S.of(context).billEditorAttachmentInvalid,
+      );
+    }
+  }
+
+  void _showPlatformFailure(
+    BuildContext context,
+    PlatformException error,
+    StackTrace stackTrace,
+  ) {
+    _AttachmentPickerDiagnostics.platformFailure(
+      code: error.code,
+      stackTrace: stackTrace,
+    );
+    if (!context.mounted) return;
+    final message = error.code.startsWith('ENTITLEMENT_')
+        ? S.of(context).billEditorAttachmentPermissionRequired
+        : S.of(context).billEditorAttachmentPickFailed;
+    FxFeedback.error(context, message: message);
+  }
+
+  void _showPluginFailure(BuildContext context, StackTrace stackTrace) {
+    _AttachmentPickerDiagnostics.pluginFailure(stackTrace);
+    if (!context.mounted) return;
+    FxFeedback.error(
+      context,
+      message: S.of(context).billEditorAttachmentPluginUnavailable,
+    );
+  }
+
+  void _showUnknownFailure(
+    BuildContext context,
+    Object error,
+    StackTrace stackTrace,
+  ) {
+    _AttachmentPickerDiagnostics.unknownFailure(
+      type: error.runtimeType,
+      stackTrace: stackTrace,
+    );
+    if (!context.mounted) return;
+    FxFeedback.error(
+      context,
+      message: S.of(context).billEditorAttachmentPickFailed,
+    );
+  }
+}
+
+class _AttachmentPickerDiagnostics {
+  static const _tag = '[BillEditorAttachmentPicker]';
+
+  static void start({required String source}) =>
+      debugPrint('$_tag start source=$source');
+
+  static void cancelledOrNoResult() =>
+      debugPrint('$_tag cancelled-or-no-result');
+
+  static void validated({
+    required String source,
+    required int validFiles,
+    required bool rejected,
+  }) {
+    debugPrint(
+      '$_tag validated source=$source '
+      'validFiles=$validFiles rejected=$rejected',
+    );
+  }
+
+  static void platformFailure({
+    required String code,
+    required StackTrace stackTrace,
+  }) {
+    _report('bill_attachment_pick_failed phase=picker code=$code', stackTrace);
+  }
+
+  static void pluginFailure(StackTrace stackTrace) {
+    _report('bill_attachment_pick_failed phase=plugin', stackTrace);
+  }
+
+  static void unknownFailure({
+    required Type type,
+    required StackTrace stackTrace,
+  }) {
+    _report('bill_attachment_pick_failed phase=unknown type=$type', stackTrace);
+  }
+
+  static void _report(String message, StackTrace stackTrace) {
+    debugPrint('$_tag $message');
+    debugPrintStack(stackTrace: stackTrace);
   }
 }
 
