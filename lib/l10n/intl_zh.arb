@@ -1596,6 +1596,8 @@
   "fxDatePickerYesterday": "昨天",
   "fxDatePickerStartOfMonth": "本月初",
   "fxDatePickerDone": "完成",
+  "fxDatePickerPreviousYear": "上一年",
+  "fxDatePickerNextYear": "下一年",
   "fxTreePickerTitle": "选择",
   "fxTreePickerClear": "清空",
   "fxTreePickerDone": "完成",

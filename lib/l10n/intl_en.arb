@@ -1594,6 +1594,8 @@
   "fxDatePickerYesterday": "Yesterday",
   "fxDatePickerStartOfMonth": "Start of month",
   "fxDatePickerDone": "Done",
+  "fxDatePickerPreviousYear": "Previous year",
+  "fxDatePickerNextYear": "Next year",
   "fxTreePickerTitle": "Select",
   "fxTreePickerClear": "Clear",
   "fxTreePickerDone": "Done",
