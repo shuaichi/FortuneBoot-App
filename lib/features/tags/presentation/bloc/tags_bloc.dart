@@ -14,16 +14,18 @@ part 'tags_state.dart';
 class TagsBloc extends Bloc<TagsEvent, TagsState> {
   final TagService _service;
   int? _bookId;
+  String? _expandedScope;
 
   TagsBloc({TagService? service, int? bookId})
     : _service = service ?? TagService(),
       _bookId = bookId,
-      super(const TagsState()) {
+      super(TagsState()) {
     on<TagsLoaded>(_onLoaded);
     on<TagsMutated>(_onLoaded);
     on<TagsBookChanged>(_onBookChanged);
     on<TagsTabChanged>(_onTabChanged);
     on<TagsSearchChanged>(_onSearchChanged);
+    on<ToggleTagExpandRequested>(_onExpandToggled);
     on<TagToggleChanged>(_onToggleChanged);
   }
 
@@ -50,7 +52,38 @@ class TagsBloc extends Bloc<TagsEvent, TagsState> {
   }
 
   void _onSearchChanged(TagsSearchChanged event, Emitter<TagsState> emit) {
-    emit(state.copyWith(keyword: event.keyword));
+    if (event.keyword.trim() == state.keyword.trim()) return;
+    emit(state.copyWith(keyword: event.keyword, searchCollapsedIds: const {}));
+  }
+
+  void _onExpandToggled(
+    ToggleTagExpandRequested event,
+    Emitter<TagsState> emit,
+  ) {
+    final tagId = event.tagId;
+    final isSearchActive = state.keyword.trim().isNotEmpty;
+    final isExpanded = state.isExpanded(tagId);
+    final expandedIds = {...state.expandedIds};
+    final searchCollapsedIds = {...state.searchCollapsedIds};
+
+    if (isSearchActive && state.autoExpandedIds.contains(tagId)) {
+      if (isExpanded) {
+        searchCollapsedIds.add(tagId);
+      } else {
+        searchCollapsedIds.remove(tagId);
+      }
+    } else if (isExpanded) {
+      expandedIds.remove(tagId);
+    } else {
+      expandedIds.add(tagId);
+    }
+
+    emit(
+      state.copyWith(
+        expandedIds: expandedIds,
+        searchCollapsedIds: searchCollapsedIds,
+      ),
+    );
   }
 
   Future<void> _onLoaded(TagsEvent event, Emitter<TagsState> emit) async {
@@ -69,10 +102,17 @@ class TagsBloc extends Bloc<TagsEvent, TagsState> {
         bookId: bookId,
         recycleBin: state.tab.recycleBin,
       );
+      final scope = '$bookId:${state.tab.recycleBin}';
+      final isNewScope = scope != _expandedScope;
+      if (isNewScope) _expandedScope = scope;
       emit(
         state.copyWith(
           status: tree.isEmpty ? TagsStatus.empty : TagsStatus.loaded,
           tree: tree,
+          expandedIds: isNewScope
+              ? tree.map((tag) => tag.tagId).whereType<int>().toSet()
+              : state.expandedIds,
+          searchCollapsedIds: isNewScope ? const {} : state.searchCollapsedIds,
         ),
       );
     } on FxApiException catch (e) {

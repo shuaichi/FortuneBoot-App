@@ -1,55 +1,52 @@
 import 'package:flutter/material.dart';
 import 'package:fortuneboot/features/categories/data/category_models.dart';
+import 'package:fortuneboot/fx/components/fx_icon_button.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
 import 'package:fortuneboot/generated/l10n.dart';
 
-/// 分类树节点（自绘 accordion：有子节点可展开/收起）。
-class CategoryTile extends StatefulWidget {
-  final FortuneCategoryVo node;
-  final Color typeTint;
-  final int depth;
-  final void Function(FortuneCategoryVo) onTap;
-  final void Function(FortuneCategoryVo) onMenu;
-  final void Function(FortuneCategoryVo, bool)? onEnableToggle;
-  final void Function(FortuneCategoryVo parent)? onAddChild;
-  final bool? initiallyExpanded;
-  final bool forceExpanded;
-
+/// 分类树节点。展开状态由所属 Bloc 驱动。
+class CategoryTile extends StatelessWidget {
   const CategoryTile({
     super.key,
     required this.node,
     required this.typeTint,
+    required this.expanded,
     required this.onTap,
     required this.onMenu,
+    required this.onToggleExpand,
+    required this.expandedFor,
+    required this.matchCountFor,
     this.depth = 0,
-    this.onEnableToggle,
     this.onAddChild,
-    this.initiallyExpanded,
-    this.forceExpanded = false,
+    this.searchMatchCount = 0,
   });
 
-  @override
-  State<CategoryTile> createState() => _CategoryTileState();
-}
-
-class _CategoryTileState extends State<CategoryTile> {
-  late bool _expanded = widget.initiallyExpanded ?? widget.depth == 0;
+  final FortuneCategoryVo node;
+  final Color typeTint;
+  final bool expanded;
+  final int depth;
+  final ValueChanged<FortuneCategoryVo> onTap;
+  final ValueChanged<FortuneCategoryVo> onMenu;
+  final ValueChanged<int> onToggleExpand;
+  final bool Function(FortuneCategoryVo child) expandedFor;
+  final int Function(FortuneCategoryVo child) matchCountFor;
+  final ValueChanged<FortuneCategoryVo>? onAddChild;
+  final int searchMatchCount;
 
   @override
   Widget build(BuildContext context) {
     final palette = FxPalette.of(context);
-    final node = widget.node;
     final hasChildren = node.children.isNotEmpty;
-    final expanded = widget.forceExpanded || _expanded;
-    final isRoot = widget.depth == 0;
+    final isRoot = depth == 0;
+    final name = node.categoryName ?? S.of(context).categoriesUnnamed;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Padding(
-          padding: EdgeInsets.only(left: widget.depth * FxSpacing.lg),
+          padding: EdgeInsets.only(left: depth * FxSpacing.lg),
           child: DecoratedBox(
             decoration: BoxDecoration(
               color: isRoot ? palette.surface : palette.surfaceMuted,
@@ -69,7 +66,7 @@ class _CategoryTileState extends State<CategoryTile> {
               borderRadius: FxRadius.tileBorder,
               child: InkWell(
                 borderRadius: FxRadius.tileBorder,
-                onTap: () => widget.onTap(node),
+                onTap: () => onTap(node),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(
                     horizontal: FxSpacing.md,
@@ -81,45 +78,41 @@ class _CategoryTileState extends State<CategoryTile> {
                         Semantics(
                           button: true,
                           expanded: expanded,
-                          label:
-                              node.categoryName ??
-                              S.of(context).categoriesUnnamed,
-                          child: Tooltip(
-                            message:
-                                node.categoryName ??
-                                S.of(context).categoriesUnnamed,
-                            child: InkResponse(
-                              radius: 24,
-                              onTap: widget.forceExpanded
-                                  ? null
-                                  : () =>
-                                        setState(() => _expanded = !_expanded),
-                              child: SizedBox(
-                                width: 44,
-                                height: 44,
-                                child: Icon(
-                                  expanded
-                                      ? Icons.expand_more_rounded
-                                      : Icons.chevron_right_rounded,
-                                  size: 20,
-                                  color: palette.textSecondary,
-                                ),
-                              ),
-                            ),
+                          label: name,
+                          child: FxIconButton(
+                            icon: expanded
+                                ? Icons.expand_more_rounded
+                                : Icons.chevron_right_rounded,
+                            tooltip: name,
+                            color: palette.textSecondary,
+                            onPressed: node.categoryId == null
+                                ? null
+                                : () => onToggleExpand(node.categoryId!),
                           ),
                         )
                       else
-                        const SizedBox(width: 20),
-                      const SizedBox(width: FxSpacing.xs),
+                        const SizedBox(width: 48),
+                      if (searchMatchCount > 0) ...[
+                        Semantics(
+                          label: S
+                              .of(context)
+                              .manageSearchBranchResults(searchMatchCount),
+                          child: Text(
+                            '$searchMatchCount',
+                            style: FxTypography.caption.copyWith(
+                              color: palette.textSecondary,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: FxSpacing.xs),
+                      ],
                       Container(
                         width: 28,
                         height: 28,
                         decoration: BoxDecoration(
-                          color:
-                              (node.enable
-                                      ? widget.typeTint
-                                      : palette.textTertiary)
-                                  .withValues(alpha: 0.14),
+                          color: (node.enable ? typeTint : palette.textTertiary)
+                              .withValues(alpha: 0.14),
                           borderRadius: FxRadius.tileBorder,
                         ),
                         alignment: Alignment.center,
@@ -128,15 +121,13 @@ class _CategoryTileState extends State<CategoryTile> {
                               ? Icons.folder_rounded
                               : Icons.label_outline_rounded,
                           size: 15,
-                          color: node.enable
-                              ? widget.typeTint
-                              : palette.textTertiary,
+                          color: node.enable ? typeTint : palette.textTertiary,
                         ),
                       ),
                       const SizedBox(width: FxSpacing.sm),
                       Expanded(
                         child: Text(
-                          node.categoryName ?? S.of(context).categoriesUnnamed,
+                          name,
                           style: FxTypography.body.copyWith(
                             color: node.enable
                                 ? palette.textPrimary
@@ -149,50 +140,20 @@ class _CategoryTileState extends State<CategoryTile> {
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
-                      if (widget.onAddChild != null && widget.depth == 0)
-                        Semantics(
-                          button: true,
-                          label: S.of(context).categoriesAdd,
-                          child: Tooltip(
-                            message: S.of(context).categoriesAdd,
-                            child: InkResponse(
-                              radius: 24,
-                              onTap: () => widget.onAddChild!(node),
-                              child: SizedBox(
-                                width: 44,
-                                height: 44,
-                                child: Icon(
-                                  Icons.add_rounded,
-                                  size: 20,
-                                  color: palette.textSecondary,
-                                ),
-                              ),
-                            ),
-                          ),
+                      if (onAddChild != null && isRoot)
+                        FxIconButton(
+                          icon: Icons.add_rounded,
+                          tooltip: S.of(context).categoriesAdd,
+                          color: palette.textSecondary,
+                          onPressed: () => onAddChild!(node),
                         ),
-                      Semantics(
-                        button: true,
-                        label: MaterialLocalizations.of(
+                      FxIconButton(
+                        icon: Icons.more_horiz_rounded,
+                        tooltip: MaterialLocalizations.of(
                           context,
                         ).showMenuTooltip,
-                        child: Tooltip(
-                          message: MaterialLocalizations.of(
-                            context,
-                          ).showMenuTooltip,
-                          child: InkResponse(
-                            radius: 24,
-                            onTap: () => widget.onMenu(node),
-                            child: SizedBox(
-                              width: 44,
-                              height: 44,
-                              child: Icon(
-                                Icons.more_horiz_rounded,
-                                size: 20,
-                                color: palette.textSecondary,
-                              ),
-                            ),
-                          ),
-                        ),
+                        color: palette.textSecondary,
+                        onPressed: () => onMenu(node),
                       ),
                     ],
                   ),
@@ -206,12 +167,15 @@ class _CategoryTileState extends State<CategoryTile> {
           for (final child in node.children) ...[
             CategoryTile(
               node: child,
-              typeTint: widget.typeTint,
-              depth: widget.depth + 1,
-              onTap: widget.onTap,
-              onMenu: widget.onMenu,
-              onEnableToggle: widget.onEnableToggle,
-              forceExpanded: widget.forceExpanded,
+              typeTint: typeTint,
+              depth: depth + 1,
+              expanded: expandedFor(child),
+              onTap: onTap,
+              onMenu: onMenu,
+              onToggleExpand: onToggleExpand,
+              expandedFor: expandedFor,
+              matchCountFor: matchCountFor,
+              searchMatchCount: matchCountFor(child),
             ),
             const SizedBox(height: FxSpacing.xs),
           ],

@@ -5,7 +5,7 @@ import 'package:fortuneboot/core/session/session_cubit.dart';
 import 'package:fortuneboot/features/books/presentation/widgets/destructive_confirm_sheet.dart';
 import 'package:fortuneboot/features/group_users/data/group_users_service.dart';
 import 'package:fortuneboot/features/group_users/presentation/bloc/group_users_bloc.dart';
-import 'package:fortuneboot/features/group_users/presentation/widgets/invite_user_sheet.dart';
+import 'package:fortuneboot/features/shared/invite_member_sheet.dart';
 import 'package:fortuneboot/fx/components/fx_button.dart';
 import 'package:fortuneboot/fx/components/fx_card.dart';
 import 'package:fortuneboot/fx/components/fx_icon_button.dart';
@@ -63,12 +63,34 @@ class _GroupUsersPageState extends State<GroupUsersPage> {
       _showToast(S.of(context).groupUsersSelectGroupFirst);
       return;
     }
-    final ok = await FxSheet.show<bool>(
+    final username = await FxSheet.show<String>(
       context,
       title: S.of(context).groupUsersInviteTitle,
-      child: InviteUserSheet(service: _service, groupId: groupId),
+      child: InviteMemberSheet(
+        strings: InviteMemberSheetStrings(
+          usernameLabel: S.of(context).groupUsersUsernameLabel,
+          usernameHint: S.of(context).groupUsersUsernameHint,
+          roleLabel: S.of(context).groupUsersRoleLabel,
+          helpText: S.of(context).groupUsersUsernameHint,
+          submitLabel: S.of(context).groupUsersSendInvite,
+          usernameRequiredMessage: S.of(context).groupUsersUsernameRequired,
+          roleRequiredMessage: S.of(context).groupUsersRoleRequired,
+        ),
+        loadRoles: () async => (await _service.getRoleTypes())
+            .map(
+              (role) => InviteMemberRole(value: role.value, label: role.label),
+            )
+            .toList(),
+        submitInvite: (username, roleType) => _service.inviteUser(
+          groupId: groupId,
+          roleType: roleType,
+          username: username,
+        ),
+        normalizeUsername: (raw) => raw.trim(),
+        initialRoleId: (roles) => roles.isEmpty ? null : roles.first.value,
+      ),
     );
-    if (ok == true && mounted && _groupId == groupId) {
+    if (username != null && mounted && _groupId == groupId) {
       _bloc.add(const GroupUsersMutated());
       _showToast(S.of(context).groupUsersInviteSent);
     }

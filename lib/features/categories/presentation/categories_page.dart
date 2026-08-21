@@ -173,6 +173,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
             onSearch: (kw) => _bloc.add(CategoriesSearchChanged(kw)),
             tab: state.tab,
             onTabChanged: (t) => _bloc.add(CategoriesTabChanged(t)),
+            dangerTabIndex: 3,
             body: _buildBody(state, bookId),
           );
         },
@@ -212,7 +213,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
       );
     }
     final inRecycle = state.tab.recycleBin;
-    final forceExpanded = state.keyword.trim().isNotEmpty;
+    final isSearching = state.keyword.trim().isNotEmpty;
     final finance = FxFinanceColors.of(context);
     return RefreshIndicator(
       onRefresh: () async => _bloc.add(const CategoriesLoaded()),
@@ -230,18 +231,20 @@ class _CategoriesPageState extends State<CategoriesPage> {
               S.of(context).categoriesExpenseSection,
               finance.expense,
               expense,
+              state,
               1,
               inRecycle,
-              forceExpanded,
+              isSearching,
             ),
           if (income.isNotEmpty)
             _section(
               S.of(context).categoriesIncomeSection,
               finance.income,
               income,
+              state,
               2,
               inRecycle,
-              forceExpanded,
+              isSearching,
             ),
         ],
       ),
@@ -252,9 +255,10 @@ class _CategoriesPageState extends State<CategoriesPage> {
     String title,
     Color tint,
     List<FortuneCategoryVo> roots,
+    CategoriesState state,
     int type,
     bool inRecycle,
-    bool forceExpanded,
+    bool isSearching,
   ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -290,8 +294,16 @@ class _CategoriesPageState extends State<CategoriesPage> {
           CategoryTile(
             node: node,
             typeTint: tint,
-            forceExpanded: forceExpanded,
+            expanded: state.isExpanded(node.categoryId),
             onTap: (n) => _openForm(category: n),
+            onToggleExpand: (id) =>
+                _bloc.add(ToggleCategoryExpandRequested(id)),
+            expandedFor: (child) => state.isExpanded(child.categoryId),
+            matchCountFor: (child) =>
+                isSearching ? state.matchCountFor(child.categoryId) : 0,
+            searchMatchCount: isSearching
+                ? state.matchCountFor(node.categoryId)
+                : 0,
             onMenu: _openMenu,
             onAddChild: inRecycle
                 ? null

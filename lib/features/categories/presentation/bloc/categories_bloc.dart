@@ -14,16 +14,18 @@ part 'categories_state.dart';
 class CategoriesBloc extends Bloc<CategoriesEvent, CategoriesState> {
   final CategoryService _service;
   int? _bookId;
+  String? _expandedScope;
 
   CategoriesBloc({CategoryService? service, int? bookId})
     : _service = service ?? CategoryService(),
       _bookId = bookId,
-      super(const CategoriesState()) {
+      super(CategoriesState()) {
     on<CategoriesLoaded>(_onLoaded);
     on<CategoriesMutated>(_onLoaded);
     on<CategoriesBookChanged>(_onBookChanged);
     on<CategoriesTabChanged>(_onTabChanged);
     on<CategoriesSearchChanged>(_onSearchChanged);
+    on<ToggleCategoryExpandRequested>(_onExpandToggled);
     on<CategoryEnableToggled>(_onEnableToggled);
   }
 
@@ -54,7 +56,38 @@ class CategoriesBloc extends Bloc<CategoriesEvent, CategoriesState> {
     CategoriesSearchChanged event,
     Emitter<CategoriesState> emit,
   ) {
-    emit(state.copyWith(keyword: event.keyword));
+    if (event.keyword.trim() == state.keyword.trim()) return;
+    emit(state.copyWith(keyword: event.keyword, searchCollapsedIds: const {}));
+  }
+
+  void _onExpandToggled(
+    ToggleCategoryExpandRequested event,
+    Emitter<CategoriesState> emit,
+  ) {
+    final categoryId = event.categoryId;
+    final isSearchActive = state.keyword.trim().isNotEmpty;
+    final isExpanded = state.isExpanded(categoryId);
+    final expandedIds = {...state.expandedIds};
+    final searchCollapsedIds = {...state.searchCollapsedIds};
+
+    if (isSearchActive && state.autoExpandedIds.contains(categoryId)) {
+      if (isExpanded) {
+        searchCollapsedIds.add(categoryId);
+      } else {
+        searchCollapsedIds.remove(categoryId);
+      }
+    } else if (isExpanded) {
+      expandedIds.remove(categoryId);
+    } else {
+      expandedIds.add(categoryId);
+    }
+
+    emit(
+      state.copyWith(
+        expandedIds: expandedIds,
+        searchCollapsedIds: searchCollapsedIds,
+      ),
+    );
   }
 
   Future<void> _onLoaded(
@@ -76,12 +109,22 @@ class CategoriesBloc extends Bloc<CategoriesEvent, CategoriesState> {
         bookId: bookId,
         recycleBin: state.tab.recycleBin,
       );
+      final scope = '$bookId:${state.tab.recycleBin}';
+      final isNewScope = scope != _expandedScope;
+      if (isNewScope) _expandedScope = scope;
       emit(
         state.copyWith(
           status: tree.isEmpty
               ? CategoriesStatus.empty
               : CategoriesStatus.loaded,
           tree: tree,
+          expandedIds: isNewScope
+              ? tree
+                    .map((category) => category.categoryId)
+                    .whereType<int>()
+                    .toSet()
+              : state.expandedIds,
+          searchCollapsedIds: isNewScope ? const {} : state.searchCollapsedIds,
         ),
       );
     } on FxApiException catch (e) {

@@ -166,6 +166,7 @@ class _PayeesPageState extends State<PayeesPage> {
             onSearch: (kw) => _bloc.add(PayeesSearchChanged(kw)),
             tab: state.tab,
             onTabChanged: (t) => _bloc.add(PayeesTabChanged(t)),
+            dangerTabIndex: 3,
             body: _buildBody(state, bookId),
           );
         },

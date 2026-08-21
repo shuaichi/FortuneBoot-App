@@ -175,6 +175,7 @@ class _TagsPageState extends State<TagsPage> {
             onSearch: (kw) => _bloc.add(TagsSearchChanged(kw)),
             tab: state.tab,
             onTabChanged: (t) => _bloc.add(TagsTabChanged(t)),
+            dangerTabIndex: 3,
             body: _buildBody(state, bookId),
           );
         },
@@ -224,8 +225,17 @@ class _TagsPageState extends State<TagsPage> {
         separatorBuilder: (_, i) => const SizedBox(height: FxSpacing.sm),
         itemBuilder: (context, i) => TagTile(
           node: roots[i],
+          expanded: state.isExpanded(roots[i].tagId),
           onTap: (n) => _openForm(tag: n),
           onMenu: _openMenu,
+          onToggleExpand: (id) => _bloc.add(ToggleTagExpandRequested(id)),
+          expandedFor: (child) => state.isExpanded(child.tagId),
+          matchCountFor: (child) => state.keyword.trim().isNotEmpty
+              ? state.matchCountFor(child.tagId)
+              : 0,
+          searchMatchCount: state.keyword.trim().isNotEmpty
+              ? state.matchCountFor(roots[i].tagId)
+              : 0,
         ),
       ),
     );

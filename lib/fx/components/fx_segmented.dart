@@ -29,6 +29,9 @@ class FxSegmented<T> extends StatelessWidget {
       builder: (context, constraints) {
         final count = segments.length;
         final segWidth = constraints.maxWidth / count;
+        final selectedSegment = index < 0 ? null : segments[index];
+        final selectedIsDangerous =
+            selectedSegment?.dangerWhenSelected ?? false;
         return Container(
           height: height,
           decoration: BoxDecoration(
@@ -46,7 +49,9 @@ class FxSegmented<T> extends StatelessWidget {
                 width: segWidth - 6,
                 child: Container(
                   decoration: BoxDecoration(
-                    color: palette.surface,
+                    color: selectedIsDangerous
+                        ? palette.danger.withValues(alpha: 0.08)
+                        : palette.surface,
                     borderRadius: BorderRadius.circular(FxRadius.tile - 2),
                     boxShadow: [
                       BoxShadow(
@@ -82,7 +87,9 @@ class FxSegmented<T> extends StatelessWidget {
                               overflow: TextOverflow.ellipsis,
                               style: FxTypography.label.copyWith(
                                 color: selected
-                                    ? palette.textPrimary
+                                    ? s.dangerWhenSelected
+                                          ? palette.danger
+                                          : palette.textPrimary
                                     : palette.textSecondary,
                                 fontWeight: selected
                                     ? FontWeight.w600
@@ -105,7 +112,9 @@ class FxSegmented<T> extends StatelessWidget {
 }
 
 class FxSegment<T> {
+  const FxSegment(this.value, this.label, {this.dangerWhenSelected = false});
+
   final T value;
   final String label;
-  const FxSegment(this.value, this.label);
+  final bool dangerWhenSelected;
 }

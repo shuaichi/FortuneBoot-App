@@ -39,6 +39,16 @@ class TagsMutated extends TagsEvent {
   const TagsMutated();
 }
 
+/// 切换树节点展开状态。
+class ToggleTagExpandRequested extends TagsEvent {
+  const ToggleTagExpandRequested(this.tagId);
+
+  final int tagId;
+
+  @override
+  List<Object?> get props => [tagId];
+}
+
 /// 开关切换（canExpense/canIncome/canTransfer/enable）乐观更新。
 class TagToggleChanged extends TagsEvent {
   final FortuneTagVo tag;

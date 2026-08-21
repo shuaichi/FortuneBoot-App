@@ -188,6 +188,12 @@
   "mine": "我的",
   "commonSave": "保存",
   "commonCancel": "取消",
+  "manageSearchBranchResults": "该分支有 {count} 条搜索结果",
+  "@manageSearchBranchResults": {
+    "placeholders": {
+      "count": {}
+    }
+  },
   "confirmDestructiveWarning": "此操作不可撤销。",
   "commonConfirm": "确定",
   "commonHideAmounts": "隐藏金额",

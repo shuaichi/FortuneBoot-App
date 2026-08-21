@@ -163,6 +163,7 @@ class _MembersPageState extends State<MembersPage> {
             onSearch: (kw) => _bloc.add(MembersSearchChanged(kw)),
             tab: state.tab,
             onTabChanged: (t) => _bloc.add(MembersTabChanged(t)),
+            dangerTabIndex: 3,
             body: _buildBody(state, bookId),
           );
         },

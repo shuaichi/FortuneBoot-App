@@ -44,6 +44,16 @@ class CategoriesMutated extends CategoriesEvent {
   const CategoriesMutated();
 }
 
+/// 切换树节点展开状态。
+class ToggleCategoryExpandRequested extends CategoriesEvent {
+  const ToggleCategoryExpandRequested(this.categoryId);
+
+  final int categoryId;
+
+  @override
+  List<Object?> get props => [categoryId];
+}
+
 /// 启用开关乐观更新。
 class CategoryEnableToggled extends CategoriesEvent {
   final FortuneCategoryVo category;

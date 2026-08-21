@@ -47,6 +47,7 @@ class ManageScaffold extends StatefulWidget {
   final String? searchTooltip;
   final String? closeSearchTooltip;
   final String? addTooltip;
+  final int? dangerTabIndex;
 
   const ManageScaffold({
     super.key,
@@ -61,6 +62,7 @@ class ManageScaffold extends StatefulWidget {
     this.searchTooltip,
     this.closeSearchTooltip,
     this.addTooltip,
+    this.dangerTabIndex,
   });
 
   @override
@@ -107,18 +109,25 @@ class _ManageScaffoldState extends State<ManageScaffold> {
                 value: widget.tab,
                 onChanged: widget.onTabChanged,
                 segments: [
-                  FxSegment(ManageTab.all, S.of(context).manageSharedTabAll),
+                  FxSegment(
+                    ManageTab.all,
+                    S.of(context).manageSharedTabAll,
+                    dangerWhenSelected: widget.dangerTabIndex == 0,
+                  ),
                   FxSegment(
                     ManageTab.enabled,
                     S.of(context).manageSharedTabEnabled,
+                    dangerWhenSelected: widget.dangerTabIndex == 1,
                   ),
                   FxSegment(
                     ManageTab.disabled,
                     S.of(context).manageSharedTabDisabled,
+                    dangerWhenSelected: widget.dangerTabIndex == 2,
                   ),
                   FxSegment(
                     ManageTab.recycleBin,
                     S.of(context).manageSharedTabRecycleBin,
+                    dangerWhenSelected: widget.dangerTabIndex == 3,
                   ),
                 ],
               ),

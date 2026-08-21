@@ -4,7 +4,8 @@ import 'package:fortuneboot/core/session/session_models.dart';
 import 'package:fortuneboot/features/books/data/books_manage_models.dart';
 import 'package:fortuneboot/features/books/data/books_service.dart';
 import 'package:fortuneboot/features/books/domain/books_manage_capabilities.dart';
-import 'package:fortuneboot/features/books/presentation/widgets/invite_member_sheet.dart';
+import 'package:fortuneboot/features/books/presentation/widgets/destructive_confirm_sheet.dart';
+import 'package:fortuneboot/features/shared/invite_member_sheet.dart';
 import 'package:fortuneboot/fx/components/fx_button.dart';
 import 'package:fortuneboot/fx/components/fx_card.dart';
 import 'package:fortuneboot/fx/components/fx_icon_button.dart';
@@ -87,7 +88,41 @@ class _GroupDetailPageState extends State<GroupDetailPage> {
     final username = await FxSheet.show<String>(
       context,
       title: S.of(context).booksInviteMembers,
-      child: InviteMemberSheet(service: widget.service, groupId: groupId),
+      child: InviteMemberSheet(
+        strings: InviteMemberSheetStrings(
+          usernameLabel: S.of(context).booksUsername,
+          usernameHint: '@zhangsan',
+          roleLabel: S.of(context).booksRole,
+          helpText: S.of(context).booksInviteHelp,
+          submitLabel: S.of(context).booksSendInvite,
+          usernameRequiredMessage: S.of(context).booksInviteInputError,
+          roleRequiredMessage: S.of(context).booksInviteInputError,
+        ),
+        loadRoles: () async => (await widget.service.getRoleTypes())
+            .map(
+              (role) => InviteMemberRole(value: role.value, label: role.label),
+            )
+            .toList(),
+        submitInvite: (username, roleType) => widget.service.inviteGroupUser(
+          groupId: groupId,
+          username: username,
+          roleType: roleType,
+        ),
+        normalizeUsername: (raw) => raw.trim().replaceFirst('@', ''),
+        initialRoleId: (roles) => roles.any((role) => role.value == 2)
+            ? 2
+            : roles.isEmpty
+            ? 2
+            : roles.first.value,
+        confirmBeforeSubmit: (context, username) async =>
+            DestructiveConfirmSheet.show(
+              context,
+              title: S.of(context).booksInviteConfirmTitle,
+              message: S.of(context).booksInviteConfirmMessage(username),
+              confirmLabel: S.of(context).booksSendInvite,
+              cancelLabel: S.of(context).commonCancel,
+            ),
+      ),
       expand: true,
     );
     if (username == null || !mounted) return;

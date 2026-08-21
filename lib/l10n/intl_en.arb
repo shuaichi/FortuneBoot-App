@@ -186,6 +186,12 @@
   "mine": "My",
   "commonSave": "Save",
   "commonCancel": "Cancel",
+  "manageSearchBranchResults": "{count} results in this branch",
+  "@manageSearchBranchResults": {
+    "placeholders": {
+      "count": {}
+    }
+  },
   "confirmDestructiveWarning": "This action cannot be undone.",
   "commonConfirm": "Confirm",
   "commonHideAmounts": "Hide amounts",
