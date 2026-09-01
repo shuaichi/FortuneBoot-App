@@ -43,6 +43,7 @@ class BillDetailFlow {
   }
 
   void _copy(BuildContext context, FortuneBillVo bill) {
+    if (bill.billType == FxBillType.adjust.value) return;
     Navigator.of(context).pop();
     AppRouter.push<void>(
       context,
@@ -52,6 +53,7 @@ class BillDetailFlow {
   }
 
   void _edit(BuildContext context, FortuneBillVo bill) {
+    if (bill.billType == FxBillType.adjust.value) return;
     Navigator.of(context).pop();
     AppRouter.push<void>(
       context,

@@ -62,35 +62,43 @@ class CategorySplitSection extends StatelessWidget {
               ],
             ),
           ),
-          for (int i = 0; i < state.categoryRows.length; i++)
+          for (final row in state.categoryRows)
             _CategoryRow(
-              index: i,
-              row: state.categoryRows[i],
+              key: ValueKey(row.rowId),
+              row: row,
               currencyCode: currencyCode,
               canRemove: state.categoryRows.length > 1,
               onPickCategory: () async {
+                FocusManager.instance.primaryFocus?.unfocus();
                 final picked = await FxTreePicker.show<CategoryNode>(
                   context,
                   roots: categories,
                   childrenOf: (c) => c.children,
                   labelOf: (c) => c.categoryName ?? '',
                   idOf: (c) => c.categoryId,
-                  initialSelected: state.categoryRows[i].categoryId == null
+                  initialSelected: row.categoryId == null
                       ? const {}
-                      : {state.categoryRows[i].categoryId! as Object},
+                      : {row.categoryId! as Object},
                   leafOnly: true,
                   initiallyCollapsed: true,
                   title: S.of(context).billEditorSelectCategory,
                 );
-                if (picked != null && picked.isNotEmpty) {
-                  final c = picked.first;
-                  bloc.add(
-                    CategoryRowCategoryChanged(i, c.categoryId, c.categoryName),
-                  );
-                }
+                if (!context.mounted || picked == null || picked.isEmpty) return;
+                final category = picked.first;
+                bloc.add(
+                  CategoryRowCategoryChanged(
+                    row.rowId,
+                    category.categoryId,
+                    category.categoryName,
+                  ),
+                );
               },
-              onAmount: (v) => bloc.add(CategoryRowAmountChanged(i, v)),
-              onRemove: () => bloc.add(CategoryRowRemoved(i)),
+              onAmount: (value) =>
+                  bloc.add(CategoryRowAmountChanged(row.rowId, value)),
+              onRemove: () {
+                FocusManager.instance.primaryFocus?.unfocus();
+                bloc.add(CategoryRowRemoved(row.rowId));
+              },
             ),
           Padding(
             padding: const EdgeInsets.fromLTRB(
@@ -128,7 +136,7 @@ class CategorySplitSection extends StatelessWidget {
 
 class _CategoryRow extends StatelessWidget {
   const _CategoryRow({
-    required this.index,
+    super.key,
     required this.row,
     required this.currencyCode,
     required this.canRemove,
@@ -137,7 +145,6 @@ class _CategoryRow extends StatelessWidget {
     required this.onRemove,
   });
 
-  final int index;
   final CategoryAmountRow row;
   final String currencyCode;
   final bool canRemove;
@@ -200,7 +207,7 @@ class _CategoryRow extends StatelessWidget {
           Expanded(
             flex: 3,
             child: AmountField(
-              key: ValueKey('cat_amount_${index}_${row.categoryId}'),
+              key: ValueKey('cat_amount_${row.rowId}'),
               value: row.amount,
               currencyCode: currencyCode,
               large: false,

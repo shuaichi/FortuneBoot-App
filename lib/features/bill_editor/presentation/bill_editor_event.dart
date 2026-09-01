@@ -43,34 +43,34 @@ class CategoryRowAdded extends BillEditorEvent {
 }
 
 class CategoryRowRemoved extends BillEditorEvent {
-  final int index;
-  const CategoryRowRemoved(this.index);
+  final String rowId;
+  const CategoryRowRemoved(this.rowId);
 
   @override
-  List<Object?> get props => [index];
+  List<Object?> get props => [rowId];
 }
 
 class CategoryRowCategoryChanged extends BillEditorEvent {
-  final int index;
+  final String rowId;
   final int? categoryId;
   final String? categoryName;
   const CategoryRowCategoryChanged(
-    this.index,
+    this.rowId,
     this.categoryId,
     this.categoryName,
   );
 
   @override
-  List<Object?> get props => [index, categoryId, categoryName];
+  List<Object?> get props => [rowId, categoryId, categoryName];
 }
 
 class CategoryRowAmountChanged extends BillEditorEvent {
-  final int index;
+  final String rowId;
   final double amount;
-  const CategoryRowAmountChanged(this.index, this.amount);
+  const CategoryRowAmountChanged(this.rowId, this.amount);
 
   @override
-  List<Object?> get props => [index, amount];
+  List<Object?> get props => [rowId, amount];
 }
 
 class AccountChanged extends BillEditorEvent {
@@ -140,20 +140,20 @@ class ExtraRowAdded extends BillEditorEvent {
 }
 
 class ExtraRowRemoved extends BillEditorEvent {
-  final int index;
-  const ExtraRowRemoved(this.index);
+  final String rowId;
+  const ExtraRowRemoved(this.rowId);
 
   @override
-  List<Object?> get props => [index];
+  List<Object?> get props => [rowId];
 }
 
 class ExtraRowChanged extends BillEditorEvent {
-  final int index;
+  final String rowId;
   final ExtraRow row;
-  const ExtraRowChanged(this.index, this.row);
+  const ExtraRowChanged(this.rowId, this.row);
 
   @override
-  List<Object?> get props => [index, row];
+  List<Object?> get props => [rowId, row];
 }
 
 class AttachmentsAdded extends BillEditorEvent {

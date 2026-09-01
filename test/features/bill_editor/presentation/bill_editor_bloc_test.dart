@@ -54,6 +54,77 @@ void main() {
     expect(state.mode, 'edit');
     expect(state.tradeTime, sourceTradeTime);
   });
+
+  test('updates the surviving category row by stable row ID', () async {
+    final bloc = _createBloc();
+    addTearDown(bloc.close);
+    final ready = await _initialize(bloc);
+
+    final firstRow = ready.categoryRows.single;
+    final added = bloc.stream.firstWhere(
+      (state) => state.categoryRows.length == 2,
+    );
+    bloc.add(const CategoryRowAdded());
+    final twoRows = await added;
+    final survivingRow = twoRows.categoryRows.last;
+
+    final removed = bloc.stream.firstWhere(
+      (state) => state.categoryRows.length == 1,
+    );
+    bloc.add(CategoryRowRemoved(firstRow.rowId));
+    final oneRow = await removed;
+
+    final changed = bloc.stream.firstWhere(
+      (state) => state.categoryRows.single.amount == 12.5,
+    );
+    bloc.add(CategoryRowAmountChanged(survivingRow.rowId, 12.5));
+    final updated = await changed;
+
+    expect(updated.categoryRows.single.rowId, survivingRow.rowId);
+    expect(updated.categoryRows.single.amount, 12.5);
+  });
+
+  test('ignores an update for a removed extra row', () async {
+    final bloc = _createBloc();
+    addTearDown(bloc.close);
+    await _initialize(bloc);
+
+    final firstAdded = bloc.stream.firstWhere(
+      (state) => state.extras.length == 1,
+    );
+    bloc.add(const ExtraRowAdded());
+    final firstRow = (await firstAdded).extras.single;
+
+    final secondAdded = bloc.stream.firstWhere(
+      (state) => state.extras.length == 2,
+    );
+    bloc.add(const ExtraRowAdded());
+    final twoRows = await secondAdded;
+    final survivingRow = twoRows.extras.last;
+
+    final removed = bloc.stream.firstWhere((state) => state.extras.length == 1);
+    bloc.add(ExtraRowRemoved(firstRow.rowId));
+    final oneRow = await removed;
+
+    bloc.add(
+      ExtraRowChanged(
+        firstRow.rowId,
+        firstRow.copyWith(amount: 99),
+      ),
+    );
+    await Future<void>.delayed(Duration.zero);
+
+    expect(bloc.state, oneRow);
+    expect(bloc.state.extras.single.rowId, survivingRow.rowId);
+  });
+}
+
+Future<BillEditorState> _initialize(BillEditorBloc bloc) {
+  final ready = bloc.stream.firstWhere(
+    (state) => state.status == EditorStatus.ready,
+  );
+  bloc.add(const BillEditorInitialized(BillEditorArgs(mode: 'new')));
+  return ready;
 }
 
 BillEditorBloc _createBloc() {

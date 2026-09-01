@@ -41,6 +41,10 @@ class BillEditorPage extends StatefulWidget {
   State<BillEditorPage> createState() => _BillEditorPageState();
 }
 
+void _dismissKeyboard() {
+  FocusManager.instance.primaryFocus?.unfocus();
+}
+
 class _BillEditorPageState extends State<BillEditorPage> {
   BillEditorState? _baseline;
   var _submitSuccess = false;
@@ -125,6 +129,7 @@ class _BillEditorPageState extends State<BillEditorPage> {
   }
 
   Future<void> _confirmPop(BillEditorState state) async {
+    _dismissKeyboard();
     if (_submitSuccess || !_isDirty(state)) {
       Navigator.of(context).pop();
       return;
@@ -189,7 +194,10 @@ class _BillEditorPageState extends State<BillEditorPage> {
                 icon: Icons.close_rounded,
                 tooltip: S.of(context).commonCancel,
                 color: palette.textPrimary,
-                onPressed: () => Navigator.of(context).maybePop(),
+                onPressed: () {
+                  _dismissKeyboard();
+                  Navigator.of(context).maybePop();
+                },
               ),
             ),
             body: switch (state.status) {
@@ -236,7 +244,10 @@ class _EditorBody extends StatelessWidget {
             ignoring: state.lockBillType,
             child: FxSegmented<FxBillType>(
               value: state.billType,
-              onChanged: (t) => bloc.add(BillTypeChanged(t)),
+              onChanged: (type) {
+                _dismissKeyboard();
+                bloc.add(BillTypeChanged(type));
+              },
               segments: FxBillType.selectable
                   .map((t) => FxSegment(t, t.localizedLabel(context)))
                   .toList(),
@@ -397,6 +408,7 @@ class _AccountRow extends StatelessWidget {
       value: state.accountName,
       placeholder: S.of(context).billEditorSelectAccountHint,
       onTap: () async {
+        _dismissKeyboard();
         final picked = await showOptionPicker<AccountOption>(
           context,
           title: S.of(context).billEditorSelectAccount,
@@ -405,9 +417,8 @@ class _AccountRow extends StatelessWidget {
           selectedId: state.accountId,
           idOf: (a) => a.accountId,
         );
-        if (picked != null) {
-          bloc.add(AccountChanged(picked.accountId, picked.accountName));
-        }
+        if (!context.mounted || picked == null) return;
+        bloc.add(AccountChanged(picked.accountId, picked.accountName));
       },
     );
   }
@@ -436,6 +447,7 @@ class _TransferAccountRow extends StatelessWidget {
           ? S.of(context).billEditorSelectTransferOutHint
           : S.of(context).billEditorSelectTransferInHint,
       onTap: () async {
+        _dismissKeyboard();
         final picked = await showOptionPicker<AccountOption>(
           context,
           title: isOut
@@ -446,12 +458,11 @@ class _TransferAccountRow extends StatelessWidget {
           selectedId: selectedId,
           idOf: (a) => a.accountId,
         );
-        if (picked != null) {
-          if (isOut) {
-            bloc.add(AccountChanged(picked.accountId, picked.accountName));
-          } else {
-            bloc.add(ToAccountChanged(picked.accountId, picked.accountName));
-          }
+        if (!context.mounted || picked == null) return;
+        if (isOut) {
+          bloc.add(AccountChanged(picked.accountId, picked.accountName));
+        } else {
+          bloc.add(ToAccountChanged(picked.accountId, picked.accountName));
         }
       },
     );
@@ -475,6 +486,7 @@ class _PayeeRow extends StatelessWidget {
       value: state.payeeName,
       placeholder: S.of(context).billEditorOptional,
       onTap: () async {
+        _dismissKeyboard();
         final picked = await showOptionPicker<PayeeOption>(
           context,
           title: S.of(context).billEditorSelectPayee,
@@ -484,6 +496,7 @@ class _PayeeRow extends StatelessWidget {
           idOf: (p) => p.payeeId,
           allowClear: true,
         );
+        if (!context.mounted) return;
         bloc.add(PayeeChanged(picked?.payeeId, picked?.payeeName));
       },
     );
@@ -503,6 +516,7 @@ class _OrderRow extends StatelessWidget {
       placeholder: S.of(context).billEditorRequired,
       required: true,
       onTap: () async {
+        _dismissKeyboard();
         final picked = await showOptionPicker<OrderOption>(
           context,
           title: S.of(context).billEditorSelectOrder,
@@ -514,9 +528,8 @@ class _OrderRow extends StatelessWidget {
           selectedId: state.orderId,
           idOf: (o) => o.orderId,
         );
-        if (picked != null) {
-          bloc.add(OrderChanged(picked.orderId, picked.title));
-        }
+        if (!context.mounted || picked == null) return;
+        bloc.add(OrderChanged(picked.orderId, picked.title));
       },
     );
   }
@@ -534,6 +547,7 @@ class _TradeTimeRow extends StatelessWidget {
       label: S.of(context).billEditorTime,
       value: text,
       onTap: () async {
+        _dismissKeyboard();
         final picked = await showFxDateTimePicker(
           context,
           initial: state.tradeTime,
@@ -541,9 +555,8 @@ class _TradeTimeRow extends StatelessWidget {
           lastDate: DateTime(2100),
           title: S.of(context).billEditorTradeTime,
         );
-        if (picked != null) {
-          bloc.add(TradeTimeChanged(picked));
-        }
+        if (!context.mounted || picked == null) return;
+        bloc.add(TradeTimeChanged(picked));
       },
     );
   }
@@ -588,25 +601,42 @@ class _TagsRow extends StatelessWidget {
 
     return InkWell(
       onTap: () async {
+        _dismissKeyboard();
+        final selectableIds = <int>{};
+        void collectSelectableIds(List<TagNode> nodes) {
+          for (final node in nodes) {
+            if (usable(node) && node.tagId != null) {
+              selectableIds.add(node.tagId!);
+            }
+            collectSelectableIds(node.children);
+          }
+        }
+
+        collectSelectableIds(roots);
         final result = await FxTreePicker.show<TagNode>(
           context,
           roots: roots,
           childrenOf: (t) => t.children,
           labelOf: (t) => t.tagName ?? '',
-          idOf: (t) => t.tagId,
-          initialSelected: state.tagIds.map((e) => e as Object).toSet(),
+          idOf: (tag) => usable(tag) ? tag.tagId : null,
+          initialSelected: state.tagIds
+              .where(selectableIds.contains)
+              .map((id) => id as Object)
+              .toSet(),
           multiSelect: true,
           initiallyCollapsed: true,
           title: S.of(context).billEditorSelectTags,
         );
-        if (result != null) {
-          bloc.add(
-            TagsChanged(
-              result.map((t) => t.tagId!).toList(),
-              result.map((t) => t.tagName ?? '').toList(),
-            ),
-          );
-        }
+        if (!context.mounted || result == null) return;
+        final selected = result.where(
+          (tag) => usable(tag) && tag.tagId != null,
+        );
+        bloc.add(
+          TagsChanged(
+            selected.map((tag) => tag.tagId!).toList(),
+            selected.map((tag) => tag.tagName ?? '').toList(),
+          ),
+        );
       },
       child: Padding(
         padding: const EdgeInsets.symmetric(
@@ -664,6 +694,7 @@ class _MembersRow extends StatelessWidget {
       value: state.memberNames.isEmpty ? null : state.memberNames.join('、'),
       placeholder: S.of(context).billEditorOptional,
       onTap: () async {
+        _dismissKeyboard();
         final result = await showMultiSelect<MemberOption>(
           context,
           title: S.of(context).billEditorSelectMembers,
@@ -672,14 +703,13 @@ class _MembersRow extends StatelessWidget {
           idOf: (m) => m.memberId!,
           selectedIds: state.memberIds,
         );
-        if (result != null) {
-          bloc.add(
-            MembersChanged(
-              result.map((m) => m.memberId!).toList(),
-              result.map((m) => m.memberName ?? '').toList(),
-            ),
-          );
-        }
+        if (!context.mounted || result == null) return;
+        bloc.add(
+          MembersChanged(
+            result.map((member) => member.memberId!).toList(),
+            result.map((member) => member.memberName ?? '').toList(),
+          ),
+        );
       },
     );
   }
@@ -779,6 +809,7 @@ class _AttachmentCard extends StatelessWidget {
     BuildContext context,
     BillEditorBloc bloc,
   ) {
+    _dismissKeyboard();
     final s = S.of(context);
     return FxActionSheet.show(
       context,
@@ -1197,7 +1228,10 @@ class _SubmitBar extends StatelessWidget {
         loading: submitting,
         onPressed: submitting
             ? null
-            : () => bloc.add(const BillEditorSubmitted()),
+            : () {
+                _dismissKeyboard();
+                bloc.add(const BillEditorSubmitted());
+              },
       ),
     );
   }

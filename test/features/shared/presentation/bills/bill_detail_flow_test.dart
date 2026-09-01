@@ -77,6 +77,37 @@ void main() {
     expect(confirmCount, 0);
   });
 
+  testWidgets('hides edit and copy actions for balance adjustments', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: FxTheme.light,
+        locale: const Locale('zh'),
+        localizationsDelegates: const [
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+          S.delegate,
+        ],
+        supportedLocales: S.delegate.supportedLocales,
+        home: Scaffold(
+          body: BillDetailActions(
+            bill: const FortuneBillVo(billType: 4),
+            onCopy: () {},
+            onEdit: () {},
+            onDelete: () {},
+            onConfirmToggle: (_) {},
+          ),
+        ),
+      ),
+    );
+
+    expect(find.text('编辑'), findsNothing);
+    expect(find.text('复制'), findsNothing);
+    expect(find.text('删除'), findsOneWidget);
+  });
+
   testWidgets('uses compact actions at 414 pixels without overflow', (
     tester,
   ) async {

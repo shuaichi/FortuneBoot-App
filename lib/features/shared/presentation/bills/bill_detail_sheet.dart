@@ -523,6 +523,7 @@ class BillDetailActions extends StatelessWidget {
                         : Icons.done_all_rounded),
               onPressed: () => onConfirmToggle(!bill.confirm),
             );
+            final canEditOrCopy = bill.billType != FxBillType.adjust.value;
             final editButton = FxButton.tonal(
               label: S.of(context).billsEdit,
               icon: useCompactActions ? null : Icons.edit_rounded,
@@ -542,14 +543,16 @@ class BillDetailActions extends StatelessWidget {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Row(
-                    children: [
-                      Expanded(child: editButton),
-                      const SizedBox(width: FxSpacing.sm),
-                      Expanded(child: copyButton),
-                    ],
-                  ),
-                  const SizedBox(height: FxSpacing.sm),
+                  if (canEditOrCopy) ...[
+                    Row(
+                      children: [
+                        Expanded(child: editButton),
+                        const SizedBox(width: FxSpacing.sm),
+                        Expanded(child: copyButton),
+                      ],
+                    ),
+                    const SizedBox(height: FxSpacing.sm),
+                  ],
                   Row(
                     children: [
                       Expanded(child: confirmButton),
@@ -562,10 +565,12 @@ class BillDetailActions extends StatelessWidget {
             }
             return Row(
               children: [
-                Expanded(child: editButton),
-                const SizedBox(width: FxSpacing.sm),
-                Expanded(child: copyButton),
-                const SizedBox(width: FxSpacing.sm),
+                if (canEditOrCopy) ...[
+                  Expanded(child: editButton),
+                  const SizedBox(width: FxSpacing.sm),
+                  Expanded(child: copyButton),
+                  const SizedBox(width: FxSpacing.sm),
+                ],
                 Expanded(child: confirmButton),
                 const SizedBox(width: FxSpacing.sm),
                 Expanded(child: deleteButton),

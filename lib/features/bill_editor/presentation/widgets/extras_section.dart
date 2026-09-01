@@ -43,14 +43,18 @@ class ExtrasSection extends StatelessWidget {
               style: FxTypography.label.copyWith(color: palette.textSecondary),
             ),
           ),
-          for (int i = 0; i < state.extras.length; i++)
+          for (final row in state.extras)
             _ExtraRowEditor(
-              index: i,
-              row: state.extras[i],
+              key: ValueKey(row.rowId),
+              row: row,
               currencyCode: currencyCode,
               showSide: state.isTransfer,
-              onChanged: (r) => bloc.add(ExtraRowChanged(i, r)),
-              onRemove: () => bloc.add(ExtraRowRemoved(i)),
+              onChanged: (value) =>
+                  bloc.add(ExtraRowChanged(row.rowId, value)),
+              onRemove: () {
+                FocusManager.instance.primaryFocus?.unfocus();
+                bloc.add(ExtraRowRemoved(row.rowId));
+              },
             ),
           Padding(
             padding: const EdgeInsets.fromLTRB(
@@ -88,7 +92,7 @@ class ExtrasSection extends StatelessWidget {
 
 class _ExtraRowEditor extends StatelessWidget {
   const _ExtraRowEditor({
-    required this.index,
+    super.key,
     required this.row,
     required this.currencyCode,
     required this.showSide,
@@ -96,7 +100,6 @@ class _ExtraRowEditor extends StatelessWidget {
     required this.onRemove,
   });
 
-  final int index;
   final ExtraRow row;
   final String currencyCode;
   final bool showSide;
@@ -135,7 +138,7 @@ class _ExtraRowEditor extends StatelessWidget {
           ),
           const SizedBox(height: FxSpacing.sm),
           AmountField(
-            key: ValueKey('extra_amount_$index'),
+            key: ValueKey('extra_amount_${row.rowId}'),
             value: row.amount,
             currencyCode: currencyCode,
             large: false,
@@ -143,7 +146,7 @@ class _ExtraRowEditor extends StatelessWidget {
           ),
           const SizedBox(height: FxSpacing.sm),
           TextFormField(
-            key: ValueKey('extra_remark_$index'),
+            key: ValueKey('extra_remark_${row.rowId}'),
             initialValue: row.remark ?? '',
             style: FxTypography.body.copyWith(color: palette.textPrimary),
             decoration: InputDecoration(

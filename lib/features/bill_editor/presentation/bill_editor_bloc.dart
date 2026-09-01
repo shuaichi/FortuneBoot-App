@@ -60,6 +60,35 @@ class BillEditorBloc extends Bloc<BillEditorEvent, BillEditorState> {
   final int _groupId;
   final EditorOptionsService _optionsService;
   final BillService _billService;
+  var _nextRowSequence = 0;
+
+  String _nextRowId() => 'editor-row-${_nextRowSequence++}';
+
+  CategoryAmountRow _newCategoryRow({
+    int? categoryId,
+    String? categoryName,
+    double amount = 0,
+  }) => CategoryAmountRow(
+    rowId: _nextRowId(),
+    categoryId: categoryId,
+    categoryName: categoryName,
+    amount: amount,
+  );
+
+  ExtraRow _newExtraRow({
+    int extraType = 1,
+    double amount = 0,
+    int accountSide = 1,
+    int? categoryId,
+    String? remark,
+  }) => ExtraRow(
+    rowId: _nextRowId(),
+    extraType: extraType,
+    amount: amount,
+    accountSide: accountSide,
+    categoryId: categoryId,
+    remark: remark,
+  );
 
   Future<void> _onInitialized(
     BillEditorInitialized event,
@@ -124,10 +153,10 @@ class BillEditorBloc extends Bloc<BillEditorEvent, BillEditorState> {
       final billType =
           FxBillType.fromValue(source.billType) ?? FxBillType.expense;
       final rows = source.categoryAmountPair.isEmpty
-          ? const [CategoryAmountRow()]
+          ? [_newCategoryRow()]
           : source.categoryAmountPair
                 .map(
-                  (e) => CategoryAmountRow(
+                  (e) => _newCategoryRow(
                     categoryId: e.categoryId,
                     categoryName: e.categoryName,
                     amount: e.amount,
@@ -136,7 +165,7 @@ class BillEditorBloc extends Bloc<BillEditorEvent, BillEditorState> {
                 .toList();
       final extras = source.extras
           .map(
-            (e) => ExtraRow(
+            (e) => _newExtraRow(
               extraType: e.extraType ?? 1,
               amount: e.amount,
               accountSide: e.accountSide ?? 1,
@@ -192,6 +221,7 @@ class BillEditorBloc extends Bloc<BillEditorEvent, BillEditorState> {
       billId: args.billId,
       lockBillType: args.lockBillType,
       billType: preset ?? FxBillType.expense,
+      categoryRows: [_newCategoryRow()],
     );
   }
 
@@ -239,7 +269,7 @@ class BillEditorBloc extends Bloc<BillEditorEvent, BillEditorState> {
       clearToAccount: true,
       clearPayee: true,
       clearOrder: true,
-      categoryRows: const [CategoryAmountRow()],
+      categoryRows: [_newCategoryRow()],
       extras: const [],
     );
     if (state.status == EditorStatus.ready) {
@@ -261,7 +291,7 @@ class BillEditorBloc extends Bloc<BillEditorEvent, BillEditorState> {
   ) {
     emit(
       state.copyWith(
-        categoryRows: [...state.categoryRows, const CategoryAmountRow()],
+        categoryRows: [...state.categoryRows, _newCategoryRow()],
       ),
     );
   }
@@ -270,12 +300,11 @@ class BillEditorBloc extends Bloc<BillEditorEvent, BillEditorState> {
     CategoryRowRemoved event,
     Emitter<BillEditorState> emit,
   ) {
-    if (state.categoryRows.length <= 1 ||
-        event.index < 0 ||
-        event.index >= state.categoryRows.length) {
-      return;
-    }
-    final rows = [...state.categoryRows]..removeAt(event.index);
+    if (state.categoryRows.length <= 1) return;
+    final rows = state.categoryRows
+        .where((row) => row.rowId != event.rowId)
+        .toList();
+    if (rows.length == state.categoryRows.length) return;
     emit(state.copyWith(categoryRows: rows));
   }
 
@@ -283,9 +312,12 @@ class BillEditorBloc extends Bloc<BillEditorEvent, BillEditorState> {
     CategoryRowCategoryChanged event,
     Emitter<BillEditorState> emit,
   ) {
+    final index = state.categoryRows.indexWhere(
+      (row) => row.rowId == event.rowId,
+    );
+    if (index < 0) return;
     final rows = [...state.categoryRows];
-    if (event.index < 0 || event.index >= rows.length) return;
-    rows[event.index] = rows[event.index].copyWith(
+    rows[index] = rows[index].copyWith(
       categoryId: event.categoryId,
       categoryName: event.categoryName,
     );
@@ -296,9 +328,12 @@ class BillEditorBloc extends Bloc<BillEditorEvent, BillEditorState> {
     CategoryRowAmountChanged event,
     Emitter<BillEditorState> emit,
   ) {
+    final index = state.categoryRows.indexWhere(
+      (row) => row.rowId == event.rowId,
+    );
+    if (index < 0) return;
     final rows = [...state.categoryRows];
-    if (event.index < 0 || event.index >= rows.length) return;
-    rows[event.index] = rows[event.index].copyWith(amount: event.amount);
+    rows[index] = rows[index].copyWith(amount: event.amount);
     emit(state.copyWith(categoryRows: rows));
   }
 
@@ -363,15 +398,17 @@ class BillEditorBloc extends Bloc<BillEditorEvent, BillEditorState> {
 
   void _onExtraRowAdded(ExtraRowAdded event, Emitter<BillEditorState> emit) {
     // 转账默认转出方向 from(1)，支出固定 from。
-    emit(state.copyWith(extras: [...state.extras, const ExtraRow()]));
+    emit(state.copyWith(extras: [...state.extras, _newExtraRow()]));
   }
 
   void _onExtraRowRemoved(
     ExtraRowRemoved event,
     Emitter<BillEditorState> emit,
   ) {
-    if (event.index < 0 || event.index >= state.extras.length) return;
-    final extras = [...state.extras]..removeAt(event.index);
+    final extras = state.extras
+        .where((row) => row.rowId != event.rowId)
+        .toList();
+    if (extras.length == state.extras.length) return;
     emit(state.copyWith(extras: extras));
   }
 
@@ -379,9 +416,17 @@ class BillEditorBloc extends Bloc<BillEditorEvent, BillEditorState> {
     ExtraRowChanged event,
     Emitter<BillEditorState> emit,
   ) {
+    final index = state.extras.indexWhere((row) => row.rowId == event.rowId);
+    if (index < 0) return;
     final extras = [...state.extras];
-    if (event.index < 0 || event.index >= extras.length) return;
-    extras[event.index] = event.row;
+    extras[index] = ExtraRow(
+      rowId: extras[index].rowId,
+      extraType: event.row.extraType,
+      amount: event.row.amount,
+      accountSide: event.row.accountSide,
+      categoryId: event.row.categoryId,
+      remark: event.row.remark,
+    );
     emit(state.copyWith(extras: extras));
   }
 

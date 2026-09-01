@@ -2,11 +2,14 @@ import 'package:equatable/equatable.dart';
 
 /// 分类拆分行（分类 + 金额）。
 class CategoryAmountRow extends Equatable {
+  /// 仅用于编辑器内动态行的稳定身份，不提交到服务端。
+  final String rowId;
   final int? categoryId;
   final String? categoryName;
   final double amount;
 
   const CategoryAmountRow({
+    this.rowId = '',
     this.categoryId,
     this.categoryName,
     this.amount = 0,
@@ -18,6 +21,7 @@ class CategoryAmountRow extends Equatable {
     double? amount,
   }) {
     return CategoryAmountRow(
+      rowId: rowId,
       categoryId: categoryId ?? this.categoryId,
       categoryName: categoryName ?? this.categoryName,
       amount: amount ?? this.amount,
@@ -25,11 +29,14 @@ class CategoryAmountRow extends Equatable {
   }
 
   @override
-  List<Object?> get props => [categoryId, categoryName, amount];
+  List<Object?> get props => [rowId, categoryId, categoryName, amount];
 }
 
 /// 附加费用行。
 class ExtraRow extends Equatable {
+  /// 仅用于编辑器内动态行的稳定身份，不提交到服务端。
+  final String rowId;
+
   /// 手续费1 / 优惠2
   final int extraType;
 
@@ -41,6 +48,7 @@ class ExtraRow extends Equatable {
   final String? remark;
 
   const ExtraRow({
+    this.rowId = '',
     this.extraType = 1,
     this.amount = 0,
     this.accountSide = 1,
@@ -56,6 +64,7 @@ class ExtraRow extends Equatable {
     String? remark,
   }) {
     return ExtraRow(
+      rowId: rowId,
       extraType: extraType ?? this.extraType,
       amount: amount ?? this.amount,
       accountSide: accountSide ?? this.accountSide,
@@ -66,6 +75,7 @@ class ExtraRow extends Equatable {
 
   @override
   List<Object?> get props => [
+    rowId,
     extraType,
     amount,
     accountSide,
