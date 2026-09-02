@@ -16,6 +16,9 @@ enum BillValidationError {
   accountRequired,
   orderRequired,
   titleRequired,
+  extraCategoryRequired,
+  extraCategoryNotInSplit,
+  transferExtraAccountSideInvalid,
 }
 
 class BillEditorState extends Equatable {
@@ -134,6 +137,24 @@ class BillEditorState extends Equatable {
   /// 展示大金额。
   double get displayAmount => isTransfer ? transferAmount : categoryTotal;
 
+  /// 当前分类拆分中可关联附加费用的分类。
+  List<CategoryAmountRow> get extraCategoryRows {
+    final categoryIds = <int>{};
+    return categoryRows
+        .where(
+          (row) => row.categoryId != null && categoryIds.add(row.categoryId!),
+        )
+        .toList(growable: false);
+  }
+
+  Set<int> get extraCategoryIds =>
+      extraCategoryRows.map((row) => row.categoryId!).toSet();
+
+  bool get hasExtraCategories => extraCategoryRows.isNotEmpty;
+
+  static bool isValidTransferAccountSide(int accountSide) =>
+      accountSide == 1 || accountSide == 2;
+
   /// 首个有效分类名（供默认标题）。
   String get firstCategoryName {
     for (final r in categoryRows) {
@@ -154,6 +175,11 @@ class BillEditorState extends Equatable {
       if (accountId == toAccountId) {
         return BillValidationError.transferSameAccount;
       }
+      for (final extra in extras.where((extra) => extra.amount != 0)) {
+        if (!isValidTransferAccountSide(extra.accountSide)) {
+          return BillValidationError.transferExtraAccountSideInvalid;
+        }
+      }
     } else {
       if (categoryRows.isEmpty) return BillValidationError.categoryRequired;
       for (final r in categoryRows) {
@@ -165,6 +191,15 @@ class BillEditorState extends Equatable {
       if (accountId == null) return BillValidationError.accountRequired;
       if (showOrder && orderId == null) {
         return BillValidationError.orderRequired;
+      }
+      final categoryIds = extraCategoryIds;
+      for (final extra in extras.where((extra) => extra.amount != 0)) {
+        if (extra.categoryId == null) {
+          return BillValidationError.extraCategoryRequired;
+        }
+        if (!categoryIds.contains(extra.categoryId)) {
+          return BillValidationError.extraCategoryNotInSplit;
+        }
       }
     }
     final t = effectiveTitle;

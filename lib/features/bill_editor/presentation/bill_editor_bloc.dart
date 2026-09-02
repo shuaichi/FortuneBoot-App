@@ -90,6 +90,29 @@ class BillEditorBloc extends Bloc<BillEditorEvent, BillEditorState> {
     remark: remark,
   );
 
+  ExtraRow _normalizeExtraRow(ExtraRow row, {required bool isTransfer}) {
+    if (isTransfer) {
+      return ExtraRow(
+        rowId: row.rowId,
+        extraType: row.extraType,
+        amount: row.amount,
+        accountSide: BillEditorState.isValidTransferAccountSide(row.accountSide)
+            ? row.accountSide
+            : 1,
+        categoryId: null,
+        remark: row.remark,
+      );
+    }
+    return ExtraRow(
+      rowId: row.rowId,
+      extraType: row.extraType,
+      amount: row.amount,
+      accountSide: 1,
+      categoryId: row.categoryId,
+      remark: row.remark,
+    );
+  }
+
   Future<void> _onInitialized(
     BillEditorInitialized event,
     Emitter<BillEditorState> emit,
@@ -165,12 +188,15 @@ class BillEditorBloc extends Bloc<BillEditorEvent, BillEditorState> {
                 .toList();
       final extras = source.extras
           .map(
-            (e) => _newExtraRow(
-              extraType: e.extraType ?? 1,
-              amount: e.amount,
-              accountSide: e.accountSide ?? 1,
-              categoryId: e.categoryId,
-              remark: e.remark,
+            (e) => _normalizeExtraRow(
+              _newExtraRow(
+                extraType: e.extraType ?? 1,
+                amount: e.amount,
+                accountSide: e.accountSide ?? 1,
+                categoryId: e.categoryId,
+                remark: e.remark,
+              ),
+              isTransfer: billType == FxBillType.transfer,
             ),
           )
           .toList();
@@ -290,9 +316,7 @@ class BillEditorBloc extends Bloc<BillEditorEvent, BillEditorState> {
     Emitter<BillEditorState> emit,
   ) {
     emit(
-      state.copyWith(
-        categoryRows: [...state.categoryRows, _newCategoryRow()],
-      ),
+      state.copyWith(categoryRows: [...state.categoryRows, _newCategoryRow()]),
     );
   }
 
@@ -397,8 +421,22 @@ class BillEditorBloc extends Bloc<BillEditorEvent, BillEditorState> {
   }
 
   void _onExtraRowAdded(ExtraRowAdded event, Emitter<BillEditorState> emit) {
-    // 转账默认转出方向 from(1)，支出固定 from。
-    emit(state.copyWith(extras: [...state.extras, _newExtraRow()]));
+    if (!state.isTransfer &&
+        (event.categoryId == null ||
+            !state.extraCategoryIds.contains(event.categoryId))) {
+      return;
+    }
+    emit(
+      state.copyWith(
+        extras: [
+          ...state.extras,
+          _normalizeExtraRow(
+            _newExtraRow(categoryId: event.categoryId),
+            isTransfer: state.isTransfer,
+          ),
+        ],
+      ),
+    );
   }
 
   void _onExtraRowRemoved(
@@ -419,13 +457,16 @@ class BillEditorBloc extends Bloc<BillEditorEvent, BillEditorState> {
     final index = state.extras.indexWhere((row) => row.rowId == event.rowId);
     if (index < 0) return;
     final extras = [...state.extras];
-    extras[index] = ExtraRow(
-      rowId: extras[index].rowId,
-      extraType: event.row.extraType,
-      amount: event.row.amount,
-      accountSide: event.row.accountSide,
-      categoryId: event.row.categoryId,
-      remark: event.row.remark,
+    extras[index] = _normalizeExtraRow(
+      ExtraRow(
+        rowId: extras[index].rowId,
+        extraType: event.row.extraType,
+        amount: event.row.amount,
+        accountSide: event.row.accountSide,
+        categoryId: event.row.categoryId,
+        remark: event.row.remark,
+      ),
+      isTransfer: state.isTransfer,
     );
     emit(state.copyWith(extras: extras));
   }
@@ -548,15 +589,29 @@ class BillEditorBloc extends Bloc<BillEditorEvent, BillEditorState> {
     if (s.memberIds.isNotEmpty) json['memberIdList'] = s.memberIds;
 
     if (s.showExtras && s.extras.isNotEmpty) {
+      final categoryIds = s.extraCategoryIds;
       json['extras'] = s.extras
-          .where((e) => e.amount != 0)
+          .where((extra) => extra.amount != 0)
+          .where(
+            (extra) =>
+                s.isTransfer ||
+                (extra.categoryId != null &&
+                    categoryIds.contains(extra.categoryId)),
+          )
           .map(
-            (e) => {
-              'extraType': e.extraType,
-              'amount': e.amount,
-              'accountSide': s.isTransfer ? e.accountSide : 1,
-              if (e.categoryId != null) 'categoryId': e.categoryId,
-              if (e.remark != null && e.remark!.isNotEmpty) 'remark': e.remark,
+            (extra) => {
+              'extraType': extra.extraType,
+              'amount': extra.amount,
+              'accountSide': s.isTransfer
+                  ? (BillEditorState.isValidTransferAccountSide(
+                          extra.accountSide,
+                        )
+                        ? extra.accountSide
+                        : 1)
+                  : 1,
+              'categoryId': s.isTransfer ? null : extra.categoryId,
+              if (extra.remark != null && extra.remark!.isNotEmpty)
+                'remark': extra.remark,
             },
           )
           .toList();

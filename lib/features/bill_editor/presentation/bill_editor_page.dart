@@ -112,6 +112,12 @@ class _BillEditorPageState extends State<BillEditorPage> {
         return s.billEditorValidateOrder;
       case BillValidationError.titleRequired:
         return s.billEditorValidateTitle;
+      case BillValidationError.extraCategoryRequired:
+        return s.billEditorValidateExtraCategory;
+      case BillValidationError.extraCategoryNotInSplit:
+        return s.billEditorValidateExtraCategoryInSplit;
+      case BillValidationError.transferExtraAccountSideInvalid:
+        return s.billEditorValidateTransferExtraAccountSide;
     }
   }
 

@@ -2,7 +2,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:fortuneboot/features/bill_editor/data/editor_options_service.dart';
 import 'package:fortuneboot/features/bill_editor/presentation/bill_editor_args.dart';
 import 'package:fortuneboot/features/bill_editor/presentation/bill_editor_bloc.dart';
+import 'package:fortuneboot/features/shared/data/bill_attachment.dart';
 import 'package:fortuneboot/features/shared/data/bill_models.dart';
+import 'package:fortuneboot/features/shared/data/bill_service.dart';
 
 void main() {
   final sourceTradeTime = DateTime(2020, 1, 2, 3, 4, 5);
@@ -72,7 +74,7 @@ void main() {
       (state) => state.categoryRows.length == 1,
     );
     bloc.add(CategoryRowRemoved(firstRow.rowId));
-    final oneRow = await removed;
+    await removed;
 
     final changed = bloc.stream.firstWhere(
       (state) => state.categoryRows.single.amount == 12.5,
@@ -84,21 +86,250 @@ void main() {
     expect(updated.categoryRows.single.amount, 12.5);
   });
 
+  test(
+    'adds a non-transfer extra only for a category in the current split',
+    () async {
+      final bloc = _createBloc();
+      addTearDown(bloc.close);
+      final ready = await _initialize(bloc);
+      final category = ready.categoryRows.single;
+
+      final categorySelected = bloc.stream.firstWhere(
+        (state) => state.categoryRows.single.categoryId == 101,
+      );
+      bloc.add(CategoryRowCategoryChanged(category.rowId, 101, '餐饮'));
+      await categorySelected;
+
+      final added = bloc.stream.firstWhere((state) => state.extras.length == 1);
+      bloc.add(const ExtraRowAdded(categoryId: 101));
+      expect((await added).extras.single.categoryId, 101);
+
+      bloc.add(const ExtraRowAdded(categoryId: 999));
+      await Future<void>.delayed(Duration.zero);
+      expect(bloc.state.extras, hasLength(1));
+    },
+  );
+
+  test(
+    'rejects a non-transfer extra whose category leaves the split',
+    () async {
+      final bloc = _createBloc();
+      addTearDown(bloc.close);
+      final ready = await _initialize(bloc);
+      final category = ready.categoryRows.single;
+
+      bloc.add(CategoryRowCategoryChanged(category.rowId, 101, '餐饮'));
+      bloc.add(CategoryRowAmountChanged(category.rowId, 20));
+      await Future<void>.delayed(Duration.zero);
+      bloc.add(const ExtraRowAdded(categoryId: 101));
+      final extra = await bloc.stream.firstWhere(
+        (state) => state.extras.length == 1,
+      );
+      bloc.add(
+        ExtraRowChanged(
+          extra.extras.single.rowId,
+          extra.extras.single.copyWith(amount: 12),
+        ),
+      );
+      await Future<void>.delayed(Duration.zero);
+
+      bloc.add(CategoryRowCategoryChanged(category.rowId, 202, '交通'));
+      bloc.add(const AccountChanged(1, '现金'));
+      await Future<void>.delayed(Duration.zero);
+
+      expect(bloc.state.extras.single.categoryId, 101);
+      expect(
+        bloc.state.validationError,
+        BillValidationError.extraCategoryNotInSplit,
+      );
+    },
+  );
+
+  test('preserves non-transfer extra categories when copying a bill', () async {
+    final source = FortuneBillVo(
+      billId: 1,
+      billType: 1,
+      amount: 20,
+      categoryAmountPair: const [
+        BillCategoryAmount(categoryId: 101, categoryName: '餐饮', amount: 20),
+      ],
+      extras: const [BillExtra(amount: 2, categoryId: 101)],
+    );
+    final bloc = _createBloc();
+    addTearDown(bloc.close);
+
+    bloc.add(
+      BillEditorInitialized(BillEditorArgs(mode: 'copy', sourceBill: source)),
+    );
+    final state = await bloc.stream.firstWhere(
+      (state) => state.status == EditorStatus.ready,
+    );
+
+    expect(state.mode, 'copy');
+    expect(state.billId, isNull);
+    expect(state.extras.single.categoryId, 101);
+  });
+
+  test(
+    'normalizes transfer extra category and account side when prefilling',
+    () async {
+      final source = FortuneBillVo(
+        billId: 1,
+        billType: 3,
+        amount: 20,
+        extras: const [
+          BillExtra(amount: 2, accountSide: 2, categoryId: 101),
+          BillExtra(amount: 3, accountSide: 3, categoryId: 202),
+        ],
+      );
+      final bloc = _createBloc();
+      addTearDown(bloc.close);
+
+      bloc.add(
+        BillEditorInitialized(BillEditorArgs(mode: 'edit', sourceBill: source)),
+      );
+      final state = await bloc.stream.firstWhere(
+        (state) => state.status == EditorStatus.ready,
+      );
+
+      expect(
+        state.extras.map((extra) => extra.categoryId),
+        everyElement(isNull),
+      );
+      expect(state.extras.map((extra) => extra.accountSide), [2, 1]);
+    },
+  );
+
+  test('allows a zero-amount extra draft without a category', () async {
+    final bloc = _createBloc();
+    addTearDown(bloc.close);
+    final ready = await _initialize(bloc);
+
+    final changed = bloc.stream.firstWhere((state) => state.extras.length == 1);
+    bloc.add(BillTypeChanged(FxBillType.transfer));
+    await Future<void>.delayed(Duration.zero);
+    bloc.add(const ExtraRowAdded());
+    final withDraft = await changed;
+
+    expect(withDraft.extras.single.categoryId, isNull);
+    expect(
+      withDraft.validationError,
+      isNot(BillValidationError.extraCategoryRequired),
+    );
+    expect(
+      withDraft.validationError,
+      isNot(BillValidationError.extraCategoryNotInSplit),
+    );
+    expect(ready.extras, isEmpty);
+  });
+
+  test(
+    'submits non-transfer extras with a category from the current split',
+    () async {
+      final service = _CapturingBillService();
+      final bloc = _createBloc(billService: service);
+      addTearDown(bloc.close);
+      final ready = await _initialize(bloc);
+      final category = ready.categoryRows.single;
+
+      bloc.add(CategoryRowCategoryChanged(category.rowId, 101, '餐饮'));
+      bloc.add(CategoryRowAmountChanged(category.rowId, 20));
+      bloc.add(const AccountChanged(1, '现金'));
+      await Future<void>.delayed(Duration.zero);
+      bloc.add(const ExtraRowAdded(categoryId: 101));
+      final withExtra = await bloc.stream.firstWhere(
+        (state) => state.extras.length == 1,
+      );
+      bloc.add(
+        ExtraRowChanged(
+          withExtra.extras.single.rowId,
+          withExtra.extras.single.copyWith(amount: 2, remark: '服务费'),
+        ),
+      );
+      await Future<void>.delayed(Duration.zero);
+
+      final submitted = bloc.stream.firstWhere(
+        (state) => state.submitStatus == SubmitStatus.success,
+      );
+      bloc.add(const BillEditorSubmitted());
+      await submitted;
+
+      final extras = service.submittedData!['extras'] as List<dynamic>;
+      expect(service.submittedModify, isFalse);
+      expect(extras, [
+        {
+          'extraType': 1,
+          'amount': 2.0,
+          'accountSide': 1,
+          'categoryId': 101,
+          'remark': '服务费',
+        },
+      ]);
+    },
+  );
+
+  test(
+    'submits transfer extras with null category IDs and valid sides',
+    () async {
+      final service = _CapturingBillService();
+      final bloc = _createBloc(billService: service);
+      addTearDown(bloc.close);
+      await _initialize(bloc);
+
+      bloc.add(BillTypeChanged(FxBillType.transfer));
+      bloc.add(const TransferAmountChanged(100));
+      bloc.add(const AccountChanged(1, '转出账户'));
+      bloc.add(const ToAccountChanged(2, '转入账户'));
+      bloc.add(const TitleChanged('账户转账'));
+      await Future<void>.delayed(Duration.zero);
+      bloc.add(const ExtraRowAdded());
+      final withExtra = await bloc.stream.firstWhere(
+        (state) => state.extras.length == 1,
+      );
+      bloc.add(
+        ExtraRowChanged(
+          withExtra.extras.single.rowId,
+          withExtra.extras.single.copyWith(
+            amount: 3,
+            accountSide: 2,
+            categoryId: 101,
+          ),
+        ),
+      );
+      await Future<void>.delayed(Duration.zero);
+
+      final submitted = bloc.stream.firstWhere(
+        (state) => state.submitStatus == SubmitStatus.success,
+      );
+      bloc.add(const BillEditorSubmitted());
+      await submitted;
+
+      final extras = service.submittedData!['extras'] as List<dynamic>;
+      expect(service.submittedData!['categoryAmountPair'], isEmpty);
+      expect(extras, [
+        {'extraType': 1, 'amount': 3.0, 'accountSide': 2, 'categoryId': null},
+      ]);
+    },
+  );
+
   test('ignores an update for a removed extra row', () async {
     final bloc = _createBloc();
     addTearDown(bloc.close);
-    await _initialize(bloc);
+    final ready = await _initialize(bloc);
+    final category = ready.categoryRows.single;
+    bloc.add(CategoryRowCategoryChanged(category.rowId, 1, '餐饮'));
+    await Future<void>.delayed(Duration.zero);
 
     final firstAdded = bloc.stream.firstWhere(
       (state) => state.extras.length == 1,
     );
-    bloc.add(const ExtraRowAdded());
+    bloc.add(const ExtraRowAdded(categoryId: 1));
     final firstRow = (await firstAdded).extras.single;
 
     final secondAdded = bloc.stream.firstWhere(
       (state) => state.extras.length == 2,
     );
-    bloc.add(const ExtraRowAdded());
+    bloc.add(const ExtraRowAdded(categoryId: 1));
     final twoRows = await secondAdded;
     final survivingRow = twoRows.extras.last;
 
@@ -106,12 +337,7 @@ void main() {
     bloc.add(ExtraRowRemoved(firstRow.rowId));
     final oneRow = await removed;
 
-    bloc.add(
-      ExtraRowChanged(
-        firstRow.rowId,
-        firstRow.copyWith(amount: 99),
-      ),
-    );
+    bloc.add(ExtraRowChanged(firstRow.rowId, firstRow.copyWith(amount: 99)));
     await Future<void>.delayed(Duration.zero);
 
     expect(bloc.state, oneRow);
@@ -127,12 +353,28 @@ Future<BillEditorState> _initialize(BillEditorBloc bloc) {
   return ready;
 }
 
-BillEditorBloc _createBloc() {
+BillEditorBloc _createBloc({BillService? billService}) {
   return BillEditorBloc(
     bookId: 1,
     groupId: 1,
     optionsService: _FakeEditorOptionsService(),
+    billService: billService,
   );
+}
+
+class _CapturingBillService extends BillService {
+  Map<String, dynamic>? submittedData;
+  bool? submittedModify;
+
+  @override
+  Future<void> submit(
+    Map<String, dynamic> data, {
+    required bool modify,
+    List<BillAttachment>? attachments,
+  }) async {
+    submittedData = Map<String, dynamic>.from(data);
+    submittedModify = modify;
+  }
 }
 
 class _FakeEditorOptionsService extends EditorOptionsService {

@@ -136,7 +136,11 @@ class OrderChanged extends BillEditorEvent {
 }
 
 class ExtraRowAdded extends BillEditorEvent {
-  const ExtraRowAdded();
+  final int? categoryId;
+  const ExtraRowAdded({this.categoryId});
+
+  @override
+  List<Object?> get props => [categoryId];
 }
 
 class ExtraRowRemoved extends BillEditorEvent {

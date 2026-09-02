@@ -61,6 +61,7 @@ class ExtraRow extends Equatable {
     double? amount,
     int? accountSide,
     int? categoryId,
+    bool clearCategoryId = false,
     String? remark,
   }) {
     return ExtraRow(
@@ -68,7 +69,7 @@ class ExtraRow extends Equatable {
       extraType: extraType ?? this.extraType,
       amount: amount ?? this.amount,
       accountSide: accountSide ?? this.accountSide,
-      categoryId: categoryId ?? this.categoryId,
+      categoryId: clearCategoryId ? null : categoryId ?? this.categoryId,
       remark: remark ?? this.remark,
     );
   }

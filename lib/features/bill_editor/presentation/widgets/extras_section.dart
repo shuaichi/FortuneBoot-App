@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fortuneboot/core/feedback/fx_feedback.dart';
 import 'package:fortuneboot/features/bill_editor/presentation/bill_editor_bloc.dart';
 import 'package:fortuneboot/features/bill_editor/presentation/widgets/amount_field.dart';
+import 'package:fortuneboot/features/bill_editor/presentation/widgets/editor_pickers.dart';
 import 'package:fortuneboot/fx/components/fx_card.dart';
 import 'package:fortuneboot/fx/components/fx_icon_button.dart';
 import 'package:fortuneboot/fx/components/fx_segmented.dart';
@@ -26,6 +28,49 @@ class ExtrasSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final palette = FxPalette.of(context);
     final bloc = context.read<BillEditorBloc>();
+    final categories = state.extraCategoryRows;
+
+    Future<void> addExtra() async {
+      if (state.isTransfer) {
+        bloc.add(const ExtraRowAdded());
+        return;
+      }
+      if (categories.isEmpty) {
+        FxFeedback.error(
+          context,
+          message: S.of(context).billEditorExtraCategoryRequired,
+        );
+        return;
+      }
+      final category = await showOptionPicker<CategoryAmountRow>(
+        context,
+        title: S.of(context).billEditorExtraCategory,
+        options: categories,
+        labelOf: (row) => row.categoryName ?? '',
+        idOf: (row) => row.categoryId,
+      );
+      if (!context.mounted || category?.categoryId == null) return;
+      bloc.add(ExtraRowAdded(categoryId: category!.categoryId));
+    }
+
+    Future<void> pickCategory(ExtraRow row) async {
+      final category = await showOptionPicker<CategoryAmountRow>(
+        context,
+        title: S.of(context).billEditorExtraCategory,
+        options: categories,
+        labelOf: (item) => item.categoryName ?? '',
+        idOf: (item) => item.categoryId,
+        selectedId: row.categoryId,
+      );
+      if (!context.mounted || category?.categoryId == null) return;
+      bloc.add(
+        ExtraRowChanged(
+          row.rowId,
+          row.copyWith(categoryId: category!.categoryId),
+        ),
+      );
+    }
+
     return FxCard(
       padding: EdgeInsets.zero,
       child: Column(
@@ -49,8 +94,12 @@ class ExtrasSection extends StatelessWidget {
               row: row,
               currencyCode: currencyCode,
               showSide: state.isTransfer,
-              onChanged: (value) =>
-                  bloc.add(ExtraRowChanged(row.rowId, value)),
+              categoryName: state.extraCategoryRows
+                  .where((category) => category.categoryId == row.categoryId)
+                  .map((category) => category.categoryName)
+                  .firstOrNull,
+              onPickCategory: state.isTransfer ? null : () => pickCategory(row),
+              onChanged: (value) => bloc.add(ExtraRowChanged(row.rowId, value)),
               onRemove: () {
                 FocusManager.instance.primaryFocus?.unfocus();
                 bloc.add(ExtraRowRemoved(row.rowId));
@@ -64,7 +113,7 @@ class ExtrasSection extends StatelessWidget {
               FxSpacing.md,
             ),
             child: InkWell(
-              onTap: () => bloc.add(const ExtraRowAdded()),
+              onTap: addExtra,
               borderRadius: FxRadius.tileBorder,
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: FxSpacing.sm),
@@ -96,6 +145,8 @@ class _ExtraRowEditor extends StatelessWidget {
     required this.row,
     required this.currencyCode,
     required this.showSide,
+    this.categoryName,
+    this.onPickCategory,
     required this.onChanged,
     required this.onRemove,
   });
@@ -103,6 +154,8 @@ class _ExtraRowEditor extends StatelessWidget {
   final ExtraRow row;
   final String currencyCode;
   final bool showSide;
+  final String? categoryName;
+  final VoidCallback? onPickCategory;
   final ValueChanged<ExtraRow> onChanged;
   final VoidCallback onRemove;
 
@@ -136,6 +189,48 @@ class _ExtraRowEditor extends StatelessWidget {
               ),
             ],
           ),
+          if (!showSide) ...[
+            const SizedBox(height: FxSpacing.sm),
+            InkWell(
+              onTap: onPickCategory,
+              borderRadius: FxRadius.tileBorder,
+              child: Ink(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: FxSpacing.sm,
+                  vertical: FxSpacing.sm,
+                ),
+                decoration: BoxDecoration(
+                  color: palette.surfaceMuted,
+                  borderRadius: FxRadius.tileBorder,
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.category_outlined,
+                      size: 18,
+                      color: palette.textTertiary,
+                    ),
+                    const SizedBox(width: FxSpacing.sm),
+                    Expanded(
+                      child: Text(
+                        categoryName ??
+                            S.of(context).billEditorSelectExtraCategory,
+                        style: FxTypography.body.copyWith(
+                          color: categoryName == null
+                              ? palette.textTertiary
+                              : palette.textPrimary,
+                        ),
+                      ),
+                    ),
+                    Icon(
+                      Icons.chevron_right_rounded,
+                      color: palette.textTertiary,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
           const SizedBox(height: FxSpacing.sm),
           AmountField(
             key: ValueKey('extra_amount_${row.rowId}'),
