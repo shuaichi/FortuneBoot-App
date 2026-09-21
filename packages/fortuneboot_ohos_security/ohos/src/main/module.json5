@@ -1,0 +1,9 @@
+{
+  "module": {
+    "name": "fortuneboot_ohos_security",
+    "type": "har",
+    "deviceTypes": [
+      "default"
+    ]
+  }
+}

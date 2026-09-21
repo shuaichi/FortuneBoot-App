@@ -1,0 +1,20 @@
+name: fortuneboot_ohos_security
+description: HarmonyOS screen-capture protection, gallery save, and document save bridge for FortuneBoot.
+publish_to: 'none'
+version: 0.1.0
+
+environment:
+  sdk: '>=3.8.0 <4.0.0'
+  flutter: '>=3.32.0'
+
+flutter:
+  plugin:
+    platforms:
+      ohos:
+        package: io.fortuneboot.security
+        pluginClass: FortunebootOhosSecurityPlugin
+        dartPluginClass: FortunebootOhosSecurity
+
+dependencies:
+  flutter:
+    sdk: flutter

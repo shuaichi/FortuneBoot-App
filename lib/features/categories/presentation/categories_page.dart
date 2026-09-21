@@ -1,0 +1,367 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fortuneboot/core/network/fx_api.dart';
+import 'package:fortuneboot/core/session/session_cubit.dart';
+import 'package:fortuneboot/features/categories/data/category_models.dart';
+import 'package:fortuneboot/features/categories/data/category_service.dart';
+import 'package:fortuneboot/features/categories/presentation/bloc/categories_bloc.dart';
+import 'package:fortuneboot/features/categories/presentation/widgets/category_form_sheet.dart';
+import 'package:fortuneboot/features/categories/presentation/widgets/category_tile.dart';
+import 'package:fortuneboot/features/manage_shared/manage_menu.dart';
+import 'package:fortuneboot/features/manage_shared/manage_scaffold.dart';
+import 'package:fortuneboot/fx/components/fx_sheet.dart';
+import 'package:fortuneboot/fx/components/fx_state_view.dart';
+import 'package:fortuneboot/fx/theme/fx_theme.dart';
+import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
+import 'package:fortuneboot/fx/tokens/fx_typography.dart';
+import 'package:fortuneboot/generated/l10n.dart';
+
+/// 分类管理页（树形，支出/收入两大组，Routes.categories）。
+class CategoriesPage extends StatefulWidget {
+  const CategoriesPage({super.key});
+
+  @override
+  State<CategoriesPage> createState() => _CategoriesPageState();
+}
+
+class _CategoriesPageState extends State<CategoriesPage> {
+  final CategoryService _service = CategoryService();
+
+  CategoriesBloc get _bloc => context.read<CategoriesBloc>();
+  int? get _bookId => context.read<SessionCubit>().state.currentBookId;
+
+  void _showToast(String message) {
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(SnackBar(content: Text(message)));
+  }
+
+  Future<void> _openForm({
+    FortuneCategoryVo? category,
+    int? presetType,
+    int? presetParentId,
+  }) async {
+    final bookId = _bookId;
+    if (bookId == null) {
+      _showToast(S.of(context).categoriesSelectBookFirst);
+      return;
+    }
+    final formKey = GlobalKey<CategoryFormSheetState>();
+    final changed = await FxSheet.show<bool>(
+      context,
+      title: category == null
+          ? S.of(context).categoriesAdd
+          : S.of(context).categoriesEdit,
+      expand: true,
+      submitLabel: category == null
+          ? S.of(context).categoriesCreate
+          : S.of(context).categoriesSaveEdit,
+      onSubmit: () => formKey.currentState?.submit(),
+      child: CategoryFormSheet(
+        key: formKey,
+        service: _service,
+        bookId: bookId,
+        tree: _bloc.state.tree,
+        category: category,
+        presetType: presetType,
+        presetParentId: presetParentId,
+      ),
+    );
+    if (changed == true && mounted) _bloc.add(const CategoriesMutated());
+  }
+
+  Future<void> _openMenu(FortuneCategoryVo node) async {
+    HapticFeedback.selectionClick();
+    final inRecycle = _bloc.state.tab.recycleBin;
+    final action = await showManageMenu(context, inRecycleBin: inRecycle);
+    if (action == null || !mounted) return;
+    switch (action) {
+      case ManageMenuAction.edit:
+        await _openForm(category: node);
+      case ManageMenuAction.moveToRecycleBin:
+        await _move(node, toRecycle: true);
+      case ManageMenuAction.putBack:
+        await _move(node, toRecycle: false);
+      case ManageMenuAction.remove:
+        await _remove(node);
+    }
+  }
+
+  Future<void> _move(FortuneCategoryVo node, {required bool toRecycle}) async {
+    final bookId = _bookId;
+    if (bookId == null || node.categoryId == null) return;
+    if (toRecycle) {
+      final ok = await confirmManageAction(
+        context,
+        title: S.of(context).categoriesMoveToRecycleBin,
+        message: S
+            .of(context)
+            .categoriesMoveToRecycleBinConfirm(
+              node.categoryName ?? S.of(context).categoriesThisCategory,
+            ),
+        confirmLabel: S.of(context).categoriesMove,
+        objectName: node.categoryName ?? S.of(context).categoriesThisCategory,
+      );
+      if (ok != true) return;
+    }
+    try {
+      // 后端只改当前节点。进回收站先子后父；恢复先父后子。
+      await _moveSubtree(node, bookId: bookId, toRecycle: toRecycle);
+      if (mounted) _bloc.add(const CategoriesMutated());
+    } on Object catch (e) {
+      if (!mounted) return;
+      _showToast(
+        e is FxApiException ? e.message : S.of(context).profileSaveFailedRetry,
+      );
+    }
+  }
+
+  /// 进回收站：先子后父。恢复：先父后子。
+  Future<void> _moveSubtree(
+    FortuneCategoryVo node, {
+    required int bookId,
+    required bool toRecycle,
+  }) async {
+    final categoryId = node.categoryId;
+    if (categoryId == null) return;
+    if (toRecycle) {
+      for (final child in node.children) {
+        await _moveSubtree(child, bookId: bookId, toRecycle: true);
+      }
+      await _service.moveToRecycleBin(bookId: bookId, categoryId: categoryId);
+      return;
+    }
+    await _service.putBack(bookId: bookId, categoryId: categoryId);
+    for (final child in node.children) {
+      await _moveSubtree(child, bookId: bookId, toRecycle: false);
+    }
+  }
+
+  Future<void> _remove(FortuneCategoryVo node) async {
+    final bookId = _bookId;
+    if (bookId == null || node.categoryId == null) return;
+    final ok = await confirmManageAction(
+      context,
+      title: S.of(context).categoriesDeletePermanently,
+      message: S
+          .of(context)
+          .categoriesDeletePermanentlyConfirm(
+            node.categoryName ?? S.of(context).categoriesThisCategory,
+          ),
+      confirmLabel: S.of(context).categoriesDelete,
+      objectName: node.categoryName ?? S.of(context).categoriesThisCategory,
+    );
+    if (ok != true) return;
+    try {
+      await _service.remove(bookId: bookId, categoryId: node.categoryId!);
+      if (mounted) _bloc.add(const CategoriesMutated());
+    } on Object catch (e) {
+      if (!mounted) return;
+      _showToast(
+        e is FxApiException ? e.message : S.of(context).profileSaveFailedRetry,
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final bookId = context.select<SessionCubit, int?>(
+      (c) => c.state.currentBookId,
+    );
+
+    return _BookSync(
+      bookId: bookId,
+      child: BlocConsumer<CategoriesBloc, CategoriesState>(
+        listenWhen: (p, c) =>
+            c.toastMessage != null && p.toastMessage != c.toastMessage,
+        listener: (context, state) {
+          final msg = state.toastMessage;
+          if (msg != null) _showToast(msg);
+        },
+        builder: (context, state) {
+          return ManageScaffold(
+            title: S.of(context).categoriesTitle,
+            searchHint: S.of(context).categoriesSearchHint,
+            addTooltip: S.of(context).categoriesAdd,
+            onAdd: () => _openForm(),
+            onSearch: (kw) => _bloc.add(CategoriesSearchChanged(kw)),
+            tab: state.tab,
+            onTabChanged: (t) => _bloc.add(CategoriesTabChanged(t)),
+            dangerTabIndex: 3,
+            body: _buildBody(state, bookId),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildBody(CategoriesState state, int? bookId) {
+    if (bookId == null) {
+      return FxStateView.empty(
+        message: S.of(context).categoriesSelectBookFirst,
+      );
+    }
+    switch (state.status) {
+      case CategoriesStatus.initial:
+      case CategoriesStatus.loading:
+        return FxStateView.loading();
+      case CategoriesStatus.error:
+        return FxStateView.error(
+          message: state.errorMessage,
+          retryLabel: S.of(context).commonRetry,
+          onRetry: () => _bloc.add(const CategoriesLoaded()),
+        );
+      case CategoriesStatus.empty:
+      case CategoriesStatus.loaded:
+        return _buildTree(state);
+    }
+  }
+
+  Widget _buildTree(CategoriesState state) {
+    final expense = state.expenseRoots;
+    final income = state.incomeRoots;
+    if (expense.isEmpty && income.isEmpty) {
+      return FxStateView.empty(
+        message: S.of(context).categoriesEmpty,
+        icon: Icons.category_outlined,
+      );
+    }
+    final inRecycle = state.tab.recycleBin;
+    final isSearching = state.keyword.trim().isNotEmpty;
+    final finance = FxFinanceColors.of(context);
+    return RefreshIndicator(
+      onRefresh: () async => _bloc.add(const CategoriesLoaded()),
+      child: ListView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        padding: const EdgeInsets.fromLTRB(
+          FxSpacing.lg,
+          FxSpacing.xs,
+          FxSpacing.lg,
+          FxSpacing.xxxl,
+        ),
+        children: [
+          if (expense.isNotEmpty)
+            _section(
+              S.of(context).categoriesExpenseSection,
+              finance.expense,
+              expense,
+              state,
+              1,
+              inRecycle,
+              isSearching,
+            ),
+          if (income.isNotEmpty)
+            _section(
+              S.of(context).categoriesIncomeSection,
+              finance.income,
+              income,
+              state,
+              2,
+              inRecycle,
+              isSearching,
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _section(
+    String title,
+    Color tint,
+    List<FortuneCategoryVo> roots,
+    CategoriesState state,
+    int type,
+    bool inRecycle,
+    bool isSearching,
+  ) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(
+            FxSpacing.xs,
+            FxSpacing.md,
+            FxSpacing.xs,
+            FxSpacing.sm,
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 4,
+                height: 16,
+                decoration: BoxDecoration(
+                  color: tint,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(width: FxSpacing.sm),
+              Text(
+                title,
+                style: FxTypography.label.copyWith(
+                  color: FxPalette.of(context).textSecondary,
+                ),
+              ),
+            ],
+          ),
+        ),
+        for (final node in roots) ...[
+          CategoryTile(
+            node: node,
+            typeTint: tint,
+            expanded: state.isExpanded(node.categoryId),
+            onTap: (n) => _openForm(category: n),
+            onToggleExpand: (id) =>
+                _bloc.add(ToggleCategoryExpandRequested(id)),
+            expandedFor: (child) => state.isExpanded(child.categoryId),
+            matchCountFor: (child) =>
+                isSearching ? state.matchCountFor(child.categoryId) : 0,
+            searchMatchCount: isSearching
+                ? state.matchCountFor(node.categoryId)
+                : 0,
+            onMenu: _openMenu,
+            onAddChild: inRecycle
+                ? null
+                : (parent) => _openForm(
+                    presetType: type,
+                    presetParentId: parent.categoryId,
+                  ),
+          ),
+          const SizedBox(height: FxSpacing.sm),
+        ],
+      ],
+    );
+  }
+}
+
+/// 把 SessionCubit 的 bookId 变化派发给 Bloc。
+class _BookSync extends StatefulWidget {
+  final int? bookId;
+  final Widget child;
+  const _BookSync({required this.bookId, required this.child});
+
+  @override
+  State<_BookSync> createState() => _BookSyncState();
+}
+
+class _BookSyncState extends State<_BookSync> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      context.read<CategoriesBloc>().add(CategoriesBookChanged(widget.bookId));
+    });
+  }
+
+  @override
+  void didUpdateWidget(_BookSync oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.bookId != widget.bookId) {
+      context.read<CategoriesBloc>().add(CategoriesBookChanged(widget.bookId));
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) => widget.child;
+}

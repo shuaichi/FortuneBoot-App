@@ -1,0 +1,1617 @@
+{
+  "baseUrlConfig": "Base URL Configuration",
+  "protocol": "Protocol",
+  "domain": "Domain",
+  "pleaseEnterDomain": "Please enter a domain",
+  "invalidDomain": "Invalid domain or IP address",
+  "port": "Port",
+  "pleaseEnterPort": "Please enter a port",
+  "invalidPort": "Invalid port number",
+  "confirm": "Confirm",
+  "serverConnectionFailed": "Cannot connect to server. Please check the address, port, or network.",
+  "@apiVersionTooLow": {
+    "placeholders": {
+      "actual": {},
+      "required": {}
+    }
+  },
+  "apiVersionTooLow": "Server version is too low (v{actual}). Please contact the administrator to upgrade the server to {required} or above.",
+  "@apiVersionTooHigh": {
+    "placeholders": {
+      "actual": {},
+      "supportedMax": {}
+    }
+  },
+  "apiVersionTooHigh": "Server version is too high (v{actual}). This client supports versions below {supportedMax}. Please upgrade the client or contact the administrator.",
+  "@apiVersionEndpointUnavailable": {
+    "placeholders": {
+      "required": {}
+    }
+  },
+  "apiVersionEndpointUnavailable": "The server does not support version detection, so compatibility cannot be confirmed. Verify the server and upgrade it to {required} or above.",
+  "apiVersionUnavailable": "The server returned invalid version information, so compatibility cannot be confirmed.",
+  "error": "Error",
+  "ok": "OK",
+  "nickname_required": "Nickname cannot be empty",
+  "invalid_email": "Invalid email address",
+  "invalid_phone_number": "Invalid phone number",
+  "registration_failed": "Registration failed",
+  "main_logo": "FortuneBoot",
+  "login_message": "You are trying to login/sign up on server hosted on",
+  "login_host": "demo.fortuneboot.com",
+  "login_button_text": "LOGIN",
+  "register": "REGISTER",
+  "or_login_with": "or login with",
+  "authenticate": "Authenticate",
+  "forgot_huh": "Forgot huh?",
+  "login_account": "User",
+  "login_pass": "Pass",
+  "login_confirm": "Confirm",
+  "term_of_services": "Term of services",
+  "email_auth": "Email must contain '@' and end with '.com'",
+  "password_is_empty": "Password is empty",
+  "service_required": "Required",
+  "help_me": "HELP ME",
+  "go_back": "GO BACK",
+  "not_match": "Not match!",
+  "dont_worry_be_happy": "Don't feel bad. Happens all the time.",
+  "default_comment": "Lorem Ipsum is simply dummy text of the printing and typesetting industry",
+  "password_rescued_successfully": "Password rescued successfully",
+  "oh_no": "Oh no!",
+  "succes": "Succes!",
+  "username": "Username",
+  "fill_to_signup": "Please fill in this form to complete the signup",
+  "phone_number": "Phone Number",
+  "sign_up_submit": "SUBMIT",
+  "valid_phone_number": "This isn't a valid phone number",
+  "user_auth_vaild": "Account is empty",
+  "user_not_exist": "User not exists",
+  "sign_up_success": "Sign Up Success!",
+  "login_nickname": "Nickname",
+  "login_email": "Email",
+  "sex": "sex",
+  "female": "female",
+  "male": "male",
+  "sex_valid": "Currently, only two genders are supported. Please fill in 'Male' or 'Female'.",
+  "account_valid": "Duplicate username, think of a new one or just log in",
+  "todosOverviewAppBarTitle": "Flutter Todos",
+  "@todosOverviewAppBarTitle": {
+    "description": "Title text shown in the AppBar of the Todos Overview Page"
+  },
+  "todosOverviewFilterTooltip": "Filter",
+  "@todosOverviewFilterTooltip": {
+    "description": "Tooltip text shown in the filter dropdown of the Todos Overview Page"
+  },
+  "todosOverviewFilterAll": "All",
+  "@todosOverviewFilterAll": {
+    "description": "Text shown in the filter dropdown of the Todos Overview Page for the option to display all todos"
+  },
+  "todosOverviewFilterActiveOnly": "Active only",
+  "@todosOverviewFilterActiveOnly": {
+    "description": "Text shown in the filter dropdown of the Todos Overview Page for the option to display active todos only"
+  },
+  "todosOverviewFilterCompletedOnly": "Completed only",
+  "@todosOverviewFilterCompletedOnly": {
+    "description": "Text shown in the filter dropdown of the Todos Overview Page for the option to display completed todos only"
+  },
+  "todosOverviewMarkAllCompleteButtonText": "Mark all complete",
+  "@todosOverviewMarkAllCompleteButtonText": {
+    "description": "Button text shown in the options dropdown of the Todos Overview Page that marks all current todos as complete"
+  },
+  "todosOverviewClearCompletedButtonText": "Clear completed",
+  "@todosOverviewClearCompletedButtonText": {
+    "description": "Button text shown in the options dropdown of the Todos Overview Page that deletes all completed todos"
+  },
+  "todosOverviewEmptyText": "No todos found with the selected filters.",
+  "@todosOverviewEmptyText": {
+    "description": "Text shown in the Todos Overview Page when no todos are found with the selected filters"
+  },
+  "todosOverviewTodoDeletedSnackbarText": "Todo \"{todoTitle}\" deleted.",
+  "@todosOverviewTodoDeletedSnackbarText": {
+    "description": "Snackbar text shown when a todo is deleted from the Todos Overview Page",
+    "placeholders": {
+      "todoTitle": {
+        "description": "The title of the todo that was deleted"
+      }
+    }
+  },
+  "todosOverviewUndoDeletionButtonText": "Undo",
+  "@todosOverviewUndoDeletionButtonText": {
+    "description": "Button text shown in the snackbar that undoes a deletion of a todo"
+  },
+  "todosOverviewErrorSnackbarText": "An error occurred while loading todos.",
+  "@todosOverviewErrorSnackbarText": {
+    "description": "Snackbar text shown when an error occurs while loading todos"
+  },
+  "todosOverviewOptionsTooltip": "Options",
+  "@todosOverviewOptionsTooltip": {
+    "description": "Tooltip text shown in the options dropdown of the Todos Overview Page"
+  },
+  "todosOverviewOptionsMarkAllComplete": "Mark all as completed",
+  "@todosOverviewOptionsMarkAllComplete": {
+    "description": "Button text shown in the options dropdown of the Todos Overview Page that marks all todos as complete"
+  },
+  "todosOverviewOptionsMarkAllIncomplete": "Mark all as incomplete",
+  "@todosOverviewOptionsMarkAllIncomplete": {
+    "description": "Button text shown in the options dropdown of the Todos Overview Page that marks all todos as incomplete"
+  },
+  "todosOverviewOptionsClearCompleted": "Clear completed",
+  "@todosOverviewOptionsClearCompleted": {
+    "description": "Button text shown in the options dropdown of the Todos Overview Page that deletes all completed todos"
+  },
+  "todoDetailsAppBarTitle": "Todo Details",
+  "@todoDetailsAppBarTitle": {
+    "description": "Title text shown in the AppBar of the Todo Details Page"
+  },
+  "todoDetailsDeleteButtonTooltip": "Delete",
+  "@todoDetailsDeleteButtonTooltip": {
+    "description": "Tooltip text shown in the delete button on the Todo Details Page"
+  },
+  "todoDetailsEditButtonTooltip": "Edit",
+  "@todoDetailsEditButtonTooltip": {
+    "description": "Tooltip text shown in the edit button on the Todo Details Page"
+  },
+  "editTodoEditAppBarTitle": "Edit Todo",
+  "@editTodoEditAppBarTitle": {
+    "description": "Title text shown in the AppBar of the Todo Edit Page when editing an existing todo"
+  },
+  "editTodoAddAppBarTitle": "Add Todo",
+  "@editTodoAddAppBarTitle": {
+    "description": "Title text shown in the AppBar of the Todo Edit Page when adding a new todo"
+  },
+  "editTodoTitleLabel": "Title",
+  "@editTodoTitleLabel": {
+    "description": "Label text shown in the title input field of the Todo Edit Page"
+  },
+  "editTodoDescriptionLabel": "Description",
+  "@editTodoDescriptionLabel": {
+    "description": "Label text shown in the description input field of the Todo Edit Page"
+  },
+  "editTodoSaveButtonTooltip": "Save changes",
+  "@editTodoSaveButtonTooltip": {
+    "description": "Tooltip text shown in the save button on the Todo Edit Page"
+  },
+  "statsAppBarTitle": "Stats",
+  "@statsAppBarTitle": {
+    "description": "Title text shown in the AppBar of the Stats Page"
+  },
+  "statsCompletedTodoCountLabel": "Completed todos",
+  "@statsCompletedTodoCountLabel": {
+    "description": "Label text shown in the completed todos count section of the Stats Page"
+  },
+  "statsActiveTodoCountLabel": "Active todos",
+  "@statsActiveTodoCountLabel": {
+    "description": "Label text shown in the active todos count section of the Stats Page"
+  },
+  "mine": "My",
+  "commonSave": "Save",
+  "commonCancel": "Cancel",
+  "manageSearchBranchResults": "{count} results in this branch",
+  "@manageSearchBranchResults": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "confirmDestructiveWarning": "This action cannot be undone.",
+  "commonConfirm": "Confirm",
+  "commonHideAmounts": "Hide amounts",
+  "commonRetry": "Retry",
+  "commonShowAmounts": "Show amounts",
+  "commonFollowSystem": "Follow system",
+  "profileEditProfile": "Edit profile",
+  "profileBookGroup": "Books & groups",
+  "profileCurrentGroupBook": "Current group · book",
+  "profileGroupManage": "Manage groups",
+  "profileBookManage": "Manage books",
+  "profileMemberManageGroup": "Members (group)",
+  "profileBillingManage": "Bookkeeping",
+  "profileCategoryManage": "Categories",
+  "profileTagManage": "Tags",
+  "profilePayeeManage": "Payees",
+  "profileMemberManageBill": "Members (bill)",
+  "profileAccountManage": "Accounts",
+  "profileToolbox": "Toolbox",
+  "profileGoodsManage": "Belongings",
+  "profileOrdersManage": "Documents",
+  "profileRecurringManage": "Recurring",
+  "profileImportExport": "Export",
+  "profileLogs": "Logs",
+  "logsOperation": "Operations",
+  "logsLogin": "Sign-in",
+  "logsEmpty": "No logs",
+  "logsSearchHint": "Search by username",
+  "logsUsername": "User",
+  "logsTime": "Time",
+  "logsStatus": "Status",
+  "logsModule": "Module",
+  "logsBusinessType": "Action",
+  "logsMethod": "Method",
+  "logsUrl": "URL",
+  "logsIp": "IP",
+  "logsLocation": "Location",
+  "logsSystem": "System",
+  "logsBrowser": "Browser",
+  "logsMessage": "Message",
+  "logsParam": "Request",
+  "logsResult": "Response",
+  "logsError": "Error",
+  "profilePreferences": "Preferences",
+  "profileLanguage": "Language",
+  "profileThemeMode": "Theme mode",
+  "profileThemeLight": "Light",
+  "profileThemeDark": "Dark",
+  "profileMonthStartDay": "Billing start day",
+  "profileCurrencyRefresh": "Refresh rates",
+  "profileHideAmounts": "Hide home amounts",
+  "profileHideAmountsSubtitle": "When hidden, home amounts show as ••••",
+  "profileFinanceColors": "Bill colors",
+  "profileFinanceColorsSubtitle": "Customize income / expense colors",
+  "profileAbout": "About",
+  "profileHelp": "Help",
+  "profileDonate": "Donate",
+  "profileDonateWechat": "WeChat",
+  "profileDonateAlipay": "Alipay",
+  "profileDonateScanHint": "Long press to save the QR code, or scan it with another device.",
+  "imageSaveSaving": "Saving…",
+  "imageSaveDownloadStarted": "Download started",
+  "imageSaveDownloadFailed": "Download failed",
+  "imageSaveSuccess": "Saved to photos",
+  "imageSaveFailed": "Could not save the image. Please try again.",
+  "imageSaveUnsupported": "Saving images is not supported on this platform. Please take a screenshot or download it instead.",
+  "profileLogout": "Log out",
+  "profileSelectLanguage": "Select language",
+  "navDashboard": "Dashboard",
+  "navBills": "Bills",
+  "navStats": "Stats",
+  "navProfile": "Mine",
+  "navInDevelopment": "In development",
+  "commonLanguage": "Language",
+  "commonChinese": "中文",
+  "commonEnglish": "English",
+  "accountsTitle": "Account Management",
+  "accountsAddTitle": "Add Account",
+  "accountsEditTitle": "Edit Account",
+  "accountsEmptyHint": "No accounts yet. Tap + in the top right to add one.",
+  "accountsSelectBookGroup": "Please select a ledger/group first",
+  "accountsSelectBookForAdjust": "Please select a ledger before adjusting the balance",
+  "accountsRecycleBin": "Recycle Bin",
+  "accountsRecycleBinEmpty": "Recycle bin is empty",
+  "accountsAdjustTitle": "Adjust Balance · {name}",
+  "@accountsAdjustTitle": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "accountsBalanceAdjusted": "Balance adjusted",
+  "accountsMoveToRecycleBinTitle": "Move to Recycle Bin",
+  "accountsMoveToRecycleBinConfirm": "Move \"{name}\" to the recycle bin?",
+  "@accountsMoveToRecycleBinConfirm": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "accountsMoveIn": "Move in",
+  "accountsDeletePermanently": "Delete Permanently",
+  "accountsDeleteConfirm": "Permanently delete \"{name}\"? This cannot be undone.",
+  "@accountsDeleteConfirm": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "accountsDelete": "Delete",
+  "accountsRestore": "Restore",
+  "accountsDefaultName": "this account",
+  "accountsUnnamed": "Unnamed Account",
+  "accountsTypeCash": "Cash Account",
+  "accountsTypeCredit": "Credit Card",
+  "accountsTypeAsset": "Asset Account",
+  "accountsTypeLoan": "Loan Account",
+  "accountsTypeOther": "Other Account",
+  "accountsNetWorth": "Net Worth",
+  "accountsAssets": "Assets",
+  "accountsLiabilities": "Liabilities",
+  "accountsIncludedInNetWorth": "In net worth",
+  "accountsCreditLimit": "Limit",
+  "accountsUsed": "Used",
+  "accountsBillDayChip": "Statement day {day}",
+  "@accountsBillDayChip": {
+    "placeholders": {
+      "day": {}
+    }
+  },
+  "accountsRepayDayChip": "Repayment day {day}",
+  "@accountsRepayDayChip": {
+    "placeholders": {
+      "day": {}
+    }
+  },
+  "accountsAprChip": "Rate {rate}",
+  "@accountsAprChip": {
+    "placeholders": {
+      "rate": {}
+    }
+  },
+  "accountsAdjustBalance": "Adjust Balance",
+  "accountsAdjustBalanceNeedBook": "Adjust Balance (select a ledger first)",
+  "accountsDotExpense": "Exp",
+  "accountsDotIncome": "Inc",
+  "accountsDotTransferOut": "Out",
+  "accountsDotTransferIn": "In",
+  "accountsToggleCanExpense": "Expense",
+  "accountsToggleCanIncome": "Income",
+  "accountsToggleCanTransferOut": "Transfer out",
+  "accountsToggleCanTransferIn": "Transfer in",
+  "accountsToggleInclude": "Include in net worth",
+  "accountsToggleEnable": "Enable",
+  "accountsInvalidAmount": "Please enter a valid amount",
+  "accountsCurrentBalance": "Current balance {amount}",
+  "@accountsCurrentBalance": {
+    "placeholders": {
+      "amount": {}
+    }
+  },
+  "accountsAdjustedAmount": "Adjusted amount",
+  "accountsAdjustedAmountHint": "Actual amount after adjustment",
+  "accountsOccurredTime": "Time",
+  "accountsTitleOptional": "Title (optional)",
+  "accountsBalanceAdjustHint": "Balance adjustment",
+  "accountsRemarkOptional": "Remark (optional)",
+  "accountsRemarkHint": "Remark",
+  "accountsConfirmAdjust": "Confirm Adjustment",
+  "accountsNameRequired": "Please enter an account name",
+  "accountsCurrencyRequired": "Please enter a currency",
+  "accountsFieldName": "Account name",
+  "accountsFieldNameHint": "e.g. CMB debit card",
+  "accountsFieldType": "Account type",
+  "accountsFieldBalance": "Balance",
+  "accountsFieldInitialBalance": "Initial balance",
+  "accountsFieldBalanceLiabilityHint": "Unused: 0; debt as negative (not the limit)",
+  "accountsFieldCurrency": "Currency",
+  "accountsFieldCardNo": "Card number (optional)",
+  "accountsFieldCardNoHint": "Used to show the last four digits",
+  "accountsFieldCreditLimit": "Credit/loan limit",
+  "accountsFieldCreditLimitHint": "e.g. 50000",
+  "accountsFieldRepayDay": "Repayment day (yyyy-MM-dd)",
+  "accountsFieldBillDay": "Statement day (yyyy-MM-dd)",
+  "accountsFieldApr": "Annual rate (APR)",
+  "accountsFieldAprHint": "e.g. 0.045",
+  "accountsSaveChanges": "Save Changes",
+  "accountsCreateAccount": "Create Account",
+  "billsFilterTitle": "Filter",
+  "billsDeleteTitle": "Delete bill",
+  "billsDeleteConfirm": "Delete \"{title}\"? This action cannot be undone.",
+  "@billsDeleteConfirm": {
+    "placeholders": {
+      "title": {}
+    }
+  },
+  "billsDelete": "Delete",
+  "billsCopy": "Copy",
+  "billsBillingCycle": "{month} cycle",
+  "@billsBillingCycle": {
+    "placeholders": {
+      "month": {}
+    }
+  },
+  "billsExpense": "Expense",
+  "billsIncome": "Income",
+  "billsBalance": "Balance",
+  "billsSelectBookFirst": "Please select a ledger first",
+  "billsEmpty": "No bills in this cycle",
+  "billsDayExpense": "Exp {amount}",
+  "@billsDayExpense": {
+    "placeholders": {
+      "amount": {}
+    }
+  },
+  "billsDayIncome": "Inc {amount}",
+  "@billsDayIncome": {
+    "placeholders": {
+      "amount": {}
+    }
+  },
+  "billsPendingConfirm": "Pending",
+  "billsWeekdayMon": "Mon",
+  "billsWeekdayTue": "Tue",
+  "billsWeekdayWed": "Wed",
+  "billsWeekdayThu": "Thu",
+  "billsWeekdayFri": "Fri",
+  "billsWeekdaySat": "Sat",
+  "billsWeekdaySun": "Sun",
+  "billsBillDefaultTitle": "Bill",
+  "billsCategoryDetail": "Category breakdown",
+  "billsUncategorized": "Uncategorized",
+  "billsTransferOutAccount": "From account",
+  "billsTransferInAccount": "To account",
+  "billsReceivedAmount": "Received amount",
+  "billsPayee": "Payee",
+  "billsTags": "Tags",
+  "billsMembers": "Members",
+  "billsExtras": "Extra charges",
+  "billsRemark": "Note",
+  "billsAttachments": "Attachments",
+  "billsFee": "Fee",
+  "billsDiscount": "Discount",
+  "billsCharge": "Charge",
+  "billsSideOut": "Out",
+  "billsSideIn": "In",
+  "billsExtraWithSide": "{type} ({side})",
+  "@billsExtraWithSide": {
+    "placeholders": {
+      "type": {},
+      "side": {}
+    }
+  },
+  "billsNoAttachments": "No attachments",
+  "billsClose": "Close",
+  "billsEdit": "Edit",
+  "billsUnconfirm": "Unconfirm",
+  "billsFilterByTitle": "Title",
+  "billsFilterTitleHint": "Search by bill title",
+  "billsFilterBillType": "Bill type",
+  "billsFilterAmountRange": "Amount range",
+  "billsFilterMin": "Min",
+  "billsFilterMax": "Max",
+  "billsFilterConfirmStatus": "Confirmation status",
+  "billsFilterConfirmed": "Confirmed",
+  "billsFilterUnconfirmed": "Unconfirmed",
+  "billsFilterIncludeStatus": "Include in stats",
+  "billsFilterIncluded": "Included",
+  "billsFilterExcluded": "Excluded",
+  "billsReset": "Reset",
+  "billsApply": "Apply",
+  "billsFilterAny": "Any",
+  "billEditorSelectBookFirst": "Please select a ledger before adding a bill",
+  "billEditorEditTitle": "Edit bill",
+  "billEditorNewTitle": "Add a bill",
+  "billEditorTransferAmount": "Transfer amount",
+  "billEditorAmountOf": "{type} amount",
+  "@billEditorAmountOf": {
+    "placeholders": {
+      "type": {}
+    }
+  },
+  "billEditorAmountHint": "Amount is the sum of the category breakdown below",
+  "billEditorAccount": "Account",
+  "billEditorSelectAccountHint": "Select an account",
+  "billEditorSelectAccount": "Select account",
+  "billEditorTransferOutAccount": "From account",
+  "billEditorTransferInAccount": "To account",
+  "billEditorSelectTransferOutHint": "Select the from account",
+  "billEditorSelectTransferInHint": "Select the to account",
+  "billEditorSelectTransferOut": "Select from account",
+  "billEditorSelectTransferIn": "Select to account",
+  "billEditorPayee": "Payee",
+  "billEditorOptional": "Optional",
+  "billEditorSelectPayee": "Select payee",
+  "billEditorOrder": "Linked reimbursement order",
+  "billEditorRequired": "Required",
+  "billEditorSelectOrder": "Select an active reimbursement order",
+  "billEditorTime": "Time",
+  "billEditorTradeTime": "Trade time",
+  "billEditorSelectTags": "Select tags",
+  "billEditorTags": "Tags",
+  "billEditorAddTags": "Add tags",
+  "billEditorMembers": "Members",
+  "billEditorSelectMembers": "Select members",
+  "billEditorSelectHint": "Please select",
+  "billEditorTitle": "Title",
+  "billEditorTitleHint": "Enter a title",
+  "billEditorTitleDefault": "Default: {name}",
+  "@billEditorTitleDefault": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "billEditorRemark": "Note",
+  "billEditorRemarkHint": "Add a note…",
+  "billEditorConfirmed": "Confirmed",
+  "billEditorConfirmedSubtitle": "Unconfirmed bills are excluded from the balance",
+  "billEditorInclude": "Include in stats",
+  "billEditorIncludeSubtitle": "When off, excluded from income/expense stats",
+  "billEditorSaveEdit": "Save changes",
+  "billEditorSaveNew": "Save bill",
+  "billEditorDiscardTitle": "Discard changes?",
+  "billEditorDiscardMessage": "The information you entered will be lost. This action cannot be undone.",
+  "billEditorDiscardConfirm": "Discard",
+  "billEditorAttachments": "Attachments",
+  "billEditorAddAttachment": "Add attachment",
+  "billEditorChoosePhoto": "Choose photos",
+  "billEditorChooseFile": "Choose files",
+  "billEditorSelectedCount": "{count} attachments selected",
+  "billEditorAttachmentInvalid": "Some attachments cannot be read or exceed the size limit",
+  "billEditorAttachmentPickFailed": "Could not select attachments. Please try again.",
+  "billEditorAttachmentUnreadable": "An attachment cannot be read. Please select it again.",
+  "billEditorAttachmentPermissionRequired": "File access permission is missing. Update the app or contact an administrator.",
+  "billEditorAttachmentPluginUnavailable": "The attachment component did not load correctly. Restart the app and try again.",
+  "billEditorSubmitNetworkFailed": "Network error. Check your connection and try again.",
+  "billEditorSubmitAuthFailed": "Your session has expired. Please sign in again.",
+  "@billEditorSelectedCount": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "billEditorCategorySplit": "Category breakdown",
+  "billEditorItemCount": "{count} items",
+  "@billEditorItemCount": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "billEditorSelectCategory": "Select category",
+  "billEditorAddCategory": "Add category",
+  "billEditorExtras": "Extra charges",
+  "billEditorAddExtra": "Add fee/discount",
+  "billEditorFee": "Fee",
+  "billEditorDiscount": "Discount",
+  "billEditorExtraRemark": "Note",
+  "billEditorExtraRemarkHint": "e.g. inter-bank transfer fee",
+  "billEditorNoOptions": "No options available",
+  "billEditorNoSelection": "None",
+  "booksAddGroup": "Add Group",
+  "booksEditGroup": "Edit Group",
+  "booksRemoveGroupTitle": "Delete Group",
+  "booksThisGroup": "this group",
+  "booksRemoveGroupMessage": "Delete \"{name}\"? Books under this group will no longer be accessible.",
+  "@booksRemoveGroupMessage": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "booksSwitchedToGroup": "Switched to \"{name}\"",
+  "@booksSwitchedToGroup": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "booksAddBook": "Add Book",
+  "booksEditBook": "Edit Book",
+  "booksRemoveBookTitle": "Permanently Delete Book",
+  "booksThisBook": "this book",
+  "booksRemoveBookMessage": "Permanently delete \"{name}\"? This action cannot be undone.",
+  "@booksRemoveBookMessage": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "booksTabGroups": "Groups",
+  "booksTabBooks": "Books",
+  "booksCreateGroupFirst": "Please create a group first",
+  "booksEmptyGroups": "No groups yet. Tap + in the top right to add one.",
+  "booksUnnamedGroup": "Unnamed group",
+  "booksCurrent": "Current",
+  "booksSetDefaultGroup": "Set as default group",
+  "booksDisabled": "Disabled",
+  "booksDefaultBook": "Default book: {name}",
+  "@booksDefaultBook": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "booksSelectGroupFirst": "Please select a group first",
+  "booksBelongGroup": "Group",
+  "booksEmptyBooks": "No books in this group. Tap + in the top right to add one.",
+  "booksRecycleBin": "Recycle Bin",
+  "booksUnnamedBook": "Unnamed book",
+  "booksPutBack": "Restore",
+  "booksSetDefaultBook": "Set as default book",
+  "booksEdit": "Edit",
+  "booksEnable": "Enable",
+  "booksDisable": "Disable",
+  "booksMoveToRecycle": "Move to Recycle Bin",
+  "booksDelete": "Delete",
+  "booksGroupNameRequired": "Please enter a group name",
+  "booksCurrencyRequired": "Please select a default currency",
+  "booksGroupName": "Group Name",
+  "booksGroupNameHint": "e.g. Family Account",
+  "booksDefaultCurrency": "Default Currency",
+  "booksEnabled": "Enable",
+  "booksRemarkOptional": "Remark (optional)",
+  "booksRemarkHint": "Remark",
+  "booksSaveChanges": "Save Changes",
+  "booksCreateGroup": "Create Group",
+  "booksBookNameRequired": "Please enter a book name",
+  "booksBookName": "Book Name",
+  "booksBookNameHint": "e.g. Daily Expenses",
+  "booksBookTemplateOptional": "Book Template (optional)",
+  "booksSortOptional": "Sort (optional)",
+  "booksSortHint": "Lower values appear first",
+  "booksCreateBook": "Create Book",
+  "booksManageTitle": "Groups & Books",
+  "booksCurrentAt": "Current: {tab}",
+  "@booksCurrentAt": {
+    "placeholders": {
+      "tab": {}
+    }
+  },
+  "booksTabGroupShort": "Groups",
+  "booksTabBookShort": "Books",
+  "booksGroupSearchHint": "Search group name / note / currency",
+  "booksNoMatchingGroups": "No matching groups",
+  "booksFilterAll": "All",
+  "booksFilterEnabled": "Enabled",
+  "booksFilterDisabled": "Disabled",
+  "booksHasMore": "More available",
+  "booksNoRemark": "No note",
+  "booksDefaultGroupTag": "Default group",
+  "booksCurrentUsingTag": "Current",
+  "booksNoDefaultBook": "Default book: Not set",
+  "booksVisitorViewGroupOnly": "You are a visitor and can only view group information",
+  "permissionVisitorNoAccess": "You are a visitor and do not have permission to access this",
+  "commonSystemBusy": "The system is busy. Please try again later.",
+  "booksInviteMembers": "Invite members",
+  "booksDeleteGroupForever": "Permanently delete group",
+  "booksGroupNoAvailableBook": "This group has no available books. Create or enable a book first.",
+  "booksGroupCreated": "Group created",
+  "booksGroupSaved": "Group saved",
+  "booksBookCreated": "Book created",
+  "booksBookSaved": "Book saved",
+  "booksBookSearchHint": "Search book name / note",
+  "booksRecycleEmpty": "Recycle bin is empty",
+  "booksGroupNoBooks": "No books in this group",
+  "booksGroupDisabledReadonly": "This group is disabled. You can only view historical books; enable it to edit.",
+  "booksActiveSegment": "Active",
+  "booksSelectGroup": "Select a group",
+  "booksTapSwitchGroup": "Tap to switch group",
+  "booksGroupDisabledViewOnly": "Disabled · view only",
+  "booksSwitchGroup": "Switch group",
+  "booksDefaultTag": "Default",
+  "booksDefaultAccountSettings": "Default account settings",
+  "booksDeleteForever": "Delete forever",
+  "booksBookFallbackName": "this book",
+  "booksDeleteGroupTitle": "Permanently delete group \"{name}\"?",
+  "@booksDeleteGroupTitle": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "booksDeleteGroupWarning": "This cannot be undone. It will delete books, accounts, categories, tags, payees, member relations, all bill records, and photos. This version cannot preview exact counts.",
+  "booksDeleteGroupUnderstand": "I understand counts cannot be previewed and still want to delete",
+  "booksDeleteBookForeverTitle": "Permanently delete book \"{name}\"?",
+  "@booksDeleteBookForeverTitle": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "booksDeleteBookWarning": "This cannot be undone. Make sure the group still keeps at least one active enabled book.",
+  "booksVisitorCannotCreateGroup": "Visitors cannot create groups",
+  "booksRecycleCannotCreateBook": "Cannot create books in recycle bin",
+  "booksEnableGroupBeforeCreateBook": "Enable the group before creating a book",
+  "booksVisitorCannotCreateBook": "Visitors cannot create books",
+  "booksGroupDetailTitle": "Group details",
+  "booksBookDetailTitle": "Book details",
+  "booksMembersCount": "Members ({count})",
+  "@booksMembersCount": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "booksInvite": "Invite",
+  "booksAdjustRoleHint": "To adjust roles, remove the member and invite again.",
+  "booksUnknownRole": "Unknown role",
+  "booksCannotRemoveSelf": "You cannot remove yourself",
+  "booksCannotRemoveOnlyOwner": "You cannot remove the only owner",
+  "booksInvitedUser": "Invited {username}",
+  "@booksInvitedUser": {
+    "placeholders": {
+      "username": {}
+    }
+  },
+  "booksBookOverview": "Book overview",
+  "booksNoBooks": "No books",
+  "booksManageAllBooksInTab": "Manage all books in the Books tab",
+  "booksInfo": "Info",
+  "booksSortValue": "Sort order: {sort}",
+  "@booksSortValue": {
+    "placeholders": {
+      "sort": {}
+    }
+  },
+  "booksRemarkValue": "Remark: {remark}",
+  "@booksRemarkValue": {
+    "placeholders": {
+      "remark": {}
+    }
+  },
+  "booksNone": "None",
+  "booksDefaultBookUpdated": "Default book updated",
+  "booksUsername": "Username",
+  "booksRole": "Role",
+  "booksInviteConfirmTitle": "Confirm invitation",
+  "booksInviteConfirmMessage": "Invite {username} to this group. Please confirm the username is exact.",
+  "@booksInviteConfirmMessage": {
+    "placeholders": {
+      "username": {}
+    }
+  },
+  "booksSendInvite": "Send invitation",
+  "booksInviteInputError": "Enter a username and select a role",
+  "booksInviteHelp": "Please confirm the username is exact. The current API cannot preview nickname or avatar.",
+  "booksNoEnabledAccounts": "No enabled accounts in this group\nYou can save the book first and set default accounts later in account management.",
+  "booksUnsupportedAccount": "This account does not support {kind}",
+  "@booksUnsupportedAccount": {
+    "placeholders": {
+      "kind": {}
+    }
+  },
+  "booksClearSelection": "Clear selection",
+  "booksConfirmObjectHint": "Enter \"{name}\" to confirm",
+  "@booksConfirmObjectHint": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "booksDefaultDestructiveCheckbox": "I understand this action cannot be undone and want to continue",
+  "booksPermanentlyDelete": "Permanently delete",
+  "booksRoleOwner": "Owner",
+  "booksRoleActor": "Collaborator",
+  "booksRoleVisitor": "Visitor",
+  "booksUnnamedMember": "Unknown member",
+  "booksUnnamedAccount": "Unnamed account",
+  "booksDefaultExpenseAccount": "Default expense account",
+  "booksDefaultIncomeAccount": "Default income account",
+  "booksDefaultTransferOutAccount": "Default transfer-out account",
+  "booksDefaultTransferInAccount": "Default transfer-in account",
+  "recurringSelectBookFirst": "Please select a book first",
+  "recurringLogsTitle": "Execution Logs · {name}",
+  "@recurringLogsTitle": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "recurringRemoveTitle": "Delete Rule",
+  "recurringThisRule": "this rule",
+  "recurringRemoveMessage": "Delete \"{name}\"? This action cannot be undone.",
+  "@recurringRemoveMessage": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "recurringDelete": "Delete",
+  "recurringTitle": "Recurring",
+  "recurringEmpty": "No recurring rules yet. Tap + in the top right to add one.",
+  "recurringUnnamedRule": "Unnamed rule",
+  "recurringNextExecution": "Next run",
+  "recurringExecutedLabel": "Executed",
+  "recurringExecutedCount": "{count} times",
+  "@recurringExecutedCount": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "recurringEdit": "Edit",
+  "recurringLogs": "Execution Logs",
+  "recurringRuleNameRequired": "Please enter a rule name",
+  "recurringCronRequired": "Please enter a cron expression",
+  "recurringCronInvalidFix": "Invalid cron expression, please fix it",
+  "recurringAmountRequired": "Please enter a valid template amount",
+  "recurringEditRule": "Edit Recurring Rule",
+  "recurringAddRule": "New Recurring Rule",
+  "recurringSectionRule": "Rule Settings",
+  "recurringRuleName": "Rule Name",
+  "recurringRuleNameHint": "e.g. Monthly Rent",
+  "recurringCron": "Cron Expression",
+  "recurringCronHint": "e.g. 0 0 1 * * ?",
+  "recurringSchedule": "Frequency",
+  "recurringScheduleSummary": "Runs at",
+  "recurringFreqDaily": "Daily",
+  "recurringFreqWeekly": "Weekly",
+  "recurringFreqMonthly": "Monthly",
+  "recurringFreqYearly": "Yearly",
+  "recurringAtTime": "Time",
+  "recurringOnDays": "Repeat on",
+  "recurringOnDayOfMonth": "Day of month",
+  "recurringOnMonth": "Month",
+  "recurringDayOfMonthValue": "Day {day}",
+  "@recurringDayOfMonthValue": {
+    "placeholders": {
+      "day": {}
+    }
+  },
+  "recurringMonthValue": "Month {month}",
+  "@recurringMonthValue": {
+    "placeholders": {
+      "month": {}
+    }
+  },
+  "recurringAdvancedCron": "Custom cron (advanced)",
+  "recurringAdvancedCronHint": "Manually edit the cron expression for advanced use",
+  "recurringUseVisual": "Use visual picker",
+  "recurringUseAdvanced": "Switch to custom cron",
+  "recurringDiscardCustomCronTitle": "Switch to the visual picker?",
+  "recurringDiscardCustomCronMessage": "The current custom cron expression cannot be converted to a visual rule.",
+  "recurringDiscardCustomCronWarning": "Continuing will replace it with the current visual rule and cannot be undone.",
+  "recurringSummaryDaily": "Every day at {time}",
+  "@recurringSummaryDaily": {
+    "placeholders": {
+      "time": {}
+    }
+  },
+  "recurringSummaryWeekly": "Every {days} at {time}",
+  "@recurringSummaryWeekly": {
+    "placeholders": {
+      "days": {},
+      "time": {}
+    }
+  },
+  "recurringSummaryMonthly": "Day {day} monthly at {time}",
+  "@recurringSummaryMonthly": {
+    "placeholders": {
+      "day": {},
+      "time": {}
+    }
+  },
+  "recurringSummaryYearly": "{month}/{day} yearly at {time}",
+  "@recurringSummaryYearly": {
+    "placeholders": {
+      "month": {},
+      "day": {},
+      "time": {}
+    }
+  },
+  "recurringWeekdayMon": "Mon",
+  "recurringWeekdayTue": "Tue",
+  "recurringWeekdayWed": "Wed",
+  "recurringWeekdayThu": "Thu",
+  "recurringWeekdayFri": "Fri",
+  "recurringWeekdaySat": "Sat",
+  "recurringWeekdaySun": "Sun",
+  "recurringStartDateOptional": "Start Date (optional)",
+  "recurringEndDateOptional": "End Date (optional)",
+  "recurringMaxExecutionsOptional": "Max Executions (optional)",
+  "recurringMaxExecutionsHint": "Leave empty for unlimited",
+  "recurringRecoveryStrategy": "Recovery Strategy",
+  "recurringEnabled": "Enable",
+  "recurringSectionTemplate": "Bill Template",
+  "recurringType": "Type",
+  "recurringTitleOptional": "Title (optional)",
+  "recurringBillTitleHint": "Bill title",
+  "recurringAmount": "Amount",
+  "recurringCategory": "Category",
+  "recurringAccount": "Account",
+  "recurringTagsOptional": "Tags (multiple, optional)",
+  "recurringSaveChanges": "Save Changes",
+  "recurringCreateRule": "Create Rule",
+  "recurringCronInvalid": "Invalid cron expression",
+  "recurringCronValid": "Valid cron expression",
+  "recurringNoOptions": "No options available",
+  "recurringNoLogs": "No execution records",
+  "recurringLogBillId": "Bill #{id}",
+  "@recurringLogBillId": {
+    "placeholders": {
+      "id": {}
+    }
+  },
+  "recurringLogDuration": "Took {ms}ms",
+  "@recurringLogDuration": {
+    "placeholders": {
+      "ms": {}
+    }
+  },
+  "ordersSelectBookFirst": "Please select a book first",
+  "ordersAddTitle": "Add Reimbursement Order",
+  "ordersEditTitle": "Edit Reimbursement Order",
+  "ordersRemoveTitle": "Delete Reimbursement Order",
+  "ordersThisOrder": "this reimbursement order",
+  "ordersRemoveMessage": "Delete \"{name}\"?",
+  "@ordersRemoveMessage": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "ordersDelete": "Delete",
+  "ordersTitle": "Reimbursement Orders",
+  "ordersEmpty": "No reimbursement orders yet. Tap + in the top right to add one.",
+  "ordersUnnamedOrder": "Unnamed reimbursement order",
+  "ordersOutLabel": "Out ",
+  "ordersInLabel": "In ",
+  "ordersSubmitTime": "Submitted {time}",
+  "@ordersSubmitTime": {
+    "placeholders": {
+      "time": {}
+    }
+  },
+  "ordersArchivedTime": "Archived {time}",
+  "@ordersArchivedTime": {
+    "placeholders": {
+      "time": {}
+    }
+  },
+  "ordersUse": "Use",
+  "ordersArchive": "Archive",
+  "ordersArchiveTooltip": "Archived orders are excluded from statistics",
+  "ordersStatusUnrecognized": "Unrecognized order status",
+  "ordersReopen": "Reopen",
+  "ordersTitleRequired": "Please enter a reimbursement order title",
+  "ordersOrderTitle": "Reimbursement Order Title",
+  "ordersTitleHint": "e.g. August travel reimbursement",
+  "ordersType": "Type",
+  "ordersTypeReimbursement": "Reimbursement Order",
+  "ordersRemarkOptional": "Remark (optional)",
+  "ordersRemarkHint": "Remark",
+  "ordersSaveChanges": "Save Changes",
+  "ordersCreateOrder": "Create Reimbursement Order",
+  "categoriesSelectBookFirst": "Please select a book first",
+  "categoriesAdd": "Add category",
+  "categoriesEdit": "Edit category",
+  "categoriesMoveToRecycleBin": "Move to recycle bin",
+  "categoriesMoveToRecycleBinConfirm": "Move \"{name}\" to the recycle bin?",
+  "@categoriesMoveToRecycleBinConfirm": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "categoriesMove": "Move",
+  "categoriesThisCategory": "this category",
+  "categoriesDeletePermanently": "Delete permanently",
+  "categoriesDeletePermanentlyConfirm": "Permanently delete \"{name}\"? This action cannot be undone.",
+  "@categoriesDeletePermanentlyConfirm": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "categoriesDelete": "Delete",
+  "categoriesTitle": "Categories",
+  "categoriesSearchHint": "Search category name",
+  "categoriesEmpty": "No categories yet. Tap + in the top right to add one.",
+  "categoriesExpenseSection": "Expense categories",
+  "categoriesIncomeSection": "Income categories",
+  "categoriesNameRequired": "Please enter a category name",
+  "categoriesNameLabel": "Category name",
+  "categoriesNameHint": "e.g. Dining",
+  "categoriesTypeLabel": "Category type",
+  "categoriesParentLabel": "Parent category (optional)",
+  "categoriesSortLabel": "Sort order (optional)",
+  "categoriesSortHint": "Lower numbers appear first",
+  "categoriesRemarkLabel": "Remark (optional)",
+  "categoriesRemarkHint": "Remark",
+  "categoriesEnable": "Enable",
+  "categoriesSaveEdit": "Save changes",
+  "categoriesCreate": "Create category",
+  "categoriesTypeExpense": "Expense",
+  "categoriesTypeIncome": "Income",
+  "categoriesParentNone": "None (top-level category)",
+  "categoriesUnnamed": "Unnamed",
+  "tagsSelectBookFirst": "Please select a book first",
+  "tagsAdd": "Add tag",
+  "tagsEdit": "Edit tag",
+  "tagsMoveToRecycleBin": "Move to recycle bin",
+  "tagsMoveToRecycleBinConfirm": "Move \"{name}\" to the recycle bin?",
+  "@tagsMoveToRecycleBinConfirm": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "tagsMove": "Move",
+  "tagsThisTag": "this tag",
+  "tagsDeletePermanently": "Delete permanently",
+  "tagsDeletePermanentlyConfirm": "Permanently delete \"{name}\"? This action cannot be undone.",
+  "@tagsDeletePermanentlyConfirm": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "tagsDelete": "Delete",
+  "tagsTitle": "Tags",
+  "tagsSearchHint": "Search tag name",
+  "tagsEmpty": "No tags yet. Tap + in the top right to add one.",
+  "tagsNameRequired": "Please enter a tag name",
+  "tagsNameLabel": "Tag name",
+  "tagsNameHint": "e.g. Gathering",
+  "tagsParentLabel": "Parent tag (optional)",
+  "tagsSortLabel": "Sort order (optional)",
+  "tagsSortHint": "Lower numbers appear first",
+  "tagsRemarkLabel": "Remark (optional)",
+  "tagsRemarkHint": "Remark",
+  "tagsSaveEdit": "Save changes",
+  "tagsCreate": "Create tag",
+  "tagsParentNone": "None (top-level tag)",
+  "tagsUnnamed": "Unnamed",
+  "payeesSelectBookFirst": "Please select a book first",
+  "payeesAdd": "Add payee",
+  "payeesEdit": "Edit payee",
+  "payeesMoveToRecycleBin": "Move to recycle bin",
+  "payeesMoveToRecycleBinConfirm": "Move \"{name}\" to the recycle bin?",
+  "@payeesMoveToRecycleBinConfirm": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "payeesMove": "Move",
+  "payeesThisPayee": "this payee",
+  "payeesDeletePermanently": "Delete permanently",
+  "payeesDeletePermanentlyConfirm": "Permanently delete \"{name}\"? This action cannot be undone.",
+  "@payeesDeletePermanentlyConfirm": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "payeesDelete": "Delete",
+  "payeesTitle": "Payees",
+  "payeesSearchHint": "Search payee name",
+  "payeesEmpty": "No payees yet. Tap + in the top right to add one.",
+  "payeesUnnamed": "Unnamed",
+  "payeesCanExpenseShort": "Expense",
+  "payeesCanIncomeShort": "Income",
+  "payeesSortValue": "Sort {sort}",
+  "@payeesSortValue": {
+    "placeholders": {
+      "sort": {}
+    }
+  },
+  "payeesNameRequired": "Please enter a payee name",
+  "payeesNameLabel": "Payee name",
+  "payeesNameHint": "e.g. KFC",
+  "payeesSortLabel": "Sort order (optional)",
+  "payeesSortHint": "Lower numbers appear first",
+  "payeesRemarkLabel": "Remark (optional)",
+  "payeesRemarkHint": "Remark",
+  "payeesSaveEdit": "Save changes",
+  "payeesCreate": "Create payee",
+  "membersSelectBookFirst": "Please select a book first",
+  "membersAdd": "Add member",
+  "membersEdit": "Edit member",
+  "membersMoveToRecycleBin": "Move to recycle bin",
+  "membersMoveToRecycleBinConfirm": "Move \"{name}\" to the recycle bin?",
+  "@membersMoveToRecycleBinConfirm": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "membersMove": "Move",
+  "membersThisMember": "this member",
+  "membersDeletePermanently": "Delete permanently",
+  "membersDeletePermanentlyConfirm": "Permanently delete \"{name}\"? This action cannot be undone.",
+  "@membersDeletePermanentlyConfirm": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "membersDelete": "Delete",
+  "membersTitle": "Members",
+  "membersSearchHint": "Search member name",
+  "membersEmpty": "No members yet. Tap + in the top right to add one.",
+  "membersUnnamed": "Unnamed",
+  "membersStatusEnabled": "Enabled",
+  "membersStatusDisabled": "Disabled",
+  "membersNameRequired": "Please enter a member name",
+  "membersNameLabel": "Member name",
+  "membersNameHint": "e.g. John Doe",
+  "membersSortLabel": "Sort order (optional)",
+  "membersSortHint": "Lower numbers appear first",
+  "membersRemarkLabel": "Remark (optional)",
+  "membersRemarkHint": "Remark",
+  "membersEnable": "Enable",
+  "membersSaveEdit": "Save changes",
+  "membersCreate": "Create member",
+  "groupUsersSelectGroupFirst": "Please select a group first",
+  "groupUsersInviteTitle": "Invite user",
+  "groupUsersInviteSent": "Invitation sent",
+  "groupUsersRemoveTitle": "Remove member",
+  "groupUsersRemoveConfirm": "Remove \"{name}\" from this group?",
+  "@groupUsersRemoveConfirm": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "groupUsersRemove": "Remove",
+  "groupUsersTitle": "Members",
+  "groupUsersTitleWithName": "Members · {name}",
+  "@groupUsersTitleWithName": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "groupUsersInvite": "Invite",
+  "groupUsersEmpty": "No members in this group yet",
+  "groupUsersUsernameRequired": "Please enter a username",
+  "groupUsersRoleRequired": "Please select a role",
+  "groupUsersUsernameLabel": "Username",
+  "groupUsersUsernameHint": "Enter the invitee's username",
+  "groupUsersRoleLabel": "Role",
+  "groupUsersSendInvite": "Send invitation",
+  "dashboardSelectBookFirst": "Select a book first",
+  "dashboardQuickAdd": "Add a record",
+  "dashboardNetWorth": "Net worth",
+  "dashboardNoRecordsYet": "No records yet",
+  "dashboardStartFirstBill": "Add your first record",
+  "dashboardAssets": "Assets",
+  "dashboardLiabilities": "Liabilities",
+  "dashboardPeriodExpense": "Period expense",
+  "dashboardPeriodIncome": "Period income",
+  "dashboardExpenseTrend": "Expense trend",
+  "dashboardIncomeExpenseTrend": "Income & expense trend",
+  "dashboardInsufficientData": "Not enough data",
+  "dashboardLoadFailed": "Failed to load",
+  "dashboardSelectGroup": "Select group",
+  "dashboardSelectBook": "Select book",
+  "dashboardTopCategories": "Top 3 expense categories",
+  "dashboardUncategorized": "Uncategorized",
+  "dashboardRecentBills": "Recent bills",
+  "dashboardViewAll": "All",
+  "dashboardNoBillsYet": "No bills yet",
+  "dashboardBillFallback": "Bill",
+  "dashboardAssetsLiabilities": "Assets & liabilities",
+  "dashboardNoData": "No data",
+  "statsSelectBookFirst": "Select a book first",
+  "statsCategoryShare": "Category share",
+  "statsPayees": "Payees",
+  "statsTags": "Tags",
+  "statsNoRecordsThisPeriod": "No records this period",
+  "statsUnnamed": "Unnamed",
+  "statsUncategorized": "Uncategorized",
+  "statsTitle": "Stats",
+  "statsRangeWeek": "This week",
+  "statsRangePeriod": "This period",
+  "statsRangeYear": "This year",
+  "statsRangeCustom": "Custom",
+  "statsExpense": "Expense",
+  "statsIncome": "Income",
+  "statsSurplus": "Surplus",
+  "statsBasicTitle": "Cashflow insight",
+  "statsExpenseAnalytics": "Expense analytics",
+  "statsIncomeAnalytics": "Income analytics",
+  "statsExpenseCategoryShare": "Expense category share",
+  "statsIncomeCategoryShare": "Income category share",
+  "statsExpenseTags": "Expense tags",
+  "statsIncomeTags": "Income tags",
+  "statsExpensePayees": "Expense payees",
+  "statsIncomePayees": "Income payees",
+  "statsExpenseTrend": "Expense trend",
+  "statsIncomeTrend": "Income trend",
+  "ioTitle": "Export",
+  "ioSelectBookFirst": "Select a book first",
+  "ioDownloadStarted": "Download started: {filename}",
+  "@ioDownloadStarted": {
+    "placeholders": {
+      "filename": {}
+    }
+  },
+  "ioSavedTo": "Saved to: {path}",
+  "@ioSavedTo": {
+    "placeholders": {
+      "path": {}
+    }
+  },
+  "ioExportFailedNoData": "Export failed: no data",
+  "ioDownloadFailed": "Download failed",
+  "ioReadFileFailed": "Failed to read file",
+  "ioImportResult": "Import result",
+  "ioExportBillsTitle": "Export bills (Excel)",
+  "ioExportBillsSubtitle": "Export bills from the current book (with filters, up to 10,000 rows)",
+  "ioExport": "Export",
+  "ioDownloadTemplateTitle": "Download import template",
+  "ioDownloadTemplateSubtitle": "Get the standard Excel template, fill it in, then import",
+  "ioDownloadTemplate": "Download template",
+  "ioImportBillsTitle": "Import bills (Excel)",
+  "ioImportBillsSubtitle": "Upload an .xlsx file; results are shown after import",
+  "ioSelectFileImport": "Choose file to import",
+  "ioSuccess": "Success",
+  "ioFail": "Failed",
+  "ioTotal": "Total",
+  "ioImportFailedWithErrors": "Import failed with error rows. Download the error details (Excel) to see the reasons.",
+  "ioDownloadErrorDetails": "Download error details",
+  "ioDone": "Done",
+  "manageSharedTabAll": "All",
+  "manageSharedTabEnabled": "Enabled",
+  "manageSharedTabDisabled": "Disabled",
+  "manageSharedTabRecycleBin": "Recycle bin",
+  "manageSharedSearchHint": "Search by name",
+  "manageSharedPutBack": "Restore",
+  "manageSharedDeleteForever": "Delete permanently",
+  "manageSharedEdit": "Edit",
+  "manageSharedMoveToRecycleBin": "Move to recycle bin",
+  "profileScreenCaptureAllowed": "Allow screenshots and screen recording",
+  "profileScreenCaptureAllowedSubtitle": "Screenshots, recording, and app previews are protected by default. Enable only when you need to share content.",
+  "profileScreenCaptureAllowedIosHint": "iPhone and iPad cannot block system screenshots. Protection masks recording, mirroring, and app-switcher previews.",
+  "profileScreenCaptureProtectionFailed": "Screen-capture protection could not be applied. Please try again.",
+  "profileDesktopWidget": "Add desktop widget",
+  "profileDesktopWidgetSubtitle": "Add the income/expense calendar from the home screen",
+  "profileEditTitle": "Edit profile",
+  "profileDetailsTitle": "Profile",
+  "profileViewProfile": "View profile",
+  "profileDetailedInformation": "Personal details",
+  "profileSystemRecords": "System records",
+  "profileUsername": "Username",
+  "profileRole": "Role",
+  "profileLoginIp": "Login IP",
+  "profileLoginTime": "Login time",
+  "profileRemark": "Remark",
+  "profileNotSet": "Not set",
+  "profileEditAvatar": "Edit avatar",
+  "profileQrCode": "Profile QR code",
+  "profileBack": "Back to profile center",
+  "profileMissingUserInfoUpload": "Missing user info, cannot upload",
+  "profileAvatarUpdated": "Avatar updated",
+  "profileUploadFailed": "Upload failed: {error}",
+  "@profileUploadFailed": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "profileMissingUserInfoSave": "Missing user info, cannot save",
+  "profileNicknameRequired": "Nickname cannot be empty",
+  "profileSaved": "Profile saved",
+  "profileSaveFailed": "Save failed: {error}",
+  "@profileSaveFailed": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "profileMissingUserInfoPassword": "Missing user info, cannot change password",
+  "profileChangePassword": "Change password",
+  "profileNickname": "Nickname",
+  "profileNicknameHint": "Enter a nickname",
+  "profilePhone": "Phone",
+  "profilePhoneHint": "Enter a phone number",
+  "profileEmail": "Email",
+  "profileEmailHint": "Enter an email",
+  "profileTapToChangeAvatar": "Tap to change avatar",
+  "profileSex": "Gender",
+  "profileSexMale": "Male",
+  "profileSexFemale": "Female",
+  "profilePasswordFillOldNew": "Enter the old and new passwords",
+  "profilePasswordMinLength": "New password must be at least 6 characters",
+  "profilePasswordMismatch": "The new passwords do not match",
+  "profilePasswordChanged": "Password changed successfully",
+  "profilePasswordChangeFailed": "Change failed: {error}",
+  "@profilePasswordChangeFailed": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "profileOldPassword": "Old password",
+  "profileNewPassword": "New password",
+  "profileConfirmNewPassword": "Confirm new password",
+  "profileConfirmChange": "Confirm change",
+  "profileColorIncome": "Income",
+  "profileColorExpense": "Expense",
+  "profileColorTransfer": "Transfer",
+  "profileColorAdjust": "Adjustment",
+  "profileColorAdvance": "Advance",
+  "profileColorReimburse": "Reimbursement",
+  "profileColorPresetDefault": "Default red/green",
+  "profileColorPresetDeuteranopia": "Red-green colorblind friendly",
+  "profileColorPresetProtanopia": "Protanopia friendly",
+  "profileColorPresetTritanopia": "Blue-yellow colorblind friendly",
+  "profileColorPresetTitle": "Colorblind-friendly presets",
+  "profileRestoreDefault": "Restore default",
+  "statsViewTable": "View table",
+  "statsViewChart": "View chart",
+  "statsTableItem": "Item",
+  "statsTableValue": "Value",
+  "statsTableShare": "Share",
+  "statsTableDetail": "Detail",
+  "statsTableSemantics": "Chart data table, {count} rows",
+  "@statsTableSemantics": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "statsDonutChartSemantics": "Donut chart, {count} items",
+  "@statsDonutChartSemantics": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "statsLineChartSemantics": "Line chart, {count} points",
+  "@statsLineChartSemantics": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "statsBarChartSemantics": "Bar chart, {count} items",
+  "@statsBarChartSemantics": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "profileSaveFailedRetry": "Save failed, please try again",
+  "profileLoadFailed": "Failed to load profile",
+  "profileNotLoggedIn": "Not logged in",
+  "profileNotSelected": "Not selected",
+  "profileMonthStartDayValue": "Day {day} of each month",
+  "@profileMonthStartDayValue": {
+    "placeholders": {
+      "day": {}
+    }
+  },
+  "profileMonthStartDayHint": "Short months use the last day automatically",
+  "profileRefresh": "Refresh",
+  "profileCurrencyRefreshing": "Refreshing exchange rates…",
+  "profileCurrencyRefreshed": "Exchange rates refreshed",
+  "profileCurrencyRefreshFailed": "Refresh failed: {error}",
+  "@profileCurrencyRefreshFailed": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "profileAboutApp": "About FortuneBoot",
+  "profileAppVersion": "App version",
+  "profileApiVersion": "API version",
+  "profileIcp": "ICP filing",
+  "profileSigningValidity": "Signing validity",
+  "profileSigningExpired": "Expired",
+  "profileSigningCountdown": "{days}d {hours}h {minutes}m left",
+  "@profileSigningCountdown": {
+    "placeholders": {
+      "days": {},
+      "hours": {},
+      "minutes": {}
+    }
+  },
+  "profileSigningExpiresOn": "Until {date}",
+  "@profileSigningExpiresOn": {
+    "placeholders": {
+      "date": {}
+    }
+  },
+  "profileHelpContent": "FortuneBoot is a multi-group, multi-book expense tracker.\n\n· Quickly add a record on the home page, or view details on the bills page.\n· Open \"Mine\" to manage categories, tags, accounts, members, and more.\n· If you run into problems, contact your admin or check the project docs.",
+  "profileHelpIntro": "FortuneBoot is a collaborative expense tracker with multiple groups and books. The sections below explain the common features to get you started.",
+  "profileHelpQuickTitle": "Quick entry",
+  "profileHelpQuickBody": "Tap the blue \"+\" button in the center of the bottom bar to add a record. Enter a title, then pick a category and amount. Switch between expense, income, transfer, advance and reimbursement at the top. You can split across multiple categories, add fees/discounts, and attach receipt photos.",
+  "profileHelpBillsTitle": "Bills & billing cycle",
+  "profileHelpBillsBody": "The bills page groups records by billing cycle. Use the arrows at the top to move between adjacent cycles; scrolling down loads older bills automatically. Set a custom cycle start day under \"Mine → Month start day\" (e.g. the 5th) to match your payday.",
+  "profileHelpBookTitle": "Groups & books",
+  "profileHelpBookBody": "Groups isolate scenarios (personal, family, company), and each group can hold multiple books. Add, edit, set default or disable them under \"Mine → Group / Book management\". Switching the current book refreshes bills, stats and accounts.",
+  "profileHelpManageTitle": "Base data management",
+  "profileHelpManageBody": "Categories, tags, payees, members and accounts are each managed separately. Categories and tags support tree hierarchies; accounts cover cash, credit card, asset and loan types and roll up net worth. Disabled or deleted items go to the recycle bin and can be restored.",
+  "profileHelpRecurringTitle": "Recurring bills",
+  "profileHelpRecurringBody": "Create automatic rules under \"Mine → Recurring\". Use the visual frequency picker (daily/weekly/monthly/yearly) to generate a rule without writing cron; advanced users can switch to custom mode and edit the cron expression directly.",
+  "profileHelpPrivacyTitle": "Privacy & display",
+  "profileHelpPrivacyBody": "Turn on \"Hide amounts\" to mask figures on the home and bills pages for public viewing. You can also customize income/expense colors and switch between light and dark themes.",
+  "profileHelpContactTitle": "Getting help",
+  "profileHelpContactBody": "If you hit data issues or have questions, try pull-to-refresh or re-login first. If that doesn't help, contact your group admin or visit the project home page for docs and feedback.",
+  "profileDonateContent": "Thanks for your support!\nIf you'd like to sponsor development, find donation options on the project home page.",
+  "profileLogoutConfirm": "Are you sure you want to log out?",
+  "goodsTitle": "Belongings",
+  "goodsSelectBookFirst": "Please select a book first",
+  "goodsAddTitle": "Add Item",
+  "goodsEditTitle": "Edit Item",
+  "goodsDetailTitle": "Item Details",
+  "goodsMenuDetail": "View Details",
+  "goodsMenuEdit": "Edit",
+  "goodsMenuDelete": "Delete",
+  "goodsRemoveTitle": "Delete Item",
+  "goodsThisItem": "this item",
+  "goodsRemoveConfirm": "Delete \"{name}\"? This action cannot be undone.",
+  "@goodsRemoveConfirm": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "goodsEmptyHint": "No items yet. Tap + in the top right to add one.",
+  "goodsStatAllCost": "Total Cost",
+  "goodsStatActiveCost": "Active Cost",
+  "goodsStatDailyCost": "Daily Cost",
+  "goodsUnnamed": "Unnamed",
+  "goodsHoldingDays": "Held {days} days",
+  "@goodsHoldingDays": {
+    "placeholders": {
+      "days": {}
+    }
+  },
+  "goodsDailyAvg": "Daily avg {amount}",
+  "@goodsDailyAvg": {
+    "placeholders": {
+      "amount": {}
+    }
+  },
+  "goodsFieldPurchaseDate": "Purchase Date",
+  "goodsFieldHoldingTime": "Holding Days",
+  "goodsDaysValue": "{days} days",
+  "@goodsDaysValue": {
+    "placeholders": {
+      "days": {}
+    }
+  },
+  "goodsFieldCategory": "Category",
+  "goodsFieldTag": "Tag",
+  "goodsFieldWarrantyDate": "Warranty Date",
+  "goodsFieldWarrantyStatus": "Warranty Status",
+  "goodsFieldUsageCount": "Usage Count",
+  "goodsFieldStatus": "Status",
+  "goodsFieldRetiredDate": "Retired Date",
+  "goodsFieldSoldPrice": "Sold Price",
+  "goodsFieldProfit": "Sale P/L",
+  "goodsFieldRemark": "Remark",
+  "goodsErrNameRequired": "Please enter the item name",
+  "goodsErrInvalidPrice": "Please enter a valid price",
+  "goodsErrStatusRequired": "Please select the item status",
+  "goodsErrCategoryRequired": "Please select a category",
+  "goodsPickDate": "Select Date",
+  "goodsSectionBasic": "Basic Info",
+  "goodsLabelName": "Item Name",
+  "goodsHintName": "e.g. iPhone 15",
+  "goodsLabelPrice": "Purchase Price",
+  "goodsSectionCategoryTag": "Category & Tag",
+  "goodsLabelCategoryOptional": "Category",
+  "goodsEmptyCategory": "No category",
+  "goodsLabelTagOptional": "Tag (optional)",
+  "goodsEmptyTag": "No tag",
+  "goodsNoCategoryOptions": "No categories yet. Create one in Category Management first.",
+  "goodsSectionWarrantyStatus": "Warranty & Status",
+  "goodsLabelWarrantyOptional": "Warranty Date (optional)",
+  "goodsNotSet": "Not set",
+  "goodsUnknown": "Unknown",
+  "goodsStatusUnrecognized": "Current status \"{status}\" is not recognized. Reselect to change it, or leave it unselected to keep the original.",
+  "@goodsStatusUnrecognized": {
+    "placeholders": {
+      "status": {}
+    }
+  },
+  "goodsUseByTimes": "Use by count",
+  "goodsHintUsageNum": "e.g. 120",
+  "goodsSectionDisposal": "Disposal",
+  "goodsSectionRemarkAttach": "Remark & Attachments",
+  "goodsLabelRemarkOptional": "Remark (optional)",
+  "goodsSaveChanges": "Save Changes",
+  "goodsNone": "None",
+  "goodsLabelAttachOptional": "Attachments (optional)",
+  "goodsNoOptions": "{label} (no options)",
+  "@goodsNoOptions": {
+    "placeholders": {
+      "label": {}
+    }
+  },
+  "billTypeExpense": "Expense",
+  "billTypeIncome": "Income",
+  "billTypeTransfer": "Transfer",
+  "billTypeAdjust": "Adjustment",
+  "billTypeAdvance": "Advance",
+  "billTypeReimburse": "Reimburse",
+  "billTypeFallback": "Bill",
+  "commonPleaseSelect": "Please select",
+  "billEditorValidateTransferAmount": "Transfer amount cannot be 0",
+  "billEditorValidateTransferFrom": "Select source account",
+  "billEditorValidateTransferTo": "Select destination account",
+  "billEditorValidateTransferSame": "Source and destination must differ",
+  "billEditorValidateCategoryRequired": "Add a category",
+  "billEditorValidateCategorySelect": "Select a category",
+  "billEditorValidateCategoryAmount": "Category amount cannot be 0",
+  "billEditorValidateAccount": "Select an account",
+  "billEditorValidateOrder": "Select a related reimbursement order",
+  "billEditorValidateTitle": "Enter a title",
+  "booksNoPermissionSetDefaultGroup": "You do not have permission to set the default group",
+  "booksEnableGroupFirst": "Enable this group first",
+  "booksAlreadyDefaultGroup": "This group is already the default",
+  "booksNoPermissionToggleGroup": "You do not have permission to enable or disable groups",
+  "booksGroupAlreadyEnabled": "This group is already enabled",
+  "booksGroupAlreadyDisabled": "This group is already disabled",
+  "booksKeepOneEnabledGroup": "Keep at least one enabled group",
+  "booksSetOtherDefaultGroupFirst": "Set another group as default first",
+  "booksNoPermissionDeleteGroup": "You do not have permission to delete groups",
+  "booksNoPermissionSetDefaultBook": "You do not have permission to set the default book",
+  "booksRestoreBookFirst": "Restore this book first",
+  "booksEnableBookBeforeDefault": "Enable this book before setting it as default",
+  "booksAlreadyDefaultBook": "This book is already the default",
+  "booksNoPermissionToggleBook": "You do not have permission to enable or disable books",
+  "booksBookAlreadyEnabled": "This book is already enabled",
+  "booksBookAlreadyDisabled": "This book is already disabled",
+  "booksSetOtherDefaultBookFirst": "Set another book as default first",
+  "booksOnlyAvailableBook": "This is the only available book in the group. Create or enable another book first.",
+  "booksNoPermissionMoveBook": "You do not have permission to move books",
+  "booksNoPermissionRestoreBook": "You do not have permission to restore books",
+  "booksNoPermissionDeleteBook": "You do not have permission to delete books",
+  "booksDefaultAccountMissing": "Default accounts are incomplete. Tap to complete.",
+  "booksDefaultBookTag": "Default book",
+  "booksDefaultExpenseAccountValue": "Default expense: {name}",
+  "@booksDefaultExpenseAccountValue": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "profileStatsAssets": "Asset stats",
+  "profileStatsLoans": "Loans & finance",
+  "profileStatsPolicy": "Stats policy",
+  "statsMoreReports": "More reports",
+  "statsAssetsEntrySubtitle": "Assets, liabilities, net worth trend and credit cards",
+  "statsLoansEntrySubtitle": "Receivables, payables, finance P/L and pending bills",
+  "statsPolicyEntrySubtitle": "See which bills are included in charts",
+  "statsAssetsTitle": "Asset stats",
+  "statsLoansTitle": "Loans & finance",
+  "statsPolicyTitle": "Stats policy",
+  "statsSelectGroupFirst": "Select a group first",
+  "statsAssetsComposition": "Assets & liabilities mix",
+  "statsNetAssetsTrend": "Net worth trend",
+  "statsAssetsByAccountType": "By account type",
+  "statsCreditCardOverview": "Credit cards",
+  "statsCreditCardDates": "Billing {billing} · Repayment {repayment}",
+  "@statsCreditCardDates": {
+    "placeholders": {
+      "billing": {},
+      "repayment": {}
+    }
+  },
+  "statsLoanOverview": "Loan overview",
+  "statsLoanReceivable": "Receivable",
+  "statsLoanPayable": "Payable",
+  "statsOverdueReceivable": "Overdue receivable",
+  "statsOverduePayable": "Overdue payable",
+  "statsPendingConfirm": "Pending confirmation",
+  "statsFinanceProfit": "Finance profit",
+  "statsProfit": "Profit",
+  "statsLoss": "Loss",
+  "statsNetProfit": "Net profit",
+  "statsBillCount": "{count} bills",
+  "@statsBillCount": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "statsPolicyScope": "Statistics scope",
+  "statsPolicyDefaultInclude": "Included by default",
+  "statsPolicyDefaultExclude": "Excluded by default",
+  "statsPolicyDefaultDesc": "Confirmed bills with “include in statistics” enabled are counted in income, expense, trends, category reports, and asset charts. Bills with statistics disabled remain in details only and do not affect charts.",
+  "statsPolicyEndpointFallback": "The backend policy endpoint is not available yet, so this page shows the frontend convention.",
+  "statsPolicyBillTypes": "Bill type policy",
+  "statsPolicyIncluded": "Included",
+  "statsPolicyExcluded": "Excluded",
+  "statsIncomeExpenseCalendar": "Income & expense calendar",
+  "statsCalendarMonth": "Month",
+  "statsCalendarYear": "Year",
+  "statsCalendarHistory": "History",
+  "statsCalendarIncome": "Income",
+  "statsCalendarExpense": "Expense",
+  "statsCalendarPrevious": "Previous",
+  "statsCalendarNext": "Next",
+  "statsCalendarTotalCount": "{count} total",
+  "@statsCalendarTotalCount": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "statsCalendarIncomeCount": "{count} income",
+  "@statsCalendarIncomeCount": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "statsCalendarExpenseCount": "{count} expense",
+  "@statsCalendarExpenseCount": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "statsCalendarDateSummary": "{date} income & expense",
+  "@statsCalendarDateSummary": {
+    "placeholders": {
+      "date": {}
+    }
+  },
+  "appTitle": "FortuneBoot",
+  "fxDatePickerDateTitle": "Select date",
+  "fxDatePickerDateTimeTitle": "Select date and time",
+  "fxDatePickerToday": "Today",
+  "fxDatePickerYesterday": "Yesterday",
+  "fxDatePickerStartOfMonth": "Start of month",
+  "fxDatePickerDone": "Done",
+  "fxDatePickerPreviousYear": "Previous year",
+  "fxDatePickerNextYear": "Next year",
+  "fxTreePickerTitle": "Select",
+  "fxTreePickerClear": "Clear",
+  "fxTreePickerDone": "Done",
+  "fxTreePickerSearch": "Search",
+  "fxTreePickerNoMatches": "No matches",
+  "fxTreePickerConfirm": "Confirm ({count})",
+  "fxTreePickerExpand": "Expand {label}",
+  "@fxTreePickerExpand": {
+    "placeholders": {
+      "label": {}
+    }
+  },
+  "fxTreePickerCollapse": "Collapse {label}",
+  "@fxTreePickerCollapse": {
+    "placeholders": {
+      "label": {}
+    }
+  },
+  "@fxTreePickerConfirm": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "statsCalendarViewBills": "View bills for this day",
+  "base64ImageEmpty": "Image data is empty",
+  "base64ImageInvalid": "Could not read the image"
+}

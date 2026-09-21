@@ -1,0 +1,118 @@
+name: fortuneboot
+description: "Hao Ji"
+version: 1.4.7+2026091901 #馃榿馃槇
+# 上架版本来源：versionName+versionCode。DevEco 打包前请双击运行：
+#   scripts/set_ohos_version.bat
+# 交互确认后再 Build Hap。
+# versionCode 必须是整数且 <= 2147483647，推荐格式 YYYYMMDDHH（10位，如 2026091616）。
+publish_to: 'none'
+
+environment:
+  sdk: ">=3.8.0 <4.0.0"
+  flutter: ">=3.32.0"
+
+dependencies:
+  bloc: ^9.0.0
+  cupertino_icons: ^1.0.3
+  dio: ^5.10.0
+  encrypt: ^5.0.3
+  flutter:
+    sdk: flutter
+  flutter_intl: ^0.0.1
+  flutter_localizations:
+    sdk: flutter
+  flutter_login: ^5.0.0
+  font_awesome_flutter: ^10.9.1
+  json_annotation: ^4.9.0
+  logger: ^2.5.0
+  retrofit: 4.7.2
+  shared_preferences: ^2.5.3
+  # 鸿蒙平台 SharedPreferences 支持
+  shared_preferences_ohos:
+    git:
+      url: https://gitee.com/openharmony-sig/flutter_packages.git
+      path: packages/shared_preferences/shared_preferences_ohos
+      ref: master
+  flutter_bloc: ^9.1.0
+  sticky_grouped_list: ^3.1.0
+  bloc_concurrency: ^0.3.0
+  # dropdown_flutter: ^1.0.1
+  multi_dropdown: ^3.0.1
+  accordion: ^2.6.0
+  # awesome_select_plus: ^1.0.0
+  omni_datetime_picker: ^2.3.1
+
+  package_info_plus: ^9.0.0
+  # 附件上传相关依赖
+  file_picker: ^10.3.3
+  image_picker:
+    git:
+      url: https://gitee.com/openharmony-sig/flutter_packages.git
+      path: packages/image_picker/image_picker
+      ref: master
+  file_selector:
+    git:
+      url: https://gitee.com/openharmony-sig/flutter_packages.git
+      path: packages/file_selector/file_selector
+      ref: master
+  path: ^1.9.0
+  mime: ^2.0.0
+  permission_handler: ^12.0.1
+  path_provider: ^2.1.5
+  # 鸿蒙平台 path_provider 支持
+  path_provider_ohos:
+    git:
+      url: https://gitee.com/openharmony-sig/flutter_packages.git
+      path: packages/path_provider/path_provider_ohos
+      ref: master
+  image_gallery_saver_plus: ^4.0.1
+  visibility_detector: ^0.4.0+2
+  rxdart: ^0.28.0
+  stream_transform: ^2.1.1
+  time: ^2.1.5
+  flutter_randomcolor: ^1.0.18
+  intl: ^0.20.2
+  money2: ^6.0.8
+  equatable: ^2.0.5
+  fl_chart: ^0.68.0
+  xml: ^6.3.0
+  cryptography: ^2.9.0
+  fortuneboot_ohos_security:
+    path: packages/fortuneboot_ohos_security
+
+dev_dependencies:
+  build_runner: ^2.4.0
+  # flutter_lints: ^5.0.0
+  flutter_test:
+    sdk: flutter
+  json_serializable: ^6.9.5
+  lint: ^2.1.2
+  retrofit_generator: ^10.0.6
+  intl_utils: 2.8.14
+
+# 鸿蒙分层图标（1024x1024 前景/背景）:
+# ohos/AppScope/resources/base/media/{foreground,background,layered_image}.json
+# ohos/entry/src/main/resources/base/media/{foreground,background,layered_image}.json
+# 可用 scripts/make_ohos_layered_icons.py 从 scripts/app_icon_source.png 重新生成
+
+flutter_intl:
+    enabled: true
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/images/
+
+  fonts:
+    - family: Quicksand
+      fonts:
+        - asset: assets/fonts/Quicksand-Light.ttf
+          weight: 300
+        - asset: assets/fonts/Quicksand-Regular.ttf
+        - asset: assets/fonts/Quicksand-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Quicksand-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/Quicksand-Bold.ttf
+          weight: 700

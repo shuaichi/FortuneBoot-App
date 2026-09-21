@@ -1,0 +1,1619 @@
+{
+  "baseUrlConfig": "基础 URL 配置",
+  "protocol": "协议",
+  "domain": "域名",
+  "pleaseEnterDomain": "请输入域名",
+  "invalidDomain": "无效的域名或IP地址",
+  "port": "端口",
+  "pleaseEnterPort": "请输入端口",
+  "invalidPort": "无效的端口号",
+  "confirm": "确认",
+  "serverConnectionFailed": "无法连接服务器，请检查地址、端口或网络",
+  "@apiVersionTooLow": {
+    "placeholders": {
+      "actual": {},
+      "required": {}
+    }
+  },
+  "apiVersionTooLow": "服务端版本过低（v{actual}），需 {required} 及以上，请联系管理员升级服务端",
+  "@apiVersionTooHigh": {
+    "placeholders": {
+      "actual": {},
+      "supportedMax": {}
+    }
+  },
+  "apiVersionTooHigh": "服务端版本过高（v{actual}），当前客户端仅支持低于 {supportedMax} 的服务端，请升级客户端或联系管理员",
+  "@apiVersionEndpointUnavailable": {
+    "placeholders": {
+      "required": {}
+    }
+  },
+  "apiVersionEndpointUnavailable": "服务端不支持版本检测，无法确认兼容性。请确认服务端并升级至 {required} 及以上",
+  "apiVersionUnavailable": "服务端返回的版本信息无效，无法确认兼容性，请联系管理员",
+  "error": "错误",
+  "ok": "确定",
+  "nickname_required": "昵称不能为空",
+  "invalid_email": "无效的邮箱地址",
+  "invalid_phone_number": "无效的手机号码",
+  "registration_failed": "注册失败",
+  "main_logo": "好记",
+  "login_message": "你可以通过此界面注册/登录",
+  "login_host": "demo.fortuneboot.com",
+  "login_button_text": "登录",
+  "register": "注册",
+  "or_login_with": "通过其他方式登录",
+  "authenticate": "鉴权",
+  "forgot_huh": "你不会忘了密码吧？点我",
+  "login_account": "账号",
+  "login_pass": "密码",
+  "login_confirm": "确认",
+  "term_of_services": "服务条款",
+  "email_auth": "需要包含@，且用.com结尾",
+  "password_is_empty": "密码不能为空",
+  "service_required": "同意以继续",
+  "help_me": "帮帮我",
+  "go_back": "返回",
+  "not_match": "不匹配！",
+  "dont_worry_be_happy": "别难过，这种事经常发生。",
+  "default_comment": "敬请期待",
+  "password_rescued_successfully": "密码重置成功",
+  "oh_no": "我的天呐",
+  "succes": "搞定！",
+  "username": "用户名",
+  "fill_to_signup": "即将完成注册，请补充以下信息",
+  "phone_number": "手机号",
+  "sign_up_submit": "提交",
+  "valid_phone_number": "请输入正确的手机号",
+  "user_auth_vaild": "账号不能为空",
+  "user_not_exist": "用户不存在",
+  "confirm_signup": "邀请码，非必须",
+  "confirmation_code": "邀请码",
+  "sign_up_success": "注册成功",
+  "login_nickname": "昵称",
+  "login_email": "邮箱",
+  "sex": "性别",
+  "female": "女",
+  "male": "男",
+  "sex_valid": "当前只支持两种性别，请填写‘男’或‘女’",
+  "account_valid": "用户名重复，想个新的或者直接登录吧",
+  "todosOverviewAppBarTitle": "账单明细",
+  "@todosOverviewAppBarTitle": {
+    "description": "账单明细页面的 AppBar 标题文本"
+  },
+  "todosOverviewFilterTooltip": "筛选",
+  "@todosOverviewFilterTooltip": {
+    "description": "账单明细页筛选下拉框的提示文本"
+  },
+  "todosOverviewFilterAll": "全部",
+  "@todosOverviewFilterAll": {
+    "description": "账单明细页筛选下拉框中显示全部事项的选项文本"
+  },
+  "todosOverviewFilterActiveOnly": "仅未完成",
+  "@todosOverviewFilterActiveOnly": {
+    "description": "账单明细页筛选下拉框中仅显示未完成事项的选项文本"
+  },
+  "todosOverviewFilterCompletedOnly": "仅已完成",
+  "@todosOverviewFilterCompletedOnly": {
+    "description": "账单明细页筛选下拉框中仅显示已完成事项的选项文本"
+  },
+  "todosOverviewMarkAllCompleteButtonText": "全部标记为完成",
+  "@todosOverviewMarkAllCompleteButtonText": {
+    "description": "账单明细页操作下拉框中将全部事项标记为完成的按钮文本"
+  },
+  "todosOverviewClearCompletedButtonText": "清除已完成",
+  "@todosOverviewClearCompletedButtonText": {
+    "description": "账单明细页操作下拉框中删除所有已完成事项的按钮文本"
+  },
+  "todosOverviewEmptyText": "未找到符合筛选条件的账单明细",
+  "@todosOverviewEmptyText": {
+    "description": "账单明细页在筛选条件下无事项时显示的提示文本"
+  },
+  "todosOverviewTodoDeletedSnackbarText": "账单明细「{todoTitle}」已删除。",
+  "@todosOverviewTodoDeletedSnackbarText": {
+    "description": "账单明细页删除事项时显示的 Snackbar 文本",
+    "placeholders": {
+      "todoTitle": {
+        "description": "被删除账单明细的标题"
+      }
+    }
+  },
+  "todosOverviewUndoDeletionButtonText": "撤销",
+  "@todosOverviewUndoDeletionButtonText": {
+    "description": "Snackbar 中用于撤销删除操作的按钮文本"
+  },
+  "todosOverviewErrorSnackbarText": "加载账单明细时发生错误。",
+  "@todosOverviewErrorSnackbarText": {
+    "description": "账单明细页加载数据出错时显示的 Snackbar 文本"
+  },
+  "todosOverviewOptionsTooltip": "操作",
+  "@todosOverviewOptionsTooltip": {
+    "description": "账单明细页操作下拉框的提示文本"
+  },
+  "todosOverviewOptionsMarkAllComplete": "全部标记为完成",
+  "@todosOverviewOptionsMarkAllComplete": {
+    "description": "操作下拉框中标记全部账单明细为完成的按钮文本"
+  },
+  "todosOverviewOptionsMarkAllIncomplete": "全部标记为未完成",
+  "@todosOverviewOptionsMarkAllIncomplete": {
+    "description": "操作下拉框中标记全部账单明细为未完成的按钮文本"
+  },
+  "todosOverviewOptionsClearCompleted": "清除已完成账单明细",
+  "@todosOverviewOptionsClearCompleted": {
+    "description": "操作下拉框中清除所有已完成事项的按钮文本"
+  },
+  "todoDetailsAppBarTitle": "账单明细详情",
+  "@todoDetailsAppBarTitle": {
+    "description": "账单明细详情页面的 AppBar 标题文本"
+  },
+  "todoDetailsDeleteButtonTooltip": "删除",
+  "@todoDetailsDeleteButtonTooltip": {
+    "description": "账单明细详情页删除按钮的提示文本"
+  },
+  "todoDetailsEditButtonTooltip": "修改",
+  "@todoDetailsEditButtonTooltip": {
+    "description": "账单明细情页修改按钮的提示文本"
+  },
+  "editTodoEditAppBarTitle": "修改账单明细",
+  "@editTodoEditAppBarTitle": {
+    "description": "修改已有账单明细页面的 AppBar 标题文本"
+  },
+  "editTodoAddAppBarTitle": "新建账单明细",
+  "@editTodoAddAppBarTitle": {
+    "description": "新建账单明细页面的 AppBar 标题文本"
+  },
+  "editTodoTitleLabel": "标题",
+  "@editTodoTitleLabel": {
+    "description": "账单明细修改页标题输入框的标签文本"
+  },
+  "editTodoDescriptionLabel": "描述",
+  "@editTodoDescriptionLabel": {
+    "description": "账单明细修改页描述输入框的标签文本"
+  },
+  "editTodoSaveButtonTooltip": "保存修改",
+  "@editTodoSaveButtonTooltip": {
+    "description": "账单明细修改页保存按钮的提示文本"
+  },
+  "statsAppBarTitle": "统计概览",
+  "@statsAppBarTitle": {
+    "description": "统计数据页面的 AppBar 标题文本"
+  },
+  "statsCompletedTodoCountLabel": "已完成账单明细",
+  "@statsCompletedTodoCountLabel": {
+    "description": "统计页已完成账单明细数量区域的标签文本"
+  },
+  "statsActiveTodoCountLabel": "未完成账单明细",
+  "@statsActiveTodoCountLabel": {
+    "description": "统计页未完成账单明细数量区域的标签文本"
+  },
+  "mine": "我的",
+  "commonSave": "保存",
+  "commonCancel": "取消",
+  "manageSearchBranchResults": "该分支有 {count} 条搜索结果",
+  "@manageSearchBranchResults": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "confirmDestructiveWarning": "此操作不可撤销。",
+  "commonConfirm": "确定",
+  "commonHideAmounts": "隐藏金额",
+  "commonRetry": "重试",
+  "commonShowAmounts": "显示金额",
+  "commonFollowSystem": "跟随系统",
+  "profileEditProfile": "编辑资料",
+  "profileBookGroup": "账本与分组",
+  "profileCurrentGroupBook": "当前分组·账本",
+  "profileGroupManage": "分组管理",
+  "profileBookManage": "账本管理",
+  "profileMemberManageGroup": "成员管理（分组协作）",
+  "profileBillingManage": "记账管理",
+  "profileCategoryManage": "分类管理",
+  "profileTagManage": "标签管理",
+  "profilePayeeManage": "交易对象管理",
+  "profileMemberManageBill": "成员管理（账单）",
+  "profileAccountManage": "账户管理",
+  "profileToolbox": "工具箱",
+  "profileGoodsManage": "归物管理",
+  "profileOrdersManage": "单据管理",
+  "profileRecurringManage": "周期记账",
+  "profileImportExport": "导出",
+  "profileLogs": "日志",
+  "logsOperation": "操作日志",
+  "logsLogin": "登录日志",
+  "logsEmpty": "暂无日志",
+  "logsSearchHint": "按用户名搜索",
+  "logsUsername": "用户名",
+  "logsTime": "时间",
+  "logsStatus": "状态",
+  "logsModule": "模块",
+  "logsBusinessType": "操作类型",
+  "logsMethod": "请求方法",
+  "logsUrl": "请求地址",
+  "logsIp": "IP",
+  "logsLocation": "地点",
+  "logsSystem": "系统",
+  "logsBrowser": "浏览器",
+  "logsMessage": "说明",
+  "logsParam": "请求参数",
+  "logsResult": "返回结果",
+  "logsError": "错误信息",
+  "profilePreferences": "偏好设置",
+  "profileLanguage": "语言",
+  "profileThemeMode": "主题模式",
+  "profileThemeLight": "亮色",
+  "profileThemeDark": "暗色",
+  "profileMonthStartDay": "账单月开始日",
+  "profileCurrencyRefresh": "汇率刷新",
+  "profileHideAmounts": "首页金额显示",
+  "profileHideAmountsSubtitle": "隐藏后首页金额显示为 ••••",
+  "profileFinanceColors": "账单颜色",
+  "profileFinanceColorsSubtitle": "自定义收入 / 支出等语义颜色",
+  "profileAbout": "关于",
+  "profileHelp": "帮助",
+  "profileDonate": "捐赠",
+  "profileDonateWechat": "微信",
+  "profileDonateAlipay": "支付宝",
+  "profileDonateScanHint": "长按二维码保存到相册，或用另一台设备扫描二维码",
+  "imageSaveSaving": "正在保存…",
+  "imageSaveDownloadStarted": "已开始下载",
+  "imageSaveDownloadFailed": "下载失败",
+  "imageSaveSuccess": "已保存到相册",
+  "imageSaveFailed": "保存失败，请重试",
+  "imageSaveUnsupported": "当前平台暂不支持直接保存，请截图或使用下载方式",
+  "profileLogout": "退出登录",
+  "profileSelectLanguage": "选择语言",
+  "navDashboard": "仪表盘",
+  "navBills": "账单",
+  "navStats": "统计",
+  "navProfile": "我的",
+  "navInDevelopment": "开发中",
+  "commonLanguage": "语言",
+  "commonChinese": "中文",
+  "commonEnglish": "English",
+  "accountsTitle": "账户管理",
+  "accountsAddTitle": "新增账户",
+  "accountsEditTitle": "编辑账户",
+  "accountsEmptyHint": "暂无账户，点击右上角 + 新增",
+  "accountsSelectBookGroup": "请先选择账本/分组",
+  "accountsSelectBookForAdjust": "请先选择账本后再调整余额",
+  "accountsRecycleBin": "回收站",
+  "accountsRecycleBinEmpty": "回收站为空",
+  "accountsAdjustTitle": "调整余额 · {name}",
+  "@accountsAdjustTitle": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "accountsBalanceAdjusted": "余额已调整",
+  "accountsMoveToRecycleBinTitle": "移入回收站",
+  "accountsMoveToRecycleBinConfirm": "确定将「{name}」移入回收站吗？",
+  "@accountsMoveToRecycleBinConfirm": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "accountsMoveIn": "移入",
+  "accountsDeletePermanently": "彻底删除",
+  "accountsDeleteConfirm": "确定彻底删除「{name}」吗？此操作不可撤销。",
+  "@accountsDeleteConfirm": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "accountsDelete": "删除",
+  "accountsRestore": "移出",
+  "accountsDefaultName": "该账户",
+  "accountsUnnamed": "未命名账户",
+  "accountsTypeCash": "现金账户",
+  "accountsTypeCredit": "信用卡",
+  "accountsTypeAsset": "资产账户",
+  "accountsTypeLoan": "贷款账户",
+  "accountsTypeOther": "其他账户",
+  "accountsNetWorth": "净资产",
+  "accountsAssets": "资产",
+  "accountsLiabilities": "负债",
+  "accountsIncludedInNetWorth": "计入净产",
+  "accountsCreditLimit": "额度",
+  "accountsUsed": "已用",
+  "accountsBillDayChip": "账单日 {day}",
+  "@accountsBillDayChip": {
+    "placeholders": {
+      "day": {}
+    }
+  },
+  "accountsRepayDayChip": "还款日 {day}",
+  "@accountsRepayDayChip": {
+    "placeholders": {
+      "day": {}
+    }
+  },
+  "accountsAprChip": "利率 {rate}",
+  "@accountsAprChip": {
+    "placeholders": {
+      "rate": {}
+    }
+  },
+  "accountsAdjustBalance": "调整余额",
+  "accountsAdjustBalanceNeedBook": "调整余额（需先选账本）",
+  "accountsDotExpense": "支",
+  "accountsDotIncome": "收",
+  "accountsDotTransferOut": "转出",
+  "accountsDotTransferIn": "转入",
+  "accountsToggleCanExpense": "可支出",
+  "accountsToggleCanIncome": "可收入",
+  "accountsToggleCanTransferOut": "可转出",
+  "accountsToggleCanTransferIn": "可转入",
+  "accountsToggleInclude": "计入净资产",
+  "accountsToggleEnable": "启用",
+  "accountsInvalidAmount": "请输入有效金额",
+  "accountsCurrentBalance": "当前余额 {amount}",
+  "@accountsCurrentBalance": {
+    "placeholders": {
+      "amount": {}
+    }
+  },
+  "accountsAdjustedAmount": "调整后金额",
+  "accountsAdjustedAmountHint": "调整后的实际金额",
+  "accountsOccurredTime": "发生时间",
+  "accountsTitleOptional": "标题（可选）",
+  "accountsBalanceAdjustHint": "余额调整",
+  "accountsRemarkOptional": "备注（可选）",
+  "accountsRemarkHint": "备注",
+  "accountsConfirmAdjust": "确认调整",
+  "accountsNameRequired": "请输入账户名称",
+  "accountsCurrencyRequired": "请输入币种",
+  "accountsFieldName": "账户名称",
+  "accountsFieldNameHint": "如：招行储蓄卡",
+  "accountsFieldType": "账户类型",
+  "accountsFieldBalance": "余额",
+  "accountsFieldInitialBalance": "期初余额",
+  "accountsFieldBalanceLiabilityHint": "未使用填 0，欠款填负数（勿填额度）",
+  "accountsFieldCurrency": "币种",
+  "accountsFieldCardNo": "卡号（可选）",
+  "accountsFieldCardNoHint": "用于展示末四位",
+  "accountsFieldCreditLimit": "信用/贷款额度",
+  "accountsFieldCreditLimitHint": "如：50000",
+  "accountsFieldRepayDay": "还款日（yyyy-MM-dd）",
+  "accountsFieldBillDay": "账单日（yyyy-MM-dd）",
+  "accountsFieldApr": "年利率 APR",
+  "accountsFieldAprHint": "如：0.045",
+  "accountsSaveChanges": "保存修改",
+  "accountsCreateAccount": "创建账户",
+  "billsFilterTitle": "筛选",
+  "billsDeleteTitle": "删除账单",
+  "billsDeleteConfirm": "确定删除「{title}」吗？此操作不可撤销。",
+  "@billsDeleteConfirm": {
+    "placeholders": {
+      "title": {}
+    }
+  },
+  "billsDelete": "删除",
+  "billsCopy": "复制",
+  "billsBillingCycle": "{month}账期",
+  "@billsBillingCycle": {
+    "placeholders": {
+      "month": {}
+    }
+  },
+  "billsExpense": "支出",
+  "billsIncome": "收入",
+  "billsBalance": "结余",
+  "billsSelectBookFirst": "请先选择账本",
+  "billsEmpty": "本账期暂无账单",
+  "billsDayExpense": "支 {amount}",
+  "@billsDayExpense": {
+    "placeholders": {
+      "amount": {}
+    }
+  },
+  "billsDayIncome": "收 {amount}",
+  "@billsDayIncome": {
+    "placeholders": {
+      "amount": {}
+    }
+  },
+  "billsPendingConfirm": "待确认",
+  "billsWeekdayMon": "周一",
+  "billsWeekdayTue": "周二",
+  "billsWeekdayWed": "周三",
+  "billsWeekdayThu": "周四",
+  "billsWeekdayFri": "周五",
+  "billsWeekdaySat": "周六",
+  "billsWeekdaySun": "周日",
+  "billsBillDefaultTitle": "账单",
+  "billsCategoryDetail": "分类明细",
+  "billsUncategorized": "未分类",
+  "billsTransferOutAccount": "转出账户",
+  "billsTransferInAccount": "转入账户",
+  "billsReceivedAmount": "到账金额",
+  "billsPayee": "交易对象",
+  "billsTags": "标签",
+  "billsMembers": "成员",
+  "billsExtras": "附加费用",
+  "billsRemark": "备注",
+  "billsAttachments": "附件",
+  "billsFee": "手续费",
+  "billsDiscount": "优惠",
+  "billsCharge": "费用",
+  "billsSideOut": "转出",
+  "billsSideIn": "转入",
+  "billsExtraWithSide": "{type}（{side}）",
+  "@billsExtraWithSide": {
+    "placeholders": {
+      "type": {},
+      "side": {}
+    }
+  },
+  "billsNoAttachments": "无附件",
+  "billsClose": "关闭",
+  "billsEdit": "编辑",
+  "billsUnconfirm": "取消确认",
+  "billsFilterByTitle": "标题",
+  "billsFilterTitleHint": "输入标题关键词搜索",
+  "billsFilterBillType": "账单类型",
+  "billsFilterAmountRange": "金额区间",
+  "billsFilterMin": "最小",
+  "billsFilterMax": "最大",
+  "billsFilterConfirmStatus": "确认状态",
+  "billsFilterConfirmed": "已确认",
+  "billsFilterUnconfirmed": "未确认",
+  "billsFilterIncludeStatus": "是否统计",
+  "billsFilterIncluded": "计入统计",
+  "billsFilterExcluded": "不计入",
+  "billsReset": "重置",
+  "billsApply": "应用",
+  "billsFilterAny": "不限",
+  "billEditorSelectBookFirst": "请先选择一个账本后再记账",
+  "billEditorEditTitle": "编辑账单",
+  "billEditorNewTitle": "记一笔",
+  "billEditorTransferAmount": "转账金额",
+  "billEditorAmountOf": "{type}金额",
+  "@billEditorAmountOf": {
+    "placeholders": {
+      "type": {}
+    }
+  },
+  "billEditorAmountHint": "金额按下方分类拆分累加",
+  "billEditorAccount": "账户",
+  "billEditorSelectAccountHint": "请选择账户",
+  "billEditorSelectAccount": "选择账户",
+  "billEditorTransferOutAccount": "转出账户",
+  "billEditorTransferInAccount": "转入账户",
+  "billEditorSelectTransferOutHint": "请选择转出账户",
+  "billEditorSelectTransferInHint": "请选择转入账户",
+  "billEditorSelectTransferOut": "选择转出账户",
+  "billEditorSelectTransferIn": "选择转入账户",
+  "billEditorPayee": "交易对象",
+  "billEditorOptional": "可选",
+  "billEditorSelectPayee": "选择交易对象",
+  "billEditorOrder": "关联报销单",
+  "billEditorRequired": "必选",
+  "billEditorSelectOrder": "选择使用中的报销单",
+  "billEditorTime": "时间",
+  "billEditorTradeTime": "交易时间",
+  "billEditorSelectTags": "选择标签",
+  "billEditorTags": "标签",
+  "billEditorAddTags": "添加标签",
+  "billEditorMembers": "成员",
+  "billEditorSelectMembers": "选择成员",
+  "billEditorSelectHint": "请选择",
+  "billEditorTitle": "标题",
+  "billEditorTitleHint": "请输入标题",
+  "billEditorTitleDefault": "默认「{name}」",
+  "@billEditorTitleDefault": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "billEditorRemark": "备注",
+  "billEditorRemarkHint": "添加备注…",
+  "billEditorConfirmed": "已确认",
+  "billEditorConfirmedSubtitle": "未确认账单不计入余额",
+  "billEditorInclude": "计入统计",
+  "billEditorIncludeSubtitle": "关闭后不参与收支统计",
+  "billEditorSaveEdit": "保存修改",
+  "billEditorSaveNew": "保存账单",
+  "billEditorDiscardTitle": "丢弃修改？",
+  "billEditorDiscardMessage": "已填写的内容将丢失，此操作无法撤销。",
+  "billEditorDiscardConfirm": "丢弃",
+  "billEditorAttachments": "附件",
+  "billEditorAddAttachment": "添加附件",
+  "billEditorChoosePhoto": "选择照片",
+  "billEditorChooseFile": "选择文件",
+  "billEditorSelectedCount": "已选 {count} 个附件",
+  "billEditorAttachmentInvalid": "部分附件不可读取或超出大小限制",
+  "billEditorAttachmentPickFailed": "选择附件失败，请重试",
+  "billEditorAttachmentUnreadable": "附件不可读取，请重新选择后重试",
+  "billEditorAttachmentPermissionRequired": "应用缺少文件访问权限，请更新应用或联系管理员",
+  "billEditorAttachmentPluginUnavailable": "附件组件未正确加载，请重启应用后重试",
+  "billEditorSubmitNetworkFailed": "网络异常，请检查网络后重试",
+  "billEditorSubmitAuthFailed": "登录已失效，请重新登录后重试",
+  "@billEditorSelectedCount": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "billEditorCategorySplit": "分类拆分",
+  "billEditorItemCount": "共 {count} 项",
+  "@billEditorItemCount": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "billEditorSelectCategory": "选择分类",
+  "billEditorAddCategory": "添加分类",
+  "billEditorExtras": "附加费用",
+  "billEditorAddExtra": "添加手续费/优惠",
+  "billEditorFee": "手续费",
+  "billEditorDiscount": "优惠",
+  "billEditorExtraRemark": "说明",
+  "billEditorExtraRemarkHint": "如：跨行转账手续费",
+  "billEditorNoOptions": "暂无可选项",
+  "billEditorNoSelection": "不选择",
+  "booksAddGroup": "新增分组",
+  "booksEditGroup": "编辑分组",
+  "booksRemoveGroupTitle": "删除分组",
+  "booksThisGroup": "该分组",
+  "booksRemoveGroupMessage": "确定删除「{name}」吗？该分组下账本也将无法访问。",
+  "@booksRemoveGroupMessage": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "booksSwitchedToGroup": "已切换到「{name}」",
+  "@booksSwitchedToGroup": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "booksAddBook": "新增账本",
+  "booksEditBook": "编辑账本",
+  "booksRemoveBookTitle": "彻底删除账本",
+  "booksThisBook": "该账本",
+  "booksRemoveBookMessage": "确定彻底删除「{name}」吗？此操作不可撤销。",
+  "@booksRemoveBookMessage": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "booksTabGroups": "分组管理",
+  "booksTabBooks": "账本管理",
+  "booksCreateGroupFirst": "请先创建分组",
+  "booksEmptyGroups": "暂无分组，点击右上角 + 新增",
+  "booksUnnamedGroup": "未命名分组",
+  "booksCurrent": "当前",
+  "booksSetDefaultGroup": "设为默认分组",
+  "booksDisabled": "已停用",
+  "booksDefaultBook": "默认账本：{name}",
+  "@booksDefaultBook": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "booksSelectGroupFirst": "请先选择分组",
+  "booksBelongGroup": "所属分组",
+  "booksEmptyBooks": "该分组暂无账本，点击右上角 + 新增",
+  "booksRecycleBin": "回收站",
+  "booksUnnamedBook": "未命名账本",
+  "booksPutBack": "移出",
+  "booksSetDefaultBook": "设为默认账本",
+  "booksEdit": "编辑",
+  "booksEnable": "启用",
+  "booksDisable": "停用",
+  "booksMoveToRecycle": "移入回收站",
+  "booksDelete": "删除",
+  "booksGroupNameRequired": "请输入分组名称",
+  "booksCurrencyRequired": "请选择默认币种",
+  "booksGroupName": "分组名称",
+  "booksGroupNameHint": "如：家庭账",
+  "booksDefaultCurrency": "默认币种",
+  "booksEnabled": "启用",
+  "booksRemarkOptional": "备注（可选）",
+  "booksRemarkHint": "备注",
+  "booksSaveChanges": "保存修改",
+  "booksCreateGroup": "创建分组",
+  "booksBookNameRequired": "请输入账本名称",
+  "booksBookName": "账本名称",
+  "booksBookNameHint": "如：日常开销",
+  "booksBookTemplateOptional": "账本模板（可选）",
+  "booksSortOptional": "排序（可选）",
+  "booksSortHint": "数值越小越靠前",
+  "booksCreateBook": "创建账本",
+  "booksManageTitle": "分组与账本",
+  "booksCurrentAt": "当前在：{tab}",
+  "@booksCurrentAt": {
+    "placeholders": {
+      "tab": {}
+    }
+  },
+  "booksTabGroupShort": "分组",
+  "booksTabBookShort": "账本",
+  "booksGroupSearchHint": "搜索分组名称 / 备注 / 币种",
+  "booksNoMatchingGroups": "暂无匹配分组",
+  "booksFilterAll": "全部",
+  "booksFilterEnabled": "启用中",
+  "booksFilterDisabled": "已停用",
+  "booksHasMore": "还有更多",
+  "booksNoRemark": "暂无备注",
+  "booksDefaultGroupTag": "默认分组",
+  "booksCurrentUsingTag": "当前使用",
+  "booksNoDefaultBook": "默认账本：未设置",
+  "booksVisitorViewGroupOnly": "你是访客，仅可查看分组信息",
+  "permissionVisitorNoAccess": "你是访客，无权限访问",
+  "commonSystemBusy": "系统繁忙，请稍后重试",
+  "booksInviteMembers": "邀请成员",
+  "booksDeleteGroupForever": "永久删除分组",
+  "booksGroupNoAvailableBook": "该分组暂无可用账本，请先新建或启用账本",
+  "booksGroupCreated": "分组已创建",
+  "booksGroupSaved": "分组已保存",
+  "booksBookCreated": "账本已创建",
+  "booksBookSaved": "账本已保存",
+  "booksBookSearchHint": "搜索账本名称 / 备注",
+  "booksRecycleEmpty": "回收站为空",
+  "booksGroupNoBooks": "该分组暂无账本",
+  "booksGroupDisabledReadonly": "该分组已停用，仅可查看历史账本；启用分组后可编辑。",
+  "booksActiveSegment": "在用",
+  "booksSelectGroup": "请选择分组",
+  "booksTapSwitchGroup": "点击切换管理分组",
+  "booksGroupDisabledViewOnly": "已停用 · 仅可查看",
+  "booksSwitchGroup": "切换分组",
+  "booksDefaultTag": "默认",
+  "booksDefaultAccountSettings": "默认账户设置",
+  "booksDeleteForever": "彻底删除",
+  "booksBookFallbackName": "该账本",
+  "booksDeleteGroupTitle": "永久删除分组「{name}」?",
+  "@booksDeleteGroupTitle": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "booksDeleteGroupWarning": "此操作不可恢复，会删除账本、账户、分类、标签、交易对象、成员关系、全部账单记录与照片。当前版本无法预览具体数量。",
+  "booksDeleteGroupUnderstand": "我理解无法预览数量，仍要删除",
+  "booksDeleteBookForeverTitle": "彻底删除账本「{name}」?",
+  "@booksDeleteBookForeverTitle": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "booksDeleteBookWarning": "此操作不可恢复。删除前请确认当前分组仍保留至少一个在用启用账本。",
+  "booksVisitorCannotCreateGroup": "访客无法新建分组",
+  "booksRecycleCannotCreateBook": "回收站中不可新建账本",
+  "booksEnableGroupBeforeCreateBook": "启用分组后可新建账本",
+  "booksVisitorCannotCreateBook": "访客无法新建账本",
+  "booksGroupDetailTitle": "分组详情",
+  "booksBookDetailTitle": "账本详情",
+  "booksMembersCount": "成员（{count}）",
+  "@booksMembersCount": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "booksInvite": "邀请",
+  "booksAdjustRoleHint": "如需调整角色，请移除后重新邀请。",
+  "booksUnknownRole": "角色未知",
+  "booksCannotRemoveSelf": "不能移除自己",
+  "booksCannotRemoveOnlyOwner": "不能移除唯一管理员",
+  "booksInvitedUser": "已邀请 {username}",
+  "@booksInvitedUser": {
+    "placeholders": {
+      "username": {}
+    }
+  },
+  "booksBookOverview": "账本概览",
+  "booksNoBooks": "暂无账本",
+  "booksManageAllBooksInTab": "去账本 Tab 管理全部账本",
+  "booksInfo": "信息",
+  "booksSortValue": "显示顺序：{sort}",
+  "@booksSortValue": {
+    "placeholders": {
+      "sort": {}
+    }
+  },
+  "booksRemarkValue": "备注：{remark}",
+  "@booksRemarkValue": {
+    "placeholders": {
+      "remark": {}
+    }
+  },
+  "booksNone": "无",
+  "booksDefaultBookUpdated": "默认账本已更新",
+  "booksUsername": "用户名",
+  "booksRole": "角色",
+  "booksInviteConfirmTitle": "确认邀请",
+  "booksInviteConfirmMessage": "将邀请 {username} 加入当前分组，请确认用户名完全一致。",
+  "@booksInviteConfirmMessage": {
+    "placeholders": {
+      "username": {}
+    }
+  },
+  "booksSendInvite": "发送邀请",
+  "booksInviteInputError": "请输入用户名并选择角色",
+  "booksInviteHelp": "请确认对方用户名完全一致。当前接口无法预览昵称或头像。",
+  "booksNoEnabledAccounts": "本分组暂无启用账户\n可先保存账本，稍后在账户管理中设置默认账户",
+  "booksUnsupportedAccount": "该账户不支持{kind}",
+  "@booksUnsupportedAccount": {
+    "placeholders": {
+      "kind": {}
+    }
+  },
+  "booksClearSelection": "清除选择",
+  "booksConfirmObjectHint": "请输入「{name}」确认",
+  "@booksConfirmObjectHint": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "booksDefaultDestructiveCheckbox": "我理解该操作不可恢复，仍要继续",
+  "booksPermanentlyDelete": "永久删除",
+  "booksRoleOwner": "管理员",
+  "booksRoleActor": "协作者",
+  "booksRoleVisitor": "访客",
+  "booksUnnamedMember": "未知成员",
+  "booksUnnamedAccount": "未命名账户",
+  "booksDefaultExpenseAccount": "默认支出账户",
+  "booksDefaultIncomeAccount": "默认收入账户",
+  "booksDefaultTransferOutAccount": "默认转出账户",
+  "booksDefaultTransferInAccount": "默认转入账户",
+  "recurringSelectBookFirst": "请先选择账本",
+  "recurringLogsTitle": "执行日志 · {name}",
+  "@recurringLogsTitle": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "recurringRemoveTitle": "删除规则",
+  "recurringThisRule": "该规则",
+  "recurringRemoveMessage": "确定删除「{name}」吗？此操作不可撤销。",
+  "@recurringRemoveMessage": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "recurringDelete": "删除",
+  "recurringTitle": "周期记账",
+  "recurringEmpty": "暂无周期规则，点击右上角 + 新增",
+  "recurringUnnamedRule": "未命名规则",
+  "recurringNextExecution": "下次执行",
+  "recurringExecutedLabel": "已执行",
+  "recurringExecutedCount": "{count} 次",
+  "@recurringExecutedCount": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "recurringEdit": "编辑",
+  "recurringLogs": "执行日志",
+  "recurringRuleNameRequired": "请输入规则名称",
+  "recurringCronRequired": "请输入 cron 表达式",
+  "recurringCronInvalidFix": "cron 表达式无效，请修正",
+  "recurringAmountRequired": "请输入有效的模板金额",
+  "recurringEditRule": "编辑周期规则",
+  "recurringAddRule": "新增周期规则",
+  "recurringSectionRule": "规则设置",
+  "recurringRuleName": "规则名称",
+  "recurringRuleNameHint": "如：每月房租",
+  "recurringCron": "cron 表达式",
+  "recurringCronHint": "如：0 0 1 * * ?",
+  "recurringSchedule": "执行频率",
+  "recurringScheduleSummary": "执行时间",
+  "recurringFreqDaily": "每天",
+  "recurringFreqWeekly": "每周",
+  "recurringFreqMonthly": "每月",
+  "recurringFreqYearly": "每年",
+  "recurringAtTime": "时间",
+  "recurringOnDays": "重复",
+  "recurringOnDayOfMonth": "每月几号",
+  "recurringOnMonth": "月份",
+  "recurringDayOfMonthValue": "{day} 号",
+  "@recurringDayOfMonthValue": {
+    "placeholders": {
+      "day": {}
+    }
+  },
+  "recurringMonthValue": "{month} 月",
+  "@recurringMonthValue": {
+    "placeholders": {
+      "month": {}
+    }
+  },
+  "recurringAdvancedCron": "自定义 cron（高级）",
+  "recurringAdvancedCronHint": "手动编辑 cron 表达式，适合高级用户",
+  "recurringUseVisual": "使用可视化选择",
+  "recurringUseAdvanced": "切换到自定义 cron",
+  "recurringDiscardCustomCronTitle": "切回可视化选择？",
+  "recurringDiscardCustomCronMessage": "当前自定义 cron 表达式无法转换为可视化规则。",
+  "recurringDiscardCustomCronWarning": "继续后将使用当前可视化规则覆盖该表达式，且无法恢复。",
+  "recurringSummaryDaily": "每天 {time}",
+  "@recurringSummaryDaily": {
+    "placeholders": {
+      "time": {}
+    }
+  },
+  "recurringSummaryWeekly": "每周 {days} {time}",
+  "@recurringSummaryWeekly": {
+    "placeholders": {
+      "days": {},
+      "time": {}
+    }
+  },
+  "recurringSummaryMonthly": "每月 {day} 号 {time}",
+  "@recurringSummaryMonthly": {
+    "placeholders": {
+      "day": {},
+      "time": {}
+    }
+  },
+  "recurringSummaryYearly": "每年 {month}月{day}号 {time}",
+  "@recurringSummaryYearly": {
+    "placeholders": {
+      "month": {},
+      "day": {},
+      "time": {}
+    }
+  },
+  "recurringWeekdayMon": "周一",
+  "recurringWeekdayTue": "周二",
+  "recurringWeekdayWed": "周三",
+  "recurringWeekdayThu": "周四",
+  "recurringWeekdayFri": "周五",
+  "recurringWeekdaySat": "周六",
+  "recurringWeekdaySun": "周日",
+  "recurringStartDateOptional": "开始日期（可选）",
+  "recurringEndDateOptional": "结束日期（可选）",
+  "recurringMaxExecutionsOptional": "最大执行次数（可选）",
+  "recurringMaxExecutionsHint": "留空为不限",
+  "recurringRecoveryStrategy": "补偿策略",
+  "recurringEnabled": "启用",
+  "recurringSectionTemplate": "账单模板",
+  "recurringType": "类型",
+  "recurringTitleOptional": "标题（可选）",
+  "recurringBillTitleHint": "账单标题",
+  "recurringAmount": "金额",
+  "recurringCategory": "分类",
+  "recurringAccount": "账户",
+  "recurringTagsOptional": "标签（可多选，可选）",
+  "recurringSaveChanges": "保存修改",
+  "recurringCreateRule": "创建规则",
+  "recurringCronInvalid": "cron 表达式无效",
+  "recurringCronValid": "cron 表达式有效",
+  "recurringNoOptions": "暂无可选项",
+  "recurringNoLogs": "暂无执行记录",
+  "recurringLogBillId": "账单 #{id}",
+  "@recurringLogBillId": {
+    "placeholders": {
+      "id": {}
+    }
+  },
+  "recurringLogDuration": "耗时 {ms}ms",
+  "@recurringLogDuration": {
+    "placeholders": {
+      "ms": {}
+    }
+  },
+  "ordersSelectBookFirst": "请先选择账本",
+  "ordersAddTitle": "新增报销单",
+  "ordersEditTitle": "编辑报销单",
+  "ordersRemoveTitle": "删除报销单",
+  "ordersThisOrder": "该报销单",
+  "ordersRemoveMessage": "确定删除「{name}」吗？",
+  "@ordersRemoveMessage": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "ordersDelete": "删除",
+  "ordersTitle": "报销单",
+  "ordersEmpty": "暂无报销单，点击右上角 + 新增",
+  "ordersUnnamedOrder": "未命名报销单",
+  "ordersOutLabel": "支出 ",
+  "ordersInLabel": "转入 ",
+  "ordersSubmitTime": "提交 {time}",
+  "@ordersSubmitTime": {
+    "placeholders": {
+      "time": {}
+    }
+  },
+  "ordersArchivedTime": "归档 {time}",
+  "@ordersArchivedTime": {
+    "placeholders": {
+      "time": {}
+    }
+  },
+  "ordersUse": "使用",
+  "ordersArchive": "归档",
+  "ordersArchiveTooltip": "归档后此订单不再算入统计",
+  "ordersStatusUnrecognized": "该订单状态无法识别",
+  "ordersReopen": "重开",
+  "ordersTitleRequired": "请输入报销单标题",
+  "ordersOrderTitle": "报销单标题",
+  "ordersTitleHint": "如：8月差旅报销",
+  "ordersType": "类型",
+  "ordersTypeReimbursement": "报销单",
+  "ordersRemarkOptional": "备注（可选）",
+  "ordersRemarkHint": "备注",
+  "ordersSaveChanges": "保存修改",
+  "ordersCreateOrder": "创建报销单",
+  "categoriesSelectBookFirst": "请先选择账本",
+  "categoriesAdd": "新增分类",
+  "categoriesEdit": "编辑分类",
+  "categoriesMoveToRecycleBin": "移入回收站",
+  "categoriesMoveToRecycleBinConfirm": "确定将「{name}」移入回收站吗？",
+  "@categoriesMoveToRecycleBinConfirm": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "categoriesMove": "移入",
+  "categoriesThisCategory": "该分类",
+  "categoriesDeletePermanently": "彻底删除",
+  "categoriesDeletePermanentlyConfirm": "确定彻底删除「{name}」吗？此操作不可撤销。",
+  "@categoriesDeletePermanentlyConfirm": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "categoriesDelete": "删除",
+  "categoriesTitle": "分类管理",
+  "categoriesSearchHint": "搜索分类名称",
+  "categoriesEmpty": "暂无分类，点击右上角 + 新增",
+  "categoriesExpenseSection": "支出分类",
+  "categoriesIncomeSection": "收入分类",
+  "categoriesNameRequired": "请输入分类名称",
+  "categoriesNameLabel": "分类名称",
+  "categoriesNameHint": "如：餐饮",
+  "categoriesTypeLabel": "分类类型",
+  "categoriesParentLabel": "父级分类（可选）",
+  "categoriesSortLabel": "排序（可选）",
+  "categoriesSortHint": "数字越小越靠前",
+  "categoriesRemarkLabel": "备注（可选）",
+  "categoriesRemarkHint": "备注",
+  "categoriesEnable": "启用",
+  "categoriesSaveEdit": "保存修改",
+  "categoriesCreate": "创建分类",
+  "categoriesTypeExpense": "支出",
+  "categoriesTypeIncome": "收入",
+  "categoriesParentNone": "无（顶级分类）",
+  "categoriesUnnamed": "未命名",
+  "tagsSelectBookFirst": "请先选择账本",
+  "tagsAdd": "新增标签",
+  "tagsEdit": "编辑标签",
+  "tagsMoveToRecycleBin": "移入回收站",
+  "tagsMoveToRecycleBinConfirm": "确定将「{name}」移入回收站吗？",
+  "@tagsMoveToRecycleBinConfirm": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "tagsMove": "移入",
+  "tagsThisTag": "该标签",
+  "tagsDeletePermanently": "彻底删除",
+  "tagsDeletePermanentlyConfirm": "确定彻底删除「{name}」吗？此操作不可撤销。",
+  "@tagsDeletePermanentlyConfirm": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "tagsDelete": "删除",
+  "tagsTitle": "标签管理",
+  "tagsSearchHint": "搜索标签名称",
+  "tagsEmpty": "暂无标签，点击右上角 + 新增",
+  "tagsNameRequired": "请输入标签名称",
+  "tagsNameLabel": "标签名称",
+  "tagsNameHint": "如：聚餐",
+  "tagsParentLabel": "父级标签（可选）",
+  "tagsSortLabel": "排序（可选）",
+  "tagsSortHint": "数字越小越靠前",
+  "tagsRemarkLabel": "备注（可选）",
+  "tagsRemarkHint": "备注",
+  "tagsSaveEdit": "保存修改",
+  "tagsCreate": "创建标签",
+  "tagsParentNone": "无（顶级标签）",
+  "tagsUnnamed": "未命名",
+  "payeesSelectBookFirst": "请先选择账本",
+  "payeesAdd": "新增交易对象",
+  "payeesEdit": "编辑交易对象",
+  "payeesMoveToRecycleBin": "移入回收站",
+  "payeesMoveToRecycleBinConfirm": "确定将「{name}」移入回收站吗？",
+  "@payeesMoveToRecycleBinConfirm": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "payeesMove": "移入",
+  "payeesThisPayee": "该交易对象",
+  "payeesDeletePermanently": "彻底删除",
+  "payeesDeletePermanentlyConfirm": "确定彻底删除「{name}」吗？此操作不可撤销。",
+  "@payeesDeletePermanentlyConfirm": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "payeesDelete": "删除",
+  "payeesTitle": "交易对象",
+  "payeesSearchHint": "搜索交易对象名称",
+  "payeesEmpty": "暂无交易对象，点击右上角 + 新增",
+  "payeesUnnamed": "未命名",
+  "payeesCanExpenseShort": "可支",
+  "payeesCanIncomeShort": "可收",
+  "payeesSortValue": "排序 {sort}",
+  "@payeesSortValue": {
+    "placeholders": {
+      "sort": {}
+    }
+  },
+  "payeesNameRequired": "请输入交易对象名称",
+  "payeesNameLabel": "交易对象名称",
+  "payeesNameHint": "如：肯德基",
+  "payeesSortLabel": "排序（可选）",
+  "payeesSortHint": "数字越小越靠前",
+  "payeesRemarkLabel": "备注（可选）",
+  "payeesRemarkHint": "备注",
+  "payeesSaveEdit": "保存修改",
+  "payeesCreate": "创建交易对象",
+  "membersSelectBookFirst": "请先选择账本",
+  "membersAdd": "新增成员",
+  "membersEdit": "编辑成员",
+  "membersMoveToRecycleBin": "移入回收站",
+  "membersMoveToRecycleBinConfirm": "确定将「{name}」移入回收站吗？",
+  "@membersMoveToRecycleBinConfirm": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "membersMove": "移入",
+  "membersThisMember": "该成员",
+  "membersDeletePermanently": "彻底删除",
+  "membersDeletePermanentlyConfirm": "确定彻底删除「{name}」吗？此操作不可撤销。",
+  "@membersDeletePermanentlyConfirm": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "membersDelete": "删除",
+  "membersTitle": "成员管理",
+  "membersSearchHint": "搜索成员名称",
+  "membersEmpty": "暂无成员，点击右上角 + 新增",
+  "membersUnnamed": "未命名",
+  "membersStatusEnabled": "启用",
+  "membersStatusDisabled": "停用",
+  "membersNameRequired": "请输入成员名称",
+  "membersNameLabel": "成员名称",
+  "membersNameHint": "如：张三",
+  "membersSortLabel": "排序（可选）",
+  "membersSortHint": "数字越小越靠前",
+  "membersRemarkLabel": "备注（可选）",
+  "membersRemarkHint": "备注",
+  "membersEnable": "启用",
+  "membersSaveEdit": "保存修改",
+  "membersCreate": "创建成员",
+  "groupUsersSelectGroupFirst": "请先选择分组",
+  "groupUsersInviteTitle": "邀请用户",
+  "groupUsersInviteSent": "邀请已发送",
+  "groupUsersRemoveTitle": "移除成员",
+  "groupUsersRemoveConfirm": "确定将「{name}」移出该分组吗？",
+  "@groupUsersRemoveConfirm": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "groupUsersRemove": "移除",
+  "groupUsersTitle": "成员管理",
+  "groupUsersTitleWithName": "成员管理 · {name}",
+  "@groupUsersTitleWithName": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "groupUsersInvite": "邀请",
+  "groupUsersEmpty": "该分组暂无成员",
+  "groupUsersUsernameRequired": "请输入用户名",
+  "groupUsersRoleRequired": "请选择角色",
+  "groupUsersUsernameLabel": "用户名",
+  "groupUsersUsernameHint": "输入被邀请人的用户名",
+  "groupUsersRoleLabel": "角色",
+  "groupUsersSendInvite": "发送邀请",
+  "dashboardSelectBookFirst": "请先选择一个账本",
+  "dashboardQuickAdd": "记一笔",
+  "dashboardNetWorth": "净资产",
+  "dashboardNoRecordsYet": "还没有记录",
+  "dashboardStartFirstBill": "开始记第一笔",
+  "dashboardAssets": "资产",
+  "dashboardLiabilities": "负债",
+  "dashboardPeriodExpense": "本账期支出",
+  "dashboardPeriodIncome": "本账期收入",
+  "dashboardExpenseTrend": "支出趋势",
+  "dashboardIncomeExpenseTrend": "收支趋势",
+  "dashboardInsufficientData": "数据不足",
+  "dashboardLoadFailed": "加载失败",
+  "dashboardSelectGroup": "选择分组",
+  "dashboardSelectBook": "选择账本",
+  "dashboardTopCategories": "本月支出分类 Top3",
+  "dashboardUncategorized": "未分类",
+  "dashboardRecentBills": "最近账单",
+  "dashboardViewAll": "全部",
+  "dashboardNoBillsYet": "还没有账单",
+  "dashboardBillFallback": "账单",
+  "dashboardAssetsLiabilities": "资产负债",
+  "dashboardNoData": "暂无数据",
+  "statsSelectBookFirst": "请先选择一个账本",
+  "statsCategoryShare": "分类占比",
+  "statsPayees": "交易对象",
+  "statsTags": "标签",
+  "statsNoRecordsThisPeriod": "本期暂无记录",
+  "statsUnnamed": "未命名",
+  "statsUncategorized": "未分类",
+  "statsTitle": "统计",
+  "statsRangeWeek": "本周",
+  "statsRangePeriod": "本账期",
+  "statsRangeYear": "本年",
+  "statsRangeCustom": "自定义",
+  "statsExpense": "支出",
+  "statsIncome": "收入",
+  "statsSurplus": "结余",
+  "statsBasicTitle": "收支洞察",
+  "statsExpenseAnalytics": "支出分析",
+  "statsIncomeAnalytics": "收入分析",
+  "statsExpenseCategoryShare": "支出分类占比",
+  "statsIncomeCategoryShare": "收入分类占比",
+  "statsExpenseTags": "支出标签",
+  "statsIncomeTags": "收入标签",
+  "statsExpensePayees": "支出交易对象",
+  "statsIncomePayees": "收入交易对象",
+  "statsExpenseTrend": "支出趋势",
+  "statsIncomeTrend": "收入趋势",
+  "ioTitle": "导出",
+  "ioSelectBookFirst": "请先选择账本",
+  "ioDownloadStarted": "已开始下载 {filename}",
+  "@ioDownloadStarted": {
+    "placeholders": {
+      "filename": {}
+    }
+  },
+  "ioSavedTo": "已保存到：{path}",
+  "@ioSavedTo": {
+    "placeholders": {
+      "path": {}
+    }
+  },
+  "ioExportFailedNoData": "导出失败：无数据",
+  "ioDownloadFailed": "下载失败",
+  "ioReadFileFailed": "读取文件失败",
+  "ioImportResult": "导入结果",
+  "ioExportBillsTitle": "导出账单 Excel",
+  "ioExportBillsSubtitle": "导出当前账本账单（含筛选，最大 10000 条）",
+  "ioExport": "导出",
+  "ioDownloadTemplateTitle": "下载导入模板",
+  "ioDownloadTemplateSubtitle": "获取标准 Excel 模板，按格式填写后导入",
+  "ioDownloadTemplate": "下载模板",
+  "ioImportBillsTitle": "导入账单 Excel",
+  "ioImportBillsSubtitle": "选择 .xlsx 文件上传，导入完成后展示结果",
+  "ioSelectFileImport": "选择文件导入",
+  "ioSuccess": "成功",
+  "ioFail": "失败",
+  "ioTotal": "共",
+  "ioImportFailedWithErrors": "导入失败，存在错误行。可下载错误明细 Excel 查看具体原因。",
+  "ioDownloadErrorDetails": "下载错误明细",
+  "ioDone": "完成",
+  "manageSharedTabAll": "全部",
+  "manageSharedTabEnabled": "启用",
+  "manageSharedTabDisabled": "停用",
+  "manageSharedTabRecycleBin": "回收站",
+  "manageSharedSearchHint": "搜索名称",
+  "manageSharedPutBack": "移出回收站",
+  "manageSharedDeleteForever": "彻底删除",
+  "manageSharedEdit": "编辑",
+  "manageSharedMoveToRecycleBin": "移入回收站",
+  "profileScreenCaptureAllowed": "允许截屏与录屏",
+  "profileScreenCaptureAllowedSubtitle": "默认限制截屏、录屏和应用预览；仅在需要分享内容时开启。",
+  "profileScreenCaptureAllowedIosHint": "iPhone 和 iPad 无法阻止系统静态截图；保护模式会遮挡录屏、镜像和应用切换预览中的内容。",
+  "profileScreenCaptureProtectionFailed": "屏幕保护设置未生效，请重试。",
+  "profileDesktopWidget": "添加到桌面卡片",
+  "profileDesktopWidgetSubtitle": "支持收支日历，也可长按桌面空白处添加",
+  "profileEditTitle": "编辑资料",
+  "profileDetailsTitle": "个人资料",
+  "profileViewProfile": "查看个人资料",
+  "profileDetailedInformation": "详细信息",
+  "profileSystemRecords": "系统记录",
+  "profileUsername": "账号",
+  "profileRole": "角色",
+  "profileLoginIp": "登录 IP",
+  "profileLoginTime": "登录时间",
+  "profileRemark": "备注",
+  "profileNotSet": "未设置",
+  "profileEditAvatar": "编辑头像",
+  "profileQrCode": "个人二维码",
+  "profileBack": "返回个人中心",
+  "profileMissingUserInfoUpload": "缺少用户信息，无法上传",
+  "profileAvatarUpdated": "头像已更新",
+  "profileUploadFailed": "上传失败：{error}",
+  "@profileUploadFailed": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "profileMissingUserInfoSave": "缺少用户信息，无法保存",
+  "profileNicknameRequired": "昵称不能为空",
+  "profileSaved": "资料已保存",
+  "profileSaveFailed": "保存失败：{error}",
+  "@profileSaveFailed": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "profileMissingUserInfoPassword": "缺少用户信息，无法修改密码",
+  "profileChangePassword": "修改密码",
+  "profileNickname": "昵称",
+  "profileNicknameHint": "请输入昵称",
+  "profilePhone": "电话",
+  "profilePhoneHint": "请输入手机号",
+  "profileEmail": "邮箱",
+  "profileEmailHint": "请输入邮箱",
+  "profileTapToChangeAvatar": "点击更换头像",
+  "profileSex": "性别",
+  "profileSexMale": "男",
+  "profileSexFemale": "女",
+  "profilePasswordFillOldNew": "请填写旧密码和新密码",
+  "profilePasswordMinLength": "新密码至少 6 位",
+  "profilePasswordMismatch": "两次输入的新密码不一致",
+  "profilePasswordChanged": "密码修改成功",
+  "profilePasswordChangeFailed": "修改失败：{error}",
+  "@profilePasswordChangeFailed": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "profileOldPassword": "旧密码",
+  "profileNewPassword": "新密码",
+  "profileConfirmNewPassword": "确认新密码",
+  "profileConfirmChange": "确认修改",
+  "profileColorIncome": "收入",
+  "profileColorExpense": "支出",
+  "profileColorTransfer": "转账",
+  "profileColorAdjust": "调整",
+  "profileColorAdvance": "垫付",
+  "profileColorReimburse": "报销",
+  "profileColorPresetDefault": "默认红绿",
+  "profileColorPresetDeuteranopia": "红绿色盲友好",
+  "profileColorPresetProtanopia": "红色盲友好",
+  "profileColorPresetTritanopia": "蓝黄色盲友好",
+  "profileColorPresetTitle": "色盲友好预设",
+  "profileRestoreDefault": "恢复默认",
+  "statsViewTable": "查看表格",
+  "statsViewChart": "查看图表",
+  "statsTableItem": "项目",
+  "statsTableValue": "数值",
+  "statsTableShare": "占比",
+  "statsTableDetail": "详情",
+  "statsTableSemantics": "图表数据表，共 {count} 行",
+  "@statsTableSemantics": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "statsDonutChartSemantics": "环形图，共 {count} 项",
+  "@statsDonutChartSemantics": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "statsLineChartSemantics": "折线图，共 {count} 个数据点",
+  "@statsLineChartSemantics": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "statsBarChartSemantics": "柱状图，共 {count} 项",
+  "@statsBarChartSemantics": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "profileSaveFailedRetry": "保存失败，请重试",
+  "profileLoadFailed": "资料加载失败",
+  "profileNotLoggedIn": "未登录",
+  "profileNotSelected": "未选择",
+  "profileMonthStartDayValue": "每月 {day} 日",
+  "@profileMonthStartDayValue": {
+    "placeholders": {
+      "day": {}
+    }
+  },
+  "profileMonthStartDayHint": "短月份自动使用当月最后一天",
+  "profileRefresh": "刷新",
+  "profileCurrencyRefreshing": "正在刷新汇率…",
+  "profileCurrencyRefreshed": "汇率已刷新",
+  "profileCurrencyRefreshFailed": "刷新失败：{error}",
+  "@profileCurrencyRefreshFailed": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "profileAboutApp": "关于好记",
+  "profileAppVersion": "应用版本",
+  "profileApiVersion": "API 版本",
+  "profileIcp": "ICP 备案",
+  "profileSigningValidity": "签名有效期",
+  "profileSigningExpired": "已过期",
+  "profileSigningCountdown": "剩余 {days} 天 {hours} 时 {minutes} 分",
+  "@profileSigningCountdown": {
+    "placeholders": {
+      "days": {},
+      "hours": {},
+      "minutes": {}
+    }
+  },
+  "profileSigningExpiresOn": "至 {date}",
+  "@profileSigningExpiresOn": {
+    "placeholders": {
+      "date": {}
+    }
+  },
+  "profileHelpContent": "好记是一款多分组、多账本的记账应用。\n\n· 在首页快速记一笔，或在账单页查看明细。\n· 通过\"我的\"进入分类、标签、账户、成员等管理。\n· 遇到问题可联系管理员或查看项目文档。",
+  "profileHelpIntro": "好记是一款支持多分组、多账本协作的记账应用。下面是常见功能的使用说明，帮助你快速上手。",
+  "profileHelpQuickTitle": "快速记账",
+  "profileHelpQuickBody": "点击底部中间的蓝色「+」按钮即可记一笔。先填写标题，再在金额区选择分类并输入金额；支出、收入、转账、垫付、报销可通过顶部分段切换。支持添加多个分类拆分、附加手续费/优惠、上传票据图片。",
+  "profileHelpBillsTitle": "账单与账期",
+  "profileHelpBillsBody": "账单页以账期为单位展示收支。顶部左右箭头可在相邻账期间切换，向下滚动会自动加载更早的账单。你可以在「我的 → 每月开始日」自定义账期起始日（例如每月 5 号），适配发薪日记账习惯。",
+  "profileHelpBookTitle": "分组与账本",
+  "profileHelpBookBody": "分组用于隔离不同场景（如个人、家庭、公司），每个分组下可建立多个账本。在「我的 → 分组管理 / 账本管理」中新增、编辑、设为默认或停用；切换当前账本后，账单、统计、账户都会随之刷新。",
+  "profileHelpManageTitle": "基础数据管理",
+  "profileHelpManageBody": "分类、标签、交易对象、成员、账户均可独立管理。分类与标签支持树形层级；账户区分现金、信用卡、资产、贷款四类，并汇总净资产。停用或删除的项目会进入回收站，可随时还原。",
+  "profileHelpRecurringTitle": "周期记账",
+  "profileHelpRecurringBody": "在「我的 → 周期记账」中创建自动记账规则。通过可视化的频率选择器（每天/每周/每月/每年）即可生成规则，无需手写 cron；进阶用户也可切换到自定义模式直接编辑 cron 表达式。",
+  "profileHelpPrivacyTitle": "隐私与显示",
+  "profileHelpPrivacyBody": "开启「隐藏金额」后，首页与账单中的金额会以圆点遮盖，适合在公共场合查看。你还可以自定义收入/支出等颜色，以及切换浅色/深色主题。",
+  "profileHelpContactTitle": "获取帮助",
+  "profileHelpContactBody": "若遇到数据异常或功能疑问，请先尝试下拉刷新或重新登录；仍无法解决时，可联系分组管理员，或前往项目主页查阅文档与反馈问题。",
+  "profileDonateContent": "感谢你的支持！\n如愿意赞助开发，可通过项目主页获取捐赠方式。",
+  "profileLogoutConfirm": "确定要退出当前账号吗？",
+  "goodsTitle": "归物",
+  "goodsSelectBookFirst": "请先选择账本",
+  "goodsAddTitle": "添加物品",
+  "goodsEditTitle": "编辑物品",
+  "goodsDetailTitle": "物品详情",
+  "goodsMenuDetail": "查看详情",
+  "goodsMenuEdit": "编辑",
+  "goodsMenuDelete": "删除",
+  "goodsRemoveTitle": "删除物品",
+  "goodsThisItem": "该物品",
+  "goodsRemoveConfirm": "确定删除「{name}」吗？此操作不可撤销。",
+  "@goodsRemoveConfirm": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "goodsEmptyHint": "暂无物品，点击右上角 + 添加",
+  "goodsStatAllCost": "全部成本",
+  "goodsStatActiveCost": "在役成本",
+  "goodsStatDailyCost": "日均成本",
+  "goodsUnnamed": "未命名",
+  "goodsHoldingDays": "持有 {days} 天",
+  "@goodsHoldingDays": {
+    "placeholders": {
+      "days": {}
+    }
+  },
+  "goodsDailyAvg": "日均 {amount}",
+  "@goodsDailyAvg": {
+    "placeholders": {
+      "amount": {}
+    }
+  },
+  "goodsFieldPurchaseDate": "购买日期",
+  "goodsFieldHoldingTime": "持有天数",
+  "goodsDaysValue": "{days} 天",
+  "@goodsDaysValue": {
+    "placeholders": {
+      "days": {}
+    }
+  },
+  "goodsFieldCategory": "分类",
+  "goodsFieldTag": "标签",
+  "goodsFieldWarrantyDate": "保修日期",
+  "goodsFieldWarrantyStatus": "保修状态",
+  "goodsFieldUsageCount": "使用次数",
+  "goodsFieldStatus": "状态",
+  "goodsFieldRetiredDate": "退役日期",
+  "goodsFieldSoldPrice": "出售价格",
+  "goodsFieldProfit": "出售盈亏",
+  "goodsFieldRemark": "备注",
+  "goodsErrNameRequired": "请输入物品名称",
+  "goodsErrInvalidPrice": "请输入有效价格",
+  "goodsErrStatusRequired": "请选择物品状态",
+  "goodsErrCategoryRequired": "请选择分类",
+  "goodsPickDate": "选择日期",
+  "goodsSectionBasic": "基础信息",
+  "goodsLabelName": "物品名称",
+  "goodsHintName": "如：iPhone 15",
+  "goodsLabelPrice": "购买价格",
+  "goodsSectionCategoryTag": "分类与标签",
+  "goodsLabelCategoryOptional": "分类",
+  "goodsEmptyCategory": "无分类",
+  "goodsLabelTagOptional": "标签（可选）",
+  "goodsEmptyTag": "无标签",
+  "goodsNoCategoryOptions": "暂无分类，请先在分类管理中创建",
+  "goodsSectionWarrantyStatus": "保修与状态",
+  "goodsLabelWarrantyOptional": "保修日期（可选）",
+  "goodsNotSet": "未设置",
+  "goodsUnknown": "未知",
+  "goodsStatusUnrecognized": "当前状态「{status}」暂不可识别，如需修改请重新选择；不选则保留原状态。",
+  "@goodsStatusUnrecognized": {
+    "placeholders": {
+      "status": {}
+    }
+  },
+  "goodsUseByTimes": "按次使用",
+  "goodsHintUsageNum": "如：120",
+  "goodsSectionDisposal": "处置",
+  "goodsSectionRemarkAttach": "备注与附件",
+  "goodsLabelRemarkOptional": "备注（可选）",
+  "goodsSaveChanges": "保存修改",
+  "goodsNone": "不选",
+  "goodsLabelAttachOptional": "附件（可选）",
+  "goodsNoOptions": "{label}（无可选项）",
+  "@goodsNoOptions": {
+    "placeholders": {
+      "label": {}
+    }
+  },
+  "billTypeExpense": "支出",
+  "billTypeIncome": "收入",
+  "billTypeTransfer": "转账",
+  "billTypeAdjust": "余额调整",
+  "billTypeAdvance": "垫付",
+  "billTypeReimburse": "报销",
+  "billTypeFallback": "账单",
+  "commonPleaseSelect": "请选择",
+  "billEditorValidateTransferAmount": "转账金额不能为 0",
+  "billEditorValidateTransferFrom": "请选择转出账户",
+  "billEditorValidateTransferTo": "请选择转入账户",
+  "billEditorValidateTransferSame": "转出与转入账户不能相同",
+  "billEditorValidateCategoryRequired": "请添加分类",
+  "billEditorValidateCategorySelect": "请选择分类",
+  "billEditorValidateCategoryAmount": "分类金额不能为 0",
+  "billEditorValidateAccount": "请选择账户",
+  "billEditorValidateOrder": "请选择关联报销单",
+  "billEditorValidateTitle": "请填写标题",
+  "booksNoPermissionSetDefaultGroup": "你没有设置默认分组的权限",
+  "booksEnableGroupFirst": "请先启用该分组",
+  "booksAlreadyDefaultGroup": "该分组已是默认分组",
+  "booksNoPermissionToggleGroup": "你没有启停分组的权限",
+  "booksGroupAlreadyEnabled": "该分组已启用",
+  "booksGroupAlreadyDisabled": "该分组已停用",
+  "booksKeepOneEnabledGroup": "至少保留一个启用分组",
+  "booksSetOtherDefaultGroupFirst": "请先设置其他分组为默认分组",
+  "booksNoPermissionDeleteGroup": "你没有删除分组的权限",
+  "booksNoPermissionSetDefaultBook": "你没有设置默认账本的权限",
+  "booksRestoreBookFirst": "请先恢复该账本",
+  "booksEnableBookBeforeDefault": "请先启用该账本再设为默认",
+  "booksAlreadyDefaultBook": "该账本已是默认账本",
+  "booksNoPermissionToggleBook": "你没有启停账本的权限",
+  "booksBookAlreadyEnabled": "该账本已启用",
+  "booksBookAlreadyDisabled": "该账本已停用",
+  "booksSetOtherDefaultBookFirst": "请先设置其他账本为默认账本",
+  "booksOnlyAvailableBook": "这是当前分组唯一可用账本，请先新建或启用其他账本",
+  "booksNoPermissionMoveBook": "你没有移动账本的权限",
+  "booksNoPermissionRestoreBook": "你没有恢复账本的权限",
+  "booksNoPermissionDeleteBook": "你没有删除账本的权限",
+  "booksDefaultAccountMissing": "默认账户未完整设置，点击补全",
+  "booksDefaultBookTag": "默认账本",
+  "booksDefaultExpenseAccountValue": "默认支出：{name}",
+  "@booksDefaultExpenseAccountValue": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "profileStatsAssets": "资产统计",
+  "profileStatsLoans": "借贷理财",
+  "profileStatsPolicy": "统计策略说明",
+  "statsMoreReports": "更多统计报表",
+  "statsAssetsEntrySubtitle": "资产负债构成、净资产趋势和信用卡概览",
+  "statsLoansEntrySubtitle": "借贷应收应付、理财盈亏和待确认账单",
+  "statsPolicyEntrySubtitle": "查看哪些账单会进入统计图表",
+  "statsAssetsTitle": "资产统计",
+  "statsLoansTitle": "借贷理财",
+  "statsPolicyTitle": "统计策略说明",
+  "statsSelectGroupFirst": "请先选择分组",
+  "statsAssetsComposition": "资产负债构成",
+  "statsNetAssetsTrend": "净资产趋势",
+  "statsAssetsByAccountType": "按账户类型",
+  "statsCreditCardOverview": "信用卡概览",
+  "statsCreditCardDates": "账单日 {billing} · 还款日 {repayment}",
+  "@statsCreditCardDates": {
+    "placeholders": {
+      "billing": {},
+      "repayment": {}
+    }
+  },
+  "statsLoanOverview": "借贷概览",
+  "statsLoanReceivable": "待收回",
+  "statsLoanPayable": "待归还",
+  "statsOverdueReceivable": "逾期待收",
+  "statsOverduePayable": "逾期待还",
+  "statsPendingConfirm": "待确认",
+  "statsFinanceProfit": "理财收益",
+  "statsProfit": "盈利",
+  "statsLoss": "亏损",
+  "statsNetProfit": "净收益",
+  "statsBillCount": "{count} 笔",
+  "@statsBillCount": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "statsPolicyScope": "统计口径",
+  "statsPolicyDefaultInclude": "默认计入统计",
+  "statsPolicyDefaultExclude": "默认不计入统计",
+  "statsPolicyDefaultDesc": "已确认且开启“计入统计”的账单会进入收支、趋势、分类和资产相关报表；关闭计入统计的账单仅保留明细，不影响统计图表。",
+  "statsPolicyEndpointFallback": "当前后端尚未提供完整策略接口，以下按前端约定展示。",
+  "statsPolicyBillTypes": "账单类型口径",
+  "statsPolicyIncluded": "计入",
+  "statsPolicyExcluded": "不计入",
+  "statsIncomeExpenseCalendar": "收支日历",
+  "statsCalendarMonth": "月",
+  "statsCalendarYear": "年",
+  "statsCalendarHistory": "历史",
+  "statsCalendarIncome": "收",
+  "statsCalendarExpense": "支",
+  "statsCalendarPrevious": "上一个",
+  "statsCalendarNext": "下一个",
+  "statsCalendarTotalCount": "共 {count} 笔",
+  "@statsCalendarTotalCount": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "statsCalendarIncomeCount": "收入 {count} 笔",
+  "@statsCalendarIncomeCount": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "statsCalendarExpenseCount": "支出 {count} 笔",
+  "@statsCalendarExpenseCount": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "statsCalendarDateSummary": "{date} 收支",
+  "@statsCalendarDateSummary": {
+    "placeholders": {
+      "date": {}
+    }
+  },
+  "appTitle": "好记",
+  "fxDatePickerDateTitle": "选择日期",
+  "fxDatePickerDateTimeTitle": "选择日期和时间",
+  "fxDatePickerToday": "今天",
+  "fxDatePickerYesterday": "昨天",
+  "fxDatePickerStartOfMonth": "本月初",
+  "fxDatePickerDone": "完成",
+  "fxDatePickerPreviousYear": "上一年",
+  "fxDatePickerNextYear": "下一年",
+  "fxTreePickerTitle": "选择",
+  "fxTreePickerClear": "清空",
+  "fxTreePickerDone": "完成",
+  "fxTreePickerSearch": "搜索",
+  "fxTreePickerNoMatches": "无匹配项",
+  "fxTreePickerConfirm": "确定（{count}）",
+  "fxTreePickerExpand": "展开 {label}",
+  "@fxTreePickerExpand": {
+    "placeholders": {
+      "label": {}
+    }
+  },
+  "fxTreePickerCollapse": "收起 {label}",
+  "@fxTreePickerCollapse": {
+    "placeholders": {
+      "label": {}
+    }
+  },
+  "@fxTreePickerConfirm": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "statsCalendarViewBills": "查看当天账单",
+  "base64ImageEmpty": "图片数据为空",
+  "base64ImageInvalid": "图片解析失败"
+}

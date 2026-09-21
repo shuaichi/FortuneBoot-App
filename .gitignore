@@ -1,0 +1,123 @@
+# Miscellaneous
+*.class
+*.log
+*.pyc
+*.swp
+.DS_Store
+.atom/
+.build/
+.buildlog/
+.history
+.svn/
+.swiftpm/
+migrate_working_dir/
+
+# IntelliJ related
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# VS Code
+#.vscode/
+
+# Flutter/Dart/Pub related
+**/doc/api/
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+/build/
+
+# Symbolication related
+app.*.symbols
+
+# Obfuscation related
+app.*.map.json
+
+# FVM Version Cache
+.fvm/
+.fvmrc
+
+**/local.properties
+lib/generated/
+
+# HarmonyOS
+ohos/.hvigor/
+ohos/oh_modules/
+ohos/**/build/
+ohos/**/.ohos/
+ohos/entry/libs/
+ohos/signing/
+
+# Generated files
+*.g.dart
+*.freezed.dart
+*.mocks.dart
+
+# Test coverage
+coverage/
+.test_coverage.dart
+
+# Analysis
+.analysis_options_user.yaml
+
+# DevTools
+devtools_options.yaml
+
+# Package files
+*.jar
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# Virtual environments
+venv/
+env/
+.env
+
+# Temporary files
+*.tmp
+*.bak
+*~
+*.swp
+*.swo
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE
+*.iml
+*.ipr
+*.iws
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# Debug logs
+*.log
+
+# Keystore (should never be committed)
+*.jks
+*.keystore
+
+# Local agent and audit artifacts
+*.md
+#!docs/ux-audit-2026-08-19.md
+#!docs/ux-fix-prompts/08-l10n-integration-quality-report.md
+#!docs/quality-gate-exceptions.md
+/.skillflow/
+/.xcross/
+# Local CodeGenie nested repo (broken path on this machine)
+ohos/.codegenie/
+

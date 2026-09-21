@@ -1,0 +1,15 @@
+{
+  "name": "entry",
+  "version": "1.0.0",
+  "description": "Please describe the basic information.",
+  "main": "",
+  "author": "",
+  "license": "",
+  "dependencies": {
+    "@ohos/flutter_ohos": "file:E:/zhou/WeiHu/fortuneboot/HuanJing/flutter_flutter/bin/cache/artifacts/engine/ohos-arm64/flutter_embedding_debug.har",
+    "fortuneboot_ohos_security": "file:../../packages/fortuneboot_ohos_security/ohos",
+    "shared_preferences_ohos": "file:E:/zhou/WeiHu/fortuneboot/HuanJing/pub-cache/git/flutter_packages-35fb467533e174411a117b2a030c15d2a3a9687c/packages/shared_preferences/shared_preferences_ohos/ohos",
+    "image_picker_ohos": "file:E:/zhou/WeiHu/fortuneboot/HuanJing/pub-cache/git/flutter_packages-35fb467533e174411a117b2a030c15d2a3a9687c/packages/image_picker/image_picker_ohos/ohos",
+    "file_selector_ohos": "file:E:/zhou/WeiHu/fortuneboot/HuanJing/pub-cache/git/flutter_packages-35fb467533e174411a117b2a030c15d2a3a9687c/packages/file_selector/file_selector_ohos/ohos"
+  }
+}
