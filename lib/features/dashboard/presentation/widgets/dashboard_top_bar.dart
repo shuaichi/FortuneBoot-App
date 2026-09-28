@@ -11,10 +11,18 @@ import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
 import 'package:fortuneboot/generated/l10n.dart';
 
-/// 看板粘顶栏：左侧 分组·账本 切换器（点击弹 FxSheet），右侧头像（点击可空）。
+/// 看板粘顶栏：左侧 分组·账本 切换器（点击弹 FxSheet），右侧布局编辑 / 金额显隐 / 头像。
 class DashboardTopBar extends StatelessWidget {
   final VoidCallback? onAvatarTap;
-  const DashboardTopBar({super.key, this.onAvatarTap});
+  final bool editingLayout;
+  final VoidCallback? onEditLayoutToggle;
+
+  const DashboardTopBar({
+    super.key,
+    this.onAvatarTap,
+    this.editingLayout = false,
+    this.onEditLayoutToggle,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +45,7 @@ class DashboardTopBar extends StatelessWidget {
         children: [
           Expanded(
             child: GestureDetector(
-              onTap: () => _openSwitcher(context),
+              onTap: editingLayout ? null : () => _openSwitcher(context),
               behavior: HitTestBehavior.opaque,
               child: Row(
                 mainAxisSize: MainAxisSize.min,
@@ -66,11 +74,12 @@ class DashboardTopBar extends StatelessWidget {
                                 overflow: TextOverflow.ellipsis,
                               ),
                             ),
-                            Icon(
-                              Icons.expand_more_rounded,
-                              size: 22,
-                              color: palette.textSecondary,
-                            ),
+                            if (!editingLayout)
+                              Icon(
+                                Icons.expand_more_rounded,
+                                size: 22,
+                                color: palette.textSecondary,
+                              ),
                           ],
                         ),
                       ],
@@ -81,9 +90,18 @@ class DashboardTopBar extends StatelessWidget {
             ),
           ),
           const SizedBox(width: FxSpacing.md),
-          const _AmountVisibilityAction(),
-          const SizedBox(width: FxSpacing.xs),
-          _AvatarAction(onTap: onAvatarTap),
+          if (onEditLayoutToggle != null) ...[
+            _LayoutEditAction(
+              editing: editingLayout,
+              onPressed: onEditLayoutToggle!,
+            ),
+            const SizedBox(width: FxSpacing.xs),
+          ],
+          if (!editingLayout) ...[
+            const _AmountVisibilityAction(),
+            const SizedBox(width: FxSpacing.xs),
+            _AvatarAction(onTap: onAvatarTap),
+          ],
         ],
       ),
     );
@@ -92,6 +110,27 @@ class DashboardTopBar extends StatelessWidget {
   void _openSwitcher(BuildContext context) {
     HapticFeedback.selectionClick();
     SessionSwitcherSheet.show(context);
+  }
+}
+
+class _LayoutEditAction extends StatelessWidget {
+  const _LayoutEditAction({required this.editing, required this.onPressed});
+
+  final bool editing;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return FxIconButton(
+      icon: editing ? Icons.check_rounded : Icons.dashboard_customize_rounded,
+      tooltip: editing
+          ? S.of(context).dashboardDoneEditing
+          : S.of(context).dashboardEditLayout,
+      onPressed: () {
+        HapticFeedback.selectionClick();
+        onPressed();
+      },
+    );
   }
 }
 

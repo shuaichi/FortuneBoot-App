@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fortuneboot/core/app_constants.dart';
 import 'package:fortuneboot/core/feedback/fx_feedback.dart';
 import 'package:fortuneboot/core/navigation/app_router.dart';
 import 'package:fortuneboot/core/navigation/routes.dart';
@@ -652,6 +653,11 @@ class _ProfileView extends StatelessWidget {
               context,
               S.of(context).profileApiVersion,
               about.apiVersion ?? '-',
+            ),
+            _aboutRow(
+              context,
+              S.of(context).profileAppIcp,
+              AppConstants.appIcpFiling,
             ),
             _aboutRow(context, S.of(context).profileIcp, about.icp ?? '-'),
           ],

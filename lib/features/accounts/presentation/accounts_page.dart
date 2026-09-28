@@ -14,6 +14,7 @@ import 'package:fortuneboot/features/accounts/presentation/bloc/accounts_bloc.da
 import 'package:fortuneboot/features/accounts/presentation/widgets/account_card.dart';
 import 'package:fortuneboot/features/accounts/presentation/widgets/account_form_sheet.dart';
 import 'package:fortuneboot/features/accounts/presentation/widgets/account_menu.dart';
+import 'package:fortuneboot/features/accounts/presentation/widgets/account_type_filter_bar.dart';
 import 'package:fortuneboot/features/accounts/presentation/widgets/balance_adjust_sheet.dart';
 import 'package:fortuneboot/features/accounts/presentation/widgets/net_worth_card.dart';
 import 'package:fortuneboot/features/accounts/presentation/widgets/recycle_bin_sheet.dart';
@@ -39,6 +40,9 @@ class AccountsPage extends StatefulWidget {
 
 class _AccountsPageState extends State<AccountsPage> {
   final AccountService _service = AccountService();
+
+  /// 净资产下方类型筛选；null = 显示全部。
+  int? _filterType;
 
   AccountsBloc get _bloc => context.read<AccountsBloc>();
 
@@ -316,9 +320,18 @@ class _AccountsPageState extends State<AccountsPage> {
             children: [
               Padding(
                 padding: const EdgeInsets.all(FxSpacing.lg),
-                child: NetWorthCard(
-                  assets: state.assets,
-                  currencyCode: state.currencyCode,
+                child: Column(
+                  children: [
+                    NetWorthCard(
+                      assets: state.assets,
+                      currencyCode: state.currencyCode,
+                    ),
+                    const SizedBox(height: FxSpacing.md),
+                    AccountTypeFilterBar(
+                      selectedType: _filterType,
+                      onChanged: (type) => setState(() => _filterType = type),
+                    ),
+                  ],
                 ),
               ),
               SizedBox(
@@ -339,7 +352,15 @@ class _AccountsPageState extends State<AccountsPage> {
   }
 
   Widget _buildList(AccountsState state) {
-    final groups = state.groups;
+    final counts = <int, int>{};
+    for (final a in state.accounts) {
+      final id = AccountTypeMeta.of(a.accountType).id;
+      counts[id] = (counts[id] ?? 0) + 1;
+    }
+    final groups = _filterType == null
+        ? state.groups
+        : state.groups.where((g) => g.meta.id == _filterType).toList();
+
     return RefreshIndicator(
       onRefresh: _refreshAccounts,
       child: CustomScrollView(
@@ -353,27 +374,48 @@ class _AccountsPageState extends State<AccountsPage> {
                 FxSpacing.lg,
                 FxSpacing.sm,
               ),
-              child: NetWorthCard(
-                assets: state.assets,
-                currencyCode: state.currencyCode,
+              child: Column(
+                children: [
+                  NetWorthCard(
+                    assets: state.assets,
+                    currencyCode: state.currencyCode,
+                  ),
+                  const SizedBox(height: FxSpacing.md),
+                  AccountTypeFilterBar(
+                    selectedType: _filterType,
+                    counts: counts,
+                    onChanged: (type) => setState(() => _filterType = type),
+                  ),
+                ],
               ),
             ),
           ),
-          for (final group in groups) ...[
-            SliverToBoxAdapter(child: _groupHeader(group, state.currencyCode)),
-            SliverList(
-              delegate: SliverChildBuilderDelegate((context, i) {
-                final account = group.accounts[i];
-                return AccountCard(
-                  account: account,
-                  currencyCode: state.currencyCode,
-                  onTap: () => _openForm(account: account),
-                  onMenu: () => _openMenu(account),
-                  onAdjustBalance: () => _openAdjust(account),
-                );
-              }, childCount: group.accounts.length),
-            ),
-          ],
+          if (groups.isEmpty)
+            SliverFillRemaining(
+              hasScrollBody: false,
+              child: FxStateView.empty(
+                message: S.of(context).accountsEmptyHint,
+                icon: Icons.account_balance_wallet_outlined,
+              ),
+            )
+          else
+            for (final group in groups) ...[
+              SliverToBoxAdapter(
+                child: _groupHeader(group, state.currencyCode),
+              ),
+              SliverList(
+                delegate: SliverChildBuilderDelegate((context, i) {
+                  final account = group.accounts[i];
+                  return AccountCard(
+                    account: account,
+                    currencyCode: state.currencyCode,
+                    onTap: () => _openForm(account: account),
+                    onMenu: () => _openMenu(account),
+                    onAdjustBalance: () => _openAdjust(account),
+                  );
+                }, childCount: group.accounts.length),
+              ),
+            ],
           const SliverToBoxAdapter(child: SizedBox(height: FxSpacing.xxxl)),
         ],
       ),

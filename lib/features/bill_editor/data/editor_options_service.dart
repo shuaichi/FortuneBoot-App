@@ -5,6 +5,9 @@ import 'package:fortuneboot/features/orders/data/orders_models.dart';
 class AccountOption {
   final int? accountId;
   final String? accountName;
+  final String? cardNo;
+  final double balance;
+  final String? remark;
   final bool canExpense;
   final bool canIncome;
   final bool canTransferOut;
@@ -20,6 +23,9 @@ class AccountOption {
   const AccountOption({
     this.accountId,
     this.accountName,
+    this.cardNo,
+    this.balance = 0,
+    this.remark,
     this.canExpense = false,
     this.canIncome = false,
     this.canTransferOut = false,
@@ -29,9 +35,19 @@ class AccountOption {
     this.sort,
   });
 
+  /// 卡号末四位（不足四位则原样）。
+  String? get lastFour {
+    final n = cardNo?.trim();
+    if (n == null || n.isEmpty) return null;
+    return n.length <= 4 ? n : n.substring(n.length - 4);
+  }
+
   factory AccountOption.fromJson(Map<String, dynamic> json) => AccountOption(
     accountId: FxApi.asId(json['accountId']),
     accountName: json['accountName']?.toString(),
+    cardNo: json['cardNo']?.toString(),
+    balance: FxApi.asDouble(json['balance']) ?? 0,
+    remark: json['remark']?.toString(),
     canExpense: FxApi.asBool(json['canExpense']),
     canIncome: FxApi.asBool(json['canIncome']),
     canTransferOut: FxApi.asBool(json['canTransferOut']),

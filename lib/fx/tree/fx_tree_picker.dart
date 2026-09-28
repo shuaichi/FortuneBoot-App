@@ -282,26 +282,32 @@ class _FxTreePickerState<T> extends State<FxTreePicker<T>> {
     final selected = id != null && _selected.contains(id);
     final searching = _query.trim().isNotEmpty;
     final collapsed = _collapsed.contains(f);
-    final indent = searching ? 0.0 : f.depth * 16.0;
+    final indent = searching ? 0.0 : f.depth * 14.0;
 
     return InkWell(
       onTap: selectable ? () => _toggle(f) : null,
       child: Padding(
         padding: EdgeInsets.fromLTRB(
           FxSpacing.lg + indent,
-          FxSpacing.md,
+          FxSpacing.xs,
           FxSpacing.lg,
-          FxSpacing.md,
+          FxSpacing.xs,
         ),
         child: Row(
           children: [
             if (f.hasChildren && !searching)
               SizedBox(
-                width: 48,
-                height: 48,
+                width: 32,
+                height: 32,
                 child: Semantics(
                   expanded: !collapsed,
                   child: IconButton(
+                    padding: EdgeInsets.zero,
+                    visualDensity: VisualDensity.compact,
+                    constraints: const BoxConstraints.tightFor(
+                      width: 32,
+                      height: 32,
+                    ),
                     tooltip: collapsed
                         ? S
                               .of(context)
@@ -327,11 +333,12 @@ class _FxTreePickerState<T> extends State<FxTreePicker<T>> {
                 ),
               )
             else
-              const SizedBox(width: 48),
-            const SizedBox(width: FxSpacing.sm),
+              const SizedBox(width: 32),
+            const SizedBox(width: FxSpacing.xs),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
                     widget.labelOf(f.node),
@@ -340,6 +347,7 @@ class _FxTreePickerState<T> extends State<FxTreePicker<T>> {
                           ? (selected ? palette.primary : palette.textPrimary)
                           : palette.textTertiary,
                       fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
+                      height: 1.2,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -350,6 +358,7 @@ class _FxTreePickerState<T> extends State<FxTreePicker<T>> {
                       f.pathLabel,
                       style: FxTypography.caption.copyWith(
                         color: palette.textTertiary,
+                        height: 1.15,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,

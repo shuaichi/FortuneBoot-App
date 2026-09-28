@@ -6,6 +6,7 @@ import 'package:fortuneboot/core/preferences/preferences_cubit.dart';
 import 'package:fortuneboot/features/accounts/data/account_models.dart';
 import 'package:fortuneboot/features/accounts/data/account_service.dart';
 import 'package:fortuneboot/features/accounts/presentation/widgets/account_menu.dart';
+import 'package:fortuneboot/features/accounts/presentation/widgets/bank_icon.dart';
 import 'package:fortuneboot/fx/components/fx_icon_button.dart';
 import 'package:fortuneboot/fx/components/fx_money_text.dart';
 import 'package:fortuneboot/fx/components/fx_sheet.dart';
@@ -142,7 +143,6 @@ class _RecycleBinSheetState extends State<RecycleBinSheet> {
 
   Widget _tile(BuildContext context, FortuneAccountVo a) {
     final palette = FxPalette.of(context);
-    final meta = AccountTypeMeta.of(a.accountType);
     final hideAmounts = context
         .watch<PreferencesCubit>()
         .state
@@ -157,7 +157,7 @@ class _RecycleBinSheetState extends State<RecycleBinSheet> {
       ),
       child: Row(
         children: [
-          Icon(meta.icon, color: meta.tint(context), size: 20),
+          BankIcon.fromAccount(account: a, size: 36, iconSize: 18),
           const SizedBox(width: FxSpacing.sm),
           Expanded(
             child: Column(

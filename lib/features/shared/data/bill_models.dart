@@ -91,6 +91,13 @@ enum FxBillType {
     advance,
     reimburse,
   ];
+
+  /// 周期记账模板可选类型（与 Web 一致：支出/收入/转账；垫付报销需单据，周期不支持）。
+  static const List<FxBillType> recurringSelectable = [
+    expense,
+    income,
+    transfer,
+  ];
 }
 
 /// 分类+金额对。

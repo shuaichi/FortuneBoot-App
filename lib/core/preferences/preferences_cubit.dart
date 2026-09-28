@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -8,8 +10,11 @@ import 'package:fortuneboot/core/preferences/dashboard_display_preferences.dart'
 import 'package:fortuneboot/core/preferences/finance_color_preferences.dart';
 import 'package:fortuneboot/core/preferences/locale_preferences.dart';
 import 'package:fortuneboot/core/preferences/screen_capture_preferences.dart';
+import 'package:fortuneboot/core/preferences/stats_display_preferences.dart';
 import 'package:fortuneboot/core/preferences/theme_preferences.dart';
 import 'package:fortuneboot/core/security/screen_capture_protection.dart';
+import 'package:fortuneboot/features/dashboard/data/dashboard_card_catalog.dart';
+import 'package:fortuneboot/features/stats/data/stats_card_catalog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class PreferencesState extends Equatable {
@@ -17,6 +22,7 @@ class PreferencesState extends Equatable {
   final ThemePreferences theme;
   final LocalePreferences locale;
   final DashboardDisplayPreferences dashboard;
+  final StatsDisplayPreferences stats;
   final FinanceColorPreferences financeColors;
   final ScreenCapturePreferences screenCapture;
   final bool isLoading;
@@ -28,6 +34,7 @@ class PreferencesState extends Equatable {
     this.theme = const ThemePreferences(),
     this.locale = const LocalePreferences(),
     this.dashboard = const DashboardDisplayPreferences(),
+    this.stats = const StatsDisplayPreferences(),
     this.financeColors = const FinanceColorPreferences(),
     this.screenCapture = const ScreenCapturePreferences(),
     this.isLoading = false,
@@ -40,6 +47,7 @@ class PreferencesState extends Equatable {
     ThemePreferences? theme,
     LocalePreferences? locale,
     DashboardDisplayPreferences? dashboard,
+    StatsDisplayPreferences? stats,
     FinanceColorPreferences? financeColors,
     ScreenCapturePreferences? screenCapture,
     bool? isLoading,
@@ -51,6 +59,7 @@ class PreferencesState extends Equatable {
       theme: theme ?? this.theme,
       locale: locale ?? this.locale,
       dashboard: dashboard ?? this.dashboard,
+      stats: stats ?? this.stats,
       financeColors: financeColors ?? this.financeColors,
       screenCapture: screenCapture ?? this.screenCapture,
       isLoading: isLoading ?? this.isLoading,
@@ -65,6 +74,7 @@ class PreferencesState extends Equatable {
     theme,
     locale,
     dashboard,
+    stats,
     financeColors,
     screenCapture,
     isLoading,
@@ -95,6 +105,9 @@ class PreferencesCubit extends Cubit<PreferencesState> {
   static const String _localeCodeKey = 'fortune.preferences.locale.code';
   static const String _hideAmountsKey =
       'fortune.preferences.dashboard.hideAmounts';
+  static const String _dashboardLayoutKey =
+      'fortune.preferences.dashboard.layout';
+  static const String _statsLayoutKey = 'fortune.preferences.stats.layout';
   static const String _colorPresetKey =
       'fortune.preferences.financeColors.preset';
   static const String _colorIncomeKey =
@@ -155,9 +168,8 @@ class PreferencesCubit extends Cubit<PreferencesState> {
               prefs.getString(_localeCodeKey) ?? LocalePreferences.systemCode,
             ),
           ),
-          dashboard: DashboardDisplayPreferences(
-            hideAmounts: prefs.getBool(_hideAmountsKey) ?? false,
-          ),
+          dashboard: _readDashboard(prefs),
+          stats: _readStats(prefs),
           financeColors: _readFinanceColors(prefs, defaults),
           screenCapture: screenCapture,
           failure: applied
@@ -175,6 +187,58 @@ class PreferencesCubit extends Cubit<PreferencesState> {
         ),
       );
     }
+  }
+
+  DashboardDisplayPreferences _readDashboard(SharedPreferences prefs) {
+    final hideAmounts = prefs.getBool(_hideAmountsKey) ?? false;
+    final raw = prefs.getString(_dashboardLayoutKey);
+    if (raw == null || raw.isEmpty) {
+      return DashboardDisplayPreferences(hideAmounts: hideAmounts);
+    }
+    try {
+      final decoded = jsonDecode(raw);
+      if (decoded is! Map) {
+        return DashboardDisplayPreferences(hideAmounts: hideAmounts);
+      }
+      final map = Map<String, dynamic>.from(decoded);
+      final order = _stringList(map['order']);
+      final hidden = _stringList(map['hidden']);
+      return DashboardDisplayPreferences(
+        hideAmounts: hideAmounts,
+        cardOrder: order,
+        hiddenCardIds: hidden,
+        layoutConfigured: true,
+      );
+    } on Object {
+      return DashboardDisplayPreferences(hideAmounts: hideAmounts);
+    }
+  }
+
+  StatsDisplayPreferences _readStats(SharedPreferences prefs) {
+    final raw = prefs.getString(_statsLayoutKey);
+    if (raw == null || raw.isEmpty) {
+      return const StatsDisplayPreferences();
+    }
+    try {
+      final decoded = jsonDecode(raw);
+      if (decoded is! Map) return const StatsDisplayPreferences();
+      final map = Map<String, dynamic>.from(decoded);
+      return StatsDisplayPreferences(
+        cardOrder: _stringList(map['order']),
+        hiddenCardIds: _stringList(map['hidden']),
+        layoutConfigured: true,
+      );
+    } on Object {
+      return const StatsDisplayPreferences();
+    }
+  }
+
+  List<String> _stringList(Object? value) {
+    if (value is! List) return const [];
+    return value
+        .map((e) => e?.toString() ?? '')
+        .where((e) => e.isNotEmpty)
+        .toList(growable: false);
   }
 
   FinanceColorPreferences _readFinanceColors(
@@ -244,6 +308,88 @@ class PreferencesCubit extends Cubit<PreferencesState> {
       save: (prefs) => prefs.setBool(_hideAmountsKey, hide),
       apply: () => state.copyWith(
         dashboard: state.dashboard.copyWith(hideAmounts: hide),
+      ),
+    );
+  }
+
+  /// 保存仪表盘卡片顺序与隐藏集（本地偏好，不走后端）。
+  Future<bool> setDashboardLayout({
+    required List<DashboardCardId> order,
+    required Set<DashboardCardId> hidden,
+  }) async {
+    final orderIds = order.map(DashboardCardCatalog.toStorageId).toList();
+    final hiddenIds = DashboardCardCatalog.allIds
+        .where(hidden.contains)
+        .map(DashboardCardCatalog.toStorageId)
+        .toList();
+    final next = state.dashboard.copyWith(
+      cardOrder: orderIds,
+      hiddenCardIds: hiddenIds,
+      layoutConfigured: true,
+    );
+    if (next == state.dashboard) return true;
+    final payload = jsonEncode({'order': orderIds, 'hidden': hiddenIds});
+    return _guardSave(
+      save: (prefs) => prefs.setString(_dashboardLayoutKey, payload),
+      apply: () => state.copyWith(dashboard: next),
+    );
+  }
+
+  Future<bool> resetDashboardLayout() async {
+    if (!state.dashboard.layoutConfigured &&
+        state.dashboard.cardOrder.isEmpty &&
+        state.dashboard.hiddenCardIds.isEmpty) {
+      return true;
+    }
+    return _guardSave(
+      save: (prefs) => prefs.remove(_dashboardLayoutKey),
+      apply: () => state.copyWith(
+        dashboard: state.dashboard.copyWith(
+          cardOrder: const [],
+          hiddenCardIds: const [],
+          layoutConfigured: false,
+        ),
+      ),
+    );
+  }
+
+  /// 保存统计页卡片顺序与隐藏集（本地偏好）。
+  Future<bool> setStatsLayout({
+    required List<StatsCardId> order,
+    required Set<StatsCardId> hidden,
+  }) async {
+    final orderIds = order.map(StatsCardCatalog.toStorageId).toList();
+    final hiddenIds = StatsCardCatalog.allIds
+        .where(hidden.contains)
+        .map(StatsCardCatalog.toStorageId)
+        .toList();
+    final next = state.stats.copyWith(
+      cardOrder: orderIds,
+      hiddenCardIds: hiddenIds,
+      layoutConfigured: true,
+    );
+    if (next == state.stats) return true;
+    final payload = jsonEncode({'order': orderIds, 'hidden': hiddenIds});
+    return _guardSave(
+      save: (prefs) => prefs.setString(_statsLayoutKey, payload),
+      apply: () => state.copyWith(stats: next),
+    );
+  }
+
+  Future<bool> resetStatsLayout() async {
+    if (!state.stats.layoutConfigured &&
+        state.stats.cardOrder.isEmpty &&
+        state.stats.hiddenCardIds.isEmpty) {
+      return true;
+    }
+    return _guardSave(
+      save: (prefs) => prefs.remove(_statsLayoutKey),
+      apply: () => state.copyWith(
+        stats: state.stats.copyWith(
+          cardOrder: const [],
+          hiddenCardIds: const [],
+          layoutConfigured: false,
+        ),
       ),
     );
   }

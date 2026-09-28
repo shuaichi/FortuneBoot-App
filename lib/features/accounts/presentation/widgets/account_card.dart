@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fortuneboot/core/preferences/preferences_cubit.dart';
 import 'package:fortuneboot/features/accounts/data/account_models.dart';
+import 'package:fortuneboot/features/accounts/presentation/widgets/bank_icon.dart';
 import 'package:fortuneboot/fx/components/fx_money_text.dart';
 import 'package:fortuneboot/fx/components/fx_progress_bar.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
@@ -91,18 +92,9 @@ class AccountCard extends StatelessWidget {
 
   Widget _headerRow(BuildContext context, AccountTypeMeta meta) {
     final palette = FxPalette.of(context);
-    final tint = meta.tint(context);
     return Row(
       children: [
-        Container(
-          width: 40,
-          height: 40,
-          decoration: BoxDecoration(
-            color: tint.withValues(alpha: 0.12),
-            borderRadius: FxRadius.tileBorder,
-          ),
-          child: Icon(meta.icon, color: tint, size: 22),
-        ),
+        BankIcon.fromAccount(account: account),
         const SizedBox(width: FxSpacing.md),
         Expanded(
           child: Column(

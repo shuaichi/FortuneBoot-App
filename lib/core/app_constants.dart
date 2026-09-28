@@ -3,5 +3,8 @@ abstract final class AppConstants {
   static const String minApiVersion = '1.7.0';
   static const String maxApiVersion = '2.0.0';
 
+  /// 鸿蒙 App ICP 备案号。
+  static const String appIcpFiling = '豫ICP备2025158026号-3A';
+
   const AppConstants._();
 }

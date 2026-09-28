@@ -121,3 +121,7 @@ Thumbs.db
 # Local CodeGenie nested repo (broken path on this machine)
 ohos/.codegenie/
 
+
+# Bank icon export toolchain
+tool/node_modules/
+tool/package-lock.json

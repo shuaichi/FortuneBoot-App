@@ -9,9 +9,11 @@ import 'package:fortuneboot/core/session/bill_mutations.dart';
 import 'package:fortuneboot/core/session/session_cubit.dart';
 import 'package:fortuneboot/core/shell/main_shell.dart';
 import 'package:fortuneboot/features/shared/data/bill_models.dart';
+import 'package:fortuneboot/features/stats/data/stats_card_catalog.dart';
 import 'package:fortuneboot/features/stats/presentation/bloc/stats_bloc.dart';
 import 'package:fortuneboot/features/stats/presentation/widgets/stats_formatters.dart';
 import 'package:fortuneboot/features/stats/presentation/widgets/stats_income_expense_calendar_card.dart';
+import 'package:fortuneboot/features/stats/presentation/widgets/stats_layout_editor.dart';
 import 'package:fortuneboot/features/stats/presentation/widgets/stats_overview_bar.dart';
 import 'package:fortuneboot/features/stats/presentation/widgets/stats_pie_card.dart';
 import 'package:fortuneboot/features/stats/presentation/widgets/stats_privacy.dart';
@@ -39,6 +41,7 @@ class StatsPage extends StatefulWidget {
 
 class _StatsPageState extends State<StatsPage> {
   Completer<void>? _refreshCompleter;
+  bool _editingLayout = false;
 
   @override
   void initState() {
@@ -116,8 +119,18 @@ class _StatsPageState extends State<StatsPage> {
             backgroundColor: FxPalette.of(context).canvas,
             body: Column(
               children: [
-                const StatsTopBar(),
-                Expanded(child: _Body(onRefresh: _onRefresh)),
+                StatsTopBar(
+                  editingLayout: _editingLayout,
+                  onEditLayoutToggle: () {
+                    setState(() => _editingLayout = !_editingLayout);
+                  },
+                ),
+                Expanded(
+                  child: _Body(
+                    onRefresh: _onRefresh,
+                    editingLayout: _editingLayout,
+                  ),
+                ),
               ],
             ),
           ),
@@ -127,10 +140,98 @@ class _StatsPageState extends State<StatsPage> {
   }
 }
 
-class _Body extends StatelessWidget {
-  const _Body({required this.onRefresh});
+class _Body extends StatefulWidget {
+  const _Body({required this.onRefresh, required this.editingLayout});
 
   final RefreshCallback onRefresh;
+  final bool editingLayout;
+
+  @override
+  State<_Body> createState() => _BodyState();
+}
+
+class _BodyState extends State<_Body> {
+  final ValueNotifier<int> _dragCount = ValueNotifier<int>(0);
+  List<StatsCardId>? _previewVisible;
+  StatsCardId? _draggingId;
+  List<StatsCardId> _committedVisible = const [];
+
+  bool get _editingLayout => widget.editingLayout;
+
+  List<StatsCardId> get _layoutVisible =>
+      _previewVisible ?? _committedVisible;
+
+  @override
+  void didUpdateWidget(covariant _Body oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.editingLayout && !widget.editingLayout) {
+      _previewVisible = null;
+      _draggingId = null;
+      _dragCount.value = 0;
+    }
+  }
+
+  @override
+  void dispose() {
+    _dragCount.dispose();
+    super.dispose();
+  }
+
+  void _onDragStarted(StatsCardId id) {
+    _draggingId = id;
+    _previewVisible = List<StatsCardId>.of(_committedVisible);
+    _dragCount.value++;
+    setState(() {});
+  }
+
+  void _onInsertNear(
+    StatsCardId from,
+    StatsCardId to, {
+    required bool after,
+  }) {
+    if (_draggingId != from) return;
+    final current = _previewVisible ?? _committedVisible;
+    final next = StatsCardCatalog.relocate(
+      visible: current,
+      from: from,
+      to: to,
+      after: after,
+    );
+    if (_sameOrder(next, current)) return;
+    setState(() => _previewVisible = next);
+  }
+
+  Future<void> _onDragEnded(
+    List<StatsCardId> placeable,
+    Set<StatsCardId> hidden,
+  ) async {
+    final preview = _previewVisible;
+    final committed = _committedVisible;
+    _draggingId = null;
+    if (_dragCount.value > 0) _dragCount.value--;
+    if (preview != null && !_sameOrder(preview, committed)) {
+      _committedVisible = preview;
+      _previewVisible = null;
+      setState(() {});
+      if (!mounted) return;
+      await StatsLayoutController.persist(
+        context,
+        order: [...preview, ...placeable],
+        hidden: hidden,
+      );
+      return;
+    }
+    _previewVisible = null;
+    setState(() {});
+  }
+
+  bool _sameOrder(List<StatsCardId> a, List<StatsCardId> b) {
+    if (a.length != b.length) return false;
+    for (var i = 0; i < a.length; i++) {
+      if (a[i] != b[i]) return false;
+    }
+    return true;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -140,103 +241,179 @@ class _Body extends StatelessWidget {
           return FxStateView.empty(message: S.of(context).statsSelectBookFirst);
         }
 
-        final bloc = context.read<StatsBloc>();
-        void retry() => bloc.add(const StatsRefreshed());
-        final currency = state.currencyCode;
-        final hideAmounts = context.select(
-          (PreferencesCubit cubit) => cubit.state.dashboard.hideAmounts,
-        );
+        return BlocBuilder<PreferencesCubit, PreferencesState>(
+          buildWhen: (prev, next) =>
+              prev.stats != next.stats ||
+              prev.dashboard.hideAmounts != next.dashboard.hideAmounts,
+          builder: (context, preferences) {
+            final snap = StatsLayoutController.snapshot(preferences.stats);
+            if (_draggingId == null) {
+              _committedVisible = snap.visible;
+            }
+            final visibleIds = _editingLayout ? _layoutVisible : snap.visible;
 
-        return StatsPrivacy(
-          hideAmounts: hideAmounts,
-          child: RefreshIndicator(
-            onRefresh: onRefresh,
-            child: ListView(
-              physics: const AlwaysScrollableScrollPhysics(),
-              padding: const EdgeInsets.fromLTRB(
-                FxSpacing.lg,
-                FxSpacing.sm,
-                FxSpacing.lg,
-                FxSpacing.xxxl,
-              ),
-              children: [
-                const _StatsEntryCard(),
-                const SizedBox(height: FxSpacing.md),
-                StatsOverviewBar(
-                  section: state.overview,
-                  currencyCode: currency,
-                ),
-                const SizedBox(height: FxSpacing.md),
-                StatsIncomeExpenseCalendarCard(
-                  section: state.calendar,
-                  view: state.calendarView,
-                  anchor: state.calendarAnchor,
-                  currencyCode: currency,
-                  onViewChanged: (view) =>
-                      bloc.add(StatsCalendarViewChanged(view)),
-                  onNavigate: (delta) => bloc.add(StatsCalendarNavigate(delta)),
-                  onDrillDown: (view, anchor) => bloc.add(
-                    StatsCalendarDrilledDown(view: view, anchor: anchor),
-                  ),
-                  onBillsRequested: (date) {
-                    final statsBookId = bloc.bookId;
-                    final session = context.read<SessionCubit>().state;
-                    if (statsBookId == null ||
-                        session.currentBookId != statsBookId) {
-                      return;
-                    }
-                    MainShell.openBills(
-                      context,
-                      BillsEntryRequest(
-                        bookId: statsBookId,
-                        groupId: session.currentGroupId,
-                        dateRange: BillDateRange(start: date, end: date),
+            final bloc = context.read<StatsBloc>();
+            void retry() => bloc.add(const StatsRefreshed());
+            final currency = state.currencyCode;
+            final hideAmounts = preferences.dashboard.hideAmounts;
+            final expense = state.type == StatsType.expense;
+
+            final children = <Widget>[];
+            for (final id in visibleIds) {
+              final card = _cardFor(
+                context,
+                id: id,
+                state: state,
+                currency: currency,
+                onRetry: retry,
+                bloc: bloc,
+              );
+              if (card == null) continue;
+              final item = _editingLayout
+                  ? StatsDraggableCard(
+                      key: ValueKey(id),
+                      id: id,
+                      onDragStarted: () => _onDragStarted(id),
+                      onDragEnded: () =>
+                          _onDragEnded(snap.placeable, snap.hidden),
+                      onInsertNear: _onInsertNear,
+                      onRemove: () => StatsLayoutController.hide(
+                        context,
+                        id: id,
+                        order: snap.order,
+                        hidden: snap.hidden,
                       ),
-                    );
-                  },
-                  onRetry: () => bloc.add(const StatsCalendarRetried()),
-                ),
-                const SizedBox(height: FxSpacing.md),
-                _StatsInsightCard(state: state, currencyCode: currency),
-                const SizedBox(height: FxSpacing.md),
-                _StatsDimensionPreviewCard(
-                  state: state,
-                  currencyCode: currency,
-                ),
-                const SizedBox(height: FxSpacing.md),
-                StatsTrendCard(
-                  section: state.trends,
-                  type: state.type,
-                  currencyCode: currency,
-                  onRetry: retry,
-                ),
-                const SizedBox(height: FxSpacing.md),
-                StatsPieCard(
-                  label: _categoryLabel(context, state.type),
-                  section: state.categories,
-                  currencyCode: currency,
-                  onRetry: retry,
-                ),
-                const SizedBox(height: FxSpacing.md),
-                StatsTagCard(
-                  label: _tagLabel(context, state.type),
-                  section: state.tags,
-                  currencyCode: currency,
-                  onRetry: retry,
-                ),
-                const SizedBox(height: FxSpacing.md),
-                StatsPieCard(
-                  label: _payeeLabel(context, state.type),
-                  section: state.payees,
-                  currencyCode: currency,
-                  onRetry: retry,
-                ),
-              ],
-            ),
-          ),
+                      child: card,
+                    )
+                  : card;
+              if (children.isNotEmpty) {
+                children.add(const SizedBox(height: FxSpacing.md));
+              }
+              children.add(item);
+            }
+
+            if (_editingLayout) {
+              children.add(StatsLayoutTray(expense: expense));
+            }
+
+            if (children.isEmpty) {
+              return FxStateView.empty(
+                message: S.of(context).dashboardNoVisibleCards,
+              );
+            }
+
+            final list = ValueListenableBuilder<int>(
+              valueListenable: _dragCount,
+              builder: (context, dragCount, child) {
+                return ListView(
+                  physics: dragCount > 0
+                      ? const NeverScrollableScrollPhysics()
+                      : const AlwaysScrollableScrollPhysics(),
+                  padding: const EdgeInsets.fromLTRB(
+                    FxSpacing.lg,
+                    FxSpacing.sm,
+                    FxSpacing.lg,
+                    FxSpacing.xxxl,
+                  ),
+                  children: [child!],
+                );
+              },
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: children,
+              ),
+            );
+
+            return StatsPrivacy(
+              hideAmounts: hideAmounts,
+              child: _editingLayout
+                  ? list
+                  : RefreshIndicator(
+                      onRefresh: widget.onRefresh,
+                      child: list,
+                    ),
+            );
+          },
         );
       },
     );
+  }
+
+  Widget? _cardFor(
+    BuildContext context, {
+    required StatsCardId id,
+    required StatsState state,
+    required String? currency,
+    required VoidCallback onRetry,
+    required StatsBloc bloc,
+  }) {
+    return switch (id) {
+      StatsCardId.moreReports => const _StatsEntryCard(),
+      StatsCardId.overview => StatsOverviewBar(
+        section: state.overview,
+        currencyCode: currency,
+      ),
+      StatsCardId.calendar => StatsIncomeExpenseCalendarCard(
+        section: state.calendar,
+        view: state.calendarView,
+        anchor: state.calendarAnchor,
+        currencyCode: currency,
+        onViewChanged: (view) => bloc.add(StatsCalendarViewChanged(view)),
+        onNavigate: (delta) => bloc.add(StatsCalendarNavigate(delta)),
+        onDrillDown: (view, anchor) => bloc.add(
+          StatsCalendarDrilledDown(view: view, anchor: anchor),
+        ),
+        onBillsRequested: (date) {
+          final statsBookId = bloc.bookId;
+          final session = context.read<SessionCubit>().state;
+          if (statsBookId == null || session.currentBookId != statsBookId) {
+            return;
+          }
+          MainShell.openBills(
+            context,
+            BillsEntryRequest(
+              bookId: statsBookId,
+              groupId: session.currentGroupId,
+              dateRange: BillDateRange(start: date, end: date),
+            ),
+          );
+        },
+        onRetry: () => bloc.add(const StatsCalendarRetried()),
+      ),
+      StatsCardId.insight => _StatsInsightCard(
+        state: state,
+        currencyCode: currency,
+        showPlaceholder: _editingLayout,
+      ),
+      StatsCardId.dimensionPreview => _StatsDimensionPreviewCard(
+        state: state,
+        currencyCode: currency,
+      ),
+      StatsCardId.trend => StatsTrendCard(
+        section: state.trends,
+        type: state.type,
+        currencyCode: currency,
+        onRetry: onRetry,
+      ),
+      StatsCardId.categoryShare => StatsPieCard(
+        label: _categoryLabel(context, state.type),
+        section: state.categories,
+        currencyCode: currency,
+        onRetry: onRetry,
+      ),
+      StatsCardId.tags => StatsTagCard(
+        label: _tagLabel(context, state.type),
+        section: state.tags,
+        currencyCode: currency,
+        onRetry: onRetry,
+      ),
+      StatsCardId.payees => StatsPieCard(
+        label: _payeeLabel(context, state.type),
+        section: state.payees,
+        currencyCode: currency,
+        onRetry: onRetry,
+      ),
+    };
   }
 }
 
@@ -320,13 +497,23 @@ class _StatsEntryCard extends StatelessWidget {
 class _StatsInsightCard extends StatelessWidget {
   final StatsState state;
   final String? currencyCode;
+  final bool showPlaceholder;
 
-  const _StatsInsightCard({required this.state, required this.currencyCode});
+  const _StatsInsightCard({
+    required this.state,
+    required this.currencyCode,
+    this.showPlaceholder = false,
+  });
 
   @override
   Widget build(BuildContext context) {
     final stats = state.overview.data;
-    if (stats == null) return const SizedBox.shrink();
+    if (stats == null) {
+      if (!showPlaceholder) return const SizedBox.shrink();
+      return FxCard(
+        child: FxCardLabel(S.of(context).statsBasicTitle),
+      );
+    }
     final finance = FxFinanceColors.of(context);
     final palette = FxPalette.of(context);
     final formats = StatsFormatters.of(context, currencyCode: currencyCode);

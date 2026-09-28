@@ -80,8 +80,10 @@ class BillQuery {
       'orderColumn': orderColumn,
       'orderDirection': orderDirection,
     };
-    if (billType != null) m['billType'] = billType;
-    if (billTypes != null && billTypes!.isNotEmpty) m['billTypes'] = billTypes;
+    // 后端 getPage 只认单数字段 billType；billTypes 会被忽略。
+    final resolvedBillType = billType ??
+        (billTypes != null && billTypes!.length == 1 ? billTypes!.first : null);
+    if (resolvedBillType != null) m['billType'] = resolvedBillType;
     if (title != null && title!.isNotEmpty) m['title'] = title;
     if (tradeTimeStartTime != null)
       m['tradeTimeStartTime'] = tradeTimeStartTime;
@@ -132,11 +134,66 @@ class BillService {
   final FxApi _api = FxApi.instance;
 
   Future<BillPage> getPage(BillQuery query) async {
+    final multiTypes = query.billTypes;
+    // 后端只支持单个 billType；多选时 App 侧按类型分别请求再合并。
+    if (multiTypes != null && multiTypes.length > 1) {
+      return _getPageMergedByTypes(query, multiTypes);
+    }
     final data = await _api.get(
       '/fortune/bill/getPage',
       query: query.toQueryParams(),
     );
     return _parsePage(data);
+  }
+
+  /// 多类型筛选：后端不支持 billTypes，按类型分别拉取后在 App 合并分页。
+  Future<BillPage> _getPageMergedByTypes(
+    BillQuery query,
+    List<int> types,
+  ) async {
+    final need = query.pageNum * query.pageSize;
+    final pages = await Future.wait([
+      for (final type in types)
+        getPage(
+          BillQuery(
+            bookId: query.bookId,
+            pageNum: 1,
+            pageSize: need,
+            billType: type,
+            title: query.title,
+            tradeTimeStartTime: query.tradeTimeStartTime,
+            tradeTimeEndTime: query.tradeTimeEndTime,
+            amountMin: query.amountMin,
+            amountMax: query.amountMax,
+            accountId: query.accountId,
+            payeeId: query.payeeId,
+            categoryIds: query.categoryIds,
+            tagIds: query.tagIds,
+            confirm: query.confirm,
+            include: query.include,
+            orderColumn: query.orderColumn,
+            orderDirection: query.orderDirection,
+          ),
+        ),
+    ]);
+    final seen = <int?>{};
+    final rows = <FortuneBillVo>[
+      for (final page in pages)
+        for (final row in page.rows)
+          if (seen.add(row.billId)) row,
+    ];
+    rows.sort((a, b) {
+      final at = a.tradeTime;
+      final bt = b.tradeTime;
+      if (at == null && bt == null) return 0;
+      if (at == null) return 1;
+      if (bt == null) return -1;
+      return bt.compareTo(at);
+    });
+    final total = pages.fold<int>(0, (sum, p) => sum + p.total);
+    final start = ((query.pageNum - 1) * query.pageSize).clamp(0, rows.length);
+    final end = (start + query.pageSize).clamp(0, rows.length);
+    return BillPage(rows: rows.sublist(start, end), total: total);
   }
 
   BillPage _parsePage(dynamic data) {

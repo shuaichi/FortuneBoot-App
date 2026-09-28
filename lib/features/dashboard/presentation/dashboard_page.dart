@@ -5,11 +5,16 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fortuneboot/core/preferences/preferences_cubit.dart';
 import 'package:fortuneboot/core/session/bill_mutations.dart';
 import 'package:fortuneboot/core/session/session_cubit.dart';
+import 'package:fortuneboot/features/dashboard/data/dashboard_card_catalog.dart';
 import 'package:fortuneboot/features/dashboard/presentation/bloc/dashboard_bloc.dart';
 import 'package:fortuneboot/features/dashboard/presentation/widgets/category_top_card.dart';
+import 'package:fortuneboot/features/dashboard/presentation/widgets/dashboard_draggable_card.dart';
+import 'package:fortuneboot/features/dashboard/presentation/widgets/dashboard_layout_controller.dart';
+import 'package:fortuneboot/features/dashboard/presentation/widgets/dashboard_layout_editor.dart';
 import 'package:fortuneboot/features/dashboard/presentation/widgets/dashboard_top_bar.dart';
 import 'package:fortuneboot/features/dashboard/presentation/widgets/month_stat_card.dart';
 import 'package:fortuneboot/features/dashboard/presentation/widgets/net_worth_card.dart';
+import 'package:fortuneboot/features/dashboard/presentation/widgets/quick_add_card.dart';
 import 'package:fortuneboot/features/dashboard/presentation/widgets/recent_bills_card.dart';
 import 'package:fortuneboot/features/dashboard/presentation/widgets/trend_card.dart';
 import 'package:fortuneboot/features/shared/presentation/bills/bill_detail_flow.dart';
@@ -20,12 +25,18 @@ import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/generated/l10n.dart';
 
 /// 看板首页：粘顶栏 + Bento 卡片网格。订阅 SessionCubit 切账本重拉。
-class DashboardPage extends StatelessWidget {
+class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
 
   @override
+  State<DashboardPage> createState() => _DashboardPageState();
+}
+
+class _DashboardPageState extends State<DashboardPage> {
+  bool _editingLayout = false;
+
+  @override
   Widget build(BuildContext context) {
-    // 监听账本/分组切换,驱动 Bloc 重拉。
     return BlocListener<SessionCubit, SessionState>(
       listenWhen: (prev, next) =>
           prev.currentBookId != next.currentBookId ||
@@ -51,8 +62,13 @@ class DashboardPage extends StatelessWidget {
             backgroundColor: FxPalette.of(context).canvas,
             body: Column(
               children: [
-                const DashboardTopBar(),
-                Expanded(child: _Body()),
+                DashboardTopBar(
+                  editingLayout: _editingLayout,
+                  onEditLayoutToggle: () {
+                    setState(() => _editingLayout = !_editingLayout);
+                  },
+                ),
+                Expanded(child: _Body(editingLayout: _editingLayout)),
               ],
             ),
           ),
@@ -94,7 +110,98 @@ class _MutationRefresherState extends State<_MutationRefresher> {
   Widget build(BuildContext context) => widget.child;
 }
 
-class _Body extends StatelessWidget {
+class _Body extends StatefulWidget {
+  const _Body({required this.editingLayout});
+
+  final bool editingLayout;
+
+  @override
+  State<_Body> createState() => _BodyState();
+}
+
+class _BodyState extends State<_Body> {
+  final ValueNotifier<int> _dragCount = ValueNotifier<int>(0);
+  List<DashboardCardId>? _previewVisible;
+  DashboardCardId? _draggingId;
+  List<DashboardCardId> _committedVisible = const [];
+
+  bool get _editingLayout => widget.editingLayout;
+
+  List<DashboardCardId> get _layoutVisible =>
+      _previewVisible ?? _committedVisible;
+
+  @override
+  void didUpdateWidget(covariant _Body oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.editingLayout && !widget.editingLayout) {
+      _previewVisible = null;
+      _draggingId = null;
+      _dragCount.value = 0;
+    }
+  }
+
+  void _onDragStarted(DashboardCardId id) {
+    _draggingId = id;
+    _previewVisible = List<DashboardCardId>.of(_committedVisible);
+    _dragCount.value++;
+    setState(() {});
+  }
+
+  void _onInsertNear(
+    DashboardCardId from,
+    DashboardCardId to, {
+    required bool after,
+  }) {
+    if (_draggingId != from) return;
+    final current = _previewVisible ?? _committedVisible;
+    final next = DashboardCardCatalog.relocate(
+      visible: current,
+      from: from,
+      to: to,
+      after: after,
+    );
+    if (_sameOrder(next, current)) return;
+    setState(() => _previewVisible = next);
+  }
+
+  Future<void> _onDragEnded(
+    List<DashboardCardId> placeable,
+    Set<DashboardCardId> hidden,
+  ) async {
+    final preview = _previewVisible;
+    final committed = _committedVisible;
+    _draggingId = null;
+    if (_dragCount.value > 0) _dragCount.value--;
+    if (preview != null && !_sameOrder(preview, committed)) {
+      _committedVisible = preview;
+      _previewVisible = null;
+      setState(() {});
+      if (!mounted) return;
+      await DashboardLayoutController.persist(
+        context,
+        order: [...preview, ...placeable],
+        hidden: hidden,
+      );
+      return;
+    }
+    _previewVisible = null;
+    setState(() {});
+  }
+
+  bool _sameOrder(List<DashboardCardId> a, List<DashboardCardId> b) {
+    if (a.length != b.length) return false;
+    for (var i = 0; i < a.length; i++) {
+      if (a[i] != b[i]) return false;
+    }
+    return true;
+  }
+
+  @override
+  void dispose() {
+    _dragCount.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<DashboardBloc, DashboardState>(
@@ -105,111 +212,170 @@ class _Body extends StatelessWidget {
           );
         }
 
-        final bloc = context.read<DashboardBloc>();
-        void retry() => bloc.add(const DashboardRefreshed());
-        final currency = state.currencyCode;
-        final emptyUser = state.isEmptyUser;
+        return BlocBuilder<PreferencesCubit, PreferencesState>(
+          buildWhen: (prev, next) => prev.dashboard != next.dashboard,
+          builder: (context, preferences) {
+            final snap = DashboardLayoutController.snapshot(
+              preferences.dashboard,
+            );
+            if (_draggingId == null) {
+              _committedVisible = snap.visible;
+            }
+            final visibleIds = _editingLayout ? _layoutVisible : snap.visible;
+            final bloc = context.read<DashboardBloc>();
+            void retry() => bloc.add(const DashboardRefreshed());
+            final currency = state.currencyCode;
+            final emptyUser = state.isEmptyUser;
+            final showCategories =
+                !emptyUser &&
+                (!state.categories.isReady ||
+                    (state.categories.data?.isNotEmpty ?? false));
 
-        final tiles = <FxBentoTile>[
-          // ① 净资产大卡(跨2列2行)
-          FxBentoTile(
-            colSpan: 2,
-            rowSpan: 2,
-            child: NetWorthCard(
-              section: state.assets,
-              currencyCode: currency,
-              emptyUser: emptyUser,
-              onRetry: retry,
-            ),
-          ),
-        ];
-
-        if (!emptyUser) {
-          // ② 本月支出 ③ 本月收入
-          tiles.add(
-            FxBentoTile(
-              child: MonthStatCard(
-                section: state.monthStats,
-                currencyCode: currency,
-                isExpense: true,
-                onRetry: retry,
-              ),
-            ),
-          );
-          tiles.add(
-            FxBentoTile(
-              child: MonthStatCard(
-                section: state.monthStats,
-                currencyCode: currency,
-                isExpense: false,
-                onRetry: retry,
-              ),
-            ),
-          );
-          // ④ 收支趋势（整宽双线，避免移动端出现留白）。
-          tiles.add(
-            FxBentoTile(
-              colSpan: FxBentoTile.fullSpan,
-              rowSpan: 2,
-              child: TrendCard(
-                expenseSection: state.expenseTrends,
-                incomeSection: state.incomeTrends,
-                onRetry: retry,
-              ),
-            ),
-          );
-        }
-
-        // ⑦ 最近账单(跨满)
-        tiles.add(
-          FxBentoTile(
-            colSpan: FxBentoTile.fullSpan,
-            rowSpan: 2,
-            child: RecentBillsCard(
-              section: state.recentBills,
-              currencyCode: currency,
-              onRetry: retry,
-              onBillTap: (bill) => BillDetailFlow().show(
+            final tiles = <FxBentoTile>[];
+            for (final id in visibleIds) {
+              final spec = DashboardCardCatalog.specOf(id);
+              if (spec.requiresNonEmptyUser && emptyUser) continue;
+              if (spec.hideWhenCategoryEmpty && !showCategories) continue;
+              final card = _cardFor(
                 context,
-                bookId: context.read<SessionCubit>().state.currentBookId,
-                bill: bill,
-              ),
-            ),
-          ),
-        );
-
-        // ⑧ 分类 Top3(跨满,可选:无数据整卡隐藏)
-        final showCategories =
-            !emptyUser &&
-            (!state.categories.isReady ||
-                (state.categories.data?.isNotEmpty ?? false));
-        if (showCategories) {
-          tiles.add(
-            FxBentoTile(
-              colSpan: FxBentoTile.fullSpan,
-              rowSpan: 2,
-              child: CategoryTopCard(
-                section: state.categories,
-                currencyCode: currency,
+                id: id,
+                state: state,
+                currency: currency,
+                emptyUser: emptyUser,
                 onRetry: retry,
-              ),
-            ),
-          );
-        }
+              );
+              tiles.add(
+                FxBentoTile(
+                  id: id,
+                  colSpan: spec.colSpan,
+                  rowSpan: spec.rowSpan,
+                  child: _editingLayout
+                      ? DashboardDraggableCard(
+                          key: ValueKey(id),
+                          id: id,
+                          onDragStarted: () => _onDragStarted(id),
+                          onDragEnded: () => _onDragEnded(
+                            snap.placeable,
+                            snap.hidden,
+                          ),
+                          onInsertNear: _onInsertNear,
+                          onRemove: () => DashboardLayoutController.hide(
+                            context,
+                            id: id,
+                            order: snap.order,
+                            hidden: snap.hidden,
+                          ),
+                          child: card,
+                        )
+                      : card,
+                ),
+              );
+            }
 
-        return RefreshIndicator(
-          onRefresh: () {
-            final completer = Completer<void>();
-            bloc.add(DashboardRefreshed(completer: completer));
-            return completer.future;
+            if (tiles.isEmpty && !_editingLayout) {
+              return FxStateView.empty(
+                message: S.of(context).dashboardNoVisibleCards,
+              );
+            }
+
+            final gridChildren = <Widget>[
+              if (tiles.isNotEmpty)
+                FxBentoGrid(
+                  tiles: tiles,
+                  allowBackfill: !_editingLayout,
+                ),
+              if (tiles.isEmpty)
+                Padding(
+                  padding: const EdgeInsets.all(FxSpacing.lg),
+                  child: Text(
+                    S.of(context).dashboardNoVisibleCards,
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                ),
+              if (_editingLayout) const DashboardLayoutTray(),
+            ];
+
+            final content = ValueListenableBuilder<int>(
+              valueListenable: _dragCount,
+              builder: (context, dragCount, child) {
+                return ListView(
+                  physics: dragCount > 0
+                      ? const NeverScrollableScrollPhysics()
+                      : const AlwaysScrollableScrollPhysics(),
+                  padding: const EdgeInsets.only(bottom: FxSpacing.xxxl),
+                  children: [child!],
+                );
+              },
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: gridChildren,
+              ),
+            );
+
+            if (_editingLayout) return content;
+
+            return RefreshIndicator(
+              onRefresh: () {
+                final completer = Completer<void>();
+                bloc.add(DashboardRefreshed(completer: completer));
+                return completer.future;
+              },
+              child: content,
+            );
           },
-          child: ListView(
-            physics: const AlwaysScrollableScrollPhysics(),
-            padding: const EdgeInsets.only(bottom: FxSpacing.xxxl),
-            children: [FxBentoGrid(tiles: tiles)],
-          ),
         );
       },
     );
+  }
+
+  Widget _cardFor(
+    BuildContext context, {
+    required DashboardCardId id,
+    required DashboardState state,
+    required String? currency,
+    required bool emptyUser,
+    required VoidCallback onRetry,
+  }) {
+    return switch (id) {
+      DashboardCardId.netWorth => NetWorthCard(
+        section: state.assets,
+        currencyCode: currency,
+        emptyUser: emptyUser,
+        onRetry: onRetry,
+      ),
+      DashboardCardId.monthExpense => MonthStatCard(
+        section: state.monthStats,
+        currencyCode: currency,
+        isExpense: true,
+        onRetry: onRetry,
+      ),
+      DashboardCardId.monthIncome => MonthStatCard(
+        section: state.monthStats,
+        currencyCode: currency,
+        isExpense: false,
+        onRetry: onRetry,
+      ),
+      DashboardCardId.trend => TrendCard(
+        expenseSection: state.expenseTrends,
+        incomeSection: state.incomeTrends,
+        onRetry: onRetry,
+      ),
+      DashboardCardId.recentBills => RecentBillsCard(
+        section: state.recentBills,
+        currencyCode: currency,
+        onRetry: onRetry,
+        onBillTap: (bill) => BillDetailFlow().show(
+          context,
+          bookId: context.read<SessionCubit>().state.currentBookId,
+          bill: bill,
+        ),
+      ),
+      DashboardCardId.categoryTop => CategoryTopCard(
+        section: state.categories,
+        currencyCode: currency,
+        onRetry: onRetry,
+      ),
+      DashboardCardId.quickAdd => const QuickAddCard(),
+    };
   }
 }
