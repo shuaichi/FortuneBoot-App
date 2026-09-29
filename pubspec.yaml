@@ -1,6 +1,6 @@
 name: fortuneboot
 description: "Hao Ji"
-version: 1.4.9+2026092801 #馃榿馃槇
+version: 1.5.0+2026092901 #馃榿馃槇
 # 上架版本来源：versionName+versionCode。DevEco 打包前请双击运行：
 #   scripts/set_ohos_version.bat
 # 交互确认后再 Build Hap。
@@ -75,6 +75,7 @@ dependencies:
   money2: ^6.0.8
   equatable: ^2.0.5
   fl_chart: ^0.68.0
+  lunar: ^1.7.8
   xml: ^6.3.0
   cryptography: ^2.9.0
   fortuneboot_ohos_security:
@@ -104,6 +105,7 @@ flutter:
   assets:
     - assets/images/
     - assets/images/banks/
+    - assets/calendar/holiday-patch.json
 
   fonts:
     - family: Quicksand

@@ -245,7 +245,7 @@
   "profileHideAmounts": "Hide home amounts",
   "profileHideAmountsSubtitle": "When hidden, home amounts show as ••••",
   "profileFinanceColors": "Bill colors",
-  "profileFinanceColorsSubtitle": "Customize income / expense colors",
+  "profileFinanceColorsSubtitle": "Customize income / expense / holiday colors",
   "profileAbout": "About",
   "profileHelp": "Help",
   "profileDonate": "Donate",
@@ -1217,7 +1217,7 @@
   "profileScreenCaptureAllowedIosHint": "iPhone and iPad cannot block system screenshots. Protection masks recording, mirroring, and app-switcher previews.",
   "profileScreenCaptureProtectionFailed": "Screen-capture protection could not be applied. Please try again.",
   "profileDesktopWidget": "Add desktop widget",
-  "profileDesktopWidgetSubtitle": "Add the income/expense calendar from the home screen",
+  "profileDesktopWidgetSubtitle": "Includes the 6×4 stats calendar; or add it from the home screen",
   "profileEditTitle": "Edit profile",
   "profileDetailsTitle": "Profile",
   "profileViewProfile": "View profile",
@@ -1281,6 +1281,9 @@
   "profileColorAdjust": "Adjustment",
   "profileColorAdvance": "Advance",
   "profileColorReimburse": "Reimbursement",
+  "profileColorHoliday": "Holiday",
+  "profileColorRest": "Rest day",
+  "profileColorWork": "Workday makeup",
   "profileColorPresetDefault": "Default red/green",
   "profileColorPresetDeuteranopia": "Red-green colorblind friendly",
   "profileColorPresetProtanopia": "Protanopia friendly",
@@ -1623,7 +1626,24 @@
       "count": {}
     }
   },
-  "statsCalendarViewBills": "View bills for this day",
+  "statsCalendarViewBills": "Open in Bills",
+  "statsCalendarDayBills": "Bills this day",
+  "statsCalendarDayBillsEmpty": "No bills this day",
+  "statsReceiptWelcome": "Welcome",
+  "statsReceiptItem": "Item",
+  "statsReceiptQty": "Qty",
+  "statsReceiptAmountCol": "Amount",
+  "statsReceiptPayment": "Payment",
+  "statsReceiptKeep": "Please keep this receipt",
+  "statsReceiptThanks": "Thank you",
+  "statsReceiptDate": "Date {date}",
+  "@statsReceiptDate": {
+    "placeholders": {
+      "date": {}
+    }
+  },
+  "statsReceiptCashier": "Cashier: HaoJi",
+  "statsReceiptSave": "Save receipt",
   "base64ImageEmpty": "Image data is empty",
   "base64ImageInvalid": "Could not read the image"
 }

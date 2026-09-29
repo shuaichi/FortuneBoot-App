@@ -117,6 +117,39 @@ void main() {
     expect(bloc.state, oneRow);
     expect(bloc.state.extras.single.rowId, survivingRow.rowId);
   });
+
+  test('transfer default title follows from/to account types', () {
+    const cash = AccountOption(
+      accountId: 1,
+      accountName: '钱包',
+      accountType: 1,
+    );
+    const credit = AccountOption(
+      accountId: 2,
+      accountName: '招行',
+      accountType: 2,
+    );
+    const asset = AccountOption(
+      accountId: 3,
+      accountName: '余额宝',
+      accountType: 3,
+    );
+    const options = EditorOptions(accounts: [cash, credit, asset]);
+
+    BillEditorState state({int? from, int? to}) => BillEditorState(
+      tradeTime: DateTime(2026, 1, 1),
+      billType: FxBillType.transfer,
+      accountId: from,
+      toAccountId: to,
+      options: options,
+    );
+
+    expect(state(from: 1, to: 3).suggestedTransferTitle, '转账');
+    expect(state(from: 2, to: 1).suggestedTransferTitle, '提现');
+    expect(state(from: 1, to: 2).suggestedTransferTitle, '还款');
+    expect(state(from: 2, to: 2).suggestedTransferTitle, '还款');
+    expect(state(from: 1, to: 2).effectiveTitle, '还款');
+  });
 }
 
 Future<BillEditorState> _initialize(BillEditorBloc bloc) {

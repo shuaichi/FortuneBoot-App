@@ -23,10 +23,29 @@ class ImageSaveService {
   }) async {
     try {
       final data = await rootBundle.load(assetPath);
-      final bytes = data.buffer.asUint8List();
+      return saveBytes(
+        data.buffer.asUint8List(),
+        name,
+        mimeHint: _ext(assetPath),
+        ohosSecurity: ohosSecurity,
+        operatingSystem: operatingSystem,
+      );
+    } on Exception catch (_) {
+      return ImageSaveResult.failed;
+    }
+  }
 
+  /// 保存内存中的图片到相册（移动端）或触发下载（Web）。
+  static Future<ImageSaveResult> saveBytes(
+    Uint8List bytes,
+    String name, {
+    String? mimeHint,
+    FortunebootOhosSecurity? ohosSecurity,
+    String? operatingSystem,
+  }) async {
+    try {
       if (kIsWeb) {
-        final mimeType = _toMimeType(_ext(assetPath));
+        final mimeType = _toMimeType(mimeHint ?? _ext(name));
         final ok = await webdl.downloadBytes(name, bytes, mimeType);
         return ok ? ImageSaveResult.downloadStarted : ImageSaveResult.failed;
       }

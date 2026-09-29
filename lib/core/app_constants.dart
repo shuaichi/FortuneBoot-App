@@ -6,5 +6,8 @@ abstract final class AppConstants {
   /// 鸿蒙 App ICP 备案号。
   static const String appIcpFiling = '豫ICP备2025158026号-3A';
 
+  /// 打包进安装包的国务院调休补丁（由 tool/build_holiday_patch 生成）。
+  static const String holidayPatchAsset = 'assets/calendar/holiday-patch.json';
+
   const AppConstants._();
 }

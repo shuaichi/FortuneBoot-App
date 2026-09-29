@@ -18,7 +18,7 @@
     },
     {
       "name": "EntryFormAbility_desc",
-      "value": "在桌面查看日/月收支与报销单"
+      "value": "在桌面查看日/月/统计收支日历与报销单"
     },
     {
       "name": "income_expense_calendar_card_display_name",
@@ -27,6 +27,14 @@
     {
       "name": "income_expense_calendar_card_desc",
       "value": "在桌面查看本月每日收支，可与月历堆叠"
+    },
+    {
+      "name": "stats_income_expense_calendar_card_display_name",
+      "value": "统计收支日历"
+    },
+    {
+      "name": "stats_income_expense_calendar_card_desc",
+      "value": "6×4 大卡，对应统计页本月收支日历"
     },
     {
       "name": "month_income_expense_calendar_card_display_name",

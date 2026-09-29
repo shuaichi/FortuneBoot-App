@@ -14,7 +14,7 @@ import {
 
 const CHANNEL_NAME: string = 'fortuneboot/ohos_desktop_widget';
 const MANUAL_ADD_MESSAGE: string =
-  '请长按桌面空白处，选择服务卡片 → 好记 → 选择日历或报销单卡片';
+  '请长按桌面空白处，选择服务卡片 → 好记 →「统计收支日历」（6×4）';
 
 class AddDesktopResult {
   ok: boolean = false;

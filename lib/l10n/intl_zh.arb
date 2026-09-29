@@ -247,7 +247,7 @@
   "profileHideAmounts": "首页金额显示",
   "profileHideAmountsSubtitle": "隐藏后首页金额显示为 ••••",
   "profileFinanceColors": "账单颜色",
-  "profileFinanceColorsSubtitle": "自定义收入 / 支出等语义颜色",
+  "profileFinanceColorsSubtitle": "自定义收入 / 支出 / 节假日等语义颜色",
   "profileAbout": "关于",
   "profileHelp": "帮助",
   "profileDonate": "捐赠",
@@ -1219,7 +1219,7 @@
   "profileScreenCaptureAllowedIosHint": "iPhone 和 iPad 无法阻止系统静态截图；保护模式会遮挡录屏、镜像和应用切换预览中的内容。",
   "profileScreenCaptureProtectionFailed": "屏幕保护设置未生效，请重试。",
   "profileDesktopWidget": "添加到桌面卡片",
-  "profileDesktopWidgetSubtitle": "支持收支日历，也可长按桌面空白处添加",
+  "profileDesktopWidgetSubtitle": "支持 6×4 统计收支日历，也可长按桌面空白处添加",
   "profileEditTitle": "编辑资料",
   "profileDetailsTitle": "个人资料",
   "profileViewProfile": "查看个人资料",
@@ -1283,6 +1283,9 @@
   "profileColorAdjust": "调整",
   "profileColorAdvance": "垫付",
   "profileColorReimburse": "报销",
+  "profileColorHoliday": "节假日",
+  "profileColorRest": "休",
+  "profileColorWork": "班",
   "profileColorPresetDefault": "默认红绿",
   "profileColorPresetDeuteranopia": "红绿色盲友好",
   "profileColorPresetProtanopia": "红色盲友好",
@@ -1625,7 +1628,24 @@
       "count": {}
     }
   },
-  "statsCalendarViewBills": "查看当天账单",
+  "statsCalendarViewBills": "在账单页查看",
+  "statsCalendarDayBills": "当天账单",
+  "statsCalendarDayBillsEmpty": "当天暂无账单",
+  "statsReceiptWelcome": "欢迎光临",
+  "statsReceiptItem": "品名",
+  "statsReceiptQty": "数量",
+  "statsReceiptAmountCol": "金额",
+  "statsReceiptPayment": "付款方式",
+  "statsReceiptKeep": "请保留好小票",
+  "statsReceiptThanks": "谢谢惠顾",
+  "statsReceiptDate": "日期 {date}",
+  "@statsReceiptDate": {
+    "placeholders": {
+      "date": {}
+    }
+  },
+  "statsReceiptCashier": "收银员：好记",
+  "statsReceiptSave": "保存小票",
   "base64ImageEmpty": "图片数据为空",
   "base64ImageInvalid": "图片解析失败"
 }

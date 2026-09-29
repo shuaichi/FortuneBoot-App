@@ -1083,11 +1083,11 @@ class _TitleCardState extends State<_TitleCard> {
             decoration: InputDecoration(
               isDense: true,
               border: InputBorder.none,
-              hintText: widget.state.firstCategoryName.isEmpty
+              hintText: widget.state.suggestedTitle.isEmpty
                   ? S.of(context).billEditorTitleHint
                   : S
                         .of(context)
-                        .billEditorTitleDefault(widget.state.firstCategoryName),
+                        .billEditorTitleDefault(widget.state.suggestedTitle),
               hintStyle: FxTypography.body.copyWith(
                 color: palette.textTertiary,
               ),

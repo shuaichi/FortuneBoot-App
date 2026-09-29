@@ -40,6 +40,7 @@ class _BillsFilterSheetState extends State<BillsFilterSheet> {
   late Set<int> _billTypes;
   late Set<int> _categoryIds;
   late Set<int> _tagIds;
+  late Set<int> _memberIds;
   late bool? _confirm;
   late bool? _include;
   late int? _accountId;
@@ -59,6 +60,7 @@ class _BillsFilterSheetState extends State<BillsFilterSheet> {
     _billTypes = {...widget.initial.billTypes};
     _categoryIds = {...?widget.initial.categoryIds};
     _tagIds = {...?widget.initial.tagIds};
+    _memberIds = {...?widget.initial.memberIds};
     _confirm = widget.initial.confirm;
     _include = widget.initial.include;
     _accountId = widget.initial.accountId;
@@ -94,6 +96,7 @@ class _BillsFilterSheetState extends State<BillsFilterSheet> {
       _billTypes = {};
       _categoryIds = {};
       _tagIds = {};
+      _memberIds = {};
       _confirm = null;
       _include = null;
       _accountId = null;
@@ -149,6 +152,7 @@ class _BillsFilterSheetState extends State<BillsFilterSheet> {
         include: _include,
         categoryIds: _categoryIds.isEmpty ? null : _categoryIds.toList(),
         tagIds: _tagIds.isEmpty ? null : _tagIds.toList(),
+        memberIds: _memberIds.isEmpty ? null : _memberIds.toList(),
         accountId: _accountId,
         payeeId: _payeeId,
         dateRange: _dateRange,
@@ -364,6 +368,17 @@ class _BillsFilterSheetState extends State<BillsFilterSheet> {
             _singleOption(options.payees, _payeeId, (value) {
               setState(() => _payeeId = value);
             }),
+            const SizedBox(height: FxSpacing.md),
+            _label(S.of(context).billsMembers),
+            _compactTreeField(
+              roots: [
+                for (final m in options.members)
+                  BillsFilterTreeNode(id: m.id, label: m.label),
+              ],
+              selectedIds: _memberIds,
+              title: S.of(context).billEditorSelectMembers,
+              leafOnly: false,
+            ),
           ],
         );
       },

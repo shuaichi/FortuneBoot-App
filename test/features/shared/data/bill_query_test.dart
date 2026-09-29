@@ -29,5 +29,13 @@ void main() {
       ).toQueryParams();
       expect(params['billType'], 2);
     });
+
+    test('includes memberIds when provided', () {
+      final params = const BillQuery(
+        bookId: 1,
+        memberIds: [7, 8],
+      ).toQueryParams();
+      expect(params['memberIds'], [7, 8]);
+    });
   });
 }

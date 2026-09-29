@@ -143,6 +143,30 @@ class BillEditorState extends Equatable {
     return '';
   }
 
+  int? _accountTypeOf(int? id) {
+    if (id == null) return null;
+    for (final account in options.accounts) {
+      if (account.accountId == id) return account.accountType;
+    }
+    return null;
+  }
+
+  /// 转账默认标题：收款信用卡→还款，转出信用卡→提现，转出现金→转账。
+  String get suggestedTransferTitle {
+    final toType = _accountTypeOf(toAccountId);
+    if (toType == AccountTypeMeta.credit.id) return '还款';
+    final fromType = _accountTypeOf(accountId);
+    if (fromType == AccountTypeMeta.credit.id) return '提现';
+    if (fromType == AccountTypeMeta.cash.id) return '转账';
+    return '转账';
+  }
+
+  /// 未手填时展示/提交的默认标题。
+  String get suggestedTitle {
+    if (isTransfer) return suggestedTransferTitle;
+    return firstCategoryName;
+  }
+
   /// 校验：可提交则返回 null，否则返回语义化错误（展示层本地化文案）。
   BillValidationError? get validationError {
     if (isTransfer) {
@@ -174,12 +198,12 @@ class BillEditorState extends Equatable {
 
   bool get canSubmit => validationError == null;
 
-  /// 实际提交用标题（用户未改则回退首个分类名 / 类型名）。
+  /// 实际提交用标题（用户未改则回退分类名或转账默认标题）。
   String get effectiveTitle {
     if (title.isNotEmpty) return title;
     if (!titleTouched) {
-      final c = firstCategoryName;
-      if (c.isNotEmpty) return c;
+      final suggested = suggestedTitle;
+      if (suggested.isNotEmpty) return suggested;
     }
     return title;
   }

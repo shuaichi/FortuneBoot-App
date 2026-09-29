@@ -28,12 +28,14 @@ class BillsFilterOptions {
     this.tagTrees = const [],
     this.accounts = const [],
     this.payees = const [],
+    this.members = const [],
   });
 
   final List<BillsFilterTreeNode> categoryTrees;
   final List<BillsFilterTreeNode> tagTrees;
   final List<BillsFilterOption> accounts;
   final List<BillsFilterOption> payees;
+  final List<BillsFilterOption> members;
 
   /// 扁平化树，便于摘要展示。
   static List<BillsFilterOption> flatten(List<BillsFilterTreeNode> roots) {
@@ -77,6 +79,7 @@ class BillsFilterOptionsService {
       _api.get('/fortune/tag/$bookId/getEnableList', query: {'billType': ''}),
       _api.get('/fortune/account/$groupId/getEnableList'),
       _api.get('/fortune/payee/$bookId/getEnableList', query: {'billType': ''}),
+      _api.get('/fortune/member/$bookId/getEnableList'),
     ]);
     return BillsFilterOptions(
       categoryTrees: _mergeTrees([
@@ -86,6 +89,7 @@ class BillsFilterOptionsService {
       tagTrees: _parseTree(results[2], 'tagId', 'tagName'),
       accounts: _flatOptions(results[3], 'accountId', 'accountName'),
       payees: _flatOptions(results[4], 'payeeId', 'payeeName'),
+      members: _flatOptions(results[5], 'memberId', 'memberName'),
     );
   }
 

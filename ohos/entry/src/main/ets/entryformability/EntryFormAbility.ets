@@ -181,7 +181,8 @@ export default class EntryFormAbility extends FormExtensionAbility {
               ? snapshot.yearViewYear
               : new Date().getFullYear();
             await DesktopWidgetCalendarSync.refreshAfterYearChange(this.context, year);
-          } else if (snapshot.calendarYear >= 1900 && snapshot.calendarMonth >= 1) {
+          } else if (DesktopWidgetStore.isDayForm(formName) ||
+            (snapshot.calendarYear >= 1900 && snapshot.calendarMonth >= 1)) {
             await DesktopWidgetCalendarSync.refreshAfterMonthChange(
               this.context,
               snapshot.calendarYear,

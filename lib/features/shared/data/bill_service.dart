@@ -46,6 +46,7 @@ class BillQuery {
   final int? payeeId;
   final List<int>? categoryIds;
   final List<int>? tagIds;
+  final List<int>? memberIds;
   final bool? confirm;
   final bool? include;
   final String orderColumn;
@@ -66,6 +67,7 @@ class BillQuery {
     this.payeeId,
     this.categoryIds,
     this.tagIds,
+    this.memberIds,
     this.confirm,
     this.include,
     this.orderColumn = 'tradeTime',
@@ -95,6 +97,7 @@ class BillQuery {
     if (categoryIds != null && categoryIds!.isNotEmpty)
       m['categoryIds'] = categoryIds;
     if (tagIds != null && tagIds!.isNotEmpty) m['tagIds'] = tagIds;
+    if (memberIds != null && memberIds!.isNotEmpty) m['memberIds'] = memberIds;
     if (confirm != null) m['confirm'] = confirm;
     if (include != null) m['include'] = include;
     return m;
@@ -169,6 +172,7 @@ class BillService {
             payeeId: query.payeeId,
             categoryIds: query.categoryIds,
             tagIds: query.tagIds,
+            memberIds: query.memberIds,
             confirm: query.confirm,
             include: query.include,
             orderColumn: query.orderColumn,

@@ -89,6 +89,7 @@ class BillsBloc extends Bloc<BillsEvent, BillsState> {
       title: f.title,
       categoryIds: f.categoryIds,
       tagIds: f.tagIds,
+      memberIds: f.memberIds,
     );
   }
 
@@ -203,6 +204,7 @@ class BillsBloc extends Bloc<BillsEvent, BillsState> {
         filter.include == null &&
         (filter.categoryIds == null || filter.categoryIds!.isEmpty) &&
         (filter.tagIds == null || filter.tagIds!.isEmpty) &&
+        (filter.memberIds == null || filter.memberIds!.isEmpty) &&
         filter.accountId == null &&
         filter.payeeId == null &&
         (filter.title == null || filter.title!.isEmpty);

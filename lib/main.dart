@@ -21,6 +21,7 @@ import 'package:fortuneboot/features/orders/orders_registration.dart';
 import 'package:fortuneboot/features/payees/payees_registration.dart';
 import 'package:fortuneboot/features/profile/profile_registration.dart';
 import 'package:fortuneboot/features/recurring/recurring_registration.dart';
+import 'package:fortuneboot/features/stats/data/holiday_patch_service.dart';
 import 'package:fortuneboot/features/stats/stats_registration.dart';
 import 'package:fortuneboot/features/tags/tags_registration.dart';
 import 'package:fortuneboot/login/model/users.dart';
@@ -47,6 +48,9 @@ void main() async {
   // DioClient 是内存单例，shift+r 热重启会清空其 baseUrl；若不在此恢复，
   // 未经过 BaseUrlConfigPage 初始化流程时所有请求都会失败。
   _restoreDioClientFromStorage(sharedPreferences);
+
+  // 调休补丁：从安装包 assets 注入（发版时打包）。
+  await HolidayPatchService.instance.applyBundled();
 
   // 注册各 feature 的 MainShell tab 槽位与路由。
   registerDashboardSlot();

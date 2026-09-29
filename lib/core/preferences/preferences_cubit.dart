@@ -122,6 +122,10 @@ class PreferencesCubit extends Cubit<PreferencesState> {
       'fortune.preferences.financeColors.advance';
   static const String _colorReimburseKey =
       'fortune.preferences.financeColors.reimburse';
+  static const String _colorHolidayKey =
+      'fortune.preferences.financeColors.holiday';
+  static const String _colorRestKey = 'fortune.preferences.financeColors.rest';
+  static const String _colorWorkKey = 'fortune.preferences.financeColors.work';
 
   SharedPreferences? _sharedPreferences;
   final ScreenCapturePreferenceStore _screenCapturePreferenceStore;
@@ -251,6 +255,9 @@ class PreferencesCubit extends Cubit<PreferencesState> {
     final adjust = prefs.getInt(_colorAdjustKey) ?? defaults.adjust;
     final advance = prefs.getInt(_colorAdvanceKey) ?? defaults.advance;
     final reimburse = prefs.getInt(_colorReimburseKey) ?? defaults.reimburse;
+    final holiday = prefs.getInt(_colorHolidayKey) ?? defaults.holiday;
+    final rest = prefs.getInt(_colorRestKey) ?? defaults.rest;
+    final work = prefs.getInt(_colorWorkKey) ?? defaults.work;
     final preset =
         prefs.getString(_colorPresetKey) ??
         FinanceColorPreferences.inferPreset(
@@ -260,6 +267,9 @@ class PreferencesCubit extends Cubit<PreferencesState> {
           adjust: adjust,
           advance: advance,
           reimburse: reimburse,
+          holiday: holiday,
+          rest: rest,
+          work: work,
         );
     return FinanceColorPreferences(
       income: income,
@@ -268,6 +278,9 @@ class PreferencesCubit extends Cubit<PreferencesState> {
       adjust: adjust,
       advance: advance,
       reimburse: reimburse,
+      holiday: holiday,
+      rest: rest,
+      work: work,
       preset: preset,
     );
   }
@@ -478,6 +491,9 @@ class PreferencesCubit extends Cubit<PreferencesState> {
         prefs.setInt(_colorAdjustKey, colors.adjust),
         prefs.setInt(_colorAdvanceKey, colors.advance),
         prefs.setInt(_colorReimburseKey, colors.reimburse),
+        prefs.setInt(_colorHolidayKey, colors.holiday),
+        prefs.setInt(_colorRestKey, colors.rest),
+        prefs.setInt(_colorWorkKey, colors.work),
       ]);
       if (results.any((ok) => !ok)) {
         emit(

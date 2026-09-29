@@ -358,6 +358,7 @@ class _BodyState extends State<_Body> {
         view: state.calendarView,
         anchor: state.calendarAnchor,
         currencyCode: currency,
+        bookId: bloc.bookId,
         onViewChanged: (view) => bloc.add(StatsCalendarViewChanged(view)),
         onNavigate: (delta) => bloc.add(StatsCalendarNavigate(delta)),
         onDrillDown: (view, anchor) => bloc.add(

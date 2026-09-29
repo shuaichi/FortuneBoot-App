@@ -31,6 +31,7 @@ const KEY_DEFAULT_ORDER_ID: string = 'defaultOrderId';
 const FORM_NAMES_KEY: string = 'formNames';
 
 export const FORM_NAME_DAY: string = 'income_expense_calendar_card';
+export const FORM_NAME_STATS_DAY: string = 'stats_income_expense_calendar_card';
 export const FORM_NAME_MONTH: string = 'month_income_expense_calendar_card';
 export const FORM_NAME_ORDER: string = 'reimbursement_order_card';
 
@@ -426,6 +427,12 @@ export class DesktopWidgetStore {
       // ignore
     }
     return FORM_NAME_DAY;
+  }
+
+  static isDayForm(formName: string): boolean {
+    return formName === FORM_NAME_DAY ||
+      formName === FORM_NAME_STATS_DAY ||
+      formName.indexOf('stats_income_expense_calendar') >= 0;
   }
 
   static isMonthForm(formName: string): boolean {

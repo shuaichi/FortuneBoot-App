@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fortuneboot/core/icon/fx_icon_badge.dart';
 import 'package:fortuneboot/core/icon/smart_category_engine.dart';
+import 'package:fortuneboot/core/money/fx_money_formatter.dart';
 import 'package:fortuneboot/features/shared/data/bill_models.dart';
 import 'package:fortuneboot/fx/components/fx_money_text.dart';
 import 'package:fortuneboot/fx/components/fx_tag_chip.dart';
@@ -10,7 +11,7 @@ import 'package:fortuneboot/fx/tokens/fx_typography.dart';
 import 'package:fortuneboot/generated/l10n.dart';
 import 'package:intl/intl.dart';
 
-/// 单条账单行：左图标徽标 + 标题/副行，右金额/时间/附件/标签。
+/// 单条账单行：左图标徽标 + 标题/副行，右金额/时间/手续费·优惠标签。
 class BillTile extends StatelessWidget {
   final FortuneBillVo bill;
   final VoidCallback? onTap;
@@ -69,6 +70,10 @@ class BillTile extends StatelessWidget {
         .map((t) => t.tagName ?? '')
         .where((s) => s.isNotEmpty)
         .toList();
+    final locale = Localizations.localeOf(context).toString();
+    final hasExtras = bill.hasExtrasAdjustment && !masked;
+    final fee = bill.feeTotal;
+    final discount = bill.discountTotal;
 
     return InkWell(
       onTap: onTap,
@@ -117,7 +122,7 @@ class BillTile extends StatelessWidget {
                     Text(
                       _subtitle,
                       style: FxTypography.caption.copyWith(
-                        color: FxPalette.of(context).textTertiary,
+                        color: palette.textTertiary,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -142,27 +147,89 @@ class BillTile extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
+                if (hasExtras)
+                  Text(
+                    FxMoneyFormatter.format(
+                      bill.displayAmount,
+                      locale: locale,
+                    ),
+                    style: FxTypography.caption.copyWith(
+                      color: palette.textTertiary,
+                      decoration: TextDecoration.lineThrough,
+                      decorationColor: palette.textTertiary,
+                      fontSize: 11,
+                      height: 1.15,
+                    ),
+                  ),
                 FxMoneyText(
-                  amount: bill.displayAmount,
+                  amount: hasExtras ? bill.settledAmount : bill.displayAmount,
                   currencyCode: bill.currencyCode,
                   billType: bill.billType,
                   showSign: true,
                   masked: masked,
                 ),
-                if (bill.tradeTime != null) ...[
+                if (bill.tradeTime != null ||
+                    (hasExtras && (fee > 0 || discount > 0))) ...[
                   const SizedBox(height: 2),
-                  Text(
-                    DateFormat.Hm(
-                      Localizations.localeOf(context).toString(),
-                    ).format(bill.tradeTime!),
-                    style: FxTypography.caption.copyWith(
-                      color: FxPalette.of(context).textTertiary,
-                    ),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (bill.tradeTime != null)
+                        Text(
+                          DateFormat.Hm(locale).format(bill.tradeTime!),
+                          style: FxTypography.caption.copyWith(
+                            color: palette.textTertiary,
+                          ),
+                        ),
+                      if (hasExtras && fee > 0) ...[
+                        if (bill.tradeTime != null)
+                          const SizedBox(width: FxSpacing.xs),
+                        _extraBadge(
+                          label:
+                              '${S.of(context).billsFee} ${FxMoneyFormatter.format(fee, locale: locale)}',
+                          foreground: const Color(0xFFC47A2C),
+                          background: const Color(0xFFFFF0DD),
+                        ),
+                      ],
+                      if (hasExtras && discount > 0) ...[
+                        if (bill.tradeTime != null || fee > 0)
+                          const SizedBox(width: FxSpacing.xs),
+                        _extraBadge(
+                          label:
+                              '${S.of(context).billsDiscount} ${FxMoneyFormatter.format(discount, locale: locale)}',
+                          foreground: const Color(0xFFD14343),
+                          background: const Color(0xFFFFE8E8),
+                        ),
+                      ],
+                    ],
                   ),
                 ],
               ],
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _extraBadge({
+    required String label,
+    required Color foreground,
+    required Color background,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      decoration: BoxDecoration(
+        color: background,
+        borderRadius: BorderRadius.circular(999),
+      ),
+      child: Text(
+        label,
+        style: FxTypography.caption.copyWith(
+          color: foreground,
+          fontSize: 10,
+          fontWeight: FontWeight.w500,
+          height: 1.1,
         ),
       ),
     );

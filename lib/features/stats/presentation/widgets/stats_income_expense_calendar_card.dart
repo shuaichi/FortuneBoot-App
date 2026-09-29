@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:fortuneboot/features/stats/data/chinese_calendar_day.dart';
 import 'package:fortuneboot/features/stats/data/stats_models.dart';
 import 'package:fortuneboot/features/stats/presentation/bloc/stats_bloc.dart';
+import 'package:fortuneboot/features/stats/presentation/widgets/calendar_day_summary_sheet.dart';
 import 'package:fortuneboot/features/stats/presentation/widgets/stats_formatters.dart';
 import 'package:fortuneboot/fx/components/fx_card.dart';
-import 'package:fortuneboot/fx/components/fx_money_text.dart';
 import 'package:fortuneboot/fx/components/fx_segmented.dart';
 import 'package:fortuneboot/fx/components/fx_state_view.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
@@ -24,12 +25,14 @@ class StatsIncomeExpenseCalendarCard extends StatelessWidget {
     required this.onDrillDown,
     required this.onBillsRequested,
     required this.onRetry,
+    this.bookId,
   });
 
   final StatsSection<IncomeExpenseCalendarResponse> section;
   final IncomeExpenseCalendarView view;
   final DateTime anchor;
   final String? currencyCode;
+  final int? bookId;
   final ValueChanged<IncomeExpenseCalendarView> onViewChanged;
   final ValueChanged<int> onNavigate;
   final void Function(IncomeExpenseCalendarView view, DateTime anchor)
@@ -85,6 +88,7 @@ class StatsIncomeExpenseCalendarCard extends StatelessWidget {
               view: view,
               anchor: anchor,
               currencyCode: currencyCode,
+              bookId: bookId,
               onDrillDown: onDrillDown,
               onBillsRequested: onBillsRequested,
             ),
@@ -151,12 +155,14 @@ class _CalendarContent extends StatelessWidget {
     required this.currencyCode,
     required this.onDrillDown,
     required this.onBillsRequested,
+    this.bookId,
   });
 
   final IncomeExpenseCalendarResponse response;
   final IncomeExpenseCalendarView view;
   final DateTime anchor;
   final String? currencyCode;
+  final int? bookId;
   final void Function(IncomeExpenseCalendarView view, DateTime anchor)
   onDrillDown;
   final ValueChanged<DateTime> onBillsRequested;
@@ -168,6 +174,7 @@ class _CalendarContent extends StatelessWidget {
         anchor: anchor,
         items: response.items,
         currencyCode: currencyCode,
+        bookId: bookId,
         onBillsRequested: onBillsRequested,
       );
     }
@@ -181,24 +188,56 @@ class _CalendarContent extends StatelessWidget {
   }
 }
 
-class _MonthCalendar extends StatelessWidget {
+class _MonthCalendar extends StatefulWidget {
   const _MonthCalendar({
     required this.anchor,
     required this.items,
     required this.currencyCode,
     required this.onBillsRequested,
+    this.bookId,
   });
 
   final DateTime anchor;
   final List<IncomeExpenseCalendarBucket> items;
   final String? currencyCode;
+  final int? bookId;
   final ValueChanged<DateTime> onBillsRequested;
 
   @override
+  State<_MonthCalendar> createState() => _MonthCalendarState();
+}
+
+class _MonthCalendarState extends State<_MonthCalendar> {
+  late DateTime _selected;
+
+  @override
+  void initState() {
+    super.initState();
+    _selected = _defaultSelected(widget.anchor);
+  }
+
+  @override
+  void didUpdateWidget(covariant _MonthCalendar oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.anchor.year != widget.anchor.year ||
+        oldWidget.anchor.month != widget.anchor.month) {
+      _selected = _defaultSelected(widget.anchor);
+    }
+  }
+
+  DateTime _defaultSelected(DateTime anchor) {
+    final now = DateTime.now();
+    if (now.year == anchor.year && now.month == anchor.month) {
+      return DateTime(now.year, now.month, now.day);
+    }
+    return DateTime(anchor.year, anchor.month, 1);
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final days = _mergeDayBuckets(items);
-    final firstWeekday = DateTime(anchor.year, anchor.month).weekday;
-    final dayCount = DateTime(anchor.year, anchor.month + 1, 0).day;
+    final days = _mergeDayBuckets(widget.items);
+    final firstWeekday = DateTime(widget.anchor.year, widget.anchor.month).weekday;
+    final dayCount = DateTime(widget.anchor.year, widget.anchor.month + 1, 0).day;
     final weekdayLabels = [
       S.of(context).billsWeekdayMon,
       S.of(context).billsWeekdayTue,
@@ -212,21 +251,27 @@ class _MonthCalendar extends StatelessWidget {
       for (var i = 1; i < firstWeekday; i++) const SizedBox.shrink(),
       for (var day = 1; day <= dayCount; day++)
         _DayCell(
-          date: DateTime(anchor.year, anchor.month, day),
+          date: DateTime(widget.anchor.year, widget.anchor.month, day),
           bucket: days[day] ?? const IncomeExpenseCalendarBucket(),
-          currencyCode: currencyCode,
-          onBillsRequested: onBillsRequested,
+          currencyCode: widget.currencyCode,
+          selected: day == _selected.day,
+          bookId: widget.bookId,
+          onSelected: (date) => setState(() => _selected = date),
+          onBillsRequested: widget.onBillsRequested,
         ),
     ];
     return LayoutBuilder(
       builder: (context, constraints) {
         final cellWidth = (constraints.maxWidth - 24) / 7;
         final textScale = MediaQuery.textScalerOf(context).scale(1);
-        final minimumHeight = 72 * textScale;
-        final maxHeight = 120.0 * textScale;
+        // 公历 + 农历 + 收支三行；高度跟内容走，避免格子底部空一大截。
+        final minimumHeight = 60 * textScale;
+        final maxHeight = 84.0 * textScale;
         final dayCellHeight = cellWidth.clamp(minimumHeight, maxHeight);
         return Column(
           children: [
+            _CalendarDayHeader(date: _selected),
+            const SizedBox(height: FxSpacing.lg),
             Row(
               children: [
                 for (final label in weekdayLabels)
@@ -239,19 +284,20 @@ class _MonthCalendar extends StatelessWidget {
                         textAlign: TextAlign.center,
                         style: FxTypography.caption.copyWith(
                           color: FxPalette.of(context).textTertiary,
+                          height: 1.0,
                         ),
                       ),
                     ),
                   ),
               ],
             ),
-            const SizedBox(height: FxSpacing.sm),
             GridView.builder(
+              padding: EdgeInsets.zero,
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 7,
                 mainAxisExtent: dayCellHeight,
-                mainAxisSpacing: 4,
-                crossAxisSpacing: 4,
+                mainAxisSpacing: 2,
+                crossAxisSpacing: 2,
               ),
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
@@ -291,12 +337,53 @@ class _MonthCalendar extends StatelessWidget {
     final year = int.tryParse(parts[0]);
     final month = int.tryParse(parts[1]);
     final day = int.tryParse(parts[2]);
-    if (year != anchor.year || month != anchor.month || day == null) {
+    if (year != widget.anchor.year ||
+        month != widget.anchor.month ||
+        day == null) {
       return null;
     }
-    final maxDay = DateTime(anchor.year, anchor.month + 1, 0).day;
+    final maxDay =
+        DateTime(widget.anchor.year, widget.anchor.month + 1, 0).day;
     if (day < 1 || day > maxDay) return null;
     return day;
+  }
+}
+
+/// 月视图顶部：大号公历日 + 干支年 | 农历 星期。
+class _CalendarDayHeader extends StatelessWidget {
+  const _CalendarDayHeader({required this.date});
+
+  final DateTime date;
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = FxPalette.of(context);
+    final calendar = ChineseCalendarDay.of(date);
+    return SizedBox(
+      width: double.infinity,
+      child: Column(
+        children: [
+          Text(
+            '${date.day}',
+            style: FxTypography.display.copyWith(
+              fontSize: 56,
+              fontWeight: FontWeight.w600,
+              height: 1.0,
+              color: palette.textPrimary,
+            ),
+          ),
+          const SizedBox(height: FxSpacing.xs),
+          Text(
+            calendar.headerDetail,
+            textAlign: TextAlign.center,
+            style: FxTypography.body.copyWith(
+              color: palette.textSecondary,
+              height: 1.2,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
 
@@ -305,12 +392,18 @@ class _DayCell extends StatelessWidget {
     required this.date,
     required this.bucket,
     required this.currencyCode,
+    required this.selected,
+    required this.onSelected,
     required this.onBillsRequested,
+    this.bookId,
   });
 
   final DateTime date;
   final IncomeExpenseCalendarBucket bucket;
   final String? currencyCode;
+  final bool selected;
+  final int? bookId;
+  final ValueChanged<DateTime> onSelected;
   final ValueChanged<DateTime> onBillsRequested;
 
   @override
@@ -320,44 +413,87 @@ class _DayCell extends StatelessWidget {
     final s = S.of(context);
     final locale = Localizations.localeOf(context).toString();
     final formats = StatsFormatters.of(context, currencyCode: currencyCode);
+    final calendar = ChineseCalendarDay.of(date);
+    final workRest = calendar.workRestLabel;
     final summary =
-        '${DateFormat.yMMMd(locale).format(date)}: '
+        '${DateFormat.yMMMd(locale).format(date)} ${calendar.subtitle}'
+        '${workRest == null ? '' : ' $workRest'}: '
         '${s.statsCalendarIncome} ${formats.money(bucket.income)}, '
         '${s.statsCalendarExpense} ${formats.money(bucket.expense)}, '
         '${s.statsCalendarTotalCount(bucket.totalCount)}';
+    final workRestColor = calendar.isRest
+        ? finance.rest
+        : calendar.isWorkdayMakeup
+        ? finance.work
+        : palette.textTertiary;
+    final Color fill = selected
+        ? palette.primary.withValues(alpha: 0.16)
+        : Colors.transparent;
     return Semantics(
       button: true,
+      selected: selected,
       label: summary,
       child: InkWell(
         borderRadius: BorderRadius.circular(8),
-        onTap: () => _showDaySummary(
-          context,
-          date,
-          bucket,
-          currencyCode,
-          onBillsRequested,
-        ),
+        onTap: () {
+          onSelected(date);
+          final id = bookId;
+          if (id == null) {
+            onBillsRequested(date);
+            return;
+          }
+          showCalendarDaySummarySheet(
+            context,
+            date: date,
+            bucket: bucket,
+            bookId: id,
+            currencyCode: currencyCode,
+            onViewAllBills: () => onBillsRequested(date),
+          );
+        },
         child: Container(
-          padding: const EdgeInsets.all(3),
+          padding: const EdgeInsets.fromLTRB(2, 1, 2, 1),
           decoration: BoxDecoration(
-            color: bucket.totalCount == 0
-                ? palette.surfaceMuted.withValues(alpha: 0.45)
-                : palette.primaryContainer,
+            color: fill,
             borderRadius: BorderRadius.circular(8),
+            border: selected
+                ? Border.all(color: palette.primary.withValues(alpha: 0.45))
+                : null,
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          child: Stack(
             children: [
-              Text(
-                DateFormat.d(locale).format(date),
-                style: FxTypography.caption,
-              ),
-              Expanded(
-                child: Align(
-                  alignment: Alignment.bottomLeft,
-                  child: FittedBox(
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Padding(
+                    // 给右上角「班/休」留出固定空位，避免被日期挤掉。
+                    padding: EdgeInsets.only(right: workRest == null ? 0 : 12),
+                    child: Text(
+                      '${date.day}',
+                      textAlign: TextAlign.center,
+                      style: FxTypography.caption.copyWith(
+                        fontWeight: FontWeight.w600,
+                        height: 1.0,
+                      ),
+                    ),
+                  ),
+                  Text(
+                    calendar.subtitle,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.center,
+                    style: FxTypography.caption.copyWith(
+                      color: calendar.isFestivalOrTerm
+                          ? finance.holiday
+                          : palette.textTertiary,
+                      fontSize: 9,
+                      height: 1.0,
+                    ),
+                  ),
+                  FittedBox(
                     fit: BoxFit.scaleDown,
-                    alignment: Alignment.bottomLeft,
+                    alignment: Alignment.topLeft,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,
@@ -378,13 +514,29 @@ class _DayCell extends StatelessWidget {
                           '${bucket.totalCount}',
                           style: FxTypography.caption.copyWith(
                             color: palette.textTertiary,
+                            fontSize: 9,
+                            height: 1.0,
                           ),
                         ),
                       ],
                     ),
                   ),
-                ),
+                ],
               ),
+              if (workRest != null)
+                Positioned(
+                  top: 0,
+                  right: 0,
+                  child: Text(
+                    workRest,
+                    style: FxTypography.caption.copyWith(
+                      color: workRestColor,
+                      fontSize: 9,
+                      fontWeight: FontWeight.w700,
+                      height: 1.05,
+                    ),
+                  ),
+                ),
             ],
           ),
         ),
@@ -407,7 +559,11 @@ class _CompactAmount extends StatelessWidget {
     final value = amount == 0 ? '—' : formats.compact(amount);
     return Text(
       '$prefix$value',
-      style: FxTypography.caption.copyWith(color: color, fontSize: 9),
+      style: FxTypography.caption.copyWith(
+        color: color,
+        fontSize: 9,
+        height: 1.0,
+      ),
       maxLines: 1,
       overflow: TextOverflow.ellipsis,
     );
@@ -562,100 +718,6 @@ class _PeriodCell extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-}
-
-void _showDaySummary(
-  BuildContext context,
-  DateTime date,
-  IncomeExpenseCalendarBucket bucket,
-  String? currencyCode,
-  ValueChanged<DateTime> onBillsRequested,
-) {
-  final s = S.of(context);
-  final finance = FxFinanceColors.of(context);
-  showModalBottomSheet<void>(
-    context: context,
-    showDragHandle: true,
-    builder: (context) => Padding(
-      padding: const EdgeInsets.fromLTRB(
-        FxSpacing.lg,
-        0,
-        FxSpacing.lg,
-        FxSpacing.xxxl,
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            s.statsCalendarDateSummary(
-              DateFormat.yMMMd(
-                Localizations.localeOf(context).toString(),
-              ).format(date),
-            ),
-            style: FxTypography.title,
-          ),
-          const SizedBox(height: FxSpacing.lg),
-          _SummaryRow(
-            label: s.statsCalendarIncomeCount(bucket.incomeCount),
-            amount: bucket.income,
-            color: finance.income,
-            currencyCode: currencyCode,
-          ),
-          const SizedBox(height: FxSpacing.sm),
-          _SummaryRow(
-            label: s.statsCalendarExpenseCount(bucket.expenseCount),
-            amount: bucket.expense,
-            color: finance.expense,
-            currencyCode: currencyCode,
-          ),
-          const SizedBox(height: FxSpacing.md),
-          Text(s.statsCalendarTotalCount(bucket.totalCount)),
-          const SizedBox(height: FxSpacing.lg),
-          SizedBox(
-            width: double.infinity,
-            child: FilledButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                onBillsRequested(date);
-              },
-              child: Text(s.statsCalendarViewBills),
-            ),
-          ),
-        ],
-      ),
-    ),
-  );
-}
-
-class _SummaryRow extends StatelessWidget {
-  const _SummaryRow({
-    required this.label,
-    required this.amount,
-    required this.color,
-    required this.currencyCode,
-  });
-
-  final String label;
-  final double amount;
-  final Color color;
-  final String? currencyCode;
-
-  @override
-  Widget build(BuildContext context) {
-    final formats = StatsFormatters.of(context, currencyCode: currencyCode);
-    return Row(
-      children: [
-        Expanded(child: Text(label, style: FxTypography.body)),
-        FxMoneyText(
-          amount: amount,
-          currencyCode: currencyCode,
-          color: color,
-          masked: formats.masked,
-        ),
-      ],
     );
   }
 }
