@@ -1,4 +1,3 @@
-import 'dart:math' as math;
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
@@ -74,6 +73,8 @@ class _CalendarDaySummarySheetState extends State<CalendarDaySummarySheet> {
   late final BillDetailFlow _detailFlow = BillDetailFlow(service: _service);
   late Future<BillPage> _billsFuture;
   final GlobalKey _receiptKey = GlobalKey();
+  /// 打开小票时的查看时间，用于底部分界线中间展示。
+  final DateTime _viewedAt = DateTime.now();
   var _readyToSave = false;
   var _saving = false;
 
@@ -235,6 +236,9 @@ class _CalendarDaySummarySheetState extends State<CalendarDaySummarySheet> {
                               const _ReceiptDash(),
                               _ReceiptMeta(
                                 date: widget.date,
+                                serial: loading || error
+                                    ? null
+                                    : _receiptSerial(rows),
                                 ink: ink,
                                 muted: muted,
                               ),
@@ -287,19 +291,63 @@ class _CalendarDaySummarySheetState extends State<CalendarDaySummarySheet> {
                                     onTap: () => _openBill(bill),
                                   ),
                               const _ReceiptDash(),
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    s.statsReceiptPayment,
+                                    style: FxTypography.body.copyWith(
+                                      color: ink,
+                                    ),
+                                  ),
+                                  const Spacer(),
+                                  Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      _ReceiptExtraBadge(
+                                        label: s.statsReceiptDiscountTotal(
+                                          formats.money(
+                                            rows.fold<double>(
+                                              0,
+                                              (sum, b) =>
+                                                  sum + b.discountTotal,
+                                            ),
+                                          ),
+                                        ),
+                                        foreground: const Color(0xFFD14343),
+                                        background: const Color(0xFFFFE8E8),
+                                      ),
+                                      const SizedBox(height: 2),
+                                      _ReceiptExtraBadge(
+                                        label: s.statsReceiptFeeTotal(
+                                          formats.money(
+                                            rows.fold<double>(
+                                              0,
+                                              (sum, b) => sum + b.feeTotal,
+                                            ),
+                                          ),
+                                        ),
+                                        foreground: const Color(0xFFC47A2C),
+                                        background: const Color(0xFFFFF0DD),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 4),
                               _ReceiptTotalRow(
-                                label: s.statsCalendarIncomeCount(
-                                  widget.bucket.incomeCount,
-                                ),
+                                label: s.statsReceiptIncomeGoods,
+                                qty: widget.bucket.incomeCount,
                                 amount: widget.bucket.income,
                                 formats: formats,
                                 color: finance.income,
                               ),
                               const SizedBox(height: 4),
                               _ReceiptTotalRow(
-                                label: s.statsCalendarExpenseCount(
-                                  widget.bucket.expenseCount,
-                                ),
+                                label: s.statsReceiptSoldGoods,
+                                qty: widget.bucket.expenseCount,
                                 amount: widget.bucket.expense,
                                 formats: formats,
                                 color: finance.expense,
@@ -313,60 +361,68 @@ class _CalendarDaySummarySheetState extends State<CalendarDaySummarySheet> {
                                   color: muted,
                                 ),
                               ),
-                              const _ReceiptDash(),
+                              _ReceiptDash(
+                                centerText: DateFormat(
+                                  'yyyy-MM-dd HH:mm:ss',
+                                ).format(_viewedAt),
+                              ),
+                              const SizedBox(height: FxSpacing.md),
                               Text(
-                                s.statsReceiptPayment,
+                                s.statsReceiptFooterWelcome,
+                                textAlign: TextAlign.center,
+                                style: FxTypography.caption.copyWith(
+                                  color: ink,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                s.statsReceiptFooterUrl,
+                                textAlign: TextAlign.center,
+                                style: FxTypography.caption.copyWith(
+                                  color: ink,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                s.statsReceiptFooterExcel,
+                                textAlign: TextAlign.center,
+                                style: FxTypography.caption.copyWith(
+                                  color: muted,
+                                ),
+                              ),
+                              const SizedBox(height: FxSpacing.sm),
+                              Center(
+                                child: Image.asset(
+                                  'assets/images/receipt_sponsor_wechat.png',
+                                  width: 120,
+                                  height: 120,
+                                  fit: BoxFit.contain,
+                                  filterQuality: FilterQuality.medium,
+                                ),
+                              ),
+                              const SizedBox(height: FxSpacing.sm),
+                              Text(
+                                s.statsReceiptFooterScan,
+                                textAlign: TextAlign.center,
                                 style: FxTypography.caption.copyWith(
                                   color: muted,
                                 ),
                               ),
                               const SizedBox(height: 4),
                               Text(
-                                _paymentLabel(rows),
-                                style: FxTypography.body.copyWith(color: ink),
+                                s.statsReceiptFooterDelivery,
+                                textAlign: TextAlign.center,
+                                style: FxTypography.caption.copyWith(
+                                  color: muted,
+                                ),
                               ),
-                              const SizedBox(height: FxSpacing.md),
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: [
-                                  Icon(
-                                    Icons.qr_code_2_rounded,
-                                    size: 64,
-                                    color: ink.withValues(alpha: 0.85),
-                                  ),
-                                  const SizedBox(width: FxSpacing.md),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.end,
-                                      children: [
-                                        Text(
-                                          s.statsReceiptCashier,
-                                          style: FxTypography.caption.copyWith(
-                                            color: muted,
-                                          ),
-                                        ),
-                                        const SizedBox(height: 8),
-                                        Text(
-                                          s.statsReceiptKeep,
-                                          textAlign: TextAlign.right,
-                                          style: FxTypography.caption.copyWith(
-                                            color: muted,
-                                          ),
-                                        ),
-                                        const SizedBox(height: 4),
-                                        Text(
-                                          s.statsReceiptThanks,
-                                          textAlign: TextAlign.right,
-                                          style: FxTypography.label.copyWith(
-                                            color: ink,
-                                            letterSpacing: 1.2,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
+                              const SizedBox(height: 4),
+                              Text(
+                                s.statsReceiptFooterCounter,
+                                textAlign: TextAlign.center,
+                                style: FxTypography.caption.copyWith(
+                                  color: muted,
+                                ),
                               ),
                             ],
                           );
@@ -412,17 +468,17 @@ class _CalendarDaySummarySheetState extends State<CalendarDaySummarySheet> {
     );
   }
 
-  String _paymentLabel(List<FortuneBillVo> rows) {
-    if (rows.isEmpty) return '—';
-    final names = <String>{};
-    for (final bill in rows) {
-      final from = bill.accountName?.trim();
-      final to = bill.toAccountName?.trim();
-      if (from != null && from.isNotEmpty) names.add(from);
-      if (to != null && to.isNotEmpty) names.add(to);
-    }
-    if (names.isEmpty) return '—';
-    return names.join(' / ');
+  /// 流水号：按列表顺序拼接各账单 [FortuneBillVo.billId]，最长 15 位。
+  String _receiptSerial(List<FortuneBillVo> rows) {
+    final ids = rows
+        .map((b) => b.billId)
+        .whereType<int>()
+        .map((id) => '$id')
+        .toList();
+    if (ids.isEmpty) return '—';
+    final joined = ids.join();
+    if (joined.length <= 15) return joined;
+    return joined.substring(0, 15);
   }
 }
 
@@ -431,30 +487,59 @@ class _ReceiptMeta extends StatelessWidget {
     required this.date,
     required this.ink,
     required this.muted,
+    this.serial,
   });
 
   final DateTime date;
   final Color ink;
   final Color muted;
+  final String? serial;
 
   @override
   Widget build(BuildContext context) {
     final s = S.of(context);
-    final locale = Localizations.localeOf(context).toString();
     final calendar = ChineseCalendarDay.of(date);
-    final dateText = DateFormat.yMMMEd(locale).format(date);
-    return Column(
+    final dateText = DateFormat('yyyy-MM-dd').format(date);
+    final caption = FxTypography.caption.copyWith(color: ink);
+    return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          s.statsReceiptDate(dateText),
-          style: FxTypography.caption.copyWith(color: ink),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(s.statsReceiptDate(dateText), style: caption),
+              const SizedBox(height: 2),
+              Text(
+                '${calendar.weekdayLabel}  ${calendar.lunarDateLabel}',
+                style: FxTypography.caption.copyWith(color: muted),
+              ),
+            ],
+          ),
         ),
-        const SizedBox(height: 2),
-        Text(
-          '${calendar.weekdayLabel}  ${calendar.lunarDateLabel}',
-          style: FxTypography.caption.copyWith(color: muted),
-        ),
+        if (serial != null) ...[
+          const SizedBox(width: FxSpacing.sm),
+          Flexible(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text(
+                  s.statsReceiptSerial(serial!),
+                  textAlign: TextAlign.right,
+                  style: caption.copyWith(
+                    fontFamily: FxTypography.monoFamily,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  s.statsReceiptCashier,
+                  textAlign: TextAlign.right,
+                  style: FxTypography.caption.copyWith(color: muted),
+                ),
+              ],
+            ),
+          ),
+        ],
       ],
     );
   }
@@ -512,14 +597,29 @@ class _ReceiptLine extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final s = S.of(context);
     final category = bill.primaryCategoryName.trim();
     final title = (bill.title?.trim().isNotEmpty == true)
         ? bill.title!.trim()
         : (category.isNotEmpty ? category : '—');
+    final members = bill.memberList
+        .map((m) => m.memberName?.trim() ?? '')
+        .where((e) => e.isNotEmpty)
+        .join('、');
+    final tags = bill.tagList
+        .map((t) => t.tagName?.trim() ?? '')
+        .where((e) => e.isNotEmpty)
+        .join('、');
+    final account = bill.accountName?.trim() ?? '';
     final sub = [
-      category,
-      bill.accountName?.trim() ?? '',
-    ].where((e) => e.isNotEmpty && e != title).join(' · ');
+      if (category.isNotEmpty && category != title) category,
+      account,
+      members,
+      tags,
+    ].where((e) => e.isNotEmpty).join(' · ');
+    final fee = bill.feeTotal;
+    final discount = bill.discountTotal;
+    final hasExtras = bill.hasExtrasAdjustment && !formats.masked;
     final amountColor = switch (bill.billType) {
       1 => finance.expense,
       2 => finance.income,
@@ -529,37 +629,65 @@ class _ReceiptLine extends StatelessWidget {
       onTap: onTap,
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 6),
-        child: Column(
+        child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  flex: 5,
-                  child: Text(
+            Expanded(
+              flex: 5,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
                     title,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: FxTypography.body.copyWith(color: ink),
                   ),
-                ),
-                Expanded(
-                  flex: 2,
-                  child: Text(
-                    '1',
-                    textAlign: TextAlign.center,
-                    style: FxTypography.body.copyWith(
-                      color: ink,
-                      fontFamily: FxTypography.monoFamily,
+                  if (sub.isNotEmpty) ...[
+                    const SizedBox(height: 2),
+                    Text(
+                      sub,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: FxTypography.caption.copyWith(color: muted),
                     ),
-                  ),
+                  ],
+                ],
+              ),
+            ),
+            Expanded(
+              flex: 2,
+              child: Text(
+                '1',
+                textAlign: TextAlign.center,
+                style: FxTypography.body.copyWith(
+                  color: ink,
+                  fontFamily: FxTypography.monoFamily,
                 ),
-                Expanded(
-                  flex: 3,
-                  child: Text(
+              ),
+            ),
+            Expanded(
+              flex: 3,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  if (hasExtras)
+                    Text(
+                      formats.money(bill.displayAmount),
+                      textAlign: TextAlign.right,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: FxTypography.caption.copyWith(
+                        color: muted,
+                        decoration: TextDecoration.lineThrough,
+                        decorationColor: muted,
+                        fontSize: 11,
+                        height: 1.15,
+                      ),
+                    ),
+                  Text(
                     formats.money(
-                      bill.displayAmount,
+                      hasExtras ? bill.settledAmount : bill.displayAmount,
                       showSign: bill.billType == 2,
                     ),
                     textAlign: TextAlign.right,
@@ -570,20 +698,64 @@ class _ReceiptLine extends StatelessWidget {
                       fontSize: 14,
                     ),
                   ),
-                ),
-              ],
-            ),
-            if (sub.isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.only(top: 2, right: 72),
-                child: Text(
-                  sub,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: FxTypography.caption.copyWith(color: muted),
-                ),
+                  if (hasExtras && (fee > 0 || discount > 0)) ...[
+                    const SizedBox(height: 2),
+                    Wrap(
+                      alignment: WrapAlignment.end,
+                      spacing: FxSpacing.xs,
+                      runSpacing: 2,
+                      children: [
+                        if (fee > 0)
+                          _ReceiptExtraBadge(
+                            label: '${s.billsFee} ${formats.money(fee)}',
+                            foreground: const Color(0xFFC47A2C),
+                            background: const Color(0xFFFFF0DD),
+                          ),
+                        if (discount > 0)
+                          _ReceiptExtraBadge(
+                            label: '${s.billsDiscount} ${formats.money(discount)}',
+                            foreground: const Color(0xFFD14343),
+                            background: const Color(0xFFFFE8E8),
+                          ),
+                      ],
+                    ),
+                  ],
+                ],
               ),
+            ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ReceiptExtraBadge extends StatelessWidget {
+  const _ReceiptExtraBadge({
+    required this.label,
+    required this.foreground,
+    required this.background,
+  });
+
+  final String label;
+  final Color foreground;
+  final Color background;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      decoration: BoxDecoration(
+        color: background,
+        borderRadius: BorderRadius.circular(999),
+      ),
+      child: Text(
+        label,
+        style: FxTypography.caption.copyWith(
+          color: foreground,
+          fontSize: 10,
+          fontWeight: FontWeight.w500,
+          height: 1.1,
         ),
       ),
     );
@@ -593,24 +765,45 @@ class _ReceiptLine extends StatelessWidget {
 class _ReceiptTotalRow extends StatelessWidget {
   const _ReceiptTotalRow({
     required this.label,
+    required this.qty,
     required this.amount,
     required this.formats,
     required this.color,
   });
 
   final String label;
+  final int qty;
   final double amount;
   final StatsFormatters formats;
   final Color color;
 
   @override
   Widget build(BuildContext context) {
+    final ink = FxPalette.of(context).textPrimary;
     return Row(
       children: [
-        Expanded(child: Text(label, style: FxTypography.bodyStrong)),
-        Text(
-          formats.money(amount),
-          style: FxTypography.money.copyWith(color: color, fontSize: 15),
+        Expanded(
+          flex: 5,
+          child: Text(label, style: FxTypography.bodyStrong.copyWith(color: ink)),
+        ),
+        Expanded(
+          flex: 2,
+          child: Text(
+            '$qty',
+            textAlign: TextAlign.center,
+            style: FxTypography.bodyStrong.copyWith(
+              color: ink,
+              fontFamily: FxTypography.monoFamily,
+            ),
+          ),
+        ),
+        Expanded(
+          flex: 3,
+          child: Text(
+            formats.money(amount),
+            textAlign: TextAlign.right,
+            style: FxTypography.money.copyWith(color: color, fontSize: 15),
+          ),
         ),
       ],
     );
@@ -618,49 +811,64 @@ class _ReceiptTotalRow extends StatelessWidget {
 }
 
 class _ReceiptDash extends StatelessWidget {
-  const _ReceiptDash();
+  const _ReceiptDash({this.centerText});
+
+  final String? centerText;
 
   @override
   Widget build(BuildContext context) {
-    final color = FxPalette.of(context).textTertiary.withValues(alpha: 0.55);
+    final color = FxPalette.of(context).textTertiary.withValues(alpha: 0.7);
+    final style = FxTypography.caption.copyWith(
+      color: color,
+      fontFamily: FxTypography.monoFamily,
+      height: 1,
+      letterSpacing: 0,
+    );
+    final bar = Text(
+      '=' * 48,
+      maxLines: 1,
+      overflow: TextOverflow.clip,
+      textAlign: TextAlign.center,
+      style: style,
+    );
+    final center = centerText;
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10),
-      child: CustomPaint(
-        painter: _DashLinePainter(color: color),
-        child: const SizedBox(width: double.infinity, height: 1),
-      ),
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: center == null
+          ? bar
+          : Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    '=' * 24,
+                    maxLines: 1,
+                    overflow: TextOverflow.clip,
+                    style: style,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 6),
+                  child: Text(
+                    center,
+                    maxLines: 1,
+                    style: style.copyWith(
+                      color: FxPalette.of(context).textSecondary,
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Text(
+                    '=' * 24,
+                    maxLines: 1,
+                    overflow: TextOverflow.clip,
+                    textAlign: TextAlign.right,
+                    style: style,
+                  ),
+                ),
+              ],
+            ),
     );
   }
-}
-
-class _DashLinePainter extends CustomPainter {
-  const _DashLinePainter({required this.color});
-
-  final Color color;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = color
-      ..strokeWidth = 1
-      ..style = PaintingStyle.stroke;
-    const dash = 5.0;
-    const gap = 4.0;
-    var x = 0.0;
-    final y = size.height / 2;
-    while (x < size.width) {
-      canvas.drawLine(
-        Offset(x, y),
-        Offset(math.min(x + dash, size.width), y),
-        paint,
-      );
-      x += dash + gap;
-    }
-  }
-
-  @override
-  bool shouldRepaint(_DashLinePainter oldDelegate) =>
-      oldDelegate.color != color;
 }
 
 class _ReceiptNotchClipper extends CustomClipper<Path> {

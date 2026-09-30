@@ -1635,13 +1635,39 @@
   "statsReceiptItem": "品名",
   "statsReceiptQty": "数量",
   "statsReceiptAmountCol": "金额",
-  "statsReceiptPayment": "付款方式",
+  "statsReceiptIncomeGoods": "收入商品数",
+  "statsReceiptSoldGoods": "售出商品数",
+  "statsReceiptPayment": "付款方式：刷脸",
+  "statsReceiptDiscountTotal": "共优惠{amount}",
+  "@statsReceiptDiscountTotal": {
+    "placeholders": {
+      "amount": {}
+    }
+  },
+  "statsReceiptFeeTotal": "手续费共{amount}",
+  "@statsReceiptFeeTotal": {
+    "placeholders": {
+      "amount": {}
+    }
+  },
   "statsReceiptKeep": "请保留好小票",
   "statsReceiptThanks": "谢谢惠顾",
-  "statsReceiptDate": "日期 {date}",
+  "statsReceiptFooterWelcome": "欢迎再次光临--服务邮箱：san.bug@qq.com",
+  "statsReceiptFooterUrl": "网址：https://www.fortuneboot.com/",
+  "statsReceiptFooterExcel": "请保留好小票，如需赞助",
+  "statsReceiptFooterScan": "扫描二维码进行赞助，非常感谢！",
+  "statsReceiptFooterDelivery": "24小时内完成账单交付",
+  "statsReceiptFooterCounter": "当前什么都不支持",
+  "statsReceiptDate": "日期:{date}",
   "@statsReceiptDate": {
     "placeholders": {
       "date": {}
+    }
+  },
+  "statsReceiptSerial": "流水号:{id}",
+  "@statsReceiptSerial": {
+    "placeholders": {
+      "id": {}
     }
   },
   "statsReceiptCashier": "收银员：好记",

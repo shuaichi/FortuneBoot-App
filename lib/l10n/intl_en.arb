@@ -1633,13 +1633,39 @@
   "statsReceiptItem": "Item",
   "statsReceiptQty": "Qty",
   "statsReceiptAmountCol": "Amount",
-  "statsReceiptPayment": "Payment",
+  "statsReceiptIncomeGoods": "Income items",
+  "statsReceiptSoldGoods": "Sold items",
+  "statsReceiptPayment": "Payment: Face pay",
+  "statsReceiptDiscountTotal": "Discount {amount}",
+  "@statsReceiptDiscountTotal": {
+    "placeholders": {
+      "amount": {}
+    }
+  },
+  "statsReceiptFeeTotal": "Fees {amount}",
+  "@statsReceiptFeeTotal": {
+    "placeholders": {
+      "amount": {}
+    }
+  },
   "statsReceiptKeep": "Please keep this receipt",
   "statsReceiptThanks": "Thank you",
-  "statsReceiptDate": "Date {date}",
+  "statsReceiptFooterWelcome": "Welcome again -- support: san.bug@qq.com",
+  "statsReceiptFooterUrl": "Website: https://www.fortuneboot.com/",
+  "statsReceiptFooterExcel": "Keep this receipt. To sponsor us,",
+  "statsReceiptFooterScan": "scan the QR code. Thank you!",
+  "statsReceiptFooterDelivery": "Statement delivered within 24 hours",
+  "statsReceiptFooterCounter": "Nothing is supported yet",
+  "statsReceiptDate": "Date:{date}",
   "@statsReceiptDate": {
     "placeholders": {
       "date": {}
+    }
+  },
+  "statsReceiptSerial": "No.:{id}",
+  "@statsReceiptSerial": {
+    "placeholders": {
+      "id": {}
     }
   },
   "statsReceiptCashier": "Cashier: HaoJi",
