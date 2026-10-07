@@ -1,0 +1,20 @@
+{
+  "modelVersion": "5.1.0",
+  "name": "hjappproject",
+  "version": "1.0.0",
+  "description": "Please describe the basic information.",
+  "main": "",
+  "author": "",
+  "license": "",
+  "dependencies": {
+    "fortuneboot_ohos_security": "file:../packages/fortuneboot_ohos_security/ohos"
+  },
+  "devDependencies": {
+    "@ohos/hypium": "1.0.6"
+  },
+  "overrides": {
+    "@ohos/flutter_ohos": "file:E:/zhou/WeiHu/fortuneboot/HuanJing/flutter_flutter/bin/cache/artifacts/engine/ohos-arm64/flutter_embedding_debug.har",
+    "flutter_native_arm64_v8a": "file:E:/zhou/WeiHu/fortuneboot/HuanJing/flutter_flutter/bin/cache/artifacts/engine/ohos-arm64/arm64_v8a_debug.har",
+    "flutter_native_x86_64": "file:E:/zhou/WeiHu/fortuneboot/HuanJing/flutter_flutter/bin/cache/artifacts/engine/ohos-x64/x86_64_debug.har"
+  }
+}

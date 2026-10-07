@@ -1,0 +1,66 @@
+{
+  "app": {
+    "signingConfigs": [
+      {
+        "name": "default",
+        "type": "HarmonyOS",
+        "material": {
+          "certpath": "E:/zhou/WeiHu/fortuneboot/FortuneBoot-App-feat_refactor/上架/fortuneboot.cer",
+          "keyAlias": "fortuneboot",
+          "keyPassword": "0000001BB6AA895723D0FB63A218ADD36615CB0FF1DDA5A618178779615FD86238332D39C62B5A9A2EE1B2",
+          "profile": "E:/zhou/WeiHu/fortuneboot/FortuneBoot-App-feat_refactor/上架/fortunebootRelease.p7b",
+          "signAlg": "SHA256withECDSA",
+          "storeFile": "E:/zhou/WeiHu/fortuneboot/FortuneBoot-App-feat_refactor/上架/fortuneboot.p12",
+          "storePassword": "0000001B77F6A151CC9D9B3D646D61EFB9FE993925BC41933BDE27EE900289E394AF441BA3879B07E30641"
+        }
+      },
+      {
+        "name": "haoji",
+        "type": "HarmonyOS",
+        "material": {
+          "certpath": "C:/Users/Administrator/.ohos/config/haoji_ohos_Y5rM-3WZXQcdyq30IREy7dT5smmiblExU88jPscG17w=.cer",
+          "keyAlias": "debugKey",
+          "keyPassword": "0000001BE82636D25C239AB90B8C9413248C7E63FDC525A49DA947D8CC38D04A487A2AA4600E18E77FCF71",
+          "profile": "C:/Users/Administrator/.ohos/config/haoji_ohos_Y5rM-3WZXQcdyq30IREy7dT5smmiblExU88jPscG17w=.p7b",
+          "signAlg": "SHA256withECDSA",
+          "storeFile": "C:/Users/Administrator/.ohos/config/haoji_ohos_Y5rM-3WZXQcdyq30IREy7dT5smmiblExU88jPscG17w=.p12",
+          "storePassword": "0000001B7E72085CF4F06AEC5667D32CB1ED14F3DEB28B9E09FAAF928FB2514A401890068231E1EE91E577"
+        }
+      }
+    ],
+    "products": [
+      {
+        "name": "default",
+        "signingConfig": "default",
+        "compatibleSdkVersion": "6.0.0(20)",
+        "runtimeOS": "HarmonyOS",
+        "targetSdkVersion": "6.0.0(20)"
+      }
+    ],
+    "buildModeSet": [
+      {
+        "name": "debug"
+      },
+      {
+        "name": "profile"
+      },
+      {
+        "name": "release"
+      }
+    ]
+  },
+  "modules": [
+    {
+      "name": "entry",
+      "srcPath": "./entry",
+      "targets": [
+        {
+          "name": "default",
+          "applyToProducts": [
+            "default"
+          ]
+        }
+      ]
+    }
+  ]
+}

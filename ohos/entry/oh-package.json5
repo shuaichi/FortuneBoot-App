@@ -1,0 +1,16 @@
+{
+  "name": "entry",
+  "version": "1.0.0",
+  "description": "Please describe the basic information.",
+  "main": "",
+  "author": "",
+  "license": "",
+  "dependencies": {
+    "@ohos/flutter_ohos": "file:E:/zhou/WeiHu/fortuneboot/HuanJing/flutter_flutter/bin/cache/artifacts/engine/ohos-arm64/flutter_embedding_debug.har",
+    "fortuneboot_ohos_security": "file:../../packages/fortuneboot_ohos_security/ohos",
+    "shared_preferences_ohos": "file:../../packages/shared_preferences_ohos/ohos",
+    "path_provider_ohos": "file:../../packages/path_provider_ohos/ohos",
+    "image_picker_ohos": "file:../../packages/image_picker_ohos/ohos",
+    "file_selector_ohos": "file:../../packages/file_selector_ohos/ohos"
+  }
+}

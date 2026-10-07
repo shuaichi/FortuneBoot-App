@@ -1,0 +1,18 @@
+# 同一份 pubspec.yaml 同时打安卓 APK 和鸿蒙 HAP，不必再改依赖。
+#
+# 做法：
+# - 官方插件（shared_preferences / path_provider / image_picker / file_selector）
+#   负责 Android / iOS / 桌面。
+# - packages/*_ohos 是 OpenHarmony-SIG 的联邦实现，只注册 ohos 平台。
+#   源码来自 https://gitee.com/openharmony-sig/flutter_packages
+#
+# 打包：
+# - 安卓：Google Flutter → flutter build apk --release
+# - 鸿蒙：Harmony Flutter SDK + DevEco。先 scripts/ohos_env.bat，再 flutter pub get
+#   （会把 @ohos/flutter_ohos 的 HAR 路径改成当前 SDK），然后 Build Hap。
+#
+# ohos/entry/oh-package.json5 里插件已指向仓库内 packages/*_ohos/ohos。
+# @ohos/flutter_ohos 的 file: HAR 仍由鸿蒙 Flutter SDK 在 pub get 时写入，随机器变化。
+#
+# 升级 *_ohos 插件时，稀疏克隆 flutter_packages 后覆盖 packages 下对应目录即可
+# （不要带 example / test / oh_modules）。
