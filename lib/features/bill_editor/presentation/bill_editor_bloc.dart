@@ -26,10 +26,12 @@ class BillEditorBloc extends Bloc<BillEditorEvent, BillEditorState> {
     required int groupId,
     EditorOptionsService? optionsService,
     BillService? billService,
+    bool copyUsesCurrentTime = true,
   }) : _bookId = bookId,
        _groupId = groupId,
        _optionsService = optionsService ?? EditorOptionsService(),
        _billService = billService ?? BillService(),
+       _copyUsesCurrentTime = copyUsesCurrentTime,
        super(BillEditorState(tradeTime: DateTime.now())) {
     on<BillEditorInitialized>(_onInitialized);
     on<BillEditorRetried>(_onRetried);
@@ -62,6 +64,7 @@ class BillEditorBloc extends Bloc<BillEditorEvent, BillEditorState> {
   final int _groupId;
   final EditorOptionsService _optionsService;
   final BillService _billService;
+  final bool _copyUsesCurrentTime;
   var _nextRowSequence = 0;
 
   String _nextRowId() => 'editor-row-${_nextRowSequence++}';
@@ -216,7 +219,7 @@ class BillEditorBloc extends Bloc<BillEditorEvent, BillEditorState> {
         toAccountName: source.toAccountName,
         payeeId: source.payeeId,
         payeeName: source.payeeName,
-        tradeTime: args.isCopy
+        tradeTime: args.isCopy && _copyUsesCurrentTime
             ? DateTime.now()
             : (source.tradeTime ?? DateTime.now()),
         tagIds: source.tagList.map((t) => t.tagId).whereType<int>().toList(),

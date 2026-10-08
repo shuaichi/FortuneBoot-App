@@ -107,6 +107,8 @@ class PreferencesCubit extends Cubit<PreferencesState> {
 
   static const String _monthStartDayKey =
       'fortune.preferences.billing.monthStartDay';
+  static const String _copyUsesCurrentTimeKey =
+      'fortune.preferences.billing.copyUsesCurrentTime';
   static const String _themeModeKey = 'fortune.preferences.theme.mode';
   static const String _localeCodeKey = 'fortune.preferences.locale.code';
   static const String _hideAmountsKey =
@@ -171,6 +173,9 @@ class PreferencesCubit extends Cubit<PreferencesState> {
         PreferencesState(
           billing: BillingPreferences(
             monthStartDay: BillingPreferences.normalizeMonthStartDay(day),
+            copyUsesCurrentTime:
+                prefs.getBool(_copyUsesCurrentTimeKey) ??
+                BillingPreferences.defaultCopyUsesCurrentTime,
           ),
           theme: ThemePreferences(
             mode: ThemePreferences.modeFromStorage(
@@ -306,6 +311,17 @@ class PreferencesCubit extends Cubit<PreferencesState> {
       save: (prefs) => prefs.setInt(_monthStartDayKey, normalized),
       apply: () => state.copyWith(
         billing: state.billing.copyWith(monthStartDay: normalized),
+      ),
+    );
+  }
+
+  /// 复制账单时默认使用当前时间；关闭后沿用原单时间。
+  Future<bool> setCopyUsesCurrentTime(bool useCurrentTime) async {
+    if (useCurrentTime == state.billing.copyUsesCurrentTime) return true;
+    return _guardSave(
+      save: (prefs) => prefs.setBool(_copyUsesCurrentTimeKey, useCurrentTime),
+      apply: () => state.copyWith(
+        billing: state.billing.copyWith(copyUsesCurrentTime: useCurrentTime),
       ),
     );
   }

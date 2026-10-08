@@ -1365,6 +1365,8 @@
     }
   },
   "profileMonthStartDayHint": "短月份自动使用当月最后一天",
+  "profileCopyUsesCurrentTime": "复制账单使用当前时间",
+  "profileCopyUsesCurrentTimeSubtitle": "关闭后，复制的新账单沿用原账单时间",
   "profileRefresh": "刷新",
   "profileCurrencyRefreshing": "正在刷新汇率…",
   "profileCurrencyRefreshed": "汇率已刷新",

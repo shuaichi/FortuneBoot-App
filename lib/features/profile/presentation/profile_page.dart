@@ -407,6 +407,27 @@ class _ProfileView extends StatelessWidget {
           ),
           _divider(context),
           FxListItem(
+            leading: _tileIcon(Icons.content_copy_rounded, palette.primary),
+            title: S.of(context).profileCopyUsesCurrentTime,
+            subtitle: S.of(context).profileCopyUsesCurrentTimeSubtitle,
+            trailing: Switch.adaptive(
+              value: preferences.billing.copyUsesCurrentTime,
+              onChanged: preferences.isLoading
+                  ? null
+                  : (useCurrentTime) async {
+                      final ok = await context
+                          .read<PreferencesCubit>()
+                          .setCopyUsesCurrentTime(useCurrentTime);
+                      if (!context.mounted || ok) return;
+                      _toast(
+                        context,
+                        S.of(context).profileSaveFailedRetry,
+                      );
+                    },
+            ),
+          ),
+          _divider(context),
+          FxListItem(
             leading: _tileIcon(Icons.currency_exchange_rounded, finance.income),
             title: S.of(context).profileCurrencyRefresh,
             trailing: Text(

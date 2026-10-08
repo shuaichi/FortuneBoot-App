@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fortuneboot/core/navigation/app_router.dart';
 import 'package:fortuneboot/core/navigation/routes.dart';
+import 'package:fortuneboot/core/preferences/preferences_cubit.dart';
 import 'package:fortuneboot/core/session/session_cubit.dart';
 import 'package:fortuneboot/features/bill_editor/presentation/bill_editor_args.dart';
 import 'package:fortuneboot/features/bill_editor/presentation/bill_editor_bloc.dart';
@@ -16,6 +17,8 @@ void registerBillEditorFeature() {
     return Builder(
       builder: (context) {
         final session = context.read<SessionCubit>().state;
+        final copyUsesCurrentTime =
+            context.read<PreferencesCubit>().state.billing.copyUsesCurrentTime;
         final bookId = session.currentBookId;
         final groupId = session.currentGroupId;
         // 账本未就绪时拦截，避免用 bookId=0 发脏请求 / 提交脏数据。
@@ -29,7 +32,11 @@ void registerBillEditorFeature() {
         }
         return BlocProvider(
           create: (_) =>
-              BillEditorBloc(bookId: bookId, groupId: groupId)
+              BillEditorBloc(
+                bookId: bookId,
+                groupId: groupId,
+                copyUsesCurrentTime: copyUsesCurrentTime,
+              )
                 ..add(BillEditorInitialized(editorArgs)),
           child: const BillEditorPage(),
         );

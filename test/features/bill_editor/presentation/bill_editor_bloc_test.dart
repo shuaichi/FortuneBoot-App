@@ -36,6 +36,23 @@ void main() {
     expect(state.tradeTime.isAfter(after), isFalse);
   });
 
+  test('keeps the source time when copying with the setting disabled', () async {
+    final bloc = _createBloc(copyUsesCurrentTime: false);
+    addTearDown(bloc.close);
+
+    bloc.add(
+      BillEditorInitialized(
+        BillEditorArgs(mode: 'copy', sourceBill: sourceBill),
+      ),
+    );
+    final state = await bloc.stream.firstWhere(
+      (state) => state.status == EditorStatus.ready,
+    );
+
+    expect(state.mode, 'copy');
+    expect(state.tradeTime, sourceTradeTime);
+  });
+
   test('preserves the source time when editing a bill', () async {
     final bloc = _createBloc();
     addTearDown(bloc.close);
@@ -401,12 +418,16 @@ Future<BillEditorState> _initialize(BillEditorBloc bloc) {
   return ready;
 }
 
-BillEditorBloc _createBloc({BillService? billService}) {
+BillEditorBloc _createBloc({
+  BillService? billService,
+  bool copyUsesCurrentTime = true,
+}) {
   return BillEditorBloc(
     bookId: 1,
     groupId: 1,
     optionsService: _FakeEditorOptionsService(),
     billService: billService,
+    copyUsesCurrentTime: copyUsesCurrentTime,
   );
 }
 

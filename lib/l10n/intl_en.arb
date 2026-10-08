@@ -1363,6 +1363,8 @@
     }
   },
   "profileMonthStartDayHint": "Short months use the last day automatically",
+  "profileCopyUsesCurrentTime": "Use current time when copying",
+  "profileCopyUsesCurrentTimeSubtitle": "When off, copied bills keep the source bill time",
   "profileRefresh": "Refresh",
   "profileCurrencyRefreshing": "Refreshing exchange rates…",
   "profileCurrencyRefreshed": "Exchange rates refreshed",

@@ -5,18 +5,27 @@ class BillingPreferences extends Equatable {
   static const int defaultMonthStartDay = 1;
   static const int minMonthStartDay = 1;
   static const int maxMonthStartDay = 31;
+  static const bool defaultCopyUsesCurrentTime = true;
 
   final int monthStartDay;
+  final bool copyUsesCurrentTime;
 
-  const BillingPreferences({this.monthStartDay = defaultMonthStartDay});
+  const BillingPreferences({
+    this.monthStartDay = defaultMonthStartDay,
+    this.copyUsesCurrentTime = defaultCopyUsesCurrentTime,
+  });
 
   factory BillingPreferences.defaults() => const BillingPreferences();
 
-  BillingPreferences copyWith({int? monthStartDay}) {
+  BillingPreferences copyWith({
+    int? monthStartDay,
+    bool? copyUsesCurrentTime,
+  }) {
     return BillingPreferences(
       monthStartDay: normalizeMonthStartDay(
         monthStartDay ?? this.monthStartDay,
       ),
+      copyUsesCurrentTime: copyUsesCurrentTime ?? this.copyUsesCurrentTime,
     );
   }
 
@@ -27,5 +36,5 @@ class BillingPreferences extends Equatable {
   }
 
   @override
-  List<Object?> get props => [monthStartDay];
+  List<Object?> get props => [monthStartDay, copyUsesCurrentTime];
 }
