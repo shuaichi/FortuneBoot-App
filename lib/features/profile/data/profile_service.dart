@@ -67,10 +67,7 @@ class ProfileService {
   ///
   /// App Store 要求支持账号自助注销。[password] 必须是已 RSA 加密的密文。
   Future<void> deleteAccount({required String password}) async {
-    await _api.delete(
-      '/system/user/profile',
-      data: {'password': password},
-    );
+    await _api.delete('/system/user/profile', data: {'password': password});
   }
 
   /// 上传头像：POST /system/user/profile/avatar（multipart `avatarfile`）。

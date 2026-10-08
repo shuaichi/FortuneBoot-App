@@ -42,7 +42,9 @@ class _AccountDeletionSheetState extends State<AccountDeletionSheet> {
   Future<void> _submit() async {
     final password = _passwordController.text;
     if (password.isEmpty) {
-      setState(() => _error = S.of(context).profileDeleteAccountPasswordRequired);
+      setState(
+        () => _error = S.of(context).profileDeleteAccountPasswordRequired,
+      );
       return;
     }
 

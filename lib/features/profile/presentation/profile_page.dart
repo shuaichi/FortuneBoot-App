@@ -15,8 +15,8 @@ import 'package:fortuneboot/features/profile/data/profile_service.dart';
 import 'package:fortuneboot/features/profile/presentation/app_lock_settings_page.dart';
 import 'package:fortuneboot/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:fortuneboot/features/profile/presentation/profile_edit_page.dart';
-import 'package:fortuneboot/features/profile/presentation/widgets/donate_qr_tile.dart';
 import 'package:fortuneboot/features/profile/presentation/widgets/account_deletion_sheet.dart';
+import 'package:fortuneboot/features/profile/presentation/widgets/donate_qr_tile.dart';
 import 'package:fortuneboot/features/profile/presentation/widgets/finance_color_editor.dart';
 import 'package:fortuneboot/features/profile/presentation/widgets/profile_avatar.dart';
 import 'package:fortuneboot/fx/components/fx_button.dart';
@@ -465,17 +465,16 @@ class _ProfileViewState extends State<_ProfileView> {
                               .read<PreferencesCubit>()
                               .setCopyUsesCurrentTime(useCurrentTime);
                           if (!context.mounted || ok) return;
-                          _toast(
-                            context,
-                            S.of(context).profileSaveFailedRetry,
-                          );
+                          _toast(context, S.of(context).profileSaveFailedRetry);
                         },
                 ),
               ),
               _divider(context),
               FxListItem(
-                leading:
-                    _tileIcon(Icons.currency_exchange_rounded, finance.income),
+                leading: _tileIcon(
+                  Icons.currency_exchange_rounded,
+                  finance.income,
+                ),
                 title: S.of(context).profileCurrencyRefresh,
                 trailing: Text(
                   S.of(context).profileRefresh,
@@ -497,8 +496,10 @@ class _ProfileViewState extends State<_ProfileView> {
               ),
               _divider(context),
               FxListItem(
-                leading:
-                    _tileIcon(Icons.screenshot_monitor_rounded, palette.info),
+                leading: _tileIcon(
+                  Icons.screenshot_monitor_rounded,
+                  palette.info,
+                ),
                 title: S.of(context).profileScreenCaptureAllowed,
                 subtitle: screenCaptureSubtitle,
                 trailing: Switch.adaptive(
@@ -1083,11 +1084,7 @@ class _ProfileViewState extends State<_ProfileView> {
             firstChild: const SizedBox(width: double.infinity),
             secondChild: Column(
               children: [
-                Divider(
-                  height: 1,
-                  thickness: 0.5,
-                  color: palette.border,
-                ),
+                Divider(height: 1, thickness: 0.5, color: palette.border),
                 if (body != null)
                   body
                 else
