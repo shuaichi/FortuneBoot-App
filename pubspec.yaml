@@ -1,6 +1,6 @@
 name: fortuneboot
 description: "Hao Ji"
-version: 1.5.0+2026100314 #🍏🥝
+version: 1.5.1+2026100814 #🍏🥝
 # 上架版本来源：versionName+versionCode。DevEco 打包前请双击运行：
 #   scripts/set_ohos_version.bat
 # 交互确认后再 Build Hap。
@@ -81,8 +81,19 @@ dev_dependencies:
     sdk: flutter
   json_serializable: ^6.9.5
   lint: ^2.1.2
+  flutter_launcher_icons: ^0.14.4
   retrofit_generator: ^10.0.6
   intl_utils: 2.8.14
+
+# 生成应用图标：dart run flutter_launcher_icons
+flutter_icons:
+  image_path: "assets/icon_source/logo.png" # 源图标路径（建议 1024x1024）
+  remove_alpha_ios: true
+  android: true
+  ios: true
+  # 鸿蒙平台需要手动配置图标
+  # 图标位置: ohos/AppScope/resources/base/media/app_icon.png
+  # 图标位置: ohos/entry/src/main/resources/base/media/icon.png
 
 # 鸿蒙分层图标（1024x1024 前景/背景）:
 # ohos/AppScope/resources/base/media/{foreground,background,layered_image}.json

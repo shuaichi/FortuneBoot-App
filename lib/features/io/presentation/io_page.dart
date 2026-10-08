@@ -27,7 +27,7 @@ import 'package:fortuneboot/util/web_download_stub.dart'
 import 'package:fortuneboot_ohos_security/fortuneboot_ohos_security.dart';
 import 'package:path_provider/path_provider.dart';
 
-/// 导入导出页（Routes.io）：当前仅展示导出账单 Excel；导入/模板逻辑保留备用。
+/// 导入导出页（Routes.io）：导出账单 Excel / 下载模板 / 导入 Excel。
 class IoPage extends StatefulWidget {
   const IoPage({super.key});
 
@@ -251,6 +251,7 @@ class _IoPageState extends State<IoPage> {
   }
 
   Widget _buildBody() {
+    final palette = FxPalette.of(context);
     final finance = FxFinanceColors.of(context);
     return ListView(
       padding: const EdgeInsets.all(FxSpacing.lg),
@@ -263,6 +264,26 @@ class _IoPageState extends State<IoPage> {
           buttonLabel: S.of(context).ioExport,
           loading: _exporting,
           onTap: _busy ? null : _export,
+        ),
+        const SizedBox(height: FxSpacing.md),
+        _actionCard(
+          icon: Icons.description_outlined,
+          tint: palette.info,
+          title: S.of(context).ioDownloadTemplateTitle,
+          subtitle: S.of(context).ioDownloadTemplateSubtitle,
+          buttonLabel: S.of(context).ioDownloadTemplate,
+          loading: _downloadingTemplate,
+          onTap: _busy ? null : _downloadTemplate,
+        ),
+        const SizedBox(height: FxSpacing.md),
+        _actionCard(
+          icon: Icons.file_upload_outlined,
+          tint: palette.primary,
+          title: S.of(context).ioImportBillsTitle,
+          subtitle: S.of(context).ioImportBillsSubtitle,
+          buttonLabel: S.of(context).ioSelectFileImport,
+          loading: _importing,
+          onTap: _busy ? null : _import,
         ),
       ],
     );

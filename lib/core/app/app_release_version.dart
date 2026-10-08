@@ -1,21 +1,20 @@
-/// App release version (aligned with pubspec.yaml / store listing).
+/// 应用发布版本（与 pubspec.yaml / 上架版本对齐）。
 ///
-/// Run scripts/set_ohos_version.bat before DevEco packaging to refresh this file.
-/// On HarmonyOS, package_info_plus is unavailable; About page uses this fallback.
+/// DevEco 打包前运行 `scripts/set_ohos_version.ps1` 会同步更新本文件。
+/// 鸿蒙端 `package_info_plus` 无实现时，关于页以此为准。
 class AppReleaseVersion {
   const AppReleaseVersion._();
 
-  /// versionName, e.g. 1.4.3
-  static const String name = '1.5.0';
+  /// 版本号（versionName），例如 1.4.3。
+  static const String name = '1.5.1';
 
-  /// versionCode, e.g. 2026082115
-  static const String build = '2026092901';
+  /// 构建号（versionCode），例如 2026082115。
+  static const String build = '2026100814';
 
-  /// About page display: 1.4.3 (2026082115)
+  /// 关于页 / 列表展示用：1.4.3（2026082115）
   static String get display {
     if (name.isEmpty) return '';
     if (build.isEmpty) return name;
-    return '$name\uFF08$build\uFF09';
+    return '$name（$build）';
   }
 }
-

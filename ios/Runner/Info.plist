@@ -2,10 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>若不允许，你将选择相册中的图片</string>
-	<key>NSFaceIDUsageDescription</key>
-	<string>用于解锁好记并保护您的财务数据</string>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
 	<key>CFBundleDevelopmentRegion</key>
@@ -28,8 +24,18 @@
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>若不允许，你将无法使用拍照、视频、扫一扫等功能</string>
+	<key>NSFaceIDUsageDescription</key>
+	<string>用于解锁好记并保护您的财务数据</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>若不允许，你将无法保存图片到系统相册</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>若不允许，你将选择相册中的图片</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>
@@ -51,9 +57,5 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
-	<key>NSCameraUsageDescription</key>
-	<string>若不允许，你将无法使用拍照、视频、扫一扫等功能</string>
-	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>若不允许，你将无法保存图片到系统相册</string>
 </dict>
 </plist>

@@ -3,13 +3,13 @@
 # 错误处理：任何命令失败时退出
 set -e
 
-VERSION_MARKER="#😁😈"
-
 # 打印帮助信息
 print_help() {
-    echo "使用方法: ./build.sh [harmony] [options]"
+    echo "使用方法: ./build.sh <platform> [options]"
     echo "支持的构建平台:"
-    echo "  harmony  - 构建鸿蒙应用（默认）"
+    echo "  android  - 构建 Android APK"
+    echo "  ios      - 构建 iOS 上传包（flutter build ipa）"
+    echo "  harmony  - 构建鸿蒙应用"
     echo ""
     echo "可选参数:"
     echo "  --skip-gen      跳过代码生成步骤"
@@ -18,27 +18,33 @@ print_help() {
     echo "  --build N       指定构建号（整数）"
     echo ""
     echo "说明:"
-    echo "  默认会交互确认版本号与构建号，再写入 pubspec.yaml。"
-    echo "  若用 DevEco Studio 打包，请双击运行: scripts/set_ohos_version.bat"
+    echo "  默认会交互确认版本号与构建号，再写入 pubspec.yaml 等文件。"
+    echo "  若用 DevEco Studio 打包鸿蒙，请双击运行: scripts/set_ohos_version.bat"
     echo ""
     echo "示例:"
-    echo "  ./build.sh"
-    echo "  ./build.sh harmony --version 1.4.4 --build 2026091616"
+    echo "  ./build.sh android"
+    echo "  ./build.sh ios --version 1.5.1 --build 2026100811"
     echo "  ./build.sh harmony --yes --skip-gen"
 }
 
-buildPlatform="harmony"
+# 检查平台参数
+if [ $# -eq 0 ]; then
+    echo "❌ 错误: 未指定构建平台"
+    print_help
+    exit 1
+fi
+
+buildPlatform="$1"
+shift
+
 skipGen=false
 assumeYes=false
 cliVersion=""
 cliBuild=""
 
-# 解析参数
+# 解析可选参数
 while [ $# -gt 0 ]; do
     case "$1" in
-        harmony)
-            buildPlatform="harmony"
-            ;;
         --skip-gen)
             skipGen=true
             ;;
@@ -62,7 +68,7 @@ while [ $# -gt 0 ]; do
             fi
             ;;
         --update-version)
-            # 兼容旧参数：现已改为每次手动确认，忽略。
+            # 兼容旧参数：现在版本号通过 --version 或交互确认。
             ;;
         -h|--help)
             print_help
@@ -77,9 +83,45 @@ while [ $# -gt 0 ]; do
     shift
 done
 
+case "$buildPlatform" in
+    android|ios|harmony) ;;
+    *)
+        echo "❌ 错误: 未知平台 '$buildPlatform'，仅支持 android/ios/harmony"
+        print_help
+        exit 1
+        ;;
+esac
+
 echo "🚀 开始构建 $buildPlatform 平台..."
 
+# Android Gradle/Kotlin DSL 当前不兼容 JDK 25，优先切到本机稳定 JDK。
+configure_android_java() {
+    if [ "$buildPlatform" != "android" ]; then
+        return
+    fi
+
+    compatibleJavaHome=""
+    if command -v /usr/libexec/java_home >/dev/null 2>&1; then
+        compatibleJavaHome=$(/usr/libexec/java_home -v 21 2>/dev/null || /usr/libexec/java_home -v 17 2>/dev/null || true)
+    fi
+
+    if [ -z "$compatibleJavaHome" ]; then
+        echo "⚠️  警告: 未找到 JDK 17/21，如遇 Gradle JavaVersion.parse 报错，请安装 JDK 21 后重试"
+        return
+    fi
+
+    export JAVA_HOME="$compatibleJavaHome"
+    export PATH="$JAVA_HOME/bin:$PATH"
+    export ANDROID_JAVA_CONFIGURED=true
+
+    echo "☕ Android 构建使用 JAVA_HOME: $JAVA_HOME"
+}
+
 configure_harmony_flutter() {
+    if [ "$buildPlatform" != "harmony" ]; then
+        return
+    fi
+
     harmonyFlutterSdk=$(grep -E '^flutter\.sdk=' ohos/local.properties 2>/dev/null | cut -d= -f2- || true)
     if [ -z "$harmonyFlutterSdk" ]; then
         return
@@ -96,21 +138,43 @@ configure_harmony_flutter() {
 }
 
 run_flutter() {
-    if [ -n "${HARMONY_FLUTTER_BIN:-}" ]; then
+    if [ "$buildPlatform" = "harmony" ] && [ -n "${HARMONY_FLUTTER_BIN:-}" ]; then
         "$HARMONY_FLUTTER_BIN" "$@"
         return
+    fi
+
+    if [ "$buildPlatform" != "android" ]; then
+        flutter "$@"
+        return
+    fi
+
+    if [ "${ANDROID_JAVA_CONFIGURED:-}" = true ] && [ -z "${FLUTTER_JDK_DIR_OVERRIDDEN:-}" ]; then
+        ORIGINAL_FLUTTER_JDK_DIR=$(flutter config --list | awk -F': ' '/jdk-dir:/ { print $2 }')
+        export ORIGINAL_FLUTTER_JDK_DIR
+        export FLUTTER_JDK_DIR_OVERRIDDEN=true
+        trap 'restore_flutter_jdk_dir' EXIT
+    fi
+
+    if [ "${ANDROID_JAVA_CONFIGURED:-}" = true ]; then
+        flutter config --jdk-dir="$JAVA_HOME" >/dev/null
     fi
 
     flutter "$@"
 }
 
+restore_flutter_jdk_dir() {
+    if [ -z "${ORIGINAL_FLUTTER_JDK_DIR:-}" ] || [ "$ORIGINAL_FLUTTER_JDK_DIR" = "(Not set)" ]; then
+        flutter config --jdk-dir= >/dev/null
+    else
+        flutter config --jdk-dir="$ORIGINAL_FLUTTER_JDK_DIR" >/dev/null
+    fi
+}
+
+configure_android_java
 configure_harmony_flutter
 
 read_current_version() {
-    line=$(grep -E "^version: .*${VERSION_MARKER}" pubspec.yaml || true)
-    if [ -z "$line" ]; then
-        line=$(grep -E '^version: ' pubspec.yaml | head -n 1 || true)
-    fi
+    line=$(grep -E '^version: ' pubspec.yaml | head -n 1 || true)
     if [ -z "$line" ]; then
         echo "❌ 错误: 无法从 pubspec.yaml 读取 version"
         exit 1
@@ -172,17 +236,11 @@ confirm_and_write_version() {
         esac
     fi
 
-    nextVersion="version: ${VERSION_NAME}+${BUILD_NUMBER} ${VERSION_MARKER}"
-    line=$(grep -Eo "version: .*${VERSION_MARKER}" pubspec.yaml || true)
-    if [ -n "$line" ]; then
-        if [[ "$OSTYPE" == "darwin"* ]]; then
-            sed -i '' "s/$line/$nextVersion/g" pubspec.yaml
-        else
-            sed -i "s/$line/$nextVersion/g" pubspec.yaml
-        fi
+    # 保留 version 行的尾部注释标记（如 #🍏🥝），仅替换版本号与构建号。
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        sed -i '' -E "s|^version: [0-9]+\\.[0-9]+\\.[0-9]+\\+[0-9]+(.*)$|version: ${VERSION_NAME}+${BUILD_NUMBER}\\1|" pubspec.yaml
     else
-        echo "❌ 错误: 未找到版本号标记 ${VERSION_MARKER}"
-        exit 1
+        sed -i -E "s|^version: [0-9]+\\.[0-9]+\\.[0-9]+\\+[0-9]+(.*)$|version: ${VERSION_NAME}+${BUILD_NUMBER}\\1|" pubspec.yaml
     fi
 
     if [ -f ohos/AppScope/app.json5 ]; then
@@ -198,18 +256,18 @@ confirm_and_write_version() {
     if [ -f ohos/local.properties ]; then
         if grep -q '^flutter.versionName=' ohos/local.properties; then
             if [[ "$OSTYPE" == "darwin"* ]]; then
-                sed -i '' -E "s/^flutter\.versionName=.*/flutter.versionName=${VERSION_NAME}/" ohos/local.properties
+                sed -i '' -E "s/^flutter\\.versionName=.*/flutter.versionName=${VERSION_NAME}/" ohos/local.properties
             else
-                sed -i -E "s/^flutter\.versionName=.*/flutter.versionName=${VERSION_NAME}/" ohos/local.properties
+                sed -i -E "s/^flutter\\.versionName=.*/flutter.versionName=${VERSION_NAME}/" ohos/local.properties
             fi
         else
             echo "flutter.versionName=${VERSION_NAME}" >> ohos/local.properties
         fi
         if grep -q '^flutter.versionCode=' ohos/local.properties; then
             if [[ "$OSTYPE" == "darwin"* ]]; then
-                sed -i '' -E "s/^flutter\.versionCode=.*/flutter.versionCode=${BUILD_NUMBER}/" ohos/local.properties
+                sed -i '' -E "s/^flutter\\.versionCode=.*/flutter.versionCode=${BUILD_NUMBER}/" ohos/local.properties
             else
-                sed -i -E "s/^flutter\.versionCode=.*/flutter.versionCode=${BUILD_NUMBER}/" ohos/local.properties
+                sed -i -E "s/^flutter\\.versionCode=.*/flutter.versionCode=${BUILD_NUMBER}/" ohos/local.properties
             fi
         else
             echo "flutter.versionCode=${BUILD_NUMBER}" >> ohos/local.properties
@@ -265,8 +323,22 @@ else
 fi
 
 # 构建应用
-echo "🔶 构建鸿蒙版本..."
-run_flutter build app --release
-echo "✅ 鸿蒙构建完成"
+case "$buildPlatform" in
+    android)
+        echo "🤖 构建 Android 版本..."
+        run_flutter build apk --release --target-platform android-arm64 -v
+        echo "✅ Android 构建完成: build/app/outputs/flutter-apk/app-release.apk"
+        ;;
+    ios)
+        echo "🍎 构建 iOS 版本..."
+        run_flutter build ipa --release
+        echo "✅ iOS 构建完成，IPA 输出目录: build/ios/ipa"
+        ;;
+    harmony)
+        echo "🔶 构建鸿蒙版本..."
+        run_flutter build app --release
+        echo "✅ 鸿蒙构建完成"
+        ;;
+esac
 
 echo "🎉 构建成功完成！"

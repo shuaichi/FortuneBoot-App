@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fortuneboot/core/errors/fx_failure.dart';
 import 'package:fortuneboot/core/errors/fx_failure_mapper.dart';
-import 'package:fortuneboot/core/preferences/app_lock_preferences.dart';
 import 'package:fortuneboot/core/preferences/billing_preferences.dart';
 import 'package:fortuneboot/core/preferences/dashboard_display_preferences.dart';
 import 'package:fortuneboot/core/preferences/finance_color_preferences.dart';
@@ -26,7 +25,6 @@ class PreferencesState extends Equatable {
   final StatsDisplayPreferences stats;
   final FinanceColorPreferences financeColors;
   final ScreenCapturePreferences screenCapture;
-  final AppLockPreferences appLock;
   final bool isLoading;
   final String? errorMessage;
   final FxFailure? failure;
@@ -39,7 +37,6 @@ class PreferencesState extends Equatable {
     this.stats = const StatsDisplayPreferences(),
     this.financeColors = const FinanceColorPreferences(),
     this.screenCapture = const ScreenCapturePreferences(),
-    this.appLock = const AppLockPreferences(),
     this.isLoading = false,
     this.errorMessage,
     this.failure,
@@ -53,7 +50,6 @@ class PreferencesState extends Equatable {
     StatsDisplayPreferences? stats,
     FinanceColorPreferences? financeColors,
     ScreenCapturePreferences? screenCapture,
-    AppLockPreferences? appLock,
     bool? isLoading,
     String? errorMessage,
     FxFailure? failure,
@@ -66,7 +62,6 @@ class PreferencesState extends Equatable {
       stats: stats ?? this.stats,
       financeColors: financeColors ?? this.financeColors,
       screenCapture: screenCapture ?? this.screenCapture,
-      appLock: appLock ?? this.appLock,
       isLoading: isLoading ?? this.isLoading,
       errorMessage: errorMessage,
       failure: failure,
@@ -82,7 +77,6 @@ class PreferencesState extends Equatable {
     stats,
     financeColors,
     screenCapture,
-    appLock,
     isLoading,
     errorMessage,
     failure,
@@ -134,10 +128,6 @@ class PreferencesCubit extends Cubit<PreferencesState> {
       'fortune.preferences.financeColors.holiday';
   static const String _colorRestKey = 'fortune.preferences.financeColors.rest';
   static const String _colorWorkKey = 'fortune.preferences.financeColors.work';
-  static const String _appLockEnabledKey =
-      'fortune.preferences.security.appLockEnabled';
-  static const String _appLockMethodKey =
-      'fortune.preferences.security.appLockMethod';
 
   SharedPreferences? _sharedPreferences;
   final ScreenCapturePreferenceStore _screenCapturePreferenceStore;
@@ -191,10 +181,6 @@ class PreferencesCubit extends Cubit<PreferencesState> {
           stats: _readStats(prefs),
           financeColors: _readFinanceColors(prefs, defaults),
           screenCapture: screenCapture,
-          appLock: AppLockPreferences(
-            enabled: prefs.getBool(_appLockEnabledKey) ?? false,
-            method: AppLockMethod.fromStorage(prefs.getString(_appLockMethodKey)),
-          ),
           failure: applied
               ? null
               : const FxFailure(kind: FxFailureKind.persistence),
@@ -436,36 +422,6 @@ class PreferencesCubit extends Cubit<PreferencesState> {
       ),
     );
   }
-
-  Future<bool> setAppLock({
-    bool? enabled,
-    AppLockMethod? method,
-  }) async {
-    final nextEnabled = enabled ?? state.appLock.enabled;
-    final nextMethod = method ?? state.appLock.method;
-    if (nextEnabled == state.appLock.enabled &&
-        nextMethod == state.appLock.method) {
-      return true;
-    }
-    return _guardSave(
-      save: (prefs) async {
-        final enabledOk = await prefs.setBool(_appLockEnabledKey, nextEnabled);
-        final methodOk = await prefs.setString(
-          _appLockMethodKey,
-          nextMethod.storageId,
-        );
-        return enabledOk && methodOk;
-      },
-      apply: () => state.copyWith(
-        appLock: state.appLock.copyWith(
-          enabled: nextEnabled,
-          method: nextMethod,
-        ),
-      ),
-    );
-  }
-
-  Future<bool> setAppLockEnabled(bool enabled) => setAppLock(enabled: enabled);
 
   Future<bool> setScreenCaptureAllowed(bool allowed) async {
     if (allowed == _screenCaptureRequestedAllowed) return true;
