@@ -63,9 +63,9 @@ class ProfileService {
     );
   }
 
-  /// 上传头像：POST /system/user/profile/avatar（multipart `avatarfile`）→ {imgUrl}。
-  /// 返回新头像 URL。
-  Future<String?> uploadAvatar(File file) async {
+  /// 上传头像：POST /system/user/profile/avatar（multipart `avatarfile`）。
+  /// 兼容 `data.imgUrl` / 根级 `imgUrl` / `data` 为字符串等多种返回形态。
+  Future<String> uploadAvatar(File file) async {
     final formData = FormData();
     formData.files.add(
       MapEntry(
@@ -81,9 +81,39 @@ class ProfileService {
       data: formData,
       options: Options(contentType: 'multipart/form-data'),
     );
-    final data = FxApi.unwrapRaw(res);
+    final body = res.data;
+    if (body is! Map) {
+      throw FxApiException(-1, '头像上传响应异常');
+    }
+    final code = FxApi.asId(body['code']) ?? -1;
+    // 业务码 0（本项目）与 200（若依风格）都视为成功。
+    if (code != 0 && code != 200) {
+      final msg = body['msg']?.toString() ?? '头像上传失败';
+      throw FxApiException(code, msg);
+    }
+
+    final rawUrl = _extractAvatarUrl(body);
+    if (rawUrl == null || rawUrl.isEmpty) {
+      throw FxApiException(-1, '未返回头像地址');
+    }
+    return rawUrl;
+  }
+
+  static String? _extractAvatarUrl(Map<dynamic, dynamic> body) {
+    final data = body['data'];
     if (data is Map) {
-      return data['imgUrl']?.toString();
+      final nested =
+          data['imgUrl'] ?? data['url'] ?? data['avatar'] ?? data['imageUrl'];
+      final text = nested?.toString().trim();
+      if (text != null && text.isNotEmpty) return text;
+    } else if (data is String) {
+      final text = data.trim();
+      if (text.isNotEmpty) return text;
+    }
+
+    for (final key in ['imgUrl', 'url', 'avatar', 'imageUrl']) {
+      final text = body[key]?.toString().trim();
+      if (text != null && text.isNotEmpty) return text;
     }
     return null;
   }

@@ -501,7 +501,11 @@ export default class FortunebootOhosSecurityPlugin
       instance.on('result', {
         onResult: (authResult: userAuth.UserAuthResult): void => {
           this.authenticationInProgress = false;
-          if (authResult.result === userAuth.UserAuthResultCode.SUCCESS) {
+          // 部分机型/文档示例 UserAuth 成功时回 0；与 SUCCESS 一并视为认证通过。
+          if (
+            authResult.result === userAuth.UserAuthResultCode.SUCCESS ||
+            authResult.result === 0
+          ) {
             result.success('authenticated');
           } else if (
             authResult.result === userAuth.UserAuthResultCode.CANCELED ||

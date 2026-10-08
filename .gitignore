@@ -96,6 +96,8 @@ web/icons/
 
 # Generated files
 *.g.dart
+# Ohos federation / vendored packages may ship Pigeon .g.dart; keep them tracked.
+!packages/**/*.g.dart
 *.freezed.dart
 *.mocks.dart
 

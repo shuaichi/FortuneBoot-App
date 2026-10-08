@@ -95,6 +95,12 @@ flutter_icons:
   # 图标位置: ohos/AppScope/resources/base/media/app_icon.png
   # 图标位置: ohos/entry/src/main/resources/base/media/icon.png
 
+# flutter_login → form_builder_phone_field → country_pickers
+# 上游未覆盖 TargetPlatform.ohos，鸿蒙编译会因 switch 非穷尽失败。
+dependency_overrides:
+  country_pickers:
+    path: packages/country_pickers
+
 # 鸿蒙分层图标（1024x1024 前景/背景）:
 # ohos/AppScope/resources/base/media/{foreground,background,layered_image}.json
 # ohos/entry/src/main/resources/base/media/{foreground,background,layered_image}.json

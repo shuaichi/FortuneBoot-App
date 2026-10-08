@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:fortuneboot/core/feedback/fx_feedback.dart';
 import 'package:fortuneboot/features/profile/data/profile_models.dart';
 import 'package:fortuneboot/features/profile/data/profile_service.dart';
+import 'package:fortuneboot/features/profile/presentation/widgets/profile_avatar.dart';
 import 'package:fortuneboot/fx/components/fx_button.dart';
 import 'package:fortuneboot/fx/components/fx_card.dart';
 import 'package:fortuneboot/fx/components/fx_icon_button.dart';
@@ -43,6 +44,8 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
   final ImagePicker _picker = ImagePicker();
 
   String? _avatar;
+  File? _localAvatar;
+  String? _avatarCacheToken;
   bool _uploadingAvatar = false;
   bool _dirty = false;
 
@@ -78,19 +81,28 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
     );
     if (picked == null) return;
 
-    setState(() => _uploadingAvatar = true);
+    final local = File(picked.path);
+    setState(() {
+      _localAvatar = local;
+      _uploadingAvatar = true;
+    });
     try {
-      final url = await _service.uploadAvatar(File(picked.path));
+      final url = await _service.uploadAvatar(local);
       if (!mounted) return;
       setState(() {
         _avatar = url;
+        _avatarCacheToken = DateTime.now().millisecondsSinceEpoch.toString();
+        _localAvatar = null;
         _uploadingAvatar = false;
         _dirty = true;
       });
       _toast(s.profileAvatarUpdated);
     } on Object {
       if (!mounted) return;
-      setState(() => _uploadingAvatar = false);
+      setState(() {
+        _uploadingAvatar = false;
+        // 上传失败时保留本地预览，便于用户感知已选图。
+      });
       _toast(s.profileSaveFailedRetry, tone: FxFeedbackTone.error);
     }
   }
@@ -262,8 +274,10 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
               child: Stack(
                 alignment: Alignment.center,
                 children: [
-                  _ProfileAvatar(
+                  ProfileAvatar(
                     imageUrl: _avatar,
+                    localFile: _localAvatar,
+                    cacheToken: _avatarCacheToken,
                     label: _displayName,
                     size: 88,
                   ),
@@ -411,53 +425,6 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
 
   String _valueOrPlaceholder(String? value, S s) {
     return value?.trim().isNotEmpty == true ? value!.trim() : s.profileNotSet;
-  }
-}
-
-class _ProfileAvatar extends StatelessWidget {
-  final String? imageUrl;
-  final String label;
-  final double size;
-
-  const _ProfileAvatar({
-    required this.imageUrl,
-    required this.label,
-    required this.size,
-  });
-
-  String get _initial {
-    final trimmed = label.trim();
-    return trimmed.isEmpty ? '?' : trimmed.characters.first.toUpperCase();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final palette = FxPalette.of(context);
-    return ClipOval(
-      child: SizedBox.square(
-        dimension: size,
-        child: imageUrl?.isNotEmpty == true
-            ? Image.network(
-                imageUrl!,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) =>
-                    _fallback(palette),
-              )
-            : _fallback(palette),
-      ),
-    );
-  }
-
-  Widget _fallback(FxPalette palette) {
-    return ColoredBox(
-      color: palette.primaryContainer,
-      child: Center(
-        child: Text(
-          _initial,
-          style: FxTypography.titleLarge.copyWith(color: palette.primary),
-        ),
-      ),
-    );
   }
 }
 

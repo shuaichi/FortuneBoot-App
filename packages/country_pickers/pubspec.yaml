@@ -1,0 +1,21 @@
+name: country_pickers
+description: Vendored 3.0.1 with TargetPlatform.ohos exhaustiveness fix for Harmony Flutter.
+version: 3.0.1
+homepage: https://github.com/figengungor/country_pickers
+publish_to: 'none'
+
+environment:
+  sdk: '>=3.3.4 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+
+flutter:
+  assets:
+    - assets/
