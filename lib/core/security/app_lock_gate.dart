@@ -261,19 +261,12 @@ class _AppLockGateState extends State<AppLockGate> with WidgetsBindingObserver {
           ],
         );
       case AppLockMethod.face:
-        return FxButton(
-          label: methodLabel(s, primary),
-          icon: methodIcon(primary),
-          expand: true,
-          loading: state.authenticating,
-          onPressed: state.authenticating
-              ? null
-              : () => context.read<AppLockCubit>().authenticate(
-                  reason: s.appLockReason,
-                  method: primary,
-                ),
-        );
+        return _systemBiometricButton(context, s, state, primary);
       case AppLockMethod.fingerprint:
+        // 鸿蒙 UserAuth 自带系统控件；勿叠 Android 指纹提示层。
+        if (Theme.of(context).platform == TargetPlatform.ohos) {
+          return _systemBiometricButton(context, s, state, primary);
+        }
         if (state.authenticating) {
           return AppLockFingerprintHint(
             onCancel: () => context.read<AppLockCubit>().cancel(),
@@ -289,6 +282,26 @@ class _AppLockGateState extends State<AppLockGate> with WidgetsBindingObserver {
           ),
         );
     }
+  }
+
+  Widget _systemBiometricButton(
+    BuildContext context,
+    S s,
+    AppLockState state,
+    AppLockMethod primary,
+  ) {
+    return FxButton(
+      label: methodLabel(s, primary),
+      icon: methodIcon(primary),
+      expand: true,
+      loading: state.authenticating,
+      onPressed: state.authenticating
+          ? null
+          : () => context.read<AppLockCubit>().authenticate(
+                reason: s.appLockReason,
+                method: primary,
+              ),
+    );
   }
 
   Future<void> _submitPassword(BuildContext context, S s) async {
@@ -326,6 +339,8 @@ class _AppLockGateState extends State<AppLockGate> with WidgetsBindingObserver {
     });
     unawaited(context.read<PreferencesCubit>().setAppLock(method: method));
     if (method == AppLockMethod.face || method == AppLockMethod.fingerprint) {
+      await Future<void>.delayed(const Duration(milliseconds: 350));
+      if (!context.mounted) return;
       await context.read<AppLockCubit>().authenticate(
         reason: s.appLockReason,
         method: method,

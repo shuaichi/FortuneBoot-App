@@ -120,6 +120,9 @@ class DioClient {
     }
   }
 
+  /// 当前鉴权请求头（只读副本），供头像等非 Dio 请求复用。
+  Map<String, dynamic> get authHeaders => Map<String, dynamic>.from(_authHeaders);
+
   void clearAuthHeader() {
     _authHeaders = {};
   }

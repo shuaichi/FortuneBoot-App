@@ -7,31 +7,31 @@
         "material": {
           "certpath": "E:/zhou/WeiHu/fortuneboot/FortuneBoot-App-feat_refactor/上架/fortuneboot.cer",
           "keyAlias": "fortuneboot",
-          "keyPassword": "0000001BB6AA895723D0FB63A218ADD36615CB0FF1DDA5A618178779615FD86238332D39C62B5A9A2EE1B2",
+          "keyPassword": "0000001BA711F540839178DAC656ACFFFF6C426EC93E32307B917D6786DB7BAC2D02C9185E79AC1D9614F8",
           "profile": "E:/zhou/WeiHu/fortuneboot/FortuneBoot-App-feat_refactor/上架/fortunebootRelease.p7b",
           "signAlg": "SHA256withECDSA",
           "storeFile": "E:/zhou/WeiHu/fortuneboot/FortuneBoot-App-feat_refactor/上架/fortuneboot.p12",
-          "storePassword": "0000001B77F6A151CC9D9B3D646D61EFB9FE993925BC41933BDE27EE900289E394AF441BA3879B07E30641"
+          "storePassword": "0000001B3CA1034B1A00964C4BBA8EE5E343884C4C6C3D232ADAEDB320FE4B43C5D1C4B382359E130E0C09"
         }
       },
       {
         "name": "haoji",
         "type": "HarmonyOS",
         "material": {
-          "certpath": "C:/Users/Administrator/.ohos/config/haoji_ohos_Y5rM-3WZXQcdyq30IREy7dT5smmiblExU88jPscG17w=.cer",
+          "certpath": "C:\\Users\\Administrator\\.ohos\\config\\haoji_ohos_Y5rM-3WZXQcdyq30IREy7dT5smmiblExU88jPscG17w=.cer",
           "keyAlias": "debugKey",
-          "keyPassword": "0000001BE82636D25C239AB90B8C9413248C7E63FDC525A49DA947D8CC38D04A487A2AA4600E18E77FCF71",
-          "profile": "C:/Users/Administrator/.ohos/config/haoji_ohos_Y5rM-3WZXQcdyq30IREy7dT5smmiblExU88jPscG17w=.p7b",
+          "keyPassword": "0000001B102E9838A745F508CDA15BB8C08405CFD05C43DAA9F768FAE6261EDDE62B46ADFACBE21D39929F",
+          "profile": "C:\\Users\\Administrator\\.ohos\\config\\haoji_ohos_Y5rM-3WZXQcdyq30IREy7dT5smmiblExU88jPscG17w=.p7b",
           "signAlg": "SHA256withECDSA",
-          "storeFile": "C:/Users/Administrator/.ohos/config/haoji_ohos_Y5rM-3WZXQcdyq30IREy7dT5smmiblExU88jPscG17w=.p12",
-          "storePassword": "0000001B7E72085CF4F06AEC5667D32CB1ED14F3DEB28B9E09FAAF928FB2514A401890068231E1EE91E577"
+          "storeFile": "C:\\Users\\Administrator\\.ohos\\config\\haoji_ohos_Y5rM-3WZXQcdyq30IREy7dT5smmiblExU88jPscG17w=.p12",
+          "storePassword": "0000001B0E09917EAB207FFA4E3BB22FA7CDA98EB71FE42032E03E5B78C822181118997298CBD6D2449746"
         }
       }
     ],
     "products": [
       {
         "name": "default",
-        "signingConfig": "default",
+        "signingConfig": "haoji",
         "compatibleSdkVersion": "6.0.0(20)",
         "runtimeOS": "HarmonyOS",
         "targetSdkVersion": "6.0.0(20)"

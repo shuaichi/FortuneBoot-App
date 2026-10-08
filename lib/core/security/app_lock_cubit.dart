@@ -106,23 +106,27 @@ class AppLockCubit extends Cubit<AppLockState> {
   }) async {
     if (state.authenticating) return false;
     emit(state.copyWith(authenticating: true));
+    var ok = false;
     try {
-      final ok = await _authenticator.authenticate(
+      ok = await _authenticator.authenticate(
         reason: reason,
         method: method,
         password: password,
         gesture: gesture,
       );
-      emit(
-        state.copyWith(
-          authenticating: false,
-          locked: ok ? false : state.locked,
-        ),
-      );
       return ok;
     } on Object {
-      emit(state.copyWith(authenticating: false));
+      ok = false;
       return false;
+    } finally {
+      if (!isClosed) {
+        emit(
+          state.copyWith(
+            authenticating: false,
+            locked: ok ? false : state.locked,
+          ),
+        );
+      }
     }
   }
 }

@@ -6,10 +6,10 @@ class AppReleaseVersion {
   const AppReleaseVersion._();
 
   /// versionName, e.g. 1.4.3
-  static const String name = '1.5.0';
+  static const String name = '1.5.1';
 
   /// versionCode, e.g. 2026082115
-  static const String build = '2026092901';
+  static const String build = '2026100801';
 
   /// About page display: 1.4.3 (2026082115)
   static String get display {

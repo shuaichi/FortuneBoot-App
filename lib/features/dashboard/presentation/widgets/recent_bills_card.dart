@@ -72,22 +72,43 @@ class RecentBillsCard extends StatelessWidget {
               ),
             ),
             const SizedBox(height: FxSpacing.sm),
-            if (bills.isEmpty)
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: FxSpacing.lg),
-                child: Center(
-                  child: Text(
-                    S.of(context).dashboardNoBillsYet,
-                    style: FxTypography.caption.copyWith(
-                      color: palette.textTertiary,
+            Expanded(
+              child: bills.isEmpty
+                  ? Center(
+                      child: Text(
+                        S.of(context).dashboardNoBillsYet,
+                        style: FxTypography.caption.copyWith(
+                          color: palette.textTertiary,
+                        ),
+                      ),
+                    )
+                  : LayoutBuilder(
+                      builder: (context, constraints) {
+                        // 高度略紧时整体轻微缩小，避免滚动与黄黑条，同时保留可读间距。
+                        return FittedBox(
+                          fit: BoxFit.scaleDown,
+                          alignment: Alignment.topCenter,
+                          child: ConstrainedBox(
+                            constraints: BoxConstraints(
+                              maxWidth: constraints.maxWidth,
+                            ),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                for (final bill in bills)
+                                  _row(
+                                    context,
+                                    bill,
+                                    hideAmounts,
+                                    onBillTap,
+                                  ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
                     ),
-                  ),
-                ),
-              )
-            else
-              ...bills.map(
-                (bill) => _row(context, bill, hideAmounts, onBillTap),
-              ),
+            ),
           ],
         );
       },
@@ -130,12 +151,13 @@ class RecentBillsCard extends StatelessWidget {
                   categoryNames: bill.categoryNamesByAmount,
                   toAccountId: bill.toAccountId,
                 ),
-                size: 36,
+                size: 34,
               ),
               const SizedBox(width: FxSpacing.md),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
                       title,
@@ -158,6 +180,7 @@ class RecentBillsCard extends StatelessWidget {
               const SizedBox(width: FxSpacing.sm),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   if (hasExtras)
                     Text(

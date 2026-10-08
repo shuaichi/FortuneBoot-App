@@ -491,38 +491,44 @@ class _DayCell extends StatelessWidget {
                       height: 1.0,
                     ),
                   ),
-                  Flexible(
-                    child: FittedBox(
-                      fit: BoxFit.scaleDown,
-                      alignment: Alignment.topLeft,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          _CompactAmount(
-                            '↑',
-                            bucket.income,
-                            currencyCode,
-                            finance.income,
-                          ),
-                          _CompactAmount(
-                            '↓',
-                            bucket.expense,
-                            currencyCode,
-                            finance.expense,
-                          ),
-                          Text(
-                            '${bucket.totalCount}',
-                            style: FxTypography.caption.copyWith(
-                              color: palette.textTertiary,
-                              fontSize: 9,
-                              height: 1.0,
-                            ),
-                          ),
-                        ],
+                  if (bucket.totalCount > 0 ||
+                      bucket.income != 0 ||
+                      bucket.expense != 0)
+                    Flexible(
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        alignment: Alignment.topLeft,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            if (bucket.income != 0)
+                              _CompactAmount(
+                                '↑',
+                                bucket.income,
+                                currencyCode,
+                                finance.income,
+                              ),
+                            if (bucket.expense != 0)
+                              _CompactAmount(
+                                '↓',
+                                bucket.expense,
+                                currencyCode,
+                                finance.expense,
+                              ),
+                            if (bucket.totalCount > 0)
+                              Text(
+                                '${bucket.totalCount}',
+                                style: FxTypography.caption.copyWith(
+                                  color: palette.textTertiary,
+                                  fontSize: 9,
+                                  height: 1.0,
+                                ),
+                              ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
                 ],
               ),
               if (workRest != null)
@@ -557,10 +563,10 @@ class _CompactAmount extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (amount == 0) return const SizedBox.shrink();
     final formats = StatsFormatters.of(context, currencyCode: currencyCode);
-    final value = amount == 0 ? '—' : formats.compact(amount);
     return Text(
-      '$prefix$value',
+      '$prefix${formats.compact(amount)}',
       style: FxTypography.caption.copyWith(
         color: color,
         fontSize: 9,
@@ -709,13 +715,20 @@ class _PeriodCell extends StatelessWidget {
             children: [
               Text(label, style: FxTypography.label),
               const Spacer(),
-              _CompactAmount('↑', bucket.income, currencyCode, finance.income),
-              _CompactAmount(
-                '↓',
-                bucket.expense,
-                currencyCode,
-                finance.expense,
-              ),
+              if (bucket.income != 0)
+                _CompactAmount(
+                  '↑',
+                  bucket.income,
+                  currencyCode,
+                  finance.income,
+                ),
+              if (bucket.expense != 0)
+                _CompactAmount(
+                  '↓',
+                  bucket.expense,
+                  currencyCode,
+                  finance.expense,
+                ),
             ],
           ),
         ),

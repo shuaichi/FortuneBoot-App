@@ -20,6 +20,7 @@ import 'package:fortuneboot/features/profile/presentation/bloc/profile_bloc.dart
 import 'package:fortuneboot/features/profile/presentation/profile_edit_page.dart';
 import 'package:fortuneboot/features/profile/presentation/widgets/donate_qr_tile.dart';
 import 'package:fortuneboot/features/profile/presentation/widgets/finance_color_editor.dart';
+import 'package:fortuneboot/features/profile/presentation/widgets/profile_avatar.dart';
 import 'package:fortuneboot/fx/components/fx_button.dart';
 import 'package:fortuneboot/fx/components/fx_card.dart';
 import 'package:fortuneboot/fx/components/fx_list_item.dart';
@@ -46,8 +47,22 @@ class ProfilePage extends StatelessWidget {
   }
 }
 
-class _ProfileView extends StatelessWidget {
+class _ProfileView extends StatefulWidget {
   const _ProfileView();
+
+  @override
+  State<_ProfileView> createState() => _ProfileViewState();
+}
+
+class _ProfileViewState extends State<_ProfileView> {
+  /// 当前展开的分组 id；同一时间只展开一组。
+  String? _expandedSection;
+
+  static const _sectionBook = 'book';
+  static const _sectionBilling = 'billing';
+  static const _sectionToolbox = 'toolbox';
+  static const _sectionPreferences = 'preferences';
+  static const _sectionAbout = 'about';
 
   void _toast(
     BuildContext context,
@@ -64,6 +79,13 @@ class _ProfileView extends StatelessWidget {
     if (changed == true && context.mounted) {
       context.read<ProfileBloc>().add(const ProfileUserRefreshed());
     }
+  }
+
+  void _toggleSection(String id) {
+    HapticFeedback.selectionClick();
+    setState(() {
+      _expandedSection = _expandedSection == id ? null : id;
+    });
   }
 
   @override
@@ -100,13 +122,13 @@ class _ProfileView extends StatelessWidget {
                       _userCard(context, state),
                       const SizedBox(height: FxSpacing.lg),
                       _bookGroupSection(context),
-                      const SizedBox(height: FxSpacing.lg),
+                      const SizedBox(height: FxSpacing.md),
                       _billingSection(context),
-                      const SizedBox(height: FxSpacing.lg),
+                      const SizedBox(height: FxSpacing.md),
                       _toolboxSection(context),
-                      const SizedBox(height: FxSpacing.lg),
+                      const SizedBox(height: FxSpacing.md),
                       _preferenceSection(context),
-                      const SizedBox(height: FxSpacing.lg),
+                      const SizedBox(height: FxSpacing.md),
                       _aboutSection(context, state.about),
                       const SizedBox(height: FxSpacing.xxl),
                       FxButton.critical(
@@ -153,7 +175,12 @@ class _ProfileView extends StatelessWidget {
       radius: FxRadius.sheet,
       child: Row(
         children: [
-          _ProfileAvatar(imageUrl: avatar, label: displayName, size: 64),
+          ProfileAvatar(
+            imageUrl: avatar,
+            cacheToken: avatar,
+            label: displayName,
+            size: 64,
+          ),
           const SizedBox(width: FxSpacing.lg),
           Expanded(
             child: Column(
@@ -216,29 +243,35 @@ class _ProfileView extends StatelessWidget {
             session.currentGroup?.groupName ?? S.of(context).profileNotSelected;
         final bookName =
             session.currentBook?.bookName ?? S.of(context).profileNotSelected;
-        return _sectionCard(context, S.of(context).profileBookGroup, [
-          FxListItem(
-            leading: _tileIcon(Icons.swap_horiz_rounded, palette.primary),
-            title: S.of(context).profileCurrentGroupBook,
-            subtitle: '$groupName · $bookName',
-            showChevron: true,
-            onTap: () => _openSwitcher(context),
-          ),
-          _divider(context),
-          FxListItem(
-            leading: _tileIcon(Icons.folder_copy_rounded, palette.info),
-            title: S.of(context).booksManageTitle,
-            showChevron: true,
-            onTap: () => AppRouter.push<void>(context, Routes.groups),
-          ),
-          _divider(context),
-          FxListItem(
-            leading: _tileIcon(Icons.group_rounded, finance.income),
-            title: S.of(context).profileMemberManageGroup,
-            showChevron: true,
-            onTap: () => AppRouter.push<void>(context, Routes.groupUsers),
-          ),
-        ]);
+        final s = S.of(context);
+        return _expandableGroup(
+          context,
+          id: _sectionBook,
+          title: s.profileBookGroup,
+          icon: Icons.menu_book_rounded,
+          tint: palette.primary,
+          subtitle: '$groupName · $bookName',
+          features: [
+            _ProfileFeature(
+              icon: Icons.swap_horiz_rounded,
+              tint: palette.primary,
+              label: s.profileCurrentGroupBook,
+              onTap: () => _openSwitcher(context),
+            ),
+            _ProfileFeature(
+              icon: Icons.folder_copy_rounded,
+              tint: palette.info,
+              label: s.booksManageTitle,
+              onTap: () => AppRouter.push<void>(context, Routes.groups),
+            ),
+            _ProfileFeature(
+              icon: Icons.group_rounded,
+              tint: finance.income,
+              label: s.profileMemberManageGroup,
+              onTap: () => AppRouter.push<void>(context, Routes.groupUsers),
+            ),
+          ],
+        );
       },
     );
   }
@@ -252,47 +285,46 @@ class _ProfileView extends StatelessWidget {
   Widget _billingSection(BuildContext context) {
     final palette = FxPalette.of(context);
     final finance = FxFinanceColors.of(context);
-    return _sectionCard(context, S.of(context).profileBillingManage, [
-      _navItem(
-        context,
-        Icons.category_rounded,
-        finance.expense,
-        S.of(context).profileCategoryManage,
-        Routes.categories,
-      ),
-      _divider(context),
-      _navItem(
-        context,
-        Icons.tag_rounded,
-        palette.info,
-        S.of(context).profileTagManage,
-        Routes.tags,
-      ),
-      _divider(context),
-      _navItem(
-        context,
-        Icons.storefront_rounded,
-        finance.adjust,
-        S.of(context).profilePayeeManage,
-        Routes.payees,
-      ),
-      _divider(context),
-      _navItem(
-        context,
-        Icons.people_alt_rounded,
-        finance.income,
-        S.of(context).profileMemberManageBill,
-        Routes.members,
-      ),
-      _divider(context),
-      _navItem(
-        context,
-        Icons.credit_card_rounded,
-        palette.primary,
-        S.of(context).profileAccountManage,
-        Routes.accounts,
-      ),
-    ]);
+    final s = S.of(context);
+    return _expandableGroup(
+      context,
+      id: _sectionBilling,
+      title: s.profileBillingManage,
+      icon: Icons.receipt_long_rounded,
+      tint: finance.expense,
+      features: [
+        _ProfileFeature(
+          icon: Icons.category_rounded,
+          tint: finance.expense,
+          label: s.profileCategoryManage,
+          onTap: () => AppRouter.push<void>(context, Routes.categories),
+        ),
+        _ProfileFeature(
+          icon: Icons.tag_rounded,
+          tint: palette.info,
+          label: s.profileTagManage,
+          onTap: () => AppRouter.push<void>(context, Routes.tags),
+        ),
+        _ProfileFeature(
+          icon: Icons.storefront_rounded,
+          tint: finance.adjust,
+          label: s.profilePayeeManage,
+          onTap: () => AppRouter.push<void>(context, Routes.payees),
+        ),
+        _ProfileFeature(
+          icon: Icons.people_alt_rounded,
+          tint: finance.income,
+          label: s.profileMemberManageBill,
+          onTap: () => AppRouter.push<void>(context, Routes.members),
+        ),
+        _ProfileFeature(
+          icon: Icons.credit_card_rounded,
+          tint: palette.primary,
+          label: s.profileAccountManage,
+          onTap: () => AppRouter.push<void>(context, Routes.accounts),
+        ),
+      ],
+    );
   }
 
   // ---------------- 工具箱 ----------------
@@ -300,47 +332,46 @@ class _ProfileView extends StatelessWidget {
   Widget _toolboxSection(BuildContext context) {
     final palette = FxPalette.of(context);
     final finance = FxFinanceColors.of(context);
-    return _sectionCard(context, S.of(context).profileToolbox, [
-      _navItem(
-        context,
-        Icons.inventory_2_rounded,
-        finance.transfer,
-        S.of(context).profileGoodsManage,
-        Routes.goods,
-      ),
-      _divider(context),
-      _navItem(
-        context,
-        Icons.description_rounded,
-        palette.info,
-        S.of(context).profileOrdersManage,
-        Routes.orders,
-      ),
-      _divider(context),
-      _navItem(
-        context,
-        Icons.repeat_rounded,
-        finance.income,
-        S.of(context).profileRecurringManage,
-        Routes.recurring,
-      ),
-      _divider(context),
-      _navItem(
-        context,
-        Icons.import_export_rounded,
-        finance.adjust,
-        S.of(context).profileImportExport,
-        Routes.io,
-      ),
-      _divider(context),
-      _navItem(
-        context,
-        Icons.history_rounded,
-        palette.primary,
-        S.of(context).profileLogs,
-        Routes.logs,
-      ),
-    ]);
+    final s = S.of(context);
+    return _expandableGroup(
+      context,
+      id: _sectionToolbox,
+      title: s.profileToolbox,
+      icon: Icons.handyman_rounded,
+      tint: finance.transfer,
+      features: [
+        _ProfileFeature(
+          icon: Icons.inventory_2_rounded,
+          tint: finance.transfer,
+          label: s.profileGoodsManage,
+          onTap: () => AppRouter.push<void>(context, Routes.goods),
+        ),
+        _ProfileFeature(
+          icon: Icons.description_rounded,
+          tint: palette.info,
+          label: s.profileOrdersManage,
+          onTap: () => AppRouter.push<void>(context, Routes.orders),
+        ),
+        _ProfileFeature(
+          icon: Icons.repeat_rounded,
+          tint: finance.income,
+          label: s.profileRecurringManage,
+          onTap: () => AppRouter.push<void>(context, Routes.recurring),
+        ),
+        _ProfileFeature(
+          icon: Icons.import_export_rounded,
+          tint: finance.adjust,
+          label: s.profileImportExport,
+          onTap: () => AppRouter.push<void>(context, Routes.io),
+        ),
+        _ProfileFeature(
+          icon: Icons.history_rounded,
+          tint: palette.primary,
+          label: s.profileLogs,
+          onTap: () => AppRouter.push<void>(context, Routes.logs),
+        ),
+      ],
+    );
   }
 
   // ---------------- 偏好设置 ----------------
@@ -366,143 +397,161 @@ class _ProfileView extends StatelessWidget {
             Theme.of(context).platform == TargetPlatform.iOS
             ? S.of(context).profileScreenCaptureAllowedIosHint
             : S.of(context).profileScreenCaptureAllowedSubtitle;
-        return _sectionCard(context, S.of(context).profilePreferences, [
-          FxListItem(
-            leading: _tileIcon(Icons.language_rounded, palette.primary),
-            title: S.of(context).profileLanguage,
-            trailing: Text(
-              langLabel,
-              style: FxTypography.caption.copyWith(
-                color: palette.textSecondary,
-              ),
-            ),
-            showChevron: true,
-            onTap: () => _openLanguage(context),
-          ),
-          _divider(context),
-          FxListItem(
-            leading: _tileIcon(Icons.dark_mode_rounded, finance.transfer),
-            title: S.of(context).profileThemeMode,
-            trailing: Text(
-              themeLabel,
-              style: FxTypography.caption.copyWith(
-                color: palette.textSecondary,
-              ),
-            ),
-            showChevron: true,
-            onTap: () => _openThemeMode(context),
-          ),
-          _divider(context),
-          FxListItem(
-            leading: _tileIcon(Icons.calendar_month_rounded, palette.info),
-            title: S.of(context).profileMonthStartDay,
-            trailing: Text(
-              S.of(context).profileMonthStartDayValue(startDay),
-              style: FxTypography.caption.copyWith(
-                color: palette.textSecondary,
-              ),
-            ),
-            showChevron: true,
-            onTap: () => _openMonthStartDay(context, startDay),
-          ),
-          _divider(context),
-          FxListItem(
-            leading: _tileIcon(Icons.content_copy_rounded, palette.primary),
-            title: S.of(context).profileCopyUsesCurrentTime,
-            subtitle: S.of(context).profileCopyUsesCurrentTimeSubtitle,
-            trailing: Switch.adaptive(
-              value: preferences.billing.copyUsesCurrentTime,
-              onChanged: preferences.isLoading
-                  ? null
-                  : (useCurrentTime) async {
-                      final ok = await context
-                          .read<PreferencesCubit>()
-                          .setCopyUsesCurrentTime(useCurrentTime);
-                      if (!context.mounted || ok) return;
-                      _toast(
-                        context,
-                        S.of(context).profileSaveFailedRetry,
-                      );
-                    },
-            ),
-          ),
-          _divider(context),
-          FxListItem(
-            leading: _tileIcon(Icons.currency_exchange_rounded, finance.income),
-            title: S.of(context).profileCurrencyRefresh,
-            trailing: Text(
-              S.of(context).profileRefresh,
-              style: FxTypography.caption.copyWith(color: palette.primary),
-            ),
-            onTap: () => _refreshCurrency(context),
-          ),
-          _divider(context),
-          if (Theme.of(context).platform == TargetPlatform.android) ...[
-            FxListItem(
-              leading: _tileIcon(Icons.lock_rounded, palette.primary),
-              title: S.of(context).profileAppLock,
-              subtitle: S.of(context).profileAppLockSubtitle,
-              trailing: Switch.adaptive(
-                value: preferences.appLock.enabled,
-                onChanged: preferences.isLoading
-                    ? null
-                    : (enabled) => _setAppLockEnabled(context, enabled),
-              ),
-            ),
-            if (preferences.appLock.enabled) ...[
-              _divider(context),
+        return _expandableGroup(
+          context,
+          id: _sectionPreferences,
+          title: S.of(context).profilePreferences,
+          icon: Icons.tune_rounded,
+          tint: palette.primary,
+          body: Column(
+            children: [
               FxListItem(
-                leading: _tileIcon(
-                  _appLockMethodIcon(preferences.appLock.method),
-                  palette.primary,
-                ),
-                title: S.of(context).profileAppLockMethod,
+                leading: _tileIcon(Icons.language_rounded, palette.primary),
+                title: S.of(context).profileLanguage,
                 trailing: Text(
-                  _appLockMethodLabel(
-                    S.of(context),
-                    preferences.appLock.method,
-                  ),
+                  langLabel,
                   style: FxTypography.caption.copyWith(
                     color: palette.textSecondary,
                   ),
                 ),
                 showChevron: true,
-                onTap: () => _changeAppLockMethod(context),
+                onTap: () => _openLanguage(context),
+              ),
+              _divider(context),
+              FxListItem(
+                leading: _tileIcon(Icons.dark_mode_rounded, finance.transfer),
+                title: S.of(context).profileThemeMode,
+                trailing: Text(
+                  themeLabel,
+                  style: FxTypography.caption.copyWith(
+                    color: palette.textSecondary,
+                  ),
+                ),
+                showChevron: true,
+                onTap: () => _openThemeMode(context),
+              ),
+              _divider(context),
+              FxListItem(
+                leading: _tileIcon(Icons.calendar_month_rounded, palette.info),
+                title: S.of(context).profileMonthStartDay,
+                trailing: Text(
+                  S.of(context).profileMonthStartDayValue(startDay),
+                  style: FxTypography.caption.copyWith(
+                    color: palette.textSecondary,
+                  ),
+                ),
+                showChevron: true,
+                onTap: () => _openMonthStartDay(context, startDay),
+              ),
+              _divider(context),
+              FxListItem(
+                leading: _tileIcon(Icons.content_copy_rounded, palette.primary),
+                title: S.of(context).profileCopyUsesCurrentTime,
+                subtitle: S.of(context).profileCopyUsesCurrentTimeSubtitle,
+                trailing: Switch.adaptive(
+                  value: preferences.billing.copyUsesCurrentTime,
+                  onChanged: preferences.isLoading
+                      ? null
+                      : (useCurrentTime) async {
+                          final ok = await context
+                              .read<PreferencesCubit>()
+                              .setCopyUsesCurrentTime(useCurrentTime);
+                          if (!context.mounted || ok) return;
+                          _toast(
+                            context,
+                            S.of(context).profileSaveFailedRetry,
+                          );
+                        },
+                ),
+              ),
+              _divider(context),
+              FxListItem(
+                leading:
+                    _tileIcon(Icons.currency_exchange_rounded, finance.income),
+                title: S.of(context).profileCurrencyRefresh,
+                trailing: Text(
+                  S.of(context).profileRefresh,
+                  style: FxTypography.caption.copyWith(color: palette.primary),
+                ),
+                onTap: () => _refreshCurrency(context),
+              ),
+              _divider(context),
+              if (_supportsAppLockPlatform(context)) ...[
+                FxListItem(
+                  leading: _tileIcon(Icons.lock_rounded, palette.primary),
+                  title: S.of(context).profileAppLock,
+                  subtitle: S.of(context).profileAppLockSubtitle,
+                  trailing: Switch.adaptive(
+                    value: preferences.appLock.enabled,
+                    onChanged: preferences.isLoading
+                        ? null
+                        : (enabled) => _setAppLockEnabled(context, enabled),
+                  ),
+                ),
+                if (preferences.appLock.enabled) ...[
+                  _divider(context),
+                  FxListItem(
+                    leading: _tileIcon(
+                      _appLockMethodIcon(preferences.appLock.method),
+                      palette.primary,
+                    ),
+                    title: S.of(context).profileAppLockMethod,
+                    trailing: Text(
+                      _appLockMethodLabel(
+                        S.of(context),
+                        preferences.appLock.method,
+                      ),
+                      style: FxTypography.caption.copyWith(
+                        color: palette.textSecondary,
+                      ),
+                    ),
+                    showChevron: true,
+                    onTap: () => _changeAppLockMethod(context),
+                  ),
+                ],
+                _divider(context),
+              ],
+              FxListItem(
+                leading:
+                    _tileIcon(Icons.screenshot_monitor_rounded, palette.info),
+                title: S.of(context).profileScreenCaptureAllowed,
+                subtitle: screenCaptureSubtitle,
+                trailing: Switch.adaptive(
+                  value: preferences.screenCapture.allowScreenCapture,
+                  onChanged: preferences.isLoading
+                      ? null
+                      : (allowed) async {
+                          final ok = await context
+                              .read<PreferencesCubit>()
+                              .setScreenCaptureAllowed(allowed);
+                          if (!context.mounted || ok) return;
+                          _toast(
+                            context,
+                            S.of(context).profileScreenCaptureProtectionFailed,
+                          );
+                        },
+                ),
+              ),
+              _divider(context),
+              FxListItem(
+                leading: _tileIcon(Icons.palette_rounded, finance.expense),
+                title: S.of(context).profileFinanceColors,
+                subtitle: S.of(context).profileFinanceColorsSubtitle,
+                showChevron: true,
+                onTap: () => _openFinanceColors(context),
               ),
             ],
-            _divider(context),
-          ],
-          FxListItem(
-            leading: _tileIcon(Icons.screenshot_monitor_rounded, palette.info),
-            title: S.of(context).profileScreenCaptureAllowed,
-            subtitle: screenCaptureSubtitle,
-            trailing: Switch.adaptive(
-              value: preferences.screenCapture.allowScreenCapture,
-              onChanged: preferences.isLoading
-                  ? null
-                  : (allowed) async {
-                      final ok = await context
-                          .read<PreferencesCubit>()
-                          .setScreenCaptureAllowed(allowed);
-                      if (!context.mounted || ok) return;
-                      _toast(
-                        context,
-                        S.of(context).profileScreenCaptureProtectionFailed,
-                      );
-                    },
-            ),
           ),
-          _divider(context),
-          FxListItem(
-            leading: _tileIcon(Icons.palette_rounded, finance.expense),
-            title: S.of(context).profileFinanceColors,
-            subtitle: S.of(context).profileFinanceColorsSubtitle,
-            showChevron: true,
-            onTap: () => _openFinanceColors(context),
-          ),
-        ]);
+        );
       },
     );
+  }
+
+  /// 安卓与鸿蒙均可启用应用锁（密码/手势全平台；生物识别走原生通道）。
+  bool _supportsAppLockPlatform(BuildContext context) {
+    final platform = Theme.of(context).platform;
+    return platform == TargetPlatform.android ||
+        platform == TargetPlatform.ohos;
   }
 
   Future<void> _setAppLockEnabled(BuildContext context, bool enabled) async {
@@ -557,6 +606,12 @@ class _ProfileView extends StatelessWidget {
       current: current,
     );
     if (!context.mounted || method == null) return null;
+    // 等底部弹层关闭后再拉系统生物识别，避免控件被立刻取消。
+    if (method == AppLockMethod.face ||
+        method == AppLockMethod.fingerprint) {
+      await Future<void>.delayed(const Duration(milliseconds: 350));
+      if (!context.mounted) return null;
+    }
     switch (method) {
       case AppLockMethod.password:
         final password = await showAppLockPasswordSheet(context, setup: true);
@@ -569,6 +624,19 @@ class _ProfileView extends StatelessWidget {
         await lock.enrollGesture(gesture);
         return method;
       case AppLockMethod.fingerprint:
+        // 鸿蒙走系统 UserAuth 控件；Android 才用指纹传感器提示层。
+        if (Theme.of(context).platform == TargetPlatform.ohos) {
+          final verified = await lock.authenticate(
+            reason: s.profileAppLockEnableReason,
+            method: method,
+          );
+          if (!context.mounted) return null;
+          if (!verified) {
+            _toast(context, s.profileAppLockFailed);
+            return null;
+          }
+          return method;
+        }
         final verified = await showAppLockFingerprintPrompt(
           context,
           reason: s.profileAppLockEnableReason,
@@ -767,33 +835,35 @@ class _ProfileView extends StatelessWidget {
   Widget _aboutSection(BuildContext context, AppAbout about) {
     final palette = FxPalette.of(context);
     final finance = FxFinanceColors.of(context);
-    final version = about.appVersion;
-    return _sectionCard(context, S.of(context).profileAbout, [
-      FxListItem(
-        leading: _tileIcon(Icons.info_outline_rounded, palette.primary),
-        title: S.of(context).profileAboutApp,
-        trailing: Text(
-          version,
-          style: FxTypography.caption.copyWith(color: palette.textSecondary),
+    final s = S.of(context);
+    return _expandableGroup(
+      context,
+      id: _sectionAbout,
+      title: s.profileAbout,
+      icon: Icons.info_outline_rounded,
+      tint: palette.primary,
+      subtitle: about.appVersion.isEmpty ? null : about.appVersion,
+      features: [
+        _ProfileFeature(
+          icon: Icons.info_outline_rounded,
+          tint: palette.primary,
+          label: s.profileAboutApp,
+          onTap: () => _openAbout(context, about),
         ),
-        showChevron: true,
-        onTap: () => _openAbout(context, about),
-      ),
-      _divider(context),
-      FxListItem(
-        leading: _tileIcon(Icons.help_outline_rounded, palette.info),
-        title: S.of(context).profileHelp,
-        showChevron: true,
-        onTap: () => _openHelp(context),
-      ),
-      _divider(context),
-      FxListItem(
-        leading: _tileIcon(Icons.favorite_border_rounded, finance.expense),
-        title: S.of(context).profileDonate,
-        showChevron: true,
-        onTap: () => _openDonate(context),
-      ),
-    ]);
+        _ProfileFeature(
+          icon: Icons.help_outline_rounded,
+          tint: palette.info,
+          label: s.profileHelp,
+          onTap: () => _openHelp(context),
+        ),
+        _ProfileFeature(
+          icon: Icons.favorite_border_rounded,
+          tint: finance.expense,
+          label: s.profileDonate,
+          onTap: () => _openDonate(context),
+        ),
+      ],
+    );
   }
 
   Future<void> _openAbout(BuildContext context, AppAbout about) async {
@@ -1086,46 +1156,124 @@ class _ProfileView extends StatelessWidget {
 
   // ---------------- 复用小组件 ----------------
 
-  Widget _sectionCard(
-    BuildContext context,
-    String title,
-    List<Widget> children,
-  ) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(
-            left: FxSpacing.xs,
-            bottom: FxSpacing.sm,
+  Widget _expandableGroup(
+    BuildContext context, {
+    required String id,
+    required String title,
+    required IconData icon,
+    required Color tint,
+    String? subtitle,
+    List<_ProfileFeature> features = const [],
+    Widget? body,
+  }) {
+    final palette = FxPalette.of(context);
+    final expanded = _expandedSection == id;
+    return FxCard(
+      padding: EdgeInsets.zero,
+      child: Column(
+        children: [
+          FxListItem(
+            leading: _tileIcon(icon, tint),
+            title: title,
+            subtitle: subtitle,
+            trailing: AnimatedRotation(
+              turns: expanded ? 0.5 : 0,
+              duration: const Duration(milliseconds: 200),
+              child: Icon(
+                Icons.expand_more_rounded,
+                color: palette.textTertiary,
+              ),
+            ),
+            onTap: () => _toggleSection(id),
           ),
-          child: Text(
-            title,
-            style: FxTypography.label.copyWith(
-              color: FxPalette.of(context).textSecondary,
+          AnimatedCrossFade(
+            duration: const Duration(milliseconds: 220),
+            sizeCurve: Curves.easeOutCubic,
+            crossFadeState: expanded
+                ? CrossFadeState.showSecond
+                : CrossFadeState.showFirst,
+            firstChild: const SizedBox(width: double.infinity),
+            secondChild: Column(
+              children: [
+                Divider(
+                  height: 1,
+                  thickness: 0.5,
+                  color: palette.border,
+                ),
+                if (body != null)
+                  body
+                else
+                  _featureButtonGrid(context, features),
+              ],
             ),
           ),
-        ),
-        FxCard(
-          padding: const EdgeInsets.symmetric(vertical: FxSpacing.xs),
-          child: Column(children: children),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
-  Widget _navItem(
+  Widget _featureButtonGrid(
     BuildContext context,
-    IconData icon,
-    Color tint,
-    String title,
-    String route,
+    List<_ProfileFeature> features,
   ) {
-    return FxListItem(
-      leading: _tileIcon(icon, tint),
-      title: title,
-      showChevron: true,
-      onTap: () => AppRouter.push<void>(context, route),
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(
+        FxSpacing.md,
+        FxSpacing.sm,
+        FxSpacing.md,
+        FxSpacing.md,
+      ),
+      child: GridView.builder(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        itemCount: features.length,
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 3,
+          mainAxisSpacing: FxSpacing.sm,
+          crossAxisSpacing: FxSpacing.sm,
+          childAspectRatio: 0.92,
+        ),
+        itemBuilder: (context, index) {
+          final feature = features[index];
+          return _featureButton(context, feature);
+        },
+      ),
+    );
+  }
+
+  Widget _featureButton(BuildContext context, _ProfileFeature feature) {
+    final palette = FxPalette.of(context);
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () {
+          HapticFeedback.selectionClick();
+          feature.onTap();
+        },
+        borderRadius: FxRadius.tileBorder,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: FxSpacing.xs,
+            vertical: FxSpacing.sm,
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              _tileIcon(feature.icon, feature.tint),
+              const SizedBox(height: FxSpacing.sm),
+              Text(
+                feature.label,
+                style: FxTypography.caption.copyWith(
+                  color: palette.textPrimary,
+                ),
+                textAlign: TextAlign.center,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 
@@ -1152,51 +1300,18 @@ class _ProfileView extends StatelessWidget {
   );
 }
 
-class _ProfileAvatar extends StatelessWidget {
-  final String? imageUrl;
-  final String label;
-  final double size;
-
-  const _ProfileAvatar({
-    required this.imageUrl,
+class _ProfileFeature {
+  const _ProfileFeature({
+    required this.icon,
+    required this.tint,
     required this.label,
-    required this.size,
+    required this.onTap,
   });
 
-  String get _initial {
-    final trimmed = label.trim();
-    return trimmed.isEmpty ? '?' : trimmed.characters.first.toUpperCase();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final palette = FxPalette.of(context);
-    return ClipOval(
-      child: SizedBox.square(
-        dimension: size,
-        child: imageUrl?.isNotEmpty == true
-            ? Image.network(
-                imageUrl!,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) =>
-                    _fallback(palette),
-              )
-            : _fallback(palette),
-      ),
-    );
-  }
-
-  Widget _fallback(FxPalette palette) {
-    return ColoredBox(
-      color: palette.primaryContainer,
-      child: Center(
-        child: Text(
-          _initial,
-          style: FxTypography.titleLarge.copyWith(color: palette.primary),
-        ),
-      ),
-    );
-  }
+  final IconData icon;
+  final Color tint;
+  final String label;
+  final VoidCallback onTap;
 }
 
 /// 内联 loading（用于卡片内小高度占位）。

@@ -1,9 +1,12 @@
 import common from '@ohos.app.ability.common';
+import cryptoFramework from '@ohos.security.cryptoFramework';
 import fileIo from '@ohos.file.fs';
 import fileUri from '@ohos.file.fileuri';
 import picker from '@ohos.file.picker';
 import photoAccessHelper from '@ohos.file.photoAccessHelper';
 import window from '@ohos.window';
+import { BusinessError } from '@kit.BasicServicesKit';
+import { userAuth } from '@kit.UserAuthenticationKit';
 import {
   FlutterPlugin,
   FlutterPluginBinding,
@@ -16,6 +19,245 @@ import MethodChannel, {
 } from '@ohos/flutter_ohos/src/main/ets/plugin/common/MethodChannel';
 
 const CHANNEL_NAME: string = 'fortuneboot/ohos_security';
+const APP_LOCK_CHANNEL_NAME: string = 'fortuneboot/app_lock';
+/** UserAuthResultCode.SUCCESS；部分机型/文档示例也会回 0。 */
+const AUTH_SUCCESS_CODE: number = 12500000;
+
+/** 与 Dart Map 对齐；用 class 保证 MethodChannel 可序列化。 */
+class AppLockAvailabilityPayload {
+  face: boolean = false;
+  fingerprint: boolean = false;
+}
+
+/** 用 number 回传结果（1/0），避免鸿蒙 MethodChannel 对裸 bool 编解码丢值。 */
+class AppLockAuthReplyPayload {
+  ok: number = 0;
+  code: number = -1;
+}
+
+/** 与 Android MainActivity 的 fortuneboot/app_lock 通道对齐。 */
+class AppLockAuthController {
+  private authInstance: userAuth.UserAuthInstance | null = null;
+  private pending: MethodResult | null = null;
+  private startToken: number = 0;
+
+  availability(): AppLockAvailabilityPayload {
+    const payload: AppLockAvailabilityPayload = new AppLockAvailabilityPayload();
+    payload.face = this.isAvailable(userAuth.UserAuthType.FACE);
+    payload.fingerprint = this.isAvailable(userAuth.UserAuthType.FINGERPRINT);
+    return payload;
+  }
+
+  authenticate(method: string, reason: string, result: MethodResult): void {
+    // 仅作废上一次等待，避免把本次 result 提前回 false。
+    this.invalidatePreviousAuth();
+    const normalized: string = method.trim().toLowerCase();
+    const authType: userAuth.UserAuthType = normalized === 'fingerprint'
+      ? userAuth.UserAuthType.FINGERPRINT
+      : userAuth.UserAuthType.FACE;
+    const trustLevel: userAuth.AuthTrustLevel | null = this.resolveTrustLevel(authType);
+    if (trustLevel === null) {
+      console.error(`app_lock authenticate unavailable for method=${method}`);
+      const denied: AppLockAuthReplyPayload = new AppLockAuthReplyPayload();
+      denied.ok = 0;
+      denied.code = 12500005;
+      result.success(denied);
+      return;
+    }
+
+    const token: number = ++this.startToken;
+    this.pending = result;
+    try {
+      const challenge: Uint8Array = this.createChallenge();
+      const types: Array<userAuth.UserAuthType> = [authType];
+      const authParam: userAuth.AuthParam = {
+        challenge: challenge,
+        authType: types,
+        authTrustLevel: trustLevel,
+      };
+      const title: string = reason.length > 0 ? reason : '请验证身份';
+      const widgetParam: userAuth.WidgetParam = {
+        title: title,
+      };
+      const instance: userAuth.UserAuthInstance =
+        userAuth.getUserAuthInstance(authParam, widgetParam);
+      this.authInstance = instance;
+      const controller: AppLockAuthController = this;
+      // 必须用闭包，不能用 class 方法：系统回调不会绑定 this，否则会报
+      // "Cannot read property controller of undefined"。
+      const listener: userAuth.IAuthCallback = {
+        onResult: (authResult: userAuth.UserAuthResult): void => {
+          try {
+            instance.off('result');
+          } catch (_) {
+            // ignore
+          }
+          const code: number = Number(authResult.result);
+          const hasToken: boolean =
+            authResult.token !== undefined &&
+            authResult.token !== null &&
+            authResult.token.length > 0;
+          const ok: boolean =
+            hasToken ||
+            code === userAuth.UserAuthResultCode.SUCCESS ||
+            code === AUTH_SUCCESS_CODE ||
+            code === 0;
+          console.info(
+            `app_lock onResult code=${code} hasToken=${hasToken} ok=${ok}`,
+          );
+          controller.finishPending(ok, code, token);
+        },
+      };
+      instance.on('result', listener);
+      // Flutter 弹层关闭动画未结束时立刻 start，系统控件常被直接取消。
+      setTimeout((): void => {
+        if (token !== this.startToken || this.pending === null) {
+          return;
+        }
+        try {
+          instance.start();
+        } catch (error) {
+          const err: BusinessError = error as BusinessError;
+          console.error(
+            `app_lock start failed: ${err?.code} ${err?.message}`,
+          );
+          this.finishPending(false, err?.code ?? -1, token);
+        }
+      }, 320);
+    } catch (error) {
+      const err: BusinessError = error as BusinessError;
+      console.error(
+        `app_lock authenticate failed: ${err?.code} ${err?.message}`,
+      );
+      this.finishPending(false, err?.code ?? -1, token);
+    }
+  }
+
+  cancel(): void {
+    this.invalidatePreviousAuth();
+  }
+
+  private invalidatePreviousAuth(): void {
+    this.startToken++;
+    const oldInstance: userAuth.UserAuthInstance | null = this.authInstance;
+    this.authInstance = null;
+    const oldPending: MethodResult | null = this.pending;
+    this.pending = null;
+    if (oldPending !== null) {
+      const payload: AppLockAuthReplyPayload = new AppLockAuthReplyPayload();
+      payload.ok = 0;
+      payload.code = 12500003;
+      oldPending.success(payload);
+    }
+    if (oldInstance !== null) {
+      try {
+        oldInstance.cancel();
+      } catch (_) {
+        // ignore
+      }
+    }
+  }
+
+  private createChallenge(): Uint8Array {
+    try {
+      const rand = cryptoFramework.createRandom();
+      const data: Uint8Array | undefined =
+        rand?.generateRandomSync(16)?.data;
+      if (data !== undefined && data.length > 0) {
+        return data;
+      }
+    } catch (_) {
+      // fall through
+    }
+    return new Uint8Array(16);
+  }
+
+  private isAvailable(authType: userAuth.UserAuthType): boolean {
+    return this.resolveTrustLevel(authType) !== null;
+  }
+
+  private resolveTrustLevel(
+    authType: userAuth.UserAuthType,
+  ): userAuth.AuthTrustLevel | null {
+    // 应用锁优先 ATL1，兼容更多机型的 2D 面容/指纹。
+    const levels: Array<userAuth.AuthTrustLevel> = [
+      userAuth.AuthTrustLevel.ATL1,
+      userAuth.AuthTrustLevel.ATL2,
+      userAuth.AuthTrustLevel.ATL3,
+    ];
+    for (let i = 0; i < levels.length; i++) {
+      try {
+        userAuth.getAvailableStatus(authType, levels[i]);
+        return levels[i];
+      } catch (error) {
+        const err: BusinessError = error as BusinessError;
+        // 12500010 = 未录入；12500005 = 类型不支持。继续尝试其它等级。
+        console.info(
+          `app_lock getAvailableStatus type=${authType} level=${levels[i]} code=${err?.code}`,
+        );
+        if (err?.code === 12500010 || err?.code === 12500005) {
+          return null;
+        }
+      }
+    }
+    return null;
+  }
+
+  finishPending(ok: boolean, code: number, token: number): void {
+    if (token !== this.startToken) {
+      return;
+    }
+    const reply: MethodResult | null = this.pending;
+    this.pending = null;
+    this.authInstance = null;
+    if (reply === null) {
+      return;
+    }
+    const payload: AppLockAuthReplyPayload = new AppLockAuthReplyPayload();
+    payload.ok = ok ? 1 : 0;
+    payload.code = code;
+    // 回调线程里直接 reply 偶发丢包；下一拍再回传给 Dart。
+    setTimeout((): void => {
+      reply.success(payload);
+    }, 0);
+  }
+}
+
+const appLockAuthController: AppLockAuthController = new AppLockAuthController();
+
+class AppLockMethodHandler implements MethodCallHandler {
+  onMethodCall(call: MethodCall, result: MethodResult): void {
+    if (call.method === 'availability') {
+      result.success(appLockAuthController.availability());
+      return;
+    }
+    if (call.method === 'authenticate') {
+      const method: string = AppLockMethodHandler.readStringArg(call, 'method');
+      const reason: string = AppLockMethodHandler.readStringArg(call, 'reason');
+      console.info(`app_lock authenticate method=${method}`);
+      appLockAuthController.authenticate(method, reason, result);
+      return;
+    }
+    if (call.method === 'cancel') {
+      appLockAuthController.cancel();
+      result.success(null);
+      return;
+    }
+    result.notImplemented();
+  }
+
+  private static readStringArg(call: MethodCall, key: string): string {
+    try {
+      const value: Object | null = call.argument(key);
+      if (value === null || value === undefined) {
+        return '';
+      }
+      return `${value}`;
+    } catch (_) {
+      return '';
+    }
+  }
+}
 
 class ScreenCaptureWindowController {
   private mainWindow: window.Window | null = null;
@@ -80,6 +322,8 @@ export function reapplyScreenCaptureProtection(): void {
 export default class FortunebootOhosSecurityPlugin
   implements FlutterPlugin, MethodCallHandler {
   private channel: MethodChannel | null = null;
+  private appLockChannel: MethodChannel | null = null;
+  private appLockHandler: AppLockMethodHandler | null = null;
 
   getUniqueClassName(): string {
     return 'FortunebootOhosSecurityPlugin';
@@ -88,11 +332,21 @@ export default class FortunebootOhosSecurityPlugin
   onAttachedToEngine(binding: FlutterPluginBinding): void {
     this.channel = new MethodChannel(binding.getBinaryMessenger(), CHANNEL_NAME);
     this.channel.setMethodCallHandler(this);
+    this.appLockHandler = new AppLockMethodHandler();
+    this.appLockChannel = new MethodChannel(
+      binding.getBinaryMessenger(),
+      APP_LOCK_CHANNEL_NAME,
+    );
+    this.appLockChannel.setMethodCallHandler(this.appLockHandler);
   }
 
   onDetachedFromEngine(binding: FlutterPluginBinding): void {
     this.channel?.setMethodCallHandler(null);
     this.channel = null;
+    this.appLockChannel?.setMethodCallHandler(null);
+    this.appLockChannel = null;
+    this.appLockHandler = null;
+    appLockAuthController.cancel();
   }
 
   onMethodCall(call: MethodCall, result: MethodResult): void {

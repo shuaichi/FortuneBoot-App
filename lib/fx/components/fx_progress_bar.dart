@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 
-/// 余额/预算占比条。
+/// 通用占比进度条（净值、分类占比等）。
 class FxProgressBar extends StatelessWidget {
   /// 0.0 ~ 1.0
   final double value;

@@ -282,6 +282,8 @@ class _BodyState extends State<_Body> {
               if (tiles.isNotEmpty)
                 FxBentoGrid(
                   tiles: tiles,
+                  // 略高于默认 92，让「最近账单」3 条在 rowSpan=2 内更从容。
+                  rowHeight: 100,
                   allowBackfill: !_editingLayout,
                 ),
               if (tiles.isEmpty)
