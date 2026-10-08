@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:fortuneboot/core/session/session_permission.dart';
 import 'package:fortuneboot/login/model/login_model.dart';
 import 'package:fortuneboot/util/dio_client.dart';
 
@@ -26,7 +27,8 @@ class FxApi {
   /// 解包 Retrofit 返回的 HJResponse。code==0 返回 data，否则抛 FxApiException。
   static dynamic unwrap(HJResponse res) {
     if (res.code == 0) return res.data;
-    throw FxApiException(res.code, res.msg.isEmpty ? '操作失败' : res.msg);
+    final raw = res.msg.isEmpty ? '操作失败' : res.msg;
+    throw FxApiException(res.code, SessionPermission.friendlyApiMessage(res.code, raw));
   }
 
   /// 解包裸 dio Response（data 为 {code,msg,data} Map）。
@@ -36,7 +38,7 @@ class FxApi {
       final code = _asInt(data['code']) ?? -1;
       if (code == 0) return data['data'];
       final msg = data['msg']?.toString() ?? '操作失败';
-      throw FxApiException(code, msg);
+      throw FxApiException(code, SessionPermission.friendlyApiMessage(code, msg));
     }
     throw FxApiException(-1, '响应格式异常');
   }

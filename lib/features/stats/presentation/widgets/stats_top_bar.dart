@@ -12,7 +12,14 @@ import 'package:intl/intl.dart';
 
 /// 统计页粘顶栏：时间区间选择（本周/本月/本年/自定义）+ 支出/收入分段。
 class StatsTopBar extends StatelessWidget {
-  const StatsTopBar({super.key});
+  const StatsTopBar({
+    super.key,
+    this.editingLayout = false,
+    this.onEditLayoutToggle,
+  });
+
+  final bool editingLayout;
+  final VoidCallback? onEditLayoutToggle;
 
   @override
   Widget build(BuildContext context) {
@@ -26,64 +33,101 @@ class StatsTopBar extends StatelessWidget {
       padding: EdgeInsets.only(
         left: FxSpacing.lg,
         right: FxSpacing.lg,
-        top: MediaQuery.of(context).padding.top + FxSpacing.sm,
-        bottom: FxSpacing.md,
+        top: MediaQuery.of(context).padding.top + FxSpacing.xs,
+        bottom: FxSpacing.sm,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(S.of(context).statsTitle, style: FxTypography.titleLarge),
-          const SizedBox(height: FxSpacing.md),
-          Wrap(
-            spacing: FxSpacing.sm,
-            runSpacing: FxSpacing.sm,
+          Row(
             children: [
-              _RangeChip(
-                label: S.of(context).statsRangeWeek,
-                semanticsLabel: S.of(context).statsRangeWeek,
-                selected: state.range == StatsRange.week,
-                onTap: () => bloc.add(const StatsRangeChanged(StatsRange.week)),
+              Expanded(
+                child: Text(
+                  S.of(context).statsTitle,
+                  style: FxTypography.titleLarge,
+                ),
               ),
-              _RangeChip(
-                label: S.of(context).statsRangePeriod,
-                semanticsLabel: S.of(context).statsRangePeriod,
-                selected: state.range == StatsRange.month,
-                onTap: () =>
-                    bloc.add(const StatsRangeChanged(StatsRange.month)),
-              ),
-              _RangeChip(
-                label: S.of(context).statsRangeYear,
-                semanticsLabel: S.of(context).statsRangeYear,
-                selected: state.range == StatsRange.year,
-                onTap: () => bloc.add(const StatsRangeChanged(StatsRange.year)),
-              ),
-              _RangeChip(
-                label:
-                    state.range == StatsRange.custom &&
-                        state.customStart != null &&
-                        state.customEnd != null
-                    ? '${day.format(state.customStart!)}-${day.format(state.customEnd!)}'
-                    : S.of(context).statsRangeCustom,
-                semanticsLabel:
-                    state.range == StatsRange.custom &&
-                        state.customStart != null &&
-                        state.customEnd != null
-                    ? '${S.of(context).statsRangeCustom} ${DateFormat.yMMMd(locale).format(state.customStart!)} - ${DateFormat.yMMMd(locale).format(state.customEnd!)}'
-                    : S.of(context).statsRangeCustom,
-                selected: state.range == StatsRange.custom,
-                onTap: () => _pickCustom(context, bloc),
-              ),
+              if (onEditLayoutToggle != null)
+                IconButton(
+                  tooltip: editingLayout
+                      ? S.of(context).dashboardDoneEditing
+                      : S.of(context).dashboardEditLayout,
+                  onPressed: () {
+                    HapticFeedback.selectionClick();
+                    onEditLayoutToggle!();
+                  },
+                  icon: Icon(
+                    editingLayout
+                        ? Icons.check_rounded
+                        : Icons.dashboard_customize_rounded,
+                  ),
+                ),
             ],
           ),
-          const SizedBox(height: FxSpacing.md),
-          FxSegmented<StatsType>(
-            value: state.type,
-            segments: [
-              FxSegment(StatsType.expense, S.of(context).statsExpense),
-              FxSegment(StatsType.income, S.of(context).statsIncome),
-            ],
-            onChanged: (t) => bloc.add(StatsTypeChanged(t)),
-          ),
+          if (!editingLayout) ...[
+            const SizedBox(height: FxSpacing.sm),
+            Row(
+              children: [
+                Expanded(
+                  child: _RangeChip(
+                    label: S.of(context).statsRangeWeek,
+                    semanticsLabel: S.of(context).statsRangeWeek,
+                    selected: state.range == StatsRange.week,
+                    onTap: () =>
+                        bloc.add(const StatsRangeChanged(StatsRange.week)),
+                  ),
+                ),
+                const SizedBox(width: FxSpacing.xs),
+                Expanded(
+                  child: _RangeChip(
+                    label: S.of(context).statsRangePeriod,
+                    semanticsLabel: S.of(context).statsRangePeriod,
+                    selected: state.range == StatsRange.month,
+                    onTap: () =>
+                        bloc.add(const StatsRangeChanged(StatsRange.month)),
+                  ),
+                ),
+                const SizedBox(width: FxSpacing.xs),
+                Expanded(
+                  child: _RangeChip(
+                    label: S.of(context).statsRangeYear,
+                    semanticsLabel: S.of(context).statsRangeYear,
+                    selected: state.range == StatsRange.year,
+                    onTap: () =>
+                        bloc.add(const StatsRangeChanged(StatsRange.year)),
+                  ),
+                ),
+                const SizedBox(width: FxSpacing.xs),
+                Expanded(
+                  child: _RangeChip(
+                    label:
+                        state.range == StatsRange.custom &&
+                            state.customStart != null &&
+                            state.customEnd != null
+                        ? '${day.format(state.customStart!)}-${day.format(state.customEnd!)}'
+                        : S.of(context).statsRangeCustom,
+                    semanticsLabel:
+                        state.range == StatsRange.custom &&
+                            state.customStart != null &&
+                            state.customEnd != null
+                        ? '${S.of(context).statsRangeCustom} ${DateFormat.yMMMd(locale).format(state.customStart!)} - ${DateFormat.yMMMd(locale).format(state.customEnd!)}'
+                        : S.of(context).statsRangeCustom,
+                    selected: state.range == StatsRange.custom,
+                    onTap: () => _pickCustom(context, bloc),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: FxSpacing.sm),
+            FxSegmented<StatsType>(
+              value: state.type,
+              segments: [
+                FxSegment(StatsType.expense, S.of(context).statsExpense),
+                FxSegment(StatsType.income, S.of(context).statsIncome),
+              ],
+              onChanged: (t) => bloc.add(StatsTypeChanged(t)),
+            ),
+          ],
         ],
       ),
     );
@@ -149,10 +193,12 @@ class _RangeChip extends StatelessWidget {
           },
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 180),
-            constraints: const BoxConstraints(minHeight: 48),
+            width: double.infinity,
+            constraints: const BoxConstraints(minHeight: 36),
+            alignment: Alignment.center,
             padding: const EdgeInsets.symmetric(
-              horizontal: FxSpacing.md,
-              vertical: FxSpacing.sm,
+              horizontal: FxSpacing.xs,
+              vertical: FxSpacing.xs,
             ),
             decoration: BoxDecoration(
               color: selected ? palette.primary : palette.surface,
@@ -160,9 +206,13 @@ class _RangeChip extends StatelessWidget {
             ),
             child: Text(
               label,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.center,
               style: FxTypography.label.copyWith(
                 color: selected ? palette.onPrimary : palette.textSecondary,
                 fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
+                height: 1.1,
               ),
             ),
           ),

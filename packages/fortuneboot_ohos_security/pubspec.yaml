@@ -1,5 +1,5 @@
 name: fortuneboot_ohos_security
-description: HarmonyOS secure storage and biometric authentication bridge for FortuneBoot.
+description: HarmonyOS screen-capture protection, gallery save, and document save bridge for FortuneBoot.
 publish_to: 'none'
 version: 0.1.0
 

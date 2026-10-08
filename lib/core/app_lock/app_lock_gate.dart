@@ -111,7 +111,7 @@ class _AppLockScreenState extends State<_AppLockScreen> {
                         const SizedBox(height: 12),
                         FilledButton(
                           onPressed: _unlock,
-                          child: Text(s.appLockUnlock),
+                          child: Text(s.appLockUnlockCta),
                         ),
                       ] else ...[
                         Text(

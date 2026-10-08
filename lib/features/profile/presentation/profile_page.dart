@@ -1,17 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fortuneboot/core/app_lock/app_lock_cubit.dart';
+import 'package:fortuneboot/core/app_constants.dart';
 import 'package:fortuneboot/core/feedback/fx_feedback.dart';
 import 'package:fortuneboot/core/navigation/app_router.dart';
 import 'package:fortuneboot/core/navigation/routes.dart';
+import 'package:fortuneboot/core/preferences/app_lock_preferences.dart';
 import 'package:fortuneboot/core/preferences/locale_preferences.dart';
 import 'package:fortuneboot/core/preferences/preferences_cubit.dart';
+import 'package:fortuneboot/core/security/app_lock_cubit.dart';
+import 'package:fortuneboot/core/security/app_lock_fingerprint_hint.dart';
+import 'package:fortuneboot/core/security/app_lock_gate.dart';
+import 'package:fortuneboot/core/security/app_lock_secret_sheets.dart';
 import 'package:fortuneboot/core/session/session_cubit.dart';
 import 'package:fortuneboot/core/session/widgets/session_switcher_sheet.dart';
 import 'package:fortuneboot/features/profile/data/profile_models.dart';
 import 'package:fortuneboot/features/profile/data/profile_service.dart';
-import 'package:fortuneboot/features/profile/presentation/app_lock_settings_page.dart';
 import 'package:fortuneboot/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:fortuneboot/features/profile/presentation/profile_edit_page.dart';
 import 'package:fortuneboot/features/profile/presentation/widgets/donate_qr_tile.dart';
@@ -328,6 +332,14 @@ class _ProfileView extends StatelessWidget {
         S.of(context).profileImportExport,
         Routes.io,
       ),
+      _divider(context),
+      _navItem(
+        context,
+        Icons.history_rounded,
+        palette.primary,
+        S.of(context).profileLogs,
+        Routes.logs,
+      ),
     ]);
   }
 
@@ -404,22 +416,41 @@ class _ProfileView extends StatelessWidget {
             onTap: () => _refreshCurrency(context),
           ),
           _divider(context),
-          FxListItem(
-            leading: _tileIcon(Icons.visibility_off_rounded, finance.adjust),
-            title: S.of(context).profileHideAmounts,
-            subtitle: S.of(context).profileHideAmountsSubtitle,
-            trailing: Switch.adaptive(
-              value: preferences.dashboard.hideAmounts,
-              onChanged: (hide) async {
-                final ok = await context
-                    .read<PreferencesCubit>()
-                    .setHideAmounts(hide);
-                if (!context.mounted || ok) return;
-                _toast(context, S.of(context).profileSaveFailedRetry);
-              },
+          if (Theme.of(context).platform == TargetPlatform.android) ...[
+            FxListItem(
+              leading: _tileIcon(Icons.lock_rounded, palette.primary),
+              title: S.of(context).profileAppLock,
+              subtitle: S.of(context).profileAppLockSubtitle,
+              trailing: Switch.adaptive(
+                value: preferences.appLock.enabled,
+                onChanged: preferences.isLoading
+                    ? null
+                    : (enabled) => _setAppLockEnabled(context, enabled),
+              ),
             ),
-          ),
-          _divider(context),
+            if (preferences.appLock.enabled) ...[
+              _divider(context),
+              FxListItem(
+                leading: _tileIcon(
+                  _appLockMethodIcon(preferences.appLock.method),
+                  palette.primary,
+                ),
+                title: S.of(context).profileAppLockMethod,
+                trailing: Text(
+                  _appLockMethodLabel(
+                    S.of(context),
+                    preferences.appLock.method,
+                  ),
+                  style: FxTypography.caption.copyWith(
+                    color: palette.textSecondary,
+                  ),
+                ),
+                showChevron: true,
+                onTap: () => _changeAppLockMethod(context),
+              ),
+            ],
+            _divider(context),
+          ],
           FxListItem(
             leading: _tileIcon(Icons.screenshot_monitor_rounded, palette.info),
             title: S.of(context).profileScreenCaptureAllowed,
@@ -448,19 +479,115 @@ class _ProfileView extends StatelessWidget {
             showChevron: true,
             onTap: () => _openFinanceColors(context),
           ),
-          _divider(context),
-          FxListItem(
-            leading: _tileIcon(Icons.lock_rounded, palette.primary),
-            title: S.of(context).profileAppLock,
-            subtitle: S.of(context).profileAppLockSubtitle,
-            showChevron: true,
-            onTap: () => Navigator.of(context).push(
-              MaterialPageRoute(builder: (_) => const AppLockSettingsPage()),
-            ),
-          ),
         ]);
       },
     );
+  }
+
+  Future<void> _setAppLockEnabled(BuildContext context, bool enabled) async {
+    final s = S.of(context);
+    final prefs = context.read<PreferencesCubit>();
+    final lock = context.read<AppLockCubit>();
+    if (!enabled) {
+      final ok = await prefs.setAppLock(enabled: false);
+      if (!context.mounted) return;
+      if (!ok) {
+        _toast(context, s.profileSaveFailedRetry);
+        return;
+      }
+      lock.unlock();
+      return;
+    }
+    final method = await _pickAndVerifyAppLockMethod(context);
+    if (!context.mounted || method == null) return;
+    final ok = await prefs.setAppLock(enabled: true, method: method);
+    if (!context.mounted) return;
+    if (!ok) _toast(context, s.profileSaveFailedRetry);
+  }
+
+  Future<void> _changeAppLockMethod(BuildContext context) async {
+    final s = S.of(context);
+    final prefs = context.read<PreferencesCubit>();
+    final method = await _pickAndVerifyAppLockMethod(
+      context,
+      current: prefs.state.appLock.method,
+    );
+    if (!context.mounted || method == null) return;
+    final ok = await prefs.setAppLock(method: method);
+    if (!context.mounted) return;
+    if (!ok) _toast(context, s.profileSaveFailedRetry);
+  }
+
+  Future<AppLockMethod?> _pickAndVerifyAppLockMethod(
+    BuildContext context, {
+    AppLockMethod? current,
+  }) async {
+    final s = S.of(context);
+    final lock = context.read<AppLockCubit>();
+    final available = await lock.availability(unlocking: false);
+    if (!context.mounted) return null;
+    if (!available.any) {
+      _toast(context, s.profileAppLockUnavailable);
+      return null;
+    }
+    final method = await showAppLockMethodSheet(
+      context,
+      availability: available,
+      current: current,
+    );
+    if (!context.mounted || method == null) return null;
+    switch (method) {
+      case AppLockMethod.password:
+        final password = await showAppLockPasswordSheet(context, setup: true);
+        if (!context.mounted || password == null) return null;
+        await lock.enrollPassword(password);
+        return method;
+      case AppLockMethod.gesture:
+        final gesture = await showAppLockGestureSheet(context, setup: true);
+        if (!context.mounted || gesture == null) return null;
+        await lock.enrollGesture(gesture);
+        return method;
+      case AppLockMethod.fingerprint:
+        final verified = await showAppLockFingerprintPrompt(
+          context,
+          reason: s.profileAppLockEnableReason,
+        );
+        if (!context.mounted) return null;
+        if (!verified) {
+          _toast(context, s.profileAppLockFailed);
+          return null;
+        }
+        return method;
+      case AppLockMethod.face:
+        final verified = await lock.authenticate(
+          reason: s.profileAppLockEnableReason,
+          method: method,
+        );
+        if (!context.mounted) return null;
+        if (!verified) {
+          _toast(context, s.profileAppLockFailed);
+          return null;
+        }
+        return method;
+    }
+  }
+
+  String _appLockMethodLabel(S s, AppLockMethod method) {
+    return switch (method) {
+      AppLockMethod.face => s.profileAppLockMethodFace,
+      AppLockMethod.fingerprint => s.profileAppLockMethodFingerprint,
+      AppLockMethod.password => s.profileAppLockMethodPassword,
+      AppLockMethod.gesture => s.profileAppLockMethodGesture,
+    };
+  }
+
+  IconData _appLockMethodIcon(AppLockMethod method) {
+    return switch (method) {
+      AppLockMethod.face => Icons.face_retouching_natural_rounded,
+      AppLockMethod.fingerprint => Icons.fingerprint_rounded,
+      AppLockMethod.password => Icons.password_rounded,
+      AppLockMethod.gesture => Icons.gesture_rounded,
+    };
   }
 
   Future<void> _openThemeMode(BuildContext context) async {
@@ -619,7 +746,7 @@ class _ProfileView extends StatelessWidget {
   Widget _aboutSection(BuildContext context, AppAbout about) {
     final palette = FxPalette.of(context);
     final finance = FxFinanceColors.of(context);
-    final version = about.appVersion.isEmpty ? '' : 'v${about.appVersion}';
+    final version = about.appVersion;
     return _sectionCard(context, S.of(context).profileAbout, [
       FxListItem(
         leading: _tileIcon(Icons.info_outline_rounded, palette.primary),
@@ -666,12 +793,17 @@ class _ProfileView extends StatelessWidget {
             _aboutRow(
               context,
               S.of(context).profileAppVersion,
-              about.appVersion.isEmpty ? '-' : 'v${about.appVersion}',
+              about.appVersion.isEmpty ? '-' : about.appVersion,
             ),
             _aboutRow(
               context,
               S.of(context).profileApiVersion,
               about.apiVersion ?? '-',
+            ),
+            _aboutRow(
+              context,
+              S.of(context).profileAppIcp,
+              AppConstants.appIcpFiling,
             ),
             _aboutRow(context, S.of(context).profileIcp, about.icp ?? '-'),
           ],
@@ -687,7 +819,7 @@ class _ProfileView extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(
-            width: 88,
+            width: 96,
             child: Text(
               label,
               style: FxTypography.label.copyWith(
@@ -907,10 +1039,11 @@ class _ProfileView extends StatelessWidget {
               expand: true,
               onPressed: () async {
                 // 纯本地清理，不调接口。
+                final lockCubit = context.read<AppLockCubit>();
                 DioClient().clearAuthHeader();
                 await UserDataSingleton().clearAuth();
                 sessionCubit.reset();
-                context.read<AppLockCubit>().onSignedOut();
+                lockCubit.exitProtectedArea();
                 navigator.pushNamedAndRemoveUntil(
                   // 登出强制返回URL配置页，用于用户更换服务器（登录页无法直接返回URL配置页）
                   Routes.baseUrlConfig,

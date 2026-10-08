@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:fortuneboot/core/session/session_cubit.dart';
 import 'package:fortuneboot/features/stats/data/stats_models.dart';
 import 'package:fortuneboot/features/stats/presentation/bloc/stats_bloc.dart';
 import 'package:fortuneboot/features/stats/presentation/widgets/stats_income_expense_calendar_card.dart';
@@ -44,6 +46,7 @@ void main() {
       _harness(
         child: _calendar(
           view: IncomeExpenseCalendarView.month,
+          bookId: 1,
           onBillsRequested: (date) => requestedDate = date,
         ),
       ),
@@ -51,7 +54,9 @@ void main() {
 
     await tester.tap(find.text('20'));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('View bills for this day'));
+    await tester.ensureVisible(find.text('Open in Bills'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Open in Bills'));
 
     expect(requestedDate, DateTime(2026, 8, 20));
   });
@@ -143,6 +148,7 @@ void main() {
 Widget _calendar({
   required IncomeExpenseCalendarView view,
   IncomeExpenseCalendarResponse? response,
+  int? bookId,
   void Function(IncomeExpenseCalendarView view, DateTime anchor)? onDrillDown,
   ValueChanged<DateTime>? onBillsRequested,
 }) {
@@ -152,6 +158,7 @@ Widget _calendar({
         section: StatsSection.ready(
           response ?? IncomeExpenseCalendarResponse(),
         ),
+        bookId: bookId,
         view: view,
         anchor: DateTime(2026, 8),
         currencyCode: 'CNY',
@@ -170,19 +177,22 @@ Widget _harness({
   bool hideAmounts = false,
   double textScale = 1,
 }) {
-  return MaterialApp(
-    theme: FxTheme.light,
-    locale: const Locale('en'),
-    localizationsDelegates: const [
-      GlobalMaterialLocalizations.delegate,
-      GlobalWidgetsLocalizations.delegate,
-      GlobalCupertinoLocalizations.delegate,
-      S.delegate,
-    ],
-    supportedLocales: S.delegate.supportedLocales,
-    home: MediaQuery(
-      data: MediaQueryData(textScaler: TextScaler.linear(textScale)),
-      child: StatsPrivacy(hideAmounts: hideAmounts, child: child),
+  return BlocProvider<SessionCubit>(
+    create: (_) => SessionCubit(),
+    child: MaterialApp(
+      theme: FxTheme.light,
+      locale: const Locale('en'),
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+        S.delegate,
+      ],
+      supportedLocales: S.delegate.supportedLocales,
+      home: MediaQuery(
+        data: MediaQueryData(textScaler: TextScaler.linear(textScale)),
+        child: StatsPrivacy(hideAmounts: hideAmounts, child: child),
+      ),
     ),
   );
 }

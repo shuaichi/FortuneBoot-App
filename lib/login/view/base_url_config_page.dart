@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fortuneboot/core/app_constants.dart';
-import 'package:fortuneboot/core/app_lock/app_lock_cubit.dart';
 import 'package:fortuneboot/core/navigation/routes.dart';
 import 'package:fortuneboot/core/preferences/locale_preferences.dart';
 import 'package:fortuneboot/core/preferences/preferences_cubit.dart';
+import 'package:fortuneboot/core/session/session_cubit.dart';
 import 'package:fortuneboot/login/auth_version_source.dart';
 import 'package:fortuneboot/login/model/users.dart';
 import 'package:fortuneboot/login/server/server_endpoint.dart';
@@ -95,8 +95,6 @@ class _BaseUrlConfigPageState extends State<BaseUrlConfigPage> {
         _authMode.value = AuthMode.signIn;
         return;
       }
-      if (!mounted) return;
-      await context.read<AppLockCubit>().onAuthenticated();
       if (!mounted) return;
       Navigator.of(
         context,
@@ -477,7 +475,10 @@ class _BaseUrlConfigPageState extends State<BaseUrlConfigPage> {
         setState(() => _isConnecting = false);
         return;
       }
+      // 换服务器必须清掉旧 token，并重置会话；否则会带着 A 站凭证打 B 站。
       DioClient().clearAuthHeader();
+      await UserDataSingleton().clearAuth();
+      if (mounted) context.read<SessionCubit>().reset();
       DioClient().updateBaseUrl(endpoint.apiBaseUri.toString());
       try {
         final check = await _checkApiVersion();

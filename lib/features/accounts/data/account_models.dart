@@ -85,8 +85,12 @@ class FortuneAccountVo {
   /// 负债账户展示为负数余额。
   bool get isLiability => AccountTypeMeta.of(accountType).isLiability;
 
-  /// 用于 FxMoneyText 的展示金额（负债类取负值）。
-  double get displayBalance => isLiability ? -balance.abs() : balance;
+  /// 展示余额：好记负债账户「余额为负表示欠款」，直接展示后端符号。
+  /// 勿用 abs 强行取负——正余额表示溢缴/未欠款，不是已用额度。
+  double get displayBalance => balance;
+
+  /// 信用卡/贷款已用额度：欠款 = max(0, -balance)；未使用或溢缴为 0。
+  double get usedCreditAmount => balance < 0 ? -balance : 0;
 
   FortuneAccountVo copyWith({
     bool? canExpense,

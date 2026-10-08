@@ -18,6 +18,7 @@ class BillsFilter extends Equatable {
 
   final List<int>? categoryIds;
   final List<int>? tagIds;
+  final List<int>? memberIds;
   final int? accountId;
   final int? payeeId;
   final BillDateRange? dateRange;
@@ -33,6 +34,7 @@ class BillsFilter extends Equatable {
     this.include,
     List<int>? categoryIds,
     List<int>? tagIds,
+    List<int>? memberIds,
     this.accountId,
     this.payeeId,
     this.dateRange,
@@ -41,7 +43,8 @@ class BillsFilter extends Equatable {
        categoryIds = categoryIds == null
            ? null
            : List.unmodifiable(categoryIds),
-       tagIds = tagIds == null ? null : List.unmodifiable(tagIds);
+       tagIds = tagIds == null ? null : List.unmodifiable(tagIds),
+       memberIds = memberIds == null ? null : List.unmodifiable(memberIds);
 
   static final BillsFilter empty = BillsFilter();
 
@@ -56,6 +59,7 @@ class BillsFilter extends Equatable {
     if (payeeId != null) n++;
     if (categoryIds != null && categoryIds!.isNotEmpty) n++;
     if (tagIds != null && tagIds!.isNotEmpty) n++;
+    if (memberIds != null && memberIds!.isNotEmpty) n++;
     if (dateRange != null) n++;
     if (title != null && title!.isNotEmpty) n++;
     return n;
@@ -71,6 +75,7 @@ class BillsFilter extends Equatable {
     bool? include,
     List<int>? categoryIds,
     List<int>? tagIds,
+    List<int>? memberIds,
     int? accountId,
     int? payeeId,
     BillDateRange? dateRange,
@@ -81,6 +86,7 @@ class BillsFilter extends Equatable {
     bool clearInclude = false,
     bool clearCategoryIds = false,
     bool clearTagIds = false,
+    bool clearMemberIds = false,
     bool clearAccountId = false,
     bool clearPayeeId = false,
     bool clearDateRange = false,
@@ -94,6 +100,7 @@ class BillsFilter extends Equatable {
       include: clearInclude ? null : (include ?? this.include),
       categoryIds: clearCategoryIds ? null : (categoryIds ?? this.categoryIds),
       tagIds: clearTagIds ? null : (tagIds ?? this.tagIds),
+      memberIds: clearMemberIds ? null : (memberIds ?? this.memberIds),
       accountId: clearAccountId ? null : (accountId ?? this.accountId),
       payeeId: clearPayeeId ? null : (payeeId ?? this.payeeId),
       dateRange: clearDateRange ? null : (dateRange ?? this.dateRange),
@@ -110,6 +117,7 @@ class BillsFilter extends Equatable {
     include,
     categoryIds,
     tagIds,
+    memberIds,
     accountId,
     payeeId,
     dateRange,

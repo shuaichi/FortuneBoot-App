@@ -4,6 +4,7 @@ import 'package:fortuneboot/core/errors/fx_failure.dart';
 import 'package:fortuneboot/core/errors/fx_failure_mapper.dart';
 import 'package:fortuneboot/core/network/fx_api.dart';
 import 'package:fortuneboot/core/session/session_models.dart';
+import 'package:fortuneboot/features/books/data/books_service.dart';
 import 'package:fortuneboot/request/book_request.dart';
 import 'package:fortuneboot/request/group_request.dart';
 
@@ -12,13 +13,18 @@ part 'session_state.dart';
 /// 全局会话：当前分组/账本/币种。取代各页面散取 UserDataSingleton。
 /// 进入 MainShell 时 [load]，退出登录时 [reset]。
 class SessionCubit extends Cubit<SessionState> {
-  SessionCubit({GroupService? groupService, BookService? bookService})
-    : _groupService = groupService ?? GroupService(),
-      _bookService = bookService ?? BookService(),
-      super(const SessionState());
+  SessionCubit({
+    GroupService? groupService,
+    BookService? bookService,
+    BooksService? booksService,
+  }) : _groupService = groupService ?? GroupService(),
+       _bookService = bookService ?? BookService(),
+       _booksService = booksService ?? BooksService(),
+       super(const SessionState());
 
   final GroupService _groupService;
   final BookService _bookService;
+  final BooksService _booksService;
 
   /// 启动拉取链：默认分组 → 分组列表 → 该分组账本 → 默认账本。
   Future<void> load() async {
@@ -78,20 +84,37 @@ class SessionCubit extends Cubit<SessionState> {
     if (groupData is! Map) {
       throw StateError('Group detail is invalid');
     }
-    final currentGroup = FortuneGroupVo.fromJson(
+    final detail = FortuneGroupVo.fromJson(
       Map<String, dynamic>.from(groupData),
     );
+    FortuneGroupVo? listed;
+    for (final g in groups) {
+      if (g.groupId == detail.groupId) {
+        listed = g;
+        break;
+      }
+    }
+    // getByGroupId 不含当前用户角色；必须从 getEnableList 结果补齐，否则会误判为访客。
+    var currentGroup = detail.withRoleFrom(listed);
     final currentGroupId = currentGroup.groupId;
     if (currentGroupId == null) {
       throw StateError('Group detail has no groupId');
     }
 
+    // 历史脏数据：defaultCurrency 误存成 currencyId（如 "33"），启动时自动写回币种代码。
+    currentGroup = await _repairGroupCurrency(currentGroup);
+    final updatedGroups = [
+      for (final g in groups)
+        if (g.groupId == currentGroup.groupId) currentGroup else g,
+    ];
+
     final booksData = FxApi.unwrap(
       await _bookService.getByGroupId(currentGroupId),
     );
-    final books = (booksData as List? ?? [])
+    var books = (booksData as List? ?? [])
         .map((e) => FortuneBookVo.fromJson(Map<String, dynamic>.from(e as Map)))
         .toList();
+    books = await _repairBookCurrencies(books);
 
     FortuneBookVo? currentBook;
     if (books.isNotEmpty) {
@@ -104,12 +127,87 @@ class SessionCubit extends Cubit<SessionState> {
     emit(
       state.copyWith(
         status: currentBook == null ? SessionStatus.empty : SessionStatus.ready,
-        groups: groups,
+        groups: updatedGroups,
         currentGroup: currentGroup,
         books: books,
         currentBook: currentBook,
       ),
     );
+  }
+
+  bool _isCurrencyId(String? raw) =>
+      raw != null && RegExp(r'^\d+$').hasMatch(raw.trim());
+
+  Future<FortuneGroupVo> _repairGroupCurrency(FortuneGroupVo group) async {
+    if (!_isCurrencyId(group.defaultCurrency)) return group;
+    try {
+      final code = await _booksService.requireCurrencyCode(
+        group.defaultCurrency,
+      );
+      if (group.groupId != null && group.groupName != null) {
+        await _booksService.modifyGroup({
+          'groupId': group.groupId,
+          'groupName': group.groupName,
+          'defaultCurrency': code,
+          'enable': group.enable,
+          if (group.defaultBookId != null) 'defaultBookId': group.defaultBookId,
+          if (group.remark != null && group.remark!.isNotEmpty)
+            'remark': group.remark,
+        });
+      }
+      return group.copyWith(defaultCurrency: code);
+    } on Object {
+      final fallback = group.defaultCurrency?.trim() == '33'
+          ? 'CNY'
+          : group.defaultCurrency;
+      return group.copyWith(defaultCurrency: fallback);
+    }
+  }
+
+  Future<List<FortuneBookVo>> _repairBookCurrencies(
+    List<FortuneBookVo> books,
+  ) async {
+    final out = <FortuneBookVo>[];
+    for (final book in books) {
+      if (!_isCurrencyId(book.defaultCurrency)) {
+        out.add(book);
+        continue;
+      }
+      try {
+        final code = await _booksService.requireCurrencyCode(
+          book.defaultCurrency,
+        );
+        if (book.bookId != null &&
+            book.groupId != null &&
+            book.bookName != null) {
+          await _booksService.modifyBook({
+            'bookId': book.bookId,
+            'groupId': book.groupId,
+            'bookName': book.bookName,
+            'defaultCurrency': code,
+            'enable': book.enable,
+            if (book.defaultExpenseAccountId != null)
+              'defaultExpenseAccountId': book.defaultExpenseAccountId,
+            if (book.defaultIncomeAccountId != null)
+              'defaultIncomeAccountId': book.defaultIncomeAccountId,
+            if (book.defaultTransferOutAccountId != null)
+              'defaultTransferOutAccountId': book.defaultTransferOutAccountId,
+            if (book.defaultTransferInAccountId != null)
+              'defaultTransferInAccountId': book.defaultTransferInAccountId,
+            if (book.sort != null) 'sort': book.sort,
+            if (book.remark != null && book.remark!.isNotEmpty)
+              'remark': book.remark,
+          });
+        }
+        out.add(book.copyWith(defaultCurrency: code));
+      } on Object {
+        final fallback = book.defaultCurrency?.trim() == '33'
+            ? 'CNY'
+            : book.defaultCurrency;
+        out.add(book.copyWith(defaultCurrency: fallback));
+      }
+    }
+    return out;
   }
 
   /// 切换分组：重拉该分组账本并选默认账本。
@@ -160,11 +258,13 @@ class SessionCubit extends Cubit<SessionState> {
       final booksData = FxApi.unwrap(
         await _bookService.getByGroupId(group.groupId!),
       );
-      final books = (booksData as List? ?? [])
+      var books = (booksData as List? ?? [])
           .map(
             (e) => FortuneBookVo.fromJson(Map<String, dynamic>.from(e as Map)),
           )
           .toList();
+      books = await _repairBookCurrencies(books);
+      final repairedGroup = await _repairGroupCurrency(group);
       // 用列表中的同 id 实例，避免持有过期副本。
       final target = books.firstWhere(
         (b) => b.bookId == book.bookId,
@@ -173,7 +273,7 @@ class SessionCubit extends Cubit<SessionState> {
       emit(
         state.copyWith(
           status: SessionStatus.ready,
-          currentGroup: group,
+          currentGroup: repairedGroup,
           books: books,
           currentBook: target,
         ),

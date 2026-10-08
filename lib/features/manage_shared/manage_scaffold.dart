@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fortuneboot/core/feedback/fx_feedback.dart';
+import 'package:fortuneboot/core/session/session_cubit.dart';
+import 'package:fortuneboot/core/session/session_permission.dart';
 import 'package:fortuneboot/fx/components/fx_icon_button.dart';
 import 'package:fortuneboot/fx/components/fx_segmented.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
@@ -77,6 +81,18 @@ class _ManageScaffoldState extends State<ManageScaffold> {
   void dispose() {
     _searchCtrl.dispose();
     super.dispose();
+  }
+
+  void _onAddPressed() {
+    final group = context.read<SessionCubit>().state.currentGroup;
+    if (!SessionPermission.canWrite(group)) {
+      FxFeedback.info(
+        context,
+        message: S.of(context).permissionVisitorNoAccess,
+      );
+      return;
+    }
+    widget.onAdd();
   }
 
   void _toggleSearch() {
@@ -169,7 +185,7 @@ class _ManageScaffoldState extends State<ManageScaffold> {
           FxIconButton(
             icon: Icons.add_rounded,
             tooltip: widget.addTooltip ?? widget.title,
-            onPressed: widget.onAdd,
+            onPressed: _onAddPressed,
           ),
         ],
       ),

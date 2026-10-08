@@ -58,15 +58,55 @@ class RecurringRuleVo {
     );
   }
 
+  RecurringRuleVo copyWith({
+    int? bookId,
+    int? ruleId,
+    String? ruleName,
+    String? cronExpression,
+    bool? enable,
+    Map<String, dynamic>? billRequest,
+    String? startDate,
+    String? endDate,
+    int? maxExecutions,
+    int? executedCount,
+    String? lastExecutedTime,
+    String? nextExecutionTime,
+    String? recoveryStrategy,
+    String? remark,
+  }) {
+    return RecurringRuleVo(
+      bookId: bookId ?? this.bookId,
+      ruleId: ruleId ?? this.ruleId,
+      ruleName: ruleName ?? this.ruleName,
+      cronExpression: cronExpression ?? this.cronExpression,
+      enable: enable ?? this.enable,
+      billRequest: billRequest ?? this.billRequest,
+      startDate: startDate ?? this.startDate,
+      endDate: endDate ?? this.endDate,
+      maxExecutions: maxExecutions ?? this.maxExecutions,
+      executedCount: executedCount ?? this.executedCount,
+      lastExecutedTime: lastExecutedTime ?? this.lastExecutedTime,
+      nextExecutionTime: nextExecutionTime ?? this.nextExecutionTime,
+      recoveryStrategy: recoveryStrategy ?? this.recoveryStrategy,
+      remark: remark ?? this.remark,
+    );
+  }
+
   /// billRequest 出参可能是 JSON 字符串或已是 Map，兼容解析。
   static Map<String, dynamic>? _parseBillRequest(dynamic v) {
     if (v == null) return null;
-    if (v is Map) return Map<String, dynamic>.from(v);
+    if (v is Map) {
+      try {
+        return Map<String, dynamic>.from(v);
+      } on Object {
+        return null;
+      }
+    }
     if (v is String && v.trim().isNotEmpty) {
       try {
         final decoded = jsonDecode(v);
         if (decoded is Map) return Map<String, dynamic>.from(decoded);
-      } on FormatException {
+      } on Object {
         return null;
       }
     }

@@ -5,30 +5,56 @@ import 'package:fortuneboot/features/orders/data/orders_models.dart';
 class AccountOption {
   final int? accountId;
   final String? accountName;
+  final String? cardNo;
+  final double balance;
+  final String? remark;
   final bool canExpense;
   final bool canIncome;
   final bool canTransferOut;
   final bool canTransferIn;
   final String? currencyCode;
 
+  /// 账户类型（AccountTypeEnum：1现金 2信用卡 3资产 4贷款）。
+  final int? accountType;
+
+  /// 同类型内排序权重。
+  final int? sort;
+
   const AccountOption({
     this.accountId,
     this.accountName,
+    this.cardNo,
+    this.balance = 0,
+    this.remark,
     this.canExpense = false,
     this.canIncome = false,
     this.canTransferOut = false,
     this.canTransferIn = false,
     this.currencyCode,
+    this.accountType,
+    this.sort,
   });
+
+  /// 卡号末四位（不足四位则原样）。
+  String? get lastFour {
+    final n = cardNo?.trim();
+    if (n == null || n.isEmpty) return null;
+    return n.length <= 4 ? n : n.substring(n.length - 4);
+  }
 
   factory AccountOption.fromJson(Map<String, dynamic> json) => AccountOption(
     accountId: FxApi.asId(json['accountId']),
     accountName: json['accountName']?.toString(),
+    cardNo: json['cardNo']?.toString(),
+    balance: FxApi.asDouble(json['balance']) ?? 0,
+    remark: json['remark']?.toString(),
     canExpense: FxApi.asBool(json['canExpense']),
     canIncome: FxApi.asBool(json['canIncome']),
     canTransferOut: FxApi.asBool(json['canTransferOut']),
     canTransferIn: FxApi.asBool(json['canTransferIn']),
     currencyCode: json['currencyCode']?.toString(),
+    accountType: FxApi.asId(json['accountType']),
+    sort: FxApi.asId(json['sort']),
   );
 }
 

@@ -1,10 +1,10 @@
 {
   "app": {
-    "bundleName": "com.fortuneboot.hjappproject",
+    "bundleName": "com.fortuneboot.haoji",
     "vendor": "example",
-    "versionCode": 1000000,
-    "versionName": "1.0.0",
-    "icon": "$media:app_icon",
+    "versionCode": 2026092901,
+    "versionName": "1.5.0",
+    "icon": "$media:layered_image",
     "label": "$string:app_name"
   }
 }

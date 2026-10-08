@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
+import 'package:dio/io.dart';
 import 'package:flutter/widgets.dart';
 import 'package:fortuneboot/login/model/users.dart';
 import 'package:logger/logger.dart';
@@ -30,6 +33,17 @@ class DioClient {
         receiveTimeout: const Duration(seconds: 15),
         contentType: Headers.jsonContentType,
       ),
+    );
+
+    // demo 等自建站证书过期时仍允许连接（仅放宽 TLS 校验，不改变业务逻辑）。
+    // 正式环境请续签证书后移除此回调。
+    dio.httpClientAdapter = IOHttpClientAdapter(
+      createHttpClient: () {
+        final client = HttpClient();
+        client.badCertificateCallback =
+            (X509Certificate cert, String host, int port) => true;
+        return client;
+      },
     );
 
     // 添加拦截器

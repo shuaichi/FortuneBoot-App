@@ -16,6 +16,7 @@ void main() {
           include: false,
           categoryIds: categoryIds,
           tagIds: const [22],
+          memberIds: const [55],
           accountId: 33,
           payeeId: 44,
           dateRange: BillDateRange(
@@ -27,7 +28,7 @@ void main() {
         billTypes.clear();
         categoryIds.clear();
 
-        expect(filter.activeCount, 9);
+        expect(filter.activeCount, 10);
         expect(filter.billTypes, {1, 2});
         expect(filter.categoryIds, [11]);
       },
@@ -41,6 +42,7 @@ void main() {
         include: true,
         categoryIds: const [1],
         tagIds: const [2],
+        memberIds: const [5],
         accountId: 3,
         payeeId: 4,
         dateRange: BillDateRange(
@@ -56,6 +58,7 @@ void main() {
         clearInclude: true,
         clearCategoryIds: true,
         clearTagIds: true,
+        clearMemberIds: true,
         clearAccountId: true,
         clearPayeeId: true,
         clearDateRange: true,

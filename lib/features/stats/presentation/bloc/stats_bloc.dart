@@ -539,12 +539,14 @@ class StatsBloc extends Bloc<StatsEvent, StatsState> {
     var pageNum = 1;
     var loaded = 0;
     while (true) {
+      // getPage 只认单数字段 billType（见 bill_request），billTypes 会被后端忽略，
+      // 导致支出/收入趋势汇总同一批账单、曲线完全一样。
       final page = await _billService.getPage(
         BillQuery(
           bookId: bookId,
           pageNum: pageNum,
           pageSize: 500,
-          billTypes: [billType],
+          billType: billType,
           tradeTimeStartTime: _day.format(start),
           tradeTimeEndTime: _day.format(end),
           include: true,
@@ -552,6 +554,7 @@ class StatsBloc extends Bloc<StatsEvent, StatsState> {
       );
       loaded += page.rows.length;
       for (final bill in page.rows) {
+        if (bill.billType != billType) continue;
         final tradeTime = bill.tradeTime;
         if (tradeTime == null) continue;
         final day = DateTime(tradeTime.year, tradeTime.month, tradeTime.day);

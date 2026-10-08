@@ -10,6 +10,7 @@ import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
+import 'package:fortuneboot/fx/tree/fx_tree_picker.dart';
 import 'package:fortuneboot/generated/l10n.dart';
 import 'package:intl/intl.dart';
 
@@ -39,6 +40,7 @@ class _BillsFilterSheetState extends State<BillsFilterSheet> {
   late Set<int> _billTypes;
   late Set<int> _categoryIds;
   late Set<int> _tagIds;
+  late Set<int> _memberIds;
   late bool? _confirm;
   late bool? _include;
   late int? _accountId;
@@ -58,6 +60,7 @@ class _BillsFilterSheetState extends State<BillsFilterSheet> {
     _billTypes = {...widget.initial.billTypes};
     _categoryIds = {...?widget.initial.categoryIds};
     _tagIds = {...?widget.initial.tagIds};
+    _memberIds = {...?widget.initial.memberIds};
     _confirm = widget.initial.confirm;
     _include = widget.initial.include;
     _accountId = widget.initial.accountId;
@@ -93,6 +96,7 @@ class _BillsFilterSheetState extends State<BillsFilterSheet> {
       _billTypes = {};
       _categoryIds = {};
       _tagIds = {};
+      _memberIds = {};
       _confirm = null;
       _include = null;
       _accountId = null;
@@ -148,6 +152,7 @@ class _BillsFilterSheetState extends State<BillsFilterSheet> {
         include: _include,
         categoryIds: _categoryIds.isEmpty ? null : _categoryIds.toList(),
         tagIds: _tagIds.isEmpty ? null : _tagIds.toList(),
+        memberIds: _memberIds.isEmpty ? null : _memberIds.toList(),
         accountId: _accountId,
         payeeId: _payeeId,
         dateRange: _dateRange,
@@ -339,58 +344,143 @@ class _BillsFilterSheetState extends State<BillsFilterSheet> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _label(S.of(context).billsCategoryDetail),
-            _multiOptions(options.categories, _categoryIds),
-            const SizedBox(height: FxSpacing.lg),
+            _compactTreeField(
+              roots: options.categoryTrees,
+              selectedIds: _categoryIds,
+              title: S.of(context).billEditorSelectCategory,
+              leafOnly: true,
+            ),
+            const SizedBox(height: FxSpacing.sm),
             _label(S.of(context).billsTags),
-            _multiOptions(options.tags, _tagIds),
-            const SizedBox(height: FxSpacing.lg),
+            _compactTreeField(
+              roots: options.tagTrees,
+              selectedIds: _tagIds,
+              title: S.of(context).billEditorSelectTags,
+              leafOnly: false,
+            ),
+            const SizedBox(height: FxSpacing.md),
             _label(S.of(context).billsTransferOutAccount),
             _singleOption(options.accounts, _accountId, (value) {
               setState(() => _accountId = value);
             }),
-            const SizedBox(height: FxSpacing.lg),
+            const SizedBox(height: FxSpacing.md),
             _label(S.of(context).billsPayee),
             _singleOption(options.payees, _payeeId, (value) {
               setState(() => _payeeId = value);
             }),
+            const SizedBox(height: FxSpacing.md),
+            _label(S.of(context).billsMembers),
+            _compactTreeField(
+              roots: [
+                for (final m in options.members)
+                  BillsFilterTreeNode(id: m.id, label: m.label),
+              ],
+              selectedIds: _memberIds,
+              title: S.of(context).billEditorSelectMembers,
+              leafOnly: false,
+            ),
           ],
         );
       },
     );
   }
 
-  Widget _multiOptions(List<BillsFilterOption> options, Set<int> selectedIds) {
-    if (options.isEmpty) {
+  Widget _compactTreeField({
+    required List<BillsFilterTreeNode> roots,
+    required Set<int> selectedIds,
+    required String title,
+    required bool leafOnly,
+  }) {
+    final palette = FxPalette.of(context);
+    if (roots.isEmpty) {
       return Text(
         S.of(context).billsFilterAny,
-        style: FxTypography.caption.copyWith(
-          color: FxPalette.of(context).textTertiary,
-        ),
+        style: FxTypography.caption.copyWith(color: palette.textTertiary),
       );
     }
-    return Wrap(
-      spacing: FxSpacing.sm,
-      runSpacing: FxSpacing.sm,
-      children: options.map((option) {
-        final selected = selectedIds.contains(option.id);
-        return Semantics(
-          button: true,
-          selected: selected,
-          label: option.label,
-          child: FxTagChip(
-            label: option.label,
-            selected: selected,
-            onTap: () => setState(() {
-              if (selected) {
-                selectedIds.remove(option.id);
-              } else {
-                selectedIds.add(option.id);
-              }
-            }),
+    final flat = BillsFilterOptions.flatten(roots);
+    final selected = flat.where((o) => selectedIds.contains(o.id)).toList();
+    final summary = selected.isEmpty
+        ? S.of(context).billsFilterAny
+        : selected.map((o) => o.label).join('、');
+
+    return Material(
+      color: palette.surfaceMuted,
+      borderRadius: FxRadius.tileBorder,
+      child: InkWell(
+        borderRadius: FxRadius.tileBorder,
+        onTap: () => _openTreePicker(
+          roots: roots,
+          selectedIds: selectedIds,
+          title: title,
+          leafOnly: leafOnly,
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: FxSpacing.md,
+            vertical: FxSpacing.md,
           ),
-        );
-      }).toList(),
+          child: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  summary,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: FxTypography.body.copyWith(
+                    color: selected.isEmpty
+                        ? palette.textTertiary
+                        : palette.textPrimary,
+                  ),
+                ),
+              ),
+              if (selected.isNotEmpty) ...[
+                Text(
+                  '${selected.length}',
+                  style: FxTypography.caption.copyWith(
+                    color: palette.primary,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(width: FxSpacing.xs),
+              ],
+              Icon(
+                Icons.keyboard_arrow_down_rounded,
+                color: palette.textSecondary,
+              ),
+            ],
+          ),
+        ),
+      ),
     );
+  }
+
+  Future<void> _openTreePicker({
+    required List<BillsFilterTreeNode> roots,
+    required Set<int> selectedIds,
+    required String title,
+    required bool leafOnly,
+  }) async {
+    final result = await FxTreePicker.show<BillsFilterTreeNode>(
+      context,
+      roots: roots,
+      childrenOf: (n) => n.children,
+      labelOf: (n) => n.label,
+      idOf: (n) => n.id,
+      initialSelected: selectedIds.map((id) => id as Object).toSet(),
+      multiSelect: true,
+      leafOnly: leafOnly,
+      initiallyCollapsed: true,
+      title: title,
+    );
+    if (result == null || !mounted) return;
+    setState(() {
+      selectedIds
+        ..clear()
+        ..addAll(
+          result.map((n) => n.id).whereType<int>(),
+        );
+    });
   }
 
   Widget _singleOption(
@@ -526,3 +616,4 @@ class _BillsFilterSheetState extends State<BillsFilterSheet> {
     );
   }
 }
+

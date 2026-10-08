@@ -7,6 +7,17 @@ sealed class RecurringEvent extends Equatable {
   List<Object?> get props => [];
 }
 
+/// 当前账本变化。
+class RecurringBookChanged extends RecurringEvent {
+  final int? bookId;
+  final List<int> bookIds;
+
+  const RecurringBookChanged({this.bookId, this.bookIds = const []});
+
+  @override
+  List<Object?> get props => [bookId, bookIds];
+}
+
 /// 加载 / 刷新规则列表。
 class RecurringLoaded extends RecurringEvent {
   const RecurringLoaded();

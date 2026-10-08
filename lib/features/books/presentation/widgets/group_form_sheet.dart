@@ -46,10 +46,13 @@ class GroupFormSheetState extends State<GroupFormSheet> {
   Future<void> _loadCurrencies() async {
     try {
       final list = await widget.service.getCurrencyTemplate();
+      final resolved = await widget.service.resolveCurrencyCode(_currency);
       if (mounted) {
         setState(() {
           _currencies = list;
-          _currency ??= list.isNotEmpty ? list.first.value : 'CNY';
+          if (resolved != null && resolved.isNotEmpty) _currency = resolved;
+          _currency ??=
+              _currencies.isNotEmpty ? _currencies.first.value : 'CNY';
         });
       }
     } on Object {
@@ -89,14 +92,16 @@ class GroupFormSheetState extends State<GroupFormSheet> {
       _submitting = true;
       _error = null;
     });
-    final body = <String, dynamic>{
-      'groupName': name,
-      'defaultCurrency': _currency,
-      'enable': _enable,
-    };
-    final remark = _remarkCtrl.text.trim();
-    if (remark.isNotEmpty) body['remark'] = remark;
     try {
+      final currency = await widget.service.requireCurrencyCode(_currency);
+      if (mounted) setState(() => _currency = currency);
+      final body = <String, dynamic>{
+        'groupName': name,
+        'defaultCurrency': currency,
+        'enable': _enable,
+      };
+      final remark = _remarkCtrl.text.trim();
+      if (remark.isNotEmpty) body['remark'] = remark;
       if (widget.isEdit) {
         body['groupId'] = widget.group!.groupId;
         await widget.service.modifyGroup(body);

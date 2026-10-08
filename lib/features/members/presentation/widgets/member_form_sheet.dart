@@ -4,6 +4,7 @@ import 'package:fortuneboot/features/manage_shared/manage_menu.dart';
 import 'package:fortuneboot/features/members/data/member_models.dart';
 import 'package:fortuneboot/features/members/data/member_service.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
+import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
 import 'package:fortuneboot/generated/l10n.dart';
@@ -87,7 +88,28 @@ class MemberFormSheetState extends State<MemberFormSheet> {
 
     try {
       if (widget.isEdit) {
-        await widget.service.modify(body);
+        final member = widget.member!;
+        final memberId = member.memberId;
+        final enableChanged = _enable != (member.enable ?? true);
+        final nameChanged =
+            _nameCtrl.text.trim() != (member.memberName ?? '').trim();
+        final originalSort = member.sort;
+        final sortChanged = sort != originalSort &&
+            !(_sortCtrl.text.trim().isEmpty && originalSort == null);
+        final remarkChanged = remark != (member.remark ?? '').trim();
+        final fieldsChanged = nameChanged || sortChanged || remarkChanged;
+
+        // 名称/排序/备注走 modify；启用走专用 PATCH，避免后端重名校验误伤自身。
+        if (fieldsChanged) {
+          await widget.service.modify(body);
+        }
+        if (enableChanged && memberId != null) {
+          await widget.service.toggle(
+            bookId: widget.bookId,
+            memberId: memberId,
+            action: _enable ? 'enable' : 'disable',
+          );
+        }
       } else {
         await widget.service.add(body);
       }
@@ -143,10 +165,13 @@ class MemberFormSheetState extends State<MemberFormSheet> {
             ),
           ),
           const SizedBox(height: FxSpacing.md),
-          ManageSwitchRow(
-            label: S.of(context).membersEnable,
-            value: _enable,
-            onChanged: (v) => setState(() => _enable = v),
+          ManageFieldLabel(S.of(context).membersEnable),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: _EnableToggleButton(
+              enabled: _enable,
+              onPressed: () => setState(() => _enable = !_enable),
+            ),
           ),
           if (_error != null) ...[
             const SizedBox(height: FxSpacing.sm),
@@ -156,6 +181,48 @@ class MemberFormSheetState extends State<MemberFormSheet> {
             ),
           ],
         ],
+      ),
+    );
+  }
+}
+
+/// 启用状态切换按钮：点一下停用，再点一下启用。
+class _EnableToggleButton extends StatelessWidget {
+  const _EnableToggleButton({
+    required this.enabled,
+    required this.onPressed,
+  });
+
+  final bool enabled;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = FxPalette.of(context);
+    final color = enabled ? palette.success : palette.textTertiary;
+    final label = enabled
+        ? S.of(context).membersStatusEnabled
+        : S.of(context).membersStatusDisabled;
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onPressed,
+        borderRadius: FxRadius.pillBorder,
+        child: Container(
+          padding: const EdgeInsets.symmetric(
+            horizontal: FxSpacing.md,
+            vertical: FxSpacing.sm,
+          ),
+          decoration: BoxDecoration(
+            color: color.withValues(alpha: 0.12),
+            borderRadius: FxRadius.pillBorder,
+            border: Border.all(color: color.withValues(alpha: 0.35)),
+          ),
+          child: Text(
+            label,
+            style: FxTypography.body.copyWith(color: color),
+          ),
+        ),
       ),
     );
   }

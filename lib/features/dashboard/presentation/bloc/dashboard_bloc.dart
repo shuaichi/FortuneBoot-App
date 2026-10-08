@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fortuneboot/core/desktop_widget/ohos_desktop_widget.dart';
 import 'package:fortuneboot/core/network/fx_api.dart';
 import 'package:fortuneboot/core/preferences/billing_preferences.dart';
 import 'package:fortuneboot/core/time/month_window_resolver.dart';
@@ -183,6 +184,16 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
         emit(next);
       }),
     );
+
+    if (version == _loadVersion) {
+      unawaited(
+        OhosDesktopWidget.syncAll(
+          bookId: bookId,
+          groupId: _groupId,
+          currencyCode: state.currencyCode,
+        ),
+      );
+    }
   }
 
   /// 执行单个拉取任务并封装为成功/失败结果，绝不抛出。

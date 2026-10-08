@@ -6,6 +6,10 @@ import {
   reapplyScreenCaptureProtection,
 } from 'fortuneboot_ohos_security';
 import { GeneratedPluginRegistrant } from '../plugins/GeneratedPluginRegistrant';
+import { DesktopWidgetChannel } from '../widget/DesktopWidgetChannel';
+import { DesktopWidgetEvents } from '../widget/DesktopWidgetEvents';
+import { DesktopWidgetStore } from '../widget/DesktopWidgetStore';
+
 
 export default class EntryAbility extends FlutterAbility {
   onWindowStageCreate(windowStage: window.WindowStage): void {
@@ -32,6 +36,10 @@ export default class EntryAbility extends FlutterAbility {
   onForeground(): void {
     super.onForeground();
     reapplyScreenCaptureProtection();
+    // App 回到前台时主动刷新桌面卡片（使用已缓存快照）。
+    DesktopWidgetStore.publishToForms(this.context).catch((e: Object) => {
+      console.error(`EntryAbility publish desktop widget failed: ${String(e)}`);
+    });
   }
 
   onBackground(): void {
@@ -42,5 +50,9 @@ export default class EntryAbility extends FlutterAbility {
   configureFlutterEngine(flutterEngine: FlutterEngine): void {
     super.configureFlutterEngine(flutterEngine);
     GeneratedPluginRegistrant.registerWith(flutterEngine);
+    DesktopWidgetChannel.register(flutterEngine, this.context);
+    DesktopWidgetEvents.subscribeMonthChanged((year: number, month: number) => {
+      DesktopWidgetChannel.notifyMonthChanged(year, month);
+    });
   }
 }

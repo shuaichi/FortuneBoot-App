@@ -110,7 +110,9 @@ class TagsBloc extends Bloc<TagsEvent, TagsState> {
           status: tree.isEmpty ? TagsStatus.empty : TagsStatus.loaded,
           tree: tree,
           expandedIds: isNewScope
-              ? tree.map((tag) => tag.tagId).whereType<int>().toSet()
+              ? (state.tab.recycleBin
+                    ? _collectTagIds(tree)
+                    : tree.map((tag) => tag.tagId).whereType<int>().toSet())
               : state.expandedIds,
           searchCollapsedIds: isNewScope ? const {} : state.searchCollapsedIds,
         ),
@@ -187,5 +189,19 @@ class TagsBloc extends Bloc<TagsEvent, TagsState> {
       }
       return n.copyWith(children: children);
     }).toList();
+  }
+
+  Set<int> _collectTagIds(List<FortuneTagVo> nodes) {
+    final ids = <int>{};
+    void walk(List<FortuneTagVo> list) {
+      for (final node in list) {
+        final id = node.tagId;
+        if (id != null) ids.add(id);
+        if (node.children.isNotEmpty) walk(node.children);
+      }
+    }
+
+    walk(nodes);
+    return ids;
   }
 }

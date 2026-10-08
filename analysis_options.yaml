@@ -219,6 +219,20 @@ analyzer:
   # errors:
     # must_be_immutable: ignore
     # body_might_complete_normally_catch_error: ignore
+  exclude:
+    - build/**
+    - android/**
+    - ios/**
+    - web/**
+    - windows/**
+    - macos/**
+    - linux/**
+    # Vendored HarmonyOS plugin packages target the OHOS toolchain; their
+    # pigeon-generated .g.dart files are produced locally and not committed.
+    - packages/image_picker_ohos/**
+    - packages/file_selector_ohos/**
+    - packages/shared_preferences_ohos/**
+    - packages/path_provider_ohos/**
   language:
     strict-casts: true
     strict-raw-types: true

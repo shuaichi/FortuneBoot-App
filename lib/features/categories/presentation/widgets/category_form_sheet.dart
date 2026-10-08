@@ -100,10 +100,11 @@ class CategoryFormSheetState extends State<CategoryFormSheet> {
       'bookId': widget.bookId,
       'categoryName': _nameCtrl.text.trim(),
       'categoryType': _categoryType,
+      // 后端树根约定 parentId=-1；省略或传 0 会在 checkHeight 中 NPE。
+      'parentId': _parentId ?? -1,
       'enable': _enable,
     };
     if (widget.isEdit) body['categoryId'] = widget.category!.categoryId;
-    if (_parentId != null) body['parentId'] = _parentId;
     final sort = int.tryParse(_sortCtrl.text.trim());
     if (sort != null) body['sort'] = sort;
     final remark = _remarkCtrl.text.trim();

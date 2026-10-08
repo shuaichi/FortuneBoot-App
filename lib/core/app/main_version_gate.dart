@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fortuneboot/core/auth/auth_version_checker.dart';
 import 'package:fortuneboot/core/errors/fx_failure.dart';
 import 'package:fortuneboot/core/errors/fx_failure_mapper.dart';
 import 'package:fortuneboot/core/navigation/routes.dart';
 import 'package:fortuneboot/core/network/fx_api.dart';
+import 'package:fortuneboot/core/security/app_lock_cubit.dart';
 import 'package:fortuneboot/core/shell/main_shell.dart';
 import 'package:fortuneboot/generated/l10n.dart';
 import 'package:fortuneboot/login/auth_version_source.dart';
@@ -115,7 +117,10 @@ class _MainVersionGateState extends State<MainVersionGate> {
             body: Center(child: CircularProgressIndicator()),
           );
         }
-        if (snapshot.requireData is MainAccessAllowed) return const MainShell();
+        if (snapshot.requireData is MainAccessAllowed) {
+          context.read<AppLockCubit>().enterProtectedArea();
+          return const MainShell();
+        }
         return const _BlockedMainPage();
       },
     );

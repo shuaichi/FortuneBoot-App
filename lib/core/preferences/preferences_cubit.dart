@@ -1,15 +1,21 @@
+import 'dart:convert';
+
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fortuneboot/core/errors/fx_failure.dart';
 import 'package:fortuneboot/core/errors/fx_failure_mapper.dart';
+import 'package:fortuneboot/core/preferences/app_lock_preferences.dart';
 import 'package:fortuneboot/core/preferences/billing_preferences.dart';
 import 'package:fortuneboot/core/preferences/dashboard_display_preferences.dart';
 import 'package:fortuneboot/core/preferences/finance_color_preferences.dart';
 import 'package:fortuneboot/core/preferences/locale_preferences.dart';
 import 'package:fortuneboot/core/preferences/screen_capture_preferences.dart';
+import 'package:fortuneboot/core/preferences/stats_display_preferences.dart';
 import 'package:fortuneboot/core/preferences/theme_preferences.dart';
 import 'package:fortuneboot/core/security/screen_capture_protection.dart';
+import 'package:fortuneboot/features/dashboard/data/dashboard_card_catalog.dart';
+import 'package:fortuneboot/features/stats/data/stats_card_catalog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class PreferencesState extends Equatable {
@@ -17,8 +23,10 @@ class PreferencesState extends Equatable {
   final ThemePreferences theme;
   final LocalePreferences locale;
   final DashboardDisplayPreferences dashboard;
+  final StatsDisplayPreferences stats;
   final FinanceColorPreferences financeColors;
   final ScreenCapturePreferences screenCapture;
+  final AppLockPreferences appLock;
   final bool isLoading;
   final String? errorMessage;
   final FxFailure? failure;
@@ -28,8 +36,10 @@ class PreferencesState extends Equatable {
     this.theme = const ThemePreferences(),
     this.locale = const LocalePreferences(),
     this.dashboard = const DashboardDisplayPreferences(),
+    this.stats = const StatsDisplayPreferences(),
     this.financeColors = const FinanceColorPreferences(),
     this.screenCapture = const ScreenCapturePreferences(),
+    this.appLock = const AppLockPreferences(),
     this.isLoading = false,
     this.errorMessage,
     this.failure,
@@ -40,8 +50,10 @@ class PreferencesState extends Equatable {
     ThemePreferences? theme,
     LocalePreferences? locale,
     DashboardDisplayPreferences? dashboard,
+    StatsDisplayPreferences? stats,
     FinanceColorPreferences? financeColors,
     ScreenCapturePreferences? screenCapture,
+    AppLockPreferences? appLock,
     bool? isLoading,
     String? errorMessage,
     FxFailure? failure,
@@ -51,8 +63,10 @@ class PreferencesState extends Equatable {
       theme: theme ?? this.theme,
       locale: locale ?? this.locale,
       dashboard: dashboard ?? this.dashboard,
+      stats: stats ?? this.stats,
       financeColors: financeColors ?? this.financeColors,
       screenCapture: screenCapture ?? this.screenCapture,
+      appLock: appLock ?? this.appLock,
       isLoading: isLoading ?? this.isLoading,
       errorMessage: errorMessage,
       failure: failure,
@@ -65,8 +79,10 @@ class PreferencesState extends Equatable {
     theme,
     locale,
     dashboard,
+    stats,
     financeColors,
     screenCapture,
+    appLock,
     isLoading,
     errorMessage,
     failure,
@@ -95,6 +111,9 @@ class PreferencesCubit extends Cubit<PreferencesState> {
   static const String _localeCodeKey = 'fortune.preferences.locale.code';
   static const String _hideAmountsKey =
       'fortune.preferences.dashboard.hideAmounts';
+  static const String _dashboardLayoutKey =
+      'fortune.preferences.dashboard.layout';
+  static const String _statsLayoutKey = 'fortune.preferences.stats.layout';
   static const String _colorPresetKey =
       'fortune.preferences.financeColors.preset';
   static const String _colorIncomeKey =
@@ -109,6 +128,14 @@ class PreferencesCubit extends Cubit<PreferencesState> {
       'fortune.preferences.financeColors.advance';
   static const String _colorReimburseKey =
       'fortune.preferences.financeColors.reimburse';
+  static const String _colorHolidayKey =
+      'fortune.preferences.financeColors.holiday';
+  static const String _colorRestKey = 'fortune.preferences.financeColors.rest';
+  static const String _colorWorkKey = 'fortune.preferences.financeColors.work';
+  static const String _appLockEnabledKey =
+      'fortune.preferences.security.appLockEnabled';
+  static const String _appLockMethodKey =
+      'fortune.preferences.security.appLockMethod';
 
   SharedPreferences? _sharedPreferences;
   final ScreenCapturePreferenceStore _screenCapturePreferenceStore;
@@ -155,11 +182,14 @@ class PreferencesCubit extends Cubit<PreferencesState> {
               prefs.getString(_localeCodeKey) ?? LocalePreferences.systemCode,
             ),
           ),
-          dashboard: DashboardDisplayPreferences(
-            hideAmounts: prefs.getBool(_hideAmountsKey) ?? false,
-          ),
+          dashboard: _readDashboard(prefs),
+          stats: _readStats(prefs),
           financeColors: _readFinanceColors(prefs, defaults),
           screenCapture: screenCapture,
+          appLock: AppLockPreferences(
+            enabled: prefs.getBool(_appLockEnabledKey) ?? false,
+            method: AppLockMethod.fromStorage(prefs.getString(_appLockMethodKey)),
+          ),
           failure: applied
               ? null
               : const FxFailure(kind: FxFailureKind.persistence),
@@ -177,6 +207,58 @@ class PreferencesCubit extends Cubit<PreferencesState> {
     }
   }
 
+  DashboardDisplayPreferences _readDashboard(SharedPreferences prefs) {
+    final hideAmounts = prefs.getBool(_hideAmountsKey) ?? false;
+    final raw = prefs.getString(_dashboardLayoutKey);
+    if (raw == null || raw.isEmpty) {
+      return DashboardDisplayPreferences(hideAmounts: hideAmounts);
+    }
+    try {
+      final decoded = jsonDecode(raw);
+      if (decoded is! Map) {
+        return DashboardDisplayPreferences(hideAmounts: hideAmounts);
+      }
+      final map = Map<String, dynamic>.from(decoded);
+      final order = _stringList(map['order']);
+      final hidden = _stringList(map['hidden']);
+      return DashboardDisplayPreferences(
+        hideAmounts: hideAmounts,
+        cardOrder: order,
+        hiddenCardIds: hidden,
+        layoutConfigured: true,
+      );
+    } on Object {
+      return DashboardDisplayPreferences(hideAmounts: hideAmounts);
+    }
+  }
+
+  StatsDisplayPreferences _readStats(SharedPreferences prefs) {
+    final raw = prefs.getString(_statsLayoutKey);
+    if (raw == null || raw.isEmpty) {
+      return const StatsDisplayPreferences();
+    }
+    try {
+      final decoded = jsonDecode(raw);
+      if (decoded is! Map) return const StatsDisplayPreferences();
+      final map = Map<String, dynamic>.from(decoded);
+      return StatsDisplayPreferences(
+        cardOrder: _stringList(map['order']),
+        hiddenCardIds: _stringList(map['hidden']),
+        layoutConfigured: true,
+      );
+    } on Object {
+      return const StatsDisplayPreferences();
+    }
+  }
+
+  List<String> _stringList(Object? value) {
+    if (value is! List) return const [];
+    return value
+        .map((e) => e?.toString() ?? '')
+        .where((e) => e.isNotEmpty)
+        .toList(growable: false);
+  }
+
   FinanceColorPreferences _readFinanceColors(
     SharedPreferences prefs,
     FinanceColorPreferences defaults,
@@ -187,6 +269,9 @@ class PreferencesCubit extends Cubit<PreferencesState> {
     final adjust = prefs.getInt(_colorAdjustKey) ?? defaults.adjust;
     final advance = prefs.getInt(_colorAdvanceKey) ?? defaults.advance;
     final reimburse = prefs.getInt(_colorReimburseKey) ?? defaults.reimburse;
+    final holiday = prefs.getInt(_colorHolidayKey) ?? defaults.holiday;
+    final rest = prefs.getInt(_colorRestKey) ?? defaults.rest;
+    final work = prefs.getInt(_colorWorkKey) ?? defaults.work;
     final preset =
         prefs.getString(_colorPresetKey) ??
         FinanceColorPreferences.inferPreset(
@@ -196,6 +281,9 @@ class PreferencesCubit extends Cubit<PreferencesState> {
           adjust: adjust,
           advance: advance,
           reimburse: reimburse,
+          holiday: holiday,
+          rest: rest,
+          work: work,
         );
     return FinanceColorPreferences(
       income: income,
@@ -204,6 +292,9 @@ class PreferencesCubit extends Cubit<PreferencesState> {
       adjust: adjust,
       advance: advance,
       reimburse: reimburse,
+      holiday: holiday,
+      rest: rest,
+      work: work,
       preset: preset,
     );
   }
@@ -247,6 +338,118 @@ class PreferencesCubit extends Cubit<PreferencesState> {
       ),
     );
   }
+
+  /// 保存仪表盘卡片顺序与隐藏集（本地偏好，不走后端）。
+  Future<bool> setDashboardLayout({
+    required List<DashboardCardId> order,
+    required Set<DashboardCardId> hidden,
+  }) async {
+    final orderIds = order.map(DashboardCardCatalog.toStorageId).toList();
+    final hiddenIds = DashboardCardCatalog.allIds
+        .where(hidden.contains)
+        .map(DashboardCardCatalog.toStorageId)
+        .toList();
+    final next = state.dashboard.copyWith(
+      cardOrder: orderIds,
+      hiddenCardIds: hiddenIds,
+      layoutConfigured: true,
+    );
+    if (next == state.dashboard) return true;
+    final payload = jsonEncode({'order': orderIds, 'hidden': hiddenIds});
+    return _guardSave(
+      save: (prefs) => prefs.setString(_dashboardLayoutKey, payload),
+      apply: () => state.copyWith(dashboard: next),
+    );
+  }
+
+  Future<bool> resetDashboardLayout() async {
+    if (!state.dashboard.layoutConfigured &&
+        state.dashboard.cardOrder.isEmpty &&
+        state.dashboard.hiddenCardIds.isEmpty) {
+      return true;
+    }
+    return _guardSave(
+      save: (prefs) => prefs.remove(_dashboardLayoutKey),
+      apply: () => state.copyWith(
+        dashboard: state.dashboard.copyWith(
+          cardOrder: const [],
+          hiddenCardIds: const [],
+          layoutConfigured: false,
+        ),
+      ),
+    );
+  }
+
+  /// 保存统计页卡片顺序与隐藏集（本地偏好）。
+  Future<bool> setStatsLayout({
+    required List<StatsCardId> order,
+    required Set<StatsCardId> hidden,
+  }) async {
+    final orderIds = order.map(StatsCardCatalog.toStorageId).toList();
+    final hiddenIds = StatsCardCatalog.allIds
+        .where(hidden.contains)
+        .map(StatsCardCatalog.toStorageId)
+        .toList();
+    final next = state.stats.copyWith(
+      cardOrder: orderIds,
+      hiddenCardIds: hiddenIds,
+      layoutConfigured: true,
+    );
+    if (next == state.stats) return true;
+    final payload = jsonEncode({'order': orderIds, 'hidden': hiddenIds});
+    return _guardSave(
+      save: (prefs) => prefs.setString(_statsLayoutKey, payload),
+      apply: () => state.copyWith(stats: next),
+    );
+  }
+
+  Future<bool> resetStatsLayout() async {
+    if (!state.stats.layoutConfigured &&
+        state.stats.cardOrder.isEmpty &&
+        state.stats.hiddenCardIds.isEmpty) {
+      return true;
+    }
+    return _guardSave(
+      save: (prefs) => prefs.remove(_statsLayoutKey),
+      apply: () => state.copyWith(
+        stats: state.stats.copyWith(
+          cardOrder: const [],
+          hiddenCardIds: const [],
+          layoutConfigured: false,
+        ),
+      ),
+    );
+  }
+
+  Future<bool> setAppLock({
+    bool? enabled,
+    AppLockMethod? method,
+  }) async {
+    final nextEnabled = enabled ?? state.appLock.enabled;
+    final nextMethod = method ?? state.appLock.method;
+    if (nextEnabled == state.appLock.enabled &&
+        nextMethod == state.appLock.method) {
+      return true;
+    }
+    return _guardSave(
+      save: (prefs) async {
+        final enabledOk = await prefs.setBool(_appLockEnabledKey, nextEnabled);
+        final methodOk = await prefs.setString(
+          _appLockMethodKey,
+          nextMethod.storageId,
+        );
+        return enabledOk && methodOk;
+      },
+      apply: () => state.copyWith(
+        appLock: state.appLock.copyWith(
+          enabled: nextEnabled,
+          method: nextMethod,
+        ),
+      ),
+    );
+  }
+
+  Future<bool> setAppLockEnabled(bool enabled) => setAppLock(enabled: enabled);
 
   Future<bool> setScreenCaptureAllowed(bool allowed) async {
     if (allowed == _screenCaptureRequestedAllowed) return true;
@@ -332,6 +535,9 @@ class PreferencesCubit extends Cubit<PreferencesState> {
         prefs.setInt(_colorAdjustKey, colors.adjust),
         prefs.setInt(_colorAdvanceKey, colors.advance),
         prefs.setInt(_colorReimburseKey, colors.reimburse),
+        prefs.setInt(_colorHolidayKey, colors.holiday),
+        prefs.setInt(_colorRestKey, colors.rest),
+        prefs.setInt(_colorWorkKey, colors.work),
       ]);
       if (results.any((ok) => !ok)) {
         emit(

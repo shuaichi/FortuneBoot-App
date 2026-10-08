@@ -109,9 +109,13 @@ class UserProfile {
 
 /// 应用信息聚合（关于页）。
 class AppAbout {
-  final String appVersion; // package_info_plus
+  final String appVersion; // 如 1.4.3（2026082115）
   final String? apiVersion; // GET /getApiVersion
   final String? icp; // GET /getIcp
 
-  const AppAbout({this.appVersion = '', this.apiVersion, this.icp});
+  const AppAbout({
+    this.appVersion = '',
+    this.apiVersion,
+    this.icp,
+  });
 }

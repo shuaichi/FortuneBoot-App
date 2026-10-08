@@ -91,6 +91,13 @@ enum FxBillType {
     advance,
     reimburse,
   ];
+
+  /// 周期记账模板可选类型（与 Web 一致：支出/收入/转账；垫付报销需单据，周期不支持）。
+  static const List<FxBillType> recurringSelectable = [
+    expense,
+    income,
+    transfer,
+  ];
 }
 
 /// 分类+金额对。
@@ -296,13 +303,29 @@ class FortuneBillVo {
         .toList();
   }
 
-  /// 展示金额（多分类取和，否则 amount）。
+  /// 展示金额（多分类取和，否则 amount）。不含手续费/优惠。
   double get displayAmount {
     if (categoryAmountPair.isNotEmpty) {
       return categoryAmountPair.fold<double>(0, (s, e) => s + e.amount);
     }
     return amount;
   }
+
+  /// 手续费合计（extraType=1）。
+  double get feeTotal => extras
+      .where((e) => e.extraType == 1 && e.amount > 0)
+      .fold<double>(0, (s, e) => s + e.amount);
+
+  /// 优惠合计（extraType=2）。
+  double get discountTotal => extras
+      .where((e) => e.extraType == 2 && e.amount > 0)
+      .fold<double>(0, (s, e) => s + e.amount);
+
+  /// 是否有手续费/优惠调整。
+  bool get hasExtrasAdjustment => feeTotal > 0 || discountTotal > 0;
+
+  /// 结算金额 = 原价 + 手续费 - 优惠（与 Web 一致）。
+  double get settledAmount => displayAmount + feeTotal - discountTotal;
 
   static DateTime? _parseDateTime(dynamic v) {
     if (v == null) return null;

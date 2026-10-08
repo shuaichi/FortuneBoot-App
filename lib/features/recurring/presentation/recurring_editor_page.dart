@@ -61,6 +61,7 @@ class _RecurringEditorPageState extends State<RecurringEditorPage> {
   late final TextEditingController _titleCtrl;
   int? _categoryId;
   int? _accountId;
+  int? _toAccountId;
   final Set<int> _tagIds = {};
 
   // 选项 / 状态
@@ -111,9 +112,14 @@ class _RecurringEditorPageState extends State<RecurringEditorPage> {
 
     _billType =
         FxBillType.fromValue(FxApi.asId(tpl['billType'])) ?? FxBillType.expense;
+    if (!FxBillType.recurringSelectable.contains(_billType)) {
+      // 历史规则可能是垫付/报销，周期已不再支持，回退为支出便于重存。
+      _billType = FxBillType.expense;
+    }
     _amountCtrl = TextEditingController(text: _initialAmount(tpl));
     _titleCtrl = TextEditingController(text: tpl['title']?.toString() ?? '');
     _accountId = FxApi.asId(tpl['accountId']);
+    _toAccountId = FxApi.asId(tpl['toAccountId']);
     _categoryId = _initialCategory(tpl);
     _initialTags(tpl);
 
@@ -139,7 +145,7 @@ class _RecurringEditorPageState extends State<RecurringEditorPage> {
   }
 
   void _initialTags(Map<String, dynamic> tpl) {
-    final tags = tpl['tagIds'] ?? tpl['tagList'];
+    final tags = tpl['tagIdList'] ?? tpl['tagIds'] ?? tpl['tagList'];
     if (tags is List) {
       for (final t in tags) {
         final id = t is Map ? FxApi.asId(t['tagId']) : FxApi.asId(t);
@@ -229,19 +235,34 @@ class _RecurringEditorPageState extends State<RecurringEditorPage> {
       ? _options.incomeCategories
       : _options.expenseCategories;
 
-  /// 构造 FortuneBillAddCommand 对象作为 billRequest。
+  bool get _isTransfer => _billType == FxBillType.transfer;
+
+  /// 构造 FortuneBillAddCommand，字段对齐 Web / 普通记账，避免到点执行 NPE。
   Map<String, dynamic> _buildBillRequest() {
     final amount = double.tryParse(_amountCtrl.text.trim()) ?? 0;
+    final title = _titleCtrl.text.trim();
+    final fallbackTitle = _nameCtrl.text.trim();
     final req = <String, dynamic>{
       'bookId': widget.bookId,
       'billType': _billType.value,
-      if (_titleCtrl.text.trim().isNotEmpty) 'title': _titleCtrl.text.trim(),
-      if (_accountId != null) 'accountId': _accountId,
-      'categoryAmountPair': [
-        {if (_categoryId != null) 'categoryId': _categoryId, 'amount': amount},
-      ],
-      if (_tagIds.isNotEmpty) 'tagIds': _tagIds.toList(),
+      // 后端策略会拆箱 confirm；Web 固定传 true。缺省 null 会在执行时 NPE。
+      'confirm': true,
+      'include': true,
+      // 标题不能为空；未填时用规则名兜底（与 Web 必填语义一致）。
+      'title': title.isNotEmpty ? title : fallbackTitle,
+      'accountId': _accountId,
     };
+    if (_isTransfer) {
+      // 转账：金额在顶层，分类为空数组；转出 accountId + 转入 toAccountId。
+      req['amount'] = amount;
+      req['toAccountId'] = _toAccountId;
+      req['categoryAmountPair'] = const <Map<String, dynamic>>[];
+    } else {
+      req['categoryAmountPair'] = [
+        {'categoryId': _categoryId, 'amount': amount},
+      ];
+    }
+    if (_tagIds.isNotEmpty) req['tagIdList'] = _tagIds.toList();
     return req;
   }
 
@@ -294,6 +315,33 @@ class _RecurringEditorPageState extends State<RecurringEditorPage> {
       setState(() => _error = S.of(context).recurringAmountRequired);
       return;
     }
+    if (_isTransfer) {
+      if (_accountId == null) {
+        setState(() => _error = S.of(context).billEditorValidateTransferFrom);
+        return;
+      }
+      if (_toAccountId == null) {
+        setState(() => _error = S.of(context).billEditorValidateTransferTo);
+        return;
+      }
+      if (_accountId == _toAccountId) {
+        setState(() => _error = S.of(context).billEditorValidateTransferSame);
+        return;
+      }
+    } else {
+      if (_accountId == null) {
+        setState(() => _error = S.of(context).recurringAccountRequired);
+        return;
+      }
+      if (_categoryId == null) {
+        setState(() => _error = S.of(context).recurringCategoryRequired);
+        return;
+      }
+    }
+    if (_titleCtrl.text.trim().isEmpty && _nameCtrl.text.trim().isEmpty) {
+      setState(() => _error = S.of(context).recurringBillTitleRequired);
+      return;
+    }
     setState(() {
       _submitting = true;
       _error = null;
@@ -315,7 +363,9 @@ class _RecurringEditorPageState extends State<RecurringEditorPage> {
     final max = int.tryParse(_maxCtrl.text.trim());
     if (max != null) body['maxExecutions'] = max;
     if (_recoveryStrategy != null && _recoveryStrategy!.isNotEmpty) {
-      body['recoveryStrategy'] = _recoveryStrategy;
+      // Web 传数字；后端 Integer，字符串数字也可反序列化，统一成 int 更稳。
+      body['recoveryStrategy'] =
+          int.tryParse(_recoveryStrategy!) ?? _recoveryStrategy;
     }
     if (_remarkCtrl.text.trim().isNotEmpty) {
       body['remark'] = _remarkCtrl.text.trim();
@@ -490,22 +540,53 @@ class _RecurringEditorPageState extends State<RecurringEditorPage> {
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
             decoration: _dec(context, '0.00'),
           ),
-          const SizedBox(height: FxSpacing.md),
-          _label(context, S.of(context).recurringCategory),
-          _optionChips(
-            context,
-            _currentCategories,
-            _categoryId,
-            (id) => setState(() => _categoryId = _categoryId == id ? null : id),
-          ),
-          const SizedBox(height: FxSpacing.md),
-          _label(context, S.of(context).recurringAccount),
-          _optionChips(
-            context,
-            _options.accounts,
-            _accountId,
-            (id) => setState(() => _accountId = _accountId == id ? null : id),
-          ),
+          if (!_isTransfer) ...[
+            const SizedBox(height: FxSpacing.md),
+            _label(context, S.of(context).recurringCategory),
+            _optionChips(
+              context,
+              _currentCategories,
+              _categoryId,
+              (id) =>
+                  setState(() => _categoryId = _categoryId == id ? null : id),
+            ),
+            const SizedBox(height: FxSpacing.md),
+            _label(context, S.of(context).recurringAccount),
+            _optionChips(
+              context,
+              _options.accounts,
+              _accountId,
+              (id) =>
+                  setState(() => _accountId = _accountId == id ? null : id),
+            ),
+          ] else ...[
+            const SizedBox(height: FxSpacing.md),
+            _label(context, S.of(context).billEditorTransferOutAccount),
+            _optionChips(
+              context,
+              _options.accounts,
+              _accountId,
+              (id) => setState(() {
+                _accountId = _accountId == id ? null : id;
+                if (_toAccountId != null && _toAccountId == _accountId) {
+                  _toAccountId = null;
+                }
+              }),
+            ),
+            const SizedBox(height: FxSpacing.md),
+            _label(context, S.of(context).billEditorTransferInAccount),
+            _optionChips(
+              context,
+              _options.accounts,
+              _toAccountId,
+              (id) => setState(() {
+                _toAccountId = _toAccountId == id ? null : id;
+                if (_accountId != null && _accountId == _toAccountId) {
+                  _accountId = null;
+                }
+              }),
+            ),
+          ],
           if (_options.tags.isNotEmpty) ...[
             const SizedBox(height: FxSpacing.md),
             _label(context, S.of(context).recurringTagsOptional),
@@ -685,12 +766,15 @@ class _RecurringEditorPageState extends State<RecurringEditorPage> {
     return Wrap(
       spacing: FxSpacing.sm,
       runSpacing: FxSpacing.sm,
-      children: FxBillType.selectable.map((t) {
+      children: FxBillType.recurringSelectable.map((t) {
         final selected = t == _billType;
         return _chip(context, t.localizedLabel(context), selected, () {
           setState(() {
             _billType = t;
             _categoryId = null; // 类型变化清空分类。
+            if (t != FxBillType.transfer) {
+              _toAccountId = null;
+            }
           });
         });
       }).toList(),

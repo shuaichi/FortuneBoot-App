@@ -13,12 +13,44 @@
       "value": "FortuneBoot"
     },
     {
-      "name": "perm_reason_read_media",
-      "value": "Used for reading images and videos"
+      "name": "EntryFormAbility_label",
+      "value": "FortuneBoot widget"
     },
     {
-      "name": "perm_reason_write_media",
-      "value": "Used for saving images and videos"
+      "name": "EntryFormAbility_desc",
+      "value": "Show daily/monthly calendars and reimbursement orders on the desktop"
+    },
+    {
+      "name": "income_expense_calendar_card_display_name",
+      "value": "Daily calendar"
+    },
+    {
+      "name": "income_expense_calendar_card_desc",
+      "value": "Daily income and expense for the month; stackable with monthly card"
+    },
+    {
+      "name": "stats_income_expense_calendar_card_display_name",
+      "value": "Stats calendar"
+    },
+    {
+      "name": "stats_income_expense_calendar_card_desc",
+      "value": "6×4 widget matching the stats income/expense calendar"
+    },
+    {
+      "name": "month_income_expense_calendar_card_display_name",
+      "value": "Monthly calendar"
+    },
+    {
+      "name": "month_income_expense_calendar_card_desc",
+      "value": "Monthly income and expense for the year; stackable with daily card"
+    },
+    {
+      "name": "reimbursement_order_card_display_name",
+      "value": "Reimbursement"
+    },
+    {
+      "name": "reimbursement_order_card_desc",
+      "value": "Shows in/out amounts; long-press to switch order; stackable"
     }
   ]
 }

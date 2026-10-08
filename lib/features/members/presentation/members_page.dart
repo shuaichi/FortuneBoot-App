@@ -211,11 +211,26 @@ class _MembersPageState extends State<MembersPage> {
         ),
         itemCount: list.length,
         separatorBuilder: (_, i) => const SizedBox(height: FxSpacing.sm),
-        itemBuilder: (context, i) => MemberCard(
-          member: list[i],
-          onTap: () => _openForm(member: list[i]),
-          onMenu: () => _openMenu(list[i]),
-        ),
+        itemBuilder: (context, i) {
+          final member = list[i];
+          final inRecycle = state.tab.recycleBin;
+          return MemberCard(
+            member: member,
+            onTap: () => _openForm(member: member),
+            onMenu: () => _openMenu(member),
+            onToggleEnable: inRecycle
+                ? null
+                : () {
+                    HapticFeedback.selectionClick();
+                    _bloc.add(
+                      MemberEnableToggled(
+                        member: member,
+                        value: !member.enable,
+                      ),
+                    );
+                  },
+          );
+        },
       ),
     );
   }

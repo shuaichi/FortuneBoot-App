@@ -289,19 +289,25 @@ class _FxTreePickerState<T> extends State<FxTreePicker<T>> {
       child: Padding(
         padding: EdgeInsets.fromLTRB(
           FxSpacing.lg + indent,
-          FxSpacing.md,
+          FxSpacing.sm,
           FxSpacing.lg,
-          FxSpacing.md,
+          FxSpacing.sm,
         ),
         child: Row(
           children: [
             if (f.hasChildren && !searching)
               SizedBox(
-                width: 48,
-                height: 48,
+                width: 40,
+                height: 40,
                 child: Semantics(
                   expanded: !collapsed,
                   child: IconButton(
+                    padding: EdgeInsets.zero,
+                    visualDensity: VisualDensity.compact,
+                    constraints: const BoxConstraints.tightFor(
+                      width: 40,
+                      height: 40,
+                    ),
                     tooltip: collapsed
                         ? S
                               .of(context)
@@ -320,18 +326,19 @@ class _FxTreePickerState<T> extends State<FxTreePicker<T>> {
                       collapsed
                           ? Icons.chevron_right_rounded
                           : Icons.expand_more_rounded,
-                      size: 20,
+                      size: 22,
                       color: palette.textTertiary,
                     ),
                   ),
                 ),
               )
             else
-              const SizedBox(width: 48),
+              const SizedBox(width: 40),
             const SizedBox(width: FxSpacing.sm),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
                     widget.labelOf(f.node),

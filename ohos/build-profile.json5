@@ -2,23 +2,36 @@
   "app": {
     "signingConfigs": [
       {
-        "name": "FortuneBoot",
+        "name": "default",
         "type": "HarmonyOS",
         "material": {
-          "storeFile": "./signing/FortuneBoot_release.p12",
-          "storePassword": "000000502787BCB962D772C378A25313CA1484CCD36DA47C94601F714474700ED05063323A747B2C3BB0455B75745221AD53CBF1351C0160E42BD554468E8B0EE94DAF647FBA1EB4A0317DAD0F167B220CCFFAFBFF27EB9CE51B5F58863E84C5",
-          "keyAlias": "PeLfpgUf20z0D7BF",
-          "keyPassword": "00000050235EC58A75CC64297F939F23E127B954CAE0D8DA3A2B339ED29532B6E0EF8D7083FA277B4E2E03A38A966F4A7DC97AE26F5F39820A8477AE850DC074C43A87195B272859EF02170448A3D38FB7F36060C4BEDDE9FE9D1D312701B45B",
+          "certpath": "E:/zhou/WeiHu/fortuneboot/FortuneBoot-App-feat_refactor/上架/fortuneboot.cer",
+          "keyAlias": "fortuneboot",
+          "keyPassword": "0000001BB6AA895723D0FB63A218ADD36615CB0FF1DDA5A618178779615FD86238332D39C62B5A9A2EE1B2",
+          "profile": "E:/zhou/WeiHu/fortuneboot/FortuneBoot-App-feat_refactor/上架/fortunebootRelease.p7b",
           "signAlg": "SHA256withECDSA",
-          "profile": "./signing/FortuneBoot_release.p7b",
-          "certpath": "./signing/FortuneBoot_release.cer"
+          "storeFile": "E:/zhou/WeiHu/fortuneboot/FortuneBoot-App-feat_refactor/上架/fortuneboot.p12",
+          "storePassword": "0000001B77F6A151CC9D9B3D646D61EFB9FE993925BC41933BDE27EE900289E394AF441BA3879B07E30641"
+        }
+      },
+      {
+        "name": "haoji",
+        "type": "HarmonyOS",
+        "material": {
+          "certpath": "C:/Users/Administrator/.ohos/config/haoji_ohos_Y5rM-3WZXQcdyq30IREy7dT5smmiblExU88jPscG17w=.cer",
+          "keyAlias": "debugKey",
+          "keyPassword": "0000001BE82636D25C239AB90B8C9413248C7E63FDC525A49DA947D8CC38D04A487A2AA4600E18E77FCF71",
+          "profile": "C:/Users/Administrator/.ohos/config/haoji_ohos_Y5rM-3WZXQcdyq30IREy7dT5smmiblExU88jPscG17w=.p7b",
+          "signAlg": "SHA256withECDSA",
+          "storeFile": "C:/Users/Administrator/.ohos/config/haoji_ohos_Y5rM-3WZXQcdyq30IREy7dT5smmiblExU88jPscG17w=.p12",
+          "storePassword": "0000001B7E72085CF4F06AEC5667D32CB1ED14F3DEB28B9E09FAAF928FB2514A401890068231E1EE91E577"
         }
       }
     ],
     "products": [
       {
         "name": "default",
-        "signingConfig": "FortuneBoot",
+        "signingConfig": "default",
         "compatibleSdkVersion": "6.0.0(20)",
         "runtimeOS": "HarmonyOS",
         "targetSdkVersion": "6.0.0(20)"

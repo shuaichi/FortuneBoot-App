@@ -6,17 +6,21 @@ import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
 import 'package:fortuneboot/generated/l10n.dart';
 
-/// 成员卡：悬浮卡片风格。头像徽章 + 名称/停用置灰 + 启用状态芯片 + ⋯ 菜单。
+/// 成员卡：悬浮卡片风格。头像徽章 + 名称/停用置灰 + 启用切换按钮 + ⋯ 菜单。
 class MemberCard extends StatelessWidget {
   final FortuneMemberVo member;
   final VoidCallback onTap;
   final VoidCallback onMenu;
+
+  /// 点击启用/停用按钮；为 null 时不展示可点切换（如回收站）。
+  final VoidCallback? onToggleEnable;
 
   const MemberCard({
     super.key,
     required this.member,
     required this.onTap,
     required this.onMenu,
+    this.onToggleEnable,
   });
 
   @override
@@ -69,7 +73,7 @@ class MemberCard extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
               ),
             ),
-            _statusChip(context, member.enable),
+            _enableButton(context, member.enable),
             const SizedBox(width: FxSpacing.sm),
             Semantics(
               button: true,
@@ -103,23 +107,38 @@ class MemberCard extends StatelessWidget {
     return name.characters.first.toUpperCase();
   }
 
-  Widget _statusChip(BuildContext context, bool enable) {
+  Widget _enableButton(BuildContext context, bool enable) {
     final palette = FxPalette.of(context);
     final color = enable ? palette.success : palette.textTertiary;
-    return Container(
+    final label = enable
+        ? S.of(context).membersStatusEnabled
+        : S.of(context).membersStatusDisabled;
+    final child = Container(
       padding: const EdgeInsets.symmetric(
         horizontal: FxSpacing.sm,
-        vertical: 2,
+        vertical: FxSpacing.xs,
       ),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.12),
         borderRadius: FxRadius.pillBorder,
+        border: Border.all(color: color.withValues(alpha: 0.35)),
       ),
       child: Text(
-        enable
-            ? S.of(context).membersStatusEnabled
-            : S.of(context).membersStatusDisabled,
+        label,
         style: FxTypography.caption.copyWith(color: color),
+      ),
+    );
+    if (onToggleEnable == null) return child;
+    return Semantics(
+      button: true,
+      label: label,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onToggleEnable,
+          borderRadius: FxRadius.pillBorder,
+          child: child,
+        ),
       ),
     );
   }

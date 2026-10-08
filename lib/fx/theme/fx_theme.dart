@@ -147,7 +147,7 @@ class FxPalette extends ThemeExtension<FxPalette> {
   }
 }
 
-/// 业务语义色 ThemeExtension：收入/支出/转账/调整/垫付/报销。
+/// 业务语义色 ThemeExtension：收入/支出/转账/调整/垫付/报销/节假日/休/班。
 /// 通过 `Theme.of(context).extension<FxFinanceColors>()!` 或 `FxFinanceColors.of(context)` 取。
 @immutable
 class FxFinanceColors extends ThemeExtension<FxFinanceColors> {
@@ -157,6 +157,9 @@ class FxFinanceColors extends ThemeExtension<FxFinanceColors> {
   final Color adjust;
   final Color advance;
   final Color reimburse;
+  final Color holiday;
+  final Color rest;
+  final Color work;
 
   const FxFinanceColors({
     required this.income,
@@ -165,6 +168,9 @@ class FxFinanceColors extends ThemeExtension<FxFinanceColors> {
     required this.adjust,
     required this.advance,
     required this.reimburse,
+    required this.holiday,
+    required this.rest,
+    required this.work,
   });
 
   static const FxFinanceColors light = FxFinanceColors(
@@ -174,6 +180,9 @@ class FxFinanceColors extends ThemeExtension<FxFinanceColors> {
     adjust: FxColors.adjust,
     advance: FxColors.expense,
     reimburse: FxColors.expense,
+    holiday: Color(0xFF7C3AED),
+    rest: FxColors.expense,
+    work: FxColors.adjust,
   );
 
   factory FxFinanceColors.fromPreferences(FinanceColorPreferences prefs) {
@@ -184,6 +193,9 @@ class FxFinanceColors extends ThemeExtension<FxFinanceColors> {
       adjust: prefs.adjustColor,
       advance: prefs.advanceColor,
       reimburse: prefs.reimburseColor,
+      holiday: prefs.holidayColor,
+      rest: prefs.restColor,
+      work: prefs.workColor,
     );
   }
 
@@ -217,6 +229,9 @@ class FxFinanceColors extends ThemeExtension<FxFinanceColors> {
     Color? adjust,
     Color? advance,
     Color? reimburse,
+    Color? holiday,
+    Color? rest,
+    Color? work,
   }) {
     return FxFinanceColors(
       income: income ?? this.income,
@@ -225,6 +240,9 @@ class FxFinanceColors extends ThemeExtension<FxFinanceColors> {
       adjust: adjust ?? this.adjust,
       advance: advance ?? this.advance,
       reimburse: reimburse ?? this.reimburse,
+      holiday: holiday ?? this.holiday,
+      rest: rest ?? this.rest,
+      work: work ?? this.work,
     );
   }
 
@@ -238,6 +256,9 @@ class FxFinanceColors extends ThemeExtension<FxFinanceColors> {
       adjust: Color.lerp(adjust, other.adjust, t)!,
       advance: Color.lerp(advance, other.advance, t)!,
       reimburse: Color.lerp(reimburse, other.reimburse, t)!,
+      holiday: Color.lerp(holiday, other.holiday, t)!,
+      rest: Color.lerp(rest, other.rest, t)!,
+      work: Color.lerp(work, other.work, t)!,
     );
   }
 }

@@ -27,6 +27,7 @@ abstract final class Routes {
   static const String books = '/books';
   static const String groups = '/groups';
   static const String io = '/io';
+  static const String logs = '/logs';
   static const String statsAssets = '/stats/assets';
   static const String statsLoans = '/stats/loans';
   static const String statsPolicy = '/stats/policy';

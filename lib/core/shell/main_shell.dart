@@ -3,9 +3,11 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fortuneboot/core/feedback/fx_feedback.dart';
 import 'package:fortuneboot/core/navigation/app_router.dart';
 import 'package:fortuneboot/core/navigation/routes.dart';
 import 'package:fortuneboot/core/session/session_cubit.dart';
+import 'package:fortuneboot/core/session/session_permission.dart';
 import 'package:fortuneboot/core/shell/bills_navigation_controller.dart';
 import 'package:fortuneboot/features/shared/data/bill_models.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
@@ -75,7 +77,8 @@ class _MainShellState extends State<MainShell> {
   void initState() {
     super.initState();
     final session = context.read<SessionCubit>();
-    if (session.state.status == SessionStatus.initial) {
+    // 进入主壳即拉取；换服务器登录后若未 reset，也能用新地址重拉账本。
+    if (session.state.status != SessionStatus.loading) {
       unawaited(session.load());
     }
   }
@@ -118,6 +121,14 @@ class _MainShellState extends State<MainShell> {
           shape: const CircleBorder(),
           onPressed: () {
             HapticFeedback.selectionClick();
+            final group = context.read<SessionCubit>().state.currentGroup;
+            if (!SessionPermission.canWrite(group)) {
+              FxFeedback.info(
+                context,
+                message: S.of(context).permissionVisitorNoAccess,
+              );
+              return;
+            }
             AppRouter.push<void>(context, Routes.billEditor);
           },
           child: const Icon(Icons.add_rounded, size: 30),

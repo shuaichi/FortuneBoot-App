@@ -8,43 +8,72 @@ import 'package:fortuneboot/generated/l10n.dart';
 part 'recurring_event.dart';
 part 'recurring_state.dart';
 
-/// 周期记账规则 Bloc：拉规则列表；启停乐观更新。
+/// 周期记账规则 Bloc（对齐成员页：创建即加载 + 账本切换重拉）。
 class RecurringBloc extends Bloc<RecurringEvent, RecurringState> {
   final RecurringService _service;
-  final int? _bookId;
+  int? _bookId;
+  List<int> _bookIds;
 
-  RecurringBloc({RecurringService? service, int? bookId})
-    : _service = service ?? RecurringService(),
-      _bookId = bookId,
-      super(const RecurringState()) {
+  RecurringBloc({
+    RecurringService? service,
+    int? bookId,
+    List<int> bookIds = const [],
+  }) : _service = service ?? RecurringService(),
+       _bookId = bookId,
+       _bookIds = List<int>.unmodifiable(bookIds),
+       super(const RecurringState()) {
+    on<RecurringBookChanged>(_onBookChanged);
     on<RecurringLoaded>(_onLoaded);
     on<RecurringMutated>(_onLoaded);
     on<RecurringToggled>(_onToggled);
+  }
+
+  int? get bookId => _bookId;
+
+  Future<void> _onBookChanged(
+    RecurringBookChanged event,
+    Emitter<RecurringState> emit,
+  ) async {
+    _bookId = event.bookId;
+    _bookIds = List<int>.unmodifiable(
+      event.bookIds.isNotEmpty
+          ? event.bookIds
+          : (event.bookId != null ? [event.bookId!] : const <int>[]),
+    );
+    await _onLoaded(event, emit);
   }
 
   Future<void> _onLoaded(
     RecurringEvent event,
     Emitter<RecurringState> emit,
   ) async {
-    final bookId = _bookId;
-    if (bookId == null) {
-      emit(state.copyWith(status: RecurringStatus.empty, rules: const []));
+    final ids = _bookIds.isNotEmpty
+        ? _bookIds
+        : (_bookId != null ? <int>[_bookId!] : const <int>[]);
+    if (ids.isEmpty) {
+      emit(
+        state.copyWith(status: RecurringStatus.empty, rules: const []),
+      );
       return;
     }
+
     emit(state.copyWith(status: RecurringStatus.loading));
     try {
-      final rules = await _service.getRules(bookId: bookId);
+      final probe = await _service.probeRulesForBooks(ids);
       emit(
         state.copyWith(
-          status: rules.isEmpty
+          status: probe.rules.isEmpty
               ? RecurringStatus.empty
               : RecurringStatus.loaded,
-          rules: rules,
+          rules: probe.rules,
         ),
       );
     } on FxApiException catch (e) {
       emit(
-        state.copyWith(status: RecurringStatus.error, errorMessage: e.message),
+        state.copyWith(
+          status: RecurringStatus.error,
+          errorMessage: e.message,
+        ),
       );
     } on Object {
       emit(
@@ -60,18 +89,40 @@ class RecurringBloc extends Bloc<RecurringEvent, RecurringState> {
     RecurringToggled event,
     Emitter<RecurringState> emit,
   ) async {
-    final bookId = _bookId;
+    final bookId = event.rule.bookId ?? _bookId;
     final ruleId = event.rule.ruleId;
     if (bookId == null || ruleId == null) return;
-
     if (state.pendingToggleIds.contains(ruleId)) return;
 
     final original = state.rules;
     final optimistic = original
-        .map((r) => r.ruleId == ruleId ? _copyEnable(r, event.enable) : r)
+        .map(
+          (r) => r.ruleId == ruleId
+              ? RecurringRuleVo(
+                  bookId: r.bookId,
+                  ruleId: r.ruleId,
+                  ruleName: r.ruleName,
+                  cronExpression: r.cronExpression,
+                  enable: event.enable,
+                  billRequest: r.billRequest,
+                  startDate: r.startDate,
+                  endDate: r.endDate,
+                  maxExecutions: r.maxExecutions,
+                  executedCount: r.executedCount,
+                  lastExecutedTime: r.lastExecutedTime,
+                  nextExecutionTime: r.nextExecutionTime,
+                  recoveryStrategy: r.recoveryStrategy,
+                  remark: r.remark,
+                )
+              : r,
+        )
         .toList();
-    final pending = {...state.pendingToggleIds, ruleId};
-    emit(state.copyWith(rules: optimistic, pendingToggleIds: pending));
+    emit(
+      state.copyWith(
+        rules: optimistic,
+        pendingToggleIds: {...state.pendingToggleIds, ruleId},
+      ),
+    );
 
     try {
       await _service.toggleRule(
@@ -79,7 +130,8 @@ class RecurringBloc extends Bloc<RecurringEvent, RecurringState> {
         ruleId: ruleId,
         enable: event.enable,
       );
-      final fresh = await _service.getRules(bookId: bookId);
+      final ids = _bookIds.isNotEmpty ? _bookIds : [bookId];
+      final fresh = await _service.getRulesForBooks(ids);
       emit(
         state.copyWith(
           status: fresh.isEmpty
@@ -101,24 +153,5 @@ class RecurringBloc extends Bloc<RecurringEvent, RecurringState> {
         ),
       );
     }
-  }
-
-  RecurringRuleVo _copyEnable(RecurringRuleVo r, bool enable) {
-    return RecurringRuleVo(
-      bookId: r.bookId,
-      ruleId: r.ruleId,
-      ruleName: r.ruleName,
-      cronExpression: r.cronExpression,
-      enable: enable,
-      billRequest: r.billRequest,
-      startDate: r.startDate,
-      endDate: r.endDate,
-      maxExecutions: r.maxExecutions,
-      executedCount: r.executedCount,
-      lastExecutedTime: r.lastExecutedTime,
-      nextExecutionTime: r.nextExecutionTime,
-      recoveryStrategy: r.recoveryStrategy,
-      remark: r.remark,
-    );
   }
 }

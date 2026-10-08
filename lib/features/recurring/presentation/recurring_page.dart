@@ -42,7 +42,7 @@ class _RecurringPageState extends State<RecurringPage> {
   }
 
   Future<void> _openEditor({RecurringRuleVo? rule}) async {
-    final bookId = _bookId;
+    final bookId = rule?.bookId ?? _bookId;
     final groupId = _groupId;
     if (bookId == null || groupId == null) {
       _showToast(S.of(context).recurringSelectBookFirst);
@@ -58,7 +58,7 @@ class _RecurringPageState extends State<RecurringPage> {
   }
 
   Future<void> _openLogs(RecurringRuleVo rule) async {
-    final bookId = _bookId;
+    final bookId = rule.bookId ?? _bookId;
     if (bookId == null || rule.ruleId == null) return;
     await FxSheet.show<void>(
       context,
@@ -72,7 +72,7 @@ class _RecurringPageState extends State<RecurringPage> {
   }
 
   Future<void> _remove(RecurringRuleVo rule) async {
-    final bookId = _bookId;
+    final bookId = rule.bookId ?? _bookId;
     if (bookId == null || rule.ruleId == null || _removingRuleId != null) {
       return;
     }
@@ -102,31 +102,50 @@ class _RecurringPageState extends State<RecurringPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: FxPalette.of(context).canvas,
-      body: SafeArea(
-        bottom: false,
-        child: BlocConsumer<RecurringBloc, RecurringState>(
-          listenWhen: (prev, curr) =>
-              curr.toastMessage != null && prev.toastSerial != curr.toastSerial,
-          listener: (context, state) {
-            final msg = state.toastMessage;
-            if (msg != null) _showToast(msg);
-          },
-          builder: (context, state) {
-            return Column(
-              children: [
-                _buildHeader(context),
-                Expanded(child: _buildBody(state)),
-              ],
-            );
-          },
+    final bookId = context.select<SessionCubit, int?>(
+      (c) => c.state.currentBookId,
+    );
+    final bookIds = context.select<SessionCubit, List<int>>(
+      (c) => [
+        for (final b in c.state.books)
+          if (b.bookId != null) b.bookId!,
+      ],
+    );
+    final bookName = context.select<SessionCubit, String?>(
+      (c) => c.state.currentBook?.bookName,
+    );
+
+    return _BookSync(
+      bookId: bookId,
+      bookIds: bookIds,
+      child: Scaffold(
+        backgroundColor: FxPalette.of(context).canvas,
+        body: SafeArea(
+          bottom: false,
+          child: BlocConsumer<RecurringBloc, RecurringState>(
+            listenWhen: (prev, curr) =>
+                curr.toastMessage != null &&
+                prev.toastSerial != curr.toastSerial,
+            listener: (context, state) {
+              final msg = state.toastMessage;
+              if (msg != null) _showToast(msg);
+            },
+            builder: (context, state) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  _buildHeader(context, bookName),
+                  Expanded(child: _buildBody(state, bookId)),
+                ],
+              );
+            },
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildHeader(BuildContext context) {
+  Widget _buildHeader(BuildContext context, String? bookName) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(
         FxSpacing.sm,
@@ -142,9 +161,18 @@ class _RecurringPageState extends State<RecurringPage> {
             onPressed: () => Navigator.of(context).maybePop(),
           ),
           Expanded(
-            child: Text(
-              S.of(context).recurringTitle,
-              style: FxTypography.title,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(S.of(context).recurringTitle, style: FxTypography.title),
+                if (bookName != null && bookName.isNotEmpty)
+                  Text(
+                    bookName,
+                    style: FxTypography.caption.copyWith(
+                      color: FxPalette.of(context).textTertiary,
+                    ),
+                  ),
+              ],
             ),
           ),
           FxIconButton(
@@ -157,8 +185,8 @@ class _RecurringPageState extends State<RecurringPage> {
     );
   }
 
-  Widget _buildBody(RecurringState state) {
-    if (_bookId == null) {
+  Widget _buildBody(RecurringState state, int? bookId) {
+    if (bookId == null) {
       return FxStateView.empty(message: S.of(context).recurringSelectBookFirst);
     }
     switch (state.status) {
@@ -175,15 +203,13 @@ class _RecurringPageState extends State<RecurringPage> {
         return RefreshIndicator(
           onRefresh: () async => _bloc.add(const RecurringLoaded()),
           child: ListView(
+            padding: const EdgeInsets.all(FxSpacing.lg),
             children: [
-              SizedBox(
-                height:
-                    MediaQuery.of(context).size.height *
-                    FxSheet.hintHeightFactor,
-                child: FxStateView.empty(
-                  message: S.of(context).recurringEmpty,
-                  icon: Icons.autorenew_rounded,
-                ),
+              FxStateView.empty(
+                message: S.of(context).recurringEmpty,
+                icon: Icons.autorenew_rounded,
+                onRetry: () => _bloc.add(const RecurringLoaded()),
+                retryLabel: S.of(context).commonRetry,
               ),
             ],
           ),
@@ -192,6 +218,7 @@ class _RecurringPageState extends State<RecurringPage> {
         return RefreshIndicator(
           onRefresh: () async => _bloc.add(const RecurringLoaded()),
           child: ListView.builder(
+            physics: const AlwaysScrollableScrollPhysics(),
             padding: const EdgeInsets.fromLTRB(
               FxSpacing.lg,
               FxSpacing.sm,
@@ -274,7 +301,6 @@ class _RecurringPageState extends State<RecurringPage> {
     );
   }
 
-  /// 调度摘要芯片：优先展示可视化人类可读描述，无法解析时回退原始 cron。
   Widget _scheduleChip(BuildContext context, String? cron) {
     final palette = FxPalette.of(context);
     final spec = CronBuilder.tryParse(cron);
@@ -363,4 +389,44 @@ class _RecurringPageState extends State<RecurringPage> {
       ],
     );
   }
+}
+
+/// 跟随 SessionCubit 账本变化重拉列表（与成员页 _BookSync 一致）。
+class _BookSync extends StatefulWidget {
+  final int? bookId;
+  final List<int> bookIds;
+  final Widget child;
+
+  const _BookSync({
+    required this.bookId,
+    required this.bookIds,
+    required this.child,
+  });
+
+  @override
+  State<_BookSync> createState() => _BookSyncState();
+}
+
+class _BookSyncState extends State<_BookSync> {
+  @override
+  void didUpdateWidget(_BookSync oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.bookId != widget.bookId ||
+        !_sameIds(oldWidget.bookIds, widget.bookIds)) {
+      context.read<RecurringBloc>().add(
+        RecurringBookChanged(bookId: widget.bookId, bookIds: widget.bookIds),
+      );
+    }
+  }
+
+  static bool _sameIds(List<int> a, List<int> b) {
+    if (a.length != b.length) return false;
+    for (var i = 0; i < a.length; i++) {
+      if (a[i] != b[i]) return false;
+    }
+    return true;
+  }
+
+  @override
+  Widget build(BuildContext context) => widget.child;
 }

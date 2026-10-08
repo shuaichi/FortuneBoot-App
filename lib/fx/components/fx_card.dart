@@ -38,19 +38,23 @@ class _FxCardState extends State<FxCard> {
     Widget content = widget.child;
 
     if (widget.accent != null) {
-      content = Row(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Container(
-            width: 4,
-            decoration: BoxDecoration(
-              color: widget.accent,
-              borderRadius: BorderRadius.circular(4),
+      // ListView 子项高度无界时，Row.stretch 会把卡片高度压成 0。
+      // IntrinsicHeight 让色条跟着内容高度走。
+      content = IntrinsicHeight(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Container(
+              width: 4,
+              decoration: BoxDecoration(
+                color: widget.accent,
+                borderRadius: BorderRadius.circular(4),
+              ),
             ),
-          ),
-          const SizedBox(width: FxSpacing.md),
-          Expanded(child: content),
-        ],
+            const SizedBox(width: FxSpacing.md),
+            Expanded(child: content),
+          ],
+        ),
       );
     }
 

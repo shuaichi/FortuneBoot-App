@@ -72,4 +72,18 @@ void main() {
     expect(call?.method, 'setScreenCaptureAllowed');
     expect(call?.arguments, {'allowed': false});
   });
+
+  test('returns false when HarmonyOS protection reports an error', () async {
+    const ohosChannel = MethodChannel('fortuneboot/ohos_security');
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(ohosChannel, (methodCall) async {
+          throw PlatformException(code: 'screen_capture_protection_failed');
+        });
+    final protection = PlatformScreenCaptureProtection(
+      ohosSecurity: FortunebootOhosSecurity(channel: ohosChannel),
+      operatingSystem: 'ohos',
+    );
+
+    expect(await protection.setScreenCaptureAllowed(false), isFalse);
+  });
 }

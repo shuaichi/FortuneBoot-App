@@ -7,6 +7,7 @@ plugins {
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
 }
+
 // 加载 local.properties 文件
 val localProperties = Properties().apply {
     val localPropertiesFile = rootProject.file("local.properties")
@@ -14,8 +15,15 @@ val localProperties = Properties().apply {
         load(FileInputStream(localPropertiesFile))
     }
 }
+
+val hasReleaseSigning =
+    !localProperties.getProperty("sign.key.alias").isNullOrBlank() &&
+        !localProperties.getProperty("sign.key.password").isNullOrBlank() &&
+        !localProperties.getProperty("sign.store.file").isNullOrBlank() &&
+        !localProperties.getProperty("sign.store.password").isNullOrBlank()
+
 android {
-    namespace = "com.fortuneboot.fortuneboot"
+    namespace = "com.fortuneboot.intelligent"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -29,41 +37,41 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.fortuneboot.fortuneboot"
-        // You can update the following values to match your application needs.
-        // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdk = 23
+        applicationId = "com.fortuneboot.intelligent"
+        minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }
-    signingConfigs {
-        create("release") {
-            keyAlias = localProperties.getProperty("sign.key.alias")
-            keyPassword = localProperties.getProperty("sign.key.password")
-            storeFile = file(localProperties.getProperty("sign.store.file"))
-            storePassword = localProperties.getProperty("sign.store.password")
-        }
-    }
 
-    packaging {
-        jniLibs {
-            useLegacyPackaging = true
+    signingConfigs {
+        if (hasReleaseSigning) {
+            create("release") {
+                keyAlias = localProperties.getProperty("sign.key.alias")
+                keyPassword = localProperties.getProperty("sign.key.password")
+                storeFile = file(localProperties.getProperty("sign.store.file")!!)
+                storePassword = localProperties.getProperty("sign.store.password")
+            }
         }
     }
 
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-//            signingConfig = signingConfigs.getByName("debug")
-            signingConfig = signingConfigs.getByName("release")
-
+            // 配置了签名则用正式签名，否则回退 debug，便于本机直接打 APK
+            signingConfig =
+                if (hasReleaseSigning) {
+                    signingConfigs.getByName("release")
+                } else {
+                    signingConfigs.getByName("debug")
+                }
         }
     }
 }
 
 flutter {
     source = "../.."
+}
+
+dependencies {
+    implementation("androidx.biometric:biometric:1.1.0")
 }

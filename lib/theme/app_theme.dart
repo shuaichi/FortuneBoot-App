@@ -293,10 +293,12 @@ class AppTheme {
         fontFamily: fontFamily,
         color: textPrimaryColor,
       ),
-      // textFieldStyle: const TextStyle(
-      //   fontFamily: fontFamily,
-      //   color: textPrimaryColor,
-      // ),
+      // 登录卡片始终白底。深色模式下 flutter_login 会把输入文字改成白色，
+      // 必须在这里钉死深色，否则账号/密码看不见。
+      textFieldStyle: const TextStyle(
+        fontFamily: fontFamily,
+        color: textPrimaryColor,
+      ),
       buttonStyle: const TextStyle(
         fontFamily: fontFamily,
         fontWeight: FontWeight.w600,
@@ -345,8 +347,10 @@ class AppTheme {
         hintStyle: const TextStyle(
           fontFamily: fontFamily,
           fontSize: 14,
-          // color: textSecondaryColor,
+          color: textSecondaryColor,
         ),
+        prefixIconColor: textPrimaryColor,
+        suffixIconColor: textPrimaryColor,
         errorStyle: const TextStyle(
           fontFamily: fontFamily,
           fontSize: 12,

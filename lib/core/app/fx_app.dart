@@ -4,13 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:fortuneboot/core/app/main_version_gate.dart';
-import 'package:fortuneboot/core/app_lock/app_lock_cubit.dart';
-import 'package:fortuneboot/core/app_lock/app_lock_gate.dart';
-import 'package:fortuneboot/core/app_lock/app_lock_stores.dart';
+import 'package:fortuneboot/core/desktop_widget/ohos_desktop_widget.dart';
 import 'package:fortuneboot/core/navigation/app_nav.dart';
 import 'package:fortuneboot/core/navigation/app_router.dart';
 import 'package:fortuneboot/core/navigation/routes.dart';
 import 'package:fortuneboot/core/preferences/preferences_cubit.dart';
+import 'package:fortuneboot/core/security/app_lock_authenticator.dart';
+import 'package:fortuneboot/core/security/app_lock_cubit.dart';
+import 'package:fortuneboot/core/security/app_lock_gate.dart';
 import 'package:fortuneboot/core/session/session_cubit.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/generated/l10n.dart';
@@ -25,7 +26,6 @@ class FxApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final appLockDependencies = AppLockPlatformDependencies.create();
     return MultiBlocProvider(
       providers: [
         BlocProvider<SessionCubit>(create: (_) => SessionCubit()),
@@ -33,11 +33,11 @@ class FxApp extends StatelessWidget {
           create: (_) => PreferencesCubit()..load(),
         ),
         BlocProvider<AppLockCubit>(
-          create: (_) => AppLockCubit(
-            settingsStore: SharedPreferencesAppLockSettingsStore(),
-            secretStore: appLockDependencies.secretStore,
-            biometricAuthenticator: appLockDependencies.biometricAuthenticator,
-          )..initialize(),
+          create: (context) => AppLockCubit(
+            authenticator: LocalAuthAppLockAuthenticator(),
+            isEnabled: () =>
+                context.read<PreferencesCubit>().state.appLock.enabled,
+          ),
         ),
       ],
       child: const _FxAppView(),
@@ -57,6 +57,22 @@ class _FxAppViewState extends State<_FxAppView> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    OhosDesktopWidget.bindMonthChangedHandler(_syncDesktopWidget);
+  }
+
+  void _syncDesktopWidget() {
+    if (!mounted) return;
+    final session = context.read<SessionCubit>().state;
+    final bookId = session.currentBookId;
+    if (bookId == null) return;
+    unawaited(
+      OhosDesktopWidget.syncAll(
+        bookId: bookId,
+        groupId: session.currentGroupId,
+        currencyCode: session.defaultCurrency,
+        hideAmounts: context.read<PreferencesCubit>().state.dashboard.hideAmounts,
+      ),
+    );
   }
 
   @override
@@ -67,12 +83,15 @@ class _FxAppViewState extends State<_FxAppView> with WidgetsBindingObserver {
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.hidden ||
+        state == AppLifecycleState.paused) {
+      context.read<AppLockCubit>().onBackgrounded();
+    }
     if (state == AppLifecycleState.resumed) {
-      unawaited(context.read<AppLockCubit>().onAppResumed());
-    } else if (state == AppLifecycleState.inactive ||
-        state == AppLifecycleState.paused ||
-        state == AppLifecycleState.detached) {
-      unawaited(context.read<AppLockCubit>().onAppBecameInactive());
+      _syncDesktopWidget();
+      if (context.read<SessionCubit>().state.currentBookId == null) {
+        unawaited(OhosDesktopWidget.publishNow());
+      }
     }
   }
 
@@ -83,7 +102,7 @@ class _FxAppViewState extends State<_FxAppView> with WidgetsBindingObserver {
       final ctx = appNavigatorKey.currentContext;
       if (ctx != null) {
         ctx.read<SessionCubit>().reset();
-        ctx.read<AppLockCubit>().onSignedOut();
+        ctx.read<AppLockCubit>().exitProtectedArea();
       }
       appNavigatorKey.currentState?.pushNamedAndRemoveUntil(
         Routes.auth,
@@ -91,7 +110,13 @@ class _FxAppViewState extends State<_FxAppView> with WidgetsBindingObserver {
       );
     };
 
-    return BlocBuilder<PreferencesCubit, PreferencesState>(
+    return BlocListener<PreferencesCubit, PreferencesState>(
+      listenWhen: (previous, current) =>
+          previous.isLoading && !current.isLoading,
+      listener: (context, _) {
+        context.read<AppLockCubit>().onPreferencesLoaded();
+      },
+      child: BlocBuilder<PreferencesCubit, PreferencesState>(
       builder: (context, prefs) {
         final financeColors = FxFinanceColors.fromPreferences(
           prefs.financeColors,
@@ -125,6 +150,7 @@ class _FxAppViewState extends State<_FxAppView> with WidgetsBindingObserver {
           onGenerateRoute: AppRouter.onGenerateRoute,
         );
       },
+    ),
     );
   }
 }

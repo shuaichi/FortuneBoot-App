@@ -110,9 +110,15 @@ class GoodsFormSheetState extends State<GoodsFormSheet> {
       setState(() {
         _categories = results[0];
         _tags = results[1];
+        // 新增且未选分类时，默认选中第一个，避免漏传 category_id。
+        if (!widget.isEdit &&
+            _categoryId == null &&
+            _categories.isNotEmpty) {
+          _categoryId = _categories.first.id;
+        }
       });
     } on Object {
-      // 选项拉取失败不阻塞表单；用户仍可不选分类/标签提交。
+      // 选项拉取失败不阻塞表单；提交时仍会校验分类必选。
     }
   }
 
@@ -145,7 +151,8 @@ class GoodsFormSheetState extends State<GoodsFormSheet> {
     final status = _statusForSubmit;
     if (status != null) body['status'] = status;
     if (widget.isEdit) body['goodsKeeperId'] = widget.goods!.goodsKeeperId;
-    if (_categoryId != null) body['categoryId'] = _categoryId;
+    // 后端 fortune_goods_keeper.category_id 非空且无默认值，必须提交。
+    body['categoryId'] = _categoryId;
     if (_tagId != null) body['tagId'] = _tagId;
     if (_warrantyDate != null) {
       body['warrantyDate'] = _day.format(_warrantyDate!);
@@ -189,6 +196,10 @@ class GoodsFormSheetState extends State<GoodsFormSheet> {
     }
     if (_statusForSubmit == null) {
       setState(() => _error = S.of(context).goodsErrStatusRequired);
+      return;
+    }
+    if (_categoryId == null) {
+      setState(() => _error = S.of(context).goodsErrCategoryRequired);
       return;
     }
     setState(() {
@@ -315,6 +326,8 @@ class GoodsFormSheetState extends State<GoodsFormSheet> {
                   _categoryId,
                   (id) => setState(() => _categoryId = id),
                   empty: S.of(context).goodsEmptyCategory,
+                  allowNone: false,
+                  emptyHint: S.of(context).goodsNoCategoryOptions,
                 ),
                 const SizedBox(height: FxSpacing.md),
                 _label(S.of(context).goodsLabelTagOptional),
@@ -525,10 +538,12 @@ class GoodsFormSheetState extends State<GoodsFormSheet> {
     int? selected,
     ValueChanged<int?> onChanged, {
     required String empty,
+    bool allowNone = true,
+    String? emptyHint,
   }) {
     if (options.isEmpty) {
       return Text(
-        S.of(context).goodsNoOptions(empty),
+        emptyHint ?? S.of(context).goodsNoOptions(empty),
         style: FxTypography.caption.copyWith(
           color: FxPalette.of(context).textTertiary,
         ),
@@ -538,7 +553,12 @@ class GoodsFormSheetState extends State<GoodsFormSheet> {
       spacing: FxSpacing.sm,
       runSpacing: FxSpacing.sm,
       children: [
-        _chip(S.of(context).goodsNone, selected == null, () => onChanged(null)),
+        if (allowNone)
+          _chip(
+            S.of(context).goodsNone,
+            selected == null,
+            () => onChanged(null),
+          ),
         for (final o in options)
           _chip(o.name, selected == o.id, () => onChanged(o.id)),
       ],

@@ -121,13 +121,14 @@ class TagFormSheetState extends State<TagFormSheet> {
     final body = <String, dynamic>{
       'bookId': widget.bookId,
       'tagName': _nameCtrl.text.trim(),
+      // 后端树根约定 parentId=-1；省略会在服务端 NPE（系统内部错误：null）。
+      'parentId': _parentId ?? -1,
       'canExpense': _canExpense,
       'canIncome': _canIncome,
       'canTransfer': _canTransfer,
       'enable': _enable,
     };
     if (widget.isEdit) body['tagId'] = widget.tag!.tagId;
-    if (_parentId != null) body['parentId'] = _parentId;
     final sort = int.tryParse(_sortCtrl.text.trim());
     if (sort != null) body['sort'] = sort;
     final remark = _remarkCtrl.text.trim();

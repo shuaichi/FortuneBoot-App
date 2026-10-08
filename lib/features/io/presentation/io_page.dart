@@ -1,9 +1,10 @@
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:file_picker/file_picker.dart';
+import 'package:file_selector/file_selector.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fortuneboot/core/feedback/fx_feedback.dart';
 import 'package:fortuneboot/core/network/fx_api.dart';
@@ -23,9 +24,10 @@ import 'package:fortuneboot/generated/l10n.dart';
 import 'package:fortuneboot/util/web_download_stub.dart'
     if (dart.library.html) 'package:fortuneboot/util/web_download.dart'
     as webdl;
+import 'package:fortuneboot_ohos_security/fortuneboot_ohos_security.dart';
 import 'package:path_provider/path_provider.dart';
 
-/// 导入导出页（Routes.io）：导出账单 Excel / 下载模板 / 导入 Excel。
+/// 导入导出页（Routes.io）：当前仅展示导出账单 Excel；导入/模板逻辑保留备用。
 class IoPage extends StatefulWidget {
   const IoPage({super.key});
 
@@ -35,6 +37,7 @@ class IoPage extends StatefulWidget {
 
 class _IoPageState extends State<IoPage> {
   final IoService _service = IoService();
+  final FortunebootOhosSecurity _ohosSecurity = FortunebootOhosSecurity();
 
   bool _exporting = false;
   bool _downloadingTemplate = false;
@@ -50,7 +53,9 @@ class _IoPageState extends State<IoPage> {
 
   bool _isCurrentBook(int bookId) => _bookId == bookId;
 
-  /// 保存字节流：Web 触发下载；移动端存临时目录并返回路径。
+  bool get _isOhos => !kIsWeb && Platform.operatingSystem == 'ohos';
+
+  /// 保存字节流：Web 触发下载；鸿蒙走系统文档保存；其它端写临时目录。
   Future<String?> _saveBytes(BytesResult res) async {
     if (res.bytes.isEmpty) return null;
     final s = S.of(context);
@@ -62,11 +67,20 @@ class _IoPageState extends State<IoPage> {
       );
       return ok ? s.ioDownloadStarted(res.filename) : null;
     }
+    if (_isOhos) {
+      final status = await _ohosSecurity.saveDocument(
+        bytes: Uint8List.fromList(res.bytes),
+        fileName: res.filename,
+      );
+      if (status == 'cancelled') return s.commonCancel;
+      if (status == 'saved') return s.ioSavedTo(res.filename);
+      return null;
+    }
     final dir = await getTemporaryDirectory();
     final path = '${dir.path}/${res.filename}';
     final file = File(path);
     await file.writeAsBytes(res.bytes, flush: true);
-    return s.ioSavedTo(res.filename);
+    return s.ioSavedTo(path);
   }
 
   Future<void> _export() async {
@@ -122,18 +136,27 @@ class _IoPageState extends State<IoPage> {
       return;
     }
     final readFailedMsg = S.of(context).ioReadFileFailed;
-    final picked = await FilePicker.platform.pickFiles(
-      type: FileType.custom,
-      allowedExtensions: const ['xlsx', 'xls'],
-      withData: true,
-    );
+    final XFile? picked;
+    try {
+      // 鸿蒙无 file_picker 实现；统一走已适配的 file_selector。
+      picked = await openFile(
+        acceptedTypeGroups: const [
+          XTypeGroup(label: 'Excel', extensions: ['xlsx', 'xls']),
+        ],
+      );
+    } on MissingPluginException {
+      if (mounted) _showToast(S.of(context).profileSaveFailedRetry);
+      return;
+    } on PlatformException {
+      if (mounted) _showToast(S.of(context).profileSaveFailedRetry);
+      return;
+    }
     if (!mounted || !_isCurrentBook(bookId)) return;
-    if (picked == null || picked.files.isEmpty) {
+    if (picked == null) {
       _showToast(S.of(context).commonCancel);
       return;
     }
-    final file = picked.files.first;
-    final extension = file.name.split('.').last.toLowerCase();
+    final extension = picked.name.split('.').last.toLowerCase();
     if (extension != 'xlsx' && extension != 'xls') {
       _showToast(readFailedMsg);
       return;
@@ -141,18 +164,16 @@ class _IoPageState extends State<IoPage> {
 
     setState(() => _importing = true);
     try {
-      final bytes =
-          file.bytes ??
-          (file.path != null ? await File(file.path!).readAsBytes() : null);
+      final bytes = await picked.readAsBytes();
       if (!mounted || !_isCurrentBook(bookId)) return;
-      if (bytes == null) {
+      if (bytes.isEmpty) {
         _showToast(readFailedMsg);
         return;
       }
       final outcome = await _service.importBills(
         bookId: bookId,
         fileBytes: bytes,
-        filename: file.name,
+        filename: picked.name,
       );
       if (!mounted || !_isCurrentBook(bookId)) return;
       final imported = outcome.result?.successCount ?? 0;
@@ -230,7 +251,6 @@ class _IoPageState extends State<IoPage> {
   }
 
   Widget _buildBody() {
-    final palette = FxPalette.of(context);
     final finance = FxFinanceColors.of(context);
     return ListView(
       padding: const EdgeInsets.all(FxSpacing.lg),
@@ -243,26 +263,6 @@ class _IoPageState extends State<IoPage> {
           buttonLabel: S.of(context).ioExport,
           loading: _exporting,
           onTap: _busy ? null : _export,
-        ),
-        const SizedBox(height: FxSpacing.md),
-        _actionCard(
-          icon: Icons.description_outlined,
-          tint: palette.info,
-          title: S.of(context).ioDownloadTemplateTitle,
-          subtitle: S.of(context).ioDownloadTemplateSubtitle,
-          buttonLabel: S.of(context).ioDownloadTemplate,
-          loading: _downloadingTemplate,
-          onTap: _busy ? null : _downloadTemplate,
-        ),
-        const SizedBox(height: FxSpacing.md),
-        _actionCard(
-          icon: Icons.file_upload_outlined,
-          tint: palette.primary,
-          title: S.of(context).ioImportBillsTitle,
-          subtitle: S.of(context).ioImportBillsSubtitle,
-          buttonLabel: S.of(context).ioSelectFileImport,
-          loading: _importing,
-          onTap: _busy ? null : _import,
         ),
       ],
     );

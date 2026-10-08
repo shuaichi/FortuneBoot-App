@@ -23,6 +23,7 @@ enum FinanceColorPreset {
 ///
 /// 默认值与 FxColors 保持一致：支出绿、收入红（国内记账习惯）、转账紫、调整橙。
 /// 垫付 / 报销默认复用支出色，允许用户单独调整。
+/// 节假日默认紫；「休」绿、「班」琥珀。
 class FinanceColorPreferences extends Equatable {
   final int income;
   final int expense;
@@ -30,6 +31,9 @@ class FinanceColorPreferences extends Equatable {
   final int adjust;
   final int advance;
   final int reimburse;
+  final int holiday;
+  final int rest;
+  final int work;
   final String preset;
 
   // 与 FxColors 的常量值保持一致（编译期常量，供默认参数使用）。
@@ -37,6 +41,9 @@ class FinanceColorPreferences extends Equatable {
   static const int _defaultExpense = 0xFF16A34A;
   static const int _defaultTransfer = 0xFF7C3AED;
   static const int _defaultAdjust = 0xFFF59E0B;
+  static const int _defaultHoliday = 0xFF7C3AED; // 紫色
+  static const int _defaultRest = 0xFF16A34A; // 休
+  static const int _defaultWork = 0xFFF59E0B; // 班
 
   const FinanceColorPreferences({
     this.income = _defaultIncome,
@@ -45,6 +52,9 @@ class FinanceColorPreferences extends Equatable {
     this.adjust = _defaultAdjust,
     this.advance = _defaultExpense,
     this.reimburse = _defaultExpense,
+    this.holiday = _defaultHoliday,
+    this.rest = _defaultRest,
+    this.work = _defaultWork,
     this.preset = 'default',
   });
 
@@ -61,6 +71,8 @@ class FinanceColorPreferences extends Equatable {
         adjust: 0xFF64748B,
         advance: 0xFF3B82F6,
         reimburse: 0xFF3B82F6,
+        rest: 0xFF3B82F6,
+        work: 0xFFF59E0B,
         preset: 'deuteranopia',
       ),
       FinanceColorPreset.protanopia => const FinanceColorPreferences(
@@ -70,6 +82,8 @@ class FinanceColorPreferences extends Equatable {
         adjust: 0xFF64748B,
         advance: 0xFF1E40AF,
         reimburse: 0xFF1E40AF,
+        rest: 0xFF1E40AF,
+        work: 0xFFF59E0B,
         preset: 'protanopia',
       ),
       FinanceColorPreset.tritanopia => const FinanceColorPreferences(
@@ -79,6 +93,7 @@ class FinanceColorPreferences extends Equatable {
         adjust: 0xFFF59E0B,
         advance: 0xFFDB2777,
         reimburse: 0xFFDB2777,
+        rest: 0xFFDB2777,
         preset: 'tritanopia',
       ),
     };
@@ -91,6 +106,9 @@ class FinanceColorPreferences extends Equatable {
     required int adjust,
     required int advance,
     required int reimburse,
+    required int holiday,
+    required int rest,
+    required int work,
   }) {
     for (final preset in FinanceColorPreset.values) {
       final colors = FinanceColorPreferences.fromPreset(preset.storageValue);
@@ -99,7 +117,10 @@ class FinanceColorPreferences extends Equatable {
           colors.transfer == transfer &&
           colors.adjust == adjust &&
           colors.advance == advance &&
-          colors.reimburse == reimburse) {
+          colors.reimburse == reimburse &&
+          colors.holiday == holiday &&
+          colors.rest == rest &&
+          colors.work == work) {
         return preset.storageValue;
       }
     }
@@ -112,6 +133,9 @@ class FinanceColorPreferences extends Equatable {
   Color get adjustColor => Color(adjust);
   Color get advanceColor => Color(advance);
   Color get reimburseColor => Color(reimburse);
+  Color get holidayColor => Color(holiday);
+  Color get restColor => Color(rest);
+  Color get workColor => Color(work);
 
   FinanceColorPreferences copyWith({
     int? income,
@@ -120,6 +144,9 @@ class FinanceColorPreferences extends Equatable {
     int? adjust,
     int? advance,
     int? reimburse,
+    int? holiday,
+    int? rest,
+    int? work,
     String? preset,
   }) {
     return FinanceColorPreferences(
@@ -129,6 +156,9 @@ class FinanceColorPreferences extends Equatable {
       adjust: adjust ?? this.adjust,
       advance: advance ?? this.advance,
       reimburse: reimburse ?? this.reimburse,
+      holiday: holiday ?? this.holiday,
+      rest: rest ?? this.rest,
+      work: work ?? this.work,
       preset: preset ?? this.preset,
     );
   }
@@ -141,6 +171,9 @@ class FinanceColorPreferences extends Equatable {
     adjust,
     advance,
     reimburse,
+    holiday,
+    rest,
+    work,
     preset,
   ];
 }

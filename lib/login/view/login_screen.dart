@@ -6,8 +6,8 @@ import 'package:flutter/scheduler.dart' show timeDilation;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_login/flutter_login.dart';
 import 'package:fortuneboot/core/app_constants.dart';
-import 'package:fortuneboot/core/app_lock/app_lock_cubit.dart';
 import 'package:fortuneboot/core/auth/auth_version_checker.dart';
+import 'package:fortuneboot/core/session/session_cubit.dart';
 import 'package:fortuneboot/login/auth/password_policy.dart';
 import 'package:fortuneboot/login/auth_version_source.dart';
 import 'package:fortuneboot/login/model/login_model.dart';
@@ -253,7 +253,22 @@ class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final additionalSignupFields = fetchUserForms(context);
-    return FlutterLogin(
+    final theme = Theme.of(context);
+    // Material 3 输入文字用 bodyLarge。登录框是白底，深色主题下 bodyLarge 为浅色会看不见。
+    return Theme(
+      data: theme.copyWith(
+        iconTheme: theme.iconTheme.copyWith(color: AppTheme.textPrimaryColor),
+        textTheme: theme.textTheme.copyWith(
+          bodyLarge: (theme.textTheme.bodyLarge ?? const TextStyle()).copyWith(
+            color: AppTheme.textPrimaryColor,
+          ),
+        ),
+        inputDecorationTheme: theme.inputDecorationTheme.copyWith(
+          prefixIconColor: AppTheme.textPrimaryColor,
+          suffixIconColor: AppTheme.textPrimaryColor,
+        ),
+      ),
+      child: FlutterLogin(
       title: S.of(context).main_logo,
       keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
       logo: const AssetImage('assets/images/login_logo.webp'),
@@ -346,8 +361,8 @@ class LoginScreen extends StatelessWidget {
           );
           return;
         }
-        await context.read<AppLockCubit>().onAuthenticated();
-        if (!context.mounted) return;
+        // 换服务器/重新登录后必须清空会话，否则 MainShell 可能跳过 load。
+        context.read<SessionCubit>().reset();
         Navigator.of(
           context,
         ).pushNamedAndRemoveUntil(Routes.main, (route) => false);
@@ -357,6 +372,7 @@ class LoginScreen extends StatelessWidget {
         return _recoverPassword(name);
       },
       headerWidget: const IntroWidget(),
+    ),
     );
   }
 
@@ -365,7 +381,7 @@ class LoginScreen extends StatelessWidget {
       UserFormField(
         keyName: 'nickname',
         displayName: S.of(context).login_nickname,
-        icon: const Icon(FontAwesomeIcons.userLarge),
+        icon: Icon(FontAwesomeIcons.userLarge.data),
         fieldValidator: (value) {
           if (value!.isEmpty) {
             return S.of(context).user_auth_vaild;
@@ -376,7 +392,7 @@ class LoginScreen extends StatelessWidget {
       UserFormField(
         keyName: 'sex',
         displayName: S.of(context).sex,
-        icon: const Icon(FontAwesomeIcons.venusMars),
+        icon: Icon(FontAwesomeIcons.venusMars.data),
         tooltip: const TextSpan(text: '男/女'),
         userType: LoginUserType.text,
       ),

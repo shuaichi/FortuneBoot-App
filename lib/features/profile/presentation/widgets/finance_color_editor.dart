@@ -99,6 +99,21 @@ class _FinanceColorEditorState extends State<FinanceColorEditor> {
             _draft.reimburse,
             (c) => _update(_draft.copyWith(reimburse: c, preset: 'custom')),
           ),
+          _row(
+            S.of(context).profileColorHoliday,
+            _draft.holiday,
+            (c) => _update(_draft.copyWith(holiday: c, preset: 'custom')),
+          ),
+          _row(
+            S.of(context).profileColorRest,
+            _draft.rest,
+            (c) => _update(_draft.copyWith(rest: c, preset: 'custom')),
+          ),
+          _row(
+            S.of(context).profileColorWork,
+            _draft.work,
+            (c) => _update(_draft.copyWith(work: c, preset: 'custom')),
+          ),
           const SizedBox(height: FxSpacing.lg),
           Row(
             children: [

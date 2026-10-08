@@ -64,13 +64,23 @@ class CapabilityResolver {
   static ManageRole _roleFromDescription(String? description) {
     final text = description?.trim();
     if (text == null || text.isEmpty) return ManageRole.visitor;
-    if (text.contains('超级') || text.contains('管理员') || text.contains('所有者')) {
+    if (text.contains('超级') ||
+        text.contains('管理员') ||
+        text.contains('所有者') ||
+        text.toLowerCase().contains('owner')) {
       return ManageRole.owner;
     }
-    if (text.contains('协作') || text.contains('成员') || text.contains('编辑')) {
+    if (text.contains('协作') ||
+        text.contains('成员') ||
+        text.contains('编辑') ||
+        text.toLowerCase().contains('actor')) {
       return ManageRole.actor;
     }
-    return ManageRole.visitor;
+    if (text.contains('访客') || text.toLowerCase().contains('visitor')) {
+      return ManageRole.visitor;
+    }
+    // 未知描述不默认访客，避免误拦写操作；按协作者放行。
+    return ManageRole.actor;
   }
 
   static ManageRole _unknownRole(int? roleType) {

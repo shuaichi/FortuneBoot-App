@@ -1,7 +1,11 @@
 allprojects {
     repositories {
-        google()
-        mavenCentral()
+        mavenLocal()
+        // 仅用国内镜像，避免 google()/mavenCentral() 连接超时
+        maven { url = uri("https://maven.aliyun.com/repository/google") }
+        maven { url = uri("https://maven.aliyun.com/repository/central") }
+        maven { url = uri("https://maven.aliyun.com/repository/public") }
+        maven { url = uri("https://mirrors.cloud.tencent.com/nexus/repository/maven-public/") }
     }
 }
 

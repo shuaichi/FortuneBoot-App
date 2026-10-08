@@ -1,8 +1,13 @@
+import 'dart:io' show Platform;
+import 'dart:typed_data';
+
 import 'package:flutter/foundation.dart' show kIsWeb;
-import 'package:flutter/services.dart' show PlatformException, rootBundle;
+import 'package:flutter/services.dart'
+    show MissingPluginException, PlatformException, rootBundle;
 import 'package:fortuneboot/util/web_download_stub.dart'
     if (dart.library.html) 'package:fortuneboot/util/web_download.dart'
     as webdl;
+import 'package:fortuneboot_ohos_security/fortuneboot_ohos_security.dart';
 import 'package:image_gallery_saver_plus/image_gallery_saver_plus.dart';
 
 enum ImageSaveResult { saved, downloadStarted, failed, unsupported }
@@ -12,16 +17,46 @@ class ImageSaveService {
   /// 保存内置资源图片到相册（移动端）或触发下载（Web）。
   static Future<ImageSaveResult> saveAssetImage(
     String assetPath,
-    String name,
-  ) async {
+    String name, {
+    FortunebootOhosSecurity? ohosSecurity,
+    String? operatingSystem,
+  }) async {
     try {
       final data = await rootBundle.load(assetPath);
-      final bytes = data.buffer.asUint8List();
+      return saveBytes(
+        data.buffer.asUint8List(),
+        name,
+        mimeHint: _ext(assetPath),
+        ohosSecurity: ohosSecurity,
+        operatingSystem: operatingSystem,
+      );
+    } on Exception catch (_) {
+      return ImageSaveResult.failed;
+    }
+  }
 
+  /// 保存内存中的图片到相册（移动端）或触发下载（Web）。
+  static Future<ImageSaveResult> saveBytes(
+    Uint8List bytes,
+    String name, {
+    String? mimeHint,
+    FortunebootOhosSecurity? ohosSecurity,
+    String? operatingSystem,
+  }) async {
+    try {
       if (kIsWeb) {
-        final mimeType = _toMimeType(_ext(assetPath));
+        final mimeType = _toMimeType(mimeHint ?? _ext(name));
         final ok = await webdl.downloadBytes(name, bytes, mimeType);
         return ok ? ImageSaveResult.downloadStarted : ImageSaveResult.failed;
+      }
+
+      final os = operatingSystem ?? Platform.operatingSystem;
+      if (os == 'ohos') {
+        return _saveOnOhos(
+          bytes: bytes,
+          fileName: name,
+          ohosSecurity: ohosSecurity ?? FortunebootOhosSecurity(),
+        );
       }
 
       final result = await ImageGallerySaverPlus.saveImage(
@@ -33,9 +68,29 @@ class ImageSaveService {
       return _isSaveSuccess(result)
           ? ImageSaveResult.saved
           : ImageSaveResult.failed;
+    } on MissingPluginException catch (_) {
+      return ImageSaveResult.unsupported;
     } on PlatformException catch (_) {
       return ImageSaveResult.unsupported;
     } on Exception catch (_) {
+      return ImageSaveResult.failed;
+    }
+  }
+
+  static Future<ImageSaveResult> _saveOnOhos({
+    required Uint8List bytes,
+    required String fileName,
+    required FortunebootOhosSecurity ohosSecurity,
+  }) async {
+    try {
+      final ok = await ohosSecurity.saveImageToGallery(
+        bytes: bytes,
+        fileName: fileName,
+      );
+      return ok ? ImageSaveResult.saved : ImageSaveResult.failed;
+    } on MissingPluginException catch (_) {
+      return ImageSaveResult.unsupported;
+    } on PlatformException catch (_) {
       return ImageSaveResult.failed;
     }
   }

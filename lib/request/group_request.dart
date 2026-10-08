@@ -15,9 +15,10 @@ part 'group_request.g.dart'; // 代码生成文件
 abstract class GroupService {
   factory GroupService({String? baseUrl}) {
     Dio dio = DioClient().dio;
+    // 勿写入绝对 baseUrl：否则会在构造时冻住地址，换服务器后仍打旧主机。
     return _GroupService(
       dio,
-      baseUrl: baseUrl ?? dio.options.baseUrl,
+      baseUrl: baseUrl,
       errorLogger: AccountErrorReport(),
     );
   }

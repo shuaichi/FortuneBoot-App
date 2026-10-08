@@ -59,17 +59,19 @@ class BookFormSheetState extends State<BookFormSheet> {
 
   Future<void> _loadOptions() async {
     try {
-      final results = await Future.wait([
-        widget.service.getCurrencyTemplate(),
-        if (!widget.isEdit) widget.service.getBookTemplate(),
-      ]);
+      final currencies = await widget.service.getCurrencyTemplate();
+      final resolved = await widget.service.resolveCurrencyCode(_currency);
+      List<OptionItem> templates = const [];
+      if (!widget.isEdit) {
+        templates = await widget.service.getBookTemplate();
+      }
       if (mounted) {
         setState(() {
-          _currencies = results[0];
-          if (!widget.isEdit && results.length > 1) _templates = results[1];
-          _currency ??= _currencies.isNotEmpty
-              ? _currencies.first.value
-              : 'CNY';
+          _currencies = currencies;
+          if (resolved != null && resolved.isNotEmpty) _currency = resolved;
+          if (!widget.isEdit) _templates = templates;
+          _currency ??=
+              _currencies.isNotEmpty ? _currencies.first.value : 'CNY';
         });
       }
     } on Object {
@@ -110,22 +112,37 @@ class BookFormSheetState extends State<BookFormSheet> {
       _submitting = true;
       _error = null;
     });
-    final body = <String, dynamic>{
-      'groupId': widget.groupId,
-      'bookName': name,
-      'defaultCurrency': _currency,
-      'enable': _enable,
-    };
-    final sort = int.tryParse(_sortCtrl.text.trim());
-    if (sort != null) body['sort'] = sort;
-    final remark = _remarkCtrl.text.trim();
-    if (remark.isNotEmpty) body['remark'] = remark;
-    if (!widget.isEdit && _bookTemplate != null && _bookTemplate!.isNotEmpty) {
-      body['bookTemplate'] = _bookTemplate;
-    }
     try {
+      final currency = await widget.service.requireCurrencyCode(_currency);
+      if (mounted) setState(() => _currency = currency);
+      final body = <String, dynamic>{
+        'groupId': widget.groupId,
+        'bookName': name,
+        'defaultCurrency': currency,
+        'enable': _enable,
+      };
+      final sort = int.tryParse(_sortCtrl.text.trim());
+      if (sort != null) body['sort'] = sort;
+      final remark = _remarkCtrl.text.trim();
+      if (remark.isNotEmpty) body['remark'] = remark;
+      if (!widget.isEdit && _bookTemplate != null && _bookTemplate!.isNotEmpty) {
+        body['bookTemplate'] = _bookTemplate;
+      }
       if (widget.isEdit) {
-        body['bookId'] = widget.book!.bookId;
+        final b = widget.book!;
+        body['bookId'] = b.bookId;
+        if (b.defaultExpenseAccountId != null) {
+          body['defaultExpenseAccountId'] = b.defaultExpenseAccountId;
+        }
+        if (b.defaultIncomeAccountId != null) {
+          body['defaultIncomeAccountId'] = b.defaultIncomeAccountId;
+        }
+        if (b.defaultTransferOutAccountId != null) {
+          body['defaultTransferOutAccountId'] = b.defaultTransferOutAccountId;
+        }
+        if (b.defaultTransferInAccountId != null) {
+          body['defaultTransferInAccountId'] = b.defaultTransferInAccountId;
+        }
         await widget.service.modifyBook(body);
       } else {
         await widget.service.addBook(body);

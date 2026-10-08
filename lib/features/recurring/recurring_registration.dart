@@ -12,10 +12,14 @@ void registerRecurringFeature() {
     return Builder(
       builder: (BuildContext context) {
         final session = context.read<SessionCubit>().state;
+        final bookId = session.currentBookId;
+        final bookIds = [
+          for (final b in session.books)
+            if (b.bookId != null) b.bookId!,
+        ];
         return BlocProvider<RecurringBloc>(
-          create: (_) =>
-              RecurringBloc(bookId: session.currentBookId)
-                ..add(const RecurringLoaded()),
+          create: (_) => RecurringBloc(bookId: bookId, bookIds: bookIds)
+            ..add(const RecurringLoaded()),
           child: const RecurringPage(),
         );
       },

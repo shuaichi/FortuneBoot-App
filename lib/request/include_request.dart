@@ -13,7 +13,8 @@ abstract class IncludeService {
     Dio dio = DioClient().dio;
     return _IncludeService(
       dio,
-      baseUrl: baseUrl ?? dio.options.baseUrl,
+      // 勿写入绝对 baseUrl：否则会在构造时冻住地址，换服务器后仍打旧主机。
+      baseUrl: baseUrl,
       errorLogger: AccountErrorReport(),
     );
   }

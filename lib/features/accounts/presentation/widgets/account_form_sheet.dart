@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fortuneboot/core/network/fx_api.dart';
 import 'package:fortuneboot/features/accounts/data/account_models.dart';
 import 'package:fortuneboot/features/accounts/data/account_service.dart';
+import 'package:fortuneboot/features/books/data/books_service.dart';
 import 'package:fortuneboot/fx/components/fx_chip.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
@@ -86,6 +87,20 @@ class AccountFormSheetState extends State<AccountFormSheet> {
     _canTransferIn = a?.canTransferIn ?? true;
     _include = a?.include ?? true;
     _enable = a?.enable ?? true;
+    _resolveCurrencyIfNeeded();
+  }
+
+  /// 默认币种曾误存 currencyId（如 "33"），打开表单时解析为币种代码。
+  Future<void> _resolveCurrencyIfNeeded() async {
+    final raw = _currencyCtrl.text.trim();
+    if (!RegExp(r'^\d+$').hasMatch(raw)) return;
+    try {
+      final code = await BooksService().resolveCurrencyCode(raw);
+      if (!mounted || code == null || code.isEmpty) return;
+      _currencyCtrl.text = code;
+    } on Object {
+      // ignore: 解析失败时保留原值，提交时由后端报错
+    }
   }
 
   @override
@@ -172,7 +187,12 @@ class AccountFormSheetState extends State<AccountFormSheet> {
       _error = null;
     });
     try {
+      final currency = await BooksService().requireCurrencyCode(
+        _currencyCtrl.text.trim(),
+      );
+      if (mounted) _currencyCtrl.text = currency;
       final body = _buildBody();
+      body['currencyCode'] = currency;
       if (widget.isEdit) {
         await widget.service.modifyAccount(body);
       } else {
@@ -227,7 +247,11 @@ class AccountFormSheetState extends State<AccountFormSheet> {
                         decimal: true,
                         signed: true,
                       ),
-                      decoration: _dec('0.00'),
+                      decoration: _dec(
+                        (_isCredit || _isLoan)
+                            ? S.of(context).accountsFieldBalanceLiabilityHint
+                            : '0.00',
+                      ),
                     ),
                   ],
                 ),

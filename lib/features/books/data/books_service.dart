@@ -82,9 +82,60 @@ class BooksService {
     return FxApi.asId(data);
   }
 
+  /// 货币模板。后端历史上 `value`=currencyId、`label`=币种代码；
+  /// 与 Web 一致，业务字段存代码，故用 label（或已改为代码的 value）作为选项值。
   Future<List<OptionItem>> getCurrencyTemplate() async {
     final data = await _api.get('/fortune/group/getCurrencyTemplate');
-    return _rows(data).map(OptionItem.fromJson).toList();
+    return _currencyRows(data).map((row) {
+      final code = row.code;
+      return OptionItem(value: code, label: code);
+    }).toList();
+  }
+
+  /// 若误把 currencyId 存成了默认币种（如 `"33"`），按模板解析为币种代码。
+  Future<String?> resolveCurrencyCode(String? raw) async {
+    if (raw == null || raw.isEmpty) return raw;
+    final trimmed = raw.trim();
+    if (!_looksLikeCurrencyId(trimmed)) return trimmed;
+    final rows = _currencyRows(
+      await _api.get('/fortune/group/getCurrencyTemplate'),
+    );
+    for (final row in rows) {
+      if (row.id == trimmed) return row.code;
+    }
+    // 模板缺失时的兜底：已知 33=CNY（currency-template.json）
+    if (trimmed == '33') return 'CNY';
+    return trimmed;
+  }
+
+  /// 提交前强制规范化；仍是数字 ID 则抛错，避免再次写入脏数据。
+  Future<String> requireCurrencyCode(String? raw) async {
+    final resolved = (await resolveCurrencyCode(raw))?.trim() ?? '';
+    if (resolved.isEmpty) {
+      throw FxApiException(-1, '请选择默认币种');
+    }
+    if (_looksLikeCurrencyId(resolved)) {
+      throw FxApiException(-1, '币种数据异常（$resolved），请重新点选币种后再保存');
+    }
+    return resolved;
+  }
+
+  bool _looksLikeCurrencyId(String raw) => RegExp(r'^\d+$').hasMatch(raw);
+
+  List<({String id, String code})> _currencyRows(dynamic data) {
+    final list = <({String id, String code})>[];
+    for (final json in _rows(data)) {
+      final id = '${json['value'] ?? ''}'.split('.').first;
+      final label = (json['label'] ?? '').toString().trim();
+      final value = (json['value'] ?? '').toString().trim();
+      // 兼容后端已改为 value=币种代码 的情况
+      final code = label.isNotEmpty
+          ? label
+          : (_looksLikeCurrencyId(value) ? '' : value);
+      if (code.isEmpty) continue;
+      list.add((id: id, code: code));
+    }
+    return list;
   }
 
   Future<List<OptionItem>> getBookTemplate() async {

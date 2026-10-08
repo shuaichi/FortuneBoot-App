@@ -6,6 +6,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fortuneboot/core/errors/fx_failure.dart';
 import 'package:fortuneboot/core/feedback/fx_feedback.dart';
 import 'package:fortuneboot/core/session/bill_mutations.dart';
+import 'package:fortuneboot/core/session/session_cubit.dart';
+import 'package:fortuneboot/core/session/session_permission.dart';
 import 'package:fortuneboot/features/bill_editor/data/editor_options_service.dart';
 import 'package:fortuneboot/features/bill_editor/presentation/bill_editor_bloc.dart';
 import 'package:fortuneboot/features/bill_editor/presentation/widgets/amount_field.dart';
@@ -167,9 +169,12 @@ class _BillEditorPageState extends State<BillEditorPage> {
           BillMutations.bump();
           Navigator.of(context).pop(true);
         } else if (state.submitStatus == SubmitStatus.failure) {
+          final group = context.read<SessionCubit>().state.currentGroup;
           final message = state.validationFailure != null
               ? _validationMessage(context, state.validationFailure!)
-              : _submitFailureMessage(context, state.submitFailure);
+              : (!SessionPermission.canWrite(group)
+                    ? S.of(context).permissionVisitorNoAccess
+                    : _submitFailureMessage(context, state.submitFailure));
           FxFeedback.error(context, message: message);
         }
       },
@@ -415,13 +420,11 @@ class _AccountRow extends StatelessWidget {
       placeholder: S.of(context).billEditorSelectAccountHint,
       onTap: () async {
         _dismissKeyboard();
-        final picked = await showOptionPicker<AccountOption>(
+        final picked = await showAccountOptionPicker(
           context,
           title: S.of(context).billEditorSelectAccount,
-          options: accounts,
-          labelOf: (a) => a.accountName ?? '',
+          accounts: accounts,
           selectedId: state.accountId,
-          idOf: (a) => a.accountId,
         );
         if (!context.mounted || picked == null) return;
         bloc.add(AccountChanged(picked.accountId, picked.accountName));
@@ -454,15 +457,13 @@ class _TransferAccountRow extends StatelessWidget {
           : S.of(context).billEditorSelectTransferInHint,
       onTap: () async {
         _dismissKeyboard();
-        final picked = await showOptionPicker<AccountOption>(
+        final picked = await showAccountOptionPicker(
           context,
           title: isOut
               ? S.of(context).billEditorSelectTransferOut
               : S.of(context).billEditorSelectTransferIn,
-          options: accounts,
-          labelOf: (a) => a.accountName ?? '',
+          accounts: accounts,
           selectedId: selectedId,
-          idOf: (a) => a.accountId,
         );
         if (!context.mounted || picked == null) return;
         if (isOut) {
@@ -755,13 +756,18 @@ class _PickerRow extends StatelessWidget {
         child: Row(
           children: [
             SizedBox(
-              width: 72,
+              // 「关联报销单 *」等中文必填标签在 72 宽下会右溢出约 4px
+              width: 96,
               child: Row(
                 children: [
-                  Text(
-                    label,
-                    style: FxTypography.label.copyWith(
-                      color: palette.textSecondary,
+                  Flexible(
+                    child: Text(
+                      label,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: FxTypography.label.copyWith(
+                        color: palette.textSecondary,
+                      ),
                     ),
                   ),
                   if (required)
@@ -1083,11 +1089,11 @@ class _TitleCardState extends State<_TitleCard> {
             decoration: InputDecoration(
               isDense: true,
               border: InputBorder.none,
-              hintText: widget.state.firstCategoryName.isEmpty
+              hintText: widget.state.suggestedTitle.isEmpty
                   ? S.of(context).billEditorTitleHint
                   : S
                         .of(context)
-                        .billEditorTitleDefault(widget.state.firstCategoryName),
+                        .billEditorTitleDefault(widget.state.suggestedTitle),
               hintStyle: FxTypography.body.copyWith(
                 color: palette.textTertiary,
               ),

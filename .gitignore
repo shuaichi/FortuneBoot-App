@@ -23,7 +23,6 @@ migrate_working_dir/
 
 # Flutter/Dart/Pub related
 **/doc/api/
-**/ios/Flutter/.last_build_id
 .dart_tool/
 .flutter-plugins
 .flutter-plugins-dependencies
@@ -37,21 +36,32 @@ app.*.symbols
 # Obfuscation related
 app.*.map.json
 
+# FVM Version Cache
+.fvm/
+.fvmrc
+
+**/local.properties
+lib/generated/
+
+# HarmonyOS
+ohos/.hvigor/
+ohos/oh_modules/
+**/oh_modules/
+ohos/**/build/
+ohos/**/.ohos/
+ohos/entry/libs/
+ohos/signing/
+
 # Android Studio will place build artifacts here
 /android/app/debug
 /android/app/profile
 /android/app/release
-
-# FVM Version Cache
-.fvm/
-.fvmrc
 
 # Android
 android/.gradle/
 android/.kotlin/
 android/app/.cxx/
 **/gradle-wrapper.jar
-**/local.properties
 **/captures/
 **/GeneratedPluginRegistrant.java
 *.apk
@@ -59,6 +69,7 @@ android/app/.cxx/
 *.aab
 
 # iOS
+**/ios/Flutter/.last_build_id
 ios/Pods/
 ios/.symlinks/
 ios/Flutter/ephemeral/
@@ -66,7 +77,6 @@ ios/Flutter/App.framework
 ios/Flutter/Flutter.framework
 ios/Flutter/Flutter.podspec
 ios/Flutter/Generated.xcconfig
-ios/Flutter/ephemeral/
 **/Podfile.lock
 **/.last_build_id
 
@@ -83,15 +93,6 @@ windows/flutter/ephemeral/
 
 # Web
 web/icons/
-lib/generated/
-
-# HarmonyOS
-ohos/.hvigor/
-ohos/oh_modules/
-ohos/**/build/
-ohos/**/.ohos/
-ohos/entry/libs/
-ohos/signing/
 
 # Generated files
 *.g.dart
@@ -156,8 +157,13 @@ android/keystore/
 
 # Local agent and audit artifacts
 *.md
-#!docs/ux-audit-2026-08-19.md
-#!docs/ux-fix-prompts/08-l10n-integration-quality-report.md
-#!docs/quality-gate-exceptions.md
+!docs/environment.md
 /.skillflow/
 /.xcross/
+# Local CodeGenie nested repo (broken path on this machine)
+ohos/.codegenie/
+
+
+# Bank icon export toolchain
+tool/node_modules/
+tool/package-lock.json

@@ -1,0 +1,6 @@
+{
+  "notBefore": 1789445884,
+  "notAfter": 1884140284,
+  "source": "fortunebootRelease.p7b",
+  "note": "HarmonyOS release profile validity (unix seconds). Update when renewing the signing profile."
+}

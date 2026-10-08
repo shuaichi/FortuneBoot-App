@@ -119,10 +119,12 @@ class CategoriesBloc extends Bloc<CategoriesEvent, CategoriesState> {
               : CategoriesStatus.loaded,
           tree: tree,
           expandedIds: isNewScope
-              ? tree
-                    .map((category) => category.categoryId)
-                    .whereType<int>()
-                    .toSet()
+              ? (state.tab.recycleBin
+                    ? _collectCategoryIds(tree)
+                    : tree
+                          .map((category) => category.categoryId)
+                          .whereType<int>()
+                          .toSet())
               : state.expandedIds,
           searchCollapsedIds: isNewScope ? const {} : state.searchCollapsedIds,
         ),
@@ -183,5 +185,19 @@ class CategoriesBloc extends Bloc<CategoriesEvent, CategoriesState> {
       }
       return n.copyWith(children: children);
     }).toList();
+  }
+
+  Set<int> _collectCategoryIds(List<FortuneCategoryVo> nodes) {
+    final ids = <int>{};
+    void walk(List<FortuneCategoryVo> list) {
+      for (final node in list) {
+        final id = node.categoryId;
+        if (id != null) ids.add(id);
+        if (node.children.isNotEmpty) walk(node.children);
+      }
+    }
+
+    walk(nodes);
+    return ids;
   }
 }

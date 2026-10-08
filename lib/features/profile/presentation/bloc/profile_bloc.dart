@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fortuneboot/core/app/app_release_version.dart';
 import 'package:fortuneboot/core/errors/fx_failure_mapper.dart';
 import 'package:fortuneboot/features/profile/data/profile_models.dart';
 import 'package:fortuneboot/features/profile/data/profile_service.dart';
@@ -51,12 +52,17 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   }
 
   Future<void> _loadAbout(Emitter<ProfileState> emit) async {
-    var appVersion = '';
+    // 鸿蒙无 package_info 实现时回退到发布版本常量。
+    var appVersion = AppReleaseVersion.display;
     try {
       final info = await PackageInfo.fromPlatform();
-      appVersion = info.version;
+      final name = info.version.trim();
+      final build = info.buildNumber.trim();
+      if (name.isNotEmpty) {
+        appVersion = build.isEmpty ? name : '$name（$build）';
+      }
     } on Object {
-      appVersion = '';
+      // 保留 AppReleaseVersion.display。
     }
 
     String? apiVersion;

@@ -111,17 +111,35 @@ class _TagsPageState extends State<TagsPage> {
       if (ok != true) return;
     }
     try {
-      if (toRecycle) {
-        await _service.moveToRecycleBin(bookId: bookId, tagId: node.tagId!);
-      } else {
-        await _service.putBack(bookId: bookId, tagId: node.tagId!);
-      }
+      // 后端只改当前节点。进回收站先子后父；恢复先父后子（父仍在回收站时子标签无法恢复）。
+      await _moveSubtree(node, bookId: bookId, toRecycle: toRecycle);
       if (mounted) _bloc.add(const TagsMutated());
     } on Object catch (e) {
       if (!mounted) return;
       _showToast(
         e is FxApiException ? e.message : S.of(context).profileSaveFailedRetry,
       );
+    }
+  }
+
+  /// 进回收站：先子后父。恢复：先父后子。
+  Future<void> _moveSubtree(
+    FortuneTagVo node, {
+    required int bookId,
+    required bool toRecycle,
+  }) async {
+    final tagId = node.tagId;
+    if (tagId == null) return;
+    if (toRecycle) {
+      for (final child in node.children) {
+        await _moveSubtree(child, bookId: bookId, toRecycle: true);
+      }
+      await _service.moveToRecycleBin(bookId: bookId, tagId: tagId);
+      return;
+    }
+    await _service.putBack(bookId: bookId, tagId: tagId);
+    for (final child in node.children) {
+      await _moveSubtree(child, bookId: bookId, toRecycle: false);
     }
   }
 
