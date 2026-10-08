@@ -79,6 +79,9 @@ void main() {
     );
     await tester.pumpAndSettle();
 
+    // 注销账号入口已移至“查看个人资料”页。
+    expect(find.text('注销账号'), findsNothing);
+
     await tester.tap(find.byTooltip('捐赠'));
     await tester.pumpAndSettle();
 

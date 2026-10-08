@@ -1,9 +1,14 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fortuneboot/core/app_lock/app_lock_cubit.dart';
 import 'package:fortuneboot/core/feedback/fx_feedback.dart';
+import 'package:fortuneboot/core/navigation/routes.dart';
+import 'package:fortuneboot/core/session/session_cubit.dart';
 import 'package:fortuneboot/features/profile/data/profile_models.dart';
 import 'package:fortuneboot/features/profile/data/profile_service.dart';
+import 'package:fortuneboot/features/profile/presentation/widgets/account_deletion_sheet.dart';
 import 'package:fortuneboot/features/profile/presentation/widgets/profile_avatar.dart';
 import 'package:fortuneboot/fx/components/fx_button.dart';
 import 'package:fortuneboot/fx/components/fx_card.dart';
@@ -15,6 +20,8 @@ import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
 import 'package:fortuneboot/generated/l10n.dart';
+import 'package:fortuneboot/login/model/users.dart';
+import 'package:fortuneboot/util/dio_client.dart';
 import 'package:fortuneboot/util/rsa_util.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
@@ -142,6 +149,32 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
     );
   }
 
+  // ---------------- 注销账号 ----------------
+
+  Future<void> _confirmDeleteAccount() async {
+    final sessionCubit = context.read<SessionCubit>();
+    final appLockCubit = context.read<AppLockCubit>();
+    final navigator = Navigator.of(context, rootNavigator: true);
+
+    final deleted = await FxSheet.show<bool>(
+      context,
+      title: S.of(context).profileDeleteAccount,
+      scrollable: true,
+      child: AccountDeletionSheet(service: _service),
+    );
+    if (deleted != true) return;
+
+    // 注销成功后清理本地登录态并回到服务器配置页。
+    DioClient().clearAuthHeader();
+    await UserDataSingleton().clearAuth();
+    sessionCubit.reset();
+    appLockCubit.onSignedOut();
+    await navigator.pushNamedAndRemoveUntil(
+      Routes.baseUrlConfig,
+      (route) => false,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final palette = FxPalette.of(context);
@@ -250,6 +283,15 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                 title: s.profileChangePassword,
                 value: '',
                 onTap: _openPasswordSheet,
+              ),
+              _divider(context),
+              _informationItem(
+                context,
+                icon: Icons.delete_forever_outlined,
+                color: palette.danger,
+                title: s.profileDeleteAccount,
+                value: '',
+                onTap: _confirmDeleteAccount,
               ),
             ]),
           ],

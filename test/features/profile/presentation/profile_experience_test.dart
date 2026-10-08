@@ -51,6 +51,7 @@ void main() {
     expect(find.text('2026-08-18 10:29'), findsOneWidget);
     expect(find.text('管理员'), findsOneWidget);
     expect(find.text('用户 ID'), findsNothing);
+    expect(find.text('注销账号'), findsOneWidget);
   });
 
   testWidgets('opens the edit sheet only from the identity card', (

@@ -15,7 +15,6 @@ import 'package:fortuneboot/features/profile/data/profile_service.dart';
 import 'package:fortuneboot/features/profile/presentation/app_lock_settings_page.dart';
 import 'package:fortuneboot/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:fortuneboot/features/profile/presentation/profile_edit_page.dart';
-import 'package:fortuneboot/features/profile/presentation/widgets/account_deletion_sheet.dart';
 import 'package:fortuneboot/features/profile/presentation/widgets/donate_qr_tile.dart';
 import 'package:fortuneboot/features/profile/presentation/widgets/finance_color_editor.dart';
 import 'package:fortuneboot/features/profile/presentation/widgets/profile_avatar.dart';
@@ -45,22 +44,8 @@ class ProfilePage extends StatelessWidget {
   }
 }
 
-class _ProfileView extends StatefulWidget {
+class _ProfileView extends StatelessWidget {
   const _ProfileView();
-
-  @override
-  State<_ProfileView> createState() => _ProfileViewState();
-}
-
-class _ProfileViewState extends State<_ProfileView> {
-  /// 当前展开的分组 id；同一时间只展开一组。
-  String? _expandedSection;
-
-  static const _sectionBook = 'book';
-  static const _sectionBilling = 'billing';
-  static const _sectionToolbox = 'toolbox';
-  static const _sectionPreferences = 'preferences';
-  static const _sectionAbout = 'about';
 
   void _toast(
     BuildContext context,
@@ -77,13 +62,6 @@ class _ProfileViewState extends State<_ProfileView> {
     if (changed == true && context.mounted) {
       context.read<ProfileBloc>().add(const ProfileUserRefreshed());
     }
-  }
-
-  void _toggleSection(String id) {
-    HapticFeedback.selectionClick();
-    setState(() {
-      _expandedSection = _expandedSection == id ? null : id;
-    });
   }
 
   @override
@@ -120,29 +98,19 @@ class _ProfileViewState extends State<_ProfileView> {
                       _userCard(context, state),
                       const SizedBox(height: FxSpacing.lg),
                       _bookGroupSection(context),
-                      const SizedBox(height: FxSpacing.md),
+                      const SizedBox(height: FxSpacing.lg),
                       _billingSection(context),
-                      const SizedBox(height: FxSpacing.md),
+                      const SizedBox(height: FxSpacing.lg),
                       _toolboxSection(context),
-                      const SizedBox(height: FxSpacing.md),
+                      const SizedBox(height: FxSpacing.lg),
                       _preferenceSection(context),
-                      const SizedBox(height: FxSpacing.md),
+                      const SizedBox(height: FxSpacing.lg),
                       _aboutSection(context, state.about),
                       const SizedBox(height: FxSpacing.xxl),
                       FxButton.critical(
                         label: S.of(context).profileLogout,
                         expand: true,
                         onPressed: () => _confirmLogout(context),
-                      ),
-                      const SizedBox(height: FxSpacing.sm),
-                      TextButton(
-                        onPressed: () => _confirmDeleteAccount(context),
-                        child: Text(
-                          S.of(context).profileDeleteAccount,
-                          style: FxTypography.bodyStrong.copyWith(
-                            color: FxPalette.of(context).danger,
-                          ),
-                        ),
                       ),
                       const SizedBox(height: FxSpacing.xxl),
                     ],
@@ -251,35 +219,29 @@ class _ProfileViewState extends State<_ProfileView> {
             session.currentGroup?.groupName ?? S.of(context).profileNotSelected;
         final bookName =
             session.currentBook?.bookName ?? S.of(context).profileNotSelected;
-        final s = S.of(context);
-        return _expandableGroup(
-          context,
-          id: _sectionBook,
-          title: s.profileBookGroup,
-          icon: Icons.menu_book_rounded,
-          tint: palette.primary,
-          subtitle: '$groupName · $bookName',
-          features: [
-            _ProfileFeature(
-              icon: Icons.swap_horiz_rounded,
-              tint: palette.primary,
-              label: s.profileCurrentGroupBook,
-              onTap: () => _openSwitcher(context),
-            ),
-            _ProfileFeature(
-              icon: Icons.folder_copy_rounded,
-              tint: palette.info,
-              label: s.booksManageTitle,
-              onTap: () => AppRouter.push<void>(context, Routes.groups),
-            ),
-            _ProfileFeature(
-              icon: Icons.group_rounded,
-              tint: finance.income,
-              label: s.profileMemberManageGroup,
-              onTap: () => AppRouter.push<void>(context, Routes.groupUsers),
-            ),
-          ],
-        );
+        return _sectionCard(context, S.of(context).profileBookGroup, [
+          FxListItem(
+            leading: _tileIcon(Icons.swap_horiz_rounded, palette.primary),
+            title: S.of(context).profileCurrentGroupBook,
+            subtitle: '$groupName · $bookName',
+            showChevron: true,
+            onTap: () => _openSwitcher(context),
+          ),
+          _divider(context),
+          FxListItem(
+            leading: _tileIcon(Icons.folder_copy_rounded, palette.info),
+            title: S.of(context).booksManageTitle,
+            showChevron: true,
+            onTap: () => AppRouter.push<void>(context, Routes.groups),
+          ),
+          _divider(context),
+          FxListItem(
+            leading: _tileIcon(Icons.group_rounded, finance.income),
+            title: S.of(context).profileMemberManageGroup,
+            showChevron: true,
+            onTap: () => AppRouter.push<void>(context, Routes.groupUsers),
+          ),
+        ]);
       },
     );
   }
@@ -293,46 +255,47 @@ class _ProfileViewState extends State<_ProfileView> {
   Widget _billingSection(BuildContext context) {
     final palette = FxPalette.of(context);
     final finance = FxFinanceColors.of(context);
-    final s = S.of(context);
-    return _expandableGroup(
-      context,
-      id: _sectionBilling,
-      title: s.profileBillingManage,
-      icon: Icons.receipt_long_rounded,
-      tint: finance.expense,
-      features: [
-        _ProfileFeature(
-          icon: Icons.category_rounded,
-          tint: finance.expense,
-          label: s.profileCategoryManage,
-          onTap: () => AppRouter.push<void>(context, Routes.categories),
-        ),
-        _ProfileFeature(
-          icon: Icons.tag_rounded,
-          tint: palette.info,
-          label: s.profileTagManage,
-          onTap: () => AppRouter.push<void>(context, Routes.tags),
-        ),
-        _ProfileFeature(
-          icon: Icons.storefront_rounded,
-          tint: finance.adjust,
-          label: s.profilePayeeManage,
-          onTap: () => AppRouter.push<void>(context, Routes.payees),
-        ),
-        _ProfileFeature(
-          icon: Icons.people_alt_rounded,
-          tint: finance.income,
-          label: s.profileMemberManageBill,
-          onTap: () => AppRouter.push<void>(context, Routes.members),
-        ),
-        _ProfileFeature(
-          icon: Icons.credit_card_rounded,
-          tint: palette.primary,
-          label: s.profileAccountManage,
-          onTap: () => AppRouter.push<void>(context, Routes.accounts),
-        ),
-      ],
-    );
+    return _sectionCard(context, S.of(context).profileBillingManage, [
+      _navItem(
+        context,
+        Icons.category_rounded,
+        finance.expense,
+        S.of(context).profileCategoryManage,
+        Routes.categories,
+      ),
+      _divider(context),
+      _navItem(
+        context,
+        Icons.tag_rounded,
+        palette.info,
+        S.of(context).profileTagManage,
+        Routes.tags,
+      ),
+      _divider(context),
+      _navItem(
+        context,
+        Icons.storefront_rounded,
+        finance.adjust,
+        S.of(context).profilePayeeManage,
+        Routes.payees,
+      ),
+      _divider(context),
+      _navItem(
+        context,
+        Icons.people_alt_rounded,
+        finance.income,
+        S.of(context).profileMemberManageBill,
+        Routes.members,
+      ),
+      _divider(context),
+      _navItem(
+        context,
+        Icons.credit_card_rounded,
+        palette.primary,
+        S.of(context).profileAccountManage,
+        Routes.accounts,
+      ),
+    ]);
   }
 
   // ---------------- 工具箱 ----------------
@@ -340,46 +303,47 @@ class _ProfileViewState extends State<_ProfileView> {
   Widget _toolboxSection(BuildContext context) {
     final palette = FxPalette.of(context);
     final finance = FxFinanceColors.of(context);
-    final s = S.of(context);
-    return _expandableGroup(
-      context,
-      id: _sectionToolbox,
-      title: s.profileToolbox,
-      icon: Icons.handyman_rounded,
-      tint: finance.transfer,
-      features: [
-        _ProfileFeature(
-          icon: Icons.inventory_2_rounded,
-          tint: finance.transfer,
-          label: s.profileGoodsManage,
-          onTap: () => AppRouter.push<void>(context, Routes.goods),
-        ),
-        _ProfileFeature(
-          icon: Icons.description_rounded,
-          tint: palette.info,
-          label: s.profileOrdersManage,
-          onTap: () => AppRouter.push<void>(context, Routes.orders),
-        ),
-        _ProfileFeature(
-          icon: Icons.repeat_rounded,
-          tint: finance.income,
-          label: s.profileRecurringManage,
-          onTap: () => AppRouter.push<void>(context, Routes.recurring),
-        ),
-        _ProfileFeature(
-          icon: Icons.import_export_rounded,
-          tint: finance.adjust,
-          label: s.profileImportExport,
-          onTap: () => AppRouter.push<void>(context, Routes.io),
-        ),
-        _ProfileFeature(
-          icon: Icons.history_rounded,
-          tint: palette.primary,
-          label: s.profileLogs,
-          onTap: () => AppRouter.push<void>(context, Routes.logs),
-        ),
-      ],
-    );
+    return _sectionCard(context, S.of(context).profileToolbox, [
+      _navItem(
+        context,
+        Icons.inventory_2_rounded,
+        finance.transfer,
+        S.of(context).profileGoodsManage,
+        Routes.goods,
+      ),
+      _divider(context),
+      _navItem(
+        context,
+        Icons.description_rounded,
+        palette.info,
+        S.of(context).profileOrdersManage,
+        Routes.orders,
+      ),
+      _divider(context),
+      _navItem(
+        context,
+        Icons.repeat_rounded,
+        finance.income,
+        S.of(context).profileRecurringManage,
+        Routes.recurring,
+      ),
+      _divider(context),
+      _navItem(
+        context,
+        Icons.import_export_rounded,
+        finance.adjust,
+        S.of(context).profileImportExport,
+        Routes.io,
+      ),
+      _divider(context),
+      _navItem(
+        context,
+        Icons.history_rounded,
+        palette.primary,
+        S.of(context).profileLogs,
+        Routes.logs,
+      ),
+    ]);
   }
 
   // ---------------- 偏好设置 ----------------
@@ -405,130 +369,113 @@ class _ProfileViewState extends State<_ProfileView> {
             Theme.of(context).platform == TargetPlatform.iOS
             ? S.of(context).profileScreenCaptureAllowedIosHint
             : S.of(context).profileScreenCaptureAllowedSubtitle;
-        return _expandableGroup(
-          context,
-          id: _sectionPreferences,
-          title: S.of(context).profilePreferences,
-          icon: Icons.tune_rounded,
-          tint: palette.primary,
-          body: Column(
-            children: [
-              FxListItem(
-                leading: _tileIcon(Icons.language_rounded, palette.primary),
-                title: S.of(context).profileLanguage,
-                trailing: Text(
-                  langLabel,
-                  style: FxTypography.caption.copyWith(
-                    color: palette.textSecondary,
-                  ),
-                ),
-                showChevron: true,
-                onTap: () => _openLanguage(context),
+        return _sectionCard(context, S.of(context).profilePreferences, [
+          FxListItem(
+            leading: _tileIcon(Icons.language_rounded, palette.primary),
+            title: S.of(context).profileLanguage,
+            trailing: Text(
+              langLabel,
+              style: FxTypography.caption.copyWith(
+                color: palette.textSecondary,
               ),
-              _divider(context),
-              FxListItem(
-                leading: _tileIcon(Icons.dark_mode_rounded, finance.transfer),
-                title: S.of(context).profileThemeMode,
-                trailing: Text(
-                  themeLabel,
-                  style: FxTypography.caption.copyWith(
-                    color: palette.textSecondary,
-                  ),
-                ),
-                showChevron: true,
-                onTap: () => _openThemeMode(context),
-              ),
-              _divider(context),
-              FxListItem(
-                leading: _tileIcon(Icons.calendar_month_rounded, palette.info),
-                title: S.of(context).profileMonthStartDay,
-                trailing: Text(
-                  S.of(context).profileMonthStartDayValue(startDay),
-                  style: FxTypography.caption.copyWith(
-                    color: palette.textSecondary,
-                  ),
-                ),
-                showChevron: true,
-                onTap: () => _openMonthStartDay(context, startDay),
-              ),
-              _divider(context),
-              FxListItem(
-                leading: _tileIcon(Icons.content_copy_rounded, palette.primary),
-                title: S.of(context).profileCopyUsesCurrentTime,
-                subtitle: S.of(context).profileCopyUsesCurrentTimeSubtitle,
-                trailing: Switch.adaptive(
-                  value: preferences.billing.copyUsesCurrentTime,
-                  onChanged: preferences.isLoading
-                      ? null
-                      : (useCurrentTime) async {
-                          final ok = await context
-                              .read<PreferencesCubit>()
-                              .setCopyUsesCurrentTime(useCurrentTime);
-                          if (!context.mounted || ok) return;
-                          _toast(context, S.of(context).profileSaveFailedRetry);
-                        },
-                ),
-              ),
-              _divider(context),
-              FxListItem(
-                leading: _tileIcon(
-                  Icons.currency_exchange_rounded,
-                  finance.income,
-                ),
-                title: S.of(context).profileCurrencyRefresh,
-                trailing: Text(
-                  S.of(context).profileRefresh,
-                  style: FxTypography.caption.copyWith(color: palette.primary),
-                ),
-                onTap: () => _refreshCurrency(context),
-              ),
-              _divider(context),
-              FxListItem(
-                leading: _tileIcon(Icons.lock_rounded, palette.primary),
-                title: S.of(context).profileAppLock,
-                subtitle: S.of(context).profileAppLockSubtitle,
-                showChevron: true,
-                onTap: () => Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (_) => const AppLockSettingsPage(),
-                  ),
-                ),
-              ),
-              _divider(context),
-              FxListItem(
-                leading: _tileIcon(
-                  Icons.screenshot_monitor_rounded,
-                  palette.info,
-                ),
-                title: S.of(context).profileScreenCaptureAllowed,
-                subtitle: screenCaptureSubtitle,
-                trailing: Switch.adaptive(
-                  value: preferences.screenCapture.allowScreenCapture,
-                  onChanged: preferences.isLoading
-                      ? null
-                      : (allowed) async {
-                          final ok = await context
-                              .read<PreferencesCubit>()
-                              .setScreenCaptureAllowed(allowed);
-                          if (!context.mounted || ok) return;
-                          _toast(
-                            context,
-                            S.of(context).profileScreenCaptureProtectionFailed,
-                          );
-                        },
-                ),
-              ),
-              _divider(context),
-              FxListItem(
-                leading: _tileIcon(Icons.palette_rounded, finance.expense),
-                title: S.of(context).profileFinanceColors,
-                subtitle: S.of(context).profileFinanceColorsSubtitle,
-                showChevron: true,
-                onTap: () => _openFinanceColors(context),
-              ),
-            ],
+            ),
+            showChevron: true,
+            onTap: () => _openLanguage(context),
           ),
-        );
+          _divider(context),
+          FxListItem(
+            leading: _tileIcon(Icons.dark_mode_rounded, finance.transfer),
+            title: S.of(context).profileThemeMode,
+            trailing: Text(
+              themeLabel,
+              style: FxTypography.caption.copyWith(
+                color: palette.textSecondary,
+              ),
+            ),
+            showChevron: true,
+            onTap: () => _openThemeMode(context),
+          ),
+          _divider(context),
+          FxListItem(
+            leading: _tileIcon(Icons.calendar_month_rounded, palette.info),
+            title: S.of(context).profileMonthStartDay,
+            trailing: Text(
+              S.of(context).profileMonthStartDayValue(startDay),
+              style: FxTypography.caption.copyWith(
+                color: palette.textSecondary,
+              ),
+            ),
+            showChevron: true,
+            onTap: () => _openMonthStartDay(context, startDay),
+          ),
+          _divider(context),
+          FxListItem(
+            leading: _tileIcon(Icons.content_copy_rounded, palette.primary),
+            title: S.of(context).profileCopyUsesCurrentTime,
+            subtitle: S.of(context).profileCopyUsesCurrentTimeSubtitle,
+            trailing: Switch.adaptive(
+              value: preferences.billing.copyUsesCurrentTime,
+              onChanged: preferences.isLoading
+                  ? null
+                  : (useCurrentTime) async {
+                      final ok = await context
+                          .read<PreferencesCubit>()
+                          .setCopyUsesCurrentTime(useCurrentTime);
+                      if (!context.mounted || ok) return;
+                      _toast(context, S.of(context).profileSaveFailedRetry);
+                    },
+            ),
+          ),
+          _divider(context),
+          FxListItem(
+            leading: _tileIcon(Icons.currency_exchange_rounded, finance.income),
+            title: S.of(context).profileCurrencyRefresh,
+            trailing: Text(
+              S.of(context).profileRefresh,
+              style: FxTypography.caption.copyWith(color: palette.primary),
+            ),
+            onTap: () => _refreshCurrency(context),
+          ),
+          _divider(context),
+          FxListItem(
+            leading: _tileIcon(Icons.lock_rounded, palette.primary),
+            title: S.of(context).profileAppLock,
+            subtitle: S.of(context).profileAppLockSubtitle,
+            showChevron: true,
+            onTap: () => Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => const AppLockSettingsPage()),
+            ),
+          ),
+          _divider(context),
+          FxListItem(
+            leading: _tileIcon(Icons.screenshot_monitor_rounded, palette.info),
+            title: S.of(context).profileScreenCaptureAllowed,
+            subtitle: screenCaptureSubtitle,
+            trailing: Switch.adaptive(
+              value: preferences.screenCapture.allowScreenCapture,
+              onChanged: preferences.isLoading
+                  ? null
+                  : (allowed) async {
+                      final ok = await context
+                          .read<PreferencesCubit>()
+                          .setScreenCaptureAllowed(allowed);
+                      if (!context.mounted || ok) return;
+                      _toast(
+                        context,
+                        S.of(context).profileScreenCaptureProtectionFailed,
+                      );
+                    },
+            ),
+          ),
+          _divider(context),
+          FxListItem(
+            leading: _tileIcon(Icons.palette_rounded, finance.expense),
+            title: S.of(context).profileFinanceColors,
+            subtitle: S.of(context).profileFinanceColorsSubtitle,
+            showChevron: true,
+            onTap: () => _openFinanceColors(context),
+          ),
+        ]);
       },
     );
   }
@@ -689,35 +636,33 @@ class _ProfileViewState extends State<_ProfileView> {
   Widget _aboutSection(BuildContext context, AppAbout about) {
     final palette = FxPalette.of(context);
     final finance = FxFinanceColors.of(context);
-    final s = S.of(context);
-    return _expandableGroup(
-      context,
-      id: _sectionAbout,
-      title: s.profileAbout,
-      icon: Icons.info_outline_rounded,
-      tint: palette.primary,
-      subtitle: about.appVersion.isEmpty ? null : about.appVersion,
-      features: [
-        _ProfileFeature(
-          icon: Icons.info_outline_rounded,
-          tint: palette.primary,
-          label: s.profileAboutApp,
-          onTap: () => _openAbout(context, about),
+    final version = about.appVersion;
+    return _sectionCard(context, S.of(context).profileAbout, [
+      FxListItem(
+        leading: _tileIcon(Icons.info_outline_rounded, palette.primary),
+        title: S.of(context).profileAboutApp,
+        trailing: Text(
+          version,
+          style: FxTypography.caption.copyWith(color: palette.textSecondary),
         ),
-        _ProfileFeature(
-          icon: Icons.help_outline_rounded,
-          tint: palette.info,
-          label: s.profileHelp,
-          onTap: () => _openHelp(context),
-        ),
-        _ProfileFeature(
-          icon: Icons.favorite_border_rounded,
-          tint: finance.expense,
-          label: s.profileDonate,
-          onTap: () => _openDonate(context),
-        ),
-      ],
-    );
+        showChevron: true,
+        onTap: () => _openAbout(context, about),
+      ),
+      _divider(context),
+      FxListItem(
+        leading: _tileIcon(Icons.help_outline_rounded, palette.info),
+        title: S.of(context).profileHelp,
+        showChevron: true,
+        onTap: () => _openHelp(context),
+      ),
+      _divider(context),
+      FxListItem(
+        leading: _tileIcon(Icons.favorite_border_rounded, finance.expense),
+        title: S.of(context).profileDonate,
+        showChevron: true,
+        onTap: () => _openDonate(context),
+      ),
+    ]);
   }
 
   Future<void> _openAbout(BuildContext context, AppAbout about) async {
@@ -1004,28 +949,6 @@ class _ProfileViewState extends State<_ProfileView> {
     );
   }
 
-  // ---------------- 注销账号 ----------------
-
-  Future<void> _confirmDeleteAccount(BuildContext context) async {
-    final sessionCubit = context.read<SessionCubit>();
-    final appLockCubit = context.read<AppLockCubit>();
-    final navigator = Navigator.of(context, rootNavigator: true);
-
-    final deleted = await FxSheet.show<bool>(
-      context,
-      title: S.of(context).profileDeleteAccount,
-      scrollable: true,
-      child: AccountDeletionSheet(service: ProfileService()),
-    );
-    if (deleted != true) return;
-
-    await _clearLocalSessionAndGoBaseUrlConfig(
-      sessionCubit: sessionCubit,
-      appLockCubit: appLockCubit,
-      navigator: navigator,
-    );
-  }
-
   Future<void> _clearLocalSessionAndGoBaseUrlConfig({
     required SessionCubit sessionCubit,
     required AppLockCubit appLockCubit,
@@ -1045,120 +968,46 @@ class _ProfileViewState extends State<_ProfileView> {
 
   // ---------------- 复用小组件 ----------------
 
-  Widget _expandableGroup(
-    BuildContext context, {
-    required String id,
-    required String title,
-    required IconData icon,
-    required Color tint,
-    String? subtitle,
-    List<_ProfileFeature> features = const [],
-    Widget? body,
-  }) {
-    final palette = FxPalette.of(context);
-    final expanded = _expandedSection == id;
-    return FxCard(
-      padding: EdgeInsets.zero,
-      child: Column(
-        children: [
-          FxListItem(
-            leading: _tileIcon(icon, tint),
-            title: title,
-            subtitle: subtitle,
-            trailing: AnimatedRotation(
-              turns: expanded ? 0.5 : 0,
-              duration: const Duration(milliseconds: 200),
-              child: Icon(
-                Icons.expand_more_rounded,
-                color: palette.textTertiary,
-              ),
-            ),
-            onTap: () => _toggleSection(id),
-          ),
-          AnimatedCrossFade(
-            duration: const Duration(milliseconds: 220),
-            sizeCurve: Curves.easeOutCubic,
-            crossFadeState: expanded
-                ? CrossFadeState.showSecond
-                : CrossFadeState.showFirst,
-            firstChild: const SizedBox(width: double.infinity),
-            secondChild: Column(
-              children: [
-                Divider(height: 1, thickness: 0.5, color: palette.border),
-                if (body != null)
-                  body
-                else
-                  _featureButtonGrid(context, features),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _featureButtonGrid(
+  Widget _sectionCard(
     BuildContext context,
-    List<_ProfileFeature> features,
+    String title,
+    List<Widget> children,
   ) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(
-        FxSpacing.md,
-        FxSpacing.sm,
-        FxSpacing.md,
-        FxSpacing.md,
-      ),
-      child: GridView.builder(
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        itemCount: features.length,
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 3,
-          mainAxisSpacing: FxSpacing.sm,
-          crossAxisSpacing: FxSpacing.sm,
-          childAspectRatio: 0.92,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(
+            left: FxSpacing.xs,
+            bottom: FxSpacing.sm,
+          ),
+          child: Text(
+            title,
+            style: FxTypography.label.copyWith(
+              color: FxPalette.of(context).textSecondary,
+            ),
+          ),
         ),
-        itemBuilder: (context, index) {
-          final feature = features[index];
-          return _featureButton(context, feature);
-        },
-      ),
+        FxCard(
+          padding: const EdgeInsets.symmetric(vertical: FxSpacing.xs),
+          child: Column(children: children),
+        ),
+      ],
     );
   }
 
-  Widget _featureButton(BuildContext context, _ProfileFeature feature) {
-    final palette = FxPalette.of(context);
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: () {
-          HapticFeedback.selectionClick();
-          feature.onTap();
-        },
-        borderRadius: FxRadius.tileBorder,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: FxSpacing.xs,
-            vertical: FxSpacing.sm,
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              _tileIcon(feature.icon, feature.tint),
-              const SizedBox(height: FxSpacing.sm),
-              Text(
-                feature.label,
-                style: FxTypography.caption.copyWith(
-                  color: palette.textPrimary,
-                ),
-                textAlign: TextAlign.center,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ],
-          ),
-        ),
-      ),
+  Widget _navItem(
+    BuildContext context,
+    IconData icon,
+    Color tint,
+    String title,
+    String route,
+  ) {
+    return FxListItem(
+      leading: _tileIcon(icon, tint),
+      title: title,
+      showChevron: true,
+      onTap: () => AppRouter.push<void>(context, route),
     );
   }
 
@@ -1183,20 +1032,6 @@ class _ProfileViewState extends State<_ProfileView> {
       color: FxPalette.of(context).border,
     ),
   );
-}
-
-class _ProfileFeature {
-  const _ProfileFeature({
-    required this.icon,
-    required this.tint,
-    required this.label,
-    required this.onTap,
-  });
-
-  final IconData icon;
-  final Color tint;
-  final String label;
-  final VoidCallback onTap;
 }
 
 /// 内联 loading（用于卡片内小高度占位）。
