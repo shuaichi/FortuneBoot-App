@@ -22,7 +22,12 @@ abstract interface class AppLockSecretStore {
 
 abstract interface class BiometricAuthenticator {
   Future<bool> isAvailable();
-  Future<BiometricResult> authenticate({required String localizedReason});
+  Future<bool> isFaceAvailable();
+  Future<bool> isFingerprintAvailable();
+  Future<BiometricResult> authenticate({
+    required String localizedReason,
+    AppLockPreferredUnlock? preferredBiometric,
+  });
 }
 
 class SharedPreferencesAppLockSettingsStore implements AppLockSettingsStore {
@@ -32,6 +37,7 @@ class SharedPreferencesAppLockSettingsStore implements AppLockSettingsStore {
   static const _enabledKey = 'fortune.app_lock.enabled';
   static const _methodKey = 'fortune.app_lock.method';
   static const _biometricEnabledKey = 'fortune.app_lock.biometric_enabled';
+  static const _preferredUnlockKey = 'fortune.app_lock.preferred_unlock';
 
   SharedPreferences? _sharedPreferences;
 
@@ -45,6 +51,7 @@ class SharedPreferencesAppLockSettingsStore implements AppLockSettingsStore {
       prefs.remove(_enabledKey),
       prefs.remove(_methodKey),
       prefs.remove(_biometricEnabledKey),
+      prefs.remove(_preferredUnlockKey),
     ]);
   }
 
@@ -57,10 +64,33 @@ class SharedPreferencesAppLockSettingsStore implements AppLockSettingsStore {
       (item) => item.name == methodValue,
     );
     if (method.isEmpty) return null;
+    final preferred = _readPreferredUnlock(
+      prefs,
+      fallbackMethod: method.first,
+    );
     return AppLockSettings(
       method: method.first,
-      biometricEnabled: prefs.getBool(_biometricEnabledKey) ?? false,
+      preferredUnlock: preferred,
     );
+  }
+
+  AppLockPreferredUnlock _readPreferredUnlock(
+    SharedPreferences prefs, {
+    required AppLockMethod fallbackMethod,
+  }) {
+    final stored = prefs.getString(_preferredUnlockKey);
+    if (stored != null) {
+      for (final value in AppLockPreferredUnlock.values) {
+        if (value.name == stored) return value;
+      }
+    }
+    // 兼容旧版：仅有 biometricEnabled 开关。
+    if (prefs.getBool(_biometricEnabledKey) == true) {
+      return AppLockPreferredUnlock.fingerprint;
+    }
+    return fallbackMethod == AppLockMethod.pattern
+        ? AppLockPreferredUnlock.pattern
+        : AppLockPreferredUnlock.pin;
   }
 
   @override
@@ -69,6 +99,7 @@ class SharedPreferencesAppLockSettingsStore implements AppLockSettingsStore {
     final results = await Future.wait([
       prefs.setBool(_enabledKey, true),
       prefs.setString(_methodKey, settings.method.name),
+      prefs.setString(_preferredUnlockKey, settings.preferredUnlock.name),
       prefs.setBool(_biometricEnabledKey, settings.biometricEnabled),
     ]);
     if (results.any((saved) => !saved)) {
@@ -128,18 +159,26 @@ class OhosBiometricAuthenticator implements BiometricAuthenticator {
   @override
   Future<BiometricResult> authenticate({
     required String localizedReason,
+    AppLockPreferredUnlock? preferredBiometric,
   }) async {
     try {
+      final preferredType = switch (preferredBiometric) {
+        AppLockPreferredUnlock.face => 'face',
+        AppLockPreferredUnlock.fingerprint => 'fingerprint',
+        _ => null,
+      };
       return switch (await _security.authenticateBiometrics(
         localizedReason: localizedReason,
+        preferredType: preferredType,
       )) {
         'authenticated' => BiometricResult.authenticated,
         'cancelled' => BiometricResult.cancelled,
         'unavailable' => BiometricResult.unavailable,
-        _ => BiometricResult.failed,
+        'failed' => BiometricResult.failed,
+        _ => BiometricResult.unavailable,
       };
     } on Object {
-      return BiometricResult.failed;
+      return BiometricResult.unavailable;
     }
   }
 
@@ -147,6 +186,24 @@ class OhosBiometricAuthenticator implements BiometricAuthenticator {
   Future<bool> isAvailable() async {
     try {
       return await _security.isBiometricAvailable();
+    } on Object {
+      return false;
+    }
+  }
+
+  @override
+  Future<bool> isFaceAvailable() async {
+    try {
+      return await _security.isBiometricTypeAvailable('face');
+    } on Object {
+      return false;
+    }
+  }
+
+  @override
+  Future<bool> isFingerprintAvailable() async {
+    try {
+      return await _security.isBiometricTypeAvailable('fingerprint');
     } on Object {
       return false;
     }
@@ -162,6 +219,7 @@ class LocalBiometricAuthenticator implements BiometricAuthenticator {
   @override
   Future<BiometricResult> authenticate({
     required String localizedReason,
+    AppLockPreferredUnlock? preferredBiometric,
   }) async {
     try {
       final authenticated = await _authentication.authenticate(
@@ -184,6 +242,28 @@ class LocalBiometricAuthenticator implements BiometricAuthenticator {
     try {
       if (!await _authentication.canCheckBiometrics) return false;
       return (await _authentication.getAvailableBiometrics()).isNotEmpty;
+    } on Object {
+      return false;
+    }
+  }
+
+  @override
+  Future<bool> isFaceAvailable() async {
+    try {
+      final types = await _authentication.getAvailableBiometrics();
+      return types.contains(BiometricType.face);
+    } on Object {
+      return false;
+    }
+  }
+
+  @override
+  Future<bool> isFingerprintAvailable() async {
+    try {
+      final types = await _authentication.getAvailableBiometrics();
+      return types.contains(BiometricType.fingerprint) ||
+          types.contains(BiometricType.strong) ||
+          types.contains(BiometricType.weak);
     } on Object {
       return false;
     }

@@ -293,6 +293,72 @@ void main() {
         expect(cubit.state.status, AppLockStatus.locked);
       },
     );
+
+    test('stores preferred unlock when configuring app lock', () async {
+      final cubit = AppLockCubit(
+        settingsStore: _FakeSettingsStore(),
+        secretStore: _FakeSecretStore(),
+        biometricAuthenticator: _FakeBiometricAuthenticator(),
+      );
+      addTearDown(cubit.close);
+
+      await cubit.initialize();
+      expect(
+        await cubit.configure(
+          method: AppLockMethod.pin,
+          value: '123456',
+          preferredUnlock: AppLockPreferredUnlock.fingerprint,
+        ),
+        isTrue,
+      );
+      expect(
+        cubit.state.settings?.preferredUnlock,
+        AppLockPreferredUnlock.fingerprint,
+      );
+      expect(cubit.state.settings?.biometricPreferred, isTrue);
+    });
+
+    test('updates preferred unlock after app lock is enabled', () async {
+      final cubit = AppLockCubit(
+        settingsStore: _FakeSettingsStore(
+          const AppLockSettings(method: AppLockMethod.pin),
+        ),
+        secretStore: _FakeSecretStore(secret: 'pin:00:00'),
+        biometricAuthenticator: _FakeBiometricAuthenticator(),
+      );
+      addTearDown(cubit.close);
+
+      await cubit.initialize();
+      expect(
+        await cubit.setPreferredUnlock(AppLockPreferredUnlock.fingerprint),
+        isTrue,
+      );
+      expect(
+        cubit.state.settings?.preferredUnlock,
+        AppLockPreferredUnlock.fingerprint,
+      );
+    });
+
+    test('rejects preferred unlock that conflicts with fallback method', () async {
+      final cubit = AppLockCubit(
+        settingsStore: _FakeSettingsStore(
+          const AppLockSettings(method: AppLockMethod.pin),
+        ),
+        secretStore: _FakeSecretStore(secret: 'pin:00:00'),
+        biometricAuthenticator: _FakeBiometricAuthenticator(),
+      );
+      addTearDown(cubit.close);
+
+      await cubit.initialize();
+      expect(
+        await cubit.setPreferredUnlock(AppLockPreferredUnlock.pattern),
+        isFalse,
+      );
+      expect(
+        cubit.state.settings?.preferredUnlock,
+        AppLockPreferredUnlock.pin,
+      );
+    });
   });
 }
 
@@ -301,7 +367,10 @@ Future<AppLockCubit> _biometricLockedCubit(
 ) async {
   final cubit = AppLockCubit(
     settingsStore: _FakeSettingsStore(
-      const AppLockSettings(method: AppLockMethod.pin, biometricEnabled: true),
+      const AppLockSettings(
+        method: AppLockMethod.pin,
+        preferredUnlock: AppLockPreferredUnlock.fingerprint,
+      ),
     ),
     secretStore: _FakeSecretStore(secret: 'pin:00:00'),
     biometricAuthenticator: biometricAuthenticator,
@@ -347,10 +416,17 @@ class _FakeBiometricAuthenticator implements BiometricAuthenticator {
   @override
   Future<BiometricResult> authenticate({
     required String localizedReason,
+    AppLockPreferredUnlock? preferredBiometric,
   }) async => BiometricResult.cancelled;
 
   @override
   Future<bool> isAvailable() async => false;
+
+  @override
+  Future<bool> isFaceAvailable() async => false;
+
+  @override
+  Future<bool> isFingerprintAvailable() async => false;
 }
 
 class _CompleterBiometricAuthenticator implements BiometricAuthenticator {
@@ -359,9 +435,17 @@ class _CompleterBiometricAuthenticator implements BiometricAuthenticator {
   void complete(BiometricResult result) => _result.complete(result);
 
   @override
-  Future<BiometricResult> authenticate({required String localizedReason}) =>
-      _result.future;
+  Future<BiometricResult> authenticate({
+    required String localizedReason,
+    AppLockPreferredUnlock? preferredBiometric,
+  }) => _result.future;
 
   @override
   Future<bool> isAvailable() async => true;
+
+  @override
+  Future<bool> isFaceAvailable() async => false;
+
+  @override
+  Future<bool> isFingerprintAvailable() async => true;
 }

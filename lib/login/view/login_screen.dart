@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:ui'; // 引入以使用 FontFeature
 
@@ -17,6 +18,7 @@ import 'package:fortuneboot/theme/app_theme.dart';
 import 'package:fortuneboot/core/navigation/app_nav.dart';
 import 'package:fortuneboot/core/navigation/routes.dart';
 import 'package:fortuneboot/login/model/users.dart';
+import 'package:fortuneboot/login/server/server_history_store.dart';
 import 'package:fortuneboot/util/base64_img.dart';
 import 'package:fortuneboot/util/dio_client.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -114,6 +116,8 @@ class LoginScreen extends StatelessWidget {
                 var user = UserDataSingleton();
                 user.setMap(UserDataSingleton.userInfo, userInfo);
                 user.setMap(UserDataSingleton.userToken, userToken);
+                // 登录成功后记住当前服务器，供下次在 URL 配置页下拉选择。
+                unawaited(ServerHistoryStore().rememberCurrentSaved());
               }
               return null;
             }

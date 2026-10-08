@@ -11,6 +11,7 @@ import 'package:fortuneboot/core/session/session_cubit.dart';
 import 'package:fortuneboot/login/auth_version_source.dart';
 import 'package:fortuneboot/login/model/users.dart';
 import 'package:fortuneboot/login/server/server_endpoint.dart';
+import 'package:fortuneboot/login/server/server_history_store.dart';
 import 'package:fortuneboot/generated/l10n.dart';
 import 'package:fortuneboot/util/dio_client.dart';
 
@@ -38,6 +39,8 @@ class _BaseUrlConfigPageState extends State<BaseUrlConfigPage> {
   final TextEditingController _portController = TextEditingController(
     text: '443',
   );
+  final ServerHistoryStore _historyStore = ServerHistoryStore();
+  List<ServerHistoryEntry> _history = const [];
 
   // 新增：用于接管网络请求时的动态 Loading 状态
   bool _isConnecting = false;
@@ -48,6 +51,21 @@ class _BaseUrlConfigPageState extends State<BaseUrlConfigPage> {
       _checkTokenValid();
     });
     super.initState();
+  }
+
+  Future<void> _reloadHistory() async {
+    final list = await _historyStore.load();
+    if (!mounted) return;
+    setState(() => _history = list);
+  }
+
+  void _applyHistoryEntry(ServerHistoryEntry entry) {
+    HapticFeedback.selectionClick();
+    setState(() {
+      _protocol = entry.protocol;
+      _domainController.text = entry.host;
+      _portController.text = entry.port;
+    });
   }
 
   Future<void> _checkTokenValid() async {
@@ -65,7 +83,10 @@ class _BaseUrlConfigPageState extends State<BaseUrlConfigPage> {
       _domainController.text = baseUrlDomain!;
       _portController.text = baseUrlPort ?? '';
       _protocol = baseProtocol!;
+      // 把当前已保存地址写入历史，便于下次下拉选择。
+      await _historyStore.rememberCurrentSaved();
     }
+    await _reloadHistory();
     var userInfo = await UserDataSingleton().getMap(UserDataSingleton.userInfo);
     var userToken = await UserDataSingleton().getMap(
       UserDataSingleton.userToken,
@@ -260,6 +281,10 @@ class _BaseUrlConfigPageState extends State<BaseUrlConfigPage> {
       ),
       child: Column(
         children: [
+          if (_history.isNotEmpty) ...[
+            _buildHistoryRow(),
+            _buildDivider(),
+          ],
           _buildProtocolRow(),
           _buildDivider(),
           _buildTextFieldRow(
@@ -281,6 +306,102 @@ class _BaseUrlConfigPageState extends State<BaseUrlConfigPage> {
             hint: "443",
             icon: Icons.numbers_rounded,
             keyboardType: TextInputType.number,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHistoryRow() {
+    final s = S.of(context);
+    final current = ServerHistoryEntry(
+      protocol: _protocol,
+      host: _domainController.text.trim(),
+      port: _portController.text.trim(),
+    );
+    ServerHistoryEntry? matched;
+    for (final entry in _history) {
+      if (entry == current) {
+        matched = entry;
+        break;
+      }
+    }
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: const Color(0xFF007AFF).withOpacity(0.12),
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(
+              Icons.history_rounded,
+              size: 20,
+              color: Color(0xFF007AFF),
+            ),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Text(
+              s.serverHistory,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+                color: Color(0xFF1C1C1E),
+              ),
+            ),
+          ),
+          Flexible(
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton<ServerHistoryEntry>(
+                isExpanded: true,
+                value: matched,
+                hint: Text(
+                  s.serverHistorySelect,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: Color(0xFF8E8E93),
+                  ),
+                ),
+                icon: const Icon(
+                  Icons.expand_more_rounded,
+                  color: Color(0xFF8E8E93),
+                ),
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: Color(0xFF007AFF),
+                ),
+                selectedItemBuilder: (context) {
+                  return _history.map((entry) {
+                    return Align(
+                      alignment: Alignment.centerRight,
+                      child: Text(
+                        entry.displayLabel,
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                      ),
+                    );
+                  }).toList();
+                },
+                items: _history.map((entry) {
+                  return DropdownMenuItem<ServerHistoryEntry>(
+                    value: entry,
+                    child: Text(
+                      entry.displayLabel,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  );
+                }).toList(),
+                onChanged: (entry) {
+                  if (entry != null) _applyHistoryEntry(entry);
+                },
+              ),
+            ),
           ),
         ],
       ),
@@ -496,6 +617,7 @@ class _BaseUrlConfigPageState extends State<BaseUrlConfigPage> {
             UserDataSingleton.baseUrlProtocol,
             endpoint.protocol,
           );
+          await _historyStore.remember(endpoint);
 
           if (!mounted) return;
           Navigator.of(context).pushReplacementNamed(Routes.auth);

@@ -91,6 +91,11 @@ export function reapplyScreenCaptureProtection(): void {
 
 type StoredSecret = string;
 
+interface CipherAndTag {
+  cipher: Uint8Array;
+  tag: Uint8Array;
+}
+
 export default class FortunebootOhosSecurityPlugin
   implements FlutterPlugin, MethodCallHandler {
   private channel: MethodChannel | null = null;
@@ -130,6 +135,10 @@ export default class FortunebootOhosSecurityPlugin
     }
     if (call.method === 'isBiometricAvailable') {
       result.success(this.isBiometricAvailable());
+      return;
+    }
+    if (call.method === 'isBiometricTypeAvailable') {
+      result.success(this.isBiometricTypeAvailable(call));
       return;
     }
     if (call.method === 'authenticateBiometrics') {
@@ -308,6 +317,10 @@ export default class FortunebootOhosSecurityPlugin
         result.success(null);
         return;
       }
+      if (value.startsWith('fallback:')) {
+        result.success(value.substring('fallback:'.length));
+        return;
+      }
       result.success(await this.decrypt(value));
     } catch (_) {
       result.error('secure_storage_failed', 'Unable to read secure secret', null);
@@ -322,9 +335,15 @@ export default class FortunebootOhosSecurityPlugin
       return;
     }
     try {
-      const encryptedValue: StoredSecret = await this.encrypt(value);
       const preferences: dataPreferences.Preferences = await this.getPreferences();
-      await preferences.put(key, encryptedValue);
+      let storedValue: StoredSecret;
+      try {
+        storedValue = await this.encrypt(value);
+      } catch (_) {
+        // Verifier 本身已是 PBKDF2 摘要；HUKS 不可用时降级到本地 preferences，避免应用锁无法开启。
+        storedValue = `fallback:${value}`;
+      }
+      await preferences.put(key, storedValue);
       await preferences.flush();
       result.success(null);
     } catch (_) {
@@ -363,15 +382,21 @@ export default class FortunebootOhosSecurityPlugin
   private async encrypt(value: string): Promise<StoredSecret> {
     await this.ensureHuksKey();
     const nonce: Uint8Array = await this.createNonce();
-    const options: huks.HuksOptions = {
+    const initOptions: huks.HuksOptions = {
+      properties: this.cryptoProperties(huks.HuksKeyPurpose.HUKS_KEY_PURPOSE_ENCRYPT, nonce),
+    };
+    const session: huks.HuksSessionHandle = await huks.initSession(HUKS_KEY_ALIAS, initOptions);
+    const finishOptions: huks.HuksOptions = {
       properties: this.cryptoProperties(huks.HuksKeyPurpose.HUKS_KEY_PURPOSE_ENCRYPT, nonce),
       inData: this.utf8Bytes(value),
     };
-    const session: huks.HuksSessionHandle = await huks.initSession(HUKS_KEY_ALIAS, options);
-    const encrypted: huks.HuksReturnResult = await huks.finishSession(session.handle, options);
+    const encrypted: huks.HuksReturnResult = await huks.finishSession(
+      session.handle,
+      finishOptions,
+    );
     if (encrypted.outData === undefined) throw new Error('Encryption produced no data');
-    const tag: Uint8Array = this.readAuthenticationTag(encrypted);
-    return `v1:${buffer.from(nonce).toString('base64')}:${buffer.from(tag).toString('base64')}:${buffer.from(encrypted.outData).toString('base64')}`;
+    const split: CipherAndTag = this.splitCipherAndTag(encrypted);
+    return `v1:${buffer.from(nonce).toString('base64')}:${buffer.from(split.tag).toString('base64')}:${buffer.from(split.cipher).toString('base64')}`;
   }
 
   private async decrypt(payload: StoredSecret): Promise<string> {
@@ -384,18 +409,57 @@ export default class FortunebootOhosSecurityPlugin
       throw new Error('Invalid secure payload');
     }
     await this.ensureHuksKey();
-    const options: huks.HuksOptions = {
+    const initOptions: huks.HuksOptions = {
       properties: this.cryptoProperties(
         huks.HuksKeyPurpose.HUKS_KEY_PURPOSE_DECRYPT,
         nonce,
         tag,
       ),
-      inData: encrypted,
     };
-    const session: huks.HuksSessionHandle = await huks.initSession(HUKS_KEY_ALIAS, options);
-    const decrypted: huks.HuksReturnResult = await huks.finishSession(session.handle, options);
-    if (decrypted.outData === undefined) throw new Error('Decryption produced no data');
-    return buffer.from(decrypted.outData).toString();
+    const session: huks.HuksSessionHandle = await huks.initSession(
+      HUKS_KEY_ALIAS,
+      initOptions,
+    );
+    // 部分机型要求密文后直接拼接 AE tag。
+    const cipherWithTag: Uint8Array = new Uint8Array(encrypted.length + tag.length);
+    cipherWithTag.set(encrypted, 0);
+    cipherWithTag.set(tag, encrypted.length);
+    const finishOptions: huks.HuksOptions = {
+      properties: this.cryptoProperties(
+        huks.HuksKeyPurpose.HUKS_KEY_PURPOSE_DECRYPT,
+        nonce,
+        tag,
+      ),
+      inData: cipherWithTag,
+    };
+    try {
+      const decrypted: huks.HuksReturnResult = await huks.finishSession(
+        session.handle,
+        finishOptions,
+      );
+      if (decrypted.outData === undefined) throw new Error('Decryption produced no data');
+      return buffer.from(decrypted.outData).toString();
+    } catch (_) {
+      // 回退：仅传密文，tag 走 HUKS_TAG_AE_TAG。
+      const retrySession: huks.HuksSessionHandle = await huks.initSession(
+        HUKS_KEY_ALIAS,
+        initOptions,
+      );
+      const retryOptions: huks.HuksOptions = {
+        properties: this.cryptoProperties(
+          huks.HuksKeyPurpose.HUKS_KEY_PURPOSE_DECRYPT,
+          nonce,
+          tag,
+        ),
+        inData: encrypted,
+      };
+      const decrypted: huks.HuksReturnResult = await huks.finishSession(
+        retrySession.handle,
+        retryOptions,
+      );
+      if (decrypted.outData === undefined) throw new Error('Decryption produced no data');
+      return buffer.from(decrypted.outData).toString();
+    }
   }
 
   private utf8Bytes(value: string): Uint8Array {
@@ -408,18 +472,32 @@ export default class FortunebootOhosSecurityPlugin
     return new Uint8Array(decoded.buffer, decoded.byteOffset, decoded.length);
   }
 
-  private readAuthenticationTag(result: huks.HuksReturnResult): Uint8Array {
+  private splitCipherAndTag(result: huks.HuksReturnResult): CipherAndTag {
+    const outData: Uint8Array | undefined = result.outData;
+    if (outData === undefined || outData.length === 0) {
+      throw new Error('Encryption produced no data');
+    }
     const properties: Array<huks.HuksParam> = result.properties ?? [];
     for (let index: number = 0; index < properties.length; index++) {
       const property: huks.HuksParam = properties[index];
       if (property.tag === huks.HuksTag.HUKS_TAG_AE_TAG && property.value instanceof Uint8Array) {
-        if (property.value.length === 16) return property.value;
+        if (property.value.length === 16) {
+          return { cipher: outData, tag: property.value };
+        }
       }
+    }
+    // 多数机型把 16 字节 AE tag 追加在密文末尾。
+    if (outData.length > 16) {
+      return {
+        cipher: outData.slice(0, outData.length - 16),
+        tag: outData.slice(outData.length - 16),
+      };
     }
     throw new Error('Encryption produced no authentication tag');
   }
 
   private async ensureHuksKey(): Promise<void> {
+    const keySize: number = huks.HuksKeySize.HUKS_AES_KEY_SIZE_256;
     const properties: Array<huks.HuksParam> = [
       { tag: huks.HuksTag.HUKS_TAG_ALGORITHM, value: huks.HuksKeyAlg.HUKS_ALG_AES },
       {
@@ -427,7 +505,7 @@ export default class FortunebootOhosSecurityPlugin
         value: huks.HuksKeyPurpose.HUKS_KEY_PURPOSE_ENCRYPT |
           huks.HuksKeyPurpose.HUKS_KEY_PURPOSE_DECRYPT,
       },
-      { tag: huks.HuksTag.HUKS_TAG_KEY_SIZE, value: 256 },
+      { tag: huks.HuksTag.HUKS_TAG_KEY_SIZE, value: keySize },
       { tag: huks.HuksTag.HUKS_TAG_BLOCK_MODE, value: huks.HuksCipherMode.HUKS_MODE_GCM },
       { tag: huks.HuksTag.HUKS_TAG_PADDING, value: huks.HuksKeyPadding.HUKS_PADDING_NONE },
     ];
@@ -442,10 +520,11 @@ export default class FortunebootOhosSecurityPlugin
     nonce: Uint8Array,
     authenticationTag?: Uint8Array,
   ): Array<huks.HuksParam> {
+    const keySize: number = huks.HuksKeySize.HUKS_AES_KEY_SIZE_256;
     const properties: Array<huks.HuksParam> = [
       { tag: huks.HuksTag.HUKS_TAG_ALGORITHM, value: huks.HuksKeyAlg.HUKS_ALG_AES },
       { tag: huks.HuksTag.HUKS_TAG_PURPOSE, value: purpose },
-      { tag: huks.HuksTag.HUKS_TAG_KEY_SIZE, value: 256 },
+      { tag: huks.HuksTag.HUKS_TAG_KEY_SIZE, value: keySize },
       { tag: huks.HuksTag.HUKS_TAG_BLOCK_MODE, value: huks.HuksCipherMode.HUKS_MODE_GCM },
       { tag: huks.HuksTag.HUKS_TAG_PADDING, value: huks.HuksKeyPadding.HUKS_PADDING_NONE },
       { tag: huks.HuksTag.HUKS_TAG_NONCE, value: nonce },
@@ -464,8 +543,39 @@ export default class FortunebootOhosSecurityPlugin
   }
 
   private isBiometricAvailable(): boolean {
-    return this.isAuthTypeAvailable(userAuth.UserAuthType.FINGERPRINT) ||
+    return this.availableAuthTypes().length > 0;
+  }
+
+  private isBiometricTypeAvailable(call: MethodCall): boolean {
+    const type: Object | null = call.argument('type');
+    if (type === 'face') {
+      return this.isAuthTypeAvailable(userAuth.UserAuthType.FACE);
+    }
+    if (type === 'fingerprint') {
+      return this.isAuthTypeAvailable(userAuth.UserAuthType.FINGERPRINT);
+    }
+    return false;
+  }
+
+  private availableAuthTypes(preferredType?: string | null): Array<userAuth.UserAuthType> {
+    const fingerprintAvailable: boolean =
+      this.isAuthTypeAvailable(userAuth.UserAuthType.FINGERPRINT);
+    const faceAvailable: boolean =
       this.isAuthTypeAvailable(userAuth.UserAuthType.FACE);
+    if (preferredType === 'face') {
+      return faceAvailable ? [userAuth.UserAuthType.FACE] : [];
+    }
+    if (preferredType === 'fingerprint') {
+      return fingerprintAvailable ? [userAuth.UserAuthType.FINGERPRINT] : [];
+    }
+    const types: Array<userAuth.UserAuthType> = [];
+    if (fingerprintAvailable) {
+      types.push(userAuth.UserAuthType.FINGERPRINT);
+    }
+    if (faceAvailable) {
+      types.push(userAuth.UserAuthType.FACE);
+    }
+    return types;
   }
 
   private isAuthTypeAvailable(authType: userAuth.UserAuthType): boolean {
@@ -477,56 +587,160 @@ export default class FortunebootOhosSecurityPlugin
     }
   }
 
+  private mapAuthResult(code: number): string {
+    // SUCCESS = 12500000；部分文档/机型成功回 0。
+    if (
+      code === userAuth.UserAuthResultCode.SUCCESS ||
+      code === 12500000 ||
+      code === 0
+    ) {
+      return 'authenticated';
+    }
+    if (
+      code === userAuth.UserAuthResultCode.CANCELED ||
+      code === userAuth.UserAuthResultCode.CANCELED_FROM_WIDGET ||
+      code === userAuth.UserAuthResultCode.TIMEOUT ||
+      code === 12500003 ||
+      code === 12500004 ||
+      code === 12500011
+    ) {
+      return 'cancelled';
+    }
+    if (
+      code === userAuth.UserAuthResultCode.NOT_ENROLLED ||
+      code === userAuth.UserAuthResultCode.TYPE_NOT_SUPPORT ||
+      code === userAuth.UserAuthResultCode.TRUST_LEVEL_NOT_SUPPORT ||
+      code === userAuth.UserAuthResultCode.BUSY ||
+      code === userAuth.UserAuthResultCode.LOCKED ||
+      code === 12500005 ||
+      code === 12500006 ||
+      code === 12500007 ||
+      code === 12500009 ||
+      code === 12500010
+    ) {
+      // 忙/锁定/未录入等：系统控件通常未真正完成一次识别，不应提示「未通过」。
+      return 'unavailable';
+    }
+    // 仅 FAIL（12500001）等表示用户已看到控件但识别未通过。
+    if (code === userAuth.UserAuthResultCode.FAIL || code === 12500001) {
+      return 'failed';
+    }
+    return 'unavailable';
+  }
+
   private authenticateBiometrics(call: MethodCall, result: MethodResult): void {
-    if (this.authenticationInProgress || !this.isBiometricAvailable()) {
-      result.success(this.authenticationInProgress ? 'failed' : 'unavailable');
+    // 上次 start 未回调时会卡死 in-progress，导致再次点击直接 failed 且不弹窗。
+    this.authenticationInProgress = false;
+
+    const preferredTypeArg: Object | null = call.argument('preferredType');
+    const preferredType: string | null =
+      typeof preferredTypeArg === 'string' ? preferredTypeArg : null;
+    const authTypes: Array<userAuth.UserAuthType> =
+      this.availableAuthTypes(preferredType);
+    if (authTypes.length === 0) {
+      result.success('unavailable');
       return;
     }
+
+    let challenge: Uint8Array = new Uint8Array(0);
+    try {
+      const generated: Uint8Array =
+        cryptoFramework.createRandom().generateRandomSync(16).data;
+      if (generated !== undefined && generated.length > 0) {
+        challenge = generated;
+      }
+    } catch (_) {
+      challenge = new Uint8Array(0);
+    }
+
+    const localizedReason: Object | null = call.argument('localizedReason');
+    const title: string =
+      typeof localizedReason === 'string' && localizedReason.length > 0
+        ? localizedReason
+        : 'Verify your identity to unlock FortuneBoot';
+
+    // 逐个类型尝试：避免多类型组合在部分机型上 getUserAuthInstance/start 直接失败且不弹窗。
+    for (let index = 0; index < authTypes.length; index++) {
+      const started: boolean = this.startAuthForType(
+        authTypes[index],
+        challenge,
+        title,
+        result,
+        index === authTypes.length - 1,
+      );
+      if (started) {
+        return;
+      }
+    }
+    result.success('unavailable');
+  }
+
+  private startAuthForType(
+    authType: userAuth.UserAuthType,
+    challenge: Uint8Array,
+    title: string,
+    result: MethodResult,
+    isLastType: boolean,
+  ): boolean {
     const authParam: userAuth.AuthParam = {
-      challenge: cryptoFramework.createRandom().generateRandomSync(16).data,
-      authType: [userAuth.UserAuthType.FINGERPRINT, userAuth.UserAuthType.FACE],
+      challenge: challenge,
+      authType: [authType],
       authTrustLevel: userAuth.AuthTrustLevel.ATL1,
     };
-    const localizedReason: string | null = call.argument('localizedReason');
-    const title: string = localizedReason !== null && localizedReason.length > 0
-      ? localizedReason
-      : 'Verify your identity to unlock FortuneBoot';
     const widgetParam: userAuth.WidgetParam = { title };
     try {
       const instance: userAuth.UserAuthInstance = userAuth.getUserAuthInstance(
         authParam,
         widgetParam,
       );
+      let completed: boolean = false;
+      const complete = (status: string): void => {
+        if (completed) {
+          return;
+        }
+        completed = true;
+        this.authenticationInProgress = false;
+        result.success(status);
+      };
+
       this.authenticationInProgress = true;
       instance.on('result', {
         onResult: (authResult: userAuth.UserAuthResult): void => {
-          this.authenticationInProgress = false;
-          // 部分机型/文档示例 UserAuth 成功时回 0；与 SUCCESS 一并视为认证通过。
-          if (
-            authResult.result === userAuth.UserAuthResultCode.SUCCESS ||
-            authResult.result === 0
-          ) {
-            result.success('authenticated');
-          } else if (
-            authResult.result === userAuth.UserAuthResultCode.CANCELED ||
-            authResult.result === userAuth.UserAuthResultCode.CANCELED_FROM_WIDGET ||
-            authResult.result === userAuth.UserAuthResultCode.TIMEOUT
-          ) {
-            result.success('cancelled');
-          } else if (
-            authResult.result === userAuth.UserAuthResultCode.NOT_ENROLLED ||
-            authResult.result === userAuth.UserAuthResultCode.TYPE_NOT_SUPPORT
-          ) {
-            result.success('unavailable');
-          } else {
-            result.success('failed');
+          try {
+            instance.off('result');
+          } catch (_) {
+            // ignore
           }
+          if (authResult.token !== undefined && authResult.token.length > 0) {
+            complete('authenticated');
+            return;
+          }
+          complete(this.mapAuthResult(Number(authResult.result)));
         },
       });
-      instance.start();
+      try {
+        instance.start();
+        return true;
+      } catch (_) {
+        this.authenticationInProgress = false;
+        try {
+          instance.off('result');
+        } catch (__) {
+          // ignore
+        }
+        if (isLastType) {
+          complete('unavailable');
+          return true;
+        }
+        return false;
+      }
     } catch (_) {
       this.authenticationInProgress = false;
-      result.success('failed');
+      if (isLastType) {
+        result.success('unavailable');
+        return true;
+      }
+      return false;
     }
   }
 

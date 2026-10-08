@@ -100,8 +100,15 @@ class _BiometricAuthenticator implements BiometricAuthenticator {
   @override
   Future<BiometricResult> authenticate({
     required String localizedReason,
+    AppLockPreferredUnlock? preferredBiometric,
   }) async => BiometricResult.cancelled;
 
   @override
   Future<bool> isAvailable() async => false;
+
+  @override
+  Future<bool> isFaceAvailable() async => false;
+
+  @override
+  Future<bool> isFingerprintAvailable() async => false;
 }

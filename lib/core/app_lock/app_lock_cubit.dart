@@ -140,39 +140,62 @@ class AppLockCubit extends Cubit<AppLockState> {
 
   Future<bool> isBiometricAvailable() => _biometricAuthenticator.isAvailable();
 
+  Future<bool> isFaceAvailable() => _biometricAuthenticator.isFaceAvailable();
+
+  Future<bool> isFingerprintAvailable() =>
+      _biometricAuthenticator.isFingerprintAvailable();
+
   Future<BiometricResult> unlockWithBiometrics({
     required String localizedReason,
   }) async {
     final settings = state.settings;
-    if (settings == null || !settings.biometricEnabled || !state.isLocked) {
+    if (settings == null || !settings.biometricPreferred || !state.isLocked) {
       return BiometricResult.unavailable;
     }
     if (state.isAuthenticating || !_hasAuthenticatedSession) {
       return BiometricResult.unavailable;
     }
+    final preferredBiometric = settings.preferredUnlock;
     final operationVersion = ++_operationVersion;
-    if (!await _biometricAuthenticator.isAvailable() ||
+    final typeAvailable = switch (preferredBiometric) {
+      AppLockPreferredUnlock.face =>
+        await _biometricAuthenticator.isFaceAvailable(),
+      AppLockPreferredUnlock.fingerprint =>
+        await _biometricAuthenticator.isFingerprintAvailable(),
+      _ => await _biometricAuthenticator.isAvailable(),
+    };
+    if (!typeAvailable ||
         isClosed ||
         operationVersion != _operationVersion ||
         !_hasAuthenticatedSession ||
         !state.isLocked) {
+      if (!isClosed &&
+          operationVersion == _operationVersion &&
+          state.isLocked) {
+        emit(
+          state.copyWith(failure: AppLockFailure.biometricUnavailable),
+        );
+      }
       return BiometricResult.unavailable;
     }
     _resetBiometricLifecycleTracking();
     emit(state.copyWith(isAuthenticating: true, clearFailure: true));
     final result = await _biometricAuthenticator.authenticate(
       localizedReason: localizedReason,
+      preferredBiometric: preferredBiometric,
     );
     if (isClosed ||
         operationVersion != _operationVersion ||
-        !_hasAuthenticatedSession ||
-        !state.isLocked ||
-        !state.isAuthenticating) {
-      if (!state.isAuthenticating) {
+        !_hasAuthenticatedSession) {
+      if (!isClosed &&
+          operationVersion == _operationVersion &&
+          state.isAuthenticating) {
         _resetBiometricLifecycleTracking();
+        emit(state.copyWith(isAuthenticating: false));
       }
       return result;
     }
+    // 生物识别弹窗会触发前后台切换；成功时即使 isAuthenticating 被打乱也要解锁。
     if (result == BiometricResult.authenticated) {
       final shouldSkipNextResume =
           _biometricLifecycleInterrupted &&
@@ -186,37 +209,51 @@ class AppLockCubit extends Cubit<AppLockState> {
           clearFailure: true,
         ),
       );
-    } else {
-      _resetBiometricLifecycleTracking();
-      emit(
-        state.copyWith(
-          isAuthenticating: false,
-          failure: result == BiometricResult.failed
-              ? AppLockFailure.invalidCredential
-              : null,
-          clearFailure: result != BiometricResult.failed,
-        ),
-      );
+      return result;
     }
+    _resetBiometricLifecycleTracking();
+    final failure = switch (result) {
+      BiometricResult.failed => AppLockFailure.biometricFailed,
+      BiometricResult.unavailable => AppLockFailure.biometricUnavailable,
+      BiometricResult.cancelled || BiometricResult.authenticated => null,
+    };
+    emit(
+      state.copyWith(
+        isAuthenticating: false,
+        failure: failure,
+        clearFailure: failure == null,
+      ),
+    );
     return result;
   }
 
   Future<bool> configure({
     required AppLockMethod method,
     required String value,
-    bool biometricEnabled = false,
+    AppLockPreferredUnlock preferredUnlock = AppLockPreferredUnlock.pin,
   }) async {
     final isValid = switch (method) {
       AppLockMethod.pin => AppLockVerifier.isValidPin(value),
       AppLockMethod.pattern => _isValidPatternValue(value),
     };
-    if (!isValid) return false;
+    if (!isValid) {
+      emit(state.copyWith(failure: AppLockFailure.invalidCredential));
+      return false;
+    }
+    final normalizedPreferred = _normalizePreferredUnlock(
+      preferredUnlock,
+      method,
+    );
+    if (normalizedPreferred == null) {
+      emit(state.copyWith(failure: AppLockFailure.configurationSaveFailed));
+      return false;
+    }
     try {
       final verifier = await AppLockVerifier.create(method, value);
       await _secretStore.writeVerifier(verifier);
       final settings = AppLockSettings(
         method: method,
-        biometricEnabled: biometricEnabled,
+        preferredUnlock: normalizedPreferred,
       );
       try {
         await _settingsStore.write(settings);
@@ -224,12 +261,59 @@ class AppLockCubit extends Cubit<AppLockState> {
         await _secretStore.clear();
         rethrow;
       }
+      // 在设置页开启应用锁时，用户已在主壳内，需同步会话标记，
+      // 否则切后台不会触发上锁。
+      _hasAuthenticatedSession = true;
       _resetBiometricLifecycleTracking();
       emit(AppLockState(status: AppLockStatus.unlocked, settings: settings));
       return true;
     } on Object {
       emit(state.copyWith(failure: AppLockFailure.configurationSaveFailed));
       return false;
+    }
+  }
+
+  /// 已开启应用锁时切换默认解锁方式（密码/手势为回退凭证，面容/指纹为优先方式）。
+  Future<bool> setPreferredUnlock(AppLockPreferredUnlock preferredUnlock) async {
+    final settings = state.settings;
+    if (settings == null || state.status == AppLockStatus.disabled) {
+      return false;
+    }
+    final normalized = _normalizePreferredUnlock(
+      preferredUnlock,
+      settings.method,
+    );
+    if (normalized == null) {
+      emit(state.copyWith(failure: AppLockFailure.configurationSaveFailed));
+      return false;
+    }
+    try {
+      final next = settings.copyWith(preferredUnlock: normalized);
+      await _settingsStore.write(next);
+      emit(state.copyWith(settings: next, clearFailure: true));
+      return true;
+    } on Object {
+      emit(state.copyWith(failure: AppLockFailure.configurationSaveFailed));
+      return false;
+    }
+  }
+
+  AppLockPreferredUnlock? _normalizePreferredUnlock(
+    AppLockPreferredUnlock preferred,
+    AppLockMethod fallbackMethod,
+  ) {
+    switch (preferred) {
+      case AppLockPreferredUnlock.pin:
+        return fallbackMethod == AppLockMethod.pin
+            ? AppLockPreferredUnlock.pin
+            : null;
+      case AppLockPreferredUnlock.pattern:
+        return fallbackMethod == AppLockMethod.pattern
+            ? AppLockPreferredUnlock.pattern
+            : null;
+      case AppLockPreferredUnlock.face:
+      case AppLockPreferredUnlock.fingerprint:
+        return preferred;
     }
   }
 

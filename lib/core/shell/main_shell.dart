@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fortuneboot/core/app_lock/app_lock_cubit.dart';
 import 'package:fortuneboot/core/feedback/fx_feedback.dart';
 import 'package:fortuneboot/core/navigation/app_router.dart';
 import 'package:fortuneboot/core/navigation/routes.dart';
@@ -81,6 +82,8 @@ class _MainShellState extends State<MainShell> {
     if (session.state.status != SessionStatus.loading) {
       unawaited(session.load());
     }
+    // 标记已进入受保护会话；否则后台/恢复时不会上锁。
+    unawaited(context.read<AppLockCubit>().onAuthenticated());
   }
 
   Widget _slot(WidgetBuilder? builder, String label) {

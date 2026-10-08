@@ -33,16 +33,51 @@ class FortunebootOhosSecurity {
   }
 
   Future<bool> isBiometricAvailable() async {
-    return await _channel.invokeMethod<bool>('isBiometricAvailable') ?? false;
+    try {
+      final value = await _channel.invokeMethod<dynamic>('isBiometricAvailable');
+      if (value is bool) return value;
+      if (value is num) return value != 0;
+      return false;
+    } on PlatformException {
+      return false;
+    }
+  }
+
+  /// [type] 为 `face` 或 `fingerprint`。
+  Future<bool> isBiometricTypeAvailable(String type) async {
+    try {
+      final value = await _channel.invokeMethod<dynamic>(
+        'isBiometricTypeAvailable',
+        {'type': type},
+      );
+      if (value is bool) return value;
+      if (value is num) return value != 0;
+      return false;
+    } on PlatformException {
+      return false;
+    }
   }
 
   Future<String> authenticateBiometrics({
     required String localizedReason,
+    String? preferredType,
   }) async {
-    return await _channel.invokeMethod<String>('authenticateBiometrics', {
+    try {
+      final value = await _channel.invokeMethod<dynamic>(
+        'authenticateBiometrics',
+        {
           'localizedReason': localizedReason,
-        }) ??
-        'failed';
+          if (preferredType != null) 'preferredType': preferredType,
+        },
+      );
+      if (value is String && value.isNotEmpty) return value;
+      // 通道异常/空结果时不要误报「识别未通过」，引导改用密码。
+      return 'unavailable';
+    } on PlatformException {
+      return 'unavailable';
+    } on Object {
+      return 'unavailable';
+    }
   }
 
   /// Saves image bytes to the system gallery via HarmonyOS photoAccessHelper.

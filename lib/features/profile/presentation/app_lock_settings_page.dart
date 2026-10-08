@@ -33,8 +33,9 @@ class _AppLockSettingsPageState extends State<AppLockSettingsPage> {
   final _credentialFocusNode = FocusNode();
   final _confirmationFocusNode = FocusNode();
   AppLockMethod _method = AppLockMethod.pin;
-  bool _biometricEnabled = false;
-  bool _isBiometricAvailable = false;
+  AppLockPreferredUnlock _preferredUnlock = AppLockPreferredUnlock.pin;
+  bool _isFaceAvailable = false;
+  bool _isFingerprintAvailable = false;
   bool _isSaving = false;
   PatternPathResolution? _initialPattern;
   bool _isPatternConfirmed = false;
@@ -144,6 +145,20 @@ class _AppLockSettingsPageState extends State<AppLockSettingsPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        Text(
+          s.appLockFallbackMethodTitle,
+          style: FxTypography.title.copyWith(
+            color: FxPalette.of(context).textPrimary,
+          ),
+        ),
+        const SizedBox(height: FxSpacing.xs),
+        Text(
+          s.appLockFallbackMethodSubtitle,
+          style: FxTypography.caption.copyWith(
+            color: FxPalette.of(context).textSecondary,
+          ),
+        ),
+        const SizedBox(height: FxSpacing.md),
         FxCard(
           child: FxSegmented<AppLockMethod>(
             segments: [
@@ -161,23 +176,26 @@ class _AppLockSettingsPageState extends State<AppLockSettingsPage> {
               : _patternFields(context),
         ),
         const SizedBox(height: FxSpacing.lg),
+        Text(
+          s.appLockPreferredUnlockTitle,
+          style: FxTypography.title.copyWith(
+            color: FxPalette.of(context).textPrimary,
+          ),
+        ),
+        const SizedBox(height: FxSpacing.xs),
+        Text(
+          s.appLockPreferredUnlockSubtitle,
+          style: FxTypography.caption.copyWith(
+            color: FxPalette.of(context).textSecondary,
+          ),
+        ),
+        const SizedBox(height: FxSpacing.md),
         FxCard(
           padding: EdgeInsets.zero,
-          child: FxListItem(
-            leading: Icon(
-              Icons.fingerprint_rounded,
-              color: FxPalette.of(context).primary,
-            ),
-            title: s.appLockBiometricToggleTitle,
-            subtitle: _isBiometricAvailable
-                ? s.appLockBiometricAvailableSubtitle
-                : s.appLockBiometricUnavailableSubtitle,
-            trailing: Switch.adaptive(
-              value: _biometricEnabled,
-              onChanged: _isBiometricAvailable
-                  ? (value) => setState(() => _biometricEnabled = value)
-                  : null,
-            ),
+          child: _preferredUnlockList(
+            context,
+            selected: _preferredUnlock,
+            fallbackMethod: _method,
           ),
         ),
         const SizedBox(height: FxSpacing.xl),
@@ -188,6 +206,74 @@ class _AppLockSettingsPageState extends State<AppLockSettingsPage> {
           loading: _isSaving,
           onPressed: _isSaving ? null : _enable,
         ),
+      ],
+    );
+  }
+
+  Widget _preferredUnlockList(
+    BuildContext context, {
+    required AppLockPreferredUnlock selected,
+    required AppLockMethod fallbackMethod,
+    bool persist = false,
+  }) {
+    final s = S.of(context);
+    final options = <({AppLockPreferredUnlock value, String label, IconData icon, bool enabled})>[
+      (
+        value: AppLockPreferredUnlock.face,
+        label: s.appLockPreferredFace,
+        icon: Icons.face_rounded,
+        enabled: _isFaceAvailable,
+      ),
+      (
+        value: AppLockPreferredUnlock.fingerprint,
+        label: s.appLockPreferredFingerprint,
+        icon: Icons.fingerprint_rounded,
+        enabled: _isFingerprintAvailable,
+      ),
+      (
+        value: AppLockPreferredUnlock.pin,
+        label: s.appLockPinMethod,
+        icon: Icons.pin_rounded,
+        enabled: fallbackMethod == AppLockMethod.pin,
+      ),
+      (
+        value: AppLockPreferredUnlock.pattern,
+        label: s.appLockPatternMethod,
+        icon: Icons.gesture_rounded,
+        enabled: fallbackMethod == AppLockMethod.pattern,
+      ),
+    ];
+    return Column(
+      children: [
+        for (var i = 0; i < options.length; i++) ...[
+          if (i > 0)
+            Divider(
+              height: 1,
+              thickness: 0.5,
+              color: FxPalette.of(context).border,
+            ),
+          FxListItem(
+            leading: Icon(
+              options[i].icon,
+              color: options[i].enabled
+                  ? FxPalette.of(context).primary
+                  : FxPalette.of(context).textTertiary,
+            ),
+            title: options[i].label,
+            subtitle: options[i].enabled ? null : s.appLockPreferredUnavailable,
+            trailing: Icon(
+              selected == options[i].value
+                  ? Icons.check_circle_rounded
+                  : Icons.circle_outlined,
+              color: selected == options[i].value
+                  ? FxPalette.of(context).primary
+                  : FxPalette.of(context).textTertiary,
+            ),
+            onTap: (!options[i].enabled || _isSaving)
+                ? null
+                : () => _selectPreferred(options[i].value, persist: persist),
+          ),
+        ],
       ],
     );
   }
@@ -281,6 +367,9 @@ class _AppLockSettingsPageState extends State<AppLockSettingsPage> {
 
   Widget _enabledContent(BuildContext context, AppLockMethod activeMethod) {
     final s = S.of(context);
+    final settings = context.watch<AppLockCubit>().state.settings;
+    final preferred =
+        settings?.preferredUnlock ?? _preferredUnlock;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -291,10 +380,34 @@ class _AppLockSettingsPageState extends State<AppLockSettingsPage> {
               Icons.lock_outline_rounded,
               color: FxPalette.of(context).primary,
             ),
-            title: s.appLockCurrentMethod,
+            title: s.appLockFallbackMethodTitle,
             subtitle: activeMethod == AppLockMethod.pin
                 ? s.appLockPinMethod
                 : s.appLockPatternMethod,
+          ),
+        ),
+        const SizedBox(height: FxSpacing.lg),
+        Text(
+          s.appLockPreferredUnlockTitle,
+          style: FxTypography.title.copyWith(
+            color: FxPalette.of(context).textPrimary,
+          ),
+        ),
+        const SizedBox(height: FxSpacing.xs),
+        Text(
+          s.appLockPreferredUnlockSubtitle,
+          style: FxTypography.caption.copyWith(
+            color: FxPalette.of(context).textSecondary,
+          ),
+        ),
+        const SizedBox(height: FxSpacing.md),
+        FxCard(
+          padding: EdgeInsets.zero,
+          child: _preferredUnlockList(
+            context,
+            selected: preferred,
+            fallbackMethod: activeMethod,
+            persist: true,
           ),
         ),
         const SizedBox(height: FxSpacing.lg),
@@ -316,6 +429,26 @@ class _AppLockSettingsPageState extends State<AppLockSettingsPage> {
     );
   }
 
+  Future<void> _selectPreferred(
+    AppLockPreferredUnlock value, {
+    required bool persist,
+  }) async {
+    if (!persist) {
+      setState(() => _preferredUnlock = value);
+      return;
+    }
+    setState(() {
+      _preferredUnlock = value;
+      _isSaving = true;
+    });
+    final ok = await context.read<AppLockCubit>().setPreferredUnlock(value);
+    if (!mounted) return;
+    setState(() => _isSaving = false);
+    if (!ok) {
+      _showMessage(S.of(context).appLockFailureConfigurationSave);
+    }
+  }
+
   void _changeMethod(AppLockMethod method) {
     FocusManager.instance.primaryFocus?.unfocus();
     setState(() {
@@ -326,15 +459,39 @@ class _AppLockSettingsPageState extends State<AppLockSettingsPage> {
       _patternResetToken++;
       _credentialController.clear();
       _confirmationController.clear();
+      // 回退方式变更时，默认解锁若不再合法则同步到回退方式。
+      if (_preferredUnlock == AppLockPreferredUnlock.pin &&
+          method != AppLockMethod.pin) {
+        _preferredUnlock = AppLockPreferredUnlock.pattern;
+      } else if (_preferredUnlock == AppLockPreferredUnlock.pattern &&
+          method != AppLockMethod.pattern) {
+        _preferredUnlock = AppLockPreferredUnlock.pin;
+      }
     });
   }
 
   Future<void> _loadBiometricAvailability() async {
-    final available = await context.read<AppLockCubit>().isBiometricAvailable();
+    final cubit = context.read<AppLockCubit>();
+    final face = await cubit.isFaceAvailable();
+    final fingerprint = await cubit.isFingerprintAvailable();
     if (!mounted) return;
     setState(() {
-      _isBiometricAvailable = available;
-      if (!available) _biometricEnabled = false;
+      _isFaceAvailable = face;
+      _isFingerprintAvailable = fingerprint;
+      if (_preferredUnlock == AppLockPreferredUnlock.face && !face) {
+        _preferredUnlock = fingerprint
+            ? AppLockPreferredUnlock.fingerprint
+            : (_method == AppLockMethod.pattern
+                  ? AppLockPreferredUnlock.pattern
+                  : AppLockPreferredUnlock.pin);
+      } else if (_preferredUnlock == AppLockPreferredUnlock.fingerprint &&
+          !fingerprint) {
+        _preferredUnlock = face
+            ? AppLockPreferredUnlock.face
+            : (_method == AppLockMethod.pattern
+                  ? AppLockPreferredUnlock.pattern
+                  : AppLockPreferredUnlock.pin);
+      }
     });
   }
 
@@ -359,15 +516,24 @@ class _AppLockSettingsPageState extends State<AppLockSettingsPage> {
       return;
     }
     setState(() => _isSaving = true);
-    final ok = await context.read<AppLockCubit>().configure(
+    final cubit = context.read<AppLockCubit>();
+    final ok = await cubit.configure(
       method: _method,
       value: value,
-      biometricEnabled: _biometricEnabled,
+      preferredUnlock: _preferredUnlock,
     );
     if (!mounted) return;
     setState(() => _isSaving = false);
-    if (ok) Navigator.of(context).pop();
-    if (!ok) _showMessage(S.of(context).appLockConfigurationInvalid);
+    if (ok) {
+      Navigator.of(context).pop();
+      return;
+    }
+    final s = S.of(context);
+    final message = switch (cubit.state.failure) {
+      AppLockFailure.configurationSaveFailed => s.appLockFailureConfigurationSave,
+      _ => s.appLockConfigurationInvalid,
+    };
+    _showMessage(message);
   }
 
   void _onPatternCompleted(PatternPathResolution pattern) {

@@ -37,15 +37,33 @@ class _AppLockScreen extends StatefulWidget {
   State<_AppLockScreen> createState() => _AppLockScreenState();
 }
 
-class _AppLockScreenState extends State<_AppLockScreen> {
+class _AppLockScreenState extends State<_AppLockScreen>
+    with WidgetsBindingObserver {
   final _controller = TextEditingController();
   int _patternResetToken = 0;
+  bool _autoBiometricTriggered = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    WidgetsBinding.instance.addPostFrameCallback((_) => _tryAutoBiometric());
+  }
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _controller.clear();
     _controller.dispose();
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      // 切后台时可能已上锁；等回到前台再自动唤起生物识别。
+      WidgetsBinding.instance.addPostFrameCallback((_) => _tryAutoBiometric());
+    }
   }
 
   @override
@@ -53,7 +71,12 @@ class _AppLockScreenState extends State<_AppLockScreen> {
     final state = context.watch<AppLockCubit>().state;
     final palette = FxPalette.of(context);
     final s = S.of(context);
-    final isPin = state.settings?.method == AppLockMethod.pin;
+    final settings = state.settings;
+    final isPin = settings?.method == AppLockMethod.pin;
+    final preferred = settings?.preferredUnlock;
+    final showBiometric =
+        settings?.biometricPreferred == true &&
+        state.status == AppLockStatus.locked;
     return Material(
       color: palette.canvas,
       child: SafeArea(
@@ -90,7 +113,7 @@ class _AppLockScreenState extends State<_AppLockScreen> {
                       if (isPin) ...[
                         TextField(
                           controller: _controller,
-                          autofocus: true,
+                          autofocus: !showBiometric,
                           obscureText: true,
                           enableSuggestions: false,
                           autocorrect: false,
@@ -149,19 +172,22 @@ class _AppLockScreenState extends State<_AppLockScreen> {
                           ),
                         ],
                       ],
-                      if (state.settings?.biometricEnabled == true) ...[
+                      if (showBiometric) ...[
                         const SizedBox(height: 8),
                         TextButton.icon(
                           onPressed: state.isAuthenticating
                               ? null
-                              : () => context
-                                    .read<AppLockCubit>()
-                                    .unlockWithBiometrics(
-                                      localizedReason:
-                                          s.appLockBiometricLocalizedReason,
-                                    ),
-                          icon: const Icon(Icons.fingerprint_rounded),
-                          label: Text(s.appLockUseBiometrics),
+                              : () => _unlockWithBiometrics(s),
+                          icon: Icon(
+                            preferred == AppLockPreferredUnlock.face
+                                ? Icons.face_rounded
+                                : Icons.fingerprint_rounded,
+                          ),
+                          label: Text(
+                            preferred == AppLockPreferredUnlock.face
+                                ? s.appLockUseFace
+                                : s.appLockUseFingerprint,
+                          ),
                         ),
                       ],
                     ],
@@ -175,9 +201,34 @@ class _AppLockScreenState extends State<_AppLockScreen> {
     );
   }
 
+  void _tryAutoBiometric() {
+    if (!mounted || _autoBiometricTriggered) return;
+    // 后台上锁时不要立刻调起；等 resumed 再弹系统生物识别。
+    if (WidgetsBinding.instance.lifecycleState != AppLifecycleState.resumed) {
+      return;
+    }
+    final state = context.read<AppLockCubit>().state;
+    if (state.status != AppLockStatus.locked ||
+        state.settings?.biometricPreferred != true ||
+        state.isAuthenticating) {
+      return;
+    }
+    _autoBiometricTriggered = true;
+    _unlockWithBiometrics(S.of(context));
+  }
+
+  Future<void> _unlockWithBiometrics(S s) {
+    return context.read<AppLockCubit>().unlockWithBiometrics(
+      localizedReason: s.appLockBiometricLocalizedReason,
+    );
+  }
+
   String? _failureMessage(AppLockFailure? failure, S s) {
     return switch (failure) {
       AppLockFailure.invalidCredential => s.appLockFailureInvalidCredential,
+      AppLockFailure.biometricFailed => s.appLockFailureBiometric,
+      AppLockFailure.biometricUnavailable =>
+        s.appLockFailureBiometricUnavailable,
       AppLockFailure.configurationSaveFailed =>
         s.appLockFailureConfigurationSave,
       AppLockFailure.disableFailed => s.appLockFailureDisable,
