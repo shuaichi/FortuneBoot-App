@@ -408,6 +408,53 @@ void main() {
     expect(state(from: 5, to: 1).suggestedTransferTitle, '支付宝提现');
     expect(state(from: 4, to: 2).suggestedTransferTitle, '还款');
   });
+
+  test('income-side associations bind reimburse like income', () {
+    bool usesIncomeAssociations(FxBillType type) => BillEditorState(
+      tradeTime: DateTime(2026, 1, 1),
+      billType: type,
+    ).usesIncomeAssociations;
+
+    expect(usesIncomeAssociations(FxBillType.income), isTrue);
+    expect(usesIncomeAssociations(FxBillType.reimburse), isTrue);
+    expect(usesIncomeAssociations(FxBillType.expense), isFalse);
+    expect(usesIncomeAssociations(FxBillType.advance), isFalse);
+    expect(usesIncomeAssociations(FxBillType.transfer), isFalse);
+  });
+
+  test('new advance bills default to an expense-capable account', () async {
+    final bloc = _createBloc();
+    addTearDown(bloc.close);
+
+    bloc.add(
+      const BillEditorInitialized(
+        BillEditorArgs(mode: 'new', presetBillType: 7),
+      ),
+    );
+    final state = await bloc.stream.firstWhere(
+      (state) => state.status == EditorStatus.ready,
+    );
+
+    expect(state.billType, FxBillType.advance);
+    expect(state.accountId, 11);
+  });
+
+  test('new reimburse bills default to an income-capable account', () async {
+    final bloc = _createBloc();
+    addTearDown(bloc.close);
+
+    bloc.add(
+      const BillEditorInitialized(
+        BillEditorArgs(mode: 'new', presetBillType: 8),
+      ),
+    );
+    final state = await bloc.stream.firstWhere(
+      (state) => state.status == EditorStatus.ready,
+    );
+
+    expect(state.billType, FxBillType.reimburse);
+    expect(state.accountId, 22);
+  });
 }
 
 Future<BillEditorState> _initialize(BillEditorBloc bloc) {
@@ -452,6 +499,11 @@ class _FakeEditorOptionsService extends EditorOptionsService {
     required int bookId,
     required int groupId,
   }) async {
-    return const EditorOptions();
+    return const EditorOptions(
+      accounts: [
+        AccountOption(accountId: 11, accountName: '支出账户', canExpense: true),
+        AccountOption(accountId: 22, accountName: '收入账户', canIncome: true),
+      ],
+    );
   }
 }

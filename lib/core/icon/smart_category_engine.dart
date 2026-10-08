@@ -119,14 +119,14 @@ class SmartCategoryEngine {
   bool _isTransferDomain(String id) =>
       id.startsWith('transfer_') || id.startsWith('adjust_');
 
-  /// billType 预过滤：支出账单屏蔽收入域，收入账单屏蔽支出/转账域。
+  /// billType 预过滤：支出/垫付账单屏蔽收入域，收入/报销账单屏蔽支出/转账域。
   bool _allowed(int? billType, String domainId) {
     switch (billType) {
       case 2: // 收入
+      case 8: // 报销（分类关联收入）
         return _isIncomeDomain(domainId) || domainId == 'misc_others';
       case 1: // 支出
-      case 7: // 垫付
-      case 8: // 报销
+      case 7: // 垫付（分类关联支出）
         return !_isIncomeDomain(domainId) && !_isTransferDomain(domainId);
       case 3: // 转账
       case 4: // 调整

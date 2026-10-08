@@ -124,6 +124,11 @@ class BillEditorState extends Equatable {
   bool get isAdvanceOrReimburse =>
       billType == FxBillType.advance || billType == FxBillType.reimburse;
 
+  /// 收入侧关联：报销与收入一致（分类树/账户/交易对象/标签均取收入侧可用性）；
+  /// 垫付与支出一致，取支出侧可用性。
+  bool get usesIncomeAssociations =>
+      isIncome || billType == FxBillType.reimburse;
+
   bool get usesCategorySplit => !isTransfer;
   bool get showSingleAccount => !isTransfer;
   bool get showPayee => isExpense || isIncome || isAdvanceOrReimburse;

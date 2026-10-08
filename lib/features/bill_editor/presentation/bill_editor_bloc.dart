@@ -279,7 +279,7 @@ class BillEditorBloc extends Bloc<BillEditorEvent, BillEditorState> {
       );
     }
 
-    final test = s.isIncome
+    final test = s.usesIncomeAssociations
         ? (AccountOption a) => a.canIncome
         : (AccountOption a) => a.canExpense;
     final acc = pick(test);

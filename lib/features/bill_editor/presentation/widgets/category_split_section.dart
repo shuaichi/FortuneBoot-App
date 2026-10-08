@@ -27,8 +27,8 @@ class CategorySplitSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final palette = FxPalette.of(context);
     final bloc = context.read<BillEditorBloc>();
-    // 支出/垫付/报销用支出分类；收入用收入分类。保留完整树，叶子可选。
-    final categories = state.isIncome
+    // 垫付/支出取支出侧关联；报销/收入取收入侧关联。保留完整树，叶子可选。
+    final categories = state.usesIncomeAssociations
         ? state.options.incomeCategories
         : state.options.expenseCategories;
 

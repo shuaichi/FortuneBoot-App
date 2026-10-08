@@ -410,7 +410,7 @@ class _AccountRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final bloc = context.read<BillEditorBloc>();
     final accounts = state.options.accounts.where((a) {
-      if (state.isIncome) return a.canIncome;
+      if (state.usesIncomeAssociations) return a.canIncome;
       return a.canExpense;
     }).toList();
 
@@ -484,7 +484,7 @@ class _PayeeRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final bloc = context.read<BillEditorBloc>();
     final payees = state.options.payees.where((p) {
-      if (state.isIncome) return p.canIncome;
+      if (state.usesIncomeAssociations) return p.canIncome;
       return p.canExpense;
     }).toList();
 
@@ -580,7 +580,7 @@ class _TagsRow extends StatelessWidget {
     // 按当前账单类型过滤标签树：保留可用节点及其祖先，维持树形层级。
     bool usable(TagNode t) {
       if (state.isTransfer) return t.canTransfer;
-      if (state.isIncome) return t.canIncome;
+      if (state.usesIncomeAssociations) return t.canIncome;
       return t.canExpense;
     }
 
