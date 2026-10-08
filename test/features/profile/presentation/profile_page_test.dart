@@ -9,6 +9,7 @@ import 'package:fortuneboot/features/profile/presentation/bloc/profile_bloc.dart
 import 'package:fortuneboot/features/profile/presentation/profile_edit_page.dart';
 import 'package:fortuneboot/features/profile/presentation/profile_page.dart';
 import 'package:fortuneboot/features/profile/presentation/widgets/donate_qr_tile.dart';
+import 'package:fortuneboot/fx/components/fx_sheet.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/generated/l10n.dart';
 
@@ -81,7 +82,13 @@ void main() {
     await tester.tap(find.byTooltip('捐赠'));
     await tester.pumpAndSettle();
 
-    expect(find.text('捐赠'), findsOneWidget);
+    expect(
+      find.descendant(
+        of: find.byType(FxSheet),
+        matching: find.text('捐赠'),
+      ),
+      findsOneWidget,
+    );
     expect(find.text('微信'), findsOneWidget);
     expect(find.text('支付宝'), findsOneWidget);
     expect(find.byType(DonateQrTile), findsNWidgets(2));
