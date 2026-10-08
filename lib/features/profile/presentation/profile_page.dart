@@ -16,6 +16,7 @@ import 'package:fortuneboot/features/profile/presentation/app_lock_settings_page
 import 'package:fortuneboot/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:fortuneboot/features/profile/presentation/profile_edit_page.dart';
 import 'package:fortuneboot/features/profile/presentation/widgets/donate_qr_tile.dart';
+import 'package:fortuneboot/features/profile/presentation/widgets/account_deletion_sheet.dart';
 import 'package:fortuneboot/features/profile/presentation/widgets/finance_color_editor.dart';
 import 'package:fortuneboot/features/profile/presentation/widgets/profile_avatar.dart';
 import 'package:fortuneboot/fx/components/fx_button.dart';
@@ -132,6 +133,16 @@ class _ProfileViewState extends State<_ProfileView> {
                         label: S.of(context).profileLogout,
                         expand: true,
                         onPressed: () => _confirmLogout(context),
+                      ),
+                      const SizedBox(height: FxSpacing.sm),
+                      TextButton(
+                        onPressed: () => _confirmDeleteAccount(context),
+                        child: Text(
+                          S.of(context).profileDeleteAccount,
+                          style: FxTypography.bodyStrong.copyWith(
+                            color: FxPalette.of(context).danger,
+                          ),
+                        ),
                       ),
                       const SizedBox(height: FxSpacing.xxl),
                     ],
@@ -946,6 +957,7 @@ class _ProfileViewState extends State<_ProfileView> {
 
   Future<void> _confirmLogout(BuildContext context) async {
     final sessionCubit = context.read<SessionCubit>();
+    final appLockCubit = context.read<AppLockCubit>();
     final navigator = Navigator.of(context, rootNavigator: true);
     await FxSheet.show<void>(
       context,
@@ -971,15 +983,11 @@ class _ProfileViewState extends State<_ProfileView> {
               label: S.of(context).profileLogout,
               expand: true,
               onPressed: () async {
-                // 纯本地清理，不调接口。
-                DioClient().clearAuthHeader();
-                await UserDataSingleton().clearAuth();
-                sessionCubit.reset();
-                context.read<AppLockCubit>().onSignedOut();
-                navigator.pushNamedAndRemoveUntil(
-                  // 登出强制返回URL配置页，用于用户更换服务器（登录页无法直接返回URL配置页）
-                  Routes.baseUrlConfig,
-                  (route) => false,
+                Navigator.of(context).pop();
+                await _clearLocalSessionAndGoBaseUrlConfig(
+                  sessionCubit: sessionCubit,
+                  appLockCubit: appLockCubit,
+                  navigator: navigator,
                 );
               },
             ),
@@ -992,6 +1000,45 @@ class _ProfileViewState extends State<_ProfileView> {
           ],
         ),
       ),
+    );
+  }
+
+  // ---------------- 注销账号 ----------------
+
+  Future<void> _confirmDeleteAccount(BuildContext context) async {
+    final sessionCubit = context.read<SessionCubit>();
+    final appLockCubit = context.read<AppLockCubit>();
+    final navigator = Navigator.of(context, rootNavigator: true);
+
+    final deleted = await FxSheet.show<bool>(
+      context,
+      title: S.of(context).profileDeleteAccount,
+      scrollable: true,
+      child: AccountDeletionSheet(service: ProfileService()),
+    );
+    if (deleted != true) return;
+
+    await _clearLocalSessionAndGoBaseUrlConfig(
+      sessionCubit: sessionCubit,
+      appLockCubit: appLockCubit,
+      navigator: navigator,
+    );
+  }
+
+  Future<void> _clearLocalSessionAndGoBaseUrlConfig({
+    required SessionCubit sessionCubit,
+    required AppLockCubit appLockCubit,
+    required NavigatorState navigator,
+  }) async {
+    // 纯本地清理，不调接口。
+    DioClient().clearAuthHeader();
+    await UserDataSingleton().clearAuth();
+    sessionCubit.reset();
+    appLockCubit.onSignedOut();
+    await navigator.pushNamedAndRemoveUntil(
+      // 登出强制返回URL配置页，用于用户更换服务器（登录页无法直接返回URL配置页）
+      Routes.baseUrlConfig,
+      (route) => false,
     );
   }
 
