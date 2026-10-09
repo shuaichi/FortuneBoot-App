@@ -1,6 +1,6 @@
 name: fortuneboot
 description: "Hao Ji"
-version: 1.5.1+2026100815 #🍏🥝
+version: 1.5.2+2026100820 #🍏🥝
 # 上架版本来源：versionName+versionCode。DevEco 打包前请双击运行：
 #   scripts/set_ohos_version.bat
 # 交互确认后再 Build Hap。
@@ -25,9 +25,11 @@ dependencies:
   flutter_login: ^7.0.0
   font_awesome_flutter: ^11.0.0
 
-  json_annotation: ^4.9.0
+  # 同 major 非破坏性升级（4.9 → 4.12），与 json_serializable/retrofit_generator 配套
+  json_annotation: ^4.12.0
   logger: ^2.5.0
-  retrofit: 4.7.2
+  # 同 major 非破坏性升级（4.7 → 4.10）
+  retrofit: ^4.10.0
   shared_preferences: ^2.5.3
   # 鸿蒙实现与官方插件并存：安卓走 pub.dev，HAP 走 packages/*_ohos。
   shared_preferences_ohos:
@@ -79,10 +81,12 @@ dev_dependencies:
   # flutter_lints: ^5.0.0
   flutter_test:
     sdk: flutter
-  json_serializable: ^6.9.5
+  # 同 major 非破坏性升级（6.11 → 6.14），与 retrofit_generator 配套
+  json_serializable: ^6.14.1
   lint: ^2.1.2
   flutter_launcher_icons: ^0.14.4
-  retrofit_generator: ^10.0.6
+  # 同 major 非破坏性升级（10.0 → 10.2），与 json_serializable 配套
+  retrofit_generator: ^10.2.9
   intl_utils: 2.8.14
 
 # 生成应用图标：dart run flutter_launcher_icons

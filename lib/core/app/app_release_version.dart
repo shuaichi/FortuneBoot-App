@@ -6,10 +6,10 @@ class AppReleaseVersion {
   const AppReleaseVersion._();
 
   /// 版本号（versionName），例如 1.4.3。
-  static const String name = '1.5.1';
+  static const String name = '1.5.2';
 
   /// 构建号（versionCode），例如 2026082115。
-  static const String build = '2026100815';
+  static const String build = '2026100820';
 
   /// 关于页 / 列表展示用：1.4.3（2026082115）
   static String get display {

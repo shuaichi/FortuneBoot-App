@@ -2,8 +2,8 @@
   "app": {
     "bundleName": "com.fortuneboot.haoji",
     "vendor": "example",
-    "versionCode": 2026100815,
-    "versionName": "1.5.1",
+    "versionCode": 2026100820,
+    "versionName": "1.5.2",
     "icon": "$media:layered_image",
     "label": "$string:app_name"
   }
