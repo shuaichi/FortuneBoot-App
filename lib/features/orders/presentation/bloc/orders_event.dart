@@ -1,6 +1,5 @@
 part of 'orders_bloc.dart';
 
-/// 单据 feature 事件。
 sealed class OrdersEvent extends Equatable {
   const OrdersEvent();
 
@@ -12,6 +11,14 @@ class OrdersLoaded extends OrdersEvent {
   const OrdersLoaded();
 }
 
+class OrdersRefreshed extends OrdersEvent {
+  const OrdersRefreshed();
+}
+
+class OrdersMutated extends OrdersEvent {
+  const OrdersMutated();
+}
+
 class OrdersBookChanged extends OrdersEvent {
   final int? bookId;
   const OrdersBookChanged(this.bookId);
@@ -20,17 +27,38 @@ class OrdersBookChanged extends OrdersEvent {
   List<Object?> get props => [bookId];
 }
 
-class OrdersMutated extends OrdersEvent {
-  const OrdersMutated();
-}
-
-/// 状态机流转：action = using / close / reopen。
-class OrderTransitioned extends OrdersEvent {
-  final FortuneFinanceOrderVo order;
-  final String action;
-
-  const OrderTransitioned({required this.order, required this.action});
+class OrdersTypeChanged extends OrdersEvent {
+  final FinanceOrderType type;
+  const OrdersTypeChanged(this.type);
 
   @override
-  List<Object?> get props => [order.orderId, action];
+  List<Object?> get props => [type];
+}
+
+class OrdersStatusFilterChanged extends OrdersEvent {
+  final int status;
+  const OrdersStatusFilterChanged(this.status);
+
+  @override
+  List<Object?> get props => [status];
+}
+
+class OrdersSearchChanged extends OrdersEvent {
+  final String? keyword;
+  const OrdersSearchChanged(this.keyword);
+
+  @override
+  List<Object?> get props => [keyword];
+}
+
+class OrdersOverdueOnlyChanged extends OrdersEvent {
+  final bool overdueOnly;
+  const OrdersOverdueOnlyChanged(this.overdueOnly);
+
+  @override
+  List<Object?> get props => [overdueOnly];
+}
+
+class OrdersLoadMoreRequested extends OrdersEvent {
+  const OrdersLoadMoreRequested();
 }

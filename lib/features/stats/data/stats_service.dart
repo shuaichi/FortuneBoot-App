@@ -1,4 +1,6 @@
 import 'package:fortuneboot/core/network/fx_api.dart';
+import 'package:fortuneboot/features/orders/data/orders_models.dart';
+import 'package:fortuneboot/features/orders/data/orders_service.dart';
 import 'package:fortuneboot/features/stats/data/stats_models.dart';
 import 'package:intl/intl.dart';
 
@@ -7,7 +9,11 @@ import 'package:intl/intl.dart';
 /// 概览（income/expense/surplus）复用 BillService.getStatistics，
 /// Dashboard/资产/借贷的聚合服务按 feature 独立封装。
 class StatsService {
+  StatsService({OrdersService? ordersService})
+    : _ordersService = ordersService ?? OrdersService();
+
   final FxApi _api = FxApi.instance;
+  final OrdersService _ordersService;
 
   static final DateFormat _day = DateFormat('yyyy-MM-dd');
   static final DateFormat _dateTime = DateFormat('yyyy-MM-dd HH:mm:ss');
@@ -47,6 +53,10 @@ class StatsService {
   }
 
   // ── 基础统计扩展 ──────────────────────────────────────────
+
+  /// V2 单据汇总：新借贷总览的唯一数据源。
+  Future<FinanceOrderSummary> getFinanceOrderSummary({required int bookId}) =>
+      _ordersService.getSummary(bookId: bookId);
 
   Future<List<BillComparePoint>> getBillCompare({
     required int bookId,

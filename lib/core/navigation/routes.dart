@@ -21,6 +21,8 @@ abstract final class Routes {
   static const String goods = '/goods';
   static const String goodsEditor = '/goods_editor';
   static const String orders = '/orders';
+  static const String orderDetail = '/orders/detail';
+  static const String orderReconciliation = '/orders/reconciliation';
   static const String recurring = '/recurring';
   static const String recurringEditor = '/recurring_editor';
   static const String groupUsers = '/group_users';
