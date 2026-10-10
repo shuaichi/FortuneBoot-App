@@ -8,6 +8,9 @@
   "serverHistoryEmpty": "暂无历史",
   "serverHistorySelect": "选择已保存的服务器",
   "port": "端口",
+  "apiPrefixLabel": "接口前缀",
+  "developerPrefixUnlocked": "已显示开发者设置：接口前缀（仅本次启动有效）",
+  "apiPrefixInvalid": "前缀需以 / 开头且不能以 / 结尾（如 /dev-api），留空表示无前缀",
   "pleaseEnterPort": "请输入端口",
   "invalidPort": "无效的端口号",
   "confirm": "确认",
@@ -1516,6 +1519,7 @@
       "label": {}
     }
   },
+  "billGroupClassic": "记账",
   "billTypeExpense": "支出",
   "billTypeIncome": "收入",
   "billTypeTransfer": "转账",

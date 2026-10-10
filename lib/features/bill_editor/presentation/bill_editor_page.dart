@@ -246,7 +246,6 @@ class _EditorBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bloc = context.read<BillEditorBloc>();
     final currency = _currency(state);
 
     return ListView(
@@ -257,21 +256,12 @@ class _EditorBody extends StatelessWidget {
         FxSpacing.xxxl,
       ),
       children: [
-        // 类型分段
+        // 类型选择：先选单据组，再选组内动作，避免 9 个均分分段被挤压截断。
         Opacity(
           opacity: state.lockBillType ? 0.6 : 1,
           child: IgnorePointer(
             ignoring: state.lockBillType,
-            child: FxSegmented<FxBillType>(
-              value: state.billType,
-              onChanged: (type) {
-                _dismissKeyboard();
-                bloc.add(BillTypeChanged(type));
-              },
-              segments: FxBillType.selectable
-                  .map((t) => FxSegment(t, t.localizedLabel(context)))
-                  .toList(),
-            ),
+            child: _BillTypeSection(state: state),
           ),
         ),
         const SizedBox(height: FxSpacing.lg),
@@ -351,6 +341,71 @@ class _EditorBody extends StatelessWidget {
       ],
     );
   }
+}
+
+/// 记账类型两级选择：第一级按业务分组（记账/债权单/债务单/费用报销单），
+/// 第二级在组内选具体动作；分组变更时落到该组首个动作。
+class _BillTypeSection extends StatelessWidget {
+  const _BillTypeSection({required this.state});
+
+  final BillEditorState state;
+
+  @override
+  Widget build(BuildContext context) {
+    final bloc = context.read<BillEditorBloc>();
+    final s = S.of(context);
+    final group = _billTypeGroupOf(state.billType);
+    return Column(
+      children: [
+        FxSegmented<_BillTypeGroup>(
+          value: group,
+          onChanged: (next) {
+            _dismissKeyboard();
+            if (next == group) return;
+            bloc.add(BillTypeChanged(next.types.first));
+          },
+          segments: [
+            FxSegment(_BillTypeGroup.classic, s.billGroupClassic),
+            FxSegment(_BillTypeGroup.receivable, s.ordersTypeReceivable),
+            FxSegment(_BillTypeGroup.payable, s.ordersTypePayable),
+            FxSegment(_BillTypeGroup.reimbursement, s.ordersTypeReimbursement),
+          ],
+        ),
+        const SizedBox(height: FxSpacing.sm),
+        FxSegmented<FxBillType>(
+          value: state.billType,
+          onChanged: (type) {
+            _dismissKeyboard();
+            bloc.add(BillTypeChanged(type));
+          },
+          segments: group.types
+              .map((t) => FxSegment(t, t.localizedLabel(context)))
+              .toList(),
+        ),
+      ],
+    );
+  }
+}
+
+/// 账单类型的业务分组，与 9 个可选手选类型一一对应。
+enum _BillTypeGroup {
+  classic([FxBillType.expense, FxBillType.income, FxBillType.transfer]),
+  receivable([FxBillType.loanOut, FxBillType.loanRecover]),
+  payable([FxBillType.loanIn, FxBillType.loanRepay]),
+  reimbursement([FxBillType.advance, FxBillType.reimburse]);
+
+  const _BillTypeGroup(this.types);
+
+  /// 组内动作，首项作为分组切换时的默认动作。
+  final List<FxBillType> types;
+}
+
+_BillTypeGroup _billTypeGroupOf(FxBillType type) {
+  for (final group in _BillTypeGroup.values) {
+    if (group.types.contains(type)) return group;
+  }
+  // 余额调整等系统类型不可手选，兜底归入记账组。
+  return _BillTypeGroup.classic;
 }
 
 String _currency(BillEditorState state) {

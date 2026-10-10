@@ -8,6 +8,9 @@
   "serverHistoryEmpty": "No history",
   "serverHistorySelect": "Choose a saved server",
   "port": "Port",
+  "apiPrefixLabel": "API prefix",
+  "developerPrefixUnlocked": "Developer options shown: API prefix (this launch only)",
+  "apiPrefixInvalid": "Prefix must start and not end with / (e.g. /dev-api); leave empty for none",
   "pleaseEnterPort": "Please enter a port",
   "invalidPort": "Invalid port number",
   "confirm": "Confirm",
@@ -1514,6 +1517,7 @@
       "label": {}
     }
   },
+  "billGroupClassic": "Record",
   "billTypeExpense": "Expense",
   "billTypeIncome": "Income",
   "billTypeTransfer": "Transfer",
