@@ -11,6 +11,8 @@ void main() {
     SharedPreferences.setMockInitialValues({});
     final prefs = await SharedPreferences.getInstance();
     UserDataSingleton().init(prefs);
+    // 单例存在进程级内存缓存，同一文件内用例间会互相残留，显式清空历史。
+    UserDataSingleton().setStr(ServerHistoryStore.prefsKey, '');
   });
 
   test('remember keeps newest first and dedupes', () async {

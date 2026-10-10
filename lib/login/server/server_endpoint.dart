@@ -4,12 +4,14 @@ class ServerEndpoint {
     required this.protocol,
     required this.host,
     required this.port,
+    required this.apiPrefix,
   });
 
   factory ServerEndpoint.parse({
     required String protocol,
     required String host,
     String? port,
+    String? apiPrefix,
   }) {
     final normalizedProtocol = protocol.trim().toLowerCase();
     final normalizedHost = _normalizeHost(host);
@@ -17,10 +19,12 @@ class ServerEndpoint {
       throw const ServerEndpointFormatException();
     }
     final normalizedPort = _parsePort(port);
+    final normalizedApiPrefix = _normalizeApiPrefix(apiPrefix);
     return ServerEndpoint._(
       protocol: normalizedProtocol,
       host: normalizedHost,
       port: normalizedPort,
+      apiPrefix: normalizedApiPrefix,
     );
   }
 
@@ -28,8 +32,24 @@ class ServerEndpoint {
   final String host;
   final int? port;
 
-  Uri get apiBaseUri =>
-      Uri(scheme: protocol, host: host, port: port, path: '/prod-api');
+  /// 后端接口前缀（如 /prod-api、/dev-api）；空字符串表示无前缀，接口直接挂在
+  /// 域名根路径，常用于无网关的本地调试。
+  final String apiPrefix;
+
+  /// 不传前缀时的历史默认行为。
+  static const String defaultApiPrefix = '/prod-api';
+
+  /// 开发者会话前缀：仅保留在进程内存，不落盘、不进历史；冷启动（新进程）为
+  /// null，回滚为 [defaultApiPrefix]。配置页在开发者模式下设置后，启动恢复、
+  /// 版本门禁、主流程校验都应在本次启动内沿用，保证同一前缀贯穿整个会话。
+  static String? sessionApiPrefix;
+
+  Uri get apiBaseUri => Uri(
+    scheme: protocol,
+    host: host,
+    port: port,
+    path: apiPrefix.isEmpty ? '' : apiPrefix,
+  );
 
   String get storedPort => port?.toString() ?? '';
 
@@ -61,6 +81,19 @@ class ServerEndpoint {
       throw const ServerEndpointFormatException();
     }
     return unbracketed;
+  }
+
+  static String _normalizeApiPrefix(String? value) {
+    if (value == null) return defaultApiPrefix;
+    final trimmed = value.trim();
+    if (trimmed.isEmpty) return '';
+    if (trimmed == '/' ||
+        !trimmed.startsWith('/') ||
+        trimmed.endsWith('/') ||
+        trimmed.contains(RegExp(r'[\s@?#]'))) {
+      throw const ServerEndpointFormatException();
+    }
+    return trimmed;
   }
 
   static int? _parsePort(String? value) {

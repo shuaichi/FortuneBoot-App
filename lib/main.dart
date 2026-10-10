@@ -88,6 +88,7 @@ void _restoreDioClientFromStorage(SharedPreferences prefs) {
         protocol: protocol,
         host: domain,
         port: port,
+        apiPrefix: ServerEndpoint.sessionApiPrefix,
       );
       DioClient().updateBaseUrl(endpoint.apiBaseUri.toString());
     } on ServerEndpointFormatException {

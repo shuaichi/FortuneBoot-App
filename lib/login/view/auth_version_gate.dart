@@ -33,6 +33,7 @@ class _AuthVersionGateState extends State<AuthVersionGate> {
         protocol: protocol!,
         host: domain!,
         port: port,
+        apiPrefix: ServerEndpoint.sessionApiPrefix,
       );
       DioClient().updateBaseUrl(endpoint.apiBaseUri.toString());
     } on ServerEndpointFormatException {

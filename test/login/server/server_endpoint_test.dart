@@ -36,6 +36,45 @@ void main() {
       );
     });
 
+    test('supports custom api prefixes and no-prefix local debugging', () {
+      expect(
+        ServerEndpoint.parse(
+          protocol: 'https',
+          host: 'demo.fortuneboot.com',
+          apiPrefix: ' /dev-api ',
+        ).apiBaseUri.toString(),
+        'https://demo.fortuneboot.com/dev-api',
+      );
+      expect(
+        ServerEndpoint.parse(
+          protocol: 'http',
+          host: '127.0.0.1',
+          port: '8080',
+          apiPrefix: '',
+        ).apiBaseUri.toString(),
+        'http://127.0.0.1:8080',
+      );
+    });
+
+    test('rejects malformed api prefixes', () {
+      for (final prefix in const [
+        'prod-api',
+        '/',
+        '/prod-api/',
+        '/prod api',
+        '/prod-api?x=1',
+      ]) {
+        expect(
+          () => ServerEndpoint.parse(
+            protocol: 'http',
+            host: 'example.com',
+            apiPrefix: prefix,
+          ),
+          throwsA(isA<ServerEndpointFormatException>()),
+        );
+      }
+    });
+
     test('rejects hosts containing URI components or whitespace', () {
       for (final host in const [
         '',

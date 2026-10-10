@@ -39,11 +39,47 @@ class _BaseUrlConfigPageState extends State<BaseUrlConfigPage> {
   final TextEditingController _portController = TextEditingController(
     text: '443',
   );
+  final TextEditingController _apiPrefixController = TextEditingController(
+    text: ServerEndpoint.defaultApiPrefix,
+  );
   final ServerHistoryStore _historyStore = ServerHistoryStore();
   List<ServerHistoryEntry> _history = const [];
 
   // 新增：用于接管网络请求时的动态 Loading 状态
   bool _isConnecting = false;
+
+  /// 开发者隐藏开关：连续点击顶部图标 [_devTapThreshold] 次（间隔超 2 秒重新计数）
+  /// 后显示接口前缀输入框；为内存态，冷启动自动隐藏。
+  bool _devPrefixVisible = false;
+  int _devTapCount = 0;
+  DateTime? _lastDevTap;
+  static const int _devTapThreshold = 7;
+
+  void _handleDevTap() {
+    if (_devPrefixVisible) return;
+    final now = DateTime.now();
+    if (_lastDevTap == null ||
+        now.difference(_lastDevTap!) > const Duration(seconds: 2)) {
+      _devTapCount = 0;
+    }
+    _lastDevTap = now;
+    _devTapCount++;
+    if (_devTapCount >= _devTapThreshold) {
+      HapticFeedback.mediumImpact();
+      setState(() {
+        _devPrefixVisible = true;
+        _apiPrefixController.text =
+            ServerEndpoint.sessionApiPrefix ?? ServerEndpoint.defaultApiPrefix;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(S.of(context).developerPrefixUnlocked),
+          behavior: SnackBarBehavior.floating,
+          duration: const Duration(seconds: 2),
+        ),
+      );
+    }
+  }
 
   @override
   void initState() {
@@ -100,6 +136,7 @@ class _BaseUrlConfigPageState extends State<BaseUrlConfigPage> {
         protocol: baseProtocol!,
         host: baseUrlDomain!,
         port: baseUrlPort,
+        apiPrefix: ServerEndpoint.sessionApiPrefix,
       );
       DioClient().updateBaseUrl(endpoint.apiBaseUri.toString());
       final check = await _checkApiVersion();
@@ -173,6 +210,7 @@ class _BaseUrlConfigPageState extends State<BaseUrlConfigPage> {
     _authMode.dispose();
     _domainController.dispose();
     _portController.dispose();
+    _apiPrefixController.dispose();
     super.dispose();
   }
 
@@ -239,16 +277,20 @@ class _BaseUrlConfigPageState extends State<BaseUrlConfigPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Container(
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: const Color(0xFF007AFF).withOpacity(0.12),
-            shape: BoxShape.circle,
-          ),
-          child: const Icon(
-            Icons.dns_rounded,
-            color: Color(0xFF007AFF),
-            size: 24,
+        GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: _handleDevTap,
+          child: Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: const Color(0xFF007AFF).withOpacity(0.12),
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(
+              Icons.dns_rounded,
+              color: Color(0xFF007AFF),
+              size: 24,
+            ),
           ),
         ),
         const SizedBox(height: 16),
@@ -307,6 +349,26 @@ class _BaseUrlConfigPageState extends State<BaseUrlConfigPage> {
             icon: Icons.numbers_rounded,
             keyboardType: TextInputType.number,
           ),
+          if (_devPrefixVisible) ...[
+            _buildDivider(),
+            _buildTextFieldRow(
+              label: S.of(context).apiPrefixLabel,
+              controller: _apiPrefixController,
+              hint: ServerEndpoint.defaultApiPrefix,
+              icon: Icons.alt_route_rounded,
+              validator: (value) {
+                final v = value?.trim() ?? '';
+                if (v.isEmpty) return null; // 留空表示无前缀
+                if (!v.startsWith('/') ||
+                    v.endsWith('/') ||
+                    v == '/' ||
+                    v.contains(RegExp(r'\s'))) {
+                  return S.of(context).apiPrefixInvalid;
+                }
+                return null;
+              },
+            ),
+          ],
         ],
       ),
     );
@@ -617,6 +679,10 @@ class _BaseUrlConfigPageState extends State<BaseUrlConfigPage> {
             UserDataSingleton.baseUrlProtocol,
             endpoint.protocol,
           );
+          if (_devPrefixVisible) {
+            // 会话前缀仅保留在内存，冷启动回滚默认 /prod-api。
+            ServerEndpoint.sessionApiPrefix = endpoint.apiPrefix;
+          }
           await _historyStore.remember(endpoint);
 
           if (!mounted) return;
@@ -638,6 +704,9 @@ class _BaseUrlConfigPageState extends State<BaseUrlConfigPage> {
         protocol: _protocol,
         host: _domainController.text,
         port: _portController.text,
+        apiPrefix: _devPrefixVisible
+            ? _apiPrefixController.text
+            : ServerEndpoint.sessionApiPrefix,
       );
     } on ServerEndpointFormatException {
       _showErrorDialog(S.current.serverConnectionFailed);

@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:dio/io.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/widgets.dart';
 import 'package:fortuneboot/login/model/users.dart';
 import 'package:logger/logger.dart';
@@ -37,14 +38,19 @@ class DioClient {
 
     // demo 等自建站证书过期时仍允许连接（仅放宽 TLS 校验，不改变业务逻辑）。
     // 正式环境请续签证书后移除此回调。
-    dio.httpClientAdapter = IOHttpClientAdapter(
-      createHttpClient: () {
-        final client = HttpClient();
-        client.badCertificateCallback =
-            (X509Certificate cert, String host, int port) => true;
-        return client;
-      },
-    );
+    // Web 上 dart:io 只是运行时桩：不守护的话 HttpClient() 在首个请求分发时
+    // 抛 Unsupported operation，表现为「无法连接服务器」且浏览器开发工具
+    // 看不到任何请求；因此 Web 保留默认 BrowserHttpClientAdapter。
+    if (!kIsWeb) {
+      dio.httpClientAdapter = IOHttpClientAdapter(
+        createHttpClient: () {
+          final client = HttpClient();
+          client.badCertificateCallback =
+              (X509Certificate cert, String host, int port) => true;
+          return client;
+        },
+      );
+    }
 
     // 添加拦截器
     dio.interceptors.addAll([

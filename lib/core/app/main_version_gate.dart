@@ -56,6 +56,7 @@ class _MainVersionGateState extends State<MainVersionGate> {
         protocol: protocol!,
         host: domain!,
         port: port,
+        apiPrefix: ServerEndpoint.sessionApiPrefix,
       );
       DioClient().updateBaseUrl(endpoint.apiBaseUri.toString());
       DioClient().setAuthHeader(token!);
