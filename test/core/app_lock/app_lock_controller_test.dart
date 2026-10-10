@@ -89,6 +89,7 @@ void main() {
           await cubit.configure(
             method: AppLockMethod.pattern,
             value: pattern.traditionalCanonicalCsv,
+            preferredUnlock: AppLockPreferredUnlock.pattern,
           ),
           isTrue,
         );

@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:fortuneboot/core/app_lock/app_lock_cubit.dart';
+import 'package:fortuneboot/core/app_lock/app_lock_models.dart';
+import 'package:fortuneboot/core/app_lock/app_lock_stores.dart';
 import 'package:fortuneboot/core/preferences/preferences_cubit.dart';
 import 'package:fortuneboot/core/session/session_cubit.dart';
 import 'package:fortuneboot/core/shell/main_shell.dart';
@@ -43,14 +46,21 @@ void main() {
       bookService: const _UnusedBookService(),
     );
     final preferences = PreferencesCubit();
+    final appLock = AppLockCubit(
+      settingsStore: const _FakeAppLockSettingsStore(),
+      secretStore: const _FakeAppLockSecretStore(),
+      biometricAuthenticator: const _FakeAppLockBiometricAuthenticator(),
+    );
     addTearDown(session.close);
     addTearDown(preferences.close);
+    addTearDown(appLock.close);
 
     await tester.pumpWidget(
       MultiBlocProvider(
         providers: [
           BlocProvider.value(value: session),
           BlocProvider.value(value: preferences),
+          BlocProvider.value(value: appLock),
         ],
         child: MaterialApp(
           theme: FxTheme.light,
@@ -102,4 +112,49 @@ class _UnusedBookService implements BookService {
   @override
   Future<HJResponse> getEnableList(int id, {int? type}) =>
       throw UnimplementedError();
+}
+
+class _FakeAppLockSettingsStore implements AppLockSettingsStore {
+  const _FakeAppLockSettingsStore();
+
+  @override
+  Future<AppLockSettings?> read() async => null;
+
+  @override
+  Future<void> write(AppLockSettings settings) async {}
+
+  @override
+  Future<void> clear() async {}
+}
+
+class _FakeAppLockSecretStore implements AppLockSecretStore {
+  const _FakeAppLockSecretStore();
+
+  @override
+  Future<String?> readVerifier() async => null;
+
+  @override
+  Future<void> writeVerifier(String value) async {}
+
+  @override
+  Future<void> clear() async {}
+}
+
+class _FakeAppLockBiometricAuthenticator implements BiometricAuthenticator {
+  const _FakeAppLockBiometricAuthenticator();
+
+  @override
+  Future<bool> isAvailable() async => false;
+
+  @override
+  Future<bool> isFaceAvailable() async => false;
+
+  @override
+  Future<bool> isFingerprintAvailable() async => false;
+
+  @override
+  Future<BiometricResult> authenticate({
+    required String localizedReason,
+    AppLockPreferredUnlock? preferredBiometric,
+  }) async => BiometricResult.unavailable;
 }
