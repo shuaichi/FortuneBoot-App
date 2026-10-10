@@ -26,11 +26,19 @@ class AppRouter {
   }
 
   /// 便捷 push。
+  ///
+  /// 注意：onGenerateRoute 统一返回 `FadePageRoute<dynamic>`，不能直接
+  /// `pushNamed<T>`（Flutter 会把路由强转为 `Route<T>`，运行时会抛
+  /// `Route<dynamic> is not a subtype of Route<T?>`）。因此这里以 dynamic
+  /// 入栈，再对返回值做类型收敛。
   static Future<T?> push<T>(
     BuildContext context,
     String route, {
     Object? args,
-  }) {
-    return Navigator.of(context).pushNamed<T>(route, arguments: args);
+  }) async {
+    final result = await Navigator.of(
+      context,
+    ).pushNamed<dynamic>(route, arguments: args);
+    return result is T ? result : null;
   }
 }
