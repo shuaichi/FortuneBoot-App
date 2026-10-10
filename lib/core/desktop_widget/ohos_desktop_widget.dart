@@ -1,6 +1,7 @@
 import 'dart:developer' as developer;
 import 'dart:io';
 
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/services.dart';
 import 'package:fortuneboot/features/dashboard/data/dashboard_service.dart';
 import 'package:fortuneboot/features/orders/data/orders_models.dart';
@@ -28,7 +29,8 @@ class OhosDesktopWidget {
   static final DateFormat _clock = DateFormat('HH:mm');
   static final NumberFormat _money = NumberFormat('#,##0.00');
 
-  static bool get isSupportedOs => Platform.operatingSystem == 'ohos';
+  static bool get isSupportedOs =>
+      !kIsWeb && Platform.operatingSystem == 'ohos';
 
   static void Function()? _monthChangedHandler;
   static bool _handlerReady = false;
