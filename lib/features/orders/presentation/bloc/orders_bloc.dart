@@ -52,6 +52,7 @@ class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
         type: FinanceOrderType.reimbursement.value,
       );
       final orders = page.rows
+          .map(FortuneFinanceOrderVo.fromDetail)
           .where((order) => order.isReimbursementOrder)
           .toList();
       emit(

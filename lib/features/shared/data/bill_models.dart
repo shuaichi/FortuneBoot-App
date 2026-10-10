@@ -1,6 +1,9 @@
-import 'package:flutter/widgets.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/widgets.dart';
+import 'package:fortuneboot/core/errors/fx_failure.dart';
 import 'package:fortuneboot/core/network/fx_api.dart';
+import 'package:fortuneboot/features/orders/data/order_money.dart';
+import 'package:fortuneboot/features/orders/data/orders_models.dart';
 import 'package:fortuneboot/generated/l10n.dart';
 import 'package:intl/intl.dart';
 
@@ -42,14 +45,18 @@ class BillsEntryRequest extends Equatable {
   List<Object?> get props => [bookId, groupId, dateRange];
 }
 
-/// 账单类型：1支出 2收入 3转账 4余额调整 7垫付 8报销（后端跳号，无5/6）。
+/// 账单类型：1支出 2收入 3转账 4余额调整 7—12单据流水（后端跳号，无5/6）。
 enum FxBillType {
   expense(1, '支出'),
   income(2, '收入'),
   transfer(3, '转账'),
   adjust(4, '余额调整'),
   advance(7, '垫付'),
-  reimburse(8, '报销');
+  reimburse(8, '报销到账'),
+  loanOut(9, '借出'),
+  loanRecover(10, '收回本金'),
+  loanIn(11, '借入'),
+  loanRepay(12, '归还本金');
 
   const FxBillType(this.value, this.label);
   final int value;
@@ -73,6 +80,14 @@ enum FxBillType {
         return s.billTypeAdvance;
       case FxBillType.reimburse:
         return s.billTypeReimburse;
+      case FxBillType.loanOut:
+        return s.billTypeLoanOut;
+      case FxBillType.loanRecover:
+        return s.billTypeLoanRecover;
+      case FxBillType.loanIn:
+        return s.billTypeLoanIn;
+      case FxBillType.loanRepay:
+        return s.billTypeLoanRepay;
     }
   }
 
@@ -83,13 +98,17 @@ enum FxBillType {
     return null;
   }
 
-  /// BillEditor 可手选的 5 种类型（排除系统 adjust）。
+  /// BillEditor 可手选类型（排除系统 adjust）。
   static const List<FxBillType> selectable = [
     expense,
     income,
     transfer,
     advance,
     reimburse,
+    loanOut,
+    loanRecover,
+    loanIn,
+    loanRepay,
   ];
 
   /// 周期记账模板可选类型（与 Web 一致：支出/收入/转账；垫付报销需单据，周期不支持）。
@@ -105,18 +124,26 @@ class BillCategoryAmount {
   final int? categoryId;
   final String? categoryName;
   final double amount;
+  final OrderMoney? amountMoney;
 
   const BillCategoryAmount({
     this.categoryId,
     this.categoryName,
     this.amount = 0,
+    this.amountMoney,
   });
 
   factory BillCategoryAmount.fromJson(Map<String, dynamic> json) {
+    final rawAmount = json['amount'];
+    if (rawAmount == null) {
+      throw const FxFailure(kind: FxFailureKind.invalidResponse);
+    }
+    final parsedAmount = OrderMoney.fromJson(rawAmount);
     return BillCategoryAmount(
       categoryId: FxApi.asId(json['categoryId']),
       categoryName: json['categoryName']?.toString(),
-      amount: FxApi.asDouble(json['amount']) ?? 0,
+      amount: parsedAmount.cents / 100,
+      amountMoney: parsedAmount,
     );
   }
 
@@ -197,9 +224,11 @@ class FortuneBillVo {
   final String? accountName;
   final int? orderId;
   final double amount;
+  final OrderMoney? amountMoney;
   final String? currencyCode;
   final String? toCurrencyCode;
   final double? convertedAmount;
+  final OrderMoney? convertedAmountMoney;
   final int? payeeId;
   final String? payeeName;
   final int? billType;
@@ -213,6 +242,13 @@ class FortuneBillVo {
   final List<BillTag> tagList;
   final List<BillMember> memberList;
   final List<BillExtra> extras;
+  final int? orderType;
+  final String? orderTitle;
+  final FinanceOrderComponent? orderComponent;
+  final int? orderLedgerVersion;
+  final bool recycleBin;
+  final List<String> allowedActions;
+  final String? readOnlyReason;
 
   const FortuneBillVo({
     this.billId,
@@ -224,9 +260,11 @@ class FortuneBillVo {
     this.accountName,
     this.orderId,
     this.amount = 0,
+    this.amountMoney,
     this.currencyCode,
     this.toCurrencyCode,
     this.convertedAmount,
+    this.convertedAmountMoney,
     this.payeeId,
     this.payeeName,
     this.billType,
@@ -240,6 +278,13 @@ class FortuneBillVo {
     this.tagList = const [],
     this.memberList = const [],
     this.extras = const [],
+    this.orderType,
+    this.orderTitle,
+    this.orderComponent,
+    this.orderLedgerVersion,
+    this.recycleBin = false,
+    this.allowedActions = const [],
+    this.readOnlyReason,
   });
 
   factory FortuneBillVo.fromJson(Map<String, dynamic> json) {
@@ -262,10 +307,15 @@ class FortuneBillVo {
       accountId: FxApi.asId(json['accountId']),
       accountName: json['accountName']?.toString(),
       orderId: FxApi.asId(json['orderId']),
-      amount: FxApi.asDouble(json['amount']) ?? 0,
+      amountMoney: _requireMoney(json['amount']),
+      amount: _requireMoney(json['amount']).cents / 100,
       currencyCode: json['currencyCode']?.toString(),
       toCurrencyCode: json['toCurrencyCode']?.toString(),
-      convertedAmount: FxApi.asDouble(json['convertedAmount']),
+      convertedAmountMoney: _parseMoneyOrNull(json['convertedAmount']),
+      convertedAmount: _displayDouble(
+        _parseMoneyOrNull(json['convertedAmount']),
+        fallbackNull: true,
+      ),
       payeeId: FxApi.asId(json['payeeId']),
       payeeName: json['payeeName']?.toString(),
       billType: FxApi.asId(json['billType']),
@@ -282,7 +332,36 @@ class FortuneBillVo {
       tagList: mapList(json['tagList'], BillTag.fromJson),
       memberList: mapList(json['memberList'], BillMember.fromJson),
       extras: mapList(json['extras'], BillExtra.fromJson),
+      orderType: FxApi.asId(json['orderType']),
+      orderTitle: json['orderTitle']?.toString(),
+      orderComponent: FinanceOrderComponent.fromValue(
+        json['orderComponent']?.toString(),
+      ),
+      orderLedgerVersion: FxApi.asId(json['orderLedgerVersion']),
+      recycleBin: FxApi.asBool(json['recycleBin']),
+      allowedActions: (json['allowedActions'] as List? ?? [])
+          .map((action) => action.toString())
+          .toList(),
+      readOnlyReason: json['readOnlyReason']?.toString(),
     );
+  }
+
+  static OrderMoney _requireMoney(dynamic value) {
+    if (value == null) {
+      throw const FxFailure(kind: FxFailureKind.invalidResponse);
+    }
+    return OrderMoney.fromJson(value);
+  }
+
+  static OrderMoney? _parseMoneyOrNull(dynamic value) =>
+      value == null ? null : OrderMoney.fromJson(value);
+
+  static double? _displayDouble(
+    OrderMoney? money, {
+    bool fallbackNull = false,
+  }) {
+    if (money == null) return fallbackNull ? null : 0;
+    return money.cents / 100;
   }
 
   /// 主分类名（金额最大的分类）。

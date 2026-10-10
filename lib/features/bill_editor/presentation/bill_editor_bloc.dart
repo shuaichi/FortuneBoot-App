@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:math';
+
 import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -9,6 +12,10 @@ import 'package:fortuneboot/features/accounts/data/bank_brand.dart';
 import 'package:fortuneboot/features/bill_editor/data/editor_options_service.dart';
 import 'package:fortuneboot/features/bill_editor/presentation/bill_editor_args.dart';
 import 'package:fortuneboot/features/bill_editor/presentation/bill_editor_models.dart';
+import 'package:fortuneboot/features/orders/data/finance_order_contract.dart';
+import 'package:fortuneboot/features/orders/data/order_money.dart';
+import 'package:fortuneboot/features/orders/data/orders_models.dart';
+import 'package:fortuneboot/features/orders/data/orders_service.dart';
 import 'package:fortuneboot/features/shared/data/bill_attachment.dart';
 import 'package:fortuneboot/features/shared/data/bill_attachment_validator.dart';
 import 'package:fortuneboot/features/shared/data/bill_models.dart';
@@ -26,21 +33,27 @@ class BillEditorBloc extends Bloc<BillEditorEvent, BillEditorState> {
     required int groupId,
     EditorOptionsService? optionsService,
     BillService? billService,
+    OrdersService? ordersService,
     bool copyUsesCurrentTime = true,
+    String Function()? requestIdFactory,
   }) : _bookId = bookId,
        _groupId = groupId,
        _optionsService = optionsService ?? EditorOptionsService(),
        _billService = billService ?? BillService(),
+       _ordersService = ordersService ?? OrdersService(),
        _copyUsesCurrentTime = copyUsesCurrentTime,
+       _requestIdFactory = requestIdFactory ?? _generateRequestId,
        super(BillEditorState(tradeTime: DateTime.now())) {
     on<BillEditorInitialized>(_onInitialized);
     on<BillEditorRetried>(_onRetried);
     on<BillTypeChanged>(_onBillTypeChanged);
     on<TransferAmountChanged>(_onTransferAmountChanged);
+    on<SingleAmountChanged>(_onSingleAmountChanged);
     on<CategoryRowAdded>(_onCategoryRowAdded);
     on<CategoryRowRemoved>(_onCategoryRowRemoved);
     on<CategoryRowCategoryChanged>(_onCategoryRowCategoryChanged);
     on<CategoryRowAmountChanged>(_onCategoryRowAmountChanged);
+    on<OrderCategoryRowAmountChanged>(_onOrderCategoryRowAmountChanged);
     on<AccountChanged>(_onAccountChanged);
     on<ToAccountChanged>(_onToAccountChanged);
     on<PayeeChanged>(_onPayeeChanged);
@@ -64,8 +77,28 @@ class BillEditorBloc extends Bloc<BillEditorEvent, BillEditorState> {
   final int _groupId;
   final EditorOptionsService _optionsService;
   final BillService _billService;
+  final OrdersService _ordersService;
   final bool _copyUsesCurrentTime;
+  final String Function() _requestIdFactory;
   var _nextRowSequence = 0;
+  var _optionsSequence = 0;
+  String? _lastRequestId;
+  String? _lastCommandSignature;
+
+  static String _generateRequestId() {
+    final random = Random.secure();
+    final bytes = List<int>.generate(16, (_) => random.nextInt(256));
+    final hex = bytes
+        .map((byte) => byte.toRadixString(16).padLeft(2, '0'))
+        .join();
+    return [
+      hex.substring(0, 8),
+      hex.substring(8, 12),
+      hex.substring(12, 16),
+      hex.substring(16, 20),
+      hex.substring(20),
+    ].join('-');
+  }
 
   String _nextRowId() => 'editor-row-${_nextRowSequence++}';
 
@@ -73,11 +106,13 @@ class BillEditorBloc extends Bloc<BillEditorEvent, BillEditorState> {
     int? categoryId,
     String? categoryName,
     double amount = 0,
+    int amountCents = 0,
   }) => CategoryAmountRow(
     rowId: _nextRowId(),
     categoryId: categoryId,
     categoryName: categoryName,
     amount: amount,
+    amountCents: amountCents,
   );
 
   ExtraRow _newExtraRow({
@@ -104,7 +139,6 @@ class BillEditorBloc extends Bloc<BillEditorEvent, BillEditorState> {
         accountSide: BillEditorState.isValidTransferAccountSide(row.accountSide)
             ? row.accountSide
             : 1,
-        categoryId: null,
         remark: row.remark,
       );
     }
@@ -112,8 +146,7 @@ class BillEditorBloc extends Bloc<BillEditorEvent, BillEditorState> {
       rowId: row.rowId,
       extraType: row.extraType,
       amount: row.amount,
-      accountSide: 1,
-      categoryId: row.categoryId,
+        categoryId: row.categoryId,
       remark: row.remark,
     );
   }
@@ -125,20 +158,54 @@ class BillEditorBloc extends Bloc<BillEditorEvent, BillEditorState> {
     final args = event.args;
     final source = args.sourceBill;
 
-    // 1) 用 args 预填基础字段（在选项加载前，界面即可先出骨架）。
+    if (args.presetBookId != null && args.presetBookId != _bookId) {
+      emit(
+        state.copyWith(
+          status: EditorStatus.error,
+          loadFailure: const FxFailure(
+            kind: FxFailureKind.invalidResponse,
+          ),
+        ),
+      );
+      return;
+    }
+
+    final billType = source == null
+        ? FxBillType.fromValue(args.presetBillType) ?? FxBillType.expense
+        : FxBillType.fromValue(source.billType);
+    if (billType == null) {
+      emit(
+        state.copyWith(
+          status: EditorStatus.error,
+          loadFailure: const FxFailure(
+            kind: FxFailureKind.invalidResponse,
+          ),
+        ),
+      );
+      return;
+    }
+
     var next = _prefillFromArgs(state, args);
     emit(next.copyWith(status: EditorStatus.loading));
 
-    // 2) 并发加载选项。
+    final sequence = ++_optionsSequence;
     try {
       final options = await _optionsService.loadAll(
         bookId: _bookId,
         groupId: _groupId,
+        billType: billType,
+        presetOrderId: next.orderId,
+        presetOrderTitle: next.orderTitle,
       );
+      if (sequence != _optionsSequence) return;
       next = next.copyWith(status: EditorStatus.ready, options: options);
-      // 新建且未预填账户时，按默认账户填充。
       if (source == null) {
         next = _applyDefaultAccount(next);
+      }
+      if (source?.hasFile == true && source?.billId != null) {
+        next = next.copyWith(
+          attachments: await _billService.getAttachments(source!.billId!),
+        );
       }
       emit(next);
     } on Object catch (error) {
@@ -156,62 +223,89 @@ class BillEditorBloc extends Bloc<BillEditorEvent, BillEditorState> {
     Emitter<BillEditorState> emit,
   ) async {
     emit(state.copyWith(status: EditorStatus.loading));
+    final sequence = ++_optionsSequence;
     try {
       final options = await _optionsService.loadAll(
         bookId: _bookId,
         groupId: _groupId,
+        billType: state.billType,
+        presetOrderId: state.orderId,
+        presetOrderTitle: state.orderTitle,
       );
+      if (sequence != _optionsSequence) return;
       var next = state.copyWith(status: EditorStatus.ready, options: options);
       if (state.mode == 'new' && state.accountId == null) {
         next = _applyDefaultAccount(next);
       }
       emit(next);
-    } on FxApiException catch (e) {
-      emit(state.copyWith(status: EditorStatus.error, loadError: e.message));
-    } on Object catch (e) {
-      emit(state.copyWith(status: EditorStatus.error, loadError: e.toString()));
+    } on Object catch (error) {
+      emit(
+        state.copyWith(
+          status: EditorStatus.error,
+          loadFailure: FxFailureMapper.map(error),
+        ),
+      );
     }
   }
 
-  /// 从 args（含 sourceBill / presetBillType）预填表单。
   BillEditorState _prefillFromArgs(BillEditorState base, BillEditorArgs args) {
     final source = args.sourceBill;
 
     if (source != null) {
-      final billType =
-          FxBillType.fromValue(source.billType) ?? FxBillType.expense;
-      final rows = source.categoryAmountPair.isEmpty
+      final billType = FxBillType.fromValue(source.billType);
+      if (billType == null) {
+        return base;
+      }
+      final isSingle = billType == FxBillType.loanOut ||
+          billType == FxBillType.loanRecover ||
+          billType == FxBillType.loanIn ||
+          billType == FxBillType.loanRepay;
+      final rows = isSingle
+          ? const <CategoryAmountRow>[]
+          : source.categoryAmountPair.isEmpty
           ? [_newCategoryRow()]
           : source.categoryAmountPair
                 .map(
-                  (e) => _newCategoryRow(
-                    categoryId: e.categoryId,
-                    categoryName: e.categoryName,
-                    amount: e.amount,
+                  (category) => _newCategoryRow(
+                    categoryId: category.categoryId,
+                    categoryName: category.categoryName,
+                    amount: category.amount,
+                    amountCents:
+                        category.amountMoney?.cents ??
+                        _legacyCents(category.amount),
                   ),
                 )
                 .toList();
-      final extras = source.extras
-          .map(
-            (e) => _normalizeExtraRow(
-              _newExtraRow(
-                extraType: e.extraType ?? 1,
-                amount: e.amount,
-                accountSide: e.accountSide ?? 1,
-                categoryId: e.categoryId,
-                remark: e.remark,
-              ),
-              isTransfer: billType == FxBillType.transfer,
-            ),
-          )
-          .toList();
+      final extras = (billType == FxBillType.expense ||
+              billType == FxBillType.transfer)
+          ? source.extras
+                .map(
+                  (extra) => _normalizeExtraRow(
+                    _newExtraRow(
+                      extraType: extra.extraType ?? 1,
+                      amount: extra.amount,
+                      accountSide: extra.accountSide ?? 1,
+                      categoryId: extra.categoryId,
+                      remark: extra.remark,
+                    ),
+                    isTransfer: billType == FxBillType.transfer,
+                  ),
+                )
+                .toList()
+          : const <ExtraRow>[];
+      final orderComponent =
+          args.presetOrderComponent ??
+          source.orderComponent ??
+          (isSingle ? FinanceOrderComponent.principal : null);
 
       return base.copyWith(
         mode: args.mode,
-        billId: args.isEdit ? args.billId : null,
+        billId: args.isEdit ? (args.billId ?? source.billId) : null,
         lockBillType: args.lockBillType,
         billType: billType,
         transferAmount: source.amount,
+        singleAmountCents:
+            source.amountMoney?.cents ?? _legacyCents(source.amount),
         categoryRows: rows,
         accountId: source.accountId,
         accountName: source.accountName,
@@ -222,91 +316,137 @@ class BillEditorBloc extends Bloc<BillEditorEvent, BillEditorState> {
         tradeTime: args.isCopy && _copyUsesCurrentTime
             ? DateTime.now()
             : (source.tradeTime ?? DateTime.now()),
-        tagIds: source.tagList.map((t) => t.tagId).whereType<int>().toList(),
+        tagIds: source.tagList
+            .map((tag) => tag.tagId)
+            .whereType<int>()
+            .toList(),
         tagNames: source.tagList
-            .map((t) => t.tagName ?? '')
-            .where((s) => s.isNotEmpty)
+            .map((tag) => tag.tagName ?? '')
+            .where((name) => name.isNotEmpty)
             .toList(),
         memberIds: source.memberList
-            .map((m) => m.memberId)
+            .map((member) => member.memberId)
             .whereType<int>()
             .toList(),
         memberNames: source.memberList
-            .map((m) => m.memberName ?? '')
-            .where((s) => s.isNotEmpty)
+            .map((member) => member.memberName ?? '')
+            .where((name) => name.isNotEmpty)
             .toList(),
-        orderId: source.orderId,
+        orderId: args.presetOrderId ?? source.orderId,
+        orderTitle: args.copyData?['orderTitle']?.toString() ?? source.orderTitle,
+        presetBookId: args.presetBookId,
+        orderComponent: orderComponent,
+        expectedOrderVersion: args.expectedOrderVersion,
+        lockOrderContext: args.lockOrderContext,
         extras: extras,
+        attachments: const [],
         title: source.title ?? '',
         titleTouched: (source.title ?? '').isNotEmpty,
         remark: source.remark ?? '',
-        confirm: source.confirm,
+        confirm: orderComponent == FinanceOrderComponent.writeOff ||
+            source.confirm,
         include: source.include,
       );
     }
 
-    // 新建：可能带 presetBillType。
     final preset = FxBillType.fromValue(args.presetBillType);
+    final isSingle = preset == FxBillType.loanOut ||
+        preset == FxBillType.loanRecover ||
+        preset == FxBillType.loanIn ||
+        preset == FxBillType.loanRepay;
     return base.copyWith(
       mode: args.mode,
       billId: args.billId,
       lockBillType: args.lockBillType,
       billType: preset ?? FxBillType.expense,
-      categoryRows: [_newCategoryRow()],
+      categoryRows: isSingle ? const [] : [_newCategoryRow()],
+      orderId: args.presetOrderId,
+      orderTitle: args.copyData?['orderTitle']?.toString(),
+      presetBookId: args.presetBookId,
+      orderComponent: args.presetOrderComponent,
+      expectedOrderVersion: args.expectedOrderVersion,
+      lockOrderContext: args.lockOrderContext,
     );
   }
 
-  /// 依据当前类型选默认账户（来自选项中首个可用账户）。
-  BillEditorState _applyDefaultAccount(BillEditorState s) {
-    final accounts = s.options.accounts;
-    if (accounts.isEmpty) return s;
+  static int _legacyCents(double value) => (value * 100).round();
+
+  BillEditorState _applyDefaultAccount(BillEditorState state) {
+    final accounts = state.options.accounts;
+    if (accounts.isEmpty) return state;
 
     AccountOption? pick(bool Function(AccountOption) test) {
-      for (final a in accounts) {
-        if (test(a)) return a;
+      for (final account in accounts) {
+        if (test(account)) return account;
       }
       return null;
     }
 
-    if (s.isTransfer) {
-      final out = pick((a) => a.canTransferOut);
-      final inn = pick((a) => a.canTransferIn && a.accountId != out?.accountId);
-      return s.copyWith(
+    if (state.isTransfer) {
+      final out = pick((account) => account.canTransferOut);
+      final income = pick(
+        (account) =>
+            account.canTransferIn && account.accountId != out?.accountId,
+      );
+      return state.copyWith(
         accountId: out?.accountId,
         accountName: out?.accountName,
-        toAccountId: inn?.accountId,
-        toAccountName: inn?.accountName,
+        toAccountId: income?.accountId,
+        toAccountName: income?.accountName,
       );
     }
 
-    final test = s.usesIncomeAssociations
-        ? (AccountOption a) => a.canIncome
-        : (AccountOption a) => a.canExpense;
-    final acc = pick(test);
-    if (acc == null) return s;
-    return s.copyWith(accountId: acc.accountId, accountName: acc.accountName);
+    final test = state.usesIncomeAssociations
+        ? (AccountOption account) => account.canIncome
+        : (AccountOption account) => account.canExpense;
+    final account = pick(test);
+    if (account == null) return state;
+    return state.copyWith(
+      accountId: account.accountId,
+      accountName: account.accountName,
+    );
   }
 
-  void _onBillTypeChanged(
+  Future<void> _onBillTypeChanged(
     BillTypeChanged event,
     Emitter<BillEditorState> emit,
-  ) {
-    if (state.lockBillType) return;
-    if (event.billType == state.billType) return;
-    // 切换类型时重置与类型强相关的字段，避免脏数据。
-    var next = state.copyWith(
+  ) async {
+    if (state.lockBillType || event.billType == state.billType) return;
+
+    final isSingle = event.billType == FxBillType.loanOut ||
+        event.billType == FxBillType.loanRecover ||
+        event.billType == FxBillType.loanIn ||
+        event.billType == FxBillType.loanRepay;
+    final next = state.copyWith(
       billType: event.billType,
+      transferAmount: 0,
+      singleAmountCents: 0,
+      categoryRows: isSingle ? const [] : [_newCategoryRow()],
       clearAccount: true,
       clearToAccount: true,
-      clearPayee: true,
       clearOrder: true,
-      categoryRows: [_newCategoryRow()],
+      clearOrderComponent: true,
+      clearExpectedOrderVersion: true,
       extras: const [],
+      orderComponent: isSingle ? FinanceOrderComponent.principal : null,
     );
-    if (state.status == EditorStatus.ready) {
-      next = _applyDefaultAccount(next);
-    }
     emit(next);
+
+    final sequence = ++_optionsSequence;
+    try {
+      final orders = await _optionsService.getOrderOptions(
+        bookId: _bookId,
+        billType: event.billType,
+      );
+      if (sequence != _optionsSequence) return;
+      emit(
+        state.copyWith(
+          options: state.options.copyWith(orders: orders),
+        ),
+      );
+    } on Object {
+      // 选项加载失败不覆盖已输入内容；用户可重试加载。
+    }
   }
 
   void _onTransferAmountChanged(
@@ -316,12 +456,22 @@ class BillEditorBloc extends Bloc<BillEditorEvent, BillEditorState> {
     emit(state.copyWith(transferAmount: event.amount));
   }
 
+  void _onSingleAmountChanged(
+    SingleAmountChanged event,
+    Emitter<BillEditorState> emit,
+  ) {
+    emit(state.copyWith(singleAmountCents: event.cents));
+  }
+
   void _onCategoryRowAdded(
     CategoryRowAdded event,
     Emitter<BillEditorState> emit,
   ) {
+    if (state.showSingleAmount) return;
     emit(
-      state.copyWith(categoryRows: [...state.categoryRows, _newCategoryRow()]),
+      state.copyWith(
+        categoryRows: [...state.categoryRows, _newCategoryRow()],
+      ),
     );
   }
 
@@ -362,15 +512,34 @@ class BillEditorBloc extends Bloc<BillEditorEvent, BillEditorState> {
     );
     if (index < 0) return;
     final rows = [...state.categoryRows];
-    rows[index] = rows[index].copyWith(amount: event.amount);
+    rows[index] = rows[index].copyWith(
+      amount: event.amount,
+      amountCents: _legacyCents(event.amount),
+    );
+    emit(state.copyWith(categoryRows: rows));
+  }
+
+  void _onOrderCategoryRowAmountChanged(
+    OrderCategoryRowAmountChanged event,
+    Emitter<BillEditorState> emit,
+  ) {
+    final index = state.categoryRows.indexWhere(
+      (row) => row.rowId == event.rowId,
+    );
+    if (index < 0) return;
+    final rows = [...state.categoryRows];
+    rows[index] = rows[index].copyWith(
+      amount: event.cents / 100,
+      amountCents: event.cents,
+    );
     emit(state.copyWith(categoryRows: rows));
   }
 
   void _onAccountChanged(AccountChanged event, Emitter<BillEditorState> emit) {
     emit(
       state.copyWith(
-        accountId: event.accountId,
-        accountName: event.accountName,
+        toAccountId: event.accountId,
+        toAccountName: event.accountName,
       ),
     );
   }
@@ -381,8 +550,8 @@ class BillEditorBloc extends Bloc<BillEditorEvent, BillEditorState> {
   ) {
     emit(
       state.copyWith(
-        toAccountId: event.accountId,
-        toAccountName: event.accountName,
+        accountId: event.accountId,
+        accountName: event.accountName,
       ),
     );
   }
@@ -416,11 +585,16 @@ class BillEditorBloc extends Bloc<BillEditorEvent, BillEditorState> {
   }
 
   void _onOrderChanged(OrderChanged event, Emitter<BillEditorState> emit) {
+    if (state.lockOrderContext) return;
     if (event.orderId == null) {
-      emit(state.copyWith(clearOrder: true));
+      emit(state.copyWith(clearOrder: true, clearExpectedOrderVersion: true));
     } else {
       emit(
-        state.copyWith(orderId: event.orderId, orderTitle: event.orderTitle),
+        state.copyWith(
+          orderId: event.orderId,
+          orderTitle: event.orderTitle,
+          clearExpectedOrderVersion: true,
+        ),
       );
     }
   }
@@ -513,10 +687,12 @@ class BillEditorBloc extends Bloc<BillEditorEvent, BillEditorState> {
   }
 
   void _onConfirmToggled(ConfirmToggled event, Emitter<BillEditorState> emit) {
+    if (state.confirmLocked) return;
     emit(state.copyWith(confirm: event.value));
   }
 
   void _onIncludeToggled(IncludeToggled event, Emitter<BillEditorState> emit) {
+    if (state.includeLocked) return;
     emit(state.copyWith(include: event.value));
   }
 
@@ -538,19 +714,41 @@ class BillEditorBloc extends Bloc<BillEditorEvent, BillEditorState> {
     emit(
       state.copyWith(
         submitStatus: SubmitStatus.submitting,
-        submitFailure: null,
-        validationFailure: null,
       ),
     );
     try {
-      final json = _buildCommand(state);
-      await _billService.submit(
-        json,
-        modify: state.mode == 'edit',
-        attachments: state.attachments.isEmpty ? null : state.attachments,
-      );
+      if (state.isOrderFlow) {
+        await _submitOrderEntry(emit);
+      } else {
+        final json = _buildCommand(state);
+        await _billService.submit(
+          json,
+          modify: state.mode == 'edit',
+          attachments: state.attachments.isEmpty ? null : state.attachments,
+        );
+      }
       emit(state.copyWith(submitStatus: SubmitStatus.success));
     } on Object catch (error) {
+      if (error is FxApiException &&
+          (error.code == 30011 || error.code == 409)) {
+        try {
+          final detail = await _ordersService.getDetail(
+            bookId: _bookId,
+            orderId: state.orderId!,
+          );
+          emit(
+            state.copyWith(
+              submitStatus: SubmitStatus.failure,
+              submitFailure: FxFailureMapper.map(error),
+              expectedOrderVersion: detail.version,
+              orderTitle: detail.title ?? state.orderTitle,
+            ),
+          );
+          return;
+        } on Object {
+          // 保留原始冲突错误，避免用次要加载失败覆盖业务原因。
+        }
+      }
       final failure = error is BillAttachmentValidationException
           ? const FxFailure(kind: FxFailureKind.persistence)
           : FxFailureMapper.map(error);
@@ -563,43 +761,147 @@ class BillEditorBloc extends Bloc<BillEditorEvent, BillEditorState> {
     }
   }
 
-  /// 构造 FortuneBillAddCommand JSON。
-  Map<String, dynamic> _buildCommand(BillEditorState s) {
-    final json = <String, dynamic>{
-      'bookId': _bookId,
-      'title': s.effectiveTitle,
-      'tradeTime': BillService.dateTimeFormat.format(s.tradeTime),
-      'billType': s.billTypeValue,
-      'confirm': s.confirm,
-      'include': s.include,
-    };
-
-    if (s.isTransfer) {
-      json['amount'] = s.transferAmount;
-      json['accountId'] = s.accountId;
-      json['toAccountId'] = s.toAccountId;
-      // 转账无分类，补空数组占位绕过后端 @NotNull 校验（空 list 非 null）。
-      json['categoryAmountPair'] = const <Map<String, dynamic>>[];
-    } else {
-      json['accountId'] = s.accountId;
-      json['categoryAmountPair'] = s.categoryRows
-          .where((r) => r.categoryId != null)
-          .map((r) => {'categoryId': r.categoryId, 'amount': r.amount})
-          .toList();
-      if (s.showPayee && s.payeeId != null) json['payeeId'] = s.payeeId;
-      if (s.showOrder && s.orderId != null) json['orderId'] = s.orderId;
+  Future<void> _submitOrderEntry(Emitter<BillEditorState> emit) async {
+    var expectedVersion = state.expectedOrderVersion;
+    var orderTitle = state.orderTitle;
+    if (expectedVersion == null) {
+      final detail = await _ordersService.getDetail(
+        bookId: _bookId,
+        orderId: state.orderId!,
+      );
+      expectedVersion = detail.version;
+      orderTitle = detail.title ?? orderTitle;
+      emit(
+        state.copyWith(
+          expectedOrderVersion: expectedVersion,
+          orderTitle: orderTitle,
+        ),
+      );
     }
 
-    if (s.tagIds.isNotEmpty) json['tagIdList'] = s.tagIds;
-    if (s.memberIds.isNotEmpty) json['memberIdList'] = s.memberIds;
+    var command = _buildOrderCommand(
+      state,
+      expectedVersion: expectedVersion!,
+      requestId: '',
+    );
+    final signature = _commandSignature(command);
+    if (_lastRequestId == null || _lastCommandSignature != signature) {
+      _lastRequestId = _requestIdFactory();
+      _lastCommandSignature = signature;
+    }
+    final requestId = _lastRequestId!;
+    command = command.copyWith(requestId: requestId);
 
-    if (s.showExtras && s.extras.isNotEmpty) {
-      final categoryIds = s.extraCategoryIds;
-      json['extras'] = s.extras
+    if (state.mode == 'edit' && state.billId != null) {
+      await _ordersService.modifyEntry(
+        bookId: _bookId,
+        orderId: state.orderId!,
+        billId: state.billId!,
+        command: command,
+        attachments: state.attachments,
+      );
+    } else {
+      await _ordersService.createEntry(
+        bookId: _bookId,
+        orderId: state.orderId!,
+        command: command,
+        attachments: state.attachments,
+      );
+    }
+  }
+
+  FinanceOrderEntryCommandInput _buildOrderCommand(
+    BillEditorState state, {
+    required int expectedVersion,
+    required String requestId,
+  }) {
+    final component =
+        state.orderComponent ??
+        (state.isPrincipalSingleAmount ? FinanceOrderComponent.principal : null);
+    return FinanceOrderEntryCommandInput(
+      bookId: _bookId,
+      orderId: state.orderId!,
+      billId: state.mode == 'edit' ? state.billId : null,
+      requestId: requestId,
+      expectedVersion: expectedVersion,
+      orderComponent: component,
+      title: state.effectiveTitle,
+      tradeTime: state.tradeTime,
+      billType: state.billType,
+      confirm: state.isWriteOff || state.confirm,
+      include: state.effectiveInclude,
+      accountId: state.showAccount ? state.accountId : null,
+      payeeId: state.showPayee ? state.payeeId : null,
+      amount: state.showSingleAmount
+          ? OrderMoney.fromCents(state.singleAmountCents)
+          : null,
+      categoryAmountPair: state.showCategorySplit
+          ? state.categoryRows
+                .where((row) => row.categoryId != null)
+                .map(
+                  (row) => FinanceOrderCategoryAmountInput(
+                    categoryId: row.categoryId!,
+                    amount: OrderMoney.fromCents(row.amountCents),
+                  ),
+                )
+                .toList()
+          : const [],
+      tagIdList: state.tagIds,
+      memberIdList: state.memberIds,
+      remark: state.remark,
+    );
+  }
+
+  String _commandSignature(FinanceOrderEntryCommandInput command) {
+    final json = command.toJson();
+    json
+      ..remove('requestId')
+      ..remove('expectedVersion');
+    return jsonEncode(json);
+  }
+
+  /// 构造普通无关联 FortuneBillAddCommand JSON。
+  Map<String, dynamic> _buildCommand(BillEditorState state) {
+    final json = <String, dynamic>{
+      'bookId': _bookId,
+      'title': state.effectiveTitle,
+      'tradeTime': BillService.dateTimeFormat.format(state.tradeTime),
+      'billType': state.billTypeValue,
+      'confirm': state.confirm,
+      'include': state.effectiveInclude,
+    };
+
+    if (state.isTransfer) {
+      json['amount'] = state.transferAmount;
+      json['accountId'] = state.accountId;
+      json['toAccountId'] = state.toAccountId;
+      json['categoryAmountPair'] = const <Map<String, dynamic>>[];
+    } else {
+      json['accountId'] = state.accountId;
+      json['categoryAmountPair'] = state.categoryRows
+          .where((row) => row.categoryId != null)
+          .map(
+            (row) => {
+              'categoryId': row.categoryId,
+              'amount': row.amount,
+            },
+          )
+          .toList();
+      if (state.showPayee && state.payeeId != null) {
+        json['payeeId'] = state.payeeId;
+      }
+    }
+
+    if (state.tagIds.isNotEmpty) json['tagIdList'] = state.tagIds;
+    if (state.memberIds.isNotEmpty) json['memberIdList'] = state.memberIds;
+
+    if (state.showExtras && state.extras.isNotEmpty) {
+      final categoryIds = state.extraCategoryIds;
+      json['extras'] = state.extras
           .where((extra) => extra.amount != 0)
           .where(
             (extra) =>
-                s.isTransfer ||
+                state.isTransfer ||
                 (extra.categoryId != null &&
                     categoryIds.contains(extra.categoryId)),
           )
@@ -607,14 +909,14 @@ class BillEditorBloc extends Bloc<BillEditorEvent, BillEditorState> {
             (extra) => {
               'extraType': extra.extraType,
               'amount': extra.amount,
-              'accountSide': s.isTransfer
+              'accountSide': state.isTransfer
                   ? (BillEditorState.isValidTransferAccountSide(
                           extra.accountSide,
                         )
-                        ? extra.accountSide
-                        : 1)
+                      ? extra.accountSide
+                      : 1)
                   : 1,
-              'categoryId': s.isTransfer ? null : extra.categoryId,
+              'categoryId': state.isTransfer ? null : extra.categoryId,
               if (extra.remark != null && extra.remark!.isNotEmpty)
                 'remark': extra.remark,
             },
@@ -622,8 +924,10 @@ class BillEditorBloc extends Bloc<BillEditorEvent, BillEditorState> {
           .toList();
     }
 
-    if (s.remark.isNotEmpty) json['remark'] = s.remark;
-    if (s.mode == 'edit' && s.billId != null) json['billId'] = s.billId;
+    if (state.remark.isNotEmpty) json['remark'] = state.remark;
+    if (state.mode == 'edit' && state.billId != null) {
+      json['billId'] = state.billId;
+    }
 
     return json;
   }

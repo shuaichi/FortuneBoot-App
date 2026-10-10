@@ -15,6 +15,8 @@ import 'package:fortuneboot/features/bill_editor/presentation/widgets/attachment
 import 'package:fortuneboot/features/bill_editor/presentation/widgets/category_split_section.dart';
 import 'package:fortuneboot/features/bill_editor/presentation/widgets/editor_pickers.dart';
 import 'package:fortuneboot/features/bill_editor/presentation/widgets/extras_section.dart';
+import 'package:fortuneboot/features/orders/data/order_money.dart';
+import 'package:fortuneboot/features/orders/data/orders_models.dart';
 import 'package:fortuneboot/features/shared/data/bill_attachment.dart';
 import 'package:fortuneboot/features/shared/data/bill_attachment_xfile_factory.dart';
 import 'package:fortuneboot/features/shared/data/bill_attachment_validator.dart';
@@ -30,6 +32,7 @@ import 'package:fortuneboot/fx/components/fx_segmented.dart';
 import 'package:fortuneboot/fx/components/fx_state_view.dart';
 import 'package:fortuneboot/fx/components/fx_tag_chip.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
+import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
 import 'package:fortuneboot/fx/tree/fx_tree_picker.dart';
@@ -108,10 +111,16 @@ class _BillEditorPageState extends State<BillEditorPage> {
         return s.billEditorValidateCategorySelect;
       case BillValidationError.categoryAmountPositive:
         return s.billEditorValidateCategoryAmount;
+      case BillValidationError.amountRequired:
+        return s.billEditorValidateAmount;
       case BillValidationError.accountRequired:
         return s.billEditorValidateAccount;
       case BillValidationError.orderRequired:
         return s.billEditorValidateOrder;
+      case BillValidationError.orderUnavailable:
+        return s.billEditorValidateOrder;
+      case BillValidationError.writeOffReasonRequired:
+        return s.billEditorValidateWriteOffReason;
       case BillValidationError.titleRequired:
         return s.billEditorValidateTitle;
       case BillValidationError.extraCategoryRequired:
@@ -276,7 +285,10 @@ class _EditorBody extends StatelessWidget {
         const SizedBox(height: FxSpacing.lg),
 
         // 分类拆分（非转账）
-        if (state.usesCategorySplit) ...[
+        if (state.isOrderFlow && state.showCategorySplit) ...[
+          _OrderCategorySplitSection(state: state, currencyCode: currency),
+          const SizedBox(height: FxSpacing.lg),
+        ] else if (state.showCategorySplit) ...[
           CategorySplitSection(state: state, currencyCode: currency),
           const SizedBox(height: FxSpacing.lg),
         ],
@@ -286,12 +298,20 @@ class _EditorBody extends StatelessWidget {
           padding: EdgeInsets.zero,
           child: Column(
             children: [
-              if (state.showSingleAccount)
-                _AccountRow(state: state)
-              else ...[
+              if (state.isTransfer) ...[
                 _TransferAccountRow(state: state, isOut: true),
                 _divider(context),
                 _TransferAccountRow(state: state, isOut: false),
+              ] else if (state.showAccount) ...[
+                _AccountRow(state: state),
+              ],
+              if (state.isWriteOff) ...[
+                _PickerRow(
+                  label: S.of(context).billEditorAccount,
+                  value: S.of(context).billEditorWriteOffAccount,
+                  onTap: null,
+                ),
+                _divider(context),
               ],
               if (state.showPayee) ...[
                 _divider(context),
@@ -342,6 +362,29 @@ String _currency(BillEditorState state) {
   return '';
 }
 
+/// 附属 1/2 流水显示业务动作名，而不是笼统的支出/收入。
+String _businessActionLabel(
+  BuildContext context,
+  BillEditorState state,
+) {
+  final s = S.of(context);
+  return switch (state.orderComponent) {
+    FinanceOrderComponent.interest => state.isIncome
+        ? s.orderActionInterestIn
+        : s.orderActionInterestOut,
+    FinanceOrderComponent.fee => s.orderActionFee,
+    FinanceOrderComponent.writeOff => switch (state.orderTypeOfSelection) {
+        FinanceOrderType.receivable => s.orderActionWriteOffReceivable,
+        FinanceOrderType.payable => s.orderActionWriteOffPayable,
+        FinanceOrderType.reimbursement || null =>
+          s.orderActionWriteOffReimbursement,
+      },
+    FinanceOrderComponent.principal || null => state.billType.localizedLabel(
+        context,
+      ),
+  };
+}
+
 Widget _divider(BuildContext context) =>
     Divider(height: 1, thickness: 1, color: FxPalette.of(context).border);
 
@@ -369,15 +412,25 @@ class _AmountArea extends StatelessWidget {
       );
     }
 
+    if (state.showSingleAmount) {
+      return FxCard(
+        child: _OrderAmountField(
+          label: _businessActionLabel(context, state),
+          value: state.singleAmountCents,
+          currencyCode: currency,
+          tint: tint,
+          onChanged: (cents) => bloc.add(SingleAmountChanged(cents)),
+        ),
+      );
+    }
+
     // 支出/收入/垫付/报销：大数字来自分类拆分总额（只读展示）。
     return FxCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            S
-                .of(context)
-                .billEditorAmountOf(state.billType.localizedLabel(context)),
+            _businessActionLabel(context, state),
             style: FxTypography.label.copyWith(
               color: FxPalette.of(context).textSecondary,
             ),
@@ -396,6 +449,302 @@ class _AmountArea extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+/// 单据关联流水的分类拆分。金额输入直接转换为整数分。
+class _OrderCategorySplitSection extends StatelessWidget {
+  const _OrderCategorySplitSection({
+    required this.state,
+    required this.currencyCode,
+  });
+
+  final BillEditorState state;
+  final String currencyCode;
+
+  @override
+  Widget build(BuildContext context) {
+    final bloc = context.read<BillEditorBloc>();
+    return FxCard(
+      padding: EdgeInsets.zero,
+      child: Column(
+        children: [
+          for (var index = 0; index < state.categoryRows.length; index++)
+            _OrderCategoryRow(
+              row: state.categoryRows[index],
+              currencyCode: currencyCode,
+              canRemove: state.categoryRows.length > 1,
+              onPickCategory: () async {
+                _dismissKeyboard();
+                final categories = (
+                  state.usesIncomeAssociations
+                      ? state.options.incomeCategories
+                      : state.options.expenseCategories
+                )
+                    .expand((node) => node.flatten())
+                    .where((node) => node.isLeaf)
+                    .toList();
+                final picked = await showOptionPicker<CategoryNode>(
+                  context,
+                  title: S.of(context).billEditorSelectCategory,
+                  options: categories,
+                  labelOf: (node) => node.categoryName ?? '',
+                  selectedId: state.categoryRows[index].categoryId,
+                  idOf: (node) => node.categoryId,
+                );
+                if (!context.mounted || picked == null) return;
+                bloc.add(
+                  CategoryRowCategoryChanged(
+                    state.categoryRows[index].rowId,
+                    picked.categoryId,
+                    picked.categoryName,
+                  ),
+                );
+              },
+              onAmount: (cents) => bloc.add(
+                OrderCategoryRowAmountChanged(
+                  state.categoryRows[index].rowId,
+                  cents,
+                ),
+              ),
+              onRemove: () {
+                _dismissKeyboard();
+                bloc.add(CategoryRowRemoved(state.categoryRows[index].rowId));
+              },
+            ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(
+              FxSpacing.lg,
+              FxSpacing.sm,
+              FxSpacing.lg,
+              FxSpacing.md,
+            ),
+            child: InkWell(
+              onTap: () => bloc.add(const CategoryRowAdded()),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: FxSpacing.sm),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.add_rounded,
+                      size: 18,
+                      color: FxPalette.of(context).primary,
+                    ),
+                    const SizedBox(width: FxSpacing.xs),
+                    Text(
+                      S.of(context).billEditorAddCategory,
+                      style: FxTypography.bodyStrong.copyWith(
+                        color: FxPalette.of(context).primary,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _OrderCategoryRow extends StatelessWidget {
+  const _OrderCategoryRow({
+    required this.row,
+    required this.currencyCode,
+    required this.canRemove,
+    required this.onPickCategory,
+    required this.onAmount,
+    required this.onRemove,
+  });
+
+  final CategoryAmountRow row;
+  final String currencyCode;
+  final bool canRemove;
+  final VoidCallback onPickCategory;
+  final ValueChanged<int> onAmount;
+  final VoidCallback onRemove;
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = FxPalette.of(context);
+    final hasCategory = row.categoryName?.isNotEmpty ?? false;
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: FxSpacing.lg,
+        vertical: FxSpacing.sm,
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            flex: 4,
+            child: InkWell(
+              onTap: onPickCategory,
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: FxSpacing.md,
+                  vertical: FxSpacing.md,
+                ),
+                decoration: BoxDecoration(
+                  color: palette.surfaceMuted,
+                  borderRadius: FxRadius.tileBorder,
+                ),
+                child: Text(
+                  hasCategory
+                      ? row.categoryName!
+                      : S.of(context).billEditorSelectCategory,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: FxTypography.body.copyWith(
+                    color: hasCategory
+                        ? palette.textPrimary
+                        : palette.textTertiary,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(width: FxSpacing.sm),
+          Expanded(
+            flex: 3,
+            child: _OrderAmountField(
+              key: ValueKey('order_cat_amount_${row.rowId}'),
+              value: row.amountCents,
+              currencyCode: currencyCode,
+              large: false,
+              onChanged: onAmount,
+            ),
+          ),
+          if (canRemove)
+            FxIconButton(
+              icon: Icons.remove_circle_outline_rounded,
+              tooltip: S.of(context).accountsDelete,
+              color: palette.textTertiary,
+              onPressed: onRemove,
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+/// 新单据金额输入：字符串解析为整数分，不经过 double。
+class _OrderAmountField extends StatefulWidget {
+  const _OrderAmountField({
+    super.key,
+    this.label,
+    required this.value,
+    required this.onChanged,
+    this.currencyCode,
+    this.tint,
+    this.large = true,
+  });
+
+  final String? label;
+  final int value;
+  final ValueChanged<int> onChanged;
+  final String? currencyCode;
+  final Color? tint;
+  final bool large;
+
+  @override
+  State<_OrderAmountField> createState() => _OrderAmountFieldState();
+}
+
+class _OrderAmountInputFormatter extends TextInputFormatter {
+  static final _valid = RegExp(r'^\d*\.?\d{0,2}$');
+
+  const _OrderAmountInputFormatter();
+
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    final text = newValue.text;
+    if (text.isEmpty || text == '.' || _valid.hasMatch(text)) return newValue;
+    return oldValue;
+  }
+}
+
+class _OrderAmountFieldState extends State<_OrderAmountField> {
+  late final TextEditingController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(text: _format(widget.value));
+  }
+
+  @override
+  void didUpdateWidget(_OrderAmountField oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.value != oldWidget.value) {
+      final current = _parseCents(_controller.text);
+      if (current != widget.value) {
+        _controller.text = _format(widget.value);
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  static String _format(int cents) => cents == 0
+      ? ''
+      : OrderMoney.fromCents(cents).toApiString();
+
+  static int _parseCents(String text) {
+    if (text.isEmpty) return 0;
+    try {
+      return OrderMoney.parseInput(text).cents;
+    } on Object {
+      return 0;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = FxPalette.of(context);
+    final color = widget.tint ?? palette.textPrimary;
+    final fontSize = widget.large ? 34.0 : 20.0;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (widget.label != null) ...[
+          Text(
+            widget.label!,
+            style: FxTypography.label.copyWith(color: palette.textSecondary),
+          ),
+          const SizedBox(height: FxSpacing.sm),
+        ],
+        TextField(
+          controller: _controller,
+          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+          inputFormatters: [const _OrderAmountInputFormatter()],
+          style: FxTypography.money.copyWith(
+            fontSize: fontSize,
+            fontWeight: FontWeight.w700,
+            color: color,
+          ),
+          decoration: InputDecoration(
+            isDense: true,
+            border: InputBorder.none,
+            hintText: '0',
+            hintStyle: FxTypography.money.copyWith(
+              fontSize: fontSize,
+              fontWeight: FontWeight.w700,
+              color: palette.textTertiary,
+            ),
+          ),
+          onChanged: (text) => widget.onChanged(_parseCents(text)),
+        ),
+      ],
     );
   }
 }
@@ -522,12 +871,14 @@ class _OrderRow extends StatelessWidget {
       value: state.orderTitle,
       placeholder: S.of(context).billEditorRequired,
       required: true,
-      onTap: () async {
+      onTap: state.lockOrderContext ? null : () async {
         _dismissKeyboard();
         final picked = await showOptionPicker<OrderOption>(
           context,
           title: S.of(context).billEditorSelectOrder,
-          options: state.options.orders,
+          options: state.options.orders
+              .where((order) => order.enabled)
+              .toList(),
           labelOf: (o) => [
             o.title,
             o.typeDesc,
@@ -535,8 +886,8 @@ class _OrderRow extends StatelessWidget {
           selectedId: state.orderId,
           idOf: (o) => o.orderId,
         );
-        if (!context.mounted || picked == null) return;
-        bloc.add(OrderChanged(picked.orderId, picked.title));
+        if (!context.mounted) return;
+        bloc.add(OrderChanged(picked?.orderId, picked?.title));
       },
     );
   }
@@ -736,7 +1087,7 @@ class _PickerRow extends StatelessWidget {
   final String? value;
   final String? placeholder;
   final bool required;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -744,9 +1095,11 @@ class _PickerRow extends StatelessWidget {
     final hasValue = value != null && value!.isNotEmpty;
     final placeholderText = placeholder ?? S.of(context).commonPleaseSelect;
     return InkWell(
-      onTap: () {
+      onTap: onTap == null
+          ? null
+          : () {
         HapticFeedback.selectionClick();
-        onTap();
+        onTap?.call();
       },
       child: Padding(
         padding: const EdgeInsets.symmetric(
@@ -1191,7 +1544,9 @@ class _TogglesCard extends StatelessWidget {
               style: FxTypography.caption.copyWith(color: palette.textTertiary),
             ),
             value: state.confirm,
-            onChanged: (v) => bloc.add(ConfirmToggled(v)),
+            onChanged: state.confirmLocked
+                ? null
+                : (v) => bloc.add(ConfirmToggled(v)),
           ),
           Divider(height: 1, color: palette.border),
           SwitchListTile.adaptive(
@@ -1205,8 +1560,10 @@ class _TogglesCard extends StatelessWidget {
               S.of(context).billEditorIncludeSubtitle,
               style: FxTypography.caption.copyWith(color: palette.textTertiary),
             ),
-            value: state.include,
-            onChanged: (v) => bloc.add(IncludeToggled(v)),
+            value: state.effectiveInclude,
+            onChanged: state.includeLocked
+                ? null
+                : (v) => bloc.add(IncludeToggled(v)),
           ),
         ],
       ),

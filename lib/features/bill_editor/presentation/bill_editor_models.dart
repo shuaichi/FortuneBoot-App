@@ -7,29 +7,39 @@ class CategoryAmountRow extends Equatable {
   final int? categoryId;
   final String? categoryName;
   final double amount;
+  final int amountCents;
 
   const CategoryAmountRow({
     this.rowId = '',
     this.categoryId,
     this.categoryName,
     this.amount = 0,
+    this.amountCents = 0,
   });
 
   CategoryAmountRow copyWith({
     int? categoryId,
     String? categoryName,
     double? amount,
+    int? amountCents,
   }) {
     return CategoryAmountRow(
       rowId: rowId,
       categoryId: categoryId ?? this.categoryId,
       categoryName: categoryName ?? this.categoryName,
       amount: amount ?? this.amount,
+      amountCents: amountCents ?? this.amountCents,
     );
   }
 
   @override
-  List<Object?> get props => [rowId, categoryId, categoryName, amount];
+  List<Object?> get props => [
+    rowId,
+    categoryId,
+    categoryName,
+    amount,
+    amountCents,
+  ];
 }
 
 /// 附加费用行。

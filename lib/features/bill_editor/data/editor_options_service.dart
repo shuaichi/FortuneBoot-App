@@ -1,5 +1,8 @@
+import 'package:dio/dio.dart';
 import 'package:fortuneboot/core/network/fx_api.dart';
 import 'package:fortuneboot/features/orders/data/orders_models.dart';
+import 'package:fortuneboot/features/orders/data/orders_service.dart';
+import 'package:fortuneboot/features/shared/data/bill_models.dart';
 
 /// 账户选项（按 can* 过滤可用性）。
 class AccountOption {
@@ -181,8 +184,15 @@ class OrderOption {
   final String? title;
   final int? type;
   final String? typeDesc;
+  final bool enabled;
 
-  const OrderOption({this.orderId, this.title, this.type, this.typeDesc});
+  const OrderOption({
+    this.orderId,
+    this.title,
+    this.type,
+    this.typeDesc,
+    this.enabled = true,
+  });
 
   bool get isReimbursementOrder => type == FinanceOrderType.reimbursement.value;
 
@@ -191,6 +201,14 @@ class OrderOption {
     title: json['title']?.toString(),
     type: FxApi.asId(json['type']),
     typeDesc: json['typeDesc']?.toString(),
+  );
+
+  factory OrderOption.fromDetail(FinanceOrderDetail detail) => OrderOption(
+    orderId: detail.orderId,
+    title: detail.title,
+    type: detail.type?.value,
+    typeDesc: detail.typeDesc,
+    enabled: detail.isUsing || detail.isDraft,
   );
 }
 
@@ -213,6 +231,24 @@ class EditorOptions {
     this.payees = const [],
     this.orders = const [],
   });
+
+  EditorOptions copyWith({
+    List<AccountOption>? accounts,
+    List<CategoryNode>? expenseCategories,
+    List<CategoryNode>? incomeCategories,
+    List<TagNode>? tags,
+    List<MemberOption>? members,
+    List<PayeeOption>? payees,
+    List<OrderOption>? orders,
+  }) => EditorOptions(
+    accounts: accounts ?? this.accounts,
+    expenseCategories: expenseCategories ?? this.expenseCategories,
+    incomeCategories: incomeCategories ?? this.incomeCategories,
+    tags: tags ?? this.tags,
+    members: members ?? this.members,
+    payees: payees ?? this.payees,
+    orders: orders ?? this.orders,
+  );
 }
 
 List<T> _mapNodes<T>(dynamic v, T Function(Map<String, dynamic>) f) {
@@ -227,10 +263,47 @@ List<T> _mapNodes<T>(dynamic v, T Function(Map<String, dynamic>) f) {
 
 /// BillEditor 选项数据服务：拉取分类/账户/标签/成员/交易对象/单据。
 class EditorOptionsService {
+  EditorOptionsService({Dio? dio, OrdersService? ordersService})
+    : _ordersService = ordersService ?? OrdersService(dio: dio);
+
   final FxApi _api = FxApi.instance;
+  final OrdersService _ordersService;
 
   static List<OrderOption> reimbursementOrders(Iterable<OrderOption> orders) =>
       orders.where((order) => order.isReimbursementOrder).toList();
+
+  /// 7/8 只能选报销单；9/10 只能选债权单；11/12 只能选债务单。
+  static FinanceOrderType? orderTypeForBillType(FxBillType billType) {
+    return switch (billType) {
+      FxBillType.advance ||
+      FxBillType.reimburse => FinanceOrderType.reimbursement,
+      FxBillType.loanOut ||
+      FxBillType.loanRecover => FinanceOrderType.receivable,
+      FxBillType.loanIn ||
+      FxBillType.loanRepay => FinanceOrderType.payable,
+      FxBillType.expense ||
+      FxBillType.income ||
+      FxBillType.transfer ||
+      FxBillType.adjust => null,
+    };
+  }
+
+  static List<OrderOption> _withDisabledPreset(
+    List<OrderOption> orders, {
+    int? presetOrderId,
+    String? presetOrderTitle,
+  }) {
+    if (presetOrderId == null || presetOrderTitle == null) return orders;
+    if (orders.any((order) => order.orderId == presetOrderId)) return orders;
+    return [
+      ...orders,
+      OrderOption(
+        orderId: presetOrderId,
+        title: presetOrderTitle,
+        enabled: false,
+      ),
+    ];
+  }
 
   static List<T> _list<T>(dynamic data, T Function(Map<String, dynamic>) f) {
     if (data is List) {
@@ -287,20 +360,61 @@ class EditorOptionsService {
     return reimbursementOrders(_list(data, OrderOption.fromJson));
   }
 
+  Future<List<OrderOption>> getOrderOptions({
+    required int bookId,
+    required FxBillType billType,
+    String? keyword,
+    int pageNum = 1,
+    int pageSize = 20,
+  }) async {
+    if (orderTypeForBillType(billType) == null) return const [];
+    final page = await _ordersService.getOptions(
+      bookId: bookId,
+      billType: billType.value,
+      keyword: keyword,
+      pageNum: pageNum,
+      pageSize: pageSize,
+    );
+    return page.rows.map(OrderOption.fromDetail).toList();
+  }
+
   /// 并发拉取全部选项。
   Future<EditorOptions> loadAll({
     required int bookId,
     required int groupId,
+    FxBillType? billType,
+    int pageNum = 1,
+    int pageSize = 20,
+    int? presetOrderId,
+    String? presetOrderTitle,
   }) async {
-    final results = await Future.wait([
+    final futures = <Future<Object>>[
       getAccounts(groupId),
       getCategories(bookId: bookId, billType: 1),
       getCategories(bookId: bookId, billType: 2),
       getTags(bookId),
       getMembers(bookId),
       getPayees(bookId),
-      getUsingOrders(bookId),
-    ]);
+    ];
+    if (billType != null) {
+      futures.add(
+        getOrderOptions(
+          bookId: bookId,
+          billType: billType,
+          pageNum: pageNum,
+          pageSize: pageSize,
+        ),
+      );
+    }
+    final results = await Future.wait(futures);
+    final orderResults = futures.length == results.length && results.length == 7
+        ? results[6] as List<OrderOption>
+        : const <OrderOption>[];
+    final orders = _withDisabledPreset(
+      orderResults,
+      presetOrderId: presetOrderId,
+      presetOrderTitle: presetOrderTitle,
+    );
     return EditorOptions(
       accounts: results[0] as List<AccountOption>,
       expenseCategories: results[1] as List<CategoryNode>,
@@ -308,7 +422,7 @@ class EditorOptionsService {
       tags: results[3] as List<TagNode>,
       members: results[4] as List<MemberOption>,
       payees: results[5] as List<PayeeOption>,
-      orders: results[6] as List<OrderOption>,
+      orders: orders,
     );
   }
 }

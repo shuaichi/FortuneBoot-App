@@ -1,5 +1,8 @@
 import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:dio/dio.dart';
+import 'package:fortuneboot/core/errors/fx_failure.dart';
 import 'package:fortuneboot/core/network/fx_api.dart';
 import 'package:fortuneboot/features/shared/data/bill_attachment.dart';
 import 'package:fortuneboot/features/shared/data/bill_attachment_validator.dart';
@@ -249,6 +252,34 @@ class BillService {
           .toList();
     }
     return const [];
+  }
+
+  /// 读取现有附件并还原为可再次提交的表单附件。
+  ///
+  /// C08 修改流水时，客户端必须提交保留的附件内容；空列表才表示全部删除。
+  Future<List<BillAttachment>> getAttachments(int billId) async {
+    final files = await getFiles(billId);
+    if (files.isEmpty) return const [];
+    return [
+      for (final file in files)
+        BytesBillAttachment(
+          id: 'bill-file-${file.fileId ?? file.hashCode}',
+          name: file.originalName ?? 'attachment-${file.fileId ?? ''}',
+          bytes: _decodeAttachment(file.fileData),
+        ),
+    ];
+  }
+
+  static Uint8List _decodeAttachment(String? base64Data) {
+    final data = base64Data ?? '';
+    if (data.isEmpty) {
+      throw const FxFailure(kind: FxFailureKind.invalidResponse);
+    }
+    try {
+      return base64Decode(data);
+    } on FormatException {
+      throw const FxFailure(kind: FxFailureKind.invalidResponse);
+    }
   }
 
   Future<void> remove({required int bookId, required int billId}) =>

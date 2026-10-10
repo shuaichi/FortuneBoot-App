@@ -7,7 +7,13 @@ void main() {
   test('transitions order with backend action path and reloads', () async {
     final service = _FakeOrdersService(
       const OrdersPage(
-        rows: [FortuneFinanceOrderVo(orderId: 1, type: 1, status: 200)],
+        rows: [
+          FortuneFinanceOrderVo(
+            orderId: 1,
+            type: FinanceOrderType.reimbursement,
+            status: 200,
+          ),
+        ],
       ),
     );
     final bloc = OrdersBloc(bookId: 47, service: service);
@@ -15,7 +21,11 @@ void main() {
 
     bloc.add(
       const OrderTransitioned(
-        order: FortuneFinanceOrderVo(orderId: 99, type: 1, status: 100),
+        order: FortuneFinanceOrderVo(
+          orderId: 99,
+          type: FinanceOrderType.reimbursement,
+          status: 100,
+        ),
         action: 'using',
       ),
     );
@@ -34,9 +44,12 @@ void main() {
     final service = _FakeOrdersService(
       const OrdersPage(
         rows: [
-          FortuneFinanceOrderVo(orderId: 1, type: 1),
-          FortuneFinanceOrderVo(orderId: 2, type: 2),
-          FortuneFinanceOrderVo(orderId: 3, type: 3),
+          FortuneFinanceOrderVo(
+            orderId: 1,
+            type: FinanceOrderType.reimbursement,
+          ),
+          FortuneFinanceOrderVo(orderId: 2, type: FinanceOrderType.receivable),
+          FortuneFinanceOrderVo(orderId: 3, type: FinanceOrderType.payable),
         ],
       ),
     );
@@ -59,8 +72,8 @@ void main() {
       service: _FakeOrdersService(
         const OrdersPage(
           rows: [
-            FortuneFinanceOrderVo(orderId: 2, type: 2),
-            FortuneFinanceOrderVo(orderId: 3, type: 3),
+            FortuneFinanceOrderVo(orderId: 2, type: FinanceOrderType.receivable),
+            FortuneFinanceOrderVo(orderId: 3, type: FinanceOrderType.payable),
           ],
         ),
       ),
@@ -85,24 +98,46 @@ class _FakeOrdersService extends OrdersService {
   final transitions = <({int bookId, int orderId, String action})>[];
 
   @override
-  Future<OrdersPage> getPage({
+  Future<FinanceOrderPage> getPage({
     required int bookId,
     int pageNum = 1,
     int pageSize = 20,
+    String? keyword,
     String? title,
     int? type,
     int? status,
+    String? settlementState,
+    bool overdueOnly = false,
   }) async {
     requests.add((type: type));
-    return _page;
+    return FinanceOrderPage(
+      rows: _page.rows.map(_toDetail).toList(),
+      total: _page.total,
+    );
   }
 
   @override
-  Future<void> transition({
+  Future<FinanceOrderMutationResult> transition({
     required int bookId,
     required int orderId,
-    required String action,
+    required Object action,
+    String? requestId,
+    int? expectedVersion,
   }) async {
-    transitions.add((bookId: bookId, orderId: orderId, action: action));
+    transitions.add((
+      bookId: bookId,
+      orderId: orderId,
+      action: action.toString(),
+    ));
+    return const FinanceOrderMutationResult();
   }
+
+  FinanceOrderDetail _toDetail(FortuneFinanceOrderVo order) =>
+      FinanceOrderDetail(
+        orderId: order.orderId,
+        bookId: order.bookId,
+        title: order.title,
+        type: order.type,
+        status: order.status,
+      );
 }

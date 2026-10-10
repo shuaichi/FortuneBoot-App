@@ -74,7 +74,7 @@ class OrderFormSheetState extends State<OrderFormSheet> {
     try {
       final remark = _remarkCtrl.text.trim();
       if (widget.isEdit) {
-        await widget.service.modify(
+        await widget.service.modifyLegacy(
           bookId: widget.bookId,
           orderId: widget.order!.orderId!,
           title: title,

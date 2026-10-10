@@ -498,6 +498,11 @@ class _FakeEditorOptionsService extends EditorOptionsService {
   Future<EditorOptions> loadAll({
     required int bookId,
     required int groupId,
+    FxBillType? billType,
+    int pageNum = 1,
+    int pageSize = 20,
+    int? presetOrderId,
+    String? presetOrderTitle,
   }) async {
     return const EditorOptions(
       accounts: [

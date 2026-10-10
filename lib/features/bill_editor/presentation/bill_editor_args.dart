@@ -1,3 +1,4 @@
+import 'package:fortuneboot/features/orders/data/orders_models.dart';
 import 'package:fortuneboot/features/shared/data/bill_models.dart';
 
 /// BillEditor 入参。
@@ -22,20 +23,32 @@ class BillEditorArgs {
   /// 新建时预选的账单类型（默认支出）。
   final int? presetBillType;
 
+  /// 单据上下文预填与锁定。
+  final int? presetBookId;
+  final int? presetOrderId;
+  final FinanceOrderComponent? presetOrderComponent;
+  final int? expectedOrderVersion;
+  final bool lockOrderContext;
+
   const BillEditorArgs({
     this.mode = 'new',
     this.billId,
     this.sourceBill,
     this.copyData,
     this.presetBillType,
+    this.presetBookId,
+    this.presetOrderId,
+    this.presetOrderComponent,
+    this.expectedOrderVersion,
+    this.lockOrderContext = false,
   });
 
   bool get isEdit => mode == 'edit';
   bool get isCopy => mode == 'copy';
   bool get isNew => !isEdit && !isCopy;
 
-  /// billType 是否锁定（仅编辑模式锁定，避免数据错乱）。
-  bool get lockBillType => isEdit;
+  /// billType 是否锁定（编辑或由单据详情发起时锁定）。
+  bool get lockBillType => isEdit || lockOrderContext;
 
   /// 从路由参数解析。宽松兼容多种入参形态。
   factory BillEditorArgs.fromRouteArgs(Object? args) {
@@ -61,6 +74,24 @@ class BillEditorArgs {
       };
       final billId = _asInt(map['billId']) ?? sourceBill?.billId;
       final presetBillType = _asInt(map['billType'] ?? map['presetBillType']);
+      final presetBookId = _asInt(
+        map['presetBookId'] ?? map['bookId'] ?? sourceBill?.bookId,
+      );
+      final presetOrderId = _asInt(
+        map['presetOrderId'] ?? sourceBill?.orderId,
+      );
+      final rawOrderComponent =
+          map['presetOrderComponent'] ?? sourceBill?.orderComponent?.value;
+      final presetOrderComponent = rawOrderComponent == null
+          ? null
+          : FinanceOrderComponent.fromValue(rawOrderComponent.toString());
+      final expectedOrderVersion = _asInt(
+        map['expectedOrderVersion'] ?? map['expectedVersion'],
+      );
+      final lockOrderContext = _asBool(
+            map['lockOrderContext'],
+          ) ||
+          presetOrderComponent != null;
       final copyData = switch (map['copyData']) {
         final Map<dynamic, dynamic> m => Map<String, dynamic>.from(m),
         _ => null,
@@ -71,6 +102,11 @@ class BillEditorArgs {
         sourceBill: sourceBill,
         copyData: copyData,
         presetBillType: presetBillType,
+        presetBookId: presetBookId,
+        presetOrderId: presetOrderId,
+        presetOrderComponent: presetOrderComponent,
+        expectedOrderVersion: expectedOrderVersion,
+        lockOrderContext: lockOrderContext,
       );
     }
 
@@ -82,5 +118,11 @@ class BillEditorArgs {
     if (v is int) return v;
     if (v is num) return v.toInt();
     return int.tryParse(v.toString());
+  }
+
+  static bool _asBool(dynamic v) {
+    if (v is bool) return v;
+    if (v is num) return v != 0;
+    return v.toString().toLowerCase() == 'true';
   }
 }

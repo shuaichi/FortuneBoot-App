@@ -38,6 +38,15 @@ class TransferAmountChanged extends BillEditorEvent {
   List<Object?> get props => [amount];
 }
 
+/// 单据 9—12 的单一金额变更，单位为整数分。
+class SingleAmountChanged extends BillEditorEvent {
+  final int cents;
+  const SingleAmountChanged(this.cents);
+
+  @override
+  List<Object?> get props => [cents];
+}
+
 class CategoryRowAdded extends BillEditorEvent {
   const CategoryRowAdded();
 }
@@ -71,6 +80,16 @@ class CategoryRowAmountChanged extends BillEditorEvent {
 
   @override
   List<Object?> get props => [rowId, amount];
+}
+
+/// 单据关联分类拆分金额变更，单位为整数分。
+class OrderCategoryRowAmountChanged extends BillEditorEvent {
+  final String rowId;
+  final int cents;
+  const OrderCategoryRowAmountChanged(this.rowId, this.cents);
+
+  @override
+  List<Object?> get props => [rowId, cents];
 }
 
 class AccountChanged extends BillEditorEvent {

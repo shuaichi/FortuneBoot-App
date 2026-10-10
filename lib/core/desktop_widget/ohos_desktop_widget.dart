@@ -400,7 +400,7 @@ class OhosDesktopWidget {
           pageSize: 20,
           type: FinanceOrderType.reimbursement.value,
         );
-        rows = page.rows;
+        rows = page.rows.map(FortuneFinanceOrderVo.fromDetail).toList();
       } on Object catch (e, st) {
         developer.log(
           'OhosDesktopWidget.orders page failed: $e',

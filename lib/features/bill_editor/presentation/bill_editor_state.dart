@@ -13,8 +13,11 @@ enum BillValidationError {
   categoryRequired,
   categorySelectRequired,
   categoryAmountPositive,
+  amountRequired,
   accountRequired,
   orderRequired,
+  orderUnavailable,
+  writeOffReasonRequired,
   titleRequired,
   extraCategoryRequired,
   extraCategoryNotInSplit,
@@ -29,13 +32,10 @@ class BillEditorState extends Equatable {
   final String mode; // new | edit | copy
   final int? billId;
   final bool lockBillType;
-
   final FxBillType billType;
 
-  /// 转账单一金额。
   final double transferAmount;
-
-  /// 分类拆分行（支出/收入/垫付/报销）。
+  final int singleAmountCents;
   final List<CategoryAmountRow> categoryRows;
 
   final int? accountId;
@@ -47,7 +47,6 @@ class BillEditorState extends Equatable {
   final String? payeeName;
 
   final DateTime tradeTime;
-
   final List<int> tagIds;
   final List<String> tagNames;
   final List<int> memberIds;
@@ -55,26 +54,24 @@ class BillEditorState extends Equatable {
 
   final int? orderId;
   final String? orderTitle;
+  final int? presetBookId;
+  final FinanceOrderComponent? orderComponent;
+  final int? expectedOrderVersion;
+  final bool lockOrderContext;
 
   final List<ExtraRow> extras;
   final List<BillAttachment> attachments;
 
   final String title;
-  final bool titleTouched; // 用户是否手改过标题
+  final bool titleTouched;
   final String remark;
   final bool confirm;
   final bool include;
 
-  /// 选项数据。
   final EditorOptions options;
-
   final SubmitStatus submitStatus;
-
-  /// 后端/异常错误文案（仅保留兼容，不写入原始异常）。
   final String? submitError;
   final FxFailure? submitFailure;
-
-  /// 本地校验失败（语义枚举，展示层本地化）。
   final BillValidationError? validationFailure;
 
   const BillEditorState({
@@ -86,6 +83,7 @@ class BillEditorState extends Equatable {
     this.lockBillType = false,
     this.billType = FxBillType.expense,
     this.transferAmount = 0,
+    this.singleAmountCents = 0,
     this.categoryRows = const [CategoryAmountRow()],
     this.accountId,
     this.accountName,
@@ -100,6 +98,10 @@ class BillEditorState extends Equatable {
     this.memberNames = const [],
     this.orderId,
     this.orderTitle,
+    this.presetBookId,
+    this.orderComponent,
+    this.expectedOrderVersion,
+    this.lockOrderContext = false,
     this.extras = const [],
     this.attachments = const [],
     this.title = '',
@@ -114,8 +116,6 @@ class BillEditorState extends Equatable {
     this.validationFailure,
   });
 
-  // ---- 派生 ----
-
   int get billTypeValue => billType.value;
 
   bool get isTransfer => billType == FxBillType.transfer;
@@ -123,48 +123,87 @@ class BillEditorState extends Equatable {
   bool get isIncome => billType == FxBillType.income;
   bool get isAdvanceOrReimburse =>
       billType == FxBillType.advance || billType == FxBillType.reimburse;
+  bool get isPrincipalSingleAmount =>
+      billType == FxBillType.loanOut ||
+      billType == FxBillType.loanRecover ||
+      billType == FxBillType.loanIn ||
+      billType == FxBillType.loanRepay;
+  bool get isWriteOff => orderComponent == FinanceOrderComponent.writeOff;
 
-  /// 收入侧关联：报销与收入一致（分类树/账户/交易对象/标签均取收入侧可用性）；
-  /// 垫付与支出一致，取支出侧可用性。
+  /// 7—12，或由单据详情带入的 1/2 附属组件，都必须走 V2 写入口。
+  bool get isOrderFlow =>
+      isAdvanceOrReimburse ||
+      isPrincipalSingleAmount ||
+      orderComponent != null;
+
   bool get usesIncomeAssociations =>
-      isIncome || billType == FxBillType.reimburse;
+      isIncome ||
+      billType == FxBillType.reimburse ||
+      billType == FxBillType.loanRecover ||
+      billType == FxBillType.loanIn;
 
-  bool get usesCategorySplit => !isTransfer;
-  bool get showSingleAccount => !isTransfer;
-  bool get showPayee => isExpense || isIncome || isAdvanceOrReimburse;
-  bool get showOrder => isAdvanceOrReimburse;
-  bool get showExtras => isExpense || isTransfer;
+  bool get showSingleAmount => isPrincipalSingleAmount;
+  bool get showCategorySplit => !isTransfer && !showSingleAmount;
+  bool get showAccount => !isTransfer && !isWriteOff;
+  bool get showPayee => !isTransfer && !isWriteOff;
+  bool get showOrder => isOrderFlow;
+  bool get showExtras =>
+      (isExpense || isTransfer) && !isOrderFlow;
+  bool get confirmLocked => isWriteOff;
+  bool get includeLocked => isOrderFlow;
+
+  /// 单据关联流水的服务端 include 规则：本金 false，附属组件 true。
+  bool get effectiveInclude =>
+      isOrderFlow
+      ? !(orderComponent == FinanceOrderComponent.principal ||
+            isPrincipalSingleAmount ||
+            isAdvanceOrReimburse)
+      : include;
+
+  int get categoryTotalCents =>
+      categoryRows.fold<int>(0, (sum, row) => sum + row.amountCents);
 
   /// 分类拆分总额（支出/收入/垫付/报销）。
   double get categoryTotal =>
-      categoryRows.fold<double>(0, (s, r) => s + r.amount);
+      isOrderFlow ? categoryTotalCents / 100 : categoryRows.fold<double>(
+        0,
+        (sum, row) => sum + row.amount,
+      );
 
-  /// 展示大金额。
-  double get displayAmount => isTransfer ? transferAmount : categoryTotal;
+  /// 展示大金额。仅用于 UI，不参与新单据提交计算。
+  double get displayAmount =>
+      showSingleAmount
+      ? singleAmountCents / 100
+      : isTransfer
+      ? transferAmount
+      : categoryTotal;
 
-  /// 当前分类拆分中可关联附加费用的分类。
-  List<CategoryAmountRow> get extraCategoryRows {
-    final categoryIds = <int>{};
-    return categoryRows
-        .where(
-          (row) => row.categoryId != null && categoryIds.add(row.categoryId!),
-        )
-        .toList(growable: false);
-  }
+  List<CategoryAmountRow> get extraCategoryRows => categoryRows
+      .where(
+        (row) =>
+            row.categoryId != null &&
+            extraCategoryIds.contains(row.categoryId),
+      )
+      .toList(growable: false);
 
-  Set<int> get extraCategoryIds =>
-      extraCategoryRows.map((row) => row.categoryId!).toSet();
+  Set<int> get extraCategoryIds => categoryRows
+      .where((row) => row.categoryId != null)
+      .map((row) => row.categoryId!)
+      .toSet();
+
+  Set<int> get _extraCategoryIds => extraCategoryRows
+      .map((row) => row.categoryId!)
+      .toSet();
 
   bool get hasExtraCategories => extraCategoryRows.isNotEmpty;
 
   static bool isValidTransferAccountSide(int accountSide) =>
       accountSide == 1 || accountSide == 2;
 
-  /// 首个有效分类名（供默认标题）。
   String get firstCategoryName {
-    for (final r in categoryRows) {
-      final n = r.categoryName;
-      if (n != null && n.isNotEmpty) return n;
+    for (final row in categoryRows) {
+      final name = row.categoryName;
+      if (name != null && name.isNotEmpty) return name;
     }
     return '';
   }
@@ -179,7 +218,6 @@ class BillEditorState extends Equatable {
     return null;
   }
 
-  /// 转账默认标题：收款信用卡→还款；转出微信/支付宝→提现；转出信用卡→提现；其余→转账。
   String get suggestedTransferTitle {
     final toType = _accountTypeOf(toAccountId);
     if (toType == AccountTypeMeta.credit.id) return '还款';
@@ -196,13 +234,25 @@ class BillEditorState extends Equatable {
     return '转账';
   }
 
-  /// 未手填时展示/提交的默认标题。
   String get suggestedTitle {
     if (isTransfer) return suggestedTransferTitle;
+    if (showSingleAmount) return billType.label;
     return firstCategoryName;
   }
 
-  /// 校验：可提交则返回 null，否则返回语义化错误（展示层本地化文案）。
+  FinanceOrderType? get orderTypeOfSelection {
+    for (final order in options.orders) {
+      if (order.orderId == orderId) {
+        return FinanceOrderType.fromValue(order.type);
+      }
+    }
+    return null;
+  }
+
+  bool get _selectedOrderEnabled => options.orders.any(
+    (order) => order.orderId == orderId && order.enabled,
+  );
+
   BillValidationError? get validationError {
     if (isTransfer) {
       if (transferAmount == 0) {
@@ -218,19 +268,35 @@ class BillEditorState extends Equatable {
           return BillValidationError.transferExtraAccountSideInvalid;
         }
       }
+    } else if (showSingleAmount) {
+      if (singleAmountCents <= 0) return BillValidationError.amountRequired;
+      if (orderId == null) return BillValidationError.orderRequired;
     } else {
+      if (isWriteOff && remark.trim().isEmpty) {
+        return BillValidationError.writeOffReasonRequired;
+      }
       if (categoryRows.isEmpty) return BillValidationError.categoryRequired;
-      for (final r in categoryRows) {
-        if (r.categoryId == null) {
+      for (final row in categoryRows) {
+        if (row.categoryId == null) {
           return BillValidationError.categorySelectRequired;
         }
-        if (r.amount == 0) return BillValidationError.categoryAmountPositive;
+        final amountInvalid = isOrderFlow
+            ? row.amountCents <= 0
+            : row.amount == 0;
+        if (amountInvalid) {
+          return BillValidationError.categoryAmountPositive;
+        }
       }
-      if (accountId == null) return BillValidationError.accountRequired;
+      if (showAccount && accountId == null) {
+        return BillValidationError.accountRequired;
+      }
       if (showOrder && orderId == null) {
         return BillValidationError.orderRequired;
       }
-      final categoryIds = extraCategoryIds;
+      if (showOrder && orderId != null && !_selectedOrderEnabled) {
+        return BillValidationError.orderUnavailable;
+      }
+      final categoryIds = _extraCategoryIds;
       for (final extra in extras.where((extra) => extra.amount != 0)) {
         if (extra.categoryId == null) {
           return BillValidationError.extraCategoryRequired;
@@ -240,14 +306,13 @@ class BillEditorState extends Equatable {
         }
       }
     }
-    final t = effectiveTitle;
-    if (t.isEmpty) return BillValidationError.titleRequired;
+    final effectiveTitleValue = effectiveTitle;
+    if (effectiveTitleValue.isEmpty) return BillValidationError.titleRequired;
     return null;
   }
 
   bool get canSubmit => validationError == null;
 
-  /// 实际提交用标题（用户未改则回退分类名或转账默认标题）。
   String get effectiveTitle {
     if (title.isNotEmpty) return title;
     if (!titleTouched) {
@@ -266,6 +331,7 @@ class BillEditorState extends Equatable {
     bool? lockBillType,
     FxBillType? billType,
     double? transferAmount,
+    int? singleAmountCents,
     List<CategoryAmountRow>? categoryRows,
     int? accountId,
     String? accountName,
@@ -284,6 +350,12 @@ class BillEditorState extends Equatable {
     int? orderId,
     String? orderTitle,
     bool clearOrder = false,
+    int? presetBookId,
+    FinanceOrderComponent? orderComponent,
+    bool clearOrderComponent = false,
+    int? expectedOrderVersion,
+    bool clearExpectedOrderVersion = false,
+    bool? lockOrderContext,
     List<ExtraRow>? extras,
     List<BillAttachment>? attachments,
     String? title,
@@ -306,6 +378,7 @@ class BillEditorState extends Equatable {
       lockBillType: lockBillType ?? this.lockBillType,
       billType: billType ?? this.billType,
       transferAmount: transferAmount ?? this.transferAmount,
+      singleAmountCents: singleAmountCents ?? this.singleAmountCents,
       categoryRows: categoryRows ?? this.categoryRows,
       accountId: clearAccount ? null : (accountId ?? this.accountId),
       accountName: clearAccount ? null : (accountName ?? this.accountName),
@@ -322,6 +395,14 @@ class BillEditorState extends Equatable {
       memberNames: memberNames ?? this.memberNames,
       orderId: clearOrder ? null : (orderId ?? this.orderId),
       orderTitle: clearOrder ? null : (orderTitle ?? this.orderTitle),
+      presetBookId: presetBookId ?? this.presetBookId,
+      orderComponent: clearOrderComponent
+          ? null
+          : (orderComponent ?? this.orderComponent),
+      expectedOrderVersion: clearExpectedOrderVersion
+          ? null
+          : (expectedOrderVersion ?? this.expectedOrderVersion),
+      lockOrderContext: lockOrderContext ?? this.lockOrderContext,
       extras: extras ?? this.extras,
       attachments: attachments ?? this.attachments,
       title: title ?? this.title,
@@ -347,6 +428,7 @@ class BillEditorState extends Equatable {
     lockBillType,
     billType,
     transferAmount,
+    singleAmountCents,
     categoryRows,
     accountId,
     accountName,
@@ -361,6 +443,10 @@ class BillEditorState extends Equatable {
     memberNames,
     orderId,
     orderTitle,
+    presetBookId,
+    orderComponent,
+    expectedOrderVersion,
+    lockOrderContext,
     extras,
     attachments,
     title,

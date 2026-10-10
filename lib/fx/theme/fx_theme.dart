@@ -157,6 +157,10 @@ class FxFinanceColors extends ThemeExtension<FxFinanceColors> {
   final Color adjust;
   final Color advance;
   final Color reimburse;
+  final Color loanOut;
+  final Color loanRecover;
+  final Color loanIn;
+  final Color loanRepay;
   final Color holiday;
   final Color rest;
   final Color work;
@@ -168,6 +172,10 @@ class FxFinanceColors extends ThemeExtension<FxFinanceColors> {
     required this.adjust,
     required this.advance,
     required this.reimburse,
+    required this.loanOut,
+    required this.loanRecover,
+    required this.loanIn,
+    required this.loanRepay,
     required this.holiday,
     required this.rest,
     required this.work,
@@ -180,6 +188,10 @@ class FxFinanceColors extends ThemeExtension<FxFinanceColors> {
     adjust: FxColors.adjust,
     advance: FxColors.expense,
     reimburse: FxColors.expense,
+    loanOut: FxColors.expense,
+    loanRecover: FxColors.income,
+    loanIn: FxColors.income,
+    loanRepay: FxColors.expense,
     holiday: Color(0xFF7C3AED),
     rest: FxColors.expense,
     work: FxColors.adjust,
@@ -193,6 +205,10 @@ class FxFinanceColors extends ThemeExtension<FxFinanceColors> {
       adjust: prefs.adjustColor,
       advance: prefs.advanceColor,
       reimburse: prefs.reimburseColor,
+      loanOut: prefs.expenseColor,
+      loanRecover: prefs.incomeColor,
+      loanIn: prefs.incomeColor,
+      loanRepay: prefs.expenseColor,
       holiday: prefs.holidayColor,
       rest: prefs.restColor,
       work: prefs.workColor,
@@ -202,7 +218,7 @@ class FxFinanceColors extends ThemeExtension<FxFinanceColors> {
   static FxFinanceColors of(BuildContext context) =>
       Theme.of(context).extension<FxFinanceColors>() ?? light;
 
-  /// 按账单类型取语义色。billType: 1支出 2收入 3转账 4调整 7垫付 8报销。
+  /// 按账单类型取语义色。billType: 1支出 2收入 3转账 4调整 7—12单据流水。
   Color forBillType(int? billType) {
     switch (billType) {
       case 2:
@@ -215,6 +231,14 @@ class FxFinanceColors extends ThemeExtension<FxFinanceColors> {
         return advance;
       case 8:
         return reimburse;
+      case 9:
+        return loanOut;
+      case 10:
+        return loanRecover;
+      case 11:
+        return loanIn;
+      case 12:
+        return loanRepay;
       case 1:
       default:
         return expense;
@@ -229,6 +253,10 @@ class FxFinanceColors extends ThemeExtension<FxFinanceColors> {
     Color? adjust,
     Color? advance,
     Color? reimburse,
+    Color? loanOut,
+    Color? loanRecover,
+    Color? loanIn,
+    Color? loanRepay,
     Color? holiday,
     Color? rest,
     Color? work,
@@ -240,6 +268,10 @@ class FxFinanceColors extends ThemeExtension<FxFinanceColors> {
       adjust: adjust ?? this.adjust,
       advance: advance ?? this.advance,
       reimburse: reimburse ?? this.reimburse,
+      loanOut: loanOut ?? this.loanOut,
+      loanRecover: loanRecover ?? this.loanRecover,
+      loanIn: loanIn ?? this.loanIn,
+      loanRepay: loanRepay ?? this.loanRepay,
       holiday: holiday ?? this.holiday,
       rest: rest ?? this.rest,
       work: work ?? this.work,
@@ -256,6 +288,10 @@ class FxFinanceColors extends ThemeExtension<FxFinanceColors> {
       adjust: Color.lerp(adjust, other.adjust, t)!,
       advance: Color.lerp(advance, other.advance, t)!,
       reimburse: Color.lerp(reimburse, other.reimburse, t)!,
+      loanOut: Color.lerp(loanOut, other.loanOut, t)!,
+      loanRecover: Color.lerp(loanRecover, other.loanRecover, t)!,
+      loanIn: Color.lerp(loanIn, other.loanIn, t)!,
+      loanRepay: Color.lerp(loanRepay, other.loanRepay, t)!,
       holiday: Color.lerp(holiday, other.holiday, t)!,
       rest: Color.lerp(rest, other.rest, t)!,
       work: Color.lerp(work, other.work, t)!,
