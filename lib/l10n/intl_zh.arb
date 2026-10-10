@@ -946,9 +946,15 @@
   "ordersReopen": "重开",
   "ordersTitleRequired": "请输入单据标题",
   "ordersOrderTitle": "报销单标题",
+  "ordersTitleOfType": "{type}标题",
+  "@ordersTitleOfType": {
+    "placeholders": {
+      "type": {}
+    }
+  },
   "ordersTitleHint": "如：8月差旅报销",
   "ordersType": "类型",
-  "ordersTypeReimbursement": "费用报销单",
+  "ordersTypeReimbursement": "报销单",
   "ordersRemarkOptional": "备注（可选）",
   "ordersRemarkHint": "备注",
   "ordersSaveChanges": "保存修改",

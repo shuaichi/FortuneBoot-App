@@ -944,6 +944,12 @@
   "ordersReopen": "Reopen",
   "ordersTitleRequired": "Please enter an order title",
   "ordersOrderTitle": "Reimbursement Order Title",
+  "ordersTitleOfType": "{type} Title",
+  "@ordersTitleOfType": {
+    "placeholders": {
+      "type": {}
+    }
+  },
   "ordersTitleHint": "e.g. August travel reimbursement",
   "ordersType": "Type",
   "ordersTypeReimbursement": "Expense claim",

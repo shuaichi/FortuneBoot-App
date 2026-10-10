@@ -53,7 +53,6 @@ class OrderFormSheetState extends State<OrderFormSheet> {
   int? _counterpartyId;
   List<FortunePayeeVo> _payees = const [];
   DateTime? _dueDate;
-  bool _titleTouched = false;
   bool _submitting = false;
   String? _error;
 
@@ -73,7 +72,7 @@ class OrderFormSheetState extends State<OrderFormSheet> {
     _remarkCtrl = TextEditingController(text: order?.remark ?? '');
     _payeeService = widget.payeeService ?? PayeeService();
     _loadPayees();
-    _titleCtrl.addListener(() => _titleTouched = true);
+    _syncDefaultTitle();
   }
 
   @override
@@ -228,15 +227,25 @@ class OrderFormSheetState extends State<OrderFormSheet> {
     });
   }
 
+  /// 最近一次自动生成的标题。只要当前文本仍等于它（或为空），说明用户没有
+  /// 手动改过标题，允许继续自动同步（切换类型 / 输入对方时都要刷新）；
+  /// 一旦用户手改，文案与锚点脱钩，之后不再覆盖。
+  String _lastAutoTitle = '';
+
   void _syncDefaultTitle() {
-    if (widget.order != null || _titleTouched || _titleCtrl.text.isNotEmpty) {
-      return;
-    }
-    _titleCtrl.text = switch (_selectedType) {
-      FinanceOrderType.receivable => '${_counterpartyCtrl.text} · 借款',
-      FinanceOrderType.payable => '${_counterpartyCtrl.text} · 借入',
-      FinanceOrderType.reimbursement => '${_counterpartyCtrl.text} · 报销',
+    if (widget.order != null) return;
+    final current = _titleCtrl.text;
+    if (current.isNotEmpty && current != _lastAutoTitle) return;
+    final suffix = switch (_selectedType) {
+      FinanceOrderType.receivable => ' · 债权',
+      FinanceOrderType.payable => ' · 债务',
+      FinanceOrderType.reimbursement => ' · 报销',
     };
+    final counterparty = _counterpartyCtrl.text.trim();
+    final next = counterparty.isEmpty ? suffix : '$counterparty · $suffix';
+    if (next == current) return;
+    _lastAutoTitle = next;
+    _titleCtrl.text = next;
   }
 
   String _requestId() =>
@@ -333,7 +342,7 @@ class OrderFormSheetState extends State<OrderFormSheet> {
             ),
           ],
           const SizedBox(height: FxSpacing.md),
-          _label(S.of(context).ordersOrderTitle),
+          _label(S.of(context).ordersTitleOfType(_typeLabel(_selectedType))),
           TextField(
             controller: _titleCtrl,
             decoration: _dec(context, S.of(context).ordersTitleHint),
