@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hjproject/home/payee_manage/constants/design_system.dart' as ds;
+import 'package:hjproject/Home/common/widgets/icon_form_field.dart';
+import 'package:hjproject/util/app_icon.dart';
 
 /// 增强版交易对象表单组件
 /// 基于设计系统重构，提供现代化的表单体验
@@ -16,6 +18,12 @@ class EnhancedPayeeForm extends StatelessWidget {
   final bool canExpense;
   final bool canIncome;
   final bool enable;
+
+  /// 自定义图标名；为空时使用默认图标
+  final String? icon;
+
+  /// 图标选择回调；null 表示恢复默认
+  final ValueChanged<String?> onIconChanged;
 
   final ValueChanged<bool> onCanExpenseChanged;
   final ValueChanged<bool> onCanIncomeChanged;
@@ -35,6 +43,8 @@ class EnhancedPayeeForm extends StatelessWidget {
     required this.canExpense,
     required this.canIncome,
     required this.enable,
+    required this.icon,
+    required this.onIconChanged,
     required this.onCanExpenseChanged,
     required this.onCanIncomeChanged,
     required this.onEnableChanged,
@@ -57,6 +67,13 @@ class EnhancedPayeeForm extends StatelessWidget {
             child: Column(
               children: [
                 _buildNameField(context),
+                SizedBox(height: ds.Spacing.md),
+                IconFormField(
+                  title: '交易对象图标',
+                  value: icon,
+                  defaultIconName: AppIcon.payeeFallback,
+                  onChanged: onIconChanged,
+                ),
                 SizedBox(height: ds.Spacing.md),
                 _buildSortField(context),
               ],

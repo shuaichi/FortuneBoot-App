@@ -4,6 +4,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hjproject/repository/repository/bills_repository.dart';
 import 'package:hjproject/Home/category_manage/data/category_service.dart';
+import 'package:hjproject/Home/common/widgets/icon_form_field.dart';
+import 'package:hjproject/util/app_icon.dart';
 
 class CategoryAddPage extends StatefulWidget {
   final int categoryType; // 1: 支出, 2: 收入
@@ -33,6 +35,9 @@ class _CategoryAddPageState extends State<CategoryAddPage> {
   bool _enable = true;
   bool _saving = false;
   bool _dirty = false;
+
+  // 自定义图标名（为空表示使用默认图标）
+  String? _icon;
 
   int _parentId = -1;
 
@@ -154,6 +159,7 @@ class _CategoryAddPageState extends State<CategoryAddPage> {
         bookId: bookId,
         sort: _sortController.text.trim().isEmpty ? 0 : int.parse(_sortController.text.trim()),
         remark: _remarkController.text.trim().isEmpty ? null : _remarkController.text.trim(),
+        icon: _icon,
       );
       if (!mounted) return;
       ScaffoldMessenger.of(context).removeCurrentSnackBar();
@@ -318,6 +324,13 @@ class _CategoryAddPageState extends State<CategoryAddPage> {
                             }
                             return null;
                           },
+                        ),
+                        const SizedBox(height: 12),
+                        IconFormField(
+                          title: '分类图标',
+                          value: _icon,
+                          defaultIconName: AppIcon.categoryFallback,
+                          onChanged: (v) => setState(() => _icon = v),
                         ),
                         const SizedBox(height: 12),
                         SwitchListTile(

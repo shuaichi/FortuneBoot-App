@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hjproject/util/app_icon.dart';
 
 class TagTreeNode<T> extends StatelessWidget {
   const TagTreeNode({
@@ -18,6 +19,7 @@ class TagTreeNode<T> extends StatelessWidget {
     this.canExpenseOf,
     this.canIncomeOf,
     this.canTransferOf,
+    this.iconOf,
   });
 
   final T node;
@@ -32,6 +34,9 @@ class TagTreeNode<T> extends StatelessWidget {
   final bool Function(T)? canExpenseOf;
   final bool Function(T)? canIncomeOf;
   final bool Function(T)? canTransferOf;
+
+  /// 可选：取节点自定义图标名（Iconify 名称，如 ep:collection-tag），未提供时沿用默认图标
+  final String? Function(T)? iconOf;
 
   // Controlled expansion
   final bool Function(T) isExpanded;
@@ -54,8 +59,10 @@ class TagTreeNode<T> extends StatelessWidget {
     final String? remark = remarkOf(node);
     final bool expanded = isExpanded(node);
 
+    // 自定义图标优先，未设置时沿用原有图标
+    final IconData? customIcon = AppIcon.resolve(iconOf?.call(node));
     final Widget leading = Icon(
-      hasChildren ? Icons.label : Icons.label_outline,
+      customIcon ?? (hasChildren ? Icons.label : Icons.label_outline),
       size: 16,
       color: cs.secondary,
     );
@@ -204,6 +211,7 @@ class TagTreeNode<T> extends StatelessWidget {
                     canExpenseOf: canExpenseOf,
                     canIncomeOf: canIncomeOf,
                     canTransferOf: canTransferOf,
+                    iconOf: iconOf,
                   ),
                 )
                 .toList(),

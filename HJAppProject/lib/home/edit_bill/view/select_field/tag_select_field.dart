@@ -4,6 +4,7 @@ import 'package:hjproject/home/edit_bill/models/edit_select_item.dart';
 import 'package:hjproject/home/bill_overview/models/bill_item.dart';
 import 'package:hjproject/request/tag_request.dart';
 import 'package:hjproject/repository/repository/bills_repository.dart';
+import 'package:hjproject/util/app_icon.dart';
 
 class TagTreeSelection extends StatefulWidget {
   TagTreeSelection(
@@ -134,7 +135,8 @@ class _TagTreeSelectionState extends State<TagTreeSelection> {
               children: [
                 SizedBox(width: 12.0 * depth),
                 Icon(
-                  hasChildren ? Icons.label : Icons.label_outline,
+                  AppIcon.resolve(node.icon) ??
+                      (hasChildren ? Icons.label : Icons.label_outline),
                   size: 16,
                   color: Theme.of(context).colorScheme.secondary,
                 ),

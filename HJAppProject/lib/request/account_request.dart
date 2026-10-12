@@ -114,6 +114,7 @@ class AccountQueryService {
       'canTransferOut': a.canTransferOut,
       'canTransferIn': a.canTransferIn,
       'remark': a.remark,
+      'icon': a.icon,
     };
 
     // 类型差异字段
@@ -270,6 +271,7 @@ extension AccountQueryServiceExtensions on AccountQueryService {
     DateTime? billDay,
     double? creditLimit,
     double? apr,
+    String? icon,
   }) async {
     final Map<String, dynamic> body = {
       'groupId': groupId,
@@ -296,6 +298,9 @@ extension AccountQueryServiceExtensions on AccountQueryService {
     }
     if (remark != null && remark.trim().isNotEmpty) {
       body['remark'] = remark.trim();
+    }
+    if (icon != null && icon.trim().isNotEmpty) {
+      body['icon'] = icon.trim();
     }
 
     final response = await _dio.post(

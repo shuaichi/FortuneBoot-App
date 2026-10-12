@@ -4,6 +4,7 @@ import 'package:hjproject/home/edit_bill/view/edit_bill_page.dart';
 import 'package:hjproject/home/theme/theme.dart';
 import 'package:hjproject/home/bill_overview/bloc/bills_overview_bloc.dart';
 import 'package:hjproject/home/bill_overview/bloc/detail_bloc/bill_detail_bloc.dart';
+import 'package:hjproject/util/app_icon.dart';
 import 'package:hjproject/home/bill_overview/models/bill_item.dart';
 import 'package:hjproject/home/bill_overview/models/bill_item_add.dart';
 import 'package:intl/intl.dart';
@@ -93,6 +94,18 @@ class _BillDetailContent extends StatelessWidget {
 
     // 获取分类名称
     String categoryName = _getCategoryNames(bill);
+
+    // 分类自定义图标（取第一个已设置的图标）
+    IconData? categoryIconData;
+    if (bill.categoryAmountPair != null) {
+      for (final pair in bill.categoryAmountPair!) {
+        final resolved = AppIcon.resolve(pair.icon);
+        if (resolved != null) {
+          categoryIconData = resolved;
+          break;
+        }
+      }
+    }
 
     // 格式化时间
     String formattedDate = DateFormat('yyyy年MM月dd日 HH:mm')
@@ -231,12 +244,25 @@ class _BillDetailContent extends StatelessWidget {
                           color: Colors.grey[200],
                           borderRadius: BorderRadius.circular(4),
                         ),
-                        child: Text(
-                          categoryName,
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.grey[800],
-                          ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            if (categoryIconData != null) ...[
+                              Icon(
+                                categoryIconData,
+                                size: 12,
+                                color: Colors.grey[800],
+                              ),
+                              const SizedBox(width: 4),
+                            ],
+                            Text(
+                              categoryName,
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.grey[800],
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],
@@ -255,14 +281,16 @@ class _BillDetailContent extends StatelessWidget {
                   context,
                   bill.billType == BillType.transfer ? '转出账户' : '账户',
                   bill.accountName ?? '未知',
-                  icon: Icons.account_balance_wallet,
+                  icon: AppIcon.resolve(bill.accountIcon) ??
+                      Icons.account_balance_wallet,
                 ),
                 if (bill.billType == BillType.transfer)
                   _buildDetailItem(
                     context,
                     '转入账户',
                     bill.toAccountName ?? '未知',
-                    icon: Icons.arrow_forward,
+                    icon: AppIcon.resolve(bill.toAccountIcon) ??
+                        Icons.arrow_forward,
                   ),
                 _buildDetailItem(
                   context,
@@ -306,6 +334,12 @@ class _BillDetailContent extends StatelessWidget {
                     runSpacing: 8,
                     children: bill.tagList!
                         .map((tag) => Chip(
+                              avatar: Icon(
+                                AppIcon.resolve(tag.icon) ??
+                                    Icons.label_outline,
+                                size: 14,
+                                color: Colors.grey[700],
+                              ),
                               label: Text(
                                 tag.tagName ?? '',
                                 style: const TextStyle(fontSize: 12),

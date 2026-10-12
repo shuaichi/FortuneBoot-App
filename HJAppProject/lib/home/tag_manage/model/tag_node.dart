@@ -10,6 +10,7 @@ class TagNode {
   final bool enable;
   final int sort;
   final String? remark;
+  final String? icon;
   final List<TagNode> children;
 
   TagNode({
@@ -24,6 +25,7 @@ class TagNode {
     required this.enable,
     required this.sort,
     this.remark,
+    this.icon,
     required this.children,
   });
 
@@ -42,6 +44,7 @@ class TagNode {
       enable: json['enable'] as bool? ?? true,
       sort: (json['sort'] as num?)?.toInt() ?? 0,
       remark: json['remark']?.toString(),
+      icon: json['icon']?.toString(),
       children: (json['children'] as List? ?? [])
           .map((e) => TagNode.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -61,6 +64,7 @@ class TagNode {
       'enable': enable,
       'sort': sort,
       'remark': remark,
+      'icon': icon,
       'children': children.map((e) => e.toJson()).toList(),
     };
   }
@@ -77,6 +81,7 @@ class TagNode {
     bool? enable,
     int? sort,
     String? remark,
+    String? icon,
     List<TagNode>? children,
   }) {
     return TagNode(
@@ -91,6 +96,7 @@ class TagNode {
       enable: enable ?? this.enable,
       sort: sort ?? this.sort,
       remark: remark ?? this.remark,
+      icon: icon ?? this.icon,
       children: children ?? this.children,
     );
   }

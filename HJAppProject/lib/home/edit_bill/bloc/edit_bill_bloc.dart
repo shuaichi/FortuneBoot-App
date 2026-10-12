@@ -136,10 +136,12 @@ class EditBillBloc extends Bloc<EditBillEvent, EditBillState> {
     if (accountRes.code == 0) {
       accountRes.data?.forEach((element) {
         final String accountName = element['accountName'] as String? ?? '';
+        final String? accountIcon = element['icon'] as String?;
         final DropdownItem<AccountSelectItem> account = DropdownItem(
             label: accountName,
             value: AccountSelectItem(
-                accountName, element['accountId'] as int? ?? 0));
+                accountName, element['accountId'] as int? ?? 0,
+                icon: accountIcon));
         if ((element['canExpense'] as bool? ?? false)) {
           expenseAccountList.add(account);
         }

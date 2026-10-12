@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import '../data/tag_service.dart';
+import 'package:hjproject/Home/common/widgets/icon_form_field.dart';
+import 'package:hjproject/util/app_icon.dart';
 
 class TagAddPage extends StatefulWidget {
   final int initialParentId;
@@ -32,6 +34,9 @@ class _TagAddPageState extends State<TagAddPage> {
   bool _isLoading = false;
   bool _dirty = false;
   String? _parentTagName;
+
+  /// 自定义图标名（Iconify 名称），为空表示使用默认图标
+  String? _icon;
 
   final TagPageService _service = TagPageService();
 
@@ -178,6 +183,18 @@ class _TagAddPageState extends State<TagAddPage> {
                                 return '标签名称不能超过32个字符';
                               }
                               return null;
+                            },
+                          ),
+                          const SizedBox(height: 16),
+                          IconFormField(
+                            title: '标签图标',
+                            subtitle: '未设置时显示默认图标',
+                            value: _icon,
+                            defaultIconName: AppIcon.tagFallback,
+                            enabled: !_isLoading,
+                            onChanged: (v) {
+                              setState(() => _icon = v);
+                              _markDirty();
                             },
                           ),
                           const SizedBox(height: 16),
@@ -362,6 +379,7 @@ class _TagAddPageState extends State<TagAddPage> {
         remark: _remarkController.text.trim().isEmpty
             ? null
             : _remarkController.text.trim(),
+        icon: _icon,
       );
       
       if (!mounted) return;

@@ -65,6 +65,7 @@ class TagPageService {
     required bool canIncome,
     required bool canTransfer,
     String? remark,
+    String? icon,
     bool recycleBin = false,
   }) async {
     final payload = {
@@ -78,6 +79,7 @@ class TagPageService {
       'canIncome': canIncome,
       'canTransfer': canTransfer,
       'remark': remark,
+      'icon': icon,
       'recycleBin': recycleBin,
       'id': tagId,
     };
@@ -109,6 +111,7 @@ class TagPageService {
     required bool canTransfer,
     int sort = 0,
     String? remark,
+    String? icon,
   }) async {
     final payload = {
       'enable': enable,
@@ -116,6 +119,7 @@ class TagPageService {
       'tagName': tagName,
       'sort': sort,
       'remark': remark,
+      'icon': icon,
       'bookId': bookId,
       'canExpense': canExpense,
       'canIncome': canIncome,

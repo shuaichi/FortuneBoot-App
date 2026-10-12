@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hjproject/home/payee_manage/constants/design_system.dart' as ds;
 import 'package:hjproject/home/payee_manage/model/payee.dart';
+import 'package:hjproject/util/app_icon.dart';
 
 /// 增强版交易对象卡片组件
 /// 包含手势操作、动画效果和优化的视觉层次
@@ -154,9 +155,12 @@ class _EnhancedPayeeCardState extends State<EnhancedPayeeCard>
   }
 
   Widget _buildHeader(ThemeData theme, Color primaryColor, IconData payeeIcon) {
+    // 用户自定义图标优先，未设置时沿用按名称推断的图标
+    final IconData headerIcon =
+        AppIcon.resolve(widget.payee.icon) ?? payeeIcon;
     return Row(
       children: [
-        // 交易对象类型图标
+        // 交易对象图标（自定义 / 默认）
         Container(
           padding: EdgeInsets.all(ds.Spacing.sm),
           decoration: BoxDecoration(
@@ -164,7 +168,7 @@ class _EnhancedPayeeCardState extends State<EnhancedPayeeCard>
             borderRadius: BorderRadius.circular(ds.BorderRadiusValues.sm),
           ),
           child: Icon(
-            payeeIcon,
+            headerIcon,
             color: primaryColor,
             size: 20,
           ),

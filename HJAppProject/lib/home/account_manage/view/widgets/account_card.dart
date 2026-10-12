@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hjproject/Home/account_manage/constants/design_system.dart' as ds;
 import 'package:hjproject/Home/account_manage/models/fortune_account.dart';
+import 'package:hjproject/util/app_icon.dart';
 
 /// 增强版账户卡片组件
 /// 包含手势操作、动画效果和优化的视觉层次
@@ -156,9 +157,12 @@ class _EnhancedAccountCardState extends State<EnhancedAccountCard>
   }
 
   Widget _buildHeader(ThemeData theme, Color typeColor, IconData typeIcon) {
+    // 用户自定义图标优先，未设置时沿用账户类型图标
+    final IconData headerIcon =
+        AppIcon.resolve(widget.account.icon) ?? typeIcon;
     return Row(
       children: [
-        // 账户类型图标
+        // 账户图标（自定义 / 类型默认）
         Container(
           padding: EdgeInsets.all(ds.Spacing.sm),
           decoration: BoxDecoration(
@@ -166,7 +170,7 @@ class _EnhancedAccountCardState extends State<EnhancedAccountCard>
             borderRadius: BorderRadius.circular(ds.BorderRadiusValues.sm),
           ),
           child: Icon(
-            typeIcon,
+            headerIcon,
             color: typeColor,
             size: 20,
           ),

@@ -9,6 +9,9 @@ class Payee {
   final bool enable;
   final String? remark;
 
+  /// 自定义图标名（Iconify 名称，如 ep:shop）；为空时使用默认图标
+  final String? icon;
+
   const Payee({
     required this.payeeId,
     required this.bookId,
@@ -18,6 +21,7 @@ class Payee {
     required this.canIncome,
     required this.enable,
     this.remark,
+    this.icon,
   });
 
   factory Payee.fromJson(Map<String, dynamic> json) {
@@ -37,6 +41,7 @@ class Payee {
       canIncome: (json['canIncome'] as bool?) ?? false,
       enable: (json['enable'] as bool?) ?? false,
       remark: json['remark']?.toString(),
+      icon: json['icon']?.toString(),
     );
   }
 

@@ -111,6 +111,7 @@ class _TagManagePageState extends State<TagManagePage> {
       canExpenseOf: (n) => n.canExpense,
       canIncomeOf: (n) => n.canIncome,
       canTransferOf: (n) => n.canTransfer,
+      iconOf: (n) => n.icon,
       onToggleNode: (node, expanded) {
         setState(() {
           if (expanded) {
@@ -196,6 +197,7 @@ String? _findTagNameById(int id) {
           parentId: node.parentId,
           bookId: bookId,
           parentName: _findTagNameById(node.parentId),
+          icon: node.icon,
         ),
       ),
     );

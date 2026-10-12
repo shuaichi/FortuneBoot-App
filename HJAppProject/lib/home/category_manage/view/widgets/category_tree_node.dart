@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hjproject/util/app_icon.dart';
 
 class CategoryTreeNode<T> extends StatelessWidget {
   const CategoryTreeNode({
@@ -14,6 +15,7 @@ class CategoryTreeNode<T> extends StatelessWidget {
     required this.onModify,
     required this.onMoveToRecycle,
     required this.onAddChild,
+    this.iconOf,
   });
 
   final T node;
@@ -24,6 +26,9 @@ class CategoryTreeNode<T> extends StatelessWidget {
   final String Function(T) nameOf;
   final String? Function(T) remarkOf;
   final int Function(T) idOf;
+
+  /// 可选：取节点自定义图标名，未提供时沿用默认图标
+  final String? Function(T)? iconOf;
 
   // Controlled expansion
   final bool Function(T) isExpanded;
@@ -46,8 +51,10 @@ class CategoryTreeNode<T> extends StatelessWidget {
     final String? remark = remarkOf(node);
     final bool expanded = isExpanded(node);
 
+    // 自定义图标优先，未设置时沿用原有图标
+    final IconData? customIcon = AppIcon.resolve(iconOf?.call(node));
     final Widget leading = Icon(
-      hasChildren ? Icons.label : Icons.label_outline,
+      customIcon ?? (hasChildren ? Icons.label : Icons.label_outline),
       size: 16,
       color: cs.secondary,
     );
@@ -170,6 +177,7 @@ class CategoryTreeNode<T> extends StatelessWidget {
                     nameOf: nameOf,
                     remarkOf: remarkOf,
                     idOf: idOf,
+                    iconOf: iconOf,
                     isExpanded: isExpanded, // child recomputes via parent
                     onToggleNode: onToggleNode,
                     onModify: onModify,

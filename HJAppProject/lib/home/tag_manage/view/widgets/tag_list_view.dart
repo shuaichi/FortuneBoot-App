@@ -25,6 +25,7 @@ class TagListView<T> extends StatelessWidget {
     required this.canExpenseOf,
     required this.canIncomeOf,
     required this.canTransferOf,
+    this.iconOf,
     required this.onToggleNode,
     required this.onModify,
     required this.onMoveToRecycle,
@@ -55,6 +56,9 @@ class TagListView<T> extends StatelessWidget {
   final bool Function(T) canExpenseOf;
   final bool Function(T) canIncomeOf;
   final bool Function(T) canTransferOf;
+
+  /// 可选：取节点自定义图标名（Iconify 名称），未提供时沿用默认图标
+  final String? Function(T)? iconOf;
 
   // Actions
   final void Function(T node, bool expanded) onToggleNode;
@@ -123,6 +127,7 @@ class TagListView<T> extends StatelessWidget {
               canExpenseOf: canExpenseOf,
               canIncomeOf: canIncomeOf,
               canTransferOf: canTransferOf,
+              iconOf: iconOf,
             ),
           ),
           const SizedBox(height: 12),

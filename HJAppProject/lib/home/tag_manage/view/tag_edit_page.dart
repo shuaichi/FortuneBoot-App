@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import '../data/tag_service.dart';
+import 'package:hjproject/Home/common/widgets/icon_form_field.dart';
+import 'package:hjproject/util/app_icon.dart';
 
 class TagEditPage extends StatefulWidget {
   final int tagId;
@@ -15,6 +17,7 @@ class TagEditPage extends StatefulWidget {
   final int parentId;
   final int bookId;
   final String? parentName;
+  final String? icon;
 
   const TagEditPage({
     Key? key,
@@ -29,6 +32,7 @@ class TagEditPage extends StatefulWidget {
     required this.parentId,
     required this.bookId,
     this.parentName,
+    this.icon,
   }) : super(key: key);
 
   @override
@@ -48,6 +52,9 @@ class _TagEditPageState extends State<TagEditPage> {
   bool _isLoading = false;
   bool _dirty = false;
   String? _parentTagName;
+
+  /// 自定义图标名（Iconify 名称），为空表示使用默认图标
+  String? _icon;
 
   final TagPageService _service = TagPageService();
 
@@ -83,6 +90,7 @@ class _TagEditPageState extends State<TagEditPage> {
     _canIncome = widget.canIncome;
     _canTransfer = widget.canTransfer;
     _parentTagName = widget.parentName;
+    _icon = widget.icon;
   }
 
   @override
@@ -166,6 +174,18 @@ class _TagEditPageState extends State<TagEditPage> {
                           return '请输入标签名称';
                         }
                         return null;
+                      },
+                    ),
+                    const SizedBox(height: 16),
+                    IconFormField(
+                      title: '标签图标',
+                      subtitle: '未设置时显示默认图标',
+                      value: _icon,
+                      defaultIconName: AppIcon.tagFallback,
+                      enabled: !_isLoading,
+                      onChanged: (v) {
+                        setState(() => _icon = v);
+                        _markDirty();
                       },
                     ),
                     const SizedBox(height: 16),
@@ -313,6 +333,7 @@ class _TagEditPageState extends State<TagEditPage> {
         canIncome: _canIncome,
         canTransfer: _canTransfer,
         remark: _remarkController.text.trim().isEmpty ? null : _remarkController.text.trim(),
+        icon: _icon,
       );
 
       if (mounted) {

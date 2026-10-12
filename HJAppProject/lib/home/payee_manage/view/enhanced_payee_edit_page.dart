@@ -4,6 +4,8 @@ import 'package:flutter/services.dart';
 import 'package:hjproject/home/payee_manage/model/payee.dart';
 import 'package:hjproject/home/payee_manage/data/payee_service.dart';
 import 'package:hjproject/home/payee_manage/constants/design_system.dart' as ds;
+import 'package:hjproject/Home/common/widgets/icon_form_field.dart';
+import 'package:hjproject/util/app_icon.dart';
 
 /// 增强版交易对象编辑页面
 /// 基于设计系统重构，提供现代化的用户体验和一致的视觉设计
@@ -44,6 +46,9 @@ class _EnhancedPayeeEditPageState extends State<EnhancedPayeeEditPage>
   late bool _canExpense;
   late bool _canIncome;
   late bool _enable;
+
+  // 自定义图标名（为空表示使用默认图标）
+  String? _icon;
 
   // UI状态
   bool _saving = false;
@@ -118,6 +123,7 @@ class _EnhancedPayeeEditPageState extends State<EnhancedPayeeEditPage>
     _canExpense = payee.canExpense;
     _canIncome = payee.canIncome;
     _enable = payee.enable;
+    _icon = payee.icon;
 
     // 保存初始数据
     _initialData = {
@@ -127,6 +133,7 @@ class _EnhancedPayeeEditPageState extends State<EnhancedPayeeEditPage>
       'canExpense': payee.canExpense,
       'canIncome': payee.canIncome,
       'enable': payee.enable,
+      'icon': payee.icon,
     };
   }
 
@@ -151,6 +158,7 @@ class _EnhancedPayeeEditPageState extends State<EnhancedPayeeEditPage>
       'canExpense': _canExpense,
       'canIncome': _canIncome,
       'enable': _enable,
+      'icon': _icon,
     };
     
     final isDirty = currentData.entries.any((entry) => 
@@ -204,6 +212,7 @@ class _EnhancedPayeeEditPageState extends State<EnhancedPayeeEditPage>
         remark: _remarkController.text.trim().isEmpty 
             ? null 
             : _remarkController.text.trim(),
+        icon: _icon,
       );
 
       if (!mounted) return;
@@ -605,6 +614,21 @@ class _EnhancedPayeeEditPageState extends State<EnhancedPayeeEditPage>
                                   if (text.length > 32) return '名称长度不能超过32个字符';
                                   return null;
                                 },
+                              ),
+                              SizedBox(height: ds.Spacing.md),
+                              IgnorePointer(
+                                ignoring: _saving,
+                                child: IconFormField(
+                                  title: '交易对象图标',
+                                  value: _icon,
+                                  defaultIconName: AppIcon.payeeFallback,
+                                  onChanged: (v) {
+                                    setState(() {
+                                      _icon = v;
+                                    });
+                                    _computeDirty();
+                                  },
+                                ),
                               ),
                               SizedBox(height: ds.Spacing.md),
                               TextFormField(

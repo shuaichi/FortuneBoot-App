@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:hjproject/Home/category_manage/data/category_service.dart';
+import 'package:hjproject/Home/common/widgets/icon_form_field.dart';
+import 'package:hjproject/util/app_icon.dart';
 
 class CategoryEditPage extends StatefulWidget {
   final int categoryId;
@@ -12,6 +14,7 @@ class CategoryEditPage extends StatefulWidget {
   final int categoryType; // 1: 支出, 2: 收入
   final int parentId;
   final int bookId;
+  final String? icon;
 
   const CategoryEditPage({
     Key? key,
@@ -23,6 +26,7 @@ class CategoryEditPage extends StatefulWidget {
     required this.categoryType,
     required this.parentId,
     required this.bookId,
+    this.icon,
   }) : super(key: key);
 
   @override
@@ -42,6 +46,9 @@ class _CategoryEditPageState extends State<CategoryEditPage> {
 
   late bool _enable;
 
+  /// 自定义图标名（Iconify 名称），为空表示使用默认图标
+  String? _icon;
+
   bool _saving = false;
   bool _dirty = false;
 
@@ -56,6 +63,7 @@ class _CategoryEditPageState extends State<CategoryEditPage> {
     _sortController = TextEditingController(text: widget.sort.toString());
     _remarkController = TextEditingController(text: widget.remark ?? '');
     _enable = widget.enable;
+    _icon = widget.icon;
 
     _nameNode = FocusNode();
     _sortNode = FocusNode();
@@ -66,6 +74,7 @@ class _CategoryEditPageState extends State<CategoryEditPage> {
       'sort': widget.sort.toString(),
       'remark': widget.remark ?? '',
       'enable': widget.enable,
+      'icon': widget.icon,
     };
 
     void listener() => _computeDirty();
@@ -91,6 +100,7 @@ class _CategoryEditPageState extends State<CategoryEditPage> {
       'sort': _sortController.text,
       'remark': _remarkController.text,
       'enable': _enable,
+      'icon': _icon,
     };
     final changed = now.entries.any((e) => _initial[e.key] != e.value);
     if (_dirty != changed) {
@@ -161,6 +171,7 @@ class _CategoryEditPageState extends State<CategoryEditPage> {
             : int.parse(_sortController.text.trim()),
         remark: _remarkController.text.trim().isEmpty ? null : _remarkController.text.trim(),
         recycleBin: false,
+        icon: _icon,
       );
       if (!mounted) return;
       ScaffoldMessenger.of(context).removeCurrentSnackBar();
@@ -296,6 +307,20 @@ class _CategoryEditPageState extends State<CategoryEditPage> {
                               return '名称长度不能超过32字符';
                             }
                             return null;
+                          },
+                        ),
+                        const SizedBox(height: 12),
+                        IconFormField(
+                          title: '分类图标',
+                          subtitle: '未设置时显示默认图标',
+                          value: _icon,
+                          defaultIconName: AppIcon.categoryFallback,
+                          enabled: !_saving,
+                          onChanged: (v) {
+                            setState(() {
+                              _icon = v;
+                            });
+                            _computeDirty();
                           },
                         ),
                         const SizedBox(height: 12),

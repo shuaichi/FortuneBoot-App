@@ -5,23 +5,26 @@ part 'edit_select_item.g.dart';
 abstract class BaseSelectItem {
   String title;
   int id;
-  BaseSelectItem(this.title, this.id);
+
+  /// 自定义图标名（Iconify 名称，如 ep:wallet），为空表示使用默认图标
+  String? icon;
+  BaseSelectItem(this.title, this.id, {this.icon});
   @override
   String toString() {
-    return '$title $id';
+    return '$title $id $icon';
   }
 }
 
 class AccountSelectItem extends BaseSelectItem {
-  AccountSelectItem(super.title, super.id);
+  AccountSelectItem(super.title, super.id, {super.icon});
 }
 
 class BookSelectItem extends BaseSelectItem {
-  BookSelectItem(super.title, super.id);
+  BookSelectItem(super.title, super.id, {super.icon});
 }
 
 class PayeeSelectItem extends BaseSelectItem {
-  PayeeSelectItem(super.title, super.id);
+  PayeeSelectItem(super.title, super.id, {super.icon});
 }
 
 abstract class BaseTreeSelectItem<T extends BaseTreeSelectItem<T>> {
@@ -29,7 +32,10 @@ abstract class BaseTreeSelectItem<T extends BaseTreeSelectItem<T>> {
   String title;
   int id;
 
-  BaseTreeSelectItem(this.title, this.id, {this.children});
+  /// 自定义图标名（Iconify 名称），为空表示使用默认图标
+  String? icon;
+
+  BaseTreeSelectItem(this.title, this.id, {this.children, this.icon});
 
   // 检查是否有子项
   bool get hasChildren => children != null && children!.isNotEmpty;
@@ -72,7 +78,12 @@ class CategorySelectItem extends BaseTreeSelectItem<CategorySelectItem> {
   String title;
   @JsonKey(name: 'categoryId')
   int id;
-  CategorySelectItem(this.title, this.id, {this.children}) : super(title, id);
+
+  /// 分类自定义图标名（Iconify 名称）
+  String? icon;
+
+  CategorySelectItem(this.title, this.id, {this.children, this.icon})
+      : super(title, id, icon: icon);
 
   factory CategorySelectItem.fromJson(Map<String, dynamic> json) =>
       _$CategorySelectItemFromJson(json);
@@ -126,7 +137,12 @@ class TagSelectItem extends BaseTreeSelectItem<TagSelectItem> {
   String title;
   @JsonKey(name: 'tagId')
   int id;
-  TagSelectItem(this.title, this.id, {this.children}) : super(title, id);
+
+  /// 标签自定义图标名（Iconify 名称）
+  String? icon;
+
+  TagSelectItem(this.title, this.id, {this.children, this.icon})
+      : super(title, id, icon: icon);
 
   factory TagSelectItem.fromJson(Map<String, dynamic> json) =>
       _$TagSelectItemFromJson(json);

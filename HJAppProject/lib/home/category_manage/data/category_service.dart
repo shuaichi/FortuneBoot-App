@@ -63,6 +63,7 @@ class CategoryPageService {
     required int parentId,
     required int sort,
     String? remark,
+    String? icon,
     bool recycleBin = false,
   }) async {
     final payload = {
@@ -74,6 +75,7 @@ class CategoryPageService {
       'parentId': parentId,
       'sort': sort,
       'remark': remark,
+      'icon': icon,
       'recycleBin': recycleBin,
       'id': categoryId,
     };
@@ -103,6 +105,7 @@ class CategoryPageService {
     required int bookId,
     int sort = 0,
     String? remark,
+    String? icon,
   }) async {
     final payload = {
       'enable': enable,
@@ -110,6 +113,7 @@ class CategoryPageService {
       'categoryName': categoryName,
       'sort': sort,
       'remark': remark,
+      'icon': icon,
       'bookId': bookId,
       'categoryType': categoryType,
     };
@@ -190,6 +194,9 @@ class CategoryNode {
   final bool recycleBin;
   final List<CategoryNode> children;
 
+  /// 自定义图标名（Iconify 名称）；为空时使用默认图标
+  final String? icon;
+
   CategoryNode({
     required this.categoryId,
     required this.id,
@@ -202,6 +209,7 @@ class CategoryNode {
     required this.enable,
     required this.recycleBin,
     required this.children,
+    this.icon,
   });
 
   factory CategoryNode.fromJson(Map<String, dynamic> json) {
@@ -221,6 +229,7 @@ class CategoryNode {
       children: (json['children'] as List? ?? [])
           .map((e) => CategoryNode.fromJson(e as Map<String, dynamic>))
           .toList(),
+      icon: json['icon']?.toString(),
     );
   }
 }

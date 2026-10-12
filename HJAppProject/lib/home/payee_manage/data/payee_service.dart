@@ -103,6 +103,7 @@ class PayeeService {
     required bool canIncome,
     required bool enable,
     String? remark,
+    String? icon,
   }) async {
     final body = <String, dynamic>{
       'payeeId': payeeId,
@@ -113,6 +114,7 @@ class PayeeService {
       'canIncome': canIncome,
       'enable': enable,
       if (remark != null) 'remark': remark,
+      if (icon != null) 'icon': icon,
     };
 
     final response = await _dio.put(
@@ -145,6 +147,7 @@ class PayeeService {
     required bool canIncome,
     required bool enable,
     String? remark,
+    String? icon,
   }) async {
     final body = <String, dynamic>{
       'bookId': bookId,
@@ -154,6 +157,7 @@ class PayeeService {
       'canIncome': canIncome,
       'enable': enable,
       if (remark != null) 'remark': remark,
+      if (icon != null) 'icon': icon,
     };
 
     final response = await _dio.post(

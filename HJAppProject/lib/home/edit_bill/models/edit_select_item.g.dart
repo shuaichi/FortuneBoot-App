@@ -13,6 +13,7 @@ CategorySelectItem _$CategorySelectItemFromJson(Map<String, dynamic> json) =>
       children: (json['children'] as List<dynamic>?)
           ?.map((e) => CategorySelectItem.fromJson(e as Map<String, dynamic>))
           .toList(),
+      icon: json['icon'] as String?,
     );
 
 Map<String, dynamic> _$CategorySelectItemToJson(CategorySelectItem instance) =>
@@ -20,6 +21,7 @@ Map<String, dynamic> _$CategorySelectItemToJson(CategorySelectItem instance) =>
       'children': instance.children,
       'categoryName': instance.title,
       'categoryId': instance.id,
+      'icon': instance.icon,
     };
 
 TagSelectItem _$TagSelectItemFromJson(Map<String, dynamic> json) =>
@@ -29,6 +31,7 @@ TagSelectItem _$TagSelectItemFromJson(Map<String, dynamic> json) =>
       children: (json['children'] as List<dynamic>?)
           ?.map((e) => TagSelectItem.fromJson(e as Map<String, dynamic>))
           .toList(),
+      icon: json['icon'] as String?,
     );
 
 Map<String, dynamic> _$TagSelectItemToJson(TagSelectItem instance) =>
@@ -36,4 +39,5 @@ Map<String, dynamic> _$TagSelectItemToJson(TagSelectItem instance) =>
       'children': instance.children,
       'tagName': instance.title,
       'tagId': instance.id,
+      'icon': instance.icon,
     };

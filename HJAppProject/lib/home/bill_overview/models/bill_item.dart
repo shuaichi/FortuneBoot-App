@@ -54,14 +54,20 @@ class BillItem extends Equatable {
   DateTime? tradeTime;
   int? accountId;
   String? accountName;
+  /// 账户自定义图标名（Iconify 名称，如 ep:wallet），后端未返回时为空
+  String? accountIcon;
   double? amount;
   String? currencyCode;
   double? convertedAmount;
   int? payeeId;
   String? payeeName;
+  /// 交易对象自定义图标名（Iconify 名称，如 ep:shop）
+  String? payeeIcon;
   BillType? billType;
   int? toAccountId;
   String? toAccountName;
+  /// 转入账户自定义图标名（转账账单）
+  String? toAccountIcon;
   bool? confirm;
   bool? include;
   String? remark;
@@ -83,14 +89,17 @@ class BillItem extends Equatable {
       this.tradeTime,
       this.accountId,
       this.accountName,
+      this.accountIcon,
       this.amount,
       this.currencyCode,
       this.convertedAmount,
       this.payeeId,
       this.payeeName,
+      this.payeeIcon,
       this.billType,
       this.toAccountId,
       this.toAccountName,
+      this.toAccountIcon,
       this.confirm,
       this.include,
       this.remark,
@@ -104,7 +113,7 @@ class BillItem extends Equatable {
 
   @override
   String toString() {
-    return 'BillItem{billId: $billId, bookId: $bookId, bookName: $bookName, title: $title, tradeTime: $tradeTime, accountId: $accountId, accountName: $accountName, amount: $amount, currencyCode: $currencyCode, convertedAmount: $convertedAmount, payeeId: $payeeId, payeeName: $payeeName, billType: $billType, toAccountId: $toAccountId, toAccountName: $toAccountName, confirm: $confirm, include: $include, remark: $remark, categoryAmountPair: $categoryAmountPair, tagList: $tagList, fileList: $fileList}';
+    return 'BillItem{billId: $billId, bookId: $bookId, bookName: $bookName, title: $title, tradeTime: $tradeTime, accountId: $accountId, accountName: $accountName, accountIcon: $accountIcon, amount: $amount, currencyCode: $currencyCode, convertedAmount: $convertedAmount, payeeId: $payeeId, payeeName: $payeeName, payeeIcon: $payeeIcon, billType: $billType, toAccountId: $toAccountId, toAccountName: $toAccountName, toAccountIcon: $toAccountIcon, confirm: $confirm, include: $include, remark: $remark, categoryAmountPair: $categoryAmountPair, tagList: $tagList, fileList: $fileList}';
   }
 
   @override
@@ -117,14 +126,17 @@ class BillItem extends Equatable {
         tradeTime,
         accountId,
         accountName,
+        accountIcon,
         amount,
         currencyCode,
         convertedAmount,
         payeeId,
         payeeName,
+        payeeIcon,
         billType,
         toAccountId,
         toAccountName,
+        toAccountIcon,
         confirm,
         include,
         remark,
@@ -139,8 +151,10 @@ class CategoryAmountPair {
   int? categoryId;
   String? categoryName;
   double? amount;
+  /// 分类自定义图标名（Iconify 名称，如 ep:menu）
+  String? icon;
 
-  CategoryAmountPair({this.categoryId, this.categoryName, this.amount});
+  CategoryAmountPair({this.categoryId, this.categoryName, this.amount, this.icon});
 
   factory CategoryAmountPair.fromJson(Map<String, dynamic> json) =>
       _$CategoryAmountPairFromJson(json);
@@ -148,7 +162,7 @@ class CategoryAmountPair {
 
   @override
   String toString() {
-    return 'CategoryAmountPair{categoryId: $categoryId, categoryName: $categoryName, amount: $amount}';
+    return 'CategoryAmountPair{categoryId: $categoryId, categoryName: $categoryName, amount: $amount, icon: $icon}';
   }
 }
 
@@ -166,6 +180,8 @@ class TagList {
   int? sort;
   String? remark;
   int? id;
+  /// 标签自定义图标名（Iconify 名称，如 ep:collection-tag）
+  String? icon;
 
   TagList(
       {this.children,
@@ -179,7 +195,8 @@ class TagList {
       this.enable,
       this.sort,
       this.remark,
-      this.id});
+      this.id,
+      this.icon});
 
   factory TagList.fromJson(Map<String, dynamic> json) =>
       _$TagListFromJson(json);
@@ -187,6 +204,6 @@ class TagList {
 
   @override
   String toString() {
-    return 'TagList{children: $children, tagId: $tagId, tagName: $tagName, bookId: $bookId, parentId: $parentId, canExpense: $canExpense, canIncome: $canIncome, canTransfer: $canTransfer, enable: $enable, sort: $sort, remark: $remark, id: $id}';
+    return 'TagList{children: $children, tagId: $tagId, tagName: $tagName, bookId: $bookId, parentId: $parentId, canExpense: $canExpense, canIncome: $canIncome, canTransfer: $canTransfer, enable: $enable, sort: $sort, remark: $remark, id: $id, icon: $icon}';
   }
 }

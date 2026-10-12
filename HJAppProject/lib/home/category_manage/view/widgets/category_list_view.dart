@@ -21,6 +21,7 @@ class CategoryListView<T> extends StatelessWidget {
     required this.nameOf,
     required this.remarkOf,
     required this.idOf,
+    this.iconOf,
     required this.onToggleNode,
     required this.onModify,
     required this.onMoveToRecycle,
@@ -47,6 +48,9 @@ class CategoryListView<T> extends StatelessWidget {
   final String Function(T) nameOf;
   final String? Function(T) remarkOf;
   final int Function(T) idOf;
+
+  /// 可选：取节点自定义图标名（Iconify 名称，如 ep:menu），未提供时沿用默认图标
+  final String? Function(T)? iconOf;
 
   // Actions
   final void Function(T node, bool expanded) onToggleNode;
@@ -105,6 +109,7 @@ class CategoryListView<T> extends StatelessWidget {
               nameOf: nameOf,
               remarkOf: remarkOf,
               idOf: idOf,
+              iconOf: iconOf,
               isExpanded: (x) => expandedNodeIds.contains(idOf(x)),
               onToggleNode: onToggleNode,
               onModify: onModify,

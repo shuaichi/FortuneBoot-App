@@ -3,6 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:hjproject/Request/account_request.dart';
 import 'package:hjproject/request/group_request.dart';
 import 'package:hjproject/Home/setting_page/view/widgets/selection_bottom_sheet.dart';
+import 'package:hjproject/Home/common/widgets/icon_form_field.dart';
+import 'package:hjproject/util/app_icon.dart';
 import 'package:hjproject/Home/account_manage/constants/design_system.dart' as ds;
 
 /// 增强版新增账户页面
@@ -64,6 +66,9 @@ class _EnhancedAccountAddPageState extends State<EnhancedAccountAddPage>
   // 表单验证错误
   String? _nameError;
   String? _currencyError;
+
+  // 自定义图标名（为空表示按账户类型使用默认图标）
+  String? _icon;
 
   @override
   void initState() {
@@ -489,6 +494,7 @@ class _EnhancedAccountAddPageState extends State<EnhancedAccountAddPage>
         repayDay: (widget.accountType == 2 || widget.accountType == 4)
             ? _repayDay
             : null,
+        icon: _icon,
       );
       if (ok && mounted) {
         // 添加成功动画
@@ -712,6 +718,16 @@ class _EnhancedAccountAddPageState extends State<EnhancedAccountAddPage>
                         ),
                       ),
                     ],
+                    SizedBox(height: ds.Spacing.md),
+
+                    IconFormField(
+                      title: '账户图标',
+                      subtitle: '未设置时按账户类型显示默认图标',
+                      value: _icon,
+                      defaultIconName:
+                          AppIcon.accountTypeFallback(widget.accountType),
+                      onChanged: (v) => setState(() => _icon = v),
+                    ),
                     SizedBox(height: ds.Spacing.md),
 
                     // 币种选择

@@ -23,6 +23,9 @@ class FortuneAccount {
   final int? sort;
   final String? remark;
 
+  /// 自定义图标名（Iconify 名称，如 ep:wallet）；为空时按账户类型取默认图标
+  final String? icon;
+
   FortuneAccount({
     this.accountId,
     this.cardNo,
@@ -44,6 +47,7 @@ class FortuneAccount {
     this.groupId,
     this.sort,
     this.remark,
+    this.icon,
   });
 
   factory FortuneAccount.fromJson(Map<String, dynamic> json) {
@@ -89,6 +93,7 @@ class FortuneAccount {
       groupId: (json['groupId'] as num?)?.toInt(),
       sort: (json['sort'] as num?)?.toInt(),
       remark: json['remark']?.toString(),
+      icon: json['icon']?.toString(),
     );
   }
 

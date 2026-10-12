@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hjproject/home/theme/theme.dart';
 import 'package:hjproject/home/bill_overview/models/bill_item.dart';
+import 'package:hjproject/util/app_icon.dart';
 import 'package:intl/intl.dart';
 
 class BillListTile extends StatelessWidget {
@@ -91,7 +92,18 @@ class BillListTile extends StatelessWidget {
         break;
     }
 
-    // 根据分类设置图标（这里使用一些常见的中国消费分类图标）
+    // 根据分类设置图标（优先使用用户自定义图标，未设置时回退到内置关键字猜测）
+    IconData? customCategoryIcon;
+    if (bill.categoryAmountPair != null && bill.categoryAmountPair!.isNotEmpty) {
+      for (final pair in bill.categoryAmountPair!) {
+        final resolved = AppIcon.resolve(pair.icon);
+        if (resolved != null) {
+          customCategoryIcon = resolved;
+          break;
+        }
+      }
+    }
+
     if (categoryName.isNotEmpty) {
       if (categoryName.contains('餐饮') ||
           categoryName.contains('吃') ||
@@ -149,8 +161,12 @@ class BillListTile extends StatelessWidget {
                   borderRadius: BorderRadius.circular(8.0),
                 ),
                 child: Icon(
-                  categoryIcon?['icon'] as IconData? ?? billIcon,
-                  color: categoryIcon?['color'] as Color? ?? billColor,
+                  customCategoryIcon ??
+                      (categoryIcon?['icon'] as IconData?) ??
+                      billIcon,
+                  color: customCategoryIcon != null
+                      ? billColor
+                      : (categoryIcon?['color'] as Color? ?? billColor),
                   size: 20,
                 ),
               ),
@@ -175,7 +191,8 @@ class BillListTile extends StatelessWidget {
                         if (bill.accountName != null &&
                             bill.accountName!.isNotEmpty) ...[
                           Icon(
-                            Icons.account_balance,
+                            AppIcon.resolve(bill.accountIcon) ??
+                                Icons.account_balance,
                             size: 12,
                             color: Colors.grey[600],
                           ),

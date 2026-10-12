@@ -42,6 +42,9 @@ class _EnhancedPayeeAddPageState extends State<EnhancedPayeeAddPage>
   bool _canIncome = true;
   bool _enable = true;
 
+  // 自定义图标名（为空表示使用默认图标）
+  String? _icon;
+
   // UI状态
   bool _saving = false;
   bool _dirty = false;
@@ -187,6 +190,7 @@ class _EnhancedPayeeAddPageState extends State<EnhancedPayeeAddPage>
         remark: _remarkController.text.trim().isEmpty
             ? null
             : _remarkController.text.trim(),
+        icon: _icon,
       );
 
       if (!mounted) return;
@@ -223,6 +227,7 @@ class _EnhancedPayeeAddPageState extends State<EnhancedPayeeAddPage>
       _canExpense = true;
       _canIncome = true;
       _enable = true;
+      _icon = null;
       _dirty = false;
     });
   }
@@ -469,6 +474,13 @@ class _EnhancedPayeeAddPageState extends State<EnhancedPayeeAddPage>
                             canExpense: _canExpense,
                             canIncome: _canIncome,
                             enable: _enable,
+                            icon: _icon,
+                            onIconChanged: (v) {
+                              setState(() {
+                                _icon = v;
+                              });
+                              _markDirty();
+                            },
                             onCanExpenseChanged: (v) {
                               setState(() {
                                 _canExpense = v;

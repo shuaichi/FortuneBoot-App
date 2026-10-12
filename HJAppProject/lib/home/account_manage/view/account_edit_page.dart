@@ -3,6 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:hjproject/Home/account_manage/models/fortune_account.dart';
 import 'package:hjproject/Request/account_request.dart';
+import 'package:hjproject/Home/common/widgets/icon_form_field.dart';
+import 'package:hjproject/util/app_icon.dart';
 import 'package:hjproject/Home/account_manage/constants/design_system.dart'
     as ds;
 
@@ -61,6 +63,9 @@ class _EnhancedAccountEditPageState extends State<EnhancedAccountEditPage>
   // 表单验证错误
   String? _nameError;
 
+  // 自定义图标名（为空表示按账户类型使用默认图标）
+  String? _icon;
+
   @override
   void initState() {
     super.initState();
@@ -115,6 +120,7 @@ class _EnhancedAccountEditPageState extends State<EnhancedAccountEditPage>
 
     _accountType = account.accountType ?? 1;
     _currencyCode = account.currencyCode ?? 'CNY';
+    _icon = account.icon;
 
     // 信用卡特有字段
     if (_accountType == 2) {
@@ -552,6 +558,7 @@ class _EnhancedAccountEditPageState extends State<EnhancedAccountEditPage>
             : null,
         billDay: _accountType == 2 ? _billDay : null,
         repayDay: (_accountType == 2 || _accountType == 4) ? _repayDay : null,
+        icon: _icon,
       );
 
       final success = await _service.modifyAccount(updatedAccount);
@@ -667,6 +674,16 @@ class _EnhancedAccountEditPageState extends State<EnhancedAccountEditPage>
                         ),
                       ),
                     ],
+                    SizedBox(height: ds.Spacing.md),
+
+                    IconFormField(
+                      title: '账户图标',
+                      subtitle: '未设置时按账户类型显示默认图标',
+                      value: _icon,
+                      defaultIconName:
+                          AppIcon.accountTypeFallback(_accountType),
+                      onChanged: (v) => setState(() => _icon = v),
+                    ),
                     SizedBox(height: ds.Spacing.md),
 
                     TextFormField(

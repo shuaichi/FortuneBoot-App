@@ -11,6 +11,7 @@ import 'package:hjproject/home/bill_overview/models/bill_item.dart';
 import 'package:hjproject/home/bill_overview/models/bill_item_add.dart';
 import 'package:hjproject/generated/l10n.dart';
 import 'package:hjproject/repository/repository/bills_repository.dart';
+import 'package:hjproject/util/app_icon.dart';
 import 'package:intl/intl.dart';
 import 'package:multi_dropdown/multi_dropdown.dart';
 import 'package:omni_datetime_picker/omni_datetime_picker.dart';
@@ -426,7 +427,11 @@ class _EditBillViewState extends State<EditBillView> {
             ),
             child: Row(
               children: [
-                const Icon(Icons.account_balance_wallet, color: Colors.grey),
+                Icon(
+                  AppIcon.resolve(selectItem?.icon) ??
+                      Icons.account_balance_wallet,
+                  color: Colors.grey,
+                ),
                 const SizedBox(width: 12),
                 Text(
                   '账户',
@@ -465,7 +470,10 @@ class _EditBillViewState extends State<EditBillView> {
             ),
             child: Row(
               children: [
-                const Icon(Icons.person, color: Colors.grey),
+                Icon(
+                  AppIcon.resolve(payeeSelectItem?.icon) ?? Icons.person,
+                  color: Colors.grey,
+                ),
                 const SizedBox(width: 12),
                 Text(
                   '交易对象',
@@ -604,6 +612,14 @@ class _EditBillViewState extends State<EditBillView> {
                   ),
                 ),
                 const Spacer(),
+                if (AppIcon.resolve(selectOutItem?.icon) != null) ...[
+                  Icon(
+                    AppIcon.resolve(selectOutItem?.icon),
+                    size: 18,
+                    color: Colors.grey,
+                  ),
+                  const SizedBox(width: 4),
+                ],
                 Text(
                   selectOutItem?.title ?? '请选择转入账户',
                   style: const TextStyle(
@@ -643,6 +659,14 @@ class _EditBillViewState extends State<EditBillView> {
                   ),
                 ),
                 const Spacer(),
+                if (AppIcon.resolve(selectInItem?.icon) != null) ...[
+                  Icon(
+                    AppIcon.resolve(selectInItem?.icon),
+                    size: 18,
+                    color: Colors.grey,
+                  ),
+                  const SizedBox(width: 4),
+                ],
                 Text(
                   selectInItem?.title ?? '请选择转出账户',
                   style: const TextStyle(
@@ -1492,7 +1516,10 @@ class TitleField extends StatelessWidget {
                     itemBuilder: (context, index) {
                       final item = items[index];
                       final isSelected = currentItem?.id == item.value.id;
+                      final IconData? itemIcon =
+                          AppIcon.resolve(item.value.icon);
                       return ListTile(
+                        leading: itemIcon == null ? null : Icon(itemIcon),
                         title: Text(item.label),
                         trailing: isSelected
                             ? const Icon(Icons.check, color: Colors.green)
@@ -1577,7 +1604,10 @@ class TitleField extends StatelessWidget {
                     itemBuilder: (context, index) {
                       final item = items[index];
                       final isSelected = currentItem?.id == item.value.id;
+                      final IconData? itemIcon =
+                          AppIcon.resolve(item.value.icon);
                       return ListTile(
+                        leading: itemIcon == null ? null : Icon(itemIcon),
                         title: Text(item.label),
                         trailing: isSelected
                             ? const Icon(Icons.check, color: Colors.green)
@@ -1662,7 +1692,10 @@ class TitleField extends StatelessWidget {
                     itemBuilder: (context, index) {
                       final item = items[index];
                       final isSelected = currentItem?.id == item.value.id;
+                      final IconData? itemIcon =
+                          AppIcon.resolve(item.value.icon);
                       return ListTile(
+                        leading: itemIcon == null ? null : Icon(itemIcon),
                         title: Text(item.label),
                         trailing: isSelected
                             ? const Icon(Icons.check, color: Colors.green)
@@ -1747,7 +1780,10 @@ class TitleField extends StatelessWidget {
                     itemBuilder: (context, index) {
                       final item = items[index];
                       final isSelected = currentItem?.id == item.value.id;
+                      final IconData? itemIcon =
+                          AppIcon.resolve(item.value.icon);
                       return ListTile(
+                        leading: itemIcon == null ? null : Icon(itemIcon),
                         title: Text(item.label),
                         trailing: isSelected
                             ? const Icon(Icons.check, color: Colors.green)

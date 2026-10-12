@@ -5,6 +5,7 @@ import 'package:hjproject/home/edit_bill/models/edit_select_item.dart';
 import 'package:hjproject/home/bill_overview/models/bill_item.dart';
 import 'package:hjproject/request/category_request.dart';
 import 'package:hjproject/repository/repository/bills_repository.dart';
+import 'package:hjproject/util/app_icon.dart';
 
 class CategoryTreeWidget extends StatefulWidget {
   CategoryTreeWidget(
@@ -304,6 +305,16 @@ class CategoryTreeWidgetState extends State<CategoryTreeWidget> {
                       label: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
+                          if (AppIcon.resolve(node.icon) != null) ...[
+                            Icon(
+                              AppIcon.resolve(node.icon),
+                              size: 14,
+                              color: isSelected
+                                  ? Theme.of(context).colorScheme.onPrimary
+                                  : null,
+                            ),
+                            const SizedBox(width: 4),
+                          ],
                           Text(node.title,
                               style: TextStyle(fontSize: depth == 0 ? 14 : 12)),
                           if (hasChildren)

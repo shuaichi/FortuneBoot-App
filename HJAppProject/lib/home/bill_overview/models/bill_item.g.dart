@@ -16,14 +16,17 @@ BillItem _$BillItemFromJson(Map<String, dynamic> json) => BillItem(
           : DateTime.parse(json['tradeTime'] as String),
       accountId: json['accountId'] as int?,
       accountName: json['accountName'] as String?,
+      accountIcon: json['accountIcon'] as String?,
       amount: (json['amount'] as num?)?.toDouble(),
       currencyCode: json['currencyCode'] as String?,
       convertedAmount: (json['convertedAmount'] as num?)?.toDouble(),
       payeeId: json['payeeId'] as int?,
       payeeName: json['payeeName'] as String?,
+      payeeIcon: json['payeeIcon'] as String?,
       billType: $enumDecodeNullable(_$BillTypeEnumMap, json['billType']),
       toAccountId: json['toAccountId'] as int?,
       toAccountName: json['toAccountName'] as String?,
+      toAccountIcon: json['toAccountIcon'] as String?,
       confirm: json['confirm'] as bool?,
       include: json['include'] as bool?,
       remark: json['remark'] as String?,
@@ -46,14 +49,17 @@ Map<String, dynamic> _$BillItemToJson(BillItem instance) => <String, dynamic>{
       'tradeTime': instance.tradeTime?.toIso8601String(),
       'accountId': instance.accountId,
       'accountName': instance.accountName,
+      'accountIcon': instance.accountIcon,
       'amount': instance.amount,
       'currencyCode': instance.currencyCode,
       'convertedAmount': instance.convertedAmount,
       'payeeId': instance.payeeId,
       'payeeName': instance.payeeName,
+      'payeeIcon': instance.payeeIcon,
       'billType': _$BillTypeEnumMap[instance.billType],
       'toAccountId': instance.toAccountId,
       'toAccountName': instance.toAccountName,
+      'toAccountIcon': instance.toAccountIcon,
       'confirm': instance.confirm,
       'include': instance.include,
       'remark': instance.remark,
@@ -76,6 +82,7 @@ CategoryAmountPair _$CategoryAmountPairFromJson(Map<String, dynamic> json) =>
       categoryId: json['categoryId'] as int?,
       categoryName: json['categoryName'] as String?,
       amount: (json['amount'] as num?)?.toDouble(),
+      icon: json['icon'] as String?,
     );
 
 Map<String, dynamic> _$CategoryAmountPairToJson(CategoryAmountPair instance) =>
@@ -83,6 +90,7 @@ Map<String, dynamic> _$CategoryAmountPairToJson(CategoryAmountPair instance) =>
       'categoryId': instance.categoryId,
       'categoryName': instance.categoryName,
       'amount': instance.amount,
+      'icon': instance.icon,
     };
 
 TagList _$TagListFromJson(Map<String, dynamic> json) => TagList(
@@ -98,6 +106,7 @@ TagList _$TagListFromJson(Map<String, dynamic> json) => TagList(
       sort: json['sort'] as int?,
       remark: json['remark'] as String?,
       id: json['id'] as int?,
+      icon: json['icon'] as String?,
     );
 
 Map<String, dynamic> _$TagListToJson(TagList instance) => <String, dynamic>{
@@ -113,4 +122,5 @@ Map<String, dynamic> _$TagListToJson(TagList instance) => <String, dynamic>{
       'sort': instance.sort,
       'remark': instance.remark,
       'id': instance.id,
+      'icon': instance.icon,
     };
