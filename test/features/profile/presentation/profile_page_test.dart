@@ -96,36 +96,33 @@ void main() {
     await preferencesCubit.close();
   });
 
-  testWidgets(
-    'opens donation sheet from the profile QR code only',
-    (tester) async {
-      await tester.pumpWidget(
-        _page(
-          profileBloc: profileBloc,
-          sessionCubit: sessionCubit,
-          preferencesCubit: preferencesCubit,
-        ),
-      );
-      await tester.pumpAndSettle();
+  testWidgets('opens donation sheet from the profile QR code only', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      _page(
+        profileBloc: profileBloc,
+        sessionCubit: sessionCubit,
+        preferencesCubit: preferencesCubit,
+      ),
+    );
+    await tester.pumpAndSettle();
 
-      // 注销账号入口已移至“查看个人资料”页。
-      expect(find.text('注销账号'), findsNothing);
+    // 注销账号入口已移至“查看个人资料”页。
+    expect(find.text('注销账号'), findsNothing);
 
-      await tester.tap(find.byTooltip('捐赠'));
-      await tester.pumpAndSettle();
+    await tester.tap(find.byTooltip('捐赠'));
+    await tester.pumpAndSettle();
 
-      expect(
-        find.descendant(of: find.byType(FxSheet), matching: find.text('捐赠')),
-        findsOneWidget,
-      );
-      expect(find.text('微信'), findsOneWidget);
-      expect(find.text('支付宝'), findsOneWidget);
-      expect(find.byType(DonateQrTile), findsNWidgets(2));
-      expect(find.byType(ProfileEditPage), findsNothing);
-    },
-    // 捐赠功能入口本期隐藏，待内购功能上线后恢复（disable-donation-entries）。
-    skip: true,
-  );
+    expect(
+      find.descendant(of: find.byType(FxSheet), matching: find.text('捐赠')),
+      findsOneWidget,
+    );
+    expect(find.text('微信'), findsOneWidget);
+    expect(find.text('支付宝'), findsOneWidget);
+    expect(find.byType(DonateQrTile), findsNWidgets(2));
+    expect(find.byType(ProfileEditPage), findsNothing);
+  });
 
   testWidgets('opens the profile editor from the remaining user card area', (
     tester,
@@ -177,13 +174,11 @@ void main() {
         debugDefaultTargetPlatformOverride = null;
       }
     },
-    // 捐赠功能入口本期隐藏，待内购功能上线后恢复（disable-donation-entries）。
+    // Apple 平台内购入口本期隐藏，待内购功能上线后恢复（非 Apple 平台不受影响）。
     skip: true,
   );
 
-  testWidgets('hides donation entries while the feature is disabled', (
-    tester,
-  ) async {
+  testWidgets('hides donation entries on Apple platforms only', (tester) async {
     debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
     try {
       await tester.pumpWidget(

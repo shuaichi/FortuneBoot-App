@@ -56,8 +56,9 @@ class _ProfileView extends StatelessWidget {
 
   final DonationApi? donationApi;
 
-  /// 捐赠功能开关：本期版本先隐藏入口，待 App Store 内购商品配置完成后再开启。
-  static const bool _donationFeatureEnabled = false;
+  /// Apple 平台内购捐赠开关：本期版本先隐藏 Apple 端入口，
+  /// 待 App Store 内购商品配置完成后再开启。Android/鸿蒙/Web 不受此开关影响。
+  static const bool _appleIapDonationEnabled = false;
 
   bool get _usesAppleInAppPurchase =>
       !kIsWeb &&
@@ -65,6 +66,11 @@ class _ProfileView extends StatelessWidget {
         TargetPlatform.iOS || TargetPlatform.macOS => true,
         _ => false,
       };
+
+  /// 是否展示捐赠入口：非 Apple 平台始终展示二维码捐赠；
+  /// Apple 平台仅在内购功能开启后展示。
+  bool get _showDonationEntry =>
+      !_usesAppleInAppPurchase || _appleIapDonationEnabled;
 
   void _toast(
     BuildContext context,
@@ -213,7 +219,7 @@ class _ProfileView extends StatelessWidget {
               ],
             ),
           ),
-          if (_donationFeatureEnabled)
+          if (_showDonationEntry)
             IconButton(
               tooltip: S.of(context).profileDonate,
               onPressed: () => _openDonate(context),
@@ -677,7 +683,7 @@ class _ProfileView extends StatelessWidget {
         showChevron: true,
         onTap: () => _openHelp(context),
       ),
-      if (_donationFeatureEnabled) ...[
+      if (_showDonationEntry) ...[
         _divider(context),
         FxListItem(
           leading: _tileIcon(Icons.favorite_border_rounded, finance.expense),
