@@ -21,6 +21,7 @@ dependencies:
   flutter_intl: ^0.0.1
   flutter_localizations:
     sdk: flutter
+  in_app_purchase: ^3.2.3
   # 安卓：FA 11 + flutter_login 7（IconData 为 final，需 .data）
   flutter_login: ^7.0.0
   font_awesome_flutter: ^11.0.0

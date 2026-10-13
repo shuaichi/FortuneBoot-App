@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -10,6 +11,8 @@ import 'package:fortuneboot/core/preferences/locale_preferences.dart';
 import 'package:fortuneboot/core/preferences/preferences_cubit.dart';
 import 'package:fortuneboot/core/session/session_cubit.dart';
 import 'package:fortuneboot/core/session/widgets/session_switcher_sheet.dart';
+import 'package:fortuneboot/features/profile/data/donation_models.dart';
+import 'package:fortuneboot/features/profile/data/in_app_purchase_donation_service.dart';
 import 'package:fortuneboot/features/profile/data/profile_models.dart';
 import 'package:fortuneboot/features/profile/data/profile_service.dart';
 import 'package:fortuneboot/features/profile/presentation/app_lock_settings_page.dart';
@@ -17,6 +20,7 @@ import 'package:fortuneboot/features/profile/presentation/bloc/profile_bloc.dart
 import 'package:fortuneboot/features/profile/presentation/profile_edit_page.dart';
 import 'package:fortuneboot/features/profile/presentation/widgets/donate_qr_tile.dart';
 import 'package:fortuneboot/features/profile/presentation/widgets/finance_color_editor.dart';
+import 'package:fortuneboot/features/profile/presentation/widgets/iap_donation_section.dart';
 import 'package:fortuneboot/features/profile/presentation/widgets/profile_avatar.dart';
 import 'package:fortuneboot/fx/components/fx_button.dart';
 import 'package:fortuneboot/fx/components/fx_card.dart';
@@ -36,16 +40,28 @@ import 'package:fortuneboot/util/image_save_service.dart';
 ///
 /// 聚合所有管理入口：用户卡、账本与分组、记账管理、工具箱、偏好设置、关于、退出登录。
 class ProfilePage extends StatelessWidget {
-  const ProfilePage({super.key});
+  const ProfilePage({super.key, this.donationApi});
+
+  /// 测试可注入；生产环境在 Apple 平台创建 In-App Purchase 服务。
+  final DonationApi? donationApi;
 
   @override
   Widget build(BuildContext context) {
-    return const _ProfileView();
+    return _ProfileView(donationApi: donationApi);
   }
 }
 
 class _ProfileView extends StatelessWidget {
-  const _ProfileView();
+  const _ProfileView({this.donationApi});
+
+  final DonationApi? donationApi;
+
+  bool get _usesAppleInAppPurchase =>
+      !kIsWeb &&
+      switch (defaultTargetPlatform) {
+        TargetPlatform.iOS || TargetPlatform.macOS => true,
+        _ => false,
+      };
 
   void _toast(
     BuildContext context,
@@ -198,7 +214,9 @@ class _ProfileView extends StatelessWidget {
             tooltip: S.of(context).profileDonate,
             onPressed: () => _openDonate(context),
             icon: Icon(
-              Icons.qr_code_rounded,
+              _usesAppleInAppPurchase
+                  ? Icons.favorite_rounded
+                  : Icons.qr_code_rounded,
               size: 28,
               color: palette.textSecondary,
             ),
@@ -831,6 +849,19 @@ class _ProfileView extends StatelessWidget {
   }
 
   Future<void> _openDonate(BuildContext context) async {
+    if (_usesAppleInAppPurchase) {
+      await FxSheet.show<void>(
+        context,
+        title: S.of(context).profileDonate,
+        scrollable: true,
+        maxHeightFactor: FxSheet.pickerHeightFactor,
+        child: IapDonationSection(
+          api: donationApi ?? InAppPurchaseDonationService(),
+        ),
+      );
+      return;
+    }
+
     final finance = FxFinanceColors.of(context);
     final palette = FxPalette.of(context);
     await FxSheet.show<void>(
