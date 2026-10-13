@@ -96,33 +96,36 @@ void main() {
     await preferencesCubit.close();
   });
 
-  testWidgets('opens donation sheet from the profile QR code only', (
-    tester,
-  ) async {
-    await tester.pumpWidget(
-      _page(
-        profileBloc: profileBloc,
-        sessionCubit: sessionCubit,
-        preferencesCubit: preferencesCubit,
-      ),
-    );
-    await tester.pumpAndSettle();
+  testWidgets(
+    'opens donation sheet from the profile QR code only',
+    (tester) async {
+      await tester.pumpWidget(
+        _page(
+          profileBloc: profileBloc,
+          sessionCubit: sessionCubit,
+          preferencesCubit: preferencesCubit,
+        ),
+      );
+      await tester.pumpAndSettle();
 
-    // 注销账号入口已移至“查看个人资料”页。
-    expect(find.text('注销账号'), findsNothing);
+      // 注销账号入口已移至“查看个人资料”页。
+      expect(find.text('注销账号'), findsNothing);
 
-    await tester.tap(find.byTooltip('捐赠'));
-    await tester.pumpAndSettle();
+      await tester.tap(find.byTooltip('捐赠'));
+      await tester.pumpAndSettle();
 
-    expect(
-      find.descendant(of: find.byType(FxSheet), matching: find.text('捐赠')),
-      findsOneWidget,
-    );
-    expect(find.text('微信'), findsOneWidget);
-    expect(find.text('支付宝'), findsOneWidget);
-    expect(find.byType(DonateQrTile), findsNWidgets(2));
-    expect(find.byType(ProfileEditPage), findsNothing);
-  });
+      expect(
+        find.descendant(of: find.byType(FxSheet), matching: find.text('捐赠')),
+        findsOneWidget,
+      );
+      expect(find.text('微信'), findsOneWidget);
+      expect(find.text('支付宝'), findsOneWidget);
+      expect(find.byType(DonateQrTile), findsNWidgets(2));
+      expect(find.byType(ProfileEditPage), findsNothing);
+    },
+    // 捐赠功能入口本期隐藏，待内购功能上线后恢复（disable-donation-entries）。
+    skip: true,
+  );
 
   testWidgets('opens the profile editor from the remaining user card area', (
     tester,
@@ -143,33 +146,61 @@ void main() {
     expect(find.byType(DonateQrTile), findsNothing);
   });
 
-  testWidgets('uses In-App Purchase for donations on Apple platforms', (
+  testWidgets(
+    'uses In-App Purchase for donations on Apple platforms',
+    (tester) async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+      final donationApi = _FakeDonationApi();
+
+      try {
+        await tester.pumpWidget(
+          _page(
+            profileBloc: profileBloc,
+            sessionCubit: sessionCubit,
+            preferencesCubit: preferencesCubit,
+            donationApi: donationApi,
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(find.byIcon(Icons.qr_code_rounded), findsNothing);
+
+        await tester.tap(find.byTooltip('捐赠'));
+        await tester.pumpAndSettle();
+
+        expect(find.byType(IapDonationSection), findsOneWidget);
+        expect(find.text('小额支持'), findsOneWidget);
+        expect(find.byType(DonateQrTile), findsNothing);
+        expect(find.text('微信'), findsNothing);
+        expect(find.text('支付宝'), findsNothing);
+      } finally {
+        debugDefaultTargetPlatformOverride = null;
+      }
+    },
+    // 捐赠功能入口本期隐藏，待内购功能上线后恢复（disable-donation-entries）。
+    skip: true,
+  );
+
+  testWidgets('hides donation entries while the feature is disabled', (
     tester,
   ) async {
     debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
-    final donationApi = _FakeDonationApi();
-
     try {
       await tester.pumpWidget(
         _page(
           profileBloc: profileBloc,
           sessionCubit: sessionCubit,
           preferencesCubit: preferencesCubit,
-          donationApi: donationApi,
+          donationApi: _FakeDonationApi(),
         ),
       );
       await tester.pumpAndSettle();
 
+      expect(find.byTooltip('捐赠'), findsNothing);
+      expect(find.text('捐赠'), findsNothing);
+      expect(find.byIcon(Icons.favorite_rounded), findsNothing);
       expect(find.byIcon(Icons.qr_code_rounded), findsNothing);
-
-      await tester.tap(find.byTooltip('捐赠'));
-      await tester.pumpAndSettle();
-
-      expect(find.byType(IapDonationSection), findsOneWidget);
-      expect(find.text('小额支持'), findsOneWidget);
       expect(find.byType(DonateQrTile), findsNothing);
-      expect(find.text('微信'), findsNothing);
-      expect(find.text('支付宝'), findsNothing);
     } finally {
       debugDefaultTargetPlatformOverride = null;
     }

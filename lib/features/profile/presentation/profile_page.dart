@@ -56,6 +56,9 @@ class _ProfileView extends StatelessWidget {
 
   final DonationApi? donationApi;
 
+  /// 捐赠功能开关：本期版本先隐藏入口，待 App Store 内购商品配置完成后再开启。
+  static const bool _donationFeatureEnabled = false;
+
   bool get _usesAppleInAppPurchase =>
       !kIsWeb &&
       switch (defaultTargetPlatform) {
@@ -210,17 +213,18 @@ class _ProfileView extends StatelessWidget {
               ],
             ),
           ),
-          IconButton(
-            tooltip: S.of(context).profileDonate,
-            onPressed: () => _openDonate(context),
-            icon: Icon(
-              _usesAppleInAppPurchase
-                  ? Icons.favorite_rounded
-                  : Icons.qr_code_rounded,
-              size: 28,
-              color: palette.textSecondary,
+          if (_donationFeatureEnabled)
+            IconButton(
+              tooltip: S.of(context).profileDonate,
+              onPressed: () => _openDonate(context),
+              icon: Icon(
+                _usesAppleInAppPurchase
+                    ? Icons.favorite_rounded
+                    : Icons.qr_code_rounded,
+                size: 28,
+                color: palette.textSecondary,
+              ),
             ),
-          ),
         ],
       ),
     );
@@ -673,13 +677,15 @@ class _ProfileView extends StatelessWidget {
         showChevron: true,
         onTap: () => _openHelp(context),
       ),
-      _divider(context),
-      FxListItem(
-        leading: _tileIcon(Icons.favorite_border_rounded, finance.expense),
-        title: S.of(context).profileDonate,
-        showChevron: true,
-        onTap: () => _openDonate(context),
-      ),
+      if (_donationFeatureEnabled) ...[
+        _divider(context),
+        FxListItem(
+          leading: _tileIcon(Icons.favorite_border_rounded, finance.expense),
+          title: S.of(context).profileDonate,
+          showChevron: true,
+          onTap: () => _openDonate(context),
+        ),
+      ],
     ]);
   }
 
