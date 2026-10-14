@@ -359,7 +359,23 @@ class BillEditorBloc extends Bloc<BillEditorEvent, BillEditorState> {
       billId: args.billId,
       lockBillType: args.lockBillType,
       billType: preset ?? FxBillType.expense,
-      categoryRows: isSingle ? const [] : [_newCategoryRow()],
+      categoryRows: isSingle
+          ? const []
+          : [
+              // 分类金额型结算（报销到账/差额结清）同样预填待结清金额。
+              _newCategoryRow(
+                amountCents: args.isNew && args.presetAmountCents != null
+                    ? args.presetAmountCents!
+                    : 0,
+                amount: args.isNew && args.presetAmountCents != null
+                    ? args.presetAmountCents! / 100
+                    : 0,
+              ),
+            ],
+      singleAmountCents:
+          isSingle && args.presetAmountCents != null && args.isNew
+          ? args.presetAmountCents!
+          : 0,
       orderId: args.presetOrderId,
       orderTitle: args.copyData?['orderTitle']?.toString(),
       presetBookId: args.presetBookId,

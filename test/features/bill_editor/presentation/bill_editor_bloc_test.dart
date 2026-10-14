@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:fortuneboot/features/bill_editor/data/editor_options_service.dart';
 import 'package:fortuneboot/features/bill_editor/presentation/bill_editor_args.dart';
 import 'package:fortuneboot/features/bill_editor/presentation/bill_editor_bloc.dart';
+import 'package:fortuneboot/features/orders/data/orders_models.dart';
 import 'package:fortuneboot/features/shared/data/bill_attachment.dart';
 import 'package:fortuneboot/features/shared/data/bill_models.dart';
 import 'package:fortuneboot/features/shared/data/bill_service.dart';
@@ -72,6 +73,69 @@ void main() {
 
     expect(state.mode, 'edit');
     expect(state.tradeTime, sourceTradeTime);
+  });
+
+  test('prefills pending amount for settle preset from the order detail', () async {
+    final bloc = _createBloc();
+    addTearDown(bloc.close);
+
+    bloc.add(
+      const BillEditorInitialized(
+        BillEditorArgs(
+          mode: 'new',
+          presetBillType: 10,
+          presetBookId: 1,
+          presetOrderId: 11,
+          presetOrderComponent: FinanceOrderComponent.principal,
+          presetAmountCents: 60000,
+          lockOrderContext: true,
+        ),
+      ),
+    );
+    final state = await bloc.stream.firstWhere(
+      (state) => state.status == EditorStatus.ready,
+    );
+
+    expect(state.billType, FxBillType.loanRecover);
+    expect(state.singleAmountCents, 60000);
+    expect(state.orderId, 11);
+  });
+
+  test('prefills pending amount into the first category row for reimburse/write-off', () async {
+    final bloc = _createBloc();
+    addTearDown(bloc.close);
+
+    bloc.add(
+      const BillEditorInitialized(
+        BillEditorArgs(
+          mode: 'new',
+          presetBillType: 8,
+          presetBookId: 1,
+          presetOrderId: 11,
+          presetOrderComponent: FinanceOrderComponent.principal,
+          presetAmountCents: 60000,
+          lockOrderContext: true,
+        ),
+      ),
+    );
+    final state = await bloc.stream.firstWhere(
+      (state) => state.status == EditorStatus.ready,
+    );
+
+    expect(state.billType, FxBillType.reimburse);
+    expect(state.categoryRows.single.amountCents, 60000);
+  });
+
+  test('round-trips presetAmountCents through route args', () {
+    final args = BillEditorArgs.fromRouteArgs({
+      'mode': 'new',
+      'presetBillType': 10,
+      'presetOrderId': 11,
+      'presetOrderComponent': 'PRINCIPAL',
+      'presetAmountCents': 60000,
+    });
+
+    expect(args.presetAmountCents, 60000);
   });
 
   test('updates the surviving category row by stable row ID', () async {

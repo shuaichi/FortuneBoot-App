@@ -30,6 +30,9 @@ class BillEditorArgs {
   final int? expectedOrderVersion;
   final bool lockOrderContext;
 
+  /// 结算类动作预填的剩余本金（分）。仅新建（new）时生效。
+  final int? presetAmountCents;
+
   const BillEditorArgs({
     this.mode = 'new',
     this.billId,
@@ -41,6 +44,7 @@ class BillEditorArgs {
     this.presetOrderComponent,
     this.expectedOrderVersion,
     this.lockOrderContext = false,
+    this.presetAmountCents,
   });
 
   bool get isEdit => mode == 'edit';
@@ -107,6 +111,7 @@ class BillEditorArgs {
         presetOrderComponent: presetOrderComponent,
         expectedOrderVersion: expectedOrderVersion,
         lockOrderContext: lockOrderContext,
+        presetAmountCents: _asInt(map['presetAmountCents']),
       );
     }
 

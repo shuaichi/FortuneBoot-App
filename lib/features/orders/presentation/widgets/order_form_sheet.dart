@@ -89,6 +89,12 @@ class OrderFormSheetState extends State<OrderFormSheet> {
   bool get isSubmitting => _submitting;
 
   Future<void> _submitAndClose({required bool continueFlow}) async {
+    if (widget.isEdit) {
+      // 编辑场景由单据详情页以 FinanceOrderMutationResult 关闭弹层；
+      // OrderFormSheetResult 仅用于新建（保存草稿/下一步记一笔）流程。
+      await _submit(closeOnSuccess: true);
+      return;
+    }
     final result = await _submit();
     if (result != null && mounted) {
       Navigator.of(
@@ -237,9 +243,9 @@ class OrderFormSheetState extends State<OrderFormSheet> {
     final current = _titleCtrl.text;
     if (current.isNotEmpty && current != _lastAutoTitle) return;
     final suffix = switch (_selectedType) {
-      FinanceOrderType.receivable => ' · 债权',
-      FinanceOrderType.payable => ' · 债务',
-      FinanceOrderType.reimbursement => ' · 报销',
+      FinanceOrderType.receivable => '债权',
+      FinanceOrderType.payable => '债务',
+      FinanceOrderType.reimbursement => '报销',
     };
     final counterparty = _counterpartyCtrl.text.trim();
     final next = counterparty.isEmpty ? suffix : '$counterparty · $suffix';
