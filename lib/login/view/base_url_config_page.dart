@@ -1,9 +1,12 @@
+import 'dart:async';
+
 import 'package:fortuneboot/core/auth/auth_version_checker.dart';
 import 'package:flutter/material.dart';
 // 引入震动反馈
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fortuneboot/core/app_constants.dart';
+import 'package:fortuneboot/core/navigation/app_router.dart';
 import 'package:fortuneboot/core/navigation/routes.dart';
 import 'package:fortuneboot/core/preferences/locale_preferences.dart';
 import 'package:fortuneboot/core/preferences/preferences_cubit.dart';
@@ -157,6 +160,9 @@ class _BaseUrlConfigPageState extends State<BaseUrlConfigPage> {
       Navigator.of(
         context,
       ).pushNamedAndRemoveUntil(Routes.main, (route) => false);
+      // Web/App 刷新即冷启动：恢复最近打开的白名单功能页（单据管理），
+      // 不再强制回到首页路径。
+      unawaited(AppRouter.restoreLastRoute());
     } else {
       _authMode.value = AuthMode.signIn;
     }
