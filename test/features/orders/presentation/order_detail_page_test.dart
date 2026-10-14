@@ -10,7 +10,9 @@ import 'package:fortuneboot/features/orders/data/order_money.dart';
 import 'package:fortuneboot/features/orders/data/orders_models.dart';
 import 'package:fortuneboot/features/orders/data/orders_service.dart';
 import 'package:fortuneboot/features/orders/presentation/order_detail_page.dart';
+import 'package:fortuneboot/features/orders/presentation/widgets/order_entry_tile.dart';
 import 'package:fortuneboot/features/orders/presentation/widgets/order_summary_strip.dart';
+import 'package:fortuneboot/fx/components/fx_money_text.dart';
 import 'package:fortuneboot/fx/components/fx_icon_button.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/generated/l10n.dart';
@@ -36,6 +38,9 @@ void main() {
     final allowed = _FakeOrdersService(canClose: true);
     await _pumpDetail(tester, service: allowed);
     await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey('order-archive')), findsNothing);
+    await tester.tap(find.byKey(const ValueKey('order-more')));
+    await tester.pumpAndSettle();
     expect(find.byKey(const ValueKey('order-archive')), findsOneWidget);
   });
 
@@ -47,6 +52,9 @@ void main() {
     await _pumpDetail(tester, service: service);
     await tester.pumpAndSettle();
 
+    expect(find.byKey(const ValueKey('order-archive')), findsNothing);
+    await tester.tap(find.byKey(const ValueKey('order-more')));
+    await tester.pumpAndSettle();
     expect(find.byKey(const ValueKey('order-archive')), findsNothing);
   });
 
@@ -65,6 +73,8 @@ void main() {
       },
     );
     await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('order-more')));
+    await tester.pumpAndSettle();
     await tester.tap(find.byKey(const ValueKey('order-write-off')));
     await tester.pumpAndSettle();
 
@@ -77,6 +87,99 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(args.single.presetOrderComponent, FinanceOrderComponent.writeOff);
+    // 债务单的差额结清是收入方向（billType 2），不是默认支出。
+    expect(args.single.presetBillType, 2);
+  });
+
+  testWidgets('settle action prefills the remaining pending amount', (
+    tester,
+  ) async {
+    final service = _FakeOrdersService();
+    final args = <BillEditorArgs>[];
+
+    await _pumpDetail(
+      tester,
+      service: service,
+      editorLauncher: (arg) async {
+        args.add(arg);
+        return false;
+      },
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.text(S.current.ordersActionLoanRepay));
+    await tester.pumpAndSettle();
+
+    expect(args.single.presetBillType, 12);
+    expect(args.single.presetAmountCents, 60000);
+  });
+
+  testWidgets('edit metadata sheet title follows order type', (tester) async {
+    final service = _FakeOrdersService();
+
+    await _pumpDetail(tester, service: service);
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('order-more')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('order-edit-metadata')));
+    await tester.pumpAndSettle();
+
+    // 债务单编辑标题必须是“编辑债务单”，不能是写死的“编辑报销单”。
+    expect(find.text('编辑债务单'), findsOneWidget);
+    expect(find.text('编辑报销单'), findsNothing);
+  });
+
+  testWidgets('shows settled tag when the order is fully settled', (
+    tester,
+  ) async {
+    final service = _FakeOrdersService(
+      settlementState: 'SETTLED',
+      settledCents: 100000,
+    );
+
+    await _pumpDetail(tester, service: service);
+    await tester.pumpAndSettle();
+
+    expect(find.text(S.current.ordersSettledTag), findsOneWidget);
+  });
+
+  testWidgets('entry amounts follow cash direction and bill type colors', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(800, 1800);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    final service = _FakeOrdersService();
+
+    await _pumpDetail(tester, service: service);
+    await tester.pumpAndSettle();
+
+    final tiles = tester
+        .widgetList<OrderEntryTile>(find.byType(OrderEntryTile))
+        .toList();
+    expect(tiles, hasLength(2));
+
+    // 借入（billType 11）是入账：正号 + 入账语义色。
+    final loanIn = tiles.first;
+    final loanInMoney = tester.widget<FxMoneyText>(
+      find.descendant(
+        of: find.byWidget(loanIn),
+        matching: find.byType(FxMoneyText),
+      ),
+    );
+    expect(loanInMoney.amount, 1000.0);
+    expect(loanInMoney.billType, 11);
+
+    // 归还本金（billType 12）是出账：负号 + 出账语义色，不能显示成正号。
+    final repay = tiles.last;
+    final repayMoney = tester.widget<FxMoneyText>(
+      find.descendant(
+        of: find.byWidget(repay),
+        matching: find.byType(FxMoneyText),
+      ),
+    );
+    expect(repayMoney.amount, -400.0);
+    expect(repayMoney.billType, 12);
   });
 
   testWidgets('void and restore refresh detail and bump bill mutations', (
@@ -127,6 +230,65 @@ void main() {
       contains('restore'),
     );
   });
+  testWidgets('successful delete pops detail instead of refreshing removed order', (
+    tester,
+  ) async {
+    final service = _FakeOrdersService(canDelete: true);
+    final preferences = PreferencesCubit();
+    addTearDown(preferences.close);
+
+    await tester.pumpWidget(
+      BlocProvider<PreferencesCubit>.value(
+        value: preferences,
+        child: MaterialApp(
+          theme: FxTheme.light,
+          locale: const Locale('zh'),
+          localizationsDelegates: const [
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+            S.delegate,
+          ],
+          supportedLocales: S.delegate.supportedLocales,
+          home: Builder(
+            builder: (context) => Scaffold(
+              body: Center(
+                child: TextButton(
+                  onPressed: () => Navigator.of(context).push(
+                    MaterialPageRoute<void>(
+                      builder: (_) => OrderDetailPage(
+                        service: service,
+                        bookId: 7,
+                        orderId: 11,
+                      ),
+                    ),
+                  ),
+                  child: const Text('home-root'),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.tap(find.text('home-root'));
+    await tester.pumpAndSettle();
+    expect(find.byType(OrderDetailPage), findsOneWidget);
+    final detailCallsBefore = service.detailCalls;
+
+    await tester.tap(find.byKey(const ValueKey('order-more')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('order-delete')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text(S.current.ordersDelete).last);
+    await tester.pumpAndSettle();
+
+    // 删除成功：返回上一层（列表），而不是刷新已删除实体后展示“找不到单据”。
+    expect(service.transitions, contains('remove'));
+    expect(find.byType(OrderDetailPage), findsNothing);
+    expect(find.text('home-root'), findsOneWidget);
+    expect(service.detailCalls, detailCallsBefore);
+  });
 }
 
 Future<void> _pumpDetail(
@@ -161,13 +323,34 @@ Future<void> _pumpDetail(
 }
 
 class _FakeOrdersService extends OrdersService {
-  _FakeOrdersService({this.canClose = true});
+  _FakeOrdersService({
+    this.canClose = true,
+    this.settlementState,
+    this.settledCents = 40000,
+    this.canDelete = false,
+  });
 
   final bool canClose;
+  final String? settlementState;
+  final int settledCents;
+  final bool canDelete;
   var detailCalls = 0;
   var entryCalls = 0;
   var pendingCents = 60000;
   final entryActions = <({String action, int billId})>[];
+  final transitions = <String>[];
+
+  @override
+  Future<FinanceOrderMutationResult> transition({
+    required int bookId,
+    required int orderId,
+    required Object action,
+    String? requestId,
+    int? expectedVersion,
+  }) async {
+    transitions.add(action.toString());
+    return FinanceOrderMutationResult(orderId: orderId, version: 5);
+  }
 
   @override
   Future<FinanceOrderDetail> getDetail({
@@ -184,8 +367,9 @@ class _FakeOrdersService extends OrdersService {
       status: 200,
       currencyCode: 'CNY',
       version: 4,
+      settlementState: settlementState,
       issuedAmount: OrderMoney.fromCents(100000),
-      settledAmount: OrderMoney.fromCents(40000),
+      settledAmount: OrderMoney.fromCents(settledCents),
       pendingAmount: OrderMoney.fromCents(pendingCents),
       adjustedAmount: OrderMoney.fromCents(0),
       allowedEntryActions: const [
@@ -196,7 +380,7 @@ class _FakeOrdersService extends OrdersService {
         'WRITE_OFF',
       ],
       canEdit: true,
-      canDelete: false,
+      canDelete: canDelete,
       canClose: canClose,
       pendingEntryCount: 1,
     );

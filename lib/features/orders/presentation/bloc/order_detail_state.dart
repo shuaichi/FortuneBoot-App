@@ -13,6 +13,7 @@ class OrderDetailState extends Equatable {
   final bool loadingMore;
   final String? loadMoreError;
   final bool actionLoading;
+  final bool removed;
   final String? errorMessage;
   final String? toastMessage;
   final int requestGeneration;
@@ -28,6 +29,7 @@ class OrderDetailState extends Equatable {
     this.loadingMore = false,
     this.loadMoreError,
     this.actionLoading = false,
+    this.removed = false,
     this.errorMessage,
     this.toastMessage,
     this.requestGeneration = 0,
@@ -46,6 +48,7 @@ class OrderDetailState extends Equatable {
     bool? loadingMore,
     String? loadMoreError,
     bool? actionLoading,
+    bool? removed,
     String? errorMessage,
     String? toastMessage,
     int? requestGeneration,
@@ -61,6 +64,7 @@ class OrderDetailState extends Equatable {
       loadingMore: loadingMore ?? this.loadingMore,
       loadMoreError: loadMoreError,
       actionLoading: actionLoading ?? this.actionLoading,
+      removed: removed ?? this.removed,
       errorMessage: errorMessage,
       toastMessage: toastMessage,
       requestGeneration: requestGeneration ?? this.requestGeneration,
@@ -79,6 +83,7 @@ class OrderDetailState extends Equatable {
     loadingMore,
     loadMoreError,
     actionLoading,
+    removed,
     errorMessage,
     toastMessage,
     requestGeneration,

@@ -83,6 +83,8 @@ class OrderCard extends StatelessWidget {
               if (order.overdue) _tag(S.of(context).ordersOverdue),
               if (order.settlementState == 'PARTIAL')
                 _tag(S.of(context).ordersPartiallySettled),
+              if (order.settlementState == 'SETTLED')
+                _tag(S.of(context).ordersSettledTag),
               if (order.pendingEntryCount > 0)
                 _tag(
                   S

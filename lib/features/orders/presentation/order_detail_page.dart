@@ -20,7 +20,6 @@ import 'package:fortuneboot/fx/components/fx_button.dart';
 import 'package:fortuneboot/fx/components/fx_card.dart';
 import 'package:fortuneboot/fx/components/fx_chip.dart';
 import 'package:fortuneboot/fx/components/fx_confirm_sheet.dart';
-import 'package:fortuneboot/fx/components/fx_icon_button.dart';
 import 'package:fortuneboot/fx/components/fx_money_text.dart';
 import 'package:fortuneboot/fx/components/fx_sheet.dart';
 import 'package:fortuneboot/fx/components/fx_state_view.dart';
@@ -160,6 +159,11 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
   }
 
   void _listenState(BuildContext context, OrderDetailState state) {
+    if (state.removed) {
+      // 删除成功后直接返回列表页，避免展示已删除单据的错误视图。
+      Navigator.of(context).maybePop();
+      return;
+    }
     final message = state.toastMessage;
     if (message == null) return;
     ScaffoldMessenger.of(context)
@@ -187,57 +191,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                 overflow: TextOverflow.ellipsis,
               ),
             ),
-            Wrap(
-              spacing: FxSpacing.xs,
-              children: [
-                if (detail.canEdit)
-                  FxIconButton(
-                    key: const ValueKey('order-edit-metadata'),
-                    icon: Icons.edit_rounded,
-                    tooltip: S.of(context).ordersEditMetadata,
-                    onPressed: _editMetadata,
-                  ),
-                if (detail.allowedEntryActions.contains('WRITE_OFF'))
-                  FxIconButton(
-                    key: const ValueKey('order-write-off'),
-                    icon: Icons.money_off_rounded,
-                    tooltip: S.of(context).ordersWriteOff,
-                    onPressed: _confirmWriteOff,
-                  ),
-                FxIconButton(
-                  key: const ValueKey('order-audit'),
-                  icon: Icons.history_rounded,
-                  tooltip: S.of(context).ordersAuditTitle,
-                  onPressed: () => OrderAuditSheet.show(
-                    context,
-                    service: widget.service,
-                    bookId: widget.bookId,
-                    orderId: widget.orderId,
-                  ),
-                ),
-                if (detail.canClose)
-                  FxIconButton(
-                    key: const ValueKey('order-archive'),
-                    icon: Icons.archive_rounded,
-                    tooltip: S.of(context).ordersArchive,
-                    onPressed: _confirmClose,
-                  ),
-                if (detail.canReopen)
-                  FxIconButton(
-                    key: const ValueKey('order-reopen'),
-                    icon: Icons.unarchive_rounded,
-                    tooltip: S.of(context).ordersReopen,
-                    onPressed: _confirmReopen,
-                  ),
-                if (detail.canDelete)
-                  FxIconButton(
-                    key: const ValueKey('order-delete'),
-                    icon: Icons.delete_rounded,
-                    tooltip: S.of(context).ordersDelete,
-                    onPressed: _confirmDelete,
-                  ),
-              ],
-            ),
+            _moreActionsMenu(context, detail),
           ],
         ),
         const SizedBox(height: FxSpacing.md),
@@ -251,6 +205,87 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
           _pendingLabel(context, detail),
           style: FxTypography.body.copyWith(color: palette.textSecondary),
         ),
+        if (detail.settlementState == 'SETTLED' ||
+            detail.settlementState == 'PARTIAL') ...[
+          const SizedBox(height: FxSpacing.xs),
+          FxChip(
+            label: detail.settlementState == 'SETTLED'
+                ? S.of(context).ordersSettledTag
+                : S.of(context).ordersPartiallySettled,
+            selected: detail.settlementState == 'SETTLED',
+            isAction: true,
+            onTap: () {},
+          ),
+        ],
+      ],
+    );
+  }
+
+  /// 元数据编辑、差额结清、审计、归档、重开、删除统一收进“更多操作”菜单。
+  /// 契约 C10：详情主按钮只放业务动作，其余入口进更多菜单，图标不裸奔。
+  Widget _moreActionsMenu(BuildContext context, FinanceOrderDetail detail) {
+    final l10n = S.of(context);
+    return PopupMenuButton<String>(
+      key: const ValueKey('order-more'),
+      icon: const Icon(Icons.more_vert_rounded),
+      tooltip: l10n.ordersMoreActions,
+      onSelected: (value) {
+        switch (value) {
+          case 'edit':
+            _editMetadata();
+          case 'writeOff':
+            _confirmWriteOff();
+          case 'audit':
+            OrderAuditSheet.show(
+              context,
+              service: widget.service,
+              bookId: widget.bookId,
+              orderId: widget.orderId,
+            );
+          case 'close':
+            _confirmClose();
+          case 'reopen':
+            _confirmReopen();
+          case 'delete':
+            _confirmDelete();
+        }
+      },
+      itemBuilder: (context) => [
+        if (detail.canEdit)
+          PopupMenuItem(
+            key: const ValueKey('order-edit-metadata'),
+            value: 'edit',
+            child: Text(l10n.ordersEditMetadata),
+          ),
+        if (detail.allowedEntryActions.contains('WRITE_OFF'))
+          PopupMenuItem(
+            key: const ValueKey('order-write-off'),
+            value: 'writeOff',
+            child: Text(l10n.ordersWriteOff),
+          ),
+        PopupMenuItem(
+          key: const ValueKey('order-audit'),
+          value: 'audit',
+          child: Text(l10n.ordersAuditTitle),
+        ),
+        if (detail.canClose)
+          PopupMenuItem(
+            key: const ValueKey('order-archive'),
+            value: 'close',
+            child: Text(l10n.ordersArchive),
+          ),
+        if (detail.canReopen)
+          PopupMenuItem(
+            key: const ValueKey('order-reopen'),
+            value: 'reopen',
+            child: Text(l10n.ordersReopen),
+          ),
+        if (detail.canDelete)
+          PopupMenuItem(
+            key: const ValueKey('order-delete'),
+            value: 'delete',
+            child: Text(l10n.ordersDelete),
+          ),
       ],
     );
   }
@@ -435,7 +470,21 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
     final state = _bloc.state;
     final detail = state.detail;
     if (detail == null) return false;
-    final billType = action?.billType ?? entry?.billType ?? 1;
+    // 差额结清的 billType 由单据类型决定：债务单是收入（2），其余是支出（1）。
+    final billType =
+        action?.billType ??
+        entry?.billType ??
+        (component == FinanceOrderComponent.writeOff &&
+                detail.type == FinanceOrderType.payable
+            ? 2
+            : 1);
+    // 契约 C10：结算动作的默认金额为当前待结清金额。
+    final settlePrefill =
+        entry == null &&
+        (action == FinanceOrderEntryActionKind.loanRecover ||
+            action == FinanceOrderEntryActionKind.loanRepay ||
+            action == FinanceOrderEntryActionKind.reimburse ||
+            component == FinanceOrderComponent.writeOff);
     final args = BillEditorArgs(
       mode: entry == null ? 'new' : 'edit',
       billId: entry?.billId,
@@ -446,6 +495,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
       presetOrderComponent: entry?.orderComponent ?? component,
       expectedOrderVersion: detail.version,
       lockOrderContext: true,
+      presetAmountCents: settlePrefill ? detail.pendingAmount?.cents : null,
     );
     final launcher = widget.editorLauncher ?? _routeEditor;
     final changed = await launcher(args);
@@ -470,6 +520,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
         'presetOrderComponent': args.presetOrderComponent?.value,
         'expectedOrderVersion': args.expectedOrderVersion,
         'lockOrderContext': args.lockOrderContext,
+        'presetAmountCents': args.presetAmountCents,
       },
     );
     return result == true;
@@ -487,9 +538,15 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
     final detail = _bloc.state.detail;
     if (detail == null) return;
     final key = GlobalKey<OrderFormSheetState>();
+    final typeLabel = switch (detail.type) {
+      FinanceOrderType.receivable => S.of(context).ordersTypeReceivable,
+      FinanceOrderType.payable => S.of(context).ordersTypePayable,
+      FinanceOrderType.reimbursement => S.of(context).ordersTypeReimbursement,
+      null => S.of(context).ordersTypeReimbursement,
+    };
     await FxSheet.show<FinanceOrderMutationResult>(
       context,
-      title: S.of(context).ordersEditTitle,
+      title: S.of(context).ordersEditTitle(typeLabel),
       expand: true,
       child: OrderFormSheet(
         key: key,

@@ -913,7 +913,12 @@
   },
   "ordersSelectBookFirst": "Please select a book first",
   "ordersAddTitle": "Add order",
-  "ordersEditTitle": "Edit Reimbursement Order",
+  "ordersEditTitle": "Edit {type}",
+  "@ordersEditTitle": {
+    "placeholders": {
+      "type": {}
+    }
+  },
   "ordersRemoveTitle": "Delete Reimbursement Order",
   "ordersThisOrder": "this reimbursement order",
   "ordersRemoveMessage": "Delete \"{name}\"?",
@@ -1839,6 +1844,7 @@
   "ordersSettledRepaid": "Repaid",
   "ordersSettledReimbursed": "Reimbursed",
   "ordersPartiallySettled": "Partially settled",
+  "ordersSettledTag": "Settled",
   "ordersOverdue": "Overdue",
   "ordersPendingEntryCount": "{count} pending",
   "@ordersPendingEntryCount": {"placeholders": {"count": {"type": "int"}}},

@@ -38,6 +38,9 @@ class OrderDetailBloc extends Bloc<OrderDetailEvent, OrderDetailState> {
     OrderDetailEvent event,
     Emitter<OrderDetailState> emit,
   ) async {
+    // 删除完成后不再刷新同一实体：BillMutations.bump 触发的队列刷新在此丢弃，
+    // 避免对已删除单据发出多余的 getDetail（返回 404）。
+    if (state.removed) return;
     final generation = state.requestGeneration + 1;
     emit(
       state.copyWith(
@@ -224,6 +227,11 @@ class OrderDetailBloc extends Bloc<OrderDetailEvent, OrderDetailState> {
         expectedVersion: version,
       );
       BillMutations.bump();
+      if (event.action == 'remove') {
+        // 单据已删除：不刷新已删除实体（否则会弹出“找不到单据”），通知页面返回上层。
+        emit(state.copyWith(actionLoading: false, removed: true));
+        return;
+      }
       emit(state.copyWith(actionLoading: false));
       await _onLoaded(const OrderDetailRefreshed(), emit);
     } on Object catch (error) {

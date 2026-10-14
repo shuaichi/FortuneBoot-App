@@ -11,6 +11,18 @@ import 'package:fortuneboot/generated/l10n.dart';
 
 /// 单据流水条目。
 class OrderEntryTile extends StatelessWidget {
+  /// 入账方向的流水类型：2收入、8报销到账、10收回本金、11借入。
+  /// 其余（1/4/7/9/12）按出账方向处理。
+  static const Set<int> _incomeBillTypes = {2, 8, 10, 11};
+
+  /// 统一现金方向签名：入账为正、出账为负。颜色语义由 billType 决定，
+  /// 与账单列表共用同一套“入账/出账遵从用户偏好”的颜色规则。
+  static double signedAmount(FinanceOrderEntry entry) {
+    final cents = entry.amount?.cents ?? 0;
+    final sign = _incomeBillTypes.contains(entry.billType) ? 1 : -1;
+    return sign * cents / 100;
+  }
+
   final FinanceOrderEntry entry;
   final bool hideAmounts;
   final ValueChanged<FinanceOrderEntry>? onPreview;
@@ -52,11 +64,11 @@ class OrderEntryTile extends StatelessWidget {
                 ),
               ),
               FxMoneyText(
-                amount: (entry.amount?.cents ?? 0) / 100,
+                amount: signedAmount(entry),
                 currencyCode: entry.currencyCode,
+                billType: entry.billType,
                 masked: hideAmounts,
                 showSign: true,
-                colorBySign: true,
               ),
             ],
           ),

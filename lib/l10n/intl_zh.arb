@@ -915,7 +915,12 @@
   },
   "ordersSelectBookFirst": "请先选择账本",
   "ordersAddTitle": "新增单据",
-  "ordersEditTitle": "编辑报销单",
+  "ordersEditTitle": "编辑{type}",
+  "@ordersEditTitle": {
+    "placeholders": {
+      "type": {}
+    }
+  },
   "ordersRemoveTitle": "删除报销单",
   "ordersThisOrder": "该报销单",
   "ordersRemoveMessage": "确定删除「{name}」吗？",
@@ -1841,6 +1846,7 @@
   "ordersSettledRepaid": "已归还",
   "ordersSettledReimbursed": "已到账",
   "ordersPartiallySettled": "部分结清",
+  "ordersSettledTag": "已结清",
   "ordersOverdue": "逾期",
   "ordersPendingEntryCount": "待确认 {count} 笔",
   "@ordersPendingEntryCount": {"placeholders": {"count": {"type": "int"}}},
