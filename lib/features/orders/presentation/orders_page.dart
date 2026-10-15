@@ -303,7 +303,7 @@ class _OrdersPageState extends State<OrdersPage> {
             hideAmounts: hideAmounts,
             onTap: () => _openDetail(order),
             onReport: order.isReviewRequired
-                ? () => _openReconciliation()
+                ? () => _openReconciliation(focusOrderId: order.orderId)
                 : null,
           );
         },
@@ -336,13 +336,17 @@ class _OrdersPageState extends State<OrdersPage> {
     );
   }
 
-  Future<void> _openReconciliation() async {
+  Future<void> _openReconciliation({int? focusOrderId}) async {
     final bookId = context.read<SessionCubit>().state.currentBookId;
     if (bookId == null) return;
     await AppRouter.push<void>(
       context,
       Routes.orderReconciliation,
-      args: {'bookId': bookId, 'service': service},
+      args: {
+        'bookId': bookId,
+        'service': service,
+        if (focusOrderId != null) 'focusOrderId': focusOrderId,
+      },
     );
   }
 }

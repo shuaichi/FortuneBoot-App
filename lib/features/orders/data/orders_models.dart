@@ -631,9 +631,14 @@ class FinanceOrderReconciliationPage {
   });
 
   factory FinanceOrderReconciliationPage.fromJson(dynamic data) {
+    // 兼容分页对象或直接返回数组。
+    if (data is List) {
+      final rows = _mapList(data, FinanceOrderReconciliation.fromJson);
+      return FinanceOrderReconciliationPage(rows: rows, total: rows.length);
+    }
     final map = _asMap(data);
     final rows = _mapList(
-      map?['rows'],
+      map?['rows'] ?? map?['list'] ?? map?['records'],
       FinanceOrderReconciliation.fromJson,
     );
     return FinanceOrderReconciliationPage(
@@ -684,15 +689,12 @@ class FinanceOrderReconciliation {
         bookId: FxApi.asId(json['bookId']),
         issueCodes: _stringList(json['issueCodes']),
         originalStatus: FxApi.asId(json['originalStatus']),
-        originalOutAmount: _amount(json['originalOutAmount']),
-        originalInAmount: _amount(json['originalInAmount']),
-        candidateIssuedAmount: _amount(json['candidateIssuedAmount']),
-        candidateSettledAmount: _amount(json['candidateSettledAmount']),
-        candidatePendingAmount: _amount(json['candidatePendingAmount']),
-        accountIds: (json['accountIds'] as List? ?? [])
-            .map((id) => FxApi.asId(id))
-            .whereType<int>()
-            .toList(),
+        originalOutAmount: _amountLenient(json['originalOutAmount']),
+        originalInAmount: _amountLenient(json['originalInAmount']),
+        candidateIssuedAmount: _amountLenient(json['candidateIssuedAmount']),
+        candidateSettledAmount: _amountLenient(json['candidateSettledAmount']),
+        candidatePendingAmount: _amountLenient(json['candidatePendingAmount']),
+        accountIds: _idList(json['accountIds']),
         currencyCodes: _stringList(json['currencyCodes']),
         cashEffectKnown: FxApi.asBool(json['cashEffectKnown']),
         note: _string(json['note']),
@@ -716,6 +718,10 @@ List<T> _mapList<T>(dynamic data, T Function(Map<String, dynamic>) fromJson) {
 String? _string(dynamic value) => value?.toString();
 
 List<String> _stringList(dynamic value) {
+  if (value is String) {
+    final trimmed = value.trim();
+    return trimmed.isEmpty ? const [] : [trimmed];
+  }
   if (value is! List) return const [];
   return value.map((item) => item.toString()).toList();
 }
@@ -733,4 +739,19 @@ DateTime? _dateTime(dynamic value) {
 OrderMoney? _amount(dynamic value) {
   if (value == null) return null;
   return OrderMoney.fromJson(value);
+}
+
+/// 核对报告等历史数据金额格式不统一时，解析失败降级为 null，避免整页加载失败。
+OrderMoney? _amountLenient(dynamic value) {
+  if (value == null) return null;
+  try {
+    return OrderMoney.fromJson(value);
+  } on Object {
+    return null;
+  }
+}
+
+List<int> _idList(dynamic value) {
+  if (value is! List) return const [];
+  return value.map(FxApi.asId).whereType<int>().toList();
 }

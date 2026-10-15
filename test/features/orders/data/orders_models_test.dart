@@ -205,6 +205,29 @@ void main() {
     });
     expect(reconciliation.issueCodes, ['LEGACY_LOAN_ISOLATED']);
     expect(reconciliation.candidatePendingAmount, isNull);
+
+    // 多位小数 / 异常 accountIds / list 分页键，不应拖垮整页解析。
+    final messy = FinanceOrderReconciliationPage.fromJson({
+      'list': [
+        {
+          'orderId': 1002,
+          'issueCodes': 'LEGACY_LOAN_ISOLATED',
+          'originalOutAmount': '1000.0000',
+          'originalInAmount': {'amount': '400.50'},
+          'candidatePendingAmount': 'not-a-money',
+          'accountIds': '',
+          'currencyCodes': ['CNY'],
+        },
+      ],
+      'total': 1,
+    });
+    expect(messy.total, 1);
+    expect(messy.rows, hasLength(1));
+    expect(messy.rows.single.originalOutAmount?.cents, 100000);
+    expect(messy.rows.single.originalInAmount?.cents, 40050);
+    expect(messy.rows.single.candidatePendingAmount, isNull);
+    expect(messy.rows.single.accountIds, isEmpty);
+    expect(messy.rows.single.issueCodes, ['LEGACY_LOAN_ISOLATED']);
   });
 
   test('maps entry components from the fixed whitelist', () {

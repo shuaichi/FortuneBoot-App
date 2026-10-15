@@ -390,13 +390,29 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                 ),
             ],
           ),
-        if (detail.readOnlyReason?.isNotEmpty == true)
+        if (detail.isReviewRequired ||
+            detail.readOnlyReason?.isNotEmpty == true)
           Padding(
             padding: const EdgeInsets.only(top: FxSpacing.sm),
-            child: Text(detail.readOnlyReason!),
+            child: Text(
+              _readOnlyReasonLabel(context, detail),
+              style: FxTypography.body.copyWith(
+                color: FxPalette.of(context).textSecondary,
+              ),
+            ),
           ),
       ],
     );
+  }
+
+  /// 服务端可能直接回枚举值（如 REVIEW_REQUIRED），转成可读说明。
+  String _readOnlyReasonLabel(BuildContext context, FinanceOrderDetail detail) {
+    final s = S.of(context);
+    final raw = detail.readOnlyReason?.trim();
+    if (detail.isReviewRequired || raw == 'REVIEW_REQUIRED') {
+      return s.ordersReviewRequiredHint;
+    }
+    return raw ?? '';
   }
 
   Widget _entryFilter(BuildContext context, OrderDetailState state) {

@@ -7,24 +7,24 @@
         "material": {
           "certpath": "E:/zhou/WeiHu/fortuneboot/FortuneBoot-App-feat_refactor/上架/fortuneboot.cer",
           "keyAlias": "fortuneboot",
-          "keyPassword": "0000001BA711F540839178DAC656ACFFFF6C426EC93E32307B917D6786DB7BAC2D02C9185E79AC1D9614F8",
+          "keyPassword": "0000001B300A385D422F2D9B4F3F4801FF2FDC60977C5C6103267E91FD243D565B31A05CFB5030284860C9",
           "profile": "E:/zhou/WeiHu/fortuneboot/FortuneBoot-App-feat_refactor/上架/fortunebootRelease.p7b",
           "signAlg": "SHA256withECDSA",
           "storeFile": "E:/zhou/WeiHu/fortuneboot/FortuneBoot-App-feat_refactor/上架/fortuneboot.p12",
-          "storePassword": "0000001B3CA1034B1A00964C4BBA8EE5E343884C4C6C3D232ADAEDB320FE4B43C5D1C4B382359E130E0C09"
+          "storePassword": "0000001BC8D8097F7D4D76319B4B717B055DBE5A46E0042384E7914742A990B5A17EF31B80FD34DE0D383A"
         }
       },
       {
         "name": "haoji",
         "type": "HarmonyOS",
         "material": {
-          "certpath": "C:\\Users\\Administrator\\.ohos\\config\\haoji_ohos_Y5rM-3WZXQcdyq30IREy7dT5smmiblExU88jPscG17w=.cer",
+          "certpath": "C:/Users/Administrator/.ohos/config/haoji_ohos_Y5rM-3WZXQcdyq30IREy7dT5smmiblExU88jPscG17w=.cer",
           "keyAlias": "debugKey",
-          "keyPassword": "0000001B102E9838A745F508CDA15BB8C08405CFD05C43DAA9F768FAE6261EDDE62B46ADFACBE21D39929F",
-          "profile": "C:\\Users\\Administrator\\.ohos\\config\\haoji_ohos_Y5rM-3WZXQcdyq30IREy7dT5smmiblExU88jPscG17w=.p7b",
+          "keyPassword": "0000001B71B9F413D66308DE68260113BB69C726ED20301CA21E770CD9CDC9CF0E934FBF20AB9EA89618D3",
+          "profile": "C:/Users/Administrator/.ohos/config/haoji_ohos_Y5rM-3WZXQcdyq30IREy7dT5smmiblExU88jPscG17w=.p7b",
           "signAlg": "SHA256withECDSA",
-          "storeFile": "C:\\Users\\Administrator\\.ohos\\config\\haoji_ohos_Y5rM-3WZXQcdyq30IREy7dT5smmiblExU88jPscG17w=.p12",
-          "storePassword": "0000001B0E09917EAB207FFA4E3BB22FA7CDA98EB71FE42032E03E5B78C822181118997298CBD6D2449746"
+          "storeFile": "C:/Users/Administrator/.ohos/config/haoji_ohos_Y5rM-3WZXQcdyq30IREy7dT5smmiblExU88jPscG17w=.p12",
+          "storePassword": "0000001BC60390754F482AF678CBA3E6A6B94ED6B9CDDC6E688018564A6B6FE4B5975AE43BF58B342B3C5A"
         }
       }
     ],

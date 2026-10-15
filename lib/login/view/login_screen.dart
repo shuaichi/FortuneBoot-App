@@ -141,10 +141,9 @@ class LoginScreen extends StatelessWidget {
     String nickName = data.additionalSignupData!['nickname']!;
     String email = data.additionalSignupData!['email']!;
     String phoneNumber = data.additionalSignupData!['phone_number']!;
-    int sex =
-        (data.additionalSignupData!['sex'] ?? S.current.male) == S.current.male
-        ? 1
-        : 0;
+    // 表单写入「男/女」或 '1'/'0'。
+    final sexRaw = data.additionalSignupData!['sex'];
+    final int sex = (sexRaw == '1' || sexRaw == S.current.male) ? 1 : 0;
     String password = data.password!;
     final ResisterLogin post = ResisterLogin(
       userName,
@@ -381,41 +380,49 @@ class LoginScreen extends StatelessWidget {
   }
 
   List<UserFormField> fetchUserForms(BuildContext context) {
+    final s = S.of(context);
     return [
       UserFormField(
         keyName: 'nickname',
-        displayName: S.of(context).login_nickname,
+        displayName: s.login_nickname,
         icon: Icon(FontAwesomeIcons.userLarge.data),
         fieldValidator: (value) {
           if (value!.isEmpty) {
-            return S.of(context).user_auth_vaild;
+            return s.user_auth_vaild;
+          }
+          return null;
+        },
+      ),
+      // 不设 tooltip：flutter_login 会用 Tooltip 包住输入框，部分平台会抢点击。
+      UserFormField(
+        keyName: 'sex',
+        displayName: s.sex,
+        icon: Icon(FontAwesomeIcons.venusMars.data),
+        userType: LoginUserType.text,
+        defaultValue: s.male,
+        fieldValidator: (value) {
+          if (value != s.male && value != s.female) {
+            return '${s.commonPleaseSelect}${s.sex}（${s.male}/${s.female}）';
           }
           return null;
         },
       ),
       UserFormField(
-        keyName: 'sex',
-        displayName: S.of(context).sex,
-        icon: Icon(FontAwesomeIcons.venusMars.data),
-        tooltip: const TextSpan(text: '男/女'),
-        userType: LoginUserType.text,
-      ),
-      UserFormField(
         keyName: 'email',
-        displayName: S.of(context).login_email,
+        displayName: s.login_email,
         userType: LoginUserType.email,
         icon: const Icon(Icons.email),
         fieldValidator: (value) {
           if (value!.isNotEmpty &&
               !RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
-            return S.of(context).invalid_email;
+            return s.invalid_email;
           }
           return null;
         },
       ),
       UserFormField(
         keyName: 'phone_number',
-        displayName: S.of(context).phone_number,
+        displayName: s.phone_number,
         userType: LoginUserType.phone,
         fieldValidator: (value) {
           if (value == null || value.isEmpty) {
@@ -438,7 +445,7 @@ class LoginScreen extends StatelessWidget {
             r'$',
           );
           if (!phoneRegExp.hasMatch(value)) {
-            return S.of(context).valid_phone_number;
+            return s.valid_phone_number;
           }
           return null;
         },

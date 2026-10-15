@@ -32,18 +32,40 @@ class OrderMoney extends Equatable implements Comparable<OrderMoney> {
     return OrderMoney._(cents);
   }
 
-  /// 兼容旧 JSON number 与 V2 字符串。旧数字先转十进制字符串，不走浮点运算。
+  /// 兼容旧 JSON number、V2 字符串，以及 `{amount|value}` 包装。
+  /// 响应侧允许超过两位小数，按分截断；用户输入仍走 [parseInput] 严格校验。
   factory OrderMoney.fromJson(dynamic value) {
     if (value == null) {
       throw _invalidAmount();
+    }
+    if (value is Map) {
+      final map = Map<Object?, Object?>.from(value);
+      final nested =
+          map['amount'] ?? map['value'] ?? map['cents'] ?? map['money'];
+      if (nested == null) {
+        throw _invalidAmount();
+      }
+      // cents 字段按整数分解析，避免再走十进制。
+      if (map.containsKey('cents') && identical(nested, map['cents'])) {
+        final cents = nested is int
+            ? nested
+            : int.tryParse(nested.toString());
+        if (cents == null || cents.abs() > maxCents) {
+          throw _invalidAmount();
+        }
+        return OrderMoney._(cents);
+      }
+      return OrderMoney.fromJson(nested);
     }
     return OrderMoney.parse(value.toString());
   }
 
   static int _parseDecimal(String rawValue, {required bool allowNegative}) {
     final value = rawValue.trim();
+    // 响应用 allowNegative=true：允许多位小数后截断到分。
+    // 输入用 allowNegative=false：最多两位小数。
     final match = RegExp(
-      allowNegative ? r'^-?\d+(?:\.\d{1,2})?$' : r'^\d+(?:\.\d{1,2})?$',
+      allowNegative ? r'^-?\d+(?:\.\d+)?$' : r'^\d+(?:\.\d{1,2})?$',
     ).firstMatch(value);
     if (match == null) {
       throw _invalidAmount();
@@ -53,12 +75,13 @@ class OrderMoney extends Equatable implements Comparable<OrderMoney> {
     final unsigned = negative ? value.substring(1) : value;
     final dot = unsigned.indexOf('.');
     final wholePart = dot < 0 ? unsigned : unsigned.substring(0, dot);
-    final decimalPart = dot < 0 ? '' : unsigned.substring(dot + 1);
+    final rawDecimal = dot < 0 ? '' : unsigned.substring(dot + 1);
+    final decimalPart = rawDecimal.isEmpty
+        ? '00'
+        : rawDecimal.padRight(2, '0').substring(0, 2);
 
     final whole = int.tryParse(wholePart.isEmpty ? '0' : wholePart);
-    final decimal = int.tryParse(
-      decimalPart.isEmpty ? '0' : decimalPart.padRight(2, '0'),
-    );
+    final decimal = int.tryParse(decimalPart);
     if (whole == null || decimal == null) {
       throw _invalidAmount();
     }
