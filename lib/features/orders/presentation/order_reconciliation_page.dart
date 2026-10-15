@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fortuneboot/core/navigation/app_router.dart';
 import 'package:fortuneboot/core/navigation/routes.dart';
@@ -36,14 +35,13 @@ class OrderReconciliationPage extends StatefulWidget {
 }
 
 class _OrderReconciliationPageState extends State<OrderReconciliationPage> {
-  static const int _pageSize = 20;
-
   final List<FinanceOrderReconciliation> _rows = [];
   var _page = 1;
   var _total = 0;
   var _loading = true;
   var _loadingMore = false;
   String? _error;
+  String? _loadMoreError;
 
   @override
   void initState() {
@@ -52,6 +50,7 @@ class _OrderReconciliationPageState extends State<OrderReconciliationPage> {
   }
 
   Future<void> _load({bool append = false}) async {
+    final requestPage = append ? _page + 1 : _page;
     setState(() {
       if (append) {
         _loadingMore = true;
@@ -59,21 +58,23 @@ class _OrderReconciliationPageState extends State<OrderReconciliationPage> {
         _loading = true;
       }
       _error = null;
+      _loadMoreError = null;
     });
     try {
       final page = await widget.service.getReconciliation(
         bookId: widget.bookId,
-        pageNum: _page,
-        pageSize: _pageSize,
+        pageNum: requestPage,
       );
       if (!mounted) return;
       setState(() {
         if (append) {
           _rows.addAll(page.rows);
+          _page = requestPage;
         } else {
           _rows
             ..clear()
             ..addAll(page.rows);
+          _page = 1;
         }
         _total = page.total;
         _loading = false;
@@ -85,9 +86,15 @@ class _OrderReconciliationPageState extends State<OrderReconciliationPage> {
       setState(() {
         _loading = false;
         _loadingMore = false;
-        _error = error is FxApiException
-            ? error.message
-            : S.of(context).dashboardLoadFailed;
+        if (append) {
+          _loadMoreError = error is FxApiException
+              ? error.message
+              : S.of(context).ordersLoadMoreFailed;
+        } else {
+          _error = error is FxApiException
+              ? error.message
+              : S.of(context).dashboardLoadFailed;
+        }
       });
     }
   }
@@ -137,9 +144,8 @@ class _OrderReconciliationPageState extends State<OrderReconciliationPage> {
             : S.of(context).ordersOpenFocusedOrder,
         onRetry: focusOrderId == null
             ? null
-            : () => _openOrder(
-                FinanceOrderReconciliation(orderId: focusOrderId),
-              ),
+            : () =>
+                  _openOrder(FinanceOrderReconciliation(orderId: focusOrderId)),
       );
     }
     return RefreshIndicator(
@@ -159,12 +165,18 @@ class _OrderReconciliationPageState extends State<OrderReconciliationPage> {
                 child: Center(child: CircularProgressIndicator()),
               );
             }
+            if (_loadMoreError != null) {
+              return ListTile(
+                key: const ValueKey('reconciliation-load-more'),
+                title: Text(S.of(context).ordersLoadMoreFailed),
+                trailing: Text(S.of(context).commonRetry),
+                onTap: () => _load(append: true),
+              );
+            }
             return ListTile(
-              title: Text(S.of(context).commonRetry),
-              onTap: () {
-                _page++;
-                _load(append: true);
-              },
+              key: const ValueKey('reconciliation-load-more'),
+              title: Text(S.of(context).ordersLoadMore),
+              onTap: () => _load(append: true),
             );
           }
           return _ReconciliationCard(
@@ -198,9 +210,7 @@ class _ReconciliationCard extends StatelessWidget {
         note.isNotEmpty &&
         !issues.any((code) => code.toUpperCase() == note.toUpperCase()) &&
         !_issueLabels(context, issues).any((label) => label == note);
-    final currency = row.currencyCodes.isEmpty
-        ? null
-        : row.currencyCodes.first;
+    final currency = row.currencyCodes.isEmpty ? null : row.currencyCodes.first;
 
     return FxCard(
       onTap: onTap,
@@ -308,7 +318,6 @@ class _ReconciliationCard extends StatelessWidget {
           amount: amount.cents / 100,
           currencyCode: currencyCode,
           fontSize: 14,
-          fontWeight: FontWeight.w600,
           color: palette.textPrimary,
         ),
       ],
