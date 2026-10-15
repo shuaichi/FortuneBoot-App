@@ -92,7 +92,11 @@ class OrderCard extends StatelessWidget {
                       .ordersPendingEntryCount(order.pendingEntryCount),
                 ),
               if (order.isReviewRequired)
-                _tag(S.of(context).ordersReviewRequired),
+                // 待核对：点进单据详情查看说明与流水；勿用空 onTap 吞掉卡片点击。
+                _tag(
+                  S.of(context).ordersReviewRequired,
+                  onTap: onTap,
+                ),
               if (onReport != null)
                 _tag(S.of(context).ordersViewReconciliation, onTap: onReport),
             ],
@@ -111,12 +115,17 @@ class OrderCard extends StatelessWidget {
     return _tag('$label ${(amount / 100).toStringAsFixed(2)}');
   }
 
-  Widget _tag(String label, {VoidCallback? onTap}) => FxChip(
-    label: label,
-    selected: false,
-    isAction: true,
-    onTap: onTap ?? () {},
-  );
+  /// 无 [onTap] 的状态标签不拦截手势，点到标签仍落到卡片打开详情。
+  Widget _tag(String label, {VoidCallback? onTap}) {
+    final chip = FxChip(
+      label: label,
+      selected: false,
+      isAction: onTap != null,
+      onTap: onTap ?? () {},
+    );
+    if (onTap != null) return chip;
+    return IgnorePointer(child: chip);
+  }
 
   String _issuedLabel(BuildContext context) => switch (order.type) {
     FinanceOrderType.receivable => S.of(context).ordersIssuedLoanOut,

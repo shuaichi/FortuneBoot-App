@@ -554,8 +554,8 @@ class BillEditorBloc extends Bloc<BillEditorEvent, BillEditorState> {
   void _onAccountChanged(AccountChanged event, Emitter<BillEditorState> emit) {
     emit(
       state.copyWith(
-        toAccountId: event.accountId,
-        toAccountName: event.accountName,
+        accountId: event.accountId,
+        accountName: event.accountName,
       ),
     );
   }
@@ -566,8 +566,8 @@ class BillEditorBloc extends Bloc<BillEditorEvent, BillEditorState> {
   ) {
     emit(
       state.copyWith(
-        accountId: event.accountId,
-        accountName: event.accountName,
+        toAccountId: event.accountId,
+        toAccountName: event.accountName,
       ),
     );
   }

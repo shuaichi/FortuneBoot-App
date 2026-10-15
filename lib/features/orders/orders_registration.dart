@@ -49,10 +49,15 @@ void registerOrdersFeature() {
       _ => <String, dynamic>{},
     };
     final bookId = map['bookId'] as int?;
+    final focusOrderId = map['focusOrderId'] as int?;
     final service = map['service'] is OrdersService
         ? map['service'] as OrdersService
         : OrdersService();
     if (bookId == null) return const Scaffold(body: SizedBox.shrink());
-    return OrderReconciliationPage(service: service, bookId: bookId);
+    return OrderReconciliationPage(
+      service: service,
+      bookId: bookId,
+      focusOrderId: focusOrderId,
+    );
   });
 }

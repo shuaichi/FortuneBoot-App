@@ -54,7 +54,14 @@ void main() {
       ),
     );
     expect(() => OrderMoney.fromJson('not-a-number'), throwsA(isA<FxFailure>()));
-    expect(() => OrderMoney.fromJson(1.234), throwsA(isA<FxFailure>()));
+    expect(() => OrderMoney.fromJson('1e3'), throwsA(isA<FxFailure>()));
+  });
+
+  test('fromJson truncates extra response decimals and unwraps amount maps', () {
+    expect(OrderMoney.fromJson('1.234').cents, 123);
+    expect(OrderMoney.fromJson('1000.0000').cents, 100000);
+    expect(OrderMoney.fromJson({'amount': '12.345'}).cents, 1234);
+    expect(OrderMoney.fromJson({'cents': 50}).cents, 50);
   });
 
   test('supports exact addition, subtraction and comparison', () {
