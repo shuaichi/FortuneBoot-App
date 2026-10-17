@@ -11,6 +11,7 @@ import 'package:fortuneboot/core/desktop_widget/ohos_desktop_widget.dart';
 import 'package:fortuneboot/core/navigation/app_nav.dart';
 import 'package:fortuneboot/core/navigation/app_router.dart';
 import 'package:fortuneboot/core/navigation/routes.dart';
+import 'package:fortuneboot/core/navigation/startup_route_guard.dart';
 import 'package:fortuneboot/core/preferences/preferences_cubit.dart';
 import 'package:fortuneboot/core/session/session_cubit.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
@@ -59,6 +60,8 @@ class _FxAppViewState extends State<_FxAppView> with WidgetsBindingObserver {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     OhosDesktopWidget.bindMonthChangedHandler(_syncDesktopWidget);
+    // Web 刷新深链会绕过 baseUrlConfig 启动流程，首帧后统一拉回启动页。
+    StartupRouteGuard.scheduleStartupReset(appNavigatorKey);
   }
 
   void _syncDesktopWidget() {
