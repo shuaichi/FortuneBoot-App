@@ -1,6 +1,6 @@
 name: fortuneboot
 description: "Hao Ji"
-version: 1.6.0+2026101417 #🍏🥝
+version: 1.6.1+2026101816 #🍏🥝
 # 上架版本来源：versionName+versionCode。DevEco 打包前请双击运行：
 #   scripts/set_ohos_version.bat
 # 交互确认后再 Build Hap。
