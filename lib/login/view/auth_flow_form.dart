@@ -385,28 +385,25 @@ class _AuthFlowFormState extends State<AuthFlowForm> {
 
   Widget _buildSecondaryActions(S s) {
     return switch (_mode) {
-      // FxButton 在宽松约束下会撑满可用宽度，这里用 IntrinsicWidth 收成内容宽度；
-      // 两个操作在窄屏放不下时由 Wrap 换行，避免 RenderFlex 溢出。
+      // 两个文案按钮按内容宽度收缩，窄屏放不下时由 Wrap 换行，避免 RenderFlex 溢出。
       _AuthFlowMode.signIn => Wrap(
         alignment: WrapAlignment.spaceBetween,
         spacing: FxSpacing.sm,
         runSpacing: FxSpacing.xs,
         children: [
-          IntrinsicWidth(
-            child: FxButton.text(
-              label: s.forgot_huh,
-              onPressed: _loading
-                  ? null
-                  : () => _changeMode(_AuthFlowMode.recover),
-            ),
+          FxButton.text(
+            label: s.forgot_huh,
+            hugContent: true,
+            onPressed: _loading
+                ? null
+                : () => _changeMode(_AuthFlowMode.recover),
           ),
-          IntrinsicWidth(
-            child: FxButton.text(
-              label: s.register,
-              onPressed: _loading
-                  ? null
-                  : () => _changeMode(_AuthFlowMode.signUp),
-            ),
+          FxButton.text(
+            label: s.register,
+            hugContent: true,
+            onPressed: _loading
+                ? null
+                : () => _changeMode(_AuthFlowMode.signUp),
           ),
         ],
       ),

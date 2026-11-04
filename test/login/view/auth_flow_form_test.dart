@@ -144,6 +144,8 @@ void main() {
     );
     final registerRect = tester.getRect(find.widgetWithText(FxButton, '注册'));
     expect(forgotRect.top, registerRect.top);
+    // 窄屏下仍完整展示长文案，而不是被压成半宽后省略。
+    expect(forgotRect.width, greaterThan(180));
     expect(forgotRect.left, greaterThanOrEqualTo(0));
     expect(registerRect.right, lessThanOrEqualTo(320));
   });

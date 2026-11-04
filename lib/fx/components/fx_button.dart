@@ -16,6 +16,9 @@ class FxButton extends StatelessWidget {
   final FxButtonVariant variant;
   final IconData? icon;
   final bool expand;
+
+  /// 为 true 时在宽松约束下按内容宽度收缩；默认撑满可用宽度。
+  final bool hugContent;
   final bool loading;
 
   const FxButton({
@@ -25,6 +28,7 @@ class FxButton extends StatelessWidget {
     this.variant = FxButtonVariant.filled,
     this.icon,
     this.expand = false,
+    this.hugContent = false,
     this.loading = false,
   });
 
@@ -34,6 +38,7 @@ class FxButton extends StatelessWidget {
     required this.onPressed,
     this.icon,
     this.expand = false,
+    this.hugContent = false,
     this.loading = false,
   }) : variant = FxButtonVariant.tonal;
 
@@ -43,6 +48,7 @@ class FxButton extends StatelessWidget {
     required this.onPressed,
     this.icon,
     this.expand = false,
+    this.hugContent = false,
     this.loading = false,
   }) : variant = FxButtonVariant.text;
 
@@ -52,6 +58,7 @@ class FxButton extends StatelessWidget {
     required this.onPressed,
     this.icon,
     this.expand = false,
+    this.hugContent = false,
     this.loading = false,
   }) : variant = FxButtonVariant.critical;
 
@@ -91,11 +98,13 @@ class FxButton extends StatelessWidget {
                 Icon(icon, size: 18, color: fg),
                 const SizedBox(width: 8),
               ],
-              Text(
-                label,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: FxTypography.bodyStrong.copyWith(color: fg),
+              Flexible(
+                child: Text(
+                  label,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: FxTypography.bodyStrong.copyWith(color: fg),
+                ),
               ),
             ],
           );
@@ -104,6 +113,7 @@ class FxButton extends StatelessWidget {
     final horizontalPadding = variant == FxButtonVariant.text
         ? _textHorizontalPadding
         : _defaultHorizontalPadding;
+    final hug = hugContent && !expand;
 
     final button = Opacity(
       opacity: disabled ? 0.5 : 1,
@@ -120,7 +130,7 @@ class FxButton extends StatelessWidget {
                 },
           child: Container(
             height: 48,
-            alignment: Alignment.center,
+            alignment: hug ? null : Alignment.center,
             padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
             child: child,
           ),
