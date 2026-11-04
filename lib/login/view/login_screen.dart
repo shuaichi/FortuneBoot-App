@@ -15,7 +15,7 @@ import 'package:fortuneboot/core/navigation/app_nav.dart';
 import 'package:fortuneboot/core/navigation/routes.dart';
 import 'package:fortuneboot/login/model/users.dart';
 import 'package:fortuneboot/login/server/server_history_store.dart';
-import 'package:fortuneboot/login/view/auth_flow_form.dart';
+import 'package:fortuneboot/login/view/auth_page.dart';
 import 'package:fortuneboot/login/view/auth_scaffold.dart';
 import 'package:fortuneboot/fx/components/fx_button.dart';
 import 'package:fortuneboot/fx/components/fx_pressable.dart';
@@ -25,7 +25,6 @@ import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
 import 'package:fortuneboot/util/base64_img.dart';
 import 'package:fortuneboot/util/dio_client.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:encrypt/encrypt.dart';
 import '../../generated/l10n.dart';
 import 'package:flutter/services.dart';
@@ -52,7 +51,10 @@ class LoginScreen extends StatelessWidget {
     return sb.toString() + footer;
   }
 
-  Future<String?> _loginUser(LoginData data) async {
+  Future<String?> _loginUser(
+    LoginData data, {
+    required String cancelledMessage,
+  }) async {
     // lxjtodo：注册：1.验证码 2.rsa加密密码 3.login
     final loginService = LoginService();
     var capImgRes = await loginService.captchaImage();
@@ -74,7 +76,7 @@ class LoginScreen extends StatelessWidget {
           ? null
           : Map<String, dynamic>.from(captchaResult);
       if (userResDic == null) {
-        return S.current.default_comment;
+        return cancelledMessage;
       }
     }
     final rsaKey = await loginService.getRsaPublicKey();
@@ -108,7 +110,7 @@ class LoginScreen extends StatelessWidget {
                 );
                 var token = responseData["token"] as String? ?? "";
                 if (token.isEmpty) {
-                  return S.current.default_comment;
+                  return S.current.commonSystemBusy;
                 }
                 var userToken = {
                   "Cookie":
@@ -124,11 +126,11 @@ class LoginScreen extends StatelessWidget {
               }
               return null;
             }
-            return S.current.default_comment;
+            return value.msg.isEmpty ? S.current.commonSystemBusy : value.msg;
           })
-          .catchError((_) => S.current.default_comment);
+          .catchError((_) => S.current.commonSystemBusy);
     } on Object {
-      return S.current.default_comment;
+      return S.current.commonSystemBusy;
     }
   }
 
@@ -174,7 +176,7 @@ class LoginScreen extends StatelessWidget {
           debugPrint(value.toString());
           return value.msg;
         })
-        .catchError((Object _) => S.current.default_comment);
+        .catchError((Object _) => S.current.registration_failed);
   }
 
   Future<String?> _signupUser(SignupData data) async {
@@ -215,17 +217,14 @@ class LoginScreen extends StatelessWidget {
             ),
           );
         } else {
-          return 'service err role err';
+          return S.current.commonSystemBusy;
         }
       }
-      return S.current.default_comment;
+      return S.current.commonSystemBusy;
     } on Object {
-      return S.current.default_comment;
+      return S.current.commonSystemBusy;
     }
   }
-
-  Future<String?> _recoverPassword(String name) async =>
-      S.current.default_comment;
 
   String _apiVersionFailureMessage(
     BuildContext context,
@@ -289,29 +288,35 @@ class LoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final s = S.of(context);
-    return AuthScaffold(
-      title: s.main_logo,
-      subtitle: '${s.login_message} ${s.login_host}',
-      child: AuthFlowForm(
-        additionalSignupFields: fetchUserForms(context),
-        onCheckUsername: _checkUsernameAvailable,
-        onLogin: (data) {
-          HapticFeedback.mediumImpact();
-          return _loginUser(data);
-        },
-        onSignup: (data) {
-          HapticFeedback.mediumImpact();
-          return _signupUser(data);
-        },
-        onRecoverPassword: (account) {
-          HapticFeedback.lightImpact();
-          return _recoverPassword(account);
-        },
-        onLoginSuccess: () => _completeLogin(context),
-        onOpenTerms: _openTerms,
-      ),
+    final copy = AuthCopy.of(context);
+    return AuthPage(
+      copy: copy,
+      serverLabel: _currentServerLabel(),
+      additionalSignupFields: fetchUserForms(context),
+      onCheckUsername: _checkUsernameAvailable,
+      onLogin: (data) {
+        HapticFeedback.mediumImpact();
+        return _loginUser(data, cancelledMessage: copy.signInCancelled);
+      },
+      onSignup: (data) {
+        HapticFeedback.mediumImpact();
+        return _signupUser(data);
+      },
+      onLoginSuccess: () => _completeLogin(context),
+      onOpenTerms: _openTerms,
     );
+  }
+
+  String? _currentServerLabel() {
+    final raw = DioClient().dio.options.baseUrl.trim();
+    if (raw.isEmpty) {
+      return null;
+    }
+    final uri = Uri.tryParse(raw);
+    if (uri == null || uri.host.isEmpty) {
+      return raw;
+    }
+    return uri.hasPort ? '${uri.host}:${uri.port}' : uri.host;
   }
 
   List<UserFormField> fetchUserForms(BuildContext context) {
@@ -320,7 +325,6 @@ class LoginScreen extends StatelessWidget {
       UserFormField(
         keyName: 'nickname',
         displayName: s.login_nickname,
-        icon: Icon(FontAwesomeIcons.userLarge.data),
         fieldValidator: (value) {
           if (value!.isEmpty) {
             return s.user_auth_vaild;
@@ -332,7 +336,6 @@ class LoginScreen extends StatelessWidget {
       UserFormField(
         keyName: 'sex',
         displayName: s.sex,
-        icon: Icon(FontAwesomeIcons.venusMars.data),
         userType: LoginUserType.text,
         defaultValue: s.male,
         fieldValidator: (value) {
@@ -346,7 +349,6 @@ class LoginScreen extends StatelessWidget {
         keyName: 'email',
         displayName: s.login_email,
         userType: LoginUserType.email,
-        icon: const Icon(Icons.email),
         fieldValidator: (value) {
           if (value!.isNotEmpty &&
               !RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
