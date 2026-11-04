@@ -83,7 +83,7 @@ void main() {
     final shellInsets = tester.widget<ShellContentInsets>(
       find.byType(ShellContentInsets),
     );
-    expect(shellInsets.bottom, 96);
+    expect(shellInsets.bottom, 144);
 
     await tester.tap(find.text('全部'));
     await tester.pump();
@@ -149,6 +149,78 @@ void main() {
       ),
       findsOneWidget,
     );
+  });
+
+  testWidgets('stats tab hides quick add and releases its content inset', (
+    tester,
+  ) async {
+    final originalDashboard = MainShellSlots.dashboard;
+    final originalBills = MainShellSlots.bills;
+    final originalStats = MainShellSlots.stats;
+    final originalProfile = MainShellSlots.profile;
+    addTearDown(() {
+      MainShellSlots.dashboard = originalDashboard;
+      MainShellSlots.bills = originalBills;
+      MainShellSlots.stats = originalStats;
+      MainShellSlots.profile = originalProfile;
+    });
+
+    MainShellSlots.dashboard = (_) => const SizedBox.shrink();
+    MainShellSlots.bills = (_) => const SizedBox.shrink();
+    MainShellSlots.stats = (_) => const Center(child: Text('Stats tab'));
+    MainShellSlots.profile = (_) => const SizedBox.shrink();
+
+    final session = SessionCubit(
+      groupService: const _EmptyGroupService(),
+      bookService: const _UnusedBookService(),
+    );
+    final preferences = PreferencesCubit();
+    final appLock = AppLockCubit(
+      settingsStore: const _FakeAppLockSettingsStore(),
+      secretStore: const _FakeAppLockSecretStore(),
+      biometricAuthenticator: const _FakeAppLockBiometricAuthenticator(),
+    );
+    addTearDown(session.close);
+    addTearDown(preferences.close);
+    addTearDown(appLock.close);
+
+    await tester.pumpWidget(
+      MultiBlocProvider(
+        providers: [
+          BlocProvider.value(value: session),
+          BlocProvider.value(value: preferences),
+          BlocProvider.value(value: appLock),
+        ],
+        child: MaterialApp(
+          theme: FxTheme.light,
+          locale: const Locale('zh'),
+          localizationsDelegates: const [
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+            S.delegate,
+          ],
+          supportedLocales: S.delegate.supportedLocales,
+          home: const MainShell(),
+        ),
+      ),
+    );
+    await tester.pump();
+
+    final dashboardInset = tester
+        .widget<ShellContentInsets>(find.byType(ShellContentInsets))
+        .bottom;
+    expect(find.byType(FloatingActionButton), findsOneWidget);
+
+    await tester.tap(find.text('统计'));
+    await tester.pumpAndSettle();
+
+    final statsInset = tester
+        .widget<ShellContentInsets>(find.byType(ShellContentInsets))
+        .bottom;
+    expect(find.text('Stats tab'), findsOneWidget);
+    expect(find.byType(FloatingActionButton), findsNothing);
+    expect(statsInset, lessThan(dashboardInset));
   });
 }
 

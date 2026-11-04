@@ -33,18 +33,9 @@ class StatsPieCard extends StatelessWidget {
       section: section,
       onRetry: onRetry,
       height: 240,
+      isEmpty: (slices) => slices.every((slice) => slice.value <= 0),
       builder: (slices) {
         final positive = slices.where((s) => s.value > 0).toList();
-        if (positive.isEmpty) {
-          return Center(
-            child: Text(
-              S.of(context).statsNoRecordsThisPeriod,
-              style: FxTypography.caption.copyWith(
-                color: FxPalette.of(context).textTertiary,
-              ),
-            ),
-          );
-        }
         final formats = StatsFormatters.of(context, currencyCode: currencyCode);
         final chartSlices = [
           for (final slice in positive)

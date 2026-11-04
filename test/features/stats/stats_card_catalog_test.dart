@@ -9,6 +9,18 @@ void main() {
       expect(order.toSet(), StatsCardCatalog.allIds.toSet());
     });
 
+    test('normalizeOrder keeps secondary reports after core analytics', () {
+      final order = StatsCardCatalog.normalizeOrder(const [
+        'moreReports',
+        'trend',
+        'overview',
+      ]);
+
+      expect(order.last, StatsCardId.moreReports);
+      expect(order.indexOf(StatsCardId.trend), lessThan(order.length - 1));
+      expect(order.indexOf(StatsCardId.overview), lessThan(order.length - 1));
+    });
+
     test('relocate inserts before or after', () {
       const visible = [
         StatsCardId.overview,
@@ -22,11 +34,7 @@ void main() {
           to: StatsCardId.overview,
           after: false,
         ),
-        [
-          StatsCardId.trend,
-          StatsCardId.overview,
-          StatsCardId.calendar,
-        ],
+        [StatsCardId.trend, StatsCardId.overview, StatsCardId.calendar],
       );
     });
   });

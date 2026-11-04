@@ -236,8 +236,15 @@ class _MonthCalendarState extends State<_MonthCalendar> {
   @override
   Widget build(BuildContext context) {
     final days = _mergeDayBuckets(widget.items);
-    final firstWeekday = DateTime(widget.anchor.year, widget.anchor.month).weekday;
-    final dayCount = DateTime(widget.anchor.year, widget.anchor.month + 1, 0).day;
+    final firstWeekday = DateTime(
+      widget.anchor.year,
+      widget.anchor.month,
+    ).weekday;
+    final dayCount = DateTime(
+      widget.anchor.year,
+      widget.anchor.month + 1,
+      0,
+    ).day;
     final weekdayLabels = [
       S.of(context).billsWeekdayMon,
       S.of(context).billsWeekdayTue,
@@ -264,9 +271,9 @@ class _MonthCalendarState extends State<_MonthCalendar> {
       builder: (context, constraints) {
         final cellWidth = (constraints.maxWidth - 24) / 7;
         final textScale = MediaQuery.textScalerOf(context).scale(1);
-        // 公历 + 农历 + 收支三行；高度跟内容走，避免格子底部空一大截。
-        final minimumHeight = 60 * textScale;
-        final maxHeight = 84.0 * textScale;
+        // 公历 + 一条农历/节日 + 收支状态点，详情由当日摘要承接。
+        final minimumHeight = 52 * textScale;
+        final maxHeight = 64.0 * textScale;
         final dayCellHeight = cellWidth.clamp(minimumHeight, maxHeight);
         return Column(
           children: [
@@ -342,8 +349,7 @@ class _MonthCalendarState extends State<_MonthCalendar> {
         day == null) {
       return null;
     }
-    final maxDay =
-        DateTime(widget.anchor.year, widget.anchor.month + 1, 0).day;
+    final maxDay = DateTime(widget.anchor.year, widget.anchor.month + 1, 0).day;
     if (day < 1 || day > maxDay) return null;
     return day;
   }
@@ -421,14 +427,7 @@ class _DayCell extends StatelessWidget {
         '${s.statsCalendarIncome} ${formats.money(bucket.income)}, '
         '${s.statsCalendarExpense} ${formats.money(bucket.expense)}, '
         '${s.statsCalendarTotalCount(bucket.totalCount)}';
-    final workRestColor = calendar.isRest
-        ? finance.rest
-        : calendar.isWorkdayMakeup
-        ? finance.work
-        : palette.textTertiary;
-    final Color fill = selected
-        ? palette.primary.withValues(alpha: 0.16)
-        : Colors.transparent;
+    final Color fill = selected ? palette.surfaceMuted : Colors.transparent;
     return Semantics(
       button: true,
       selected: selected,
@@ -452,102 +451,77 @@ class _DayCell extends StatelessWidget {
           );
         },
         child: Container(
-          padding: const EdgeInsets.fromLTRB(2, 1, 2, 1),
+          padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 4),
           decoration: BoxDecoration(
             color: fill,
             borderRadius: BorderRadius.circular(8),
-            border: selected
-                ? Border.all(color: palette.primary.withValues(alpha: 0.45))
-                : null,
+            border: selected ? Border.all(color: palette.primary) : null,
           ),
-          child: Stack(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Padding(
-                    // 给右上角「班/休」留出固定空位，避免被日期挤掉。
-                    padding: EdgeInsets.only(right: workRest == null ? 0 : 12),
-                    child: Text(
-                      '${date.day}',
-                      textAlign: TextAlign.center,
-                      style: FxTypography.caption.copyWith(
-                        fontWeight: FontWeight.w600,
-                        height: 1.0,
-                      ),
-                    ),
-                  ),
-                  Text(
-                    calendar.subtitle,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    textAlign: TextAlign.center,
-                    style: FxTypography.caption.copyWith(
-                      color: calendar.isFestivalOrTerm
-                          ? finance.holiday
-                          : palette.textTertiary,
-                      fontSize: 9,
-                      height: 1.0,
-                    ),
-                  ),
-                  if (bucket.totalCount > 0 ||
-                      bucket.income != 0 ||
-                      bucket.expense != 0)
-                    Flexible(
-                      child: FittedBox(
-                        fit: BoxFit.scaleDown,
-                        alignment: Alignment.topLeft,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            if (bucket.income != 0)
-                              _CompactAmount(
-                                '↑',
-                                bucket.income,
-                                currencyCode,
-                                finance.income,
-                              ),
-                            if (bucket.expense != 0)
-                              _CompactAmount(
-                                '↓',
-                                bucket.expense,
-                                currencyCode,
-                                finance.expense,
-                              ),
-                            if (bucket.totalCount > 0)
-                              Text(
-                                '${bucket.totalCount}',
-                                style: FxTypography.caption.copyWith(
-                                  color: palette.textTertiary,
-                                  fontSize: 9,
-                                  height: 1.0,
-                                ),
-                              ),
-                          ],
-                        ),
-                      ),
-                    ),
-                ],
-              ),
-              if (workRest != null)
-                Positioned(
-                  top: 0,
-                  right: 0,
-                  child: Text(
-                    workRest,
-                    style: FxTypography.caption.copyWith(
-                      color: workRestColor,
-                      fontSize: 9,
-                      fontWeight: FontWeight.w700,
-                      height: 1.05,
-                    ),
-                  ),
+              Text(
+                '${date.day}',
+                textAlign: TextAlign.center,
+                style: FxTypography.caption.copyWith(
+                  color: selected ? palette.primary : palette.textPrimary,
+                  fontWeight: FontWeight.w600,
+                  height: 1.0,
                 ),
+              ),
+              Text(
+                calendar.subtitle,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.center,
+                style: FxTypography.caption.copyWith(
+                  color: calendar.isFestivalOrTerm
+                      ? finance.holiday
+                      : palette.textTertiary,
+                  fontSize: 9,
+                  height: 1.0,
+                ),
+              ),
+              _ActivityDots(bucket: bucket),
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _ActivityDots extends StatelessWidget {
+  const _ActivityDots({required this.bucket});
+
+  final IncomeExpenseCalendarBucket bucket;
+
+  @override
+  Widget build(BuildContext context) {
+    final finance = FxFinanceColors.of(context);
+    final palette = FxPalette.of(context);
+    final colors = <Color>[
+      if (bucket.income != 0) finance.income,
+      if (bucket.expense != 0) finance.expense,
+      if (bucket.income == 0 && bucket.expense == 0 && bucket.totalCount > 0)
+        palette.textTertiary,
+    ];
+    return SizedBox(
+      height: 5,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          for (final color in colors)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 2),
+              child: Container(
+                width: 5,
+                height: 5,
+                decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+              ),
+            ),
+        ],
       ),
     );
   }

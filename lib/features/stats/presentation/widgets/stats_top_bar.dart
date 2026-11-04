@@ -68,69 +68,70 @@ class StatsTopBar extends StatelessWidget {
             const SizedBox(height: FxSpacing.sm),
             Row(
               children: [
-                Expanded(
-                  child: _RangeChip(
-                    label: S.of(context).statsRangeWeek,
-                    semanticsLabel: S.of(context).statsRangeWeek,
-                    selected: state.range == StatsRange.week,
-                    onTap: () =>
-                        bloc.add(const StatsRangeChanged(StatsRange.week)),
-                  ),
+                _RangeMenu(
+                  label: _rangeLabel(context, state, day),
+                  semanticsLabel: _rangeSemanticsLabel(context, state, locale),
+                  onSelected: (range) {
+                    HapticFeedback.selectionClick();
+                    if (range == StatsRange.custom) {
+                      _pickCustom(context, bloc);
+                      return;
+                    }
+                    bloc.add(StatsRangeChanged(range));
+                  },
                 ),
-                const SizedBox(width: FxSpacing.xs),
+                const SizedBox(width: FxSpacing.sm),
                 Expanded(
-                  child: _RangeChip(
-                    label: S.of(context).statsRangePeriod,
-                    semanticsLabel: S.of(context).statsRangePeriod,
-                    selected: state.range == StatsRange.month,
-                    onTap: () =>
-                        bloc.add(const StatsRangeChanged(StatsRange.month)),
-                  ),
-                ),
-                const SizedBox(width: FxSpacing.xs),
-                Expanded(
-                  child: _RangeChip(
-                    label: S.of(context).statsRangeYear,
-                    semanticsLabel: S.of(context).statsRangeYear,
-                    selected: state.range == StatsRange.year,
-                    onTap: () =>
-                        bloc.add(const StatsRangeChanged(StatsRange.year)),
-                  ),
-                ),
-                const SizedBox(width: FxSpacing.xs),
-                Expanded(
-                  child: _RangeChip(
-                    label:
-                        state.range == StatsRange.custom &&
-                            state.customStart != null &&
-                            state.customEnd != null
-                        ? '${day.format(state.customStart!)}-${day.format(state.customEnd!)}'
-                        : S.of(context).statsRangeCustom,
-                    semanticsLabel:
-                        state.range == StatsRange.custom &&
-                            state.customStart != null &&
-                            state.customEnd != null
-                        ? '${S.of(context).statsRangeCustom} ${DateFormat.yMMMd(locale).format(state.customStart!)} - ${DateFormat.yMMMd(locale).format(state.customEnd!)}'
-                        : S.of(context).statsRangeCustom,
-                    selected: state.range == StatsRange.custom,
-                    onTap: () => _pickCustom(context, bloc),
+                  child: FxSegmented<StatsType>(
+                    value: state.type,
+                    segments: [
+                      FxSegment(StatsType.expense, S.of(context).statsExpense),
+                      FxSegment(StatsType.income, S.of(context).statsIncome),
+                    ],
+                    onChanged: (type) => bloc.add(StatsTypeChanged(type)),
                   ),
                 ),
               ],
-            ),
-            const SizedBox(height: FxSpacing.sm),
-            FxSegmented<StatsType>(
-              value: state.type,
-              segments: [
-                FxSegment(StatsType.expense, S.of(context).statsExpense),
-                FxSegment(StatsType.income, S.of(context).statsIncome),
-              ],
-              onChanged: (t) => bloc.add(StatsTypeChanged(t)),
             ),
           ],
         ],
       ),
     );
+  }
+
+  String _rangeLabel(BuildContext context, StatsState state, DateFormat day) {
+    if (state.range == StatsRange.custom &&
+        state.customStart != null &&
+        state.customEnd != null) {
+      return '${day.format(state.customStart!)}–${day.format(state.customEnd!)}';
+    }
+    return _labelForRange(context, state.range);
+  }
+
+  String _rangeSemanticsLabel(
+    BuildContext context,
+    StatsState state,
+    String locale,
+  ) {
+    final s = S.of(context);
+    if (state.range == StatsRange.custom &&
+        state.customStart != null &&
+        state.customEnd != null) {
+      final start = DateFormat.yMMMd(locale).format(state.customStart!);
+      final end = DateFormat.yMMMd(locale).format(state.customEnd!);
+      return '${s.statsRangeCustom} $start - $end';
+    }
+    return _labelForRange(context, state.range);
+  }
+
+  String _labelForRange(BuildContext context, StatsRange range) {
+    final s = S.of(context);
+    return switch (range) {
+      StatsRange.week => s.statsRangeWeek,
+      StatsRange.month => s.statsRangePeriod,
+      StatsRange.year => s.statsRangeYear,
+      StatsRange.custom => s.statsRangeCustom,
+    };
   }
 
   Future<void> _pickCustom(BuildContext context, StatsBloc bloc) async {
@@ -162,58 +163,74 @@ class StatsTopBar extends StatelessWidget {
   }
 }
 
-class _RangeChip extends StatelessWidget {
-  final String label;
-  final String semanticsLabel;
-  final bool selected;
-  final VoidCallback onTap;
-
-  const _RangeChip({
+class _RangeMenu extends StatelessWidget {
+  const _RangeMenu({
     required this.label,
     required this.semanticsLabel,
-    required this.selected,
-    required this.onTap,
+    required this.onSelected,
   });
+
+  final String label;
+  final String semanticsLabel;
+  final ValueChanged<StatsRange> onSelected;
 
   @override
   Widget build(BuildContext context) {
     final palette = FxPalette.of(context);
-    return Semantics(
-      button: true,
-      selected: selected,
-      label: semanticsLabel,
+    final s = S.of(context);
+    return ConstrainedBox(
+      constraints: const BoxConstraints(maxWidth: 144, minHeight: 48),
       child: Material(
-        color: Colors.transparent,
-        borderRadius: FxRadius.pillBorder,
-        child: InkWell(
-          borderRadius: FxRadius.pillBorder,
-          onTap: () {
-            if (!selected) HapticFeedback.selectionClick();
-            onTap();
-          },
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 180),
-            width: double.infinity,
-            constraints: const BoxConstraints(minHeight: 36),
-            alignment: Alignment.center,
-            padding: const EdgeInsets.symmetric(
-              horizontal: FxSpacing.xs,
-              vertical: FxSpacing.xs,
+        color: palette.surface,
+        shape: RoundedRectangleBorder(
+          borderRadius: FxRadius.tileBorder,
+          side: BorderSide(color: palette.border),
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: PopupMenuButton<StatsRange>(
+          tooltip: semanticsLabel,
+          onSelected: onSelected,
+          itemBuilder: (context) => [
+            PopupMenuItem(
+              value: StatsRange.week,
+              child: Text(s.statsRangeWeek),
             ),
-            decoration: BoxDecoration(
-              color: selected ? palette.primary : palette.surface,
-              borderRadius: FxRadius.pillBorder,
+            PopupMenuItem(
+              value: StatsRange.month,
+              child: Text(s.statsRangePeriod),
             ),
-            child: Text(
-              label,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              textAlign: TextAlign.center,
-              style: FxTypography.label.copyWith(
-                color: selected ? palette.onPrimary : palette.textSecondary,
-                fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
-                height: 1.1,
-              ),
+            PopupMenuItem(
+              value: StatsRange.year,
+              child: Text(s.statsRangeYear),
+            ),
+            PopupMenuItem(
+              value: StatsRange.custom,
+              child: Text(s.statsRangeCustom),
+            ),
+          ],
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: FxSpacing.md),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Flexible(
+                  child: Text(
+                    label,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: FxTypography.label.copyWith(
+                      color: palette.textSecondary,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: FxSpacing.xs),
+                Icon(
+                  Icons.keyboard_arrow_down_rounded,
+                  size: 18,
+                  color: palette.textTertiary,
+                ),
+              ],
             ),
           ),
         ),

@@ -158,8 +158,7 @@ class _BodyState extends State<_Body> {
 
   bool get _editingLayout => widget.editingLayout;
 
-  List<StatsCardId> get _layoutVisible =>
-      _previewVisible ?? _committedVisible;
+  List<StatsCardId> get _layoutVisible => _previewVisible ?? _committedVisible;
 
   @override
   void didUpdateWidget(covariant _Body oldWidget) {
@@ -184,11 +183,7 @@ class _BodyState extends State<_Body> {
     setState(() {});
   }
 
-  void _onInsertNear(
-    StatsCardId from,
-    StatsCardId to, {
-    required bool after,
-  }) {
+  void _onInsertNear(StatsCardId from, StatsCardId to, {required bool after}) {
     if (_draggingId != from) return;
     final current = _previewVisible ?? _committedVisible;
     final next = StatsCardCatalog.relocate(
@@ -269,7 +264,7 @@ class _BodyState extends State<_Body> {
                 bloc: bloc,
               );
               if (card == null) continue;
-              final item = _editingLayout
+              final item = _editingLayout && id != StatsCardId.moreReports
                   ? StatsDraggableCard(
                       key: ValueKey(id),
                       id: id,
@@ -305,33 +300,28 @@ class _BodyState extends State<_Body> {
             final list = ValueListenableBuilder<int>(
               valueListenable: _dragCount,
               builder: (context, dragCount, child) {
+                final bottomInset = ShellContentInsets.bottomOf(context);
                 return ListView(
                   physics: dragCount > 0
                       ? const NeverScrollableScrollPhysics()
                       : const AlwaysScrollableScrollPhysics(),
-                  padding: const EdgeInsets.fromLTRB(
+                  padding: EdgeInsets.fromLTRB(
                     FxSpacing.lg,
                     FxSpacing.sm,
                     FxSpacing.lg,
-                    FxSpacing.xxxl,
+                    bottomInset,
                   ),
                   children: [child!],
                 );
               },
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: children,
-              ),
+              child: Column(mainAxisSize: MainAxisSize.min, children: children),
             );
 
             return StatsPrivacy(
               hideAmounts: hideAmounts,
               child: _editingLayout
                   ? list
-                  : RefreshIndicator(
-                      onRefresh: widget.onRefresh,
-                      child: list,
-                    ),
+                  : RefreshIndicator(onRefresh: widget.onRefresh, child: list),
             );
           },
         );
@@ -361,9 +351,8 @@ class _BodyState extends State<_Body> {
         bookId: bloc.bookId,
         onViewChanged: (view) => bloc.add(StatsCalendarViewChanged(view)),
         onNavigate: (delta) => bloc.add(StatsCalendarNavigate(delta)),
-        onDrillDown: (view, anchor) => bloc.add(
-          StatsCalendarDrilledDown(view: view, anchor: anchor),
-        ),
+        onDrillDown: (view, anchor) =>
+            bloc.add(StatsCalendarDrilledDown(view: view, anchor: anchor)),
         onBillsRequested: (date) {
           final statsBookId = bloc.bookId;
           final session = context.read<SessionCubit>().state;
@@ -511,9 +500,7 @@ class _StatsInsightCard extends StatelessWidget {
     final stats = state.overview.data;
     if (stats == null) {
       if (!showPlaceholder) return const SizedBox.shrink();
-      return FxCard(
-        child: FxCardLabel(S.of(context).statsBasicTitle),
-      );
+      return FxCard(child: FxCardLabel(S.of(context).statsBasicTitle));
     }
     final finance = FxFinanceColors.of(context);
     final palette = FxPalette.of(context);

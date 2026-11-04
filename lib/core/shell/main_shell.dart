@@ -148,6 +148,10 @@ class _MainShellState extends State<MainShell> {
     final palette = FxPalette.of(context);
     final s = S.of(context);
     final wide = MediaQuery.widthOf(context) >= _desktopBreakpoint;
+    final currentTab = MainShellTab.values[_index];
+    final showMobileQuickAdd =
+        currentTab == MainShellTab.dashboard ||
+        currentTab == MainShellTab.bills;
     final pages = [
       _slot(MainShellSlots.dashboard, s.navDashboard),
       _slot(MainShellSlots.bills, s.navBills),
@@ -177,7 +181,8 @@ class _MainShellState extends State<MainShell> {
 
     final contentBottomInset = wide
         ? FxSpacing.xxxl
-        : 96 + MediaQuery.paddingOf(context).bottom;
+        : (showMobileQuickAdd ? 144 : 88) +
+              MediaQuery.paddingOf(context).bottom;
     return ShellContentInsets(
       bottom: contentBottomInset,
       child: BillsNavigationScope(
@@ -229,13 +234,13 @@ class _MainShellState extends State<MainShell> {
                   ],
                 )
               : content,
-          floatingActionButton: wide
+          floatingActionButton: wide || !showMobileQuickAdd
               ? null
               : FloatingActionButton(
                   tooltip: s.dashboardQuickAdd,
                   onPressed: _openQuickAdd,
-                  backgroundColor: palette.primary,
-                  foregroundColor: palette.onPrimary,
+                  backgroundColor: palette.textPrimary,
+                  foregroundColor: palette.surface,
                   elevation: 0,
                   shape: const CircleBorder(),
                   child: const Icon(Icons.add_rounded, size: 28),

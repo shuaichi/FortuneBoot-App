@@ -56,7 +56,6 @@ class MonthStatCard extends StatelessWidget {
               amount: amount,
               currencyCode: currencyCode,
               fontSize: 20,
-              fontWeight: FontWeight.w700,
               color: palette.textPrimary,
               masked: hideAmounts,
               compactWhenNeeded: true,

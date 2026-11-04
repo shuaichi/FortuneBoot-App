@@ -95,8 +95,7 @@ class NetWorthCard extends StatelessWidget {
             FxMoneyText(
               amount: data.netAssets,
               currencyCode: currencyCode,
-              fontSize: 30,
-              fontWeight: FontWeight.w700,
+              fontSize: 32,
               color: palette.textPrimary,
               masked: hideAmounts,
               compactWhenNeeded: true,

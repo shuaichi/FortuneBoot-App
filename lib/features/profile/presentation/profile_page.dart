@@ -12,6 +12,7 @@ import 'package:fortuneboot/core/preferences/locale_preferences.dart';
 import 'package:fortuneboot/core/preferences/preferences_cubit.dart';
 import 'package:fortuneboot/core/session/session_cubit.dart';
 import 'package:fortuneboot/core/session/widgets/session_switcher_sheet.dart';
+import 'package:fortuneboot/core/shell/main_shell.dart';
 import 'package:fortuneboot/features/profile/data/donation_models.dart';
 import 'package:fortuneboot/features/profile/data/in_app_purchase_donation_service.dart';
 import 'package:fortuneboot/features/profile/data/profile_models.dart';
@@ -104,11 +105,15 @@ class _ProfileView extends StatelessWidget {
           children: [
             SizedBox(
               height: kToolbarHeight,
-              child: Center(
-                child: Text(
-                  S.of(context).navProfile,
-                  style: FxTypography.title.copyWith(
-                    color: palette.textPrimary,
+              child: Align(
+                alignment: AlignmentDirectional.centerStart,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: FxSpacing.lg),
+                  child: Text(
+                    S.of(context).navProfile,
+                    style: FxTypography.titleLarge.copyWith(
+                      color: palette.textPrimary,
+                    ),
                   ),
                 ),
               ),
@@ -117,11 +122,11 @@ class _ProfileView extends StatelessWidget {
               child: BlocBuilder<ProfileBloc, ProfileState>(
                 builder: (context, state) {
                   return ListView(
-                    padding: const EdgeInsets.fromLTRB(
+                    padding: EdgeInsets.fromLTRB(
                       FxSpacing.lg,
                       FxSpacing.lg,
                       FxSpacing.lg,
-                      FxSpacing.xxxl,
+                      ShellContentInsets.bottomOf(context),
                     ),
                     children: [
                       _userCard(context, state),

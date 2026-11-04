@@ -11,7 +11,7 @@ import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/generated/l10n.dart';
 
 void main() {
-  testWidgets('masks compact amounts and semantics when amounts are hidden', (
+  testWidgets('keeps hidden amounts out of day cells and semantics', (
     tester,
   ) async {
     await tester.pumpWidget(
@@ -36,8 +36,52 @@ void main() {
 
     expect(find.textContaining('1234'), findsNothing);
     expect(find.textContaining('56'), findsNothing);
-    expect(find.textContaining('••••'), findsWidgets);
+    expect(find.textContaining('••••'), findsNothing);
     expect(find.bySemanticsLabel(RegExp('1234')), findsNothing);
+  });
+
+  testWidgets('day cells replace amounts and counts with quiet activity', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      _harness(
+        child: _calendar(
+          view: IncomeExpenseCalendarView.month,
+          response: IncomeExpenseCalendarResponse(
+            items: const [
+              IncomeExpenseCalendarBucket(
+                period: '2026-08-20',
+                income: 1234,
+                expense: 56,
+                incomeCount: 1,
+                expenseCount: 2,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    await tester.tap(find.text('20'));
+    await tester.pump();
+
+    final selectedDay = find.byWidgetPredicate(
+      (widget) =>
+          widget is Semantics &&
+          widget.properties.button == true &&
+          widget.properties.selected == true,
+    );
+    final cellTexts = tester
+        .widgetList<Text>(
+          find.descendant(of: selectedDay, matching: find.byType(Text)),
+        )
+        .map((text) => text.data ?? '')
+        .toList();
+
+    expect(cellTexts, contains('20'));
+    expect(cellTexts.where((text) => text.startsWith('↑')), isEmpty);
+    expect(cellTexts.where((text) => text.startsWith('↓')), isEmpty);
+    expect(cellTexts, isNot(contains('3')));
   });
 
   testWidgets('opens same-day bills from the day summary', (tester) async {
@@ -59,6 +103,26 @@ void main() {
     await tester.tap(find.text('Open in Bills'));
 
     expect(requestedDate, DateTime(2026, 8, 20));
+  });
+
+  testWidgets('moves holiday work-rest detail into the day summary', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      _harness(
+        child: _calendar(
+          view: IncomeExpenseCalendarView.month,
+          anchor: DateTime(2026, 9),
+          bookId: 1,
+        ),
+      ),
+    );
+
+    expect(find.text('休'), findsNothing);
+    await tester.tap(find.text('25'));
+    await tester.pumpAndSettle();
+
+    expect(find.textContaining('休'), findsWidgets);
   });
 
   testWidgets('drills year months and history years to precise anchors', (
@@ -147,6 +211,7 @@ void main() {
 
 Widget _calendar({
   required IncomeExpenseCalendarView view,
+  DateTime? anchor,
   IncomeExpenseCalendarResponse? response,
   int? bookId,
   void Function(IncomeExpenseCalendarView view, DateTime anchor)? onDrillDown,
@@ -160,7 +225,7 @@ Widget _calendar({
         ),
         bookId: bookId,
         view: view,
-        anchor: DateTime(2026, 8),
+        anchor: anchor ?? DateTime(2026, 8),
         currencyCode: 'CNY',
         onViewChanged: (_) {},
         onNavigate: (_) {},

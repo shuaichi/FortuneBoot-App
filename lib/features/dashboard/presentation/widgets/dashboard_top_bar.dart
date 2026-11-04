@@ -75,7 +75,7 @@ class DashboardTopBar extends StatelessWidget {
                           Flexible(
                             child: Text(
                               bookName,
-                              style: FxTypography.title,
+                              style: FxTypography.titleLarge,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),

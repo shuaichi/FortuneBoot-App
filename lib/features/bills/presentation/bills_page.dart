@@ -434,12 +434,11 @@ class _BillsPageState extends State<BillsPage> {
         children: [
           Row(
             children: [
-              const SizedBox(width: 48),
               Expanded(
                 child: Text(
                   S.of(context).navBills,
-                  textAlign: TextAlign.center,
-                  style: FxTypography.title,
+                  textAlign: TextAlign.start,
+                  style: FxTypography.titleLarge,
                 ),
               ),
               _filterButton(state, activeCount),

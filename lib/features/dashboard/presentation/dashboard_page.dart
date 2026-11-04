@@ -246,6 +246,7 @@ class _BodyState extends State<_Body> {
             final gridRowHeight = 100 + 40 * (textScale - 1).clamp(0.0, 2.0);
 
             final tiles = <FxBentoTile>[];
+            Widget? netWorthHero;
             Widget? recentBills;
             for (final id in visibleIds) {
               final spec = DashboardCardCatalog.specOf(id);
@@ -260,6 +261,10 @@ class _BodyState extends State<_Body> {
                 emptyUser: emptyUser,
                 onRetry: retry,
               );
+              if (!_editingLayout && id == DashboardCardId.netWorth) {
+                netWorthHero = card;
+                continue;
+              }
               if (!_editingLayout && id == DashboardCardId.recentBills) {
                 recentBills = card;
                 continue;
@@ -295,7 +300,10 @@ class _BodyState extends State<_Body> {
               );
             }
 
-            if (tiles.isEmpty && recentBills == null && !_editingLayout) {
+            if (tiles.isEmpty &&
+                netWorthHero == null &&
+                recentBills == null &&
+                !_editingLayout) {
               return FxStateView.empty(
                 message: S.of(context).dashboardNoVisibleCards,
               );
@@ -307,7 +315,7 @@ class _BodyState extends State<_Body> {
               padding: EdgeInsets.zero,
               allowBackfill: !_editingLayout,
             );
-            final browsingContent = LayoutBuilder(
+            final supportingContent = LayoutBuilder(
               builder: (context, constraints) {
                 final desktop = constraints.maxWidth >= _desktopBreakpoint;
                 if (!desktop || recentBills == null) {
@@ -331,6 +339,20 @@ class _BodyState extends State<_Body> {
                 );
               },
             );
+            final browsingContent = Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (netWorthHero != null) ...[
+                  SizedBox(
+                    height: 224 + 56 * (textScale - 1).clamp(0.0, 2.0),
+                    child: netWorthHero,
+                  ),
+                  if (tiles.isNotEmpty || recentBills != null)
+                    const SizedBox(height: FxSpacing.xl),
+                ],
+                supportingContent,
+              ],
+            );
             final gridChildren = <Widget>[
               if (_editingLayout)
                 Padding(
@@ -342,7 +364,7 @@ class _BodyState extends State<_Body> {
                   padding: const EdgeInsets.all(FxSpacing.xl),
                   child: browsingContent,
                 ),
-              if (tiles.isEmpty && recentBills == null)
+              if (tiles.isEmpty && netWorthHero == null && recentBills == null)
                 Padding(
                   padding: const EdgeInsets.all(FxSpacing.lg),
                   child: Text(

@@ -41,6 +41,24 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets('net worth is the full-width hero above the supporting grid', (
+    tester,
+  ) async {
+    await _pumpDashboard(tester);
+
+    final hero = tester.getRect(find.byType(NetWorthCard));
+    final grid = tester.getRect(find.byType(FxBentoGrid));
+    expect(hero.bottom, lessThanOrEqualTo(grid.top));
+    expect(hero.width, closeTo(grid.width, 0.01));
+    expect(
+      find.descendant(
+        of: find.byType(FxBentoGrid),
+        matching: find.byType(NetWorthCard),
+      ),
+      findsNothing,
+    );
+  });
+
   testWidgets('desktop uses an aligned 360px recent-bills sidebar', (
     tester,
   ) async {
@@ -105,7 +123,14 @@ void main() {
       ),
       findsNothing,
     );
-    expect(tester.takeException(), isNull);
+    final layoutError = tester.takeException();
+    expect(
+      layoutError,
+      isNull,
+      reason: layoutError is FlutterError
+          ? layoutError.toStringDeep()
+          : layoutError?.toString(),
+    );
   });
 
   testWidgets('empty trends do not consume primary dashboard space', (

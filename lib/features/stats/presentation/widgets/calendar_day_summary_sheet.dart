@@ -73,6 +73,7 @@ class _CalendarDaySummarySheetState extends State<CalendarDaySummarySheet> {
   late final BillDetailFlow _detailFlow = BillDetailFlow(service: _service);
   late Future<BillPage> _billsFuture;
   final GlobalKey _receiptKey = GlobalKey();
+
   /// 打开小票时的查看时间，用于底部分界线中间展示。
   final DateTime _viewedAt = DateTime.now();
   var _readyToSave = false;
@@ -320,8 +321,7 @@ class _CalendarDaySummarySheetState extends State<CalendarDaySummarySheet> {
                                           formats.money(
                                             rows.fold<double>(
                                               0,
-                                              (sum, b) =>
-                                                  sum + b.discountTotal,
+                                              (sum, b) => sum + b.discountTotal,
                                             ),
                                           ),
                                         ),
@@ -528,7 +528,8 @@ class _ReceiptMeta extends StatelessWidget {
               Text(s.statsReceiptDate(dateText), style: caption),
               const SizedBox(height: 2),
               Text(
-                '${calendar.weekdayLabel}  ${calendar.lunarDateLabel}',
+                '${calendar.weekdayLabel}  ${calendar.lunarDateLabel}'
+                '${calendar.workRestLabel == null ? '' : '  ${calendar.workRestLabel}'}',
                 style: FxTypography.caption.copyWith(color: muted),
               ),
             ],
@@ -543,9 +544,7 @@ class _ReceiptMeta extends StatelessWidget {
                 Text(
                   s.statsReceiptSerial(serial!),
                   textAlign: TextAlign.right,
-                  style: caption.copyWith(
-                    fontFamily: FxTypography.monoFamily,
-                  ),
+                  style: caption.copyWith(fontFamily: FxTypography.monoFamily),
                 ),
                 const SizedBox(height: 2),
                 Text(
@@ -711,7 +710,8 @@ class _ReceiptLine extends StatelessWidget {
                           ),
                         if (discount > 0)
                           _ReceiptExtraBadge(
-                            label: '${s.billsDiscount} ${formats.money(discount)}',
+                            label:
+                                '${s.billsDiscount} ${formats.money(discount)}',
                             foreground: const Color(0xFFD14343),
                             background: const Color(0xFFFFE8E8),
                           ),
@@ -782,7 +782,10 @@ class _ReceiptTotalRow extends StatelessWidget {
       children: [
         Expanded(
           flex: 5,
-          child: Text(label, style: FxTypography.bodyStrong.copyWith(color: ink)),
+          child: Text(
+            label,
+            style: FxTypography.bodyStrong.copyWith(color: ink),
+          ),
         ),
         Expanded(
           flex: 2,

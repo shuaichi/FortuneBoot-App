@@ -152,6 +152,8 @@ class RecentBillPreviewRow extends StatelessWidget {
         showSign:
             bill.billType != FxBillType.transfer.value &&
             bill.billType != FxBillType.adjust.value,
+        fontSize: 15,
+        fontWeight: FontWeight.w500,
         masked: hidden,
         compactWhenNeeded: true,
       ),

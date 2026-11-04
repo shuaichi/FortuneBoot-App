@@ -14,7 +14,6 @@ enum StatsCardId {
 /// 统计卡片目录：默认顺序与持久化 ID 归一化。
 abstract final class StatsCardCatalog {
   static const List<StatsCardId> defaultOrder = [
-    StatsCardId.moreReports,
     StatsCardId.overview,
     StatsCardId.calendar,
     StatsCardId.insight,
@@ -23,6 +22,7 @@ abstract final class StatsCardCatalog {
     StatsCardId.categoryShare,
     StatsCardId.tags,
     StatsCardId.payees,
+    StatsCardId.moreReports,
   ];
 
   static const Set<StatsCardId> defaultHidden = {};
@@ -44,12 +44,15 @@ abstract final class StatsCardCatalog {
     final order = <StatsCardId>[];
     for (final raw in stored) {
       final id = tryParse(raw);
-      if (id == null || !seen.add(id)) continue;
+      if (id == null || id == StatsCardId.moreReports || !seen.add(id)) {
+        continue;
+      }
       order.add(id);
     }
     for (final id in allIds) {
-      if (seen.add(id)) order.add(id);
+      if (id != StatsCardId.moreReports && seen.add(id)) order.add(id);
     }
+    order.add(StatsCardId.moreReports);
     return order;
   }
 
