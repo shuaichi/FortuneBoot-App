@@ -13,6 +13,7 @@ import 'package:fortuneboot/features/dashboard/presentation/widgets/recent_bills
 import 'package:fortuneboot/features/dashboard/presentation/widgets/trend_card.dart';
 import 'package:fortuneboot/features/shared/data/bill_models.dart';
 import 'package:fortuneboot/features/shared/data/bill_service.dart';
+import 'package:fortuneboot/fx/components/fx_money_text.dart';
 import 'package:fortuneboot/fx/layout/fx_bento_grid.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/generated/l10n.dart';
@@ -64,7 +65,22 @@ void main() {
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);
 
-    await _pumpDashboard(tester, textScale: 2);
+    await _pumpDashboard(
+      tester,
+      textScale: 2,
+      assets: const AssetsLiabilities(
+        totalAssets: 987654321098.76,
+        totalLiabilities: 123456789012.34,
+        netAssets: 864197532086.42,
+      ),
+      monthStats: const BillStatistics(
+        expense: 123456789012.34,
+        income: 987654321098.76,
+      ),
+      categories: const [
+        CategorySlice(name: '非常长的分类名称用于验证布局', value: 123456789, percent: 100),
+      ],
+    );
 
     for (final cardType in [NetWorthCard, MonthStatCard]) {
       expect(
@@ -75,6 +91,20 @@ void main() {
         findsNothing,
       );
     }
+    final monthAmount = tester.widget<FxMoneyText>(
+      find.descendant(
+        of: find.byType(MonthStatCard).first,
+        matching: find.byType(FxMoneyText),
+      ),
+    );
+    expect(monthAmount.color, FxPalette.light.textPrimary);
+    expect(
+      find.descendant(
+        of: find.byType(MonthStatCard).first,
+        matching: find.text('¥123,456,789,012.34'),
+      ),
+      findsNothing,
+    );
     expect(tester.takeException(), isNull);
   });
 
@@ -89,20 +119,26 @@ void main() {
   });
 }
 
-Future<void> _pumpDashboard(WidgetTester tester, {double textScale = 1}) async {
+Future<void> _pumpDashboard(
+  WidgetTester tester, {
+  double textScale = 1,
+  AssetsLiabilities assets = const AssetsLiabilities(),
+  BillStatistics monthStats = const BillStatistics(),
+  List<CategorySlice> categories = const [],
+}) async {
   final session = SessionCubit();
   final preferences = PreferencesCubit();
   final dashboard = _PreviewDashboardBloc()
     ..seed(
-      const DashboardState(
+      DashboardState(
         hasBook: true,
         currencyCode: 'CNY',
-        assets: DashboardSection.ready(AssetsLiabilities()),
-        monthStats: DashboardSection.ready(BillStatistics()),
-        expenseTrends: DashboardSection.ready(<TrendPoint>[]),
-        incomeTrends: DashboardSection.ready(<TrendPoint>[]),
-        categories: DashboardSection.ready(<CategorySlice>[]),
-        recentBills: DashboardSection.ready([
+        assets: DashboardSection.ready(assets),
+        monthStats: DashboardSection.ready(monthStats),
+        expenseTrends: const DashboardSection.ready(<TrendPoint>[]),
+        incomeTrends: const DashboardSection.ready(<TrendPoint>[]),
+        categories: DashboardSection.ready(categories),
+        recentBills: const DashboardSection.ready([
           FortuneBillVo(billId: 1, title: '午餐', amount: 28, billType: 1),
           FortuneBillVo(billId: 2, title: '晚餐', amount: 45, billType: 1),
           FortuneBillVo(billId: 3, title: '交通', amount: 6, billType: 1),

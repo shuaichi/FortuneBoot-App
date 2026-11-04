@@ -1,4 +1,4 @@
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:fortuneboot/core/money/fx_money_formatter.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
@@ -32,6 +32,9 @@ class FxMoneyText extends StatelessWidget {
   /// Overrides the locale derived from [Localizations] when supplied.
   final Locale? locale;
 
+  /// 宽度不足时使用紧凑金额；完整值仍保留给 Tooltip 与无障碍语义。
+  final bool compactWhenNeeded;
+
   const FxMoneyText({
     super.key,
     required this.amount,
@@ -45,6 +48,7 @@ class FxMoneyText extends StatelessWidget {
     this.masked = false,
     this.maskedText = FxMoneyFormatter.hiddenPlaceholder,
     this.locale,
+    this.compactWhenNeeded = false,
   });
 
   @override
@@ -77,21 +81,55 @@ class FxMoneyText extends StatelessWidget {
     final safeColor = isMasked && color == null
         ? palette.textPrimary
         : resolved;
+    final localeName = (locale ?? Localizations.localeOf(context)).toString();
+    final style = FxTypography.money.copyWith(
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      color: safeColor,
+    );
 
-    return Semantics(
-      label: isMasked ? maskedText : text,
-      child: ExcludeSemantics(
-        child: Text(
-          text,
-          style: FxTypography.money.copyWith(
-            fontSize: fontSize,
-            fontWeight: fontWeight,
-            color: safeColor,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        var displayText = text;
+        if (compactWhenNeeded && !isMasked && constraints.hasBoundedWidth) {
+          final painter = TextPainter(
+            text: TextSpan(text: text, style: style),
+            textDirection: Directionality.of(context),
+            textScaler: MediaQuery.textScalerOf(context),
+            locale: Localizations.localeOf(context),
+            maxLines: 1,
+          )..layout(maxWidth: constraints.maxWidth);
+          if (painter.didExceedMaxLines) {
+            final sign = showSign && amount > 0
+                ? '+'
+                : amount < 0
+                ? '-'
+                : '';
+            final compactNumber = FxMoneyFormatter.formatCompact(
+              amount.abs(),
+              locale: localeName,
+            );
+            displayText = '$sign$symbol$compactNumber';
+          }
+          painter.dispose();
+        }
+
+        final amountText = Semantics(
+          label: text,
+          child: ExcludeSemantics(
+            child: Text(
+              displayText,
+              style: style,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-        ),
-      ),
+        );
+        if (displayText == text) {
+          return amountText;
+        }
+        return Tooltip(message: text, child: amountText);
+      },
     );
   }
 }

@@ -72,7 +72,7 @@ class FxPalette extends ThemeExtension<FxPalette> {
     border: Color(0xFF2A323D),
     textPrimary: Color(0xFFF2F4F7),
     textSecondary: Color(0xFFA6AEBB),
-    textTertiary: Color(0xFF6F7885),
+    textTertiary: Color(0xFF98A2B3),
     success: Color(0xFF34D07A),
     warning: Color(0xFFFBBF4D),
     danger: Color(0xFFF87171),

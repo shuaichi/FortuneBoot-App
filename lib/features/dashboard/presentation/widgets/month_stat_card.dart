@@ -31,6 +31,7 @@ class MonthStatCard extends StatelessWidget {
         ? S.of(context).dashboardPeriodExpense
         : S.of(context).dashboardPeriodIncome;
     final finance = FxFinanceColors.of(context);
+    final palette = FxPalette.of(context);
     final color = isExpense ? finance.expense : finance.income;
     final hideAmounts = context
         .watch<PreferencesCubit>()
@@ -56,8 +57,9 @@ class MonthStatCard extends StatelessWidget {
               currencyCode: currencyCode,
               fontSize: 20,
               fontWeight: FontWeight.w700,
-              color: color,
+              color: palette.textPrimary,
               masked: hideAmounts,
+              compactWhenNeeded: true,
             ),
             const SizedBox(height: FxSpacing.xs),
           ],

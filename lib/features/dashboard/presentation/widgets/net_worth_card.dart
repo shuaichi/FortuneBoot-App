@@ -99,6 +99,7 @@ class NetWorthCard extends StatelessWidget {
               fontWeight: FontWeight.w700,
               color: palette.textPrimary,
               masked: hideAmounts,
+              compactWhenNeeded: true,
             ),
             const Spacer(),
             _bar(
@@ -157,6 +158,7 @@ class NetWorthCard extends StatelessWidget {
                   fontSize: 13,
                   color: color,
                   masked: hideAmounts,
+                  compactWhenNeeded: true,
                 ),
               ),
             ),

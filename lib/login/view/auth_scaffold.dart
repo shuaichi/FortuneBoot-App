@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
-import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
 
-/// 首启与认证共用骨架：窄屏单列，宽屏品牌区与固定宽度表单并列。
+/// 首启与认证共用骨架：所有宽度均使用居中的安静单列。
 ///
 /// @author JoyCode
 /// @since 2026/11/04
@@ -16,6 +15,7 @@ class AuthScaffold extends StatelessWidget {
     required this.subtitle,
     required this.child,
     this.actions = const [],
+    this.onTitleTap,
   });
 
   /// 主标题。
@@ -30,97 +30,76 @@ class AuthScaffold extends StatelessWidget {
   /// 页面级操作，例如语言切换。
   final List<Widget> actions;
 
+  /// 标题点击回调，用于保留首启页无视觉干扰的开发者入口。
+  final VoidCallback? onTitleTap;
+
   @override
   Widget build(BuildContext context) {
     final palette = FxPalette.of(context);
+    final textTheme = Theme.of(context).textTheme;
+    final keyboardVisible = MediaQuery.viewInsetsOf(context).bottom > 0;
     return Scaffold(
-      backgroundColor: palette.canvas,
+      backgroundColor: palette.surface,
       body: SafeArea(
+        bottom: !keyboardVisible,
         child: LayoutBuilder(
           builder: (context, constraints) {
-            final wide = constraints.maxWidth >= 960;
-            final introduction = Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'FORTUNEBOOT',
-                  style: FxTypography.label.copyWith(
-                    color: palette.primary,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 1.4,
-                  ),
-                ),
-                const SizedBox(height: FxSpacing.xl),
-                Text(
-                  title,
-                  style: FxTypography.display.copyWith(
-                    color: palette.textPrimary,
-                    fontSize: wide ? 42 : 34,
-                    height: 1.12,
-                    letterSpacing: -1.1,
-                  ),
-                ),
-                const SizedBox(height: FxSpacing.md),
-                ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 420),
-                  child: Text(
-                    subtitle,
-                    style: FxTypography.body.copyWith(
-                      color: palette.textSecondary,
-                      height: 1.65,
-                    ),
-                  ),
-                ),
-              ],
-            );
-            final formPanel = Container(
-              width: wide ? 420 : double.infinity,
-              padding: EdgeInsets.all(wide ? FxSpacing.xxl : 0),
-              decoration: wide
-                  ? BoxDecoration(
-                      color: palette.surface,
-                      borderRadius: FxRadius.cardBorder,
-                      border: Border.all(color: palette.border),
-                    )
-                  : null,
-              child: child,
-            );
-
+            final availableHeight = constraints.maxHeight - 48;
             return SingleChildScrollView(
               keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-              padding: EdgeInsets.symmetric(
-                horizontal: wide ? 48 : 20,
-                vertical: wide ? 48 : 20,
-              ),
-              child: Center(
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 1120),
-                  child: Column(
-                    children: [
-                      if (actions.isNotEmpty)
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: actions,
+              padding: const EdgeInsets.all(24),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  minHeight: availableHeight > 0 ? availableHeight : 0,
+                ),
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 400),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        if (actions.isNotEmpty) ...[
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: actions,
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                        ],
+                        GestureDetector(
+                          behavior: HitTestBehavior.opaque,
+                          onTap: onTitleTap,
+                          child: Semantics(
+                            header: true,
+                            child: Text(
+                              title,
+                              style: textTheme.headlineSmall?.copyWith(
+                                fontSize: 28,
+                                height: 1.2,
+                                fontWeight: FontWeight.w700,
+                                letterSpacing: -0.3,
+                                color: palette.textPrimary,
+                              ),
+                            ),
                           ),
                         ),
-                      SizedBox(height: wide ? 64 : 32),
-                      if (wide)
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Expanded(child: introduction),
-                            const SizedBox(width: 96),
-                            formPanel,
-                          ],
-                        )
-                      else ...[
-                        introduction,
-                        const SizedBox(height: 40),
-                        formPanel,
+                        if (subtitle.trim().isNotEmpty) ...[
+                          const SizedBox(height: 8),
+                          Text(
+                            subtitle,
+                            style: textTheme.bodyMedium?.copyWith(
+                              height: 1.5,
+                              color: palette.textSecondary,
+                            ),
+                          ),
+                        ],
+                        const SizedBox(height: 28),
+                        child,
                       ],
-                    ],
+                    ),
                   ),
                 ),
               ),

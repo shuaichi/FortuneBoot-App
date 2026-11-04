@@ -87,22 +87,33 @@ class CategoryTopCard extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              slice.name.isEmpty
-                  ? S.of(context).dashboardUncategorized
-                  : slice.name,
-              style: FxTypography.bodyStrong,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
+            Expanded(
+              flex: 3,
+              child: Text(
+                slice.name.isEmpty
+                    ? S.of(context).dashboardUncategorized
+                    : slice.name,
+                style: FxTypography.bodyStrong,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
             ),
-            FxMoneyText(
-              amount: slice.value,
-              currencyCode: currencyCode,
-              fontSize: 14,
-              color: palette.textPrimary,
-              masked: hideAmounts,
+            const SizedBox(width: FxSpacing.md),
+            Expanded(
+              flex: 2,
+              child: Align(
+                alignment: AlignmentDirectional.centerEnd,
+                child: FxMoneyText(
+                  amount: slice.value,
+                  currencyCode: currencyCode,
+                  fontSize: 14,
+                  color: palette.textPrimary,
+                  masked: hideAmounts,
+                  compactWhenNeeded: true,
+                ),
+              ),
             ),
           ],
         ),

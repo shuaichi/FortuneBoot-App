@@ -122,7 +122,7 @@ class BillTile extends StatelessWidget {
                     Text(
                       _subtitle,
                       style: FxTypography.caption.copyWith(
-                        color: palette.textTertiary,
+                        color: palette.textSecondary,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -149,10 +149,7 @@ class BillTile extends StatelessWidget {
               children: [
                 if (hasExtras)
                   Text(
-                    FxMoneyFormatter.format(
-                      bill.displayAmount,
-                      locale: locale,
-                    ),
+                    FxMoneyFormatter.format(bill.displayAmount, locale: locale),
                     style: FxTypography.caption.copyWith(
                       color: palette.textTertiary,
                       decoration: TextDecoration.lineThrough,

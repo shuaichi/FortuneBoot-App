@@ -17,8 +17,8 @@ abstract final class FxColors {
 
   // 中性阶
   static const Color textPrimary = Color(0xFF0A0A0A);
-  static const Color textSecondary = Color(0xFF6B7280);
-  static const Color textTertiary = Color(0xFF9CA3AF);
+  static const Color textSecondary = Color(0xFF5B6470);
+  static const Color textTertiary = Color(0xFF646C78);
 
   // 表面
   static const Color surface = Color(0xFFFFFFFF);

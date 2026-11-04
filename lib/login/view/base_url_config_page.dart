@@ -1,6 +1,5 @@
 import 'package:fortuneboot/core/auth/auth_version_checker.dart';
 import 'package:fortuneboot/fx/components/fx_button.dart';
-import 'package:fortuneboot/fx/components/fx_pressable.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
@@ -238,8 +237,9 @@ class _BaseUrlConfigPageState extends State<BaseUrlConfigPage> {
       builder: (context, mode, child) {
         return AuthScaffold(
           title: s.baseUrlConfig,
-          subtitle: s.login_message,
+          subtitle: '',
           actions: [_buildLanguageMenu(context)],
+          onTitleTap: _handleDevTap,
           child: mode == AuthMode.loading
               ? const SizedBox(
                   height: 240,
@@ -250,8 +250,6 @@ class _BaseUrlConfigPageState extends State<BaseUrlConfigPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      _buildHeader(),
-                      const SizedBox(height: FxSpacing.xxl),
                       _buildConfigCard(),
                       const SizedBox(height: FxSpacing.xxxl),
                       _buildSubmitButton(),
@@ -260,29 +258,6 @@ class _BaseUrlConfigPageState extends State<BaseUrlConfigPage> {
                 ),
         );
       },
-    );
-  }
-
-  Widget _buildHeader() {
-    final s = S.of(context);
-    final palette = FxPalette.of(context);
-    return Align(
-      alignment: Alignment.centerLeft,
-      child: FxPressable(
-        semanticLabel: s.baseUrlConfig,
-        onPressed: _handleDevTap,
-        padding: EdgeInsets.zero,
-        borderRadius: FxRadius.pillBorder,
-        child: Container(
-          width: 44,
-          height: 44,
-          decoration: BoxDecoration(
-            color: palette.primaryContainer,
-            shape: BoxShape.circle,
-          ),
-          child: Icon(Icons.dns_rounded, color: palette.primary, size: 22),
-        ),
-      ),
     );
   }
 
