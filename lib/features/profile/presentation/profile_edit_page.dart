@@ -122,9 +122,9 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
     }
     final changed = await FxSheet.show<bool>(
       context,
+      scrollable: false,
+      maxHeightFactor: FxSheet.pickerHeightFactor,
       title: S.of(context).profileEditTitle,
-      expand: true,
-      expandHeightFactor: FxSheet.pickerHeightFactor,
       child: _ProfileDetailsEditSheet(
         profile: widget.profile,
         service: _service,

@@ -53,8 +53,9 @@ class _TagsPageState extends State<TagsPage> {
     final formKey = GlobalKey<TagFormSheetState>();
     final changed = await FxSheet.show<bool>(
       context,
+      scrollable: false,
+      maxHeightFactor: FxSheet.formHeightFactor,
       title: tag == null ? S.of(context).tagsAdd : S.of(context).tagsEdit,
-      expand: true,
       submitLabel: tag == null
           ? S.of(context).tagsCreate
           : S.of(context).tagsSaveEdit,

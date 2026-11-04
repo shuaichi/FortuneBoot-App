@@ -24,6 +24,7 @@ class FxTreePicker<T> extends StatefulWidget {
   final bool leafOnly;
   final bool initiallyCollapsed;
   final String? title;
+  final bool embedded;
 
   const FxTreePicker({
     super.key,
@@ -36,6 +37,7 @@ class FxTreePicker<T> extends StatefulWidget {
     this.leafOnly = false,
     this.initiallyCollapsed = false,
     this.title,
+    this.embedded = false,
   });
 
   /// 弹出选择器，返回选中的节点列表（取消返回 null）。
@@ -51,27 +53,21 @@ class FxTreePicker<T> extends StatefulWidget {
     bool initiallyCollapsed = false,
     String? title,
   }) {
-    final palette = FxPalette.of(context);
-    return showModalBottomSheet<List<T>>(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: palette.surface,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: FxRadius.sheetRadius),
-      ),
-      builder: (ctx) => FractionallySizedBox(
-        heightFactor: FxSheet.pickerHeightFactor,
-        child: FxTreePicker<T>(
-          roots: roots,
-          childrenOf: childrenOf,
-          labelOf: labelOf,
-          idOf: idOf,
-          initialSelected: initialSelected,
-          multiSelect: multiSelect,
-          leafOnly: leafOnly,
-          initiallyCollapsed: initiallyCollapsed,
-          title: title,
-        ),
+    return FxSheet.show<List<T>>(
+      context,
+      title: title ?? S.of(context).fxTreePickerTitle,
+      maxHeightFactor: FxSheet.pickerHeightFactor,
+      child: FxTreePicker<T>(
+        roots: roots,
+        childrenOf: childrenOf,
+        labelOf: labelOf,
+        idOf: idOf,
+        initialSelected: initialSelected,
+        multiSelect: multiSelect,
+        leafOnly: leafOnly,
+        initiallyCollapsed: initiallyCollapsed,
+        title: title,
+        embedded: true,
       ),
     );
   }
@@ -160,10 +156,61 @@ class _FxTreePickerState<T> extends State<FxTreePicker<T>> {
     final palette = FxPalette.of(context);
     final s = S.of(context);
     final visible = _visible;
-    return SafeArea(
-      top: false,
-      child: Column(
-        children: [
+    final actions = Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        TextButton(
+          onPressed: () => setState(() => _selected.clear()),
+          child: Text(
+            s.fxTreePickerClear,
+            style: FxTypography.body.copyWith(color: palette.textSecondary),
+          ),
+        ),
+        if (widget.multiSelect) ...[
+          const SizedBox(width: FxSpacing.lg),
+          TextButton(
+            onPressed: _confirm,
+            child: Text(
+              s.fxTreePickerDone,
+              style: FxTypography.bodyStrong.copyWith(color: palette.primary),
+            ),
+          ),
+        ],
+      ],
+    );
+    final listContent = visible.isEmpty
+        ? widget.embedded
+              ? Padding(
+                  padding: const EdgeInsets.all(FxSpacing.xxl),
+                  child: Text(
+                    s.fxTreePickerNoMatches,
+                    textAlign: TextAlign.center,
+                    style: FxTypography.caption.copyWith(
+                      color: palette.textTertiary,
+                    ),
+                  ),
+                )
+              : Center(
+                  child: Text(
+                    s.fxTreePickerNoMatches,
+                    style: FxTypography.caption.copyWith(
+                      color: palette.textTertiary,
+                    ),
+                  ),
+                )
+        : ListView.builder(
+            shrinkWrap: widget.embedded,
+            physics: widget.embedded
+                ? const NeverScrollableScrollPhysics()
+                : null,
+            padding: const EdgeInsets.only(bottom: FxSpacing.lg),
+            itemCount: visible.length,
+            itemBuilder: (context, i) => _row(palette, visible[i]),
+          );
+    final content = Column(
+      mainAxisSize: widget.embedded ? MainAxisSize.min : MainAxisSize.max,
+      children: [
+        if (!widget.embedded) ...[
           const SizedBox(height: FxSpacing.sm),
           Center(
             child: Container(
@@ -187,93 +234,56 @@ class _FxTreePickerState<T> extends State<FxTreePicker<T>> {
                     color: palette.textPrimary,
                   ),
                 ),
-                Row(
-                  children: [
-                    TextButton(
-                      onPressed: () => setState(() => _selected.clear()),
-                      child: Text(
-                        s.fxTreePickerClear,
-                        style: FxTypography.body.copyWith(
-                          color: palette.textSecondary,
-                        ),
-                      ),
-                    ),
-                    if (widget.multiSelect) ...[
-                      const SizedBox(width: FxSpacing.lg),
-                      TextButton(
-                        onPressed: _confirm,
-                        child: Text(
-                          s.fxTreePickerDone,
-                          style: FxTypography.bodyStrong.copyWith(
-                            color: palette.primary,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
+                actions,
               ],
             ),
           ),
-          const SizedBox(height: FxSpacing.sm),
+        ] else
+          Align(alignment: Alignment.centerRight, child: actions),
+        const SizedBox(height: FxSpacing.sm),
+        Padding(
+          padding: FxSpacing.pageH,
+          child: TextField(
+            onChanged: (v) => setState(() => _query = v),
+            style: FxTypography.body.copyWith(color: palette.textPrimary),
+            decoration: InputDecoration(
+              hintText: s.fxTreePickerSearch,
+              prefixIcon: Icon(
+                Icons.search_rounded,
+                color: palette.textTertiary,
+              ),
+              filled: true,
+              fillColor: palette.surfaceMuted,
+              contentPadding: const EdgeInsets.symmetric(
+                vertical: 0,
+                horizontal: FxSpacing.md,
+              ),
+              border: OutlineInputBorder(
+                borderRadius: FxRadius.tileBorder,
+                borderSide: BorderSide.none,
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(height: FxSpacing.sm),
+        if (widget.embedded) listContent else Expanded(child: listContent),
+        if (widget.multiSelect)
           Padding(
-            padding: FxSpacing.pageH,
-            child: TextField(
-              onChanged: (v) => setState(() => _query = v),
-              style: FxTypography.body.copyWith(color: palette.textPrimary),
-              decoration: InputDecoration(
-                hintText: s.fxTreePickerSearch,
-                prefixIcon: Icon(
-                  Icons.search_rounded,
-                  color: palette.textTertiary,
-                ),
-                filled: true,
-                fillColor: palette.surfaceMuted,
-                contentPadding: const EdgeInsets.symmetric(
-                  vertical: 0,
-                  horizontal: FxSpacing.md,
-                ),
-                border: OutlineInputBorder(
-                  borderRadius: FxRadius.tileBorder,
-                  borderSide: BorderSide.none,
-                ),
-              ),
+            padding: const EdgeInsets.fromLTRB(
+              FxSpacing.lg,
+              FxSpacing.sm,
+              FxSpacing.lg,
+              FxSpacing.lg,
+            ),
+            child: FxButton(
+              label: s.fxTreePickerConfirm(_selected.length),
+              expand: true,
+              onPressed: _confirm,
             ),
           ),
-          const SizedBox(height: FxSpacing.sm),
-          Expanded(
-            child: visible.isEmpty
-                ? Center(
-                    child: Text(
-                      s.fxTreePickerNoMatches,
-                      style: FxTypography.caption.copyWith(
-                        color: palette.textTertiary,
-                      ),
-                    ),
-                  )
-                : ListView.builder(
-                    padding: const EdgeInsets.only(bottom: FxSpacing.lg),
-                    itemCount: visible.length,
-                    itemBuilder: (context, i) => _row(palette, visible[i]),
-                  ),
-          ),
-          if (widget.multiSelect)
-            Padding(
-              padding: const EdgeInsets.fromLTRB(
-                FxSpacing.lg,
-                FxSpacing.sm,
-                FxSpacing.lg,
-                FxSpacing.lg,
-              ),
-              child: FxButton(
-                label: s.fxTreePickerConfirm(_selected.length),
-                expand: true,
-                onPressed: _confirm,
-              ),
-            ),
-        ],
-      ),
+      ],
     );
+    return widget.embedded ? content : SafeArea(top: false, child: content);
   }
 
   Widget _row(FxPalette palette, FxFlatNode<T> f) {

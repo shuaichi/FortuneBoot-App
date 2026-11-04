@@ -87,6 +87,8 @@ class _GroupDetailPageState extends State<GroupDetailPage> {
     if (groupId == null) return;
     final username = await FxSheet.show<String>(
       context,
+      scrollable: false,
+      maxHeightFactor: FxSheet.formHeightFactor,
       title: S.of(context).booksInviteMembers,
       child: InviteMemberSheet(
         strings: InviteMemberSheetStrings(
@@ -123,7 +125,6 @@ class _GroupDetailPageState extends State<GroupDetailPage> {
               cancelLabel: S.of(context).commonCancel,
             ),
       ),
-      expand: true,
     );
     if (username == null || !mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(

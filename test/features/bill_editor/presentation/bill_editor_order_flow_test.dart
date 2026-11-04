@@ -2,11 +2,15 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fortuneboot/core/errors/fx_failure.dart';
 import 'package:fortuneboot/features/bill_editor/data/editor_options_service.dart';
 import 'package:fortuneboot/features/bill_editor/presentation/bill_editor_args.dart';
 import 'package:fortuneboot/features/bill_editor/presentation/bill_editor_bloc.dart';
+import 'package:fortuneboot/features/bill_editor/presentation/bill_editor_page.dart';
 import 'package:fortuneboot/features/orders/data/finance_order_contract.dart';
 import 'package:fortuneboot/features/orders/data/order_money.dart';
 import 'package:fortuneboot/features/orders/data/orders_models.dart';
@@ -14,6 +18,8 @@ import 'package:fortuneboot/features/orders/data/orders_service.dart';
 import 'package:fortuneboot/features/shared/data/bill_attachment.dart';
 import 'package:fortuneboot/features/shared/data/bill_models.dart';
 import 'package:fortuneboot/features/shared/data/bill_service.dart';
+import 'package:fortuneboot/fx/theme/fx_theme.dart';
+import 'package:fortuneboot/generated/l10n.dart';
 
 void main() {
   test('route parsing checks every order context value', () {
@@ -92,130 +98,139 @@ void main() {
     }
   });
 
-  test('advance and reimburse still submit category splits as strings', () async {
-    final harness = _EditorHarness();
-    addTearDown(harness.dispose);
-    final state = await harness.initialize(
-      const BillEditorArgs(
-        presetBillType: 7,
-        presetBookId: 20,
-        presetOrderId: 2001,
-        expectedOrderVersion: 3,
-        copyData: {'orderTitle': '报销单'},
-      ),
-    );
-    final row = state.categoryRows.single;
-    harness.bloc.add(CategoryRowCategoryChanged(row.rowId, 101, '垫付'));
-    harness.bloc.add(OrderCategoryRowAmountChanged(row.rowId, 80000));
-    harness.bloc.add(const AccountChanged(50, '现金'));
-    await Future<void>.delayed(Duration.zero);
-    await harness.submit();
-
-    expect(harness.lastEntryJson()['categoryAmountPair'], [
-      {'categoryId': 101, 'amount': '800.00'},
-    ]);
-    expect(harness.lastEntryJson()['include'], isFalse);
-
-    final reimburseHarness = _EditorHarness();
-    addTearDown(reimburseHarness.dispose);
-    final reimburse = await reimburseHarness.initialize(
-      const BillEditorArgs(
-        presetBillType: 8,
-        presetBookId: 20,
-        presetOrderId: 2001,
-        expectedOrderVersion: 3,
-        copyData: {'orderTitle': '报销单'},
-      ),
-    );
-    expect(reimburse.showCategorySplit, isTrue);
-    expect(reimburse.usesIncomeAssociations, isTrue);
-  });
-
-  test('WRITE_OFF hides accounts, fixes confirm and requires a reason', () async {
-    final harness = _EditorHarness();
-    addTearDown(harness.dispose);
-    final state = await harness.initialize(
-      const BillEditorArgs(
-        presetBillType: 1,
-        presetBookId: 20,
-        presetOrderId: 1001,
-        presetOrderComponent: FinanceOrderComponent.writeOff,
-        expectedOrderVersion: 7,
-        lockOrderContext: true,
-        copyData: {'orderTitle': '张三借款'},
-      ),
-    );
-
-    expect(state.showAccount, isFalse);
-    expect(state.showExtras, isFalse);
-    expect(state.confirmLocked, isTrue);
-    expect(state.confirm, isTrue);
-    expect(
-      state.validationError,
-      BillValidationError.writeOffReasonRequired,
-    );
-
-    harness.bloc.add(const RemarkChanged('确认无法收回'));
-    final row = harness.bloc.state.categoryRows.single;
-    harness.bloc.add(CategoryRowCategoryChanged(row.rowId, 101, '损失'));
-    harness.bloc.add(OrderCategoryRowAmountChanged(row.rowId, 20000));
-    await Future<void>.delayed(Duration.zero);
-    await harness.submit();
-
-    final json = harness.lastEntryJson();
-    expect(json['orderComponent'], 'WRITE_OFF');
-    expect(json['confirm'], isTrue);
-    expect(json['remark'], '确认无法收回');
-    expect(json.containsKey('accountId'), isFalse);
-    expect(json.containsKey('toAccountId'), isFalse);
-    expect(json['categoryAmountPair'], [
-      {'categoryId': 101, 'amount': '200.00'},
-    ]);
-  });
-
-  test('normal one, two and three forms do not use the V2 entry service', () async {
-    for (final type in [
-      FxBillType.expense,
-      FxBillType.income,
-      FxBillType.transfer,
-    ]) {
+  test(
+    'advance and reimburse still submit category splits as strings',
+    () async {
       final harness = _EditorHarness();
       addTearDown(harness.dispose);
       final state = await harness.initialize(
-        BillEditorArgs(presetBillType: type.value),
+        const BillEditorArgs(
+          presetBillType: 7,
+          presetBookId: 20,
+          presetOrderId: 2001,
+          expectedOrderVersion: 3,
+          copyData: {'orderTitle': '报销单'},
+        ),
       );
-      expect(state.isOrderFlow, isFalse);
-      expect(state.showOrder, isFalse);
-      expect(harness.ordersServiceUsed, isFalse);
-    }
-  });
+      final row = state.categoryRows.single;
+      harness.bloc.add(CategoryRowCategoryChanged(row.rowId, 101, '垫付'));
+      harness.bloc.add(OrderCategoryRowAmountChanged(row.rowId, 80000));
+      harness.bloc.add(const AccountChanged(50, '现金'));
+      await Future<void>.delayed(Duration.zero);
+      await harness.submit();
 
-  test('retries the same content with one UUID and changes it for new content', () async {
-    final harness = _EditorHarness();
-    addTearDown(harness.dispose);
-    await harness.initialize(_principalArgs());
-    harness.bloc.add(const SingleAmountChanged(100000));
-    await Future<void>.delayed(Duration.zero);
+      expect(harness.lastEntryJson()['categoryAmountPair'], [
+        {'categoryId': 101, 'amount': '800.00'},
+      ]);
+      expect(harness.lastEntryJson()['include'], isFalse);
 
-    harness.enqueueError();
-    await harness.submit();
-    expect(harness.bloc.state.submitStatus, SubmitStatus.failure);
-    expect(harness.bloc.state.singleAmountCents, 100000);
+      final reimburseHarness = _EditorHarness();
+      addTearDown(reimburseHarness.dispose);
+      final reimburse = await reimburseHarness.initialize(
+        const BillEditorArgs(
+          presetBillType: 8,
+          presetBookId: 20,
+          presetOrderId: 2001,
+          expectedOrderVersion: 3,
+          copyData: {'orderTitle': '报销单'},
+        ),
+      );
+      expect(reimburse.showCategorySplit, isTrue);
+      expect(reimburse.usesIncomeAssociations, isTrue);
+    },
+  );
 
-    harness.enqueueSuccess();
-    await harness.submit();
-    final first = harness.lastEntryJson()['requestId'];
+  test(
+    'WRITE_OFF hides accounts, fixes confirm and requires a reason',
+    () async {
+      final harness = _EditorHarness();
+      addTearDown(harness.dispose);
+      final state = await harness.initialize(
+        const BillEditorArgs(
+          presetBillType: 1,
+          presetBookId: 20,
+          presetOrderId: 1001,
+          presetOrderComponent: FinanceOrderComponent.writeOff,
+          expectedOrderVersion: 7,
+          lockOrderContext: true,
+          copyData: {'orderTitle': '张三借款'},
+        ),
+      );
 
-    harness.bloc.add(const SingleAmountChanged(40000));
-    await Future<void>.delayed(Duration.zero);
-    harness.enqueueSuccess();
-    await harness.submit();
-    final second = harness.lastEntryJson()['requestId'];
+      expect(state.showAccount, isFalse);
+      expect(state.showExtras, isFalse);
+      expect(state.confirmLocked, isTrue);
+      expect(state.confirm, isTrue);
+      expect(state.validationError, BillValidationError.writeOffReasonRequired);
 
-    expect(first, 'request-1');
-    expect(second, 'request-2');
-    expect(harness.lastEntryJson()['amount'], '400.00');
-  });
+      harness.bloc.add(const RemarkChanged('确认无法收回'));
+      final row = harness.bloc.state.categoryRows.single;
+      harness.bloc.add(CategoryRowCategoryChanged(row.rowId, 101, '损失'));
+      harness.bloc.add(OrderCategoryRowAmountChanged(row.rowId, 20000));
+      await Future<void>.delayed(Duration.zero);
+      await harness.submit();
+
+      final json = harness.lastEntryJson();
+      expect(json['orderComponent'], 'WRITE_OFF');
+      expect(json['confirm'], isTrue);
+      expect(json['remark'], '确认无法收回');
+      expect(json.containsKey('accountId'), isFalse);
+      expect(json.containsKey('toAccountId'), isFalse);
+      expect(json['categoryAmountPair'], [
+        {'categoryId': 101, 'amount': '200.00'},
+      ]);
+    },
+  );
+
+  test(
+    'normal one, two and three forms do not use the V2 entry service',
+    () async {
+      for (final type in [
+        FxBillType.expense,
+        FxBillType.income,
+        FxBillType.transfer,
+      ]) {
+        final harness = _EditorHarness();
+        addTearDown(harness.dispose);
+        final state = await harness.initialize(
+          BillEditorArgs(presetBillType: type.value),
+        );
+        expect(state.isOrderFlow, isFalse);
+        expect(state.showOrder, isFalse);
+        expect(harness.ordersServiceUsed, isFalse);
+      }
+    },
+  );
+
+  test(
+    'retries the same content with one UUID and changes it for new content',
+    () async {
+      final harness = _EditorHarness();
+      addTearDown(harness.dispose);
+      await harness.initialize(_principalArgs());
+      harness.bloc.add(const SingleAmountChanged(100000));
+      await Future<void>.delayed(Duration.zero);
+
+      harness.enqueueError();
+      await harness.submit();
+      expect(harness.bloc.state.submitStatus, SubmitStatus.failure);
+      expect(harness.bloc.state.singleAmountCents, 100000);
+
+      harness.enqueueSuccess();
+      await harness.submit();
+      final first = harness.lastEntryJson()['requestId'];
+
+      harness.bloc.add(const SingleAmountChanged(40000));
+      await Future<void>.delayed(Duration.zero);
+      harness.enqueueSuccess();
+      await harness.submit();
+      final second = harness.lastEntryJson()['requestId'];
+
+      expect(first, 'request-1');
+      expect(second, 'request-2');
+      expect(harness.lastEntryJson()['amount'], '400.00');
+    },
+  );
 
   test('version conflict preserves input and refreshes order detail', () async {
     final harness = _EditorHarness();
@@ -304,6 +319,63 @@ void main() {
     expect(harness.adapter.requests.last.method, 'POST');
     expect(harness.lastEntryJson()['requestId'], isNotEmpty);
   });
+
+  testWidgets('category total uses a currency symbol instead of CNY', (
+    tester,
+  ) async {
+    final harness = _EditorHarness();
+    final state = await harness.initialize(
+      const BillEditorArgs(presetBillType: 1, presetBookId: 20),
+    );
+    harness.bloc.add(const AccountChanged(50, '现金'));
+    harness.bloc.add(
+      CategoryRowAmountChanged(state.categoryRows.single.rowId, 123.45),
+    );
+    await tester.pump();
+    expect(harness.bloc.state.accountId, 50);
+    expect(harness.bloc.state.categoryTotal, 123.45);
+    await tester.pumpWidget(_editorWidget(harness.bloc));
+
+    expect(find.text('¥123.45'), findsOneWidget);
+    expect(find.text('CNY 123.45'), findsNothing);
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
+
+  testWidgets('core editor fields share one continuous grouped form', (
+    tester,
+  ) async {
+    final harness = _EditorHarness();
+    await harness.initialize(
+      const BillEditorArgs(presetBillType: 1, presetBookId: 20),
+    );
+    await tester.pumpWidget(_editorWidget(harness.bloc));
+
+    final core = find.byKey(const ValueKey('bill-editor-core-section'));
+    expect(core, findsOneWidget);
+    expect(
+      find.descendant(of: core, matching: find.text('备注')),
+      findsOneWidget,
+    );
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
+}
+
+Widget _editorWidget(BillEditorBloc bloc) {
+  return BlocProvider.value(
+    value: bloc,
+    child: MaterialApp(
+      theme: FxTheme.light,
+      locale: const Locale('zh'),
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+        S.delegate,
+      ],
+      supportedLocales: S.delegate.supportedLocales,
+      home: const BillEditorPage(),
+    ),
+  );
 }
 
 BillEditorArgs _principalArgs() => const BillEditorArgs(
@@ -342,7 +414,8 @@ class _EditorHarness {
   Future<BillEditorState> initialize(BillEditorArgs args) {
     final ready = bloc.stream.firstWhere(
       (state) =>
-          state.status == EditorStatus.ready || state.status == EditorStatus.error,
+          state.status == EditorStatus.ready ||
+          state.status == EditorStatus.error,
     );
     bloc.add(BillEditorInitialized(args));
     return ready;
@@ -365,8 +438,11 @@ class _EditorHarness {
     'replayed': false,
   });
 
-  void enqueueError({int code = 500}) =>
-      adapter.enqueue({'code': code, 'msg': 'error', 'data': null}, wrapped: false);
+  void enqueueError({int code = 500}) => adapter.enqueue({
+    'code': code,
+    'msg': 'error',
+    'data': null,
+  }, wrapped: false);
 
   void enqueueDetail({required int version}) => adapter.enqueue({
     'orderId': 1001,
@@ -388,7 +464,7 @@ class _EditorHarness {
     return jsonDecode(body.substring(start, end)) as Map<String, dynamic>;
   }
 
-  void dispose() => bloc.close();
+  Future<void> dispose() => bloc.close();
 }
 
 class _CountingOrdersService extends OrdersService {
@@ -418,9 +494,8 @@ class _QueueAdapter implements HttpClientAdapter {
   final List<RequestOptions> requests = [];
   final List<String> bodies = [];
 
-  void enqueue(dynamic data, {bool wrapped = true}) => _responses.add(
-    wrapped ? {'code': 0, 'msg': 'ok', 'data': data} : data,
-  );
+  void enqueue(dynamic data, {bool wrapped = true}) =>
+      _responses.add(wrapped ? {'code': 0, 'msg': 'ok', 'data': data} : data);
 
   @override
   Future<ResponseBody> fetch(
@@ -464,15 +539,16 @@ class _FakeOptionsService extends EditorOptionsService {
   }) async {
     return const EditorOptions(
       accounts: [
-        AccountOption(accountId: 50, accountName: '现金', canExpense: true),
+        AccountOption(
+          accountId: 50,
+          accountName: '现金',
+          canExpense: true,
+          currencyCode: 'CNY',
+        ),
         AccountOption(accountId: 51, accountName: '收入账户', canIncome: true),
       ],
-      expenseCategories: [
-        CategoryNode(categoryId: 101, categoryName: '垫付'),
-      ],
-      incomeCategories: [
-        CategoryNode(categoryId: 201, categoryName: '报销'),
-      ],
+      expenseCategories: [CategoryNode(categoryId: 101, categoryName: '垫付')],
+      incomeCategories: [CategoryNode(categoryId: 201, categoryName: '报销')],
       orders: [
         OrderOption(orderId: 1001, title: '张三借款', type: 2),
         OrderOption(orderId: 2001, title: '报销单', type: 1),

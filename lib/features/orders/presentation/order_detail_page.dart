@@ -565,8 +565,9 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
     };
     await FxSheet.show<FinanceOrderMutationResult>(
       context,
+      scrollable: false,
+      maxHeightFactor: FxSheet.formHeightFactor,
       title: S.of(context).ordersEditTitle(typeLabel),
-      expand: true,
       child: OrderFormSheet(
         key: key,
         service: widget.service,

@@ -43,10 +43,11 @@ class _MembersPageState extends State<MembersPage> {
     final formKey = GlobalKey<MemberFormSheetState>();
     final changed = await FxSheet.show<bool>(
       context,
+      scrollable: false,
+      maxHeightFactor: FxSheet.formHeightFactor,
       title: member == null
           ? S.of(context).membersAdd
           : S.of(context).membersEdit,
-      expand: true,
       submitLabel: member == null
           ? S.of(context).membersCreate
           : S.of(context).membersSaveEdit,

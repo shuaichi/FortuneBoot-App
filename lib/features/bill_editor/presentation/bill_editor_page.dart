@@ -28,6 +28,8 @@ import 'package:fortuneboot/fx/components/fx_card.dart';
 import 'package:fortuneboot/fx/components/fx_confirm_sheet.dart';
 import 'package:fortuneboot/fx/components/fx_date_picker.dart';
 import 'package:fortuneboot/fx/components/fx_icon_button.dart';
+import 'package:fortuneboot/fx/components/fx_list_section.dart';
+import 'package:fortuneboot/fx/components/fx_money_text.dart';
 import 'package:fortuneboot/fx/components/fx_segmented.dart';
 import 'package:fortuneboot/fx/components/fx_state_view.dart';
 import 'package:fortuneboot/fx/components/fx_tag_chip.dart';
@@ -266,59 +268,35 @@ class _EditorBody extends StatelessWidget {
         ),
         const SizedBox(height: FxSpacing.lg),
 
-        // 标题（置于金额上方，便于先命名再记金额）
-        _TitleCard(state: state),
-        const SizedBox(height: FxSpacing.lg),
-
-        // 金额区
-        _AmountArea(state: state, currency: currency),
-        const SizedBox(height: FxSpacing.lg),
-
-        // 分类拆分（非转账）
-        if (state.isOrderFlow && state.showCategorySplit) ...[
-          _OrderCategorySplitSection(state: state, currencyCode: currency),
-          const SizedBox(height: FxSpacing.lg),
-        ] else if (state.showCategorySplit) ...[
-          CategorySplitSection(state: state, currencyCode: currency),
-          const SizedBox(height: FxSpacing.lg),
-        ],
-
-        // 明细卡
-        FxCard(
-          padding: EdgeInsets.zero,
-          child: Column(
-            children: [
-              if (state.isTransfer) ...[
-                _TransferAccountRow(state: state, isOut: true),
-                _divider(context),
-                _TransferAccountRow(state: state, isOut: false),
-              ] else if (state.showAccount) ...[
-                _AccountRow(state: state),
-              ],
-              if (state.isWriteOff) ...[
-                _PickerRow(
-                  label: S.of(context).billEditorAccount,
-                  value: S.of(context).billEditorWriteOffAccount,
-                  onTap: null,
-                ),
-                _divider(context),
-              ],
-              if (state.showPayee) ...[
-                _divider(context),
-                _PayeeRow(state: state),
-              ],
-              if (state.showOrder) ...[
-                _divider(context),
-                _OrderRow(state: state),
-              ],
-              _divider(context),
-              _TradeTimeRow(state: state),
-              _divider(context),
-              _TagsRow(state: state),
-              _divider(context),
-              _MembersRow(state: state),
-            ],
-          ),
+        // 核心字段共享一个连续表面，避免每个输入项都形成独立卡片。
+        FxListSection(
+          key: const ValueKey('bill-editor-core-section'),
+          dividerIndent: FxSpacing.lg,
+          children: [
+            _TitleCard(state: state),
+            _AmountArea(state: state, currency: currency),
+            if (state.isOrderFlow && state.showCategorySplit)
+              _OrderCategorySplitSection(state: state, currencyCode: currency)
+            else if (state.showCategorySplit)
+              CategorySplitSection(state: state, currencyCode: currency),
+            if (state.isTransfer) ...[
+              _TransferAccountRow(state: state, isOut: true),
+              _TransferAccountRow(state: state, isOut: false),
+            ] else if (state.showAccount)
+              _AccountRow(state: state),
+            if (state.isWriteOff)
+              _PickerRow(
+                label: S.of(context).billEditorAccount,
+                value: S.of(context).billEditorWriteOffAccount,
+                onTap: null,
+              ),
+            if (state.showPayee) _PayeeRow(state: state),
+            if (state.showOrder) _OrderRow(state: state),
+            _TradeTimeRow(state: state),
+            _TagsRow(state: state),
+            _MembersRow(state: state),
+            _RemarkCard(state: state),
+          ],
         ),
         const SizedBox(height: FxSpacing.lg),
 
@@ -330,10 +308,6 @@ class _EditorBody extends StatelessWidget {
 
         // 附件
         _AttachmentCard(state: state),
-        const SizedBox(height: FxSpacing.lg),
-
-        // 备注
-        _RemarkCard(state: state),
         const SizedBox(height: FxSpacing.lg),
 
         // 开关
@@ -418,30 +392,22 @@ String _currency(BillEditorState state) {
 }
 
 /// 附属 1/2 流水显示业务动作名，而不是笼统的支出/收入。
-String _businessActionLabel(
-  BuildContext context,
-  BillEditorState state,
-) {
+String _businessActionLabel(BuildContext context, BillEditorState state) {
   final s = S.of(context);
   return switch (state.orderComponent) {
-    FinanceOrderComponent.interest => state.isIncome
-        ? s.orderActionInterestIn
-        : s.orderActionInterestOut,
+    FinanceOrderComponent.interest =>
+      state.isIncome ? s.orderActionInterestIn : s.orderActionInterestOut,
     FinanceOrderComponent.fee => s.orderActionFee,
     FinanceOrderComponent.writeOff => switch (state.orderTypeOfSelection) {
-        FinanceOrderType.receivable => s.orderActionWriteOffReceivable,
-        FinanceOrderType.payable => s.orderActionWriteOffPayable,
-        FinanceOrderType.reimbursement || null =>
-          s.orderActionWriteOffReimbursement,
-      },
-    FinanceOrderComponent.principal || null => state.billType.localizedLabel(
-        context,
-      ),
+      FinanceOrderType.receivable => s.orderActionWriteOffReceivable,
+      FinanceOrderType.payable => s.orderActionWriteOffPayable,
+      FinanceOrderType.reimbursement ||
+      null => s.orderActionWriteOffReimbursement,
+    },
+    FinanceOrderComponent.principal ||
+    null => state.billType.localizedLabel(context),
   };
 }
-
-Widget _divider(BuildContext context) =>
-    Divider(height: 1, thickness: 1, color: FxPalette.of(context).border);
 
 // ---------------- 金额区 ----------------
 
@@ -456,7 +422,8 @@ class _AmountArea extends StatelessWidget {
     final tint = FxFinanceColors.of(context).forBillType(state.billTypeValue);
 
     if (state.isTransfer) {
-      return FxCard(
+      return Padding(
+        padding: const EdgeInsets.all(FxSpacing.lg),
         child: AmountField(
           label: S.of(context).billEditorTransferAmount,
           value: state.transferAmount,
@@ -468,7 +435,8 @@ class _AmountArea extends StatelessWidget {
     }
 
     if (state.showSingleAmount) {
-      return FxCard(
+      return Padding(
+        padding: const EdgeInsets.all(FxSpacing.lg),
         child: _OrderAmountField(
           label: _businessActionLabel(context, state),
           value: state.singleAmountCents,
@@ -480,7 +448,8 @@ class _AmountArea extends StatelessWidget {
     }
 
     // 支出/收入/垫付/报销：大数字来自分类拆分总额（只读展示）。
-    return FxCard(
+    return Padding(
+      padding: const EdgeInsets.all(FxSpacing.lg),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -491,9 +460,12 @@ class _AmountArea extends StatelessWidget {
             ),
           ),
           const SizedBox(height: FxSpacing.sm),
-          Text(
-            '${currency.isEmpty ? '' : '$currency '}${state.categoryTotal.toStringAsFixed(2)}',
-            style: FxTypography.display.copyWith(color: tint),
+          FxMoneyText(
+            amount: state.categoryTotal,
+            currencyCode: currency,
+            color: tint,
+            fontSize: FxTypography.display.fontSize ?? 34,
+            fontWeight: FxTypography.display.fontWeight ?? FontWeight.w700,
           ),
           const SizedBox(height: FxSpacing.xs),
           Text(
@@ -521,86 +493,82 @@ class _OrderCategorySplitSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bloc = context.read<BillEditorBloc>();
-    return FxCard(
-      padding: EdgeInsets.zero,
-      child: Column(
-        children: [
-          for (var index = 0; index < state.categoryRows.length; index++)
-            _OrderCategoryRow(
-              row: state.categoryRows[index],
-              currencyCode: currencyCode,
-              canRemove: state.categoryRows.length > 1,
-              onPickCategory: () async {
-                _dismissKeyboard();
-                final categories = (
-                  state.usesIncomeAssociations
-                      ? state.options.incomeCategories
-                      : state.options.expenseCategories
-                )
-                    .expand((node) => node.flatten())
-                    .where((node) => node.isLeaf)
-                    .toList();
-                final picked = await showOptionPicker<CategoryNode>(
-                  context,
-                  title: S.of(context).billEditorSelectCategory,
-                  options: categories,
-                  labelOf: (node) => node.categoryName ?? '',
-                  selectedId: state.categoryRows[index].categoryId,
-                  idOf: (node) => node.categoryId,
-                );
-                if (!context.mounted || picked == null) return;
-                bloc.add(
-                  CategoryRowCategoryChanged(
-                    state.categoryRows[index].rowId,
-                    picked.categoryId,
-                    picked.categoryName,
-                  ),
-                );
-              },
-              onAmount: (cents) => bloc.add(
-                OrderCategoryRowAmountChanged(
+    return Column(
+      children: [
+        for (var index = 0; index < state.categoryRows.length; index++)
+          _OrderCategoryRow(
+            row: state.categoryRows[index],
+            currencyCode: currencyCode,
+            canRemove: state.categoryRows.length > 1,
+            onPickCategory: () async {
+              _dismissKeyboard();
+              final categories =
+                  (state.usesIncomeAssociations
+                          ? state.options.incomeCategories
+                          : state.options.expenseCategories)
+                      .expand((node) => node.flatten())
+                      .where((node) => node.isLeaf)
+                      .toList();
+              final picked = await showOptionPicker<CategoryNode>(
+                context,
+                title: S.of(context).billEditorSelectCategory,
+                options: categories,
+                labelOf: (node) => node.categoryName ?? '',
+                selectedId: state.categoryRows[index].categoryId,
+                idOf: (node) => node.categoryId,
+              );
+              if (!context.mounted || picked == null) return;
+              bloc.add(
+                CategoryRowCategoryChanged(
                   state.categoryRows[index].rowId,
-                  cents,
+                  picked.categoryId,
+                  picked.categoryName,
                 ),
+              );
+            },
+            onAmount: (cents) => bloc.add(
+              OrderCategoryRowAmountChanged(
+                state.categoryRows[index].rowId,
+                cents,
               ),
-              onRemove: () {
-                _dismissKeyboard();
-                bloc.add(CategoryRowRemoved(state.categoryRows[index].rowId));
-              },
             ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(
-              FxSpacing.lg,
-              FxSpacing.sm,
-              FxSpacing.lg,
-              FxSpacing.md,
-            ),
-            child: InkWell(
-              onTap: () => bloc.add(const CategoryRowAdded()),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: FxSpacing.sm),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.add_rounded,
-                      size: 18,
+            onRemove: () {
+              _dismissKeyboard();
+              bloc.add(CategoryRowRemoved(state.categoryRows[index].rowId));
+            },
+          ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(
+            FxSpacing.lg,
+            FxSpacing.sm,
+            FxSpacing.lg,
+            FxSpacing.md,
+          ),
+          child: InkWell(
+            onTap: () => bloc.add(const CategoryRowAdded()),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: FxSpacing.sm),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.add_rounded,
+                    size: 18,
+                    color: FxPalette.of(context).primary,
+                  ),
+                  const SizedBox(width: FxSpacing.xs),
+                  Text(
+                    S.of(context).billEditorAddCategory,
+                    style: FxTypography.bodyStrong.copyWith(
                       color: FxPalette.of(context).primary,
                     ),
-                    const SizedBox(width: FxSpacing.xs),
-                    Text(
-                      S.of(context).billEditorAddCategory,
-                      style: FxTypography.bodyStrong.copyWith(
-                        color: FxPalette.of(context).primary,
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
@@ -750,9 +718,8 @@ class _OrderAmountFieldState extends State<_OrderAmountField> {
     super.dispose();
   }
 
-  static String _format(int cents) => cents == 0
-      ? ''
-      : OrderMoney.fromCents(cents).toApiString();
+  static String _format(int cents) =>
+      cents == 0 ? '' : OrderMoney.fromCents(cents).toApiString();
 
   static int _parseCents(String text) {
     if (text.isEmpty) return 0;
@@ -926,24 +893,26 @@ class _OrderRow extends StatelessWidget {
       value: state.orderTitle,
       placeholder: S.of(context).billEditorRequired,
       required: true,
-      onTap: state.lockOrderContext ? null : () async {
-        _dismissKeyboard();
-        final picked = await showOptionPicker<OrderOption>(
-          context,
-          title: S.of(context).billEditorSelectOrder,
-          options: state.options.orders
-              .where((order) => order.enabled)
-              .toList(),
-          labelOf: (o) => [
-            o.title,
-            o.typeDesc,
-          ].where((s) => s != null && s.isNotEmpty).join(' · '),
-          selectedId: state.orderId,
-          idOf: (o) => o.orderId,
-        );
-        if (!context.mounted) return;
-        bloc.add(OrderChanged(picked?.orderId, picked?.title));
-      },
+      onTap: state.lockOrderContext
+          ? null
+          : () async {
+              _dismissKeyboard();
+              final picked = await showOptionPicker<OrderOption>(
+                context,
+                title: S.of(context).billEditorSelectOrder,
+                options: state.options.orders
+                    .where((order) => order.enabled)
+                    .toList(),
+                labelOf: (o) => [
+                  o.title,
+                  o.typeDesc,
+                ].where((s) => s != null && s.isNotEmpty).join(' · '),
+                selectedId: state.orderId,
+                idOf: (o) => o.orderId,
+              );
+              if (!context.mounted) return;
+              bloc.add(OrderChanged(picked?.orderId, picked?.title));
+            },
     );
   }
 }
@@ -1153,9 +1122,9 @@ class _PickerRow extends StatelessWidget {
       onTap: onTap == null
           ? null
           : () {
-        HapticFeedback.selectionClick();
-        onTap?.call();
-      },
+              HapticFeedback.selectionClick();
+              onTap?.call();
+            },
       child: Padding(
         padding: const EdgeInsets.symmetric(
           horizontal: FxSpacing.lg,
@@ -1482,7 +1451,11 @@ class _TitleCardState extends State<_TitleCard> {
   Widget build(BuildContext context) {
     final palette = FxPalette.of(context);
     final bloc = context.read<BillEditorBloc>();
-    return FxCard(
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: FxSpacing.lg,
+        vertical: FxSpacing.md,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -1543,7 +1516,11 @@ class _RemarkCardState extends State<_RemarkCard> {
   Widget build(BuildContext context) {
     final palette = FxPalette.of(context);
     final bloc = context.read<BillEditorBloc>();
-    return FxCard(
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: FxSpacing.lg,
+        vertical: FxSpacing.md,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -1636,26 +1613,35 @@ class _SubmitBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final bloc = context.read<BillEditorBloc>();
     final submitting = state.submitStatus == SubmitStatus.submitting;
-    return Container(
-      color: FxPalette.of(context).surface,
-      padding: EdgeInsets.fromLTRB(
-        FxSpacing.lg,
-        FxSpacing.md,
-        FxSpacing.lg,
-        FxSpacing.md + MediaQuery.of(context).padding.bottom,
-      ),
-      child: FxButton(
-        label: state.mode == 'edit'
-            ? S.of(context).billEditorSaveEdit
-            : S.of(context).billEditorSaveNew,
-        expand: true,
-        loading: submitting,
-        onPressed: submitting
-            ? null
-            : () {
-                _dismissKeyboard();
-                bloc.add(const BillEditorSubmitted());
-              },
+    final palette = FxPalette.of(context);
+    return SafeArea(
+      top: false,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: palette.surface,
+          border: Border(top: BorderSide(color: palette.border)),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(
+            FxSpacing.lg,
+            FxSpacing.md,
+            FxSpacing.lg,
+            FxSpacing.md,
+          ),
+          child: FxButton(
+            label: state.mode == 'edit'
+                ? S.of(context).billEditorSaveEdit
+                : S.of(context).billEditorSaveNew,
+            expand: true,
+            loading: submitting,
+            onPressed: submitting
+                ? null
+                : () {
+                    _dismissKeyboard();
+                    bloc.add(const BillEditorSubmitted());
+                  },
+          ),
+        ),
       ),
     );
   }

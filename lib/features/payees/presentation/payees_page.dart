@@ -43,8 +43,9 @@ class _PayeesPageState extends State<PayeesPage> {
     final formKey = GlobalKey<PayeeFormSheetState>();
     final changed = await FxSheet.show<bool>(
       context,
+      scrollable: false,
+      maxHeightFactor: FxSheet.formHeightFactor,
       title: payee == null ? S.of(context).payeesAdd : S.of(context).payeesEdit,
-      expand: true,
       submitLabel: payee == null
           ? S.of(context).payeesCreate
           : S.of(context).payeesSaveEdit,

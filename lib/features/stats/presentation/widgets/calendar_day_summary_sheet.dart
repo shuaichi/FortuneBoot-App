@@ -32,6 +32,7 @@ Future<void> showCalendarDaySummarySheet(
 }) {
   return FxSheet.show<void>(
     context,
+    title: S.of(context).statsIncomeExpenseCalendar,
     scrollable: true,
     maxHeightFactor: FxSheet.pickerHeightFactor,
     child: CalendarDaySummarySheet(

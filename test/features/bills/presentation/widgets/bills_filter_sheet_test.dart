@@ -75,6 +75,7 @@ void main() {
             heightFactor: FxSheet.pickerHeightFactor,
             child: FxSheet(
               title: '筛选',
+              maxHeightFactor: FxSheet.pickerHeightFactor,
               child: BillsFilterPage(
                 initial: BillsFilter.empty,
                 onApply: (_) {},
@@ -106,6 +107,7 @@ void main() {
         home: const MediaQuery(
           data: MediaQueryData(viewInsets: EdgeInsets.only(bottom: 200)),
           child: FxSheet(
+            title: '测试',
             scrollable: true,
             maxHeightFactor: 0.8,
             child: SizedBox(height: 1200),

@@ -46,11 +46,10 @@ class _DefaultAccountSheetState extends State<DefaultAccountSheet> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(widget.kind.label, style: FxTypography.title),
-          const SizedBox(height: FxSpacing.md),
           Flexible(
             child: ListView.separated(
               shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
               itemBuilder: (context, index) {
                 final account = widget.accounts[index];
                 final enabled = account.canUseFor(widget.kind);

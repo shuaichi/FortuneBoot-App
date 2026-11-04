@@ -128,10 +128,11 @@ class _BooksPageState extends State<BooksPage> {
     final formKey = GlobalKey<GroupFormSheetState>();
     final changed = await FxSheet.show<bool>(
       context,
+      scrollable: false,
+      maxHeightFactor: FxSheet.formHeightFactor,
       title: group == null
           ? S.of(context).booksAddGroup
           : S.of(context).booksEditGroup,
-      expand: true,
       submitLabel: group == null
           ? S.of(context).booksCreateGroup
           : S.of(context).booksSaveChanges,
@@ -207,10 +208,11 @@ class _BooksPageState extends State<BooksPage> {
     final formKey = GlobalKey<BookFormSheetState>();
     final changed = await FxSheet.show<bool>(
       context,
+      scrollable: false,
+      maxHeightFactor: FxSheet.formHeightFactor,
       title: book == null
           ? S.of(context).booksAddBook
           : S.of(context).booksEditBook,
-      expand: true,
       submitLabel: book == null
           ? S.of(context).booksCreateBook
           : S.of(context).booksSaveChanges,
@@ -259,74 +261,74 @@ class _BooksPageState extends State<BooksPage> {
         : group.defaultBookId == null
         ? 0
         : 1;
-    final action = await showModalBottomSheet<_GroupAction>(
-      context: context,
-      backgroundColor: FxPalette.of(context).surface,
-      builder: (ctx) => SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (!capabilities.canWrite)
-              _menuItem(
-                ctx,
-                Icons.visibility_rounded,
-                S.of(context).booksVisitorViewGroupOnly,
-                _GroupAction.explain,
-              ),
+    final action = await FxSheet.show<_GroupAction>(
+      context,
+      title: group.name,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (!capabilities.canWrite)
             _menuItem(
-              ctx,
-              Icons.star_rounded,
-              S.of(context).booksSetDefaultGroup,
-              _GroupAction.setDefault,
-              enabled: GroupGuard.canSetDefault(
-                group: group,
-                defaultGroupId: state.defaultGroupId,
-                enabledActiveBooksCount: enabledBookCount,
-                capabilities: capabilities,
-              ).allowed,
+              context,
+              Icons.visibility_rounded,
+              S.of(context).booksVisitorViewGroupOnly,
+              _GroupAction.explain,
             ),
-            _menuItem(
-              ctx,
-              Icons.edit_rounded,
-              S.of(ctx).booksEdit,
-              _GroupAction.edit,
-              enabled: capabilities.canEdit,
-            ),
-            _menuItem(
-              ctx,
-              Icons.person_add_alt_rounded,
-              S.of(context).booksInviteMembers,
-              _GroupAction.invite,
-              enabled: capabilities.canInvite,
-            ),
-            _menuItem(
-              ctx,
-              group.enable ? Icons.toggle_off_rounded : Icons.toggle_on_rounded,
-              group.enable ? S.of(ctx).booksDisable : S.of(ctx).booksEnable,
-              _GroupAction.toggle,
-              enabled: GroupGuard.canToggle(
-                group: group,
-                targetEnable: !group.enable,
-                defaultGroupId: state.defaultGroupId,
-                enabledGroupCount: state.enabledGroups.length,
-                capabilities: capabilities,
-              ).allowed,
-            ),
-            _menuItem(
-              ctx,
-              Icons.delete_forever_rounded,
-              S.of(context).booksDeleteGroupForever,
-              _GroupAction.delete,
-              enabled: GroupGuard.canDelete(
-                group: group,
-                defaultGroupId: state.defaultGroupId,
-                enabledGroupCount: state.enabledGroups.length,
-                capabilities: capabilities,
-              ).allowed,
-              danger: true,
-            ),
-          ],
-        ),
+          _menuItem(
+            context,
+            Icons.star_rounded,
+            S.of(context).booksSetDefaultGroup,
+            _GroupAction.setDefault,
+            enabled: GroupGuard.canSetDefault(
+              group: group,
+              defaultGroupId: state.defaultGroupId,
+              enabledActiveBooksCount: enabledBookCount,
+              capabilities: capabilities,
+            ).allowed,
+          ),
+          _menuItem(
+            context,
+            Icons.edit_rounded,
+            S.of(context).booksEdit,
+            _GroupAction.edit,
+            enabled: capabilities.canEdit,
+          ),
+          _menuItem(
+            context,
+            Icons.person_add_alt_rounded,
+            S.of(context).booksInviteMembers,
+            _GroupAction.invite,
+            enabled: capabilities.canInvite,
+          ),
+          _menuItem(
+            context,
+            group.enable ? Icons.toggle_off_rounded : Icons.toggle_on_rounded,
+            group.enable
+                ? S.of(context).booksDisable
+                : S.of(context).booksEnable,
+            _GroupAction.toggle,
+            enabled: GroupGuard.canToggle(
+              group: group,
+              targetEnable: !group.enable,
+              defaultGroupId: state.defaultGroupId,
+              enabledGroupCount: state.enabledGroups.length,
+              capabilities: capabilities,
+            ).allowed,
+          ),
+          _menuItem(
+            context,
+            Icons.delete_forever_rounded,
+            S.of(context).booksDeleteGroupForever,
+            _GroupAction.delete,
+            enabled: GroupGuard.canDelete(
+              group: group,
+              defaultGroupId: state.defaultGroupId,
+              enabledGroupCount: state.enabledGroups.length,
+              capabilities: capabilities,
+            ).allowed,
+            danger: true,
+          ),
+        ],
       ),
     );
     if (!mounted || action == null) return;
@@ -388,96 +390,94 @@ class _BooksPageState extends State<BooksPage> {
     final inRecycleBin = state.bookSegment == BooksSegment.recycleBin;
     final defaultBookId = group?.defaultBookId;
     final enabledCount = state.enabledActiveBooks.length;
-    final action = await showModalBottomSheet<_BookAction>(
-      context: context,
-      backgroundColor: FxPalette.of(context).surface,
-      builder: (ctx) => SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: inRecycleBin
-              ? [
-                  _menuItem(
-                    ctx,
-                    Icons.restore_rounded,
-                    S.of(ctx).booksPutBack,
-                    _BookAction.restore,
-                    enabled: BookGuard.canRestore(
-                      capabilities: capabilities,
-                    ).allowed,
-                  ),
-                  _menuItem(
-                    ctx,
-                    Icons.delete_forever_rounded,
-                    S.of(ctx).booksDeleteForever,
-                    _BookAction.delete,
-                    enabled: BookGuard.canDeleteForever(
-                      book: book,
-                      defaultBookId: defaultBookId,
-                      enabledActiveBookCount: enabledCount,
-                      capabilities: capabilities,
-                      inRecycleBin: true,
-                    ).allowed,
-                    danger: true,
-                  ),
-                ]
-              : [
-                  _menuItem(
-                    ctx,
-                    Icons.account_balance_wallet_rounded,
-                    S.of(ctx).booksDefaultAccountSettings,
-                    _BookAction.accounts,
-                    enabled: capabilities.canEdit,
-                  ),
-                  _menuItem(
-                    ctx,
-                    Icons.star_rounded,
-                    S.of(ctx).booksSetDefaultBook,
-                    _BookAction.setDefault,
-                    enabled: BookGuard.canSetDefault(
-                      book: book,
-                      defaultBookId: defaultBookId,
-                      inRecycleBin: false,
-                      capabilities: capabilities,
-                    ).allowed,
-                  ),
-                  _menuItem(
-                    ctx,
-                    Icons.edit_rounded,
-                    S.of(ctx).booksEdit,
-                    _BookAction.edit,
-                    enabled: capabilities.canEdit,
-                  ),
-                  _menuItem(
-                    ctx,
-                    book.enable
-                        ? Icons.toggle_off_rounded
-                        : Icons.toggle_on_rounded,
-                    book.enable
-                        ? S.of(ctx).booksDisable
-                        : S.of(ctx).booksEnable,
-                    _BookAction.toggle,
-                    enabled: BookGuard.canToggle(
-                      book: book,
-                      targetEnable: !book.enable,
-                      defaultBookId: defaultBookId,
-                      enabledActiveBookCount: enabledCount,
-                      capabilities: capabilities,
-                    ).allowed,
-                  ),
-                  _menuItem(
-                    ctx,
-                    Icons.delete_outline_rounded,
-                    S.of(ctx).booksMoveToRecycle,
-                    _BookAction.recycle,
-                    enabled: BookGuard.canMoveToRecycle(
-                      book: book,
-                      defaultBookId: defaultBookId,
-                      enabledActiveBookCount: enabledCount,
-                      capabilities: capabilities,
-                    ).allowed,
-                  ),
-                ],
-        ),
+    final action = await FxSheet.show<_BookAction>(
+      context,
+      title: book.bookName ?? S.of(context).commonMoreActions,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: inRecycleBin
+            ? [
+                _menuItem(
+                  context,
+                  Icons.restore_rounded,
+                  S.of(context).booksPutBack,
+                  _BookAction.restore,
+                  enabled: BookGuard.canRestore(
+                    capabilities: capabilities,
+                  ).allowed,
+                ),
+                _menuItem(
+                  context,
+                  Icons.delete_forever_rounded,
+                  S.of(context).booksDeleteForever,
+                  _BookAction.delete,
+                  enabled: BookGuard.canDeleteForever(
+                    book: book,
+                    defaultBookId: defaultBookId,
+                    enabledActiveBookCount: enabledCount,
+                    capabilities: capabilities,
+                    inRecycleBin: true,
+                  ).allowed,
+                  danger: true,
+                ),
+              ]
+            : [
+                _menuItem(
+                  context,
+                  Icons.account_balance_wallet_rounded,
+                  S.of(context).booksDefaultAccountSettings,
+                  _BookAction.accounts,
+                  enabled: capabilities.canEdit,
+                ),
+                _menuItem(
+                  context,
+                  Icons.star_rounded,
+                  S.of(context).booksSetDefaultBook,
+                  _BookAction.setDefault,
+                  enabled: BookGuard.canSetDefault(
+                    book: book,
+                    defaultBookId: defaultBookId,
+                    inRecycleBin: false,
+                    capabilities: capabilities,
+                  ).allowed,
+                ),
+                _menuItem(
+                  context,
+                  Icons.edit_rounded,
+                  S.of(context).booksEdit,
+                  _BookAction.edit,
+                  enabled: capabilities.canEdit,
+                ),
+                _menuItem(
+                  context,
+                  book.enable
+                      ? Icons.toggle_off_rounded
+                      : Icons.toggle_on_rounded,
+                  book.enable
+                      ? S.of(context).booksDisable
+                      : S.of(context).booksEnable,
+                  _BookAction.toggle,
+                  enabled: BookGuard.canToggle(
+                    book: book,
+                    targetEnable: !book.enable,
+                    defaultBookId: defaultBookId,
+                    enabledActiveBookCount: enabledCount,
+                    capabilities: capabilities,
+                  ).allowed,
+                ),
+                _menuItem(
+                  context,
+                  Icons.delete_outline_rounded,
+                  S.of(context).booksMoveToRecycle,
+                  _BookAction.recycle,
+                  enabled: BookGuard.canMoveToRecycle(
+                    book: book,
+                    defaultBookId: defaultBookId,
+                    enabledActiveBookCount: enabledCount,
+                    capabilities: capabilities,
+                  ).allowed,
+                ),
+              ],
       ),
     );
     if (!mounted || action == null) return;

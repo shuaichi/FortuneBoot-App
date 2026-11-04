@@ -89,10 +89,11 @@ class _AccountsPageState extends State<AccountsPage> {
     final formKey = GlobalKey<AccountFormSheetState>();
     final changed = await FxSheet.show<bool>(
       context,
+      scrollable: false,
+      maxHeightFactor: FxSheet.formHeightFactor,
       title: account == null
           ? S.of(context).accountsAddTitle
           : S.of(context).accountsEditTitle,
-      expand: true,
       submitLabel: account == null
           ? S.of(context).accountsCreateAccount
           : S.of(context).accountsSaveChanges,

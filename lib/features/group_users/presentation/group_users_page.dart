@@ -65,6 +65,8 @@ class _GroupUsersPageState extends State<GroupUsersPage> {
     }
     final username = await FxSheet.show<String>(
       context,
+      scrollable: false,
+      maxHeightFactor: FxSheet.formHeightFactor,
       title: S.of(context).groupUsersInviteTitle,
       child: InviteMemberSheet(
         strings: InviteMemberSheetStrings(

@@ -91,7 +91,6 @@ class _BookDetailPageState extends State<BookDetailPage> {
         accounts: _accounts,
         selectedAccountId: _selectedAccountId(kind),
       ),
-      expand: true,
     );
     if (!mounted) return;
     final body = <String, dynamic>{

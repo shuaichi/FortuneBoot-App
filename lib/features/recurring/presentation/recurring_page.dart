@@ -247,7 +247,6 @@ class _RecurringPageState extends State<RecurringPage> {
     return Padding(
       padding: const EdgeInsets.only(bottom: FxSpacing.md),
       child: FxCard(
-        accent: rule.enable ? palette.primary : palette.textTertiary,
         onTap: () => _openLogs(rule),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -309,7 +308,7 @@ class _RecurringPageState extends State<RecurringPage> {
     final spec = CronBuilder.tryParse(cron);
     final label = spec != null
         ? CronScheduleEditor.summarize(context, spec)
-        : S.of(context).recurringAdvancedCron;
+        : S.of(context).recurringCustomSchedule;
     return Text(
       label,
       style: FxTypography.bodyStrong.copyWith(color: palette.textPrimary),

@@ -93,6 +93,7 @@ class CronScheduleEditor extends StatelessWidget {
         ),
         const Spacer(),
         GestureDetector(
+          behavior: HitTestBehavior.opaque,
           onTap: () async {
             final picked = await showTimePicker(
               context: context,
@@ -109,6 +110,7 @@ class CronScheduleEditor extends StatelessWidget {
             }
           },
           child: Container(
+            constraints: const BoxConstraints(minHeight: 44),
             padding: const EdgeInsets.symmetric(
               horizontal: FxSpacing.md,
               vertical: FxSpacing.sm,
@@ -171,30 +173,44 @@ class CronScheduleEditor extends StatelessWidget {
           style: FxTypography.label.copyWith(color: palette.textSecondary),
         ),
         const SizedBox(height: FxSpacing.sm),
-        Wrap(
-          spacing: FxSpacing.xs,
-          runSpacing: FxSpacing.xs,
-          children: [
-            for (var d = 1; d <= 31; d++)
-              _chip(
-                context,
-                '$d',
-                spec.dayOfMonth == d && !spec.lastDayOfMonth,
-                () => onChanged(
-                  spec.copyWith(dayOfMonth: d, lastDayOfMonth: false),
-                ),
-                compact: true,
-              ),
-            _chip(
+        GridView.builder(
+          key: const ValueKey('cron-day-grid'),
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          padding: EdgeInsets.zero,
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 7,
+            mainAxisExtent: 44,
+            mainAxisSpacing: FxSpacing.xs,
+            crossAxisSpacing: FxSpacing.xs,
+          ),
+          itemCount: 31,
+          itemBuilder: (context, index) {
+            final day = index + 1;
+            return _chip(
               context,
-              '31/月末',
-              spec.lastDayOfMonth,
+              '$day',
+              spec.dayOfMonth == day && !spec.lastDayOfMonth,
               () => onChanged(
-                spec.copyWith(dayOfMonth: 31, lastDayOfMonth: true),
+                spec.copyWith(dayOfMonth: day, lastDayOfMonth: false),
               ),
+              key: ValueKey('cron-day-$day'),
               compact: true,
-            ),
-          ],
+            );
+          },
+        ),
+        const SizedBox(height: FxSpacing.xs),
+        Align(
+          alignment: Alignment.centerLeft,
+          child: _chip(
+            context,
+            S.of(context).recurringLastDayOfMonth,
+            spec.lastDayOfMonth,
+            () =>
+                onChanged(spec.copyWith(dayOfMonth: 31, lastDayOfMonth: true)),
+            key: const ValueKey('cron-last-day'),
+            compact: true,
+          ),
         ),
       ],
     );
@@ -233,10 +249,12 @@ class CronScheduleEditor extends StatelessWidget {
     String label,
     bool selected,
     VoidCallback onTap, {
+    Key? key,
     bool compact = false,
     bool multiSelect = false,
   }) {
     return FxChip(
+      key: key,
       label: label,
       selected: selected,
       multiSelect: multiSelect,

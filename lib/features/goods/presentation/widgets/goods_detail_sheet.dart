@@ -36,28 +36,15 @@ class GoodsDetailSheet extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Wrap(
-            spacing: FxSpacing.md,
-            runSpacing: FxSpacing.sm,
-            crossAxisAlignment: WrapCrossAlignment.center,
-            children: [
-              ConstrainedBox(
-                constraints: const BoxConstraints(minWidth: 180, maxWidth: 520),
-                child: Text(
-                  goods.goodsName ?? S.of(context).goodsUnnamed,
-                  style: FxTypography.title,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-              FxMoneyText(
-                amount: goods.price ?? 0,
-                currencyCode: currencyCode,
-                fontSize: 20,
-                color: palette.textPrimary,
-                masked: hideAmounts,
-              ),
-            ],
+          Align(
+            alignment: Alignment.centerLeft,
+            child: FxMoneyText(
+              amount: goods.price ?? 0,
+              currencyCode: currencyCode,
+              fontSize: 20,
+              color: palette.textPrimary,
+              masked: hideAmounts,
+            ),
           ),
           const SizedBox(height: FxSpacing.lg),
           _row(

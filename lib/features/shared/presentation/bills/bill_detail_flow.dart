@@ -42,8 +42,8 @@ class BillDetailFlow {
     if (MediaQuery.widthOf(context) < 840) {
       FxSheet.show<void>(
         context,
+        title: S.of(context).billsDetailTitle,
         scrollable: true,
-        minHeightFactor: FxSheet.hintHeightFactor,
         child: detail,
         footer: footer,
       );

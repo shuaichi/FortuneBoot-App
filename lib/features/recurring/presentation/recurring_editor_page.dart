@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:fortuneboot/core/network/fx_api.dart';
-import 'package:fortuneboot/features/books/presentation/widgets/destructive_confirm_sheet.dart';
 import 'package:fortuneboot/features/recurring/data/cron_builder.dart';
 import 'package:fortuneboot/features/recurring/data/recurring_models.dart';
 import 'package:fortuneboot/features/recurring/data/recurring_service.dart';
@@ -70,14 +69,11 @@ class _RecurringEditorPageState extends State<RecurringEditorPage> {
   bool _loadingOptions = true;
   String? _optionsError;
 
-  // cron 校验（自定义模式）
-  Timer? _cronDebounce;
+  // cron 在保存前进行服务端校验。
   bool? _cronValid;
-  bool _cronChecking = false;
 
-  /// cron 编辑模式：false=可视化下拉选择；true=自定义手写。
-  bool _cronAdvanced = false;
   CronSpec _cronSpec = const CronSpec();
+  bool _legacyScheduleConverted = false;
 
   bool _submitting = false;
   String? _error;
@@ -89,14 +85,14 @@ class _RecurringEditorPageState extends State<RecurringEditorPage> {
     final tpl = r?.billRequest ?? const {};
     _nameCtrl = TextEditingController(text: r?.ruleName ?? '');
     _cronCtrl = TextEditingController(text: r?.cronExpression ?? '');
-    // 尝试把已有 cron 反解析为可视化规格；能解析走可视化，否则走自定义手写。
+    // 旧的高级调度统一转换为默认可视规则，并在页面中明确提示。
     final parsed = CronBuilder.tryParse(r?.cronExpression);
     if (parsed != null) {
       _cronSpec = parsed;
-      _cronAdvanced = false;
       _cronCtrl.text = CronBuilder.build(parsed);
     } else if ((r?.cronExpression ?? '').trim().isNotEmpty) {
-      _cronAdvanced = true;
+      _legacyScheduleConverted = true;
+      _cronCtrl.text = CronBuilder.build(_cronSpec);
     } else {
       // 新建：默认可视化，并用默认规格生成初始 cron。
       _cronCtrl.text = CronBuilder.build(_cronSpec);
@@ -186,7 +182,6 @@ class _RecurringEditorPageState extends State<RecurringEditorPage> {
 
   @override
   void dispose() {
-    _cronDebounce?.cancel();
     _nameCtrl.dispose();
     _cronCtrl.dispose();
     _startCtrl.dispose();
@@ -196,39 +191,6 @@ class _RecurringEditorPageState extends State<RecurringEditorPage> {
     _amountCtrl.dispose();
     _titleCtrl.dispose();
     super.dispose();
-  }
-
-  // ---- cron 实时校验 ----
-
-  int _cronValidationRevision = 0;
-
-  void _onCronChanged(String value) {
-    _cronDebounce?.cancel();
-    setState(() {
-      _cronValid = null;
-      _cronChecking = false;
-    });
-    final cron = value.trim();
-    final validationRevision = ++_cronValidationRevision;
-    if (cron.isEmpty) return;
-    _cronDebounce = Timer(const Duration(milliseconds: 500), () async {
-      if (!mounted || validationRevision != _cronValidationRevision) return;
-      setState(() => _cronChecking = true);
-      try {
-        final ok = await _service.checkCronExpression(cron);
-        if (!mounted || validationRevision != _cronValidationRevision) return;
-        setState(() {
-          _cronValid = _cronCtrl.text.trim() == cron ? ok : null;
-          _cronChecking = false;
-        });
-      } on Object {
-        if (!mounted || validationRevision != _cronValidationRevision) return;
-        setState(() {
-          _cronValid = false;
-          _cronChecking = false;
-        });
-      }
-    });
   }
 
   List<SimpleOption> get _currentCategories => _billType == FxBillType.income
@@ -269,9 +231,7 @@ class _RecurringEditorPageState extends State<RecurringEditorPage> {
   Future<bool> _validateCronForSubmit() async {
     final cron = _cronCtrl.text.trim();
     if (cron.isEmpty) return false;
-    _cronDebounce?.cancel();
     setState(() {
-      _cronChecking = true;
       _cronValid = null;
     });
     try {
@@ -279,14 +239,12 @@ class _RecurringEditorPageState extends State<RecurringEditorPage> {
       if (!mounted) return false;
       setState(() {
         _cronValid = ok;
-        _cronChecking = false;
       });
       return ok;
     } on Object {
       if (mounted) {
         setState(() {
           _cronValid = false;
-          _cronChecking = false;
         });
       }
       return false;
@@ -556,8 +514,7 @@ class _RecurringEditorPageState extends State<RecurringEditorPage> {
               context,
               _options.accounts,
               _accountId,
-              (id) =>
-                  setState(() => _accountId = _accountId == id ? null : id),
+              (id) => setState(() => _accountId = _accountId == id ? null : id),
             ),
           ] else ...[
             const SizedBox(height: FxSpacing.md),
@@ -613,137 +570,32 @@ class _RecurringEditorPageState extends State<RecurringEditorPage> {
     );
   }
 
-  Future<void> _toggleCronMode() async {
-    if (!_cronAdvanced) {
-      setState(() => _cronAdvanced = true);
-      return;
-    }
-
-    final parsed = CronBuilder.tryParse(_cronCtrl.text);
-    if (parsed == null) {
-      final confirmed = await DestructiveConfirmSheet.show(
-        context,
-        title: S.of(context).recurringDiscardCustomCronTitle,
-        message: S.of(context).recurringDiscardCustomCronMessage,
-        subMessage: S.of(context).recurringDiscardCustomCronWarning,
-        confirmLabel: S.of(context).recurringUseVisual,
-        cancelLabel: S.of(context).commonCancel,
-      );
-      if (!confirmed || !mounted) return;
-    }
-
-    _cronDebounce?.cancel();
-    _cronValidationRevision++;
-    setState(() {
-      _cronAdvanced = false;
-      if (parsed != null) _cronSpec = parsed;
-      _cronCtrl.text = CronBuilder.build(_cronSpec);
-      _cronValid = null;
-      _cronChecking = false;
-    });
-  }
-
   Widget _cronField(BuildContext context) {
     final palette = FxPalette.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Row(
-          children: [
-            _label(context, S.of(context).recurringSchedule),
-            const Spacer(),
-            GestureDetector(
-              onTap: _toggleCronMode,
-              child: Text(
-                _cronAdvanced
-                    ? S.of(context).recurringUseVisual
-                    : S.of(context).recurringUseAdvanced,
-                style: FxTypography.label.copyWith(color: palette.primary),
-              ),
-            ),
-          ],
-        ),
+        _label(context, S.of(context).recurringSchedule),
         const SizedBox(height: FxSpacing.sm),
-        if (_cronAdvanced) ...[
-          TextField(
-            controller: _cronCtrl,
-            style: FxTypography.body.copyWith(
-              fontFamily: FxTypography.monoFamily,
-            ),
-            decoration: _dec(
-              context,
-              S.of(context).recurringCronHint,
-            ).copyWith(suffixIcon: _cronSuffix(context)),
-            onChanged: _onCronChanged,
+        if (_legacyScheduleConverted) ...[
+          Text(
+            S.of(context).recurringLegacyVisualNotice,
+            style: FxTypography.caption.copyWith(color: palette.textSecondary),
           ),
           const SizedBox(height: FxSpacing.xs),
-          Text(
-            S.of(context).recurringAdvancedCronHint,
-            style: FxTypography.caption.copyWith(color: palette.textTertiary),
-          ),
-          _cronHint(context),
-        ] else
-          CronScheduleEditor(
-            spec: _cronSpec,
-            onChanged: (spec) {
-              setState(() {
-                _cronSpec = spec;
-                _cronCtrl.text = CronBuilder.build(spec);
-                _cronValid = null;
-              });
-            },
-          ),
+        ],
+        CronScheduleEditor(
+          spec: _cronSpec,
+          onChanged: (spec) {
+            setState(() {
+              _cronSpec = spec;
+              _cronCtrl.text = CronBuilder.build(spec);
+              _cronValid = null;
+            });
+          },
+        ),
       ],
     );
-  }
-
-  Widget? _cronSuffix(BuildContext context) {
-    if (_cronChecking) {
-      return const Padding(
-        padding: EdgeInsets.all(12),
-        child: SizedBox(
-          width: 16,
-          height: 16,
-          child: CircularProgressIndicator(strokeWidth: 2),
-        ),
-      );
-    }
-    if (_cronValid == true) {
-      return Icon(
-        Icons.check_circle_rounded,
-        color: FxPalette.of(context).success,
-      );
-    }
-    if (_cronValid == false) {
-      return Icon(Icons.error_rounded, color: FxPalette.of(context).danger);
-    }
-    return null;
-  }
-
-  Widget _cronHint(BuildContext context) {
-    if (_cronValid == false) {
-      return Padding(
-        padding: const EdgeInsets.only(top: FxSpacing.xs),
-        child: Text(
-          S.of(context).recurringCronInvalid,
-          style: FxTypography.caption.copyWith(
-            color: FxPalette.of(context).danger,
-          ),
-        ),
-      );
-    }
-    if (_cronValid == true) {
-      return Padding(
-        padding: const EdgeInsets.only(top: FxSpacing.xs),
-        child: Text(
-          S.of(context).recurringCronValid,
-          style: FxTypography.caption.copyWith(
-            color: FxPalette.of(context).success,
-          ),
-        ),
-      );
-    }
-    return const SizedBox.shrink();
   }
 
   Widget _strategyPicker(BuildContext context) {

@@ -217,32 +217,40 @@ class _AppLockSettingsPageState extends State<AppLockSettingsPage> {
     bool persist = false,
   }) {
     final s = S.of(context);
-    final options = <({AppLockPreferredUnlock value, String label, IconData icon, bool enabled})>[
-      (
-        value: AppLockPreferredUnlock.face,
-        label: s.appLockPreferredFace,
-        icon: Icons.face_rounded,
-        enabled: _isFaceAvailable,
-      ),
-      (
-        value: AppLockPreferredUnlock.fingerprint,
-        label: s.appLockPreferredFingerprint,
-        icon: Icons.fingerprint_rounded,
-        enabled: _isFingerprintAvailable,
-      ),
-      (
-        value: AppLockPreferredUnlock.pin,
-        label: s.appLockPinMethod,
-        icon: Icons.pin_rounded,
-        enabled: fallbackMethod == AppLockMethod.pin,
-      ),
-      (
-        value: AppLockPreferredUnlock.pattern,
-        label: s.appLockPatternMethod,
-        icon: Icons.gesture_rounded,
-        enabled: fallbackMethod == AppLockMethod.pattern,
-      ),
-    ];
+    final options =
+        <
+          ({
+            AppLockPreferredUnlock value,
+            String label,
+            IconData icon,
+            bool enabled,
+          })
+        >[
+          (
+            value: AppLockPreferredUnlock.face,
+            label: s.appLockPreferredFace,
+            icon: Icons.face_rounded,
+            enabled: _isFaceAvailable,
+          ),
+          (
+            value: AppLockPreferredUnlock.fingerprint,
+            label: s.appLockPreferredFingerprint,
+            icon: Icons.fingerprint_rounded,
+            enabled: _isFingerprintAvailable,
+          ),
+          (
+            value: AppLockPreferredUnlock.pin,
+            label: s.appLockPinMethod,
+            icon: Icons.pin_rounded,
+            enabled: fallbackMethod == AppLockMethod.pin,
+          ),
+          (
+            value: AppLockPreferredUnlock.pattern,
+            label: s.appLockPatternMethod,
+            icon: Icons.gesture_rounded,
+            enabled: fallbackMethod == AppLockMethod.pattern,
+          ),
+        ];
     return Column(
       children: [
         for (var i = 0; i < options.length; i++) ...[
@@ -368,8 +376,7 @@ class _AppLockSettingsPageState extends State<AppLockSettingsPage> {
   Widget _enabledContent(BuildContext context, AppLockMethod activeMethod) {
     final s = S.of(context);
     final settings = context.watch<AppLockCubit>().state.settings;
-    final preferred =
-        settings?.preferredUnlock ?? _preferredUnlock;
+    final preferred = settings?.preferredUnlock ?? _preferredUnlock;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -530,7 +537,8 @@ class _AppLockSettingsPageState extends State<AppLockSettingsPage> {
     }
     final s = S.of(context);
     final message = switch (cubit.state.failure) {
-      AppLockFailure.configurationSaveFailed => s.appLockFailureConfigurationSave,
+      AppLockFailure.configurationSaveFailed =>
+        s.appLockFailureConfigurationSave,
       _ => s.appLockConfigurationInvalid,
     };
     _showMessage(message);
@@ -593,7 +601,6 @@ class _AppLockSettingsPageState extends State<AppLockSettingsPage> {
     return FxSheet.show<void>(
       context,
       title: S.of(context).appLockDisableDialogTitle,
-      expand: true,
       scrollable: true,
       child: _PatternVerificationSheet(
         onVerified: () {
@@ -610,7 +617,6 @@ class _AppLockSettingsPageState extends State<AppLockSettingsPage> {
       return await FxSheet.show<String>(
         context,
         title: S.of(context).appLockDisableDialogTitle,
-        expand: true,
         scrollable: true,
         child: _CredentialVerificationSheet(
           controller: controller,

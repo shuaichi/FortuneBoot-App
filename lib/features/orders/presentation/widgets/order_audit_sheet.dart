@@ -29,8 +29,9 @@ class OrderAuditSheet extends StatefulWidget {
   }) {
     return FxSheet.show<void>(
       context,
+      scrollable: false,
+      maxHeightFactor: FxSheet.formHeightFactor,
       title: S.of(context).ordersAuditTitle,
-      expand: true,
       child: OrderAuditSheet(
         service: service,
         bookId: bookId,

@@ -57,8 +57,8 @@ void main() {
               body: ElevatedButton(
                 onPressed: () => FxSheet.show<void>(
                   context,
+                  title: '归物详情',
                   scrollable: true,
-                  minHeightFactor: 0.4,
                   maxHeightFactor: 0.72,
                   child: const GoodsDetailSheet(goods: goods),
                 ),
@@ -73,6 +73,7 @@ void main() {
     await tester.tap(find.text('打开归物详情'));
     await tester.pumpAndSettle();
 
+    expect(find.text('归物详情'), findsOneWidget);
     expect(
       tester.getSize(find.byType(FxSheet)).height,
       lessThanOrEqualTo(568 * 0.72),

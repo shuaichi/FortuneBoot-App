@@ -41,7 +41,6 @@ void main() {
     final sheetHeight = tester.getSize(find.byType(FxSheet)).height;
     final viewportHeight =
         tester.view.physicalSize.height / tester.view.devicePixelRatio;
-    expect(sheetHeight, greaterThanOrEqualTo(viewportHeight * 0.4));
     expect(sheetHeight, lessThanOrEqualTo(viewportHeight * 0.72));
     expect(
       tester.getBottomLeft(find.byType(BillDetailActions)).dy,

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:fortuneboot/fx/components/fx_confirm_sheet.dart';
+import 'package:fortuneboot/fx/components/fx_sheet.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
-import 'package:fortuneboot/fx/tokens/fx_radius.dart';
-import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
 import 'package:fortuneboot/generated/l10n.dart';
 
@@ -14,63 +14,42 @@ Future<AccountMenuAction?> showAccountMenu(
   BuildContext context, {
   required bool canAdjust,
 }) {
-  return showModalBottomSheet<AccountMenuAction>(
-    context: context,
-    backgroundColor: FxPalette.of(context).surface,
-    shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(top: FxRadius.sheetRadius),
-    ),
-    builder: (ctx) {
-      return SafeArea(
-        top: false,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const SizedBox(height: FxSpacing.sm),
-            Center(
-              child: Container(
-                width: 36,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: FxPalette.of(ctx).border,
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-            ),
-            const SizedBox(height: FxSpacing.sm),
-            _item(
-              ctx,
-              Icons.edit_rounded,
-              S.of(ctx).accountsEditTitle,
-              AccountMenuAction.edit,
-            ),
-            _item(
-              ctx,
-              Icons.tune_rounded,
-              canAdjust
-                  ? S.of(ctx).accountsAdjustBalance
-                  : S.of(ctx).accountsAdjustBalanceNeedBook,
-              AccountMenuAction.adjustBalance,
-              enabled: canAdjust,
-            ),
-            _item(
-              ctx,
-              Icons.delete_outline_rounded,
-              S.of(ctx).accountsMoveToRecycleBinTitle,
-              AccountMenuAction.moveToRecycleBin,
-            ),
-            _item(
-              ctx,
-              Icons.delete_forever_rounded,
-              S.of(ctx).accountsDeletePermanently,
-              AccountMenuAction.remove,
-              danger: true,
-            ),
-            const SizedBox(height: FxSpacing.md),
-          ],
+  return FxSheet.show<AccountMenuAction>(
+    context,
+    title: S.of(context).commonMoreActions,
+    child: Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        _item(
+          context,
+          Icons.edit_rounded,
+          S.of(context).accountsEditTitle,
+          AccountMenuAction.edit,
         ),
-      );
-    },
+        _item(
+          context,
+          Icons.tune_rounded,
+          canAdjust
+              ? S.of(context).accountsAdjustBalance
+              : S.of(context).accountsAdjustBalanceNeedBook,
+          AccountMenuAction.adjustBalance,
+          enabled: canAdjust,
+        ),
+        _item(
+          context,
+          Icons.delete_outline_rounded,
+          S.of(context).accountsMoveToRecycleBinTitle,
+          AccountMenuAction.moveToRecycleBin,
+        ),
+        _item(
+          context,
+          Icons.delete_forever_rounded,
+          S.of(context).accountsDeletePermanently,
+          AccountMenuAction.remove,
+          danger: true,
+        ),
+      ],
+    ),
   );
 }
 
@@ -101,71 +80,13 @@ Future<bool?> confirmDangerAction(
   required String message,
   required String confirmLabel,
 }) {
-  return showModalBottomSheet<bool>(
-    context: context,
-    backgroundColor: FxPalette.of(context).surface,
-    shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(top: FxRadius.sheetRadius),
-    ),
-    builder: (ctx) {
-      return SafeArea(
-        top: false,
-        child: Padding(
-          padding: const EdgeInsets.all(FxSpacing.lg),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Text(title, style: FxTypography.title),
-              const SizedBox(height: FxSpacing.sm),
-              Text(message, style: FxTypography.body),
-              const SizedBox(height: FxSpacing.xl),
-              Row(
-                children: [
-                  Expanded(
-                    child: _btn(
-                      S.of(ctx).commonCancel,
-                      onTap: () => Navigator.of(ctx).pop(false),
-                      color: FxPalette.of(ctx).surfaceMuted,
-                      fg: FxPalette.of(ctx).textSecondary,
-                    ),
-                  ),
-                  const SizedBox(width: FxSpacing.md),
-                  Expanded(
-                    child: _btn(
-                      confirmLabel,
-                      onTap: () => Navigator.of(ctx).pop(true),
-                      color: FxPalette.of(ctx).danger,
-                      fg: Colors.white,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      );
-    },
-  );
-}
-
-Widget _btn(
-  String label, {
-  required VoidCallback onTap,
-  required Color color,
-  required Color fg,
-}) {
-  return Material(
-    color: color,
-    borderRadius: FxRadius.tileBorder,
-    child: InkWell(
-      borderRadius: FxRadius.tileBorder,
-      onTap: onTap,
-      child: Container(
-        height: 48,
-        alignment: Alignment.center,
-        child: Text(label, style: FxTypography.bodyStrong.copyWith(color: fg)),
-      ),
-    ),
+  return FxConfirmSheet.show(
+    context,
+    title: title,
+    message: message,
+    confirmLabel: confirmLabel,
+    cancelLabel: S.of(context).commonCancel,
+    destructive: true,
+    onConfirm: () async => true,
   );
 }

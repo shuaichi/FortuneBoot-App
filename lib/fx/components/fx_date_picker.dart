@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fortuneboot/fx/components/fx_icon_button.dart';
+import 'package:fortuneboot/fx/components/fx_sheet.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
@@ -56,20 +57,14 @@ Future<DateTime?> _showFxPicker(
   DateTime? lastDate,
   required String title,
 }) {
-  final palette = FxPalette.of(context);
-  return showModalBottomSheet<DateTime>(
-    context: context,
-    isScrollControlled: true,
-    backgroundColor: palette.surface,
-    shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(top: FxRadius.sheetRadius),
-    ),
-    builder: (ctx) => _FxDatePickerSheet(
+  return FxSheet.show<DateTime>(
+    context,
+    title: title,
+    child: _FxDatePickerSheet(
       mode: mode,
       initial: initial ?? DateTime.now(),
       firstDate: firstDate ?? DateTime(2000),
       lastDate: lastDate ?? DateTime(2100),
-      title: title,
     ),
   );
 }
@@ -79,14 +74,12 @@ class _FxDatePickerSheet extends StatefulWidget {
   final DateTime initial;
   final DateTime firstDate;
   final DateTime lastDate;
-  final String title;
 
   const _FxDatePickerSheet({
     required this.mode,
     required this.initial,
     required this.firstDate,
     required this.lastDate,
-    required this.title,
   });
 
   @override
@@ -151,143 +144,92 @@ class _FxDatePickerSheetState extends State<_FxDatePickerSheet> {
   Widget build(BuildContext context) {
     final palette = FxPalette.of(context);
     final now = DateTime.now();
-    return SafeArea(
-      top: false,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const SizedBox(height: FxSpacing.sm),
-          Center(
-            child: Container(
-              width: 36,
-              height: 4,
-              decoration: BoxDecoration(
-                color: palette.border,
-                borderRadius: BorderRadius.circular(2),
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Align(
+          alignment: Alignment.centerRight,
+          child: Padding(
+            padding: FxSpacing.pageH,
+            child: TextButton(
+              onPressed: () => Navigator.of(context).pop(_value),
+              child: Text(
+                S.of(context).fxDatePickerDone,
+                style: FxTypography.bodyStrong.copyWith(color: palette.primary),
               ),
             ),
           ),
-          const SizedBox(height: FxSpacing.xs),
-          Padding(
-            padding: FxSpacing.pageH,
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(minHeight: 52),
-              child: Builder(
-                builder: (context) {
-                  final isLargeText =
-                      MediaQuery.textScalerOf(context).scale(1) > 2;
-                  final title = Text(
-                    widget.title,
-                    maxLines: isLargeText ? null : 1,
-                    overflow: isLargeText ? null : TextOverflow.ellipsis,
-                    style: FxTypography.title.copyWith(
-                      color: palette.textPrimary,
-                    ),
-                  );
-                  final doneButton = TextButton(
-                    onPressed: () => Navigator.of(context).pop(_value),
-                    child: Text(
-                      S.of(context).fxDatePickerDone,
-                      style: FxTypography.bodyStrong.copyWith(
-                        color: palette.primary,
+        ),
+        Divider(height: 1, color: palette.border),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(
+            FxSpacing.lg,
+            FxSpacing.md,
+            FxSpacing.lg,
+            FxSpacing.sm,
+          ),
+          child: _valueHeader(context, palette),
+        ),
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          padding: FxSpacing.pageH,
+          child: Row(
+            spacing: FxSpacing.sm,
+            children: [
+              _quickAction(
+                palette,
+                icon: Icons.today_outlined,
+                label: S.of(context).fxDatePickerToday,
+                onTap: () => _setQuick(now),
+              ),
+              _quickAction(
+                palette,
+                icon: Icons.history_rounded,
+                label: S.of(context).fxDatePickerYesterday,
+                onTap: () => _setQuick(now.subtract(const Duration(days: 1))),
+              ),
+              _quickAction(
+                palette,
+                icon: Icons.calendar_month_outlined,
+                label: S.of(context).fxDatePickerStartOfMonth,
+                onTap: () => _setQuick(DateTime(now.year, now.month)),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: FxSpacing.md),
+        SizedBox(
+          height: 216,
+          child: CupertinoTheme(
+            data: CupertinoThemeData(
+              brightness: Theme.of(context).brightness,
+              textTheme: CupertinoTextThemeData(
+                dateTimePickerTextStyle: FxTypography.bodyStrong.copyWith(
+                  color: palette.textPrimary,
+                ),
+              ),
+            ),
+            child: CupertinoDatePicker(
+              // 快捷项和年份调整时递增 revision 以重建滚轮；
+              // 普通滚动只刷新摘要，不会打断用户滑动。
+              key: ValueKey(_pickerRevision),
+              mode: widget.mode,
+              initialDateTime: _value,
+              minimumDate: widget.firstDate,
+              maximumDate: widget.lastDate,
+              use24hFormat: true,
+              selectionOverlayBuilder:
+                  (context, {required selectedIndex, required columnCount}) =>
+                      _selectionOverlay(
+                        palette,
+                        selectedIndex: selectedIndex,
+                        columnCount: columnCount,
                       ),
-                    ),
-                  );
-
-                  if (isLargeText) {
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        title,
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: doneButton,
-                        ),
-                      ],
-                    );
-                  }
-
-                  return Row(
-                    children: [
-                      Expanded(child: title),
-                      doneButton,
-                    ],
-                  );
-                },
-              ),
+              onDateTimeChanged: (d) => setState(() => _value = d),
             ),
           ),
-          Divider(height: 1, color: palette.border),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(
-              FxSpacing.lg,
-              FxSpacing.md,
-              FxSpacing.lg,
-              FxSpacing.sm,
-            ),
-            child: _valueHeader(context, palette),
-          ),
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            padding: FxSpacing.pageH,
-            child: Row(
-              spacing: FxSpacing.sm,
-              children: [
-                _quickAction(
-                  palette,
-                  icon: Icons.today_outlined,
-                  label: S.of(context).fxDatePickerToday,
-                  onTap: () => _setQuick(now),
-                ),
-                _quickAction(
-                  palette,
-                  icon: Icons.history_rounded,
-                  label: S.of(context).fxDatePickerYesterday,
-                  onTap: () => _setQuick(now.subtract(const Duration(days: 1))),
-                ),
-                _quickAction(
-                  palette,
-                  icon: Icons.calendar_month_outlined,
-                  label: S.of(context).fxDatePickerStartOfMonth,
-                  onTap: () => _setQuick(DateTime(now.year, now.month)),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: FxSpacing.md),
-          SizedBox(
-            height: 216,
-            child: CupertinoTheme(
-              data: CupertinoThemeData(
-                brightness: Theme.of(context).brightness,
-                textTheme: CupertinoTextThemeData(
-                  dateTimePickerTextStyle: FxTypography.bodyStrong.copyWith(
-                    color: palette.textPrimary,
-                  ),
-                ),
-              ),
-              child: CupertinoDatePicker(
-                // 快捷项和年份调整时递增 revision 以重建滚轮；
-                // 普通滚动只刷新摘要，不会打断用户滑动。
-                key: ValueKey(_pickerRevision),
-                mode: widget.mode,
-                initialDateTime: _value,
-                minimumDate: widget.firstDate,
-                maximumDate: widget.lastDate,
-                use24hFormat: true,
-                selectionOverlayBuilder:
-                    (context, {required selectedIndex, required columnCount}) =>
-                        _selectionOverlay(
-                          palette,
-                          selectedIndex: selectedIndex,
-                          columnCount: columnCount,
-                        ),
-                onDateTimeChanged: (d) => setState(() => _value = d),
-              ),
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 

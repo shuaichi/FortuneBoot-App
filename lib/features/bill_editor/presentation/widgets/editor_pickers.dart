@@ -27,14 +27,14 @@ Future<T?> showOptionPicker<T>(
   return FxSheet.show<T>(
     context,
     title: title,
-    expand: true,
-    expandHeightFactor: FxSheet.pickerHeightFactor,
     child: options.isEmpty
         ? Padding(
             padding: const EdgeInsets.all(FxSpacing.xxxl),
             child: Center(child: Text(S.of(context).billEditorNoOptions)),
           )
         : ListView(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
             padding: const EdgeInsets.only(bottom: FxSpacing.lg),
             children: [
               if (allowClear)
@@ -77,25 +77,17 @@ Future<AccountOption?> showAccountOptionPicker(
   return FxSheet.show<AccountOption>(
     context,
     title: title,
-    expand: true,
-    expandHeightFactor: FxSheet.pickerHeightFactor,
     child: accounts.isEmpty
         ? Padding(
             padding: const EdgeInsets.all(FxSpacing.xxxl),
             child: Center(child: Text(S.of(context).billEditorNoOptions)),
           )
-        : _AccountOptionPickerBody(
-            accounts: accounts,
-            selectedId: selectedId,
-          ),
+        : _AccountOptionPickerBody(accounts: accounts, selectedId: selectedId),
   );
 }
 
 class _AccountOptionPickerBody extends StatefulWidget {
-  const _AccountOptionPickerBody({
-    required this.accounts,
-    this.selectedId,
-  });
+  const _AccountOptionPickerBody({required this.accounts, this.selectedId});
 
   final List<AccountOption> accounts;
   final int? selectedId;
@@ -164,11 +156,12 @@ class _AccountOptionPickerBodyState extends State<_AccountOptionPickerBody> {
         .state
         .dashboard
         .hideAmounts;
-    final groups = _groupAccountsByType(widget.accounts)
-        .where((g) => _filterType == null || g.meta.id == _filterType)
-        .toList();
+    final groups = _groupAccountsByType(
+      widget.accounts,
+    ).where((g) => _filterType == null || g.meta.id == _filterType).toList();
 
     return Column(
+      mainAxisSize: MainAxisSize.min,
       children: [
         Padding(
           padding: const EdgeInsets.fromLTRB(
@@ -183,7 +176,7 @@ class _AccountOptionPickerBodyState extends State<_AccountOptionPickerBody> {
             onChanged: (type) => setState(() => _filterType = type),
           ),
         ),
-        Expanded(
+        Flexible(
           child: groups.isEmpty
               ? Center(
                   child: Text(
@@ -194,6 +187,8 @@ class _AccountOptionPickerBodyState extends State<_AccountOptionPickerBody> {
                   ),
                 )
               : ListView(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
                   padding: const EdgeInsets.only(bottom: FxSpacing.lg),
                   children: [
                     for (final group in groups) ...[
@@ -244,9 +239,8 @@ class _AccountOptionPickerBodyState extends State<_AccountOptionPickerBody> {
                               ],
                             ],
                           ),
-                          onTap: () => Navigator.of(
-                            context,
-                          ).pop<AccountOption>(account),
+                          onTap: () =>
+                              Navigator.of(context).pop<AccountOption>(account),
                         ),
                     ],
                   ],
@@ -340,8 +334,6 @@ Future<List<T>?> showMultiSelect<T>(
   return FxSheet.show<List<T>>(
     context,
     title: title,
-    expand: true,
-    expandHeightFactor: FxSheet.pickerHeightFactor,
     child: _MultiSelectBody<T>(
       options: options,
       labelOf: labelOf,
@@ -386,9 +378,12 @@ class _MultiSelectBodyState<T> extends State<_MultiSelectBody<T>> {
       );
     }
     return Column(
+      mainAxisSize: MainAxisSize.min,
       children: [
-        Expanded(
+        Flexible(
           child: ListView(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
             children: widget.options.map((o) {
               final id = widget.idOf(o);
               final checked = _selected.contains(id);

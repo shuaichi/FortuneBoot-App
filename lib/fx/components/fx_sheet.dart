@@ -9,7 +9,7 @@ import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
 
-/// 统一 bottom sheet 壳：圆角 + 拖拽条 + 可选标题。theme-aware，支持暗色。
+/// 统一 bottom sheet 壳：圆角 + 拖拽条 + 标题与关闭出口。支持亮暗主题。
 class FxSheet extends StatelessWidget {
   /// 选择器 / Picker 类 sheet：列表选择、日期选择等。
   static const double pickerHeightFactor = 0.82;
@@ -26,7 +26,7 @@ class FxSheet extends StatelessWidget {
   /// 小型引导 sheet：空态提示、引导卡等。
   static const double hintHeightFactor = 0.4;
 
-  final String? title;
+  final String title;
   final Widget child;
   final List<Widget>? actions;
   final Widget? footer;
@@ -38,18 +38,15 @@ class FxSheet extends StatelessWidget {
   final String? closeTooltip;
   final String? dragHandleLabel;
 
-  /// 内容是否自身滚动。true 时 child 会被约束在最大高度内并可滚动。
+  /// 是否由 Sheet 在外层包裹滚动视图；自带滚动或 Expanded 布局的 child 应设为 false。
   final bool scrollable;
 
-  /// 最大高度占屏幕比例（scrollable 时生效）。
+  /// 整个 Sheet 的最大高度占屏幕比例，内容较小时不强制撑高。
   final double maxHeightFactor;
-
-  /// 最小高度占屏幕比例（scrollable 时生效）。
-  final double minHeightFactor;
 
   const FxSheet({
     super.key,
-    this.title,
+    required this.title,
     required this.child,
     this.actions,
     this.footer,
@@ -62,29 +59,18 @@ class FxSheet extends StatelessWidget {
     this.dragHandleLabel,
     this.scrollable = false,
     this.maxHeightFactor = FxSheet.detailHeightFactor,
-    this.minHeightFactor = 0,
   });
 
   @override
   Widget build(BuildContext context) {
     final palette = FxPalette.of(context);
     final viewInsets = MediaQuery.of(context).viewInsets;
-    final usesAdaptiveHeight = scrollable && minHeightFactor > 0;
+    final usesAdaptiveHeight = scrollable;
     final keyboardInset = viewInsets.bottom;
-    Widget body = child;
-    if (scrollable) {
-      body = usesAdaptiveHeight
-          ? SingleChildScrollView(padding: EdgeInsets.zero, child: child)
-          : ConstrainedBox(
-              constraints: BoxConstraints(
-                maxHeight: MediaQuery.of(context).size.height * maxHeightFactor,
-              ),
-              child: SingleChildScrollView(
-                padding: EdgeInsets.zero,
-                child: child,
-              ),
-            );
-    } else {
+    final body = scrollable
+        ? SingleChildScrollView(padding: EdgeInsets.zero, child: child)
+        : child;
+    if (!scrollable) {
       assert(() {
         if (keyboardInset > 0) {
           debugPrint(
@@ -118,35 +104,38 @@ class FxSheet extends StatelessWidget {
             ),
           ),
         ),
-        if (title != null) ...[
-          const SizedBox(height: FxSpacing.md),
-          Padding(
-            padding: FxSpacing.pageH,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  title!,
+        const SizedBox(height: FxSpacing.md),
+        Padding(
+          padding: FxSpacing.pageH,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Text(
+                  title,
                   style: FxTypography.title.copyWith(
                     color: palette.textPrimary,
                   ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                 ),
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    if (actions != null) ...actions!,
-                    if (closeTooltip != null)
-                      FxIconButton(
-                        icon: Icons.close_rounded,
-                        tooltip: closeTooltip!,
-                        onPressed: () => Navigator.of(context).maybePop(),
-                      ),
-                  ],
-                ),
-              ],
-            ),
+              ),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (actions != null) ...actions!,
+                  FxIconButton(
+                    icon: Icons.close_rounded,
+                    tooltip:
+                        closeTooltip ??
+                        MaterialLocalizations.of(context).closeButtonTooltip,
+                    onPressed: () => Navigator.of(context).maybePop(),
+                  ),
+                ],
+              ),
+            ],
           ),
-        ],
+        ),
         const SizedBox(height: FxSpacing.md),
         Flexible(child: body),
       ],
@@ -169,27 +158,18 @@ class FxSheet extends StatelessWidget {
       top: false,
       child: Padding(
         padding: EdgeInsets.only(bottom: keyboardInset),
-        child: usesAdaptiveHeight
-            ? LayoutBuilder(
-                builder: (context, constraints) {
-                  final maxHeight = math.min(
-                    constraints.maxHeight,
-                    constraints.maxHeight * maxHeightFactor,
-                  );
-                  final minHeight = math.min(
-                    maxHeight,
-                    constraints.maxHeight * minHeightFactor,
-                  );
-                  return ConstrainedBox(
-                    constraints: BoxConstraints(
-                      minHeight: minHeight,
-                      maxHeight: maxHeight,
-                    ),
-                    child: content,
-                  );
-                },
-              )
-            : content,
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final maxHeight = math.min(
+              constraints.maxHeight,
+              constraints.maxHeight * maxHeightFactor,
+            );
+            return ConstrainedBox(
+              constraints: BoxConstraints(maxHeight: maxHeight),
+              child: content,
+            );
+          },
+        ),
       ),
     );
   }
@@ -208,7 +188,7 @@ class FxSheet extends StatelessWidget {
   /// 便捷弹出方法。返回 sheet 的结果。
   static Future<R?> show<R>(
     BuildContext context, {
-    String? title,
+    required String title,
     required Widget child,
     List<Widget>? actions,
     Widget? footer,
@@ -218,11 +198,8 @@ class FxSheet extends StatelessWidget {
     String? secondaryLabel,
     FutureOr<void> Function()? onSecondary,
     bool isScrollControlled = true,
-    bool expand = false,
-    bool scrollable = false,
+    bool scrollable = true,
     double maxHeightFactor = FxSheet.detailHeightFactor,
-    double minHeightFactor = 0,
-    double expandHeightFactor = FxSheet.formHeightFactor,
   }) {
     final palette = FxPalette.of(context);
     return showModalBottomSheet<R>(
@@ -244,15 +221,8 @@ class FxSheet extends StatelessWidget {
           onSecondary: onSecondary,
           scrollable: scrollable,
           maxHeightFactor: maxHeightFactor,
-          minHeightFactor: minHeightFactor,
           child: child,
         );
-        if (expand) {
-          return FractionallySizedBox(
-            heightFactor: expandHeightFactor,
-            child: sheet,
-          );
-        }
         return sheet;
       },
     );

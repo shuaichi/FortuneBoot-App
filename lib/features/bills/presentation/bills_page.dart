@@ -276,8 +276,8 @@ class _BillsPageState extends State<BillsPage> {
     FxSheet.show<void>(
       context,
       title: S.of(context).billsFilterTitle,
-      expand: true,
-      expandHeightFactor: FxSheet.pickerHeightFactor,
+      scrollable: false,
+      maxHeightFactor: FxSheet.pickerHeightFactor,
       child: BillsFilterPage(
         initial: state.filter,
         bookId: _activeBookId,

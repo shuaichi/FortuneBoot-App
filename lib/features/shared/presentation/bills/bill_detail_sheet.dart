@@ -11,6 +11,7 @@ import 'package:fortuneboot/features/shared/data/bill_service.dart';
 import 'package:fortuneboot/fx/components/fx_button.dart';
 import 'package:fortuneboot/fx/components/fx_icon_button.dart';
 import 'package:fortuneboot/fx/components/fx_money_text.dart';
+import 'package:fortuneboot/fx/components/fx_sheet.dart';
 import 'package:fortuneboot/fx/components/fx_tag_chip.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
@@ -577,10 +578,11 @@ class BillDetailActions extends StatelessWidget {
   }
 
   void _showMoreActions(BuildContext context, bool canEditOrCopy) {
-    showModalBottomSheet<void>(
-      context: context,
-      builder: (sheetContext) => SafeArea(
-        child: Column(
+    FxSheet.show<void>(
+      context,
+      title: S.of(context).billsDetailTitle,
+      child: Builder(
+        builder: (sheetContext) => Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             if (canEditOrCopy)

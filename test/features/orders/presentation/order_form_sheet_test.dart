@@ -12,9 +12,7 @@ import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/generated/l10n.dart';
 
 void main() {
-  testWidgets('auto title follows contract: 对象 · 债权/债务，无双分隔点', (
-    tester,
-  ) async {
+  testWidgets('auto title follows contract: 对象 · 债权/债务，无双分隔点', (tester) async {
     final service = _FakeOrdersService();
     final key = GlobalKey<OrderFormSheetState>();
 
@@ -138,68 +136,73 @@ void main() {
     expect(service.modifyCommands.single.remark, '');
   });
 
-  testWidgets('edit save pops FinanceOrderMutationResult (no wrapper type error)',
-      (tester) async {
-    final service = _FakeOrdersService();
-    FinanceOrderMutationResult? popped;
+  testWidgets(
+    'edit save pops FinanceOrderMutationResult (no wrapper type error)',
+    (tester) async {
+      final service = _FakeOrdersService();
+      FinanceOrderMutationResult? popped;
 
-    await tester.pumpWidget(
-      MaterialApp(
-        theme: FxTheme.light,
-        locale: const Locale('zh'),
-        localizationsDelegates: const [
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
-          S.delegate,
-        ],
-        supportedLocales: S.delegate.supportedLocales,
-        home: Scaffold(
-          body: Builder(
-            builder: (context) => Center(
-              child: TextButton(
-                onPressed: () async {
-                  popped = await FxSheet.show<FinanceOrderMutationResult>(
-                    context,
-                    title: 'edit',
-                    child: OrderFormSheet(
-                      service: service,
-                      bookId: 7,
-                      order: FinanceOrderDetail(
-                        orderId: 31,
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: FxTheme.light,
+          locale: const Locale('zh'),
+          localizationsDelegates: const [
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+            S.delegate,
+          ],
+          supportedLocales: S.delegate.supportedLocales,
+          home: Scaffold(
+            body: Builder(
+              builder: (context) => Center(
+                child: TextButton(
+                  onPressed: () async {
+                    popped = await FxSheet.show<FinanceOrderMutationResult>(
+                      context,
+                      title: 'edit',
+                      scrollable: false,
+                      maxHeightFactor: FxSheet.formHeightFactor,
+                      child: OrderFormSheet(
+                        service: service,
                         bookId: 7,
-                        title: '张三借款',
-                        type: FinanceOrderType.receivable,
-                        status: 200,
-                        counterpartyName: '张三',
-                        version: 3,
-                        canDelete: false,
+                        order: FinanceOrderDetail(
+                          orderId: 31,
+                          bookId: 7,
+                          title: '张三借款',
+                          type: FinanceOrderType.receivable,
+                          status: 200,
+                          counterpartyName: '张三',
+                          version: 3,
+                          canDelete: false,
+                        ),
+                        payeeService: _FakePayeeService(),
+                        requestIdFactory: () => 'request-1',
                       ),
-                      payeeService: _FakePayeeService(),
-                      requestIdFactory: () => 'request-1',
-                    ),
-                  );
-                },
-                child: const Text('open'),
+                    );
+                  },
+                  child: const Text('open'),
+                ),
               ),
             ),
           ),
         ),
-      ),
-    );
-    await tester.tap(find.text('open'));
-    await tester.pumpAndSettle();
+      );
+      await tester.tap(find.text('open'));
+      await tester.pumpAndSettle();
 
-    await tester.tap(find.text(S.current.ordersSaveChanges));
-    await tester.pumpAndSettle();
+      await tester.ensureVisible(find.text(S.current.ordersSaveChanges));
+      await tester.tap(find.text(S.current.ordersSaveChanges));
+      await tester.pumpAndSettle();
 
-    // 契约：编辑元数据返回 FinanceOrderMutationResult；
-    // 缺陷时 FxSheet<FinanceOrderMutationResult> 收到 OrderFormSheetResult，throw TypeError。
-    expect(popped, isNotNull);
-    expect(popped!.orderId, 31);
-    expect(popped!.version, 4);
-    expect(service.modifyCommands, hasLength(1));
-  });
+      // 契约：编辑元数据返回 FinanceOrderMutationResult；
+      // 缺陷时 FxSheet<FinanceOrderMutationResult> 收到 OrderFormSheetResult，throw TypeError。
+      expect(popped, isNotNull);
+      expect(popped!.orderId, 31);
+      expect(popped!.version, 4);
+      expect(service.modifyCommands, hasLength(1));
+    },
+  );
 }
 
 Future<void> _pumpForm(

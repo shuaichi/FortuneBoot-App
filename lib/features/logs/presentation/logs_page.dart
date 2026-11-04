@@ -359,6 +359,7 @@ class _LogsPageState extends State<LogsPage> {
     final palette = FxPalette.of(context);
     FxSheet.show<void>(
       context,
+      title: title,
       scrollable: true,
       child: Padding(
         padding: const EdgeInsets.fromLTRB(
@@ -370,11 +371,6 @@ class _LogsPageState extends State<LogsPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              title,
-              style: FxTypography.title.copyWith(color: palette.textPrimary),
-            ),
-            const SizedBox(height: FxSpacing.xl),
             for (final row in visible) ...[
               Text(
                 row.$1,

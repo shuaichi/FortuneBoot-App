@@ -19,7 +19,6 @@ import 'package:fortuneboot/fx/components/fx_money_text.dart';
 import 'package:fortuneboot/fx/components/fx_sheet.dart';
 import 'package:fortuneboot/fx/components/fx_state_view.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
-import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
 import 'package:fortuneboot/generated/l10n.dart';
@@ -61,10 +60,11 @@ class _GoodsPageState extends State<GoodsPage> {
     final formKey = GlobalKey<GoodsFormSheetState>();
     final changed = await FxSheet.show<bool>(
       context,
+      scrollable: false,
+      maxHeightFactor: FxSheet.formHeightFactor,
       title: goods == null
           ? S.of(context).goodsAddTitle
           : S.of(context).goodsEditTitle,
-      expand: true,
       submitLabel: goods == null
           ? S.of(context).goodsAddTitle
           : S.of(context).goodsSaveChanges,
@@ -84,7 +84,6 @@ class _GoodsPageState extends State<GoodsPage> {
       context,
       title: goods.goodsName ?? S.of(context).goodsDetailTitle,
       scrollable: true,
-      minHeightFactor: FxSheet.hintHeightFactor,
       maxHeightFactor: FxSheet.detailHeightFactor,
       child: GoodsDetailSheet(goods: goods, currencyCode: _currency),
     );
@@ -92,38 +91,32 @@ class _GoodsPageState extends State<GoodsPage> {
 
   Future<void> _openMenu(FortuneGoodsKeeperVo goods) async {
     HapticFeedback.selectionClick();
-    final action = await showModalBottomSheet<String>(
-      context: context,
-      backgroundColor: FxPalette.of(context).surface,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: FxRadius.sheetRadius),
-      ),
-      builder: (ctx) => SafeArea(
-        top: false,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            _menuItem(
-              ctx,
-              Icons.info_outline_rounded,
-              S.of(ctx).goodsMenuDetail,
-              'detail',
-            ),
-            _menuItem(
-              ctx,
-              Icons.edit_outlined,
-              S.of(ctx).goodsMenuEdit,
-              'edit',
-            ),
-            _menuItem(
-              ctx,
-              Icons.delete_outline_rounded,
-              S.of(ctx).goodsMenuDelete,
-              'remove',
-              danger: true,
-            ),
-          ],
-        ),
+    final action = await FxSheet.show<String>(
+      context,
+      title: goods.goodsName ?? S.of(context).commonMoreActions,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _menuItem(
+            context,
+            Icons.info_outline_rounded,
+            S.of(context).goodsMenuDetail,
+            'detail',
+          ),
+          _menuItem(
+            context,
+            Icons.edit_outlined,
+            S.of(context).goodsMenuEdit,
+            'edit',
+          ),
+          _menuItem(
+            context,
+            Icons.delete_outline_rounded,
+            S.of(context).goodsMenuDelete,
+            'remove',
+            danger: true,
+          ),
+        ],
       ),
     );
     if (action == null || !mounted) return;

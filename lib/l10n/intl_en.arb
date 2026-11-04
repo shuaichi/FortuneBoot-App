@@ -192,6 +192,7 @@
   "mine": "My",
   "commonSave": "Save",
   "commonCancel": "Cancel",
+  "commonMoreActions": "More actions",
   "manageSearchBranchResults": "{count} results in this branch",
   "@manageSearchBranchResults": {
     "placeholders": {
@@ -436,6 +437,7 @@
   "billsWeekdaySat": "Sat",
   "billsWeekdaySun": "Sun",
   "billsBillDefaultTitle": "Bill",
+  "billsDetailTitle": "Bill details",
   "billsCategoryDetail": "Category breakdown",
   "billsUncategorized": "Uncategorized",
   "billsTransferOutAccount": "From account",
@@ -824,6 +826,9 @@
   "recurringAtTime": "Time",
   "recurringOnDays": "Repeat on",
   "recurringOnDayOfMonth": "Day of month",
+  "recurringLastDayOfMonth": "Last day",
+  "recurringLegacyVisualNotice": "The previous schedule could not be shown visually and has been changed to every day at 09:00. Review it before saving.",
+  "recurringCustomSchedule": "Custom schedule",
   "recurringOnMonth": "Month",
   "recurringDayOfMonthValue": "Day {day}",
   "@recurringDayOfMonthValue": {

@@ -217,7 +217,6 @@ class _GroupSelector extends StatelessWidget {
       context,
       title: S.of(context).booksSwitchGroup,
       child: _GroupPicker(state: state),
-      expand: true,
     );
     if (selectedId == null || !context.mounted) return;
     context.read<BooksBloc>().add(BooksGroupSelected(selectedId));
@@ -233,6 +232,8 @@ class _GroupPicker extends StatelessWidget {
   Widget build(BuildContext context) {
     final palette = FxPalette.of(context);
     return ListView.separated(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
       padding: const EdgeInsets.fromLTRB(
         FxSpacing.lg,
         0,

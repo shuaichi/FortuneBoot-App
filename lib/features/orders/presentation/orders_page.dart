@@ -64,8 +64,9 @@ class _OrdersPageState extends State<OrdersPage> {
     if (bookId == null) return;
     final result = await FxSheet.show<OrderFormSheetResult>(
       context,
+      scrollable: false,
+      maxHeightFactor: FxSheet.formHeightFactor,
       title: S.of(context).ordersAddTitle,
-      expand: true,
       child: OrderFormSheet(service: service, bookId: bookId),
     );
     if (result == null || !mounted) return;
@@ -244,17 +245,6 @@ class _OrdersPageState extends State<OrdersPage> {
             onPressed: () => FxSheet.show<void>(
               context,
               title: S.of(context).billsFilterTitle,
-              actions: [
-                Builder(
-                  builder: (sheetContext) => FxIconButton(
-                    icon: Icons.close_rounded,
-                    tooltip: MaterialLocalizations.of(
-                      sheetContext,
-                    ).closeButtonTooltip,
-                    onPressed: () => Navigator.of(sheetContext).pop(),
-                  ),
-                ),
-              ],
               child: BlocProvider.value(
                 value: _bloc,
                 child: BlocBuilder<OrdersBloc, OrdersState>(

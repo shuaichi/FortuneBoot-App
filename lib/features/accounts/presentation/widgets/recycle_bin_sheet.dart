@@ -9,7 +9,6 @@ import 'package:fortuneboot/features/accounts/presentation/widgets/account_menu.
 import 'package:fortuneboot/features/accounts/presentation/widgets/bank_icon.dart';
 import 'package:fortuneboot/fx/components/fx_icon_button.dart';
 import 'package:fortuneboot/fx/components/fx_money_text.dart';
-import 'package:fortuneboot/fx/components/fx_sheet.dart';
 import 'package:fortuneboot/fx/components/fx_state_view.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
@@ -117,10 +116,7 @@ class _RecycleBinSheetState extends State<RecycleBinSheet> {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: MediaQuery.of(context).size.height * FxSheet.pickerHeightFactor,
-      child: _buildBody(),
-    );
+    return _buildBody();
   }
 
   Widget _buildBody() {
@@ -135,6 +131,8 @@ class _RecycleBinSheetState extends State<RecycleBinSheet> {
       );
     }
     return ListView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
       padding: const EdgeInsets.symmetric(horizontal: FxSpacing.lg),
       itemCount: _accounts.length,
       itemBuilder: (context, i) => _tile(context, _accounts[i]),

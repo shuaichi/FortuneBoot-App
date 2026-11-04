@@ -10,6 +10,7 @@ import 'package:fortuneboot/features/payees/data/payee_models.dart';
 import 'package:fortuneboot/features/payees/data/payee_service.dart';
 import 'package:fortuneboot/fx/components/fx_button.dart';
 import 'package:fortuneboot/fx/components/fx_chip.dart';
+import 'package:fortuneboot/fx/components/fx_sheet.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
@@ -190,18 +191,20 @@ class OrderFormSheetState extends State<OrderFormSheet> {
   }
 
   Future<void> _pickCounterparty() async {
-    final selected = await showModalBottomSheet<FortunePayeeVo>(
-      context: context,
-      builder: (context) => SafeArea(
-        child: ListView(
-          children: [
-            for (final payee in _payees)
-              ListTile(
-                title: Text(payee.payeeName ?? ''),
-                onTap: () => Navigator.of(context).pop(payee),
-              ),
-          ],
-        ),
+    final selected = await FxSheet.show<FortunePayeeVo>(
+      context,
+      title: S.of(context).ordersCounterparty,
+      maxHeightFactor: FxSheet.pickerHeightFactor,
+      child: ListView(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        children: [
+          for (final payee in _payees)
+            ListTile(
+              title: Text(payee.payeeName ?? ''),
+              onTap: () => Navigator.of(context).pop(payee),
+            ),
+        ],
       ),
     );
     if (selected == null) return;

@@ -584,35 +584,32 @@ class _ProfileView extends StatelessWidget {
     await FxSheet.show<void>(
       context,
       title: S.of(context).profileMonthStartDay,
-      child: SizedBox(
-        height: MediaQuery.of(context).size.height * FxSheet.pickerHeightFactor,
-        child: ListView.builder(
-          itemCount: 31,
-          itemBuilder: (context, index) {
-            final day = index + 1;
-            return FxListItem(
-              leading: _tileIcon(Icons.event_rounded, palette.info),
-              title: S.of(context).profileMonthStartDayValue(day),
-              subtitle: day > 28
-                  ? S.of(context).profileMonthStartDayHint
-                  : null,
-              trailing: currentDay == day
-                  ? Icon(Icons.check_rounded, color: palette.primary)
-                  : null,
-              onTap: () async {
-                final saved = await context
-                    .read<PreferencesCubit>()
-                    .setMonthStartDay(day);
-                if (!context.mounted) return;
-                if (saved) {
-                  Navigator.of(context).pop();
-                } else {
-                  _toast(context, S.of(context).profileSaveFailedRetry);
-                }
-              },
-            );
-          },
-        ),
+      child: ListView.builder(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        itemCount: 31,
+        itemBuilder: (context, index) {
+          final day = index + 1;
+          return FxListItem(
+            leading: _tileIcon(Icons.event_rounded, palette.info),
+            title: S.of(context).profileMonthStartDayValue(day),
+            subtitle: day > 28 ? S.of(context).profileMonthStartDayHint : null,
+            trailing: currentDay == day
+                ? Icon(Icons.check_rounded, color: palette.primary)
+                : null,
+            onTap: () async {
+              final saved = await context
+                  .read<PreferencesCubit>()
+                  .setMonthStartDay(day);
+              if (!context.mounted) return;
+              if (saved) {
+                Navigator.of(context).pop();
+              } else {
+                _toast(context, S.of(context).profileSaveFailedRetry);
+              }
+            },
+          );
+        },
       ),
     );
   }
@@ -815,9 +812,9 @@ class _ProfileView extends StatelessWidget {
     ];
     await FxSheet.show<void>(
       context,
+      scrollable: false,
+      maxHeightFactor: FxSheet.pickerHeightFactor,
       title: s.profileHelp,
-      expand: true,
-      expandHeightFactor: FxSheet.pickerHeightFactor,
       child: ListView(
         padding: const EdgeInsets.fromLTRB(
           FxSpacing.lg,
@@ -982,7 +979,6 @@ class _ProfileView extends StatelessWidget {
             const SizedBox(height: FxSpacing.xl),
             FxButton.critical(
               label: S.of(context).profileLogout,
-              expand: true,
               onPressed: () async {
                 Navigator.of(context).pop();
                 await _clearLocalSessionAndGoBaseUrlConfig(
@@ -995,7 +991,6 @@ class _ProfileView extends StatelessWidget {
             const SizedBox(height: FxSpacing.sm),
             FxButton.text(
               label: S.of(context).commonCancel,
-              expand: true,
               onPressed: () => Navigator.of(context).pop(),
             ),
           ],

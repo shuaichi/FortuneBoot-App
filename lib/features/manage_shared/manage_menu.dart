@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fortuneboot/features/books/presentation/widgets/destructive_confirm_sheet.dart';
+import 'package:fortuneboot/fx/components/fx_sheet.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
@@ -17,63 +18,42 @@ Future<ManageMenuAction?> showManageMenu(
   BuildContext context, {
   required bool inRecycleBin,
 }) {
-  return showModalBottomSheet<ManageMenuAction>(
-    context: context,
-    backgroundColor: FxPalette.of(context).surface,
-    shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(top: FxRadius.sheetRadius),
+  return FxSheet.show<ManageMenuAction>(
+    context,
+    title: S.of(context).commonMoreActions,
+    child: Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        if (inRecycleBin) ...[
+          _item(
+            context,
+            Icons.restore_rounded,
+            S.of(context).manageSharedPutBack,
+            ManageMenuAction.putBack,
+          ),
+          _item(
+            context,
+            Icons.delete_forever_rounded,
+            S.of(context).manageSharedDeleteForever,
+            ManageMenuAction.remove,
+            danger: true,
+          ),
+        ] else ...[
+          _item(
+            context,
+            Icons.edit_rounded,
+            S.of(context).manageSharedEdit,
+            ManageMenuAction.edit,
+          ),
+          _item(
+            context,
+            Icons.delete_outline_rounded,
+            S.of(context).manageSharedMoveToRecycleBin,
+            ManageMenuAction.moveToRecycleBin,
+          ),
+        ],
+      ],
     ),
-    builder: (ctx) {
-      return SafeArea(
-        top: false,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const SizedBox(height: FxSpacing.sm),
-            Center(
-              child: Container(
-                width: 36,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: FxPalette.of(ctx).border,
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-            ),
-            const SizedBox(height: FxSpacing.sm),
-            if (inRecycleBin) ...[
-              _item(
-                ctx,
-                Icons.restore_rounded,
-                S.of(ctx).manageSharedPutBack,
-                ManageMenuAction.putBack,
-              ),
-              _item(
-                ctx,
-                Icons.delete_forever_rounded,
-                S.of(ctx).manageSharedDeleteForever,
-                ManageMenuAction.remove,
-                danger: true,
-              ),
-            ] else ...[
-              _item(
-                ctx,
-                Icons.edit_rounded,
-                S.of(ctx).manageSharedEdit,
-                ManageMenuAction.edit,
-              ),
-              _item(
-                ctx,
-                Icons.delete_outline_rounded,
-                S.of(ctx).manageSharedMoveToRecycleBin,
-                ManageMenuAction.moveToRecycleBin,
-              ),
-            ],
-            const SizedBox(height: FxSpacing.md),
-          ],
-        ),
-      );
-    },
   );
 }
 

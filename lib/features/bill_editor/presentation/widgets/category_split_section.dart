@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fortuneboot/features/bill_editor/data/editor_options_service.dart';
 import 'package:fortuneboot/features/bill_editor/presentation/bill_editor_bloc.dart';
 import 'package:fortuneboot/features/bill_editor/presentation/widgets/amount_field.dart';
-import 'package:fortuneboot/fx/components/fx_card.dart';
 import 'package:fortuneboot/fx/components/fx_icon_button.dart';
 import 'package:fortuneboot/fx/tree/fx_tree_picker.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
@@ -32,104 +31,101 @@ class CategorySplitSection extends StatelessWidget {
         ? state.options.incomeCategories
         : state.options.expenseCategories;
 
-    return FxCard(
-      padding: EdgeInsets.zero,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(
-              FxSpacing.lg,
-              FxSpacing.md,
-              FxSpacing.lg,
-              FxSpacing.sm,
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  S.of(context).billEditorCategorySplit,
-                  style: FxTypography.label.copyWith(
-                    color: palette.textSecondary,
-                  ),
-                ),
-                Text(
-                  S.of(context).billEditorItemCount(state.categoryRows.length),
-                  style: FxTypography.caption.copyWith(
-                    color: palette.textTertiary,
-                  ),
-                ),
-              ],
-            ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(
+            FxSpacing.lg,
+            FxSpacing.md,
+            FxSpacing.lg,
+            FxSpacing.sm,
           ),
-          for (final row in state.categoryRows)
-            _CategoryRow(
-              key: ValueKey(row.rowId),
-              row: row,
-              currencyCode: currencyCode,
-              canRemove: state.categoryRows.length > 1,
-              onPickCategory: () async {
-                FocusManager.instance.primaryFocus?.unfocus();
-                final picked = await FxTreePicker.show<CategoryNode>(
-                  context,
-                  roots: categories,
-                  childrenOf: (c) => c.children,
-                  labelOf: (c) => c.categoryName ?? '',
-                  idOf: (c) => c.categoryId,
-                  initialSelected: row.categoryId == null
-                      ? const {}
-                      : {row.categoryId! as Object},
-                  leafOnly: true,
-                  initiallyCollapsed: true,
-                  title: S.of(context).billEditorSelectCategory,
-                );
-                if (!context.mounted || picked == null || picked.isEmpty) return;
-                final category = picked.first;
-                bloc.add(
-                  CategoryRowCategoryChanged(
-                    row.rowId,
-                    category.categoryId,
-                    category.categoryName,
-                  ),
-                );
-              },
-              onAmount: (value) =>
-                  bloc.add(CategoryRowAmountChanged(row.rowId, value)),
-              onRemove: () {
-                FocusManager.instance.primaryFocus?.unfocus();
-                bloc.add(CategoryRowRemoved(row.rowId));
-              },
-            ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(
-              FxSpacing.lg,
-              FxSpacing.sm,
-              FxSpacing.lg,
-              FxSpacing.md,
-            ),
-            child: InkWell(
-              onTap: () => bloc.add(const CategoryRowAdded()),
-              borderRadius: FxRadius.tileBorder,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: FxSpacing.sm),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.add_rounded, size: 18, color: palette.primary),
-                    const SizedBox(width: FxSpacing.xs),
-                    Text(
-                      S.of(context).billEditorAddCategory,
-                      style: FxTypography.bodyStrong.copyWith(
-                        color: palette.primary,
-                      ),
-                    ),
-                  ],
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                S.of(context).billEditorCategorySplit,
+                style: FxTypography.label.copyWith(
+                  color: palette.textSecondary,
                 ),
+              ),
+              Text(
+                S.of(context).billEditorItemCount(state.categoryRows.length),
+                style: FxTypography.caption.copyWith(
+                  color: palette.textTertiary,
+                ),
+              ),
+            ],
+          ),
+        ),
+        for (final row in state.categoryRows)
+          _CategoryRow(
+            key: ValueKey(row.rowId),
+            row: row,
+            currencyCode: currencyCode,
+            canRemove: state.categoryRows.length > 1,
+            onPickCategory: () async {
+              FocusManager.instance.primaryFocus?.unfocus();
+              final picked = await FxTreePicker.show<CategoryNode>(
+                context,
+                roots: categories,
+                childrenOf: (c) => c.children,
+                labelOf: (c) => c.categoryName ?? '',
+                idOf: (c) => c.categoryId,
+                initialSelected: row.categoryId == null
+                    ? const {}
+                    : {row.categoryId! as Object},
+                leafOnly: true,
+                initiallyCollapsed: true,
+                title: S.of(context).billEditorSelectCategory,
+              );
+              if (!context.mounted || picked == null || picked.isEmpty) return;
+              final category = picked.first;
+              bloc.add(
+                CategoryRowCategoryChanged(
+                  row.rowId,
+                  category.categoryId,
+                  category.categoryName,
+                ),
+              );
+            },
+            onAmount: (value) =>
+                bloc.add(CategoryRowAmountChanged(row.rowId, value)),
+            onRemove: () {
+              FocusManager.instance.primaryFocus?.unfocus();
+              bloc.add(CategoryRowRemoved(row.rowId));
+            },
+          ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(
+            FxSpacing.lg,
+            FxSpacing.sm,
+            FxSpacing.lg,
+            FxSpacing.md,
+          ),
+          child: InkWell(
+            onTap: () => bloc.add(const CategoryRowAdded()),
+            borderRadius: FxRadius.tileBorder,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: FxSpacing.sm),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.add_rounded, size: 18, color: palette.primary),
+                  const SizedBox(width: FxSpacing.xs),
+                  Text(
+                    S.of(context).billEditorAddCategory,
+                    style: FxTypography.bodyStrong.copyWith(
+                      color: palette.primary,
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

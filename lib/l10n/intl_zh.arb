@@ -194,6 +194,7 @@
   "mine": "我的",
   "commonSave": "保存",
   "commonCancel": "取消",
+  "commonMoreActions": "更多操作",
   "manageSearchBranchResults": "该分支有 {count} 条搜索结果",
   "@manageSearchBranchResults": {
     "placeholders": {
@@ -438,6 +439,7 @@
   "billsWeekdaySat": "周六",
   "billsWeekdaySun": "周日",
   "billsBillDefaultTitle": "账单",
+  "billsDetailTitle": "账单详情",
   "billsCategoryDetail": "分类明细",
   "billsUncategorized": "未分类",
   "billsTransferOutAccount": "转出账户",
@@ -826,6 +828,9 @@
   "recurringAtTime": "时间",
   "recurringOnDays": "重复",
   "recurringOnDayOfMonth": "每月几号",
+  "recurringLastDayOfMonth": "月末",
+  "recurringLegacyVisualNotice": "原调度无法通过可视化选项展示，已切换为每天 09:00，请确认后保存。",
+  "recurringCustomSchedule": "特殊调度",
   "recurringOnMonth": "月份",
   "recurringDayOfMonthValue": "{day} 号",
   "@recurringDayOfMonthValue": {
