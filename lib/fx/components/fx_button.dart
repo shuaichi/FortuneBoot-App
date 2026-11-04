@@ -8,6 +8,9 @@ enum FxButtonVariant { filled, tonal, text, critical }
 
 /// 统一按钮：filled(主色) / tonal(容器色) / text / critical(红)。
 class FxButton extends StatelessWidget {
+  static const double _defaultHorizontalPadding = 20;
+  static const double _textHorizontalPadding = 12;
+
   final String label;
   final VoidCallback? onPressed;
   final FxButtonVariant variant;
@@ -88,9 +91,19 @@ class FxButton extends StatelessWidget {
                 Icon(icon, size: 18, color: fg),
                 const SizedBox(width: 8),
               ],
-              Text(label, style: FxTypography.bodyStrong.copyWith(color: fg)),
+              Text(
+                label,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: FxTypography.bodyStrong.copyWith(color: fg),
+              ),
             ],
           );
+
+    // 文本按钮没有底色，收窄左右内边距，避免窄屏并排时把文案挤出可用宽度。
+    final horizontalPadding = variant == FxButtonVariant.text
+        ? _textHorizontalPadding
+        : _defaultHorizontalPadding;
 
     final button = Opacity(
       opacity: disabled ? 0.5 : 1,
@@ -108,7 +121,7 @@ class FxButton extends StatelessWidget {
           child: Container(
             height: 48,
             alignment: Alignment.center,
-            padding: const EdgeInsets.symmetric(horizontal: 20),
+            padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
             child: child,
           ),
         ),

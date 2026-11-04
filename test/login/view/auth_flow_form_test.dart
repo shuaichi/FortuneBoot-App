@@ -6,6 +6,7 @@ import 'package:fortuneboot/fx/components/fx_button.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/generated/l10n.dart';
 import 'package:fortuneboot/login/view/auth_flow_form.dart';
+import 'package:fortuneboot/login/view/auth_scaffold.dart';
 
 void main() {
   testWidgets('successful sign-in submits trimmed credentials and continues', (
@@ -119,6 +120,33 @@ void main() {
     expect(submitted?.additionalSignupData?['nickname'], '演示用户');
     expect(find.text('注册成功'), findsOneWidget);
   });
+
+  testWidgets('narrow screens keep the secondary actions inside the form', (
+    tester,
+  ) async {
+    await _pumpForm(
+      tester,
+      surfaceSize: const Size(320, 640),
+      pageBuilder: (form) => AuthScaffold(
+        title: '好记',
+        subtitle: 'demo.fortuneboot.com',
+        child: form,
+      ),
+    );
+    await tester.pump();
+
+    expect(tester.takeException(), isNull);
+    expect(find.text('你不会忘了密码吧？点我'), findsOneWidget);
+    expect(find.text('注册'), findsOneWidget);
+
+    final forgotRect = tester.getRect(
+      find.widgetWithText(FxButton, '你不会忘了密码吧？点我'),
+    );
+    final registerRect = tester.getRect(find.widgetWithText(FxButton, '注册'));
+    expect(forgotRect.top, registerRect.top);
+    expect(forgotRect.left, greaterThanOrEqualTo(0));
+    expect(registerRect.right, lessThanOrEqualTo(320));
+  });
 }
 
 Future<void> _pumpForm(
@@ -129,7 +157,23 @@ Future<void> _pumpForm(
   Future<String?> Function(String account)? onCheckUsername,
   Future<void> Function()? onLoginSuccess,
   List<UserFormField> additionalSignupFields = const [],
+  Size? surfaceSize,
+  Widget Function(Widget form)? pageBuilder,
 }) {
+  if (surfaceSize != null) {
+    tester.view.physicalSize = surfaceSize;
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+  }
+  final form = AuthFlowForm(
+    additionalSignupFields: additionalSignupFields,
+    onLogin: onLogin ?? (_) async => null,
+    onSignup: onSignup ?? (_) async => null,
+    onRecoverPassword: onRecoverPassword ?? (_) async => null,
+    onCheckUsername: onCheckUsername ?? (_) async => null,
+    onLoginSuccess: onLoginSuccess ?? () async {},
+  );
   return tester.pumpWidget(
     MaterialApp(
       theme: FxTheme.light,
@@ -141,18 +185,9 @@ Future<void> _pumpForm(
         S.delegate,
       ],
       supportedLocales: S.delegate.supportedLocales,
-      home: Scaffold(
-        body: SingleChildScrollView(
-          child: AuthFlowForm(
-            additionalSignupFields: additionalSignupFields,
-            onLogin: onLogin ?? (_) async => null,
-            onSignup: onSignup ?? (_) async => null,
-            onRecoverPassword: onRecoverPassword ?? (_) async => null,
-            onCheckUsername: onCheckUsername ?? (_) async => null,
-            onLoginSuccess: onLoginSuccess ?? () async {},
-          ),
-        ),
-      ),
+      home:
+          pageBuilder?.call(form) ??
+          Scaffold(body: SingleChildScrollView(child: form)),
     ),
   );
 }
