@@ -6,13 +6,13 @@ import 'package:fortuneboot/core/shell/main_shell.dart';
 import 'package:fortuneboot/features/dashboard/presentation/bloc/dashboard_bloc.dart';
 import 'package:fortuneboot/features/dashboard/presentation/widgets/dashboard_card_shell.dart';
 import 'package:fortuneboot/features/shared/data/bill_models.dart';
+import 'package:fortuneboot/fx/components/fx_ledger_row.dart';
+import 'package:fortuneboot/fx/components/fx_money_text.dart';
 import 'package:fortuneboot/fx/components/fx_pressable.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
-import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
 import 'package:fortuneboot/generated/l10n.dart';
-import 'package:fortuneboot/util/currency_symbol.dart';
 import 'package:intl/intl.dart';
 
 /// 最近账单预览。内容决定高度，不使用整体缩放适配固定卡片。
@@ -83,7 +83,7 @@ class RecentBillsCard extends StatelessWidget {
             else
               for (var index = 0; index < bills.length; index++) ...[
                 if (index > 0) Divider(height: 1, color: palette.border),
-                _RecentBillRow(
+                RecentBillPreviewRow(
                   bill: bills[index],
                   currencyCode: currencyCode,
                   hidden: hideAmounts,
@@ -99,16 +99,13 @@ class RecentBillsCard extends StatelessWidget {
   }
 }
 
-class _RecentBillRow extends StatelessWidget {
-  const _RecentBillRow({
+class RecentBillPreviewRow extends StatelessWidget {
+  const RecentBillPreviewRow({
     required this.bill,
     required this.currencyCode,
     required this.hidden,
     required this.onTap,
   });
-
-  static const double _minimumTitleWidth = 112;
-  static const double _amountFontSize = 16;
 
   final FortuneBillVo bill;
   final String? currencyCode;
@@ -117,18 +114,8 @@ class _RecentBillRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final palette = FxPalette.of(context);
     final strings = S.of(context);
     final locale = Localizations.localeOf(context).toString();
-    final code = bill.currencyCode ?? currencyCode;
-    final symbol = code == null || code.isEmpty ? '' : getCurrencySymbol(code);
-    final amount = hidden
-        ? FxMoneyFormatter.hiddenPlaceholder
-        : FxMoneyFormatter.format(
-            bill.hasExtrasAdjustment ? bill.settledAmount : bill.displayAmount,
-            locale: locale,
-            currencySymbol: symbol,
-          );
     final title = bill.title?.isNotEmpty == true
         ? bill.title!
         : bill.primaryCategoryName.isNotEmpty
@@ -141,144 +128,43 @@ class _RecentBillRow extends StatelessWidget {
       if (bill.tradeTime != null)
         DateFormat.MMMd(locale).format(bill.tradeTime!),
     ].join(' · ');
-    final amountStyle = FxTypography.money.copyWith(
-      fontSize: _amountFontSize,
-      height: 1.4,
-      fontWeight: FontWeight.w600,
-      color: palette.textPrimary,
-    );
-    final metadataStyle = FxTypography.caption.copyWith(
-      fontSize: 13,
-      height: 1.4,
-      color: palette.textSecondary,
-    );
-
-    return Semantics(
-      button: onTap != null,
-      label: title,
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: onTap,
-          mouseCursor: onTap == null
-              ? SystemMouseCursors.basic
-              : SystemMouseCursors.click,
-          borderRadius: FxRadius.tileBorder,
-          hoverColor: palette.textPrimary.withValues(alpha: 0.035),
-          focusColor: palette.primary.withValues(alpha: 0.10),
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(minHeight: 64),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 14),
-              child: LayoutBuilder(
-                builder: (context, constraints) {
-                  final painter = TextPainter(
-                    text: TextSpan(
-                      text: amount,
-                      style: DefaultTextStyle.of(
-                        context,
-                      ).style.merge(amountStyle),
-                    ),
-                    textDirection: Directionality.of(context),
-                    textScaler: MediaQuery.textScalerOf(context),
-                    locale: Localizations.localeOf(context),
-                    maxLines: 1,
-                  )..layout();
-                  final amountWidth = painter.width;
-                  painter.dispose();
-                  final stacked =
-                      constraints.maxWidth - amountWidth - FxSpacing.lg <
-                          _minimumTitleWidth ||
-                      MediaQuery.textScalerOf(context).scale(_amountFontSize) >
-                          24;
-                  final description = Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        title,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: FxTypography.bodyStrong.copyWith(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                          color: palette.textPrimary,
-                        ),
-                      ),
-                      if (metadata.isNotEmpty) ...[
-                        const SizedBox(height: 3),
-                        Text(
-                          metadata,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: metadataStyle,
-                        ),
-                      ],
-                    ],
-                  );
-                  final amountText = Semantics(
-                    label: amount,
-                    child: ExcludeSemantics(
-                      child: Text(amount, style: amountStyle),
-                    ),
-                  );
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      if (stacked) ...[
-                        description,
-                        const SizedBox(height: FxSpacing.sm),
-                        Align(
-                          alignment: AlignmentDirectional.centerEnd,
-                          child: amountText,
-                        ),
-                      ] else
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Expanded(child: description),
-                            const SizedBox(width: FxSpacing.lg),
-                            amountText,
-                          ],
-                        ),
-                      if (!hidden && bill.hasExtrasAdjustment) ...[
-                        const SizedBox(height: FxSpacing.sm),
-                        Wrap(
-                          spacing: FxSpacing.md,
-                          runSpacing: FxSpacing.xs,
-                          children: [
-                            Text(
-                              FxMoneyFormatter.format(
-                                bill.displayAmount,
-                                locale: locale,
-                                currencySymbol: symbol,
-                              ),
-                              style: metadataStyle.copyWith(
-                                decoration: TextDecoration.lineThrough,
-                              ),
-                            ),
-                            if (bill.feeTotal > 0)
-                              Text(
-                                '${strings.billsFee} ${FxMoneyFormatter.format(bill.feeTotal, locale: locale, currencySymbol: symbol)}',
-                                style: metadataStyle,
-                              ),
-                            if (bill.discountTotal > 0)
-                              Text(
-                                '${strings.billsDiscount} ${FxMoneyFormatter.format(bill.discountTotal, locale: locale, currencySymbol: symbol)}',
-                                style: metadataStyle,
-                              ),
-                          ],
-                        ),
-                      ],
-                    ],
-                  );
-                },
-              ),
-            ),
-          ),
-        ),
+    final adjustments = <String>[
+      if (!hidden && bill.feeTotal > 0)
+        '${strings.billsFee} ${FxMoneyFormatter.format(bill.feeTotal, locale: locale)}',
+      if (!hidden && bill.discountTotal > 0)
+        '${strings.billsDiscount} ${FxMoneyFormatter.format(bill.discountTotal, locale: locale)}',
+    ];
+    return FxLedgerRow(
+      title: title,
+      subtitle: metadata,
+      onTap: onTap,
+      semanticLabel: title,
+      amount: FxMoneyText(
+        amount:
+            FxBillType.fromValue(bill.billType)?.signedFlowAmount(
+              bill.hasExtrasAdjustment
+                  ? bill.settledAmount
+                  : bill.displayAmount,
+            ) ??
+            bill.displayAmount,
+        currencyCode: bill.currencyCode ?? currencyCode,
+        billType: bill.billType,
+        showSign:
+            bill.billType != FxBillType.transfer.value &&
+            bill.billType != FxBillType.adjust.value,
+        masked: hidden,
+        compactWhenNeeded: true,
       ),
+      amountCaption: adjustments.isEmpty ? null : adjustments.join(' · '),
+      titleAccessory: !hidden && bill.hasExtrasAdjustment
+          ? Text(
+              FxMoneyFormatter.format(bill.displayAmount, locale: locale),
+              style: FxTypography.caption.copyWith(
+                color: FxPalette.of(context).textTertiary,
+                decoration: TextDecoration.lineThrough,
+              ),
+            )
+          : null,
     );
   }
 }

@@ -5,13 +5,13 @@ import 'package:fortuneboot/core/navigation/routes.dart';
 import 'package:fortuneboot/core/preferences/preferences_cubit.dart';
 import 'package:fortuneboot/core/session/bill_mutations.dart';
 import 'package:fortuneboot/features/bill_editor/presentation/bill_editor_args.dart';
-import 'package:fortuneboot/features/orders/data/order_money.dart';
 import 'package:fortuneboot/features/orders/data/finance_order_contract.dart';
+import 'package:fortuneboot/features/orders/data/order_money.dart';
 import 'package:fortuneboot/features/orders/data/orders_models.dart';
 import 'package:fortuneboot/features/orders/data/orders_service.dart';
 import 'package:fortuneboot/features/orders/presentation/bloc/order_detail_bloc.dart';
-import 'package:fortuneboot/features/orders/presentation/widgets/order_audit_sheet.dart';
 import 'package:fortuneboot/features/orders/presentation/widgets/order_action_sheet.dart';
+import 'package:fortuneboot/features/orders/presentation/widgets/order_audit_sheet.dart';
 import 'package:fortuneboot/features/orders/presentation/widgets/order_entry_tile.dart';
 import 'package:fortuneboot/features/orders/presentation/widgets/order_form_sheet.dart';
 import 'package:fortuneboot/features/orders/presentation/widgets/order_summary_strip.dart';
@@ -20,6 +20,7 @@ import 'package:fortuneboot/fx/components/fx_button.dart';
 import 'package:fortuneboot/fx/components/fx_card.dart';
 import 'package:fortuneboot/fx/components/fx_chip.dart';
 import 'package:fortuneboot/fx/components/fx_confirm_sheet.dart';
+import 'package:fortuneboot/fx/components/fx_list_section.dart';
 import 'package:fortuneboot/fx/components/fx_money_text.dart';
 import 'package:fortuneboot/fx/components/fx_sheet.dart';
 import 'package:fortuneboot/fx/components/fx_state_view.dart';
@@ -443,22 +444,24 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
       ];
     }
     return [
-      for (final entry in state.entries)
-        Padding(
-          padding: const EdgeInsets.only(bottom: FxSpacing.md),
-          child: OrderEntryTile(
-            entry: entry,
-            hideAmounts: hideAmounts,
-            onPreview: _previewEntry,
-            onEdit: (entry) => _openEntryEditor(entry),
-            onConfirm: (entry) =>
-                _entryAction(entry, FinanceOrderEntryAction.confirm),
-            onUnconfirm: (entry) =>
-                _entryAction(entry, FinanceOrderEntryAction.unconfirm),
-            onVoid: (entry) => _confirmVoid(entry),
-            onRestore: (entry) => _confirmRestore(entry),
-          ),
-        ),
+      FxListSection(
+        dividerIndent: FxSpacing.lg,
+        children: [
+          for (final entry in state.entries)
+            OrderEntryTile(
+              entry: entry,
+              hideAmounts: hideAmounts,
+              onPreview: _previewEntry,
+              onEdit: (entry) => _openEntryEditor(entry),
+              onConfirm: (entry) =>
+                  _entryAction(entry, FinanceOrderEntryAction.confirm),
+              onUnconfirm: (entry) =>
+                  _entryAction(entry, FinanceOrderEntryAction.unconfirm),
+              onVoid: (entry) => _confirmVoid(entry),
+              onRestore: (entry) => _confirmRestore(entry),
+            ),
+        ],
+      ),
     ];
   }
 

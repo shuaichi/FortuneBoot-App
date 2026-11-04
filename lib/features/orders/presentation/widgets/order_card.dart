@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:fortuneboot/features/orders/data/orders_models.dart';
-import 'package:fortuneboot/fx/components/fx_card.dart';
 import 'package:fortuneboot/fx/components/fx_chip.dart';
+import 'package:fortuneboot/fx/components/fx_ledger_row.dart';
 import 'package:fortuneboot/fx/components/fx_money_text.dart';
-import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
 import 'package:fortuneboot/generated/l10n.dart';
@@ -27,84 +26,61 @@ class OrderCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final palette = FxPalette.of(context);
-    return FxCard(
+    final metadata = order.title?.isNotEmpty == true ? order.title : null;
+    return FxLedgerRow(
+      title: order.counterpartyName ?? order.title ?? '',
+      subtitle: metadata,
       onTap: onTap,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      amount: order.pendingAmount == null
+          ? Text(hideAmounts ? '****' : '-', style: FxTypography.bodyStrong)
+          : FxMoneyText(
+              amount: order.pendingAmount!.cents / 100,
+              currencyCode: order.currencyCode ?? currencyCode,
+              fontSize: 18,
+              masked: hideAmounts,
+              compactWhenNeeded: true,
+            ),
+      amountCaption: _pendingLabel(context),
+      details: Wrap(
+        spacing: FxSpacing.sm,
+        runSpacing: FxSpacing.xs,
         children: [
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  order.counterpartyName ?? order.title ?? '',
-                  style: FxTypography.title,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-              const SizedBox(width: FxSpacing.sm),
-              if (order.pendingAmount == null)
-                Text(
-                  hideAmounts ? '****' : '-',
-                  style: FxTypography.money.copyWith(fontSize: 28),
-                )
-              else
-                FxMoneyText(
-                  amount: order.pendingAmount!.cents / 100,
-                  currencyCode: order.currencyCode ?? currencyCode,
-                  fontSize: 28,
-                  masked: hideAmounts,
-                ),
-            ],
-          ),
-          const SizedBox(height: FxSpacing.xs),
-          Text(
-            order.title ?? '',
-            style: FxTypography.body.copyWith(color: palette.textSecondary),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-          const SizedBox(height: FxSpacing.sm),
-          Wrap(
-            spacing: FxSpacing.sm,
-            runSpacing: FxSpacing.xs,
-            children: [
-              _moneyChip(
-                context,
-                label: _issuedLabel(context),
-                amount: order.issuedAmount?.cents,
-              ),
-              _moneyChip(
-                context,
-                label: _settledLabel(context),
-                amount: order.settledAmount?.cents,
-              ),
-              if (order.overdue) _tag(S.of(context).ordersOverdue),
-              if (order.settlementState == 'PARTIAL')
-                _tag(S.of(context).ordersPartiallySettled),
-              if (order.settlementState == 'SETTLED')
-                _tag(S.of(context).ordersSettledTag),
-              if (order.pendingEntryCount > 0)
-                _tag(
-                  S
-                      .of(context)
-                      .ordersPendingEntryCount(order.pendingEntryCount),
-                ),
-              if (order.isReviewRequired)
-                // 待核对：点进单据详情查看说明与流水；勿用空 onTap 吞掉卡片点击。
-                _tag(
-                  S.of(context).ordersReviewRequired,
-                  onTap: onTap,
-                ),
-              if (onReport != null)
-                _tag(S.of(context).ordersViewReconciliation, onTap: onReport),
-            ],
-          ),
+          if (order.issuedAmount != null)
+            _moneyChip(
+              context,
+              label: _issuedLabel(context),
+              amount: order.issuedAmount?.cents,
+            ),
+          if (order.settledAmount != null)
+            _moneyChip(
+              context,
+              label: _settledLabel(context),
+              amount: order.settledAmount?.cents,
+            ),
+          if (order.overdue) _tag(S.of(context).ordersOverdue),
+          if (order.settlementState == 'PARTIAL')
+            _tag(S.of(context).ordersPartiallySettled),
+          if (order.settlementState == 'SETTLED')
+            _tag(S.of(context).ordersSettledTag),
+          if (order.pendingEntryCount > 0)
+            _tag(
+              S.of(context).ordersPendingEntryCount(order.pendingEntryCount),
+            ),
+          if (order.isReviewRequired)
+            _tag(S.of(context).ordersReviewRequired, onTap: onTap),
+          if (onReport != null)
+            _tag(S.of(context).ordersViewReconciliation, onTap: onReport),
         ],
       ),
     );
   }
+
+  String _pendingLabel(BuildContext context) => switch (order.type) {
+    FinanceOrderType.receivable => S.of(context).ordersPendingReceivable,
+    FinanceOrderType.payable => S.of(context).ordersPendingPayable,
+    FinanceOrderType.reimbursement => S.of(context).ordersPendingReimbursement,
+    null => S.of(context).ordersPendingReceivable,
+  };
 
   Widget _moneyChip(
     BuildContext context, {

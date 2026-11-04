@@ -3,6 +3,7 @@ import 'package:fortuneboot/core/icon/fx_icon_badge.dart';
 import 'package:fortuneboot/core/icon/smart_category_engine.dart';
 import 'package:fortuneboot/core/money/fx_money_formatter.dart';
 import 'package:fortuneboot/features/shared/data/bill_models.dart';
+import 'package:fortuneboot/fx/components/fx_ledger_row.dart';
 import 'package:fortuneboot/fx/components/fx_money_text.dart';
 import 'package:fortuneboot/fx/components/fx_tag_chip.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
@@ -75,165 +76,72 @@ class BillTile extends StatelessWidget {
     final fee = bill.feeTotal;
     final discount = bill.discountTotal;
 
-    return InkWell(
+    final amountCaptionParts = <String>[
+      if (bill.tradeTime != null) DateFormat.Hm(locale).format(bill.tradeTime!),
+      if (hasExtras && fee > 0)
+        '${S.of(context).billsFee} ${FxMoneyFormatter.format(fee, locale: locale)}',
+      if (hasExtras && discount > 0)
+        '${S.of(context).billsDiscount} ${FxMoneyFormatter.format(discount, locale: locale)}',
+    ];
+    return FxLedgerRow(
+      title: _titleOf(context),
+      subtitle: _subtitle,
+      leading: FxIconBadge.forBill(_iconInput),
+      semanticLabel: _titleOf(context),
       onTap: onTap,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: FxSpacing.lg,
-          vertical: FxSpacing.md,
-        ),
-        child: Row(
-          children: [
-            FxIconBadge.forBill(_iconInput),
-            const SizedBox(width: FxSpacing.md),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Flexible(
-                        child: Text(
-                          _titleOf(context),
-                          style: FxTypography.bodyStrong,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                      if (bill.hasFile) ...[
-                        const SizedBox(width: FxSpacing.xs),
-                        Icon(
-                          Icons.attach_file_rounded,
-                          size: 14,
-                          color: palette.textTertiary,
-                        ),
-                      ],
-                      if (!bill.confirm) ...[
-                        const SizedBox(width: FxSpacing.xs),
-                        _flagDot(
-                          S.of(context).billsPendingConfirm,
-                          palette.warning,
-                        ),
-                      ],
-                    ],
-                  ),
-                  if (_subtitle.isNotEmpty) ...[
-                    const SizedBox(height: 2),
-                    Text(
-                      _subtitle,
-                      style: FxTypography.caption.copyWith(
-                        color: palette.textSecondary,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
-                  if (tags.isNotEmpty) ...[
-                    const SizedBox(height: FxSpacing.xs),
-                    Wrap(
-                      spacing: FxSpacing.xs,
-                      runSpacing: FxSpacing.xs,
-                      children: [
-                        ...tags.take(3).map((tag) => FxTagChip(label: tag)),
-                        if (tags.length > 3)
-                          FxTagChip(label: '+${tags.length - 3}'),
-                      ],
-                    ),
-                  ],
-                ],
+      amount: FxMoneyText(
+        amount:
+            FxBillType.fromValue(bill.billType)?.signedFlowAmount(
+              hasExtras ? bill.settledAmount : bill.displayAmount,
+            ) ??
+            (hasExtras ? bill.settledAmount : bill.displayAmount),
+        currencyCode: bill.currencyCode,
+        billType: bill.billType,
+        showSign:
+            bill.billType != FxBillType.transfer.value &&
+            bill.billType != FxBillType.adjust.value,
+        masked: masked,
+        compactWhenNeeded: true,
+      ),
+      amountCaption: amountCaptionParts.isEmpty
+          ? null
+          : amountCaptionParts.join(' · '),
+      titleAccessory: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (hasExtras)
+            Padding(
+              padding: const EdgeInsets.only(right: FxSpacing.xs),
+              child: Text(
+                FxMoneyFormatter.format(bill.displayAmount, locale: locale),
+                style: FxTypography.caption.copyWith(
+                  color: palette.textTertiary,
+                  decoration: TextDecoration.lineThrough,
+                ),
               ),
             ),
-            const SizedBox(width: FxSpacing.md),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
+          if (bill.hasFile)
+            Icon(
+              Icons.attach_file_rounded,
+              size: 14,
+              color: palette.textTertiary,
+            ),
+          if (!bill.confirm) ...[
+            const SizedBox(width: FxSpacing.xs),
+            _flagDot(S.of(context).billsPendingConfirm, palette.warning),
+          ],
+        ],
+      ),
+      details: tags.isEmpty
+          ? null
+          : Wrap(
+              spacing: FxSpacing.xs,
+              runSpacing: FxSpacing.xs,
               children: [
-                if (hasExtras)
-                  Text(
-                    FxMoneyFormatter.format(bill.displayAmount, locale: locale),
-                    style: FxTypography.caption.copyWith(
-                      color: palette.textTertiary,
-                      decoration: TextDecoration.lineThrough,
-                      decorationColor: palette.textTertiary,
-                      fontSize: 11,
-                      height: 1.15,
-                    ),
-                  ),
-                FxMoneyText(
-                  amount:
-                      FxBillType.fromValue(bill.billType)?.signedFlowAmount(
-                        hasExtras ? bill.settledAmount : bill.displayAmount,
-                      ) ??
-                      (hasExtras ? bill.settledAmount : bill.displayAmount),
-                  currencyCode: bill.currencyCode,
-                  billType: bill.billType,
-                  showSign: bill.billType != FxBillType.transfer.value &&
-                      bill.billType != FxBillType.adjust.value,
-                  masked: masked,
-                ),
-                if (bill.tradeTime != null ||
-                    (hasExtras && (fee > 0 || discount > 0))) ...[
-                  const SizedBox(height: 2),
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      if (bill.tradeTime != null)
-                        Text(
-                          DateFormat.Hm(locale).format(bill.tradeTime!),
-                          style: FxTypography.caption.copyWith(
-                            color: palette.textTertiary,
-                          ),
-                        ),
-                      if (hasExtras && fee > 0) ...[
-                        if (bill.tradeTime != null)
-                          const SizedBox(width: FxSpacing.xs),
-                        _extraBadge(
-                          label:
-                              '${S.of(context).billsFee} ${FxMoneyFormatter.format(fee, locale: locale)}',
-                          foreground: const Color(0xFFC47A2C),
-                          background: const Color(0xFFFFF0DD),
-                        ),
-                      ],
-                      if (hasExtras && discount > 0) ...[
-                        if (bill.tradeTime != null || fee > 0)
-                          const SizedBox(width: FxSpacing.xs),
-                        _extraBadge(
-                          label:
-                              '${S.of(context).billsDiscount} ${FxMoneyFormatter.format(discount, locale: locale)}',
-                          foreground: const Color(0xFFD14343),
-                          background: const Color(0xFFFFE8E8),
-                        ),
-                      ],
-                    ],
-                  ),
-                ],
+                ...tags.take(3).map((tag) => FxTagChip(label: tag)),
+                if (tags.length > 3) FxTagChip(label: '+${tags.length - 3}'),
               ],
             ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _extraBadge({
-    required String label,
-    required Color foreground,
-    required Color background,
-  }) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-      decoration: BoxDecoration(
-        color: background,
-        borderRadius: BorderRadius.circular(999),
-      ),
-      child: Text(
-        label,
-        style: FxTypography.caption.copyWith(
-          color: foreground,
-          fontSize: 10,
-          fontWeight: FontWeight.w500,
-          height: 1.1,
-        ),
-      ),
     );
   }
 

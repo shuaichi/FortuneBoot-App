@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fortuneboot/features/orders/data/orders_models.dart';
 import 'package:fortuneboot/fx/components/fx_card.dart';
 import 'package:fortuneboot/fx/components/fx_money_text.dart';
+import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
 import 'package:fortuneboot/generated/l10n.dart';
@@ -16,12 +17,16 @@ class OrderSummaryStrip extends StatelessWidget {
     super.key,
     required this.summary,
     required this.currencyCode,
-    required this.hideAmounts,
+    this.hideAmounts = false,
   });
 
   @override
   Widget build(BuildContext context) {
     return FxCard(
+      padding: const EdgeInsets.symmetric(
+        horizontal: FxSpacing.lg,
+        vertical: FxSpacing.md,
+      ),
       child: Row(
         children: [
           Expanded(
@@ -66,7 +71,14 @@ class OrderSummaryStrip extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(label, style: FxTypography.caption, maxLines: 1),
+          Text(
+            label,
+            style: FxTypography.caption.copyWith(
+              color: FxPalette.of(context).textSecondary,
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
           const SizedBox(height: FxSpacing.xs),
           if (amount == null)
             Text(
@@ -77,8 +89,8 @@ class OrderSummaryStrip extends StatelessWidget {
             FxMoneyText(
               amount: amount / 100,
               currencyCode: currencyCode,
-              fontSize: 18,
               masked: hideAmounts,
+              compactWhenNeeded: true,
             ),
           Text(
             S.of(context).ordersMetricCount(count),

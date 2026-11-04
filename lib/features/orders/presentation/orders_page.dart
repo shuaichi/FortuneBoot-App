@@ -15,6 +15,7 @@ import 'package:fortuneboot/features/orders/presentation/widgets/order_summary_s
 import 'package:fortuneboot/fx/components/fx_button.dart';
 import 'package:fortuneboot/fx/components/fx_chip.dart';
 import 'package:fortuneboot/fx/components/fx_icon_button.dart';
+import 'package:fortuneboot/fx/components/fx_list_section.dart';
 import 'package:fortuneboot/fx/components/fx_segmented.dart';
 import 'package:fortuneboot/fx/components/fx_sheet.dart';
 import 'package:fortuneboot/fx/components/fx_state_view.dart';
@@ -270,9 +271,10 @@ class _OrdersPageState extends State<OrdersPage> {
       return RefreshIndicator(
         onRefresh: () async => _bloc.add(const OrdersRefreshed()),
         child: ListView(
+          physics: const AlwaysScrollableScrollPhysics(),
           children: [
-            SizedBox(
-              height: MediaQuery.sizeOf(context).height * .55,
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 96),
               child: FxStateView.empty(
                 message: message,
                 icon: Icons.receipt_long_outlined,
@@ -284,7 +286,7 @@ class _OrdersPageState extends State<OrdersPage> {
     }
     return RefreshIndicator(
       onRefresh: () async => _bloc.add(const OrdersRefreshed()),
-      child: ListView.separated(
+      child: ListView(
         physics: const AlwaysScrollableScrollPhysics(),
         padding: const EdgeInsets.fromLTRB(
           FxSpacing.lg,
@@ -292,21 +294,27 @@ class _OrdersPageState extends State<OrdersPage> {
           FxSpacing.lg,
           FxSpacing.xxxl,
         ),
-        itemCount: state.orders.length + 1,
-        separatorBuilder: (_, _) => const SizedBox(height: FxSpacing.md),
-        itemBuilder: (context, index) {
-          if (index == state.orders.length) return _footer(context, state);
-          final order = state.orders[index];
-          return OrderCard(
-            order: order,
-            currencyCode: context.read<SessionCubit>().state.defaultCurrency,
-            hideAmounts: hideAmounts,
-            onTap: () => _openDetail(order),
-            onReport: order.isReviewRequired
-                ? () => _openReconciliation(focusOrderId: order.orderId)
-                : null,
-          );
-        },
+        children: [
+          FxListSection(
+            dividerIndent: FxSpacing.lg,
+            children: [
+              for (final order in state.orders)
+                OrderCard(
+                  order: order,
+                  currencyCode: context
+                      .read<SessionCubit>()
+                      .state
+                      .defaultCurrency,
+                  hideAmounts: hideAmounts,
+                  onTap: () => _openDetail(order),
+                  onReport: order.isReviewRequired
+                      ? () => _openReconciliation(focusOrderId: order.orderId)
+                      : null,
+                ),
+            ],
+          ),
+          _footer(context, state),
+        ],
       ),
     );
   }

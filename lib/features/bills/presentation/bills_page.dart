@@ -11,8 +11,8 @@ import 'package:fortuneboot/core/shell/bills_navigation_controller.dart';
 import 'package:fortuneboot/core/shell/main_shell.dart';
 import 'package:fortuneboot/core/time/month_window_resolver.dart';
 import 'package:fortuneboot/features/bills/presentation/bloc/bills_bloc.dart';
-import 'package:fortuneboot/features/bills/presentation/widgets/bill_tile.dart';
 import 'package:fortuneboot/features/bills/presentation/pages/bills_filter_page.dart';
+import 'package:fortuneboot/features/bills/presentation/widgets/bill_tile.dart';
 import 'package:fortuneboot/features/shared/data/bill_models.dart';
 import 'package:fortuneboot/features/shared/data/bill_service.dart';
 import 'package:fortuneboot/features/shared/presentation/bills/bill_delete_confirmation.dart';
@@ -430,46 +430,61 @@ class _BillsPageState extends State<BillsPage> {
         FxSpacing.lg,
         FxSpacing.sm,
       ),
-      child: Row(
+      child: Column(
         children: [
-          _iconButton(
-            Icons.chevron_left_rounded,
-            tooltip: MaterialLocalizations.of(context).previousPageTooltip,
-            enabled: canNavigateOlder,
-            onTap: () => _navigateMonth(-1),
-          ),
-          Expanded(
-            child: Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    S
-                        .of(context)
-                        .billsBillingCycle(_monthFormat.format(anchor)),
-                    style: FxTypography.title,
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    rangeLabel,
-                    style: FxTypography.caption.copyWith(
-                      color: palette.textSecondary,
-                    ),
-                  ),
-                ],
+          Row(
+            children: [
+              const SizedBox(width: 48),
+              Expanded(
+                child: Text(
+                  S.of(context).navBills,
+                  textAlign: TextAlign.center,
+                  style: FxTypography.title,
+                ),
               ),
-            ),
+              _filterButton(state, activeCount),
+            ],
           ),
-          _iconButton(
-            Icons.chevron_right_rounded,
-            tooltip: MaterialLocalizations.of(context).nextPageTooltip,
-            enabled: canNavigateNewer,
-            onTap: () => _navigateMonth(1),
+          Row(
+            children: [
+              _iconButton(
+                Icons.chevron_left_rounded,
+                tooltip: MaterialLocalizations.of(context).previousPageTooltip,
+                enabled: canNavigateOlder,
+                onTap: () => _navigateMonth(-1),
+              ),
+              Expanded(
+                child: Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        S
+                            .of(context)
+                            .billsBillingCycle(_monthFormat.format(anchor)),
+                        style: FxTypography.title,
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        rangeLabel,
+                        style: FxTypography.caption.copyWith(
+                          color: palette.textSecondary,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              _iconButton(
+                Icons.chevron_right_rounded,
+                tooltip: MaterialLocalizations.of(context).nextPageTooltip,
+                enabled: canNavigateNewer,
+                onTap: () => _navigateMonth(1),
+              ),
+              const SizedBox(width: FxSpacing.xs),
+              _amountVisibilityButton(hideAmounts),
+            ],
           ),
-          const SizedBox(width: FxSpacing.sm),
-          _filterButton(state, activeCount),
-          const SizedBox(width: FxSpacing.xs),
-          _amountVisibilityButton(hideAmounts),
         ],
       ),
     );
@@ -605,14 +620,8 @@ class _BillsPageState extends State<BillsPage> {
       ),
       decoration: BoxDecoration(
         color: palette.surface,
-        borderRadius: FxRadius.cardBorder,
-        boxShadow: [
-          BoxShadow(
-            color: palette.shadow,
-            blurRadius: 12,
-            offset: const Offset(0, 3),
-          ),
-        ],
+        borderRadius: FxRadius.tileBorder,
+        border: Border.all(color: palette.border.withValues(alpha: 0.72)),
       ),
       child: Row(
         children: [
@@ -663,6 +672,7 @@ class _BillsPageState extends State<BillsPage> {
             fontSize: 15,
             fontWeight: FontWeight.w700,
             masked: masked,
+            compactWhenNeeded: true,
           ),
         ],
       ),

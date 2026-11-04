@@ -4,8 +4,8 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fortuneboot/core/icon/fx_icon_badge.dart';
-import 'package:fortuneboot/core/preferences/preferences_cubit.dart';
 import 'package:fortuneboot/core/icon/smart_category_engine.dart';
+import 'package:fortuneboot/core/preferences/preferences_cubit.dart';
 import 'package:fortuneboot/features/shared/data/bill_models.dart';
 import 'package:fortuneboot/features/shared/data/bill_service.dart';
 import 'package:fortuneboot/fx/components/fx_button.dart';
@@ -119,44 +119,74 @@ class _BillDetailSheetState extends State<BillDetailSheet> {
       catLine.add(_bill.accountName!);
     }
 
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        FxIconBadge.forBill(_iconInput, size: 48),
-        const SizedBox(width: FxSpacing.md),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(_titleOf(context), style: FxTypography.titleLarge),
-              if (catLine.isNotEmpty) ...[
-                const SizedBox(height: FxSpacing.xs),
-                Text(
-                  catLine.join(' · '),
-                  style: FxTypography.caption.copyWith(
-                    color: FxPalette.of(context).textTertiary,
+    final amount = FxMoneyText(
+      amount:
+          FxBillType.fromValue(
+            _bill.billType,
+          )?.signedFlowAmount(_bill.displayAmount) ??
+          _bill.displayAmount,
+      currencyCode: _bill.currencyCode,
+      billType: _bill.billType,
+      showSign: !_isTransfer && _bill.billType != FxBillType.adjust.value,
+      color: color,
+      masked: hideAmounts,
+      compactWhenNeeded: true,
+    );
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final stacked =
+            constraints.maxWidth < 360 ||
+            MediaQuery.textScalerOf(context).scale(1) > 1.2;
+        final heading = Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            FxIconBadge.forBill(_iconInput, size: 44),
+            const SizedBox(width: FxSpacing.md),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    _titleOf(context),
+                    style: FxTypography.titleLarge.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                ),
-              ],
+                  if (catLine.isNotEmpty) ...[
+                    const SizedBox(height: FxSpacing.xs),
+                    Text(
+                      catLine.join(' · '),
+                      style: FxTypography.caption.copyWith(
+                        color: FxPalette.of(context).textSecondary,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ],
+        );
+        if (stacked) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              heading,
+              const SizedBox(height: FxSpacing.lg),
+              Align(alignment: AlignmentDirectional.centerEnd, child: amount),
             ],
-          ),
-        ),
-        const SizedBox(width: FxSpacing.sm),
-        FxMoneyText(
-          amount:
-              FxBillType.fromValue(
-                _bill.billType,
-              )?.signedFlowAmount(_bill.displayAmount) ??
-              _bill.displayAmount,
-          currencyCode: _bill.currencyCode,
-          billType: _bill.billType,
-          showSign: !_isTransfer && _bill.billType != FxBillType.adjust.value,
-          fontSize: 22,
-          fontWeight: FontWeight.w700,
-          color: color,
-          masked: hideAmounts,
-        ),
-      ],
+          );
+        }
+        return Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(child: heading),
+            const SizedBox(width: FxSpacing.lg),
+            amount,
+          ],
+        );
+      },
     );
   }
 
