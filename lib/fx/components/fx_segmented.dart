@@ -40,29 +40,30 @@ class FxSegmented<T> extends StatelessWidget {
           ),
           child: Stack(
             children: [
-              AnimatedPositioned(
-                duration: FxMotion.resolve(context, FxMotion.normal),
-                curve: Curves.easeOutCubic,
-                left: (index < 0 ? 0 : index) * segWidth + 3,
-                top: 3,
-                bottom: 3,
-                width: segWidth - 6,
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: selectedIsDangerous
-                        ? palette.danger.withValues(alpha: 0.08)
-                        : palette.surface,
-                    borderRadius: BorderRadius.circular(FxRadius.tile - 2),
-                    boxShadow: [
-                      BoxShadow(
-                        color: palette.shadow,
-                        blurRadius: 6,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
+              if (index >= 0)
+                AnimatedPositioned(
+                  duration: FxMotion.resolve(context, FxMotion.normal),
+                  curve: Curves.easeOutCubic,
+                  left: index * segWidth + 3,
+                  top: 3,
+                  bottom: 3,
+                  width: segWidth - 6,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: selectedIsDangerous
+                          ? palette.danger.withValues(alpha: 0.08)
+                          : palette.surface,
+                      borderRadius: BorderRadius.circular(FxRadius.tile - 2),
+                      boxShadow: [
+                        BoxShadow(
+                          color: palette.shadow,
+                          blurRadius: 6,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
               Row(
                 children: segments.map((s) {
                   final selected = s.value == value;

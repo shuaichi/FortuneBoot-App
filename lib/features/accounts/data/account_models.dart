@@ -228,20 +228,20 @@ class AccountTypeMeta {
     }
   }
 
-  /// 该类型的主色（信息区分用；负债偏红/橙，资产偏蓝/绿）。
+  /// 该类型的主色（与首页资产/负债语义保持一致：资产绿、负债红）。
   Color tint(BuildContext context) {
-    final finance = FxFinanceColors.of(context);
+    final palette = FxPalette.of(context);
     switch (id) {
       case 1:
-        return finance.income;
+        return palette.textSecondary;
       case 2:
-        return finance.expense;
+        return palette.danger;
       case 3:
-        return FxPalette.of(context).primary;
+        return palette.success;
       case 4:
-        return finance.adjust;
+        return palette.danger;
       default:
-        return FxPalette.of(context).textSecondary;
+        return palette.textSecondary;
     }
   }
 }

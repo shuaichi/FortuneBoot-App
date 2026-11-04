@@ -11,6 +11,9 @@ import 'package:fortuneboot/fx/tokens/fx_typography.dart';
 import 'package:fortuneboot/generated/l10n.dart';
 
 /// 净资产总览大卡：净资产大数字 + 资产(绿)/负债(红)双进度条。
+///
+/// 资产/负债色与首页净资卡共用 [FxPalette.success] / [FxPalette.danger]，
+/// 不随用户自定义的收支色漂移。
 class NetWorthCard extends StatelessWidget {
   final AssetsLiabilities assets;
   final String? currencyCode;
@@ -20,15 +23,16 @@ class NetWorthCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final palette = FxPalette.of(context);
-    final finance = FxFinanceColors.of(context);
     final hideAmounts = context
         .watch<PreferencesCubit>()
         .state
         .dashboard
         .hideAmounts;
-    final total = assets.totalAssets + assets.totalLiabilities;
-    final assetRatio = total <= 0 ? 0.0 : assets.totalAssets / total;
-    final liabRatio = total <= 0 ? 0.0 : assets.totalLiabilities / total;
+    final assetMagnitude = assets.totalAssets.abs();
+    final liabilityMagnitude = assets.totalLiabilities.abs();
+    final total = assetMagnitude + liabilityMagnitude;
+    final assetRatio = total <= 0 ? 0.0 : assetMagnitude / total;
+    final liabRatio = total <= 0 ? 0.0 : liabilityMagnitude / total;
 
     return FxCard(
       child: Column(
@@ -36,13 +40,17 @@ class NetWorthCard extends StatelessWidget {
         children: [
           FxCardLabel(S.of(context).accountsNetWorth),
           const SizedBox(height: FxSpacing.sm),
-          _AdaptiveMoney(
-            amount: assets.netAssets,
-            currencyCode: currencyCode,
-            fontSize: 32,
-            fontWeight: FontWeight.w700,
-            color: palette.textPrimary,
-            masked: hideAmounts,
+          Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: FxMoneyText(
+              amount: assets.netAssets,
+              currencyCode: currencyCode,
+              fontSize: 32,
+              fontWeight: FontWeight.w700,
+              color: palette.textPrimary,
+              masked: hideAmounts,
+              compactWhenNeeded: true,
+            ),
           ),
           const SizedBox(height: FxSpacing.lg),
           _bar(
@@ -50,7 +58,7 @@ class NetWorthCard extends StatelessWidget {
             S.of(context).accountsAssets,
             assets.totalAssets,
             assetRatio,
-            finance.income,
+            palette.success,
             hideAmounts,
           ),
           const SizedBox(height: FxSpacing.md),
@@ -59,7 +67,7 @@ class NetWorthCard extends StatelessWidget {
             S.of(context).accountsLiabilities,
             assets.totalLiabilities,
             liabRatio,
-            finance.expense,
+            palette.danger,
             hideAmounts,
           ),
         ],
@@ -109,12 +117,13 @@ class NetWorthCard extends StatelessWidget {
             Flexible(
               child: Align(
                 alignment: AlignmentDirectional.centerEnd,
-                child: _AdaptiveMoney(
+                child: FxMoneyText(
                   amount: amount,
                   currencyCode: currencyCode,
                   fontSize: 14,
                   color: color,
                   masked: hideAmounts,
+                  compactWhenNeeded: true,
                 ),
               ),
             ),
@@ -123,47 +132,6 @@ class NetWorthCard extends StatelessWidget {
         const SizedBox(height: FxSpacing.xs),
         FxProgressBar(value: ratio, color: color),
       ],
-    );
-  }
-}
-
-class _AdaptiveMoney extends StatelessWidget {
-  const _AdaptiveMoney({
-    required this.amount,
-    required this.currencyCode,
-    required this.fontSize,
-    required this.masked,
-    this.fontWeight = FontWeight.w600,
-    this.color,
-  });
-
-  final double amount;
-  final String? currencyCode;
-  final double fontSize;
-  final bool masked;
-  final FontWeight fontWeight;
-  final Color? color;
-
-  @override
-  Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        return FittedBox(
-          fit: BoxFit.scaleDown,
-          alignment: AlignmentDirectional.centerStart,
-          child: ConstrainedBox(
-            constraints: BoxConstraints(maxWidth: constraints.maxWidth),
-            child: FxMoneyText(
-              amount: amount,
-              currencyCode: currencyCode,
-              fontSize: fontSize,
-              fontWeight: fontWeight,
-              color: color,
-              masked: masked,
-            ),
-          ),
-        );
-      },
     );
   }
 }

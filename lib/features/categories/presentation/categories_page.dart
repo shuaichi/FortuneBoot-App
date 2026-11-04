@@ -38,11 +38,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
       ..showSnackBar(SnackBar(content: Text(message)));
   }
 
-  Future<void> _openForm({
-    FortuneCategoryVo? category,
-    int? presetType,
-    int? presetParentId,
-  }) async {
+  Future<void> _openForm({FortuneCategoryVo? category}) async {
     final bookId = _bookId;
     if (bookId == null) {
       _showToast(S.of(context).categoriesSelectBookFirst);
@@ -66,8 +62,6 @@ class _CategoriesPageState extends State<CategoriesPage> {
         bookId: bookId,
         tree: _bloc.state.tree,
         category: category,
-        presetType: presetType,
-        presetParentId: presetParentId,
       ),
     );
     if (changed == true && mounted) _bloc.add(const CategoriesMutated());
@@ -190,7 +184,6 @@ class _CategoriesPageState extends State<CategoriesPage> {
             onSearch: (kw) => _bloc.add(CategoriesSearchChanged(kw)),
             tab: state.tab,
             onTabChanged: (t) => _bloc.add(CategoriesTabChanged(t)),
-            dangerTabIndex: 3,
             body: _buildBody(state, bookId),
           );
         },
@@ -229,9 +222,6 @@ class _CategoriesPageState extends State<CategoriesPage> {
         icon: Icons.category_outlined,
       );
     }
-    final inRecycle = state.tab.recycleBin;
-    final isSearching = state.keyword.trim().isNotEmpty;
-    final finance = FxFinanceColors.of(context);
     return RefreshIndicator(
       onRefresh: () async => _bloc.add(const CategoriesLoaded()),
       child: ListView(
@@ -244,25 +234,9 @@ class _CategoriesPageState extends State<CategoriesPage> {
         ),
         children: [
           if (expense.isNotEmpty)
-            _section(
-              S.of(context).categoriesExpenseSection,
-              finance.expense,
-              expense,
-              state,
-              1,
-              inRecycle,
-              isSearching,
-            ),
+            _section(S.of(context).categoriesExpenseSection, expense, state),
           if (income.isNotEmpty)
-            _section(
-              S.of(context).categoriesIncomeSection,
-              finance.income,
-              income,
-              state,
-              2,
-              inRecycle,
-              isSearching,
-            ),
+            _section(S.of(context).categoriesIncomeSection, income, state),
         ],
       ),
     );
@@ -270,12 +244,8 @@ class _CategoriesPageState extends State<CategoriesPage> {
 
   Widget _section(
     String title,
-    Color tint,
     List<FortuneCategoryVo> roots,
     CategoriesState state,
-    int type,
-    bool inRecycle,
-    bool isSearching,
   ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -289,15 +259,6 @@ class _CategoriesPageState extends State<CategoriesPage> {
           ),
           child: Row(
             children: [
-              Container(
-                width: 4,
-                height: 16,
-                decoration: BoxDecoration(
-                  color: tint,
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-              const SizedBox(width: FxSpacing.sm),
               Text(
                 title,
                 style: FxTypography.label.copyWith(
@@ -313,24 +274,12 @@ class _CategoriesPageState extends State<CategoriesPage> {
             for (final node in roots)
               CategoryTile(
                 node: node,
-                typeTint: tint,
                 expanded: state.isExpanded(node.categoryId),
                 onTap: (n) => _openForm(category: n),
                 onToggleExpand: (id) =>
                     _bloc.add(ToggleCategoryExpandRequested(id)),
                 expandedFor: (child) => state.isExpanded(child.categoryId),
-                matchCountFor: (child) =>
-                    isSearching ? state.matchCountFor(child.categoryId) : 0,
-                searchMatchCount: isSearching
-                    ? state.matchCountFor(node.categoryId)
-                    : 0,
                 onMenu: _openMenu,
-                onAddChild: inRecycle
-                    ? null
-                    : (parent) => _openForm(
-                        presetType: type,
-                        presetParentId: parent.categoryId,
-                      ),
               ),
           ],
         ),

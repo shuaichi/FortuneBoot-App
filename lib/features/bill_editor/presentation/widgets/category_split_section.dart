@@ -4,11 +4,11 @@ import 'package:fortuneboot/features/bill_editor/data/editor_options_service.dar
 import 'package:fortuneboot/features/bill_editor/presentation/bill_editor_bloc.dart';
 import 'package:fortuneboot/features/bill_editor/presentation/widgets/amount_field.dart';
 import 'package:fortuneboot/fx/components/fx_icon_button.dart';
-import 'package:fortuneboot/fx/tree/fx_tree_picker.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
+import 'package:fortuneboot/fx/tree/fx_tree_picker.dart';
 import 'package:fortuneboot/generated/l10n.dart';
 
 /// 多分类拆分区：可增删的「分类 + 金额」行，底部实时总额。

@@ -6,8 +6,10 @@ import 'package:fortuneboot/core/network/fx_api.dart';
 import 'package:fortuneboot/features/goods/data/goods_models.dart';
 import 'package:fortuneboot/features/goods/data/goods_service.dart';
 import 'package:fortuneboot/fx/components/fx_card.dart';
-import 'package:fortuneboot/fx/components/fx_chip.dart';
 import 'package:fortuneboot/fx/components/fx_date_picker.dart';
+import 'package:fortuneboot/fx/components/fx_option_picker.dart';
+import 'package:fortuneboot/fx/components/fx_segmented.dart';
+import 'package:fortuneboot/fx/components/fx_select_row.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
@@ -111,9 +113,7 @@ class GoodsFormSheetState extends State<GoodsFormSheet> {
         _categories = results[0];
         _tags = results[1];
         // 新增且未选分类时，默认选中第一个，避免漏传 category_id。
-        if (!widget.isEdit &&
-            _categoryId == null &&
-            _categories.isNotEmpty) {
+        if (!widget.isEdit && _categoryId == null && _categories.isNotEmpty) {
           _categoryId = _categories.first.id;
         }
       });
@@ -320,22 +320,26 @@ class GoodsFormSheetState extends State<GoodsFormSheet> {
               children: [
                 _sectionTitle(S.of(context).goodsSectionCategoryTag),
                 const SizedBox(height: FxSpacing.md),
-                _label(S.of(context).goodsLabelCategoryOptional),
-                _optionSelector(
-                  _categories,
-                  _categoryId,
-                  (id) => setState(() => _categoryId = id),
-                  empty: S.of(context).goodsEmptyCategory,
-                  allowNone: false,
-                  emptyHint: S.of(context).goodsNoCategoryOptions,
+                FxSelectRow(
+                  label: S.of(context).goodsLabelCategoryOptional,
+                  value: _optionName(_categories, _categoryId),
+                  placeholder: S.of(context).goodsEmptyCategory,
+                  padding: EdgeInsets.zero,
+                  onTap: _pickCategory,
+                  onClear: _categoryId == null
+                      ? null
+                      : () => setState(() => _categoryId = null),
                 ),
                 const SizedBox(height: FxSpacing.md),
-                _label(S.of(context).goodsLabelTagOptional),
-                _optionSelector(
-                  _tags,
-                  _tagId,
-                  (id) => setState(() => _tagId = id),
-                  empty: S.of(context).goodsEmptyTag,
+                FxSelectRow(
+                  label: S.of(context).goodsLabelTagOptional,
+                  value: _optionName(_tags, _tagId),
+                  placeholder: S.of(context).goodsEmptyTag,
+                  padding: EdgeInsets.zero,
+                  onTap: _pickTag,
+                  onClear: _tagId == null
+                      ? null
+                      : () => setState(() => _tagId = null),
                 ),
               ],
             ),
@@ -533,53 +537,51 @@ class GoodsFormSheetState extends State<GoodsFormSheet> {
     );
   }
 
-  Widget _optionSelector(
-    List<GoodsOption> options,
-    int? selected,
-    ValueChanged<int?> onChanged, {
-    required String empty,
-    bool allowNone = true,
-    String? emptyHint,
-  }) {
-    if (options.isEmpty) {
-      return Text(
-        emptyHint ?? S.of(context).goodsNoOptions(empty),
-        style: FxTypography.caption.copyWith(
-          color: FxPalette.of(context).textTertiary,
-        ),
-      );
+  String? _optionName(List<GoodsOption> options, int? id) {
+    if (id == null) return null;
+    for (final option in options) {
+      if (option.id == id) return option.name;
     }
-    return Wrap(
-      spacing: FxSpacing.sm,
-      runSpacing: FxSpacing.sm,
-      children: [
-        if (allowNone)
-          _chip(
-            S.of(context).goodsNone,
-            selected == null,
-            () => onChanged(null),
-          ),
-        for (final o in options)
-          _chip(o.name, selected == o.id, () => onChanged(o.id)),
-      ],
+    return null;
+  }
+
+  Future<void> _pickCategory() async {
+    final picked = await showFxOptionPicker<GoodsOption>(
+      context,
+      title: S.of(context).billEditorSelectCategory,
+      options: _categories,
+      labelOf: (option) => option.name,
+      idOf: (option) => option.id,
+      selectedId: _categoryId,
+      emptyText: S.of(context).goodsNoCategoryOptions,
     );
+    if (!mounted || picked == null) return;
+    setState(() => _categoryId = picked.id);
+  }
+
+  Future<void> _pickTag() async {
+    final picked = await showFxOptionPicker<GoodsOption>(
+      context,
+      title: S.of(context).billEditorSelectTags,
+      options: _tags,
+      labelOf: (option) => option.name,
+      idOf: (option) => option.id,
+      selectedId: _tagId,
+      emptyText: S.of(context).goodsNoOptions(S.of(context).goodsEmptyTag),
+    );
+    if (!mounted || picked == null) return;
+    setState(() => _tagId = picked.id);
   }
 
   Widget _statusSelector() {
-    return Wrap(
-      spacing: FxSpacing.sm,
-      children: GoodsStatus.values
-          .map(
-            (s) => _chip(s.label, _status == s, () {
-              setState(() => _status = s);
-            }),
-          )
-          .toList(),
+    return FxSegmented<GoodsStatus?>(
+      value: _status,
+      onChanged: (status) => setState(() => _status = status),
+      segments: [
+        for (final status in GoodsStatus.values)
+          FxSegment<GoodsStatus?>(status, status.label),
+      ],
     );
-  }
-
-  Widget _chip(String label, bool selected, VoidCallback onTap) {
-    return FxChip(label: label, selected: selected, onTap: onTap);
   }
 
   Widget _attachments() {

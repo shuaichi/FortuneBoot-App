@@ -166,16 +166,6 @@ class _FxTreePickerState<T> extends State<FxTreePicker<T>> {
             style: FxTypography.body.copyWith(color: palette.textSecondary),
           ),
         ),
-        if (widget.multiSelect) ...[
-          const SizedBox(width: FxSpacing.lg),
-          TextButton(
-            onPressed: _confirm,
-            child: Text(
-              s.fxTreePickerDone,
-              style: FxTypography.bodyStrong.copyWith(color: palette.primary),
-            ),
-          ),
-        ],
       ],
     );
     final listContent = visible.isEmpty

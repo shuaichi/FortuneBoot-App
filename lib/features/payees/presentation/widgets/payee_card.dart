@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:fortuneboot/features/payees/data/payee_models.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
-import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
 import 'package:fortuneboot/generated/l10n.dart';
 
-/// 交易对象卡：与账户卡一致的悬浮卡片风格。
-/// 左侧类型图标徽章 + 名称/停用置灰 + 可支/可收能力点 + 排序 + ⋯ 菜单。
+/// 交易对象列表行：图标 + 名称 + 收支能力 + ⋯ 菜单。
+///
+/// 排序等内部字段收进编辑表单；行本身不画卡片、不加阴影。
 class PayeeCard extends StatelessWidget {
   final FortunePayeeVo payee;
   final VoidCallback onTap;
@@ -23,33 +23,29 @@ class PayeeCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final palette = FxPalette.of(context);
-    final finance = FxFinanceColors.of(context);
     final disabled = !payee.enable;
-    final tint = disabled ? palette.textTertiary : palette.primary;
 
-    final card = Container(
-      padding: const EdgeInsets.all(FxSpacing.md),
-      decoration: BoxDecoration(
-        color: palette.surface,
-        borderRadius: FxRadius.cardBorder,
-        boxShadow: [
-          BoxShadow(
-            color: palette.shadow,
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
+    Widget row = Padding(
+      padding: const EdgeInsets.fromLTRB(
+        FxSpacing.lg,
+        FxSpacing.sm,
+        FxSpacing.sm,
+        FxSpacing.sm,
       ),
       child: Row(
         children: [
           Container(
-            width: 40,
-            height: 40,
+            width: 36,
+            height: 36,
             decoration: BoxDecoration(
-              color: tint.withValues(alpha: 0.12),
-              borderRadius: FxRadius.tileBorder,
+              color: palette.surfaceMuted,
+              borderRadius: BorderRadius.circular(10),
             ),
-            child: Icon(Icons.storefront_rounded, size: 22, color: tint),
+            child: Icon(
+              Icons.storefront_rounded,
+              size: 19,
+              color: disabled ? palette.textTertiary : palette.textSecondary,
+            ),
           ),
           const SizedBox(width: FxSpacing.md),
           Expanded(
@@ -66,90 +62,67 @@ class PayeeCard extends StatelessWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
-                const SizedBox(height: 4),
-                Row(
-                  children: [
-                    _capChip(
-                      context,
-                      S.of(context).payeesCanExpenseShort,
-                      payee.canExpense,
-                      finance.expense,
+                if (_capabilitySummary(context).isNotEmpty) ...[
+                  const SizedBox(height: 2),
+                  Text(
+                    _capabilitySummary(context),
+                    style: FxTypography.caption.copyWith(
+                      color: palette.textTertiary,
                     ),
-                    const SizedBox(width: FxSpacing.xs),
-                    _capChip(
-                      context,
-                      S.of(context).payeesCanIncomeShort,
-                      payee.canIncome,
-                      finance.income,
-                    ),
-                    if (payee.sort != null) ...[
-                      const SizedBox(width: FxSpacing.sm),
-                      Text(
-                        S.of(context).payeesSortValue(payee.sort!),
-                        style: FxTypography.caption.copyWith(
-                          color: palette.textTertiary,
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
               ],
             ),
           ),
-          Semantics(
-            button: true,
-            label: MaterialLocalizations.of(context).showMenuTooltip,
-            child: Tooltip(
-              message: MaterialLocalizations.of(context).showMenuTooltip,
-              child: InkResponse(
-                radius: 24,
-                onTap: onMenu,
-                child: SizedBox(
-                  width: 48,
-                  height: 48,
-                  child: Icon(
-                    Icons.more_horiz_rounded,
-                    size: 20,
-                    color: palette.textSecondary,
-                  ),
-                ),
-              ),
-            ),
-          ),
+          const SizedBox(width: FxSpacing.xs),
+          _menuButton(context),
         ],
       ),
     );
 
-    return GestureDetector(
+    if (disabled) row = Opacity(opacity: 0.55, child: row);
+
+    return InkWell(
       onTap: onTap,
       onLongPress: onMenu,
-      behavior: HitTestBehavior.opaque,
-      child: card,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(minHeight: 56),
+        child: row,
+      ),
     );
   }
 
-  Widget _capChip(BuildContext context, String label, bool on, Color tint) {
+  String _capabilitySummary(BuildContext context) {
+    final labels = <String>[
+      if (payee.canExpense) S.of(context).payeesCanExpenseShort,
+      if (payee.canIncome) S.of(context).payeesCanIncomeShort,
+    ];
+    return labels.join(' · ');
+  }
+
+  Widget _menuButton(BuildContext context) {
     final palette = FxPalette.of(context);
-    final color = on ? tint : palette.textTertiary;
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-      decoration: BoxDecoration(
-        color: on ? color.withValues(alpha: 0.12) : palette.surfaceMuted,
-        borderRadius: FxRadius.pillBorder,
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            on
-                ? Icons.check_circle_rounded
-                : Icons.remove_circle_outline_rounded,
-            size: 12,
-            color: color,
+    final tooltip = MaterialLocalizations.of(context).showMenuTooltip;
+    return Semantics(
+      button: true,
+      label: tooltip,
+      child: Tooltip(
+        message: tooltip,
+        child: InkResponse(
+          radius: 24,
+          onTap: onMenu,
+          child: SizedBox(
+            width: 48,
+            height: 48,
+            child: Icon(
+              Icons.more_horiz_rounded,
+              size: 20,
+              color: palette.textSecondary,
+            ),
           ),
-          const SizedBox(width: 3),
-          Text(label, style: FxTypography.caption.copyWith(color: color)),
-        ],
+        ),
       ),
     );
   }

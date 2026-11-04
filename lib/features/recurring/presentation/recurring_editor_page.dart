@@ -11,6 +11,9 @@ import 'package:fortuneboot/features/shared/data/bill_models.dart';
 import 'package:fortuneboot/fx/components/fx_button.dart';
 import 'package:fortuneboot/fx/components/fx_chip.dart';
 import 'package:fortuneboot/fx/components/fx_icon_button.dart';
+import 'package:fortuneboot/fx/components/fx_option_picker.dart';
+import 'package:fortuneboot/fx/components/fx_segmented.dart';
+import 'package:fortuneboot/fx/components/fx_select_row.dart';
 import 'package:fortuneboot/fx/components/fx_state_view.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
@@ -500,54 +503,63 @@ class _RecurringEditorPageState extends State<RecurringEditorPage> {
           ),
           if (!_isTransfer) ...[
             const SizedBox(height: FxSpacing.md),
-            _label(context, S.of(context).recurringCategory),
-            _optionChips(
-              context,
-              _currentCategories,
-              _categoryId,
-              (id) =>
-                  setState(() => _categoryId = _categoryId == id ? null : id),
+            FxSelectRow(
+              label: S.of(context).recurringCategory,
+              value: _optionName(_currentCategories, _categoryId),
+              placeholder: S.of(context).commonPleaseSelect,
+              padding: EdgeInsets.zero,
+              onTap: () => _pickCategory(context),
+              onClear: _categoryId == null
+                  ? null
+                  : () => setState(() => _categoryId = null),
             ),
-            const SizedBox(height: FxSpacing.md),
-            _label(context, S.of(context).recurringAccount),
-            _optionChips(
-              context,
-              _options.accounts,
-              _accountId,
-              (id) => setState(() => _accountId = _accountId == id ? null : id),
+            const SizedBox(height: FxSpacing.xs),
+            FxSelectRow(
+              label: S.of(context).recurringAccount,
+              value: _optionName(_options.accounts, _accountId),
+              placeholder: S.of(context).commonPleaseSelect,
+              padding: EdgeInsets.zero,
+              onTap: () => _pickAccount(context, transferIn: false),
+              onClear: _accountId == null
+                  ? null
+                  : () => setState(() => _accountId = null),
             ),
           ] else ...[
             const SizedBox(height: FxSpacing.md),
-            _label(context, S.of(context).billEditorTransferOutAccount),
-            _optionChips(
-              context,
-              _options.accounts,
-              _accountId,
-              (id) => setState(() {
-                _accountId = _accountId == id ? null : id;
-                if (_toAccountId != null && _toAccountId == _accountId) {
-                  _toAccountId = null;
-                }
-              }),
+            FxSelectRow(
+              label: S.of(context).billEditorTransferOutAccount,
+              value: _optionName(_options.accounts, _accountId),
+              placeholder: S.of(context).commonPleaseSelect,
+              padding: EdgeInsets.zero,
+              onTap: () => _pickAccount(context, transferIn: false),
+              onClear: _accountId == null
+                  ? null
+                  : () => setState(() => _accountId = null),
             ),
-            const SizedBox(height: FxSpacing.md),
-            _label(context, S.of(context).billEditorTransferInAccount),
-            _optionChips(
-              context,
-              _options.accounts,
-              _toAccountId,
-              (id) => setState(() {
-                _toAccountId = _toAccountId == id ? null : id;
-                if (_accountId != null && _accountId == _toAccountId) {
-                  _accountId = null;
-                }
-              }),
+            const SizedBox(height: FxSpacing.xs),
+            FxSelectRow(
+              label: S.of(context).billEditorTransferInAccount,
+              value: _optionName(_options.accounts, _toAccountId),
+              placeholder: S.of(context).commonPleaseSelect,
+              padding: EdgeInsets.zero,
+              onTap: () => _pickAccount(context, transferIn: true),
+              onClear: _toAccountId == null
+                  ? null
+                  : () => setState(() => _toAccountId = null),
             ),
           ],
           if (_options.tags.isNotEmpty) ...[
-            const SizedBox(height: FxSpacing.md),
-            _label(context, S.of(context).recurringTagsOptional),
-            _tagChips(context),
+            const SizedBox(height: FxSpacing.xs),
+            FxSelectRow(
+              label: S.of(context).recurringTagsOptional,
+              value: _tagNamesSummary,
+              placeholder: S.of(context).billEditorAddTags,
+              padding: EdgeInsets.zero,
+              onTap: () => _pickTags(context),
+              onClear: _tagIds.isEmpty
+                  ? null
+                  : () => setState(() => _tagIds.clear()),
+            ),
           ],
           if (_error != null) ...[
             const SizedBox(height: FxSpacing.md),
@@ -615,83 +627,106 @@ class _RecurringEditorPageState extends State<RecurringEditorPage> {
   }
 
   Widget _typeSelector(BuildContext context) {
-    return Wrap(
-      spacing: FxSpacing.sm,
-      runSpacing: FxSpacing.sm,
-      children: FxBillType.recurringSelectable.map((t) {
-        final selected = t == _billType;
-        return _chip(context, t.localizedLabel(context), selected, () {
-          setState(() {
-            _billType = t;
-            _categoryId = null; // 类型变化清空分类。
-            if (t != FxBillType.transfer) {
-              _toAccountId = null;
-            }
-          });
+    return FxSegmented<FxBillType>(
+      value: _billType,
+      onChanged: (t) {
+        setState(() {
+          _billType = t;
+          _categoryId = null; // 类型变化清空分类。
+          if (t != FxBillType.transfer) {
+            _toAccountId = null;
+          }
         });
-      }).toList(),
+      },
+      segments: [
+        for (final type in FxBillType.recurringSelectable)
+          FxSegment(type, type.localizedLabel(context)),
+      ],
     );
   }
 
-  Widget _optionChips(
-    BuildContext context,
-    List<SimpleOption> items,
-    int? selectedId,
-    ValueChanged<int> onTap,
-  ) {
-    if (items.isEmpty) {
-      return Text(
-        S.of(context).recurringNoOptions,
-        style: FxTypography.caption.copyWith(
-          color: FxPalette.of(context).textTertiary,
-        ),
-      );
+  String? _optionName(List<SimpleOption> options, int? id) {
+    if (id == null) return null;
+    for (final option in options) {
+      if (option.id == id) return option.name;
     }
-    return Wrap(
-      spacing: FxSpacing.sm,
-      runSpacing: FxSpacing.sm,
-      children: items.map((o) {
-        final selected = o.id == selectedId;
-        return _chip(context, o.name, selected, () {
-          if (o.id != null) onTap(o.id!);
-        });
-      }).toList(),
-    );
+    return null;
   }
 
-  Widget _tagChips(BuildContext context) {
-    return Wrap(
-      spacing: FxSpacing.sm,
-      runSpacing: FxSpacing.sm,
-      children: _options.tags.map((o) {
-        final selected = o.id != null && _tagIds.contains(o.id);
-        return _chip(context, o.name, selected, () {
-          if (o.id == null) return;
-          setState(() {
-            if (_tagIds.contains(o.id)) {
-              _tagIds.remove(o.id);
-            } else {
-              _tagIds.add(o.id!);
-            }
-          });
-        }, multiSelect: true);
-      }).toList(),
+  String? get _tagNamesSummary {
+    if (_tagIds.isEmpty) return null;
+    final names = _options.tags
+        .where((option) => option.id != null && _tagIds.contains(option.id))
+        .map((option) => option.name)
+        .toList();
+    return names.isEmpty ? null : names.join('、');
+  }
+
+  Future<void> _pickCategory(BuildContext context) async {
+    final picked = await showFxOptionPicker<SimpleOption>(
+      context,
+      title: S.of(context).billEditorSelectCategory,
+      options: _currentCategories,
+      labelOf: (option) => option.name,
+      idOf: (option) => option.id,
+      selectedId: _categoryId,
+      emptyText: S.of(context).recurringNoOptions,
     );
+    if (!mounted || picked?.id == null) return;
+    setState(() => _categoryId = picked!.id);
+  }
+
+  Future<void> _pickAccount(
+    BuildContext context, {
+    required bool transferIn,
+  }) async {
+    final picked = await showFxOptionPicker<SimpleOption>(
+      context,
+      title: S.of(context).billEditorSelectAccountHint,
+      options: _options.accounts,
+      labelOf: (option) => option.name,
+      idOf: (option) => option.id,
+      selectedId: transferIn ? _toAccountId : _accountId,
+      emptyText: S.of(context).recurringNoOptions,
+    );
+    if (!mounted || picked?.id == null) return;
+    final id = picked!.id!;
+    setState(() {
+      if (transferIn) {
+        _toAccountId = id;
+        if (_accountId == id) _accountId = null;
+      } else {
+        _accountId = id;
+        if (_toAccountId == id) _toAccountId = null;
+      }
+    });
+  }
+
+  Future<void> _pickTags(BuildContext context) async {
+    final picked = await showFxMultiOptionPicker<SimpleOption>(
+      context,
+      title: S.of(context).billEditorSelectTags,
+      options: _options.tags.where((option) => option.id != null).toList(),
+      labelOf: (option) => option.name,
+      idOf: (option) => option.id,
+      selectedIds: _tagIds,
+      emptyText: S.of(context).recurringNoOptions,
+    );
+    if (!mounted || picked == null) return;
+    setState(() {
+      _tagIds
+        ..clear()
+        ..addAll(picked.map((option) => option.id!).whereType<int>());
+    });
   }
 
   Widget _chip(
     BuildContext context,
     String label,
     bool selected,
-    VoidCallback onTap, {
-    bool multiSelect = false,
-  }) {
-    return FxChip(
-      label: label,
-      selected: selected,
-      multiSelect: multiSelect,
-      onTap: onTap,
-    );
+    VoidCallback onTap,
+  ) {
+    return FxChip(label: label, selected: selected, onTap: onTap);
   }
 
   Widget _sectionTitle(String text) => Padding(

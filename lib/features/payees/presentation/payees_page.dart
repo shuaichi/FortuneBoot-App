@@ -11,6 +11,7 @@ import 'package:fortuneboot/features/payees/data/payee_service.dart';
 import 'package:fortuneboot/features/payees/presentation/bloc/payees_bloc.dart';
 import 'package:fortuneboot/features/payees/presentation/widgets/payee_card.dart';
 import 'package:fortuneboot/features/payees/presentation/widgets/payee_form_sheet.dart';
+import 'package:fortuneboot/fx/components/fx_list_section.dart';
 import 'package:fortuneboot/fx/components/fx_sheet.dart';
 import 'package:fortuneboot/fx/components/fx_state_view.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
@@ -167,7 +168,6 @@ class _PayeesPageState extends State<PayeesPage> {
             onSearch: (kw) => _bloc.add(PayeesSearchChanged(kw)),
             tab: state.tab,
             onTabChanged: (t) => _bloc.add(PayeesTabChanged(t)),
-            dangerTabIndex: 3,
             body: _buildBody(state, bookId),
           );
         },
@@ -205,7 +205,7 @@ class _PayeesPageState extends State<PayeesPage> {
     }
     return RefreshIndicator(
       onRefresh: () async => _bloc.add(const PayeesLoaded()),
-      child: ListView.separated(
+      child: ListView(
         physics: const AlwaysScrollableScrollPhysics(),
         padding: const EdgeInsets.fromLTRB(
           FxSpacing.lg,
@@ -213,13 +213,18 @@ class _PayeesPageState extends State<PayeesPage> {
           FxSpacing.lg,
           FxSpacing.xxxl,
         ),
-        itemCount: list.length,
-        separatorBuilder: (_, i) => const SizedBox(height: FxSpacing.sm),
-        itemBuilder: (context, i) => PayeeCard(
-          payee: list[i],
-          onTap: () => _openForm(payee: list[i]),
-          onMenu: () => _openMenu(list[i]),
-        ),
+        children: [
+          FxListSection(
+            children: [
+              for (final payee in list)
+                PayeeCard(
+                  payee: payee,
+                  onTap: () => _openForm(payee: payee),
+                  onMenu: () => _openMenu(payee),
+                ),
+            ],
+          ),
+        ],
       ),
     );
   }

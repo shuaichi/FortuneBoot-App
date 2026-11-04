@@ -11,7 +11,9 @@ import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
 import 'package:fortuneboot/generated/l10n.dart';
 
-/// 管理类模块统一 tab：全部 / 启用 / 停用 / 回收站。
+/// 管理类模块的生命周期筛选：全部 / 启用 / 停用。
+///
+/// 回收站是独立入口，不参与生命周期分段；[recycleBin] 仅用于服务端查询维度。
 ///
 /// - [recycleBin]：是否查询回收站（决定服务端 recycleBin 维度）。
 /// - [enableFilter]：本地按 enable 过滤（null 表示不过滤）。
@@ -36,7 +38,7 @@ extension ManageTabX on ManageTab {
 }
 
 /// 四个管理类模块共用的页面骨架：
-/// 顶部 [←] 标题 [🔍搜索][+新增] + 全部/启用/停用/回收站 tab + body 槽。
+/// 顶部 [←] 标题 [🔍搜索][+新增] + 全部/启用/停用分段 + 回收站独立入口 + body 槽。
 ///
 /// 树形/列表内容由 [body] 注入；搜索输入通过 [onSearch] 上抛（页面/ bloc 处理过滤）。
 class ManageScaffold extends StatefulWidget {
@@ -51,7 +53,6 @@ class ManageScaffold extends StatefulWidget {
   final String? searchTooltip;
   final String? closeSearchTooltip;
   final String? addTooltip;
-  final int? dangerTabIndex;
 
   const ManageScaffold({
     super.key,
@@ -66,7 +67,6 @@ class ManageScaffold extends StatefulWidget {
     this.searchTooltip,
     this.closeSearchTooltip,
     this.addTooltip,
-    this.dangerTabIndex,
   });
 
   @override
@@ -76,6 +76,19 @@ class ManageScaffold extends StatefulWidget {
 class _ManageScaffoldState extends State<ManageScaffold> {
   final TextEditingController _searchCtrl = TextEditingController();
   bool _searching = false;
+  ManageTab _lastLifecycleTab = ManageTab.all;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.tab != ManageTab.recycleBin) _lastLifecycleTab = widget.tab;
+  }
+
+  @override
+  void didUpdateWidget(ManageScaffold oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.tab != ManageTab.recycleBin) _lastLifecycleTab = widget.tab;
+  }
 
   @override
   void dispose() {
@@ -103,6 +116,16 @@ class _ManageScaffoldState extends State<ManageScaffold> {
     }
   }
 
+  void _openRecycleBin() {
+    if (widget.tab == ManageTab.recycleBin) return;
+    _lastLifecycleTab = widget.tab;
+    widget.onTabChanged(ManageTab.recycleBin);
+  }
+
+  void _closeRecycleBin() {
+    widget.onTabChanged(_lastLifecycleTab);
+  }
+
   @override
   Widget build(BuildContext context) {
     final palette = FxPalette.of(context);
@@ -121,35 +144,99 @@ class _ManageScaffoldState extends State<ManageScaffold> {
                 FxSpacing.lg,
                 FxSpacing.sm,
               ),
-              child: FxSegmented<ManageTab>(
-                value: widget.tab,
-                onChanged: widget.onTabChanged,
-                segments: [
-                  FxSegment(
-                    ManageTab.all,
-                    S.of(context).manageSharedTabAll,
-                    dangerWhenSelected: widget.dangerTabIndex == 0,
-                  ),
-                  FxSegment(
-                    ManageTab.enabled,
-                    S.of(context).manageSharedTabEnabled,
-                    dangerWhenSelected: widget.dangerTabIndex == 1,
-                  ),
-                  FxSegment(
-                    ManageTab.disabled,
-                    S.of(context).manageSharedTabDisabled,
-                    dangerWhenSelected: widget.dangerTabIndex == 2,
-                  ),
-                  FxSegment(
-                    ManageTab.recycleBin,
-                    S.of(context).manageSharedTabRecycleBin,
-                    dangerWhenSelected: widget.dangerTabIndex == 3,
-                  ),
-                ],
-              ),
+              child: widget.tab == ManageTab.recycleBin
+                  ? _buildRecycleBinBar()
+                  : _buildLifecycleFilter(),
             ),
             Expanded(child: widget.body),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLifecycleFilter() {
+    final palette = FxPalette.of(context);
+    return Row(
+      children: [
+        Expanded(
+          child: FxSegmented<ManageTab>(
+            value: widget.tab,
+            onChanged: widget.onTabChanged,
+            segments: [
+              FxSegment(ManageTab.all, S.of(context).manageSharedTabAll),
+              FxSegment(
+                ManageTab.enabled,
+                S.of(context).manageSharedTabEnabled,
+              ),
+              FxSegment(
+                ManageTab.disabled,
+                S.of(context).manageSharedTabDisabled,
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(width: FxSpacing.sm),
+        FxIconButton(
+          icon: Icons.delete_outline_rounded,
+          tooltip: S.of(context).manageSharedTabRecycleBin,
+          color: palette.textSecondary,
+          onPressed: _openRecycleBin,
+        ),
+      ],
+    );
+  }
+
+  /// 回收站是工具入口，不占用生命周期分段；进入后以单行返回条替代分段。
+  Widget _buildRecycleBinBar() {
+    final palette = FxPalette.of(context);
+    final backLabel = MaterialLocalizations.of(context).backButtonTooltip;
+    return Material(
+      color: palette.surfaceMuted,
+      borderRadius: FxRadius.tileBorder,
+      child: InkWell(
+        borderRadius: FxRadius.tileBorder,
+        onTap: _closeRecycleBin,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(minHeight: 48),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(
+              FxSpacing.lg,
+              FxSpacing.sm,
+              FxSpacing.sm,
+              FxSpacing.sm,
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.delete_outline_rounded,
+                  size: 20,
+                  color: palette.textSecondary,
+                ),
+                const SizedBox(width: FxSpacing.sm),
+                Expanded(
+                  child: Text(
+                    S.of(context).manageSharedTabRecycleBin,
+                    style: FxTypography.label.copyWith(
+                      color: palette.textPrimary,
+                    ),
+                  ),
+                ),
+                Text(
+                  backLabel,
+                  style: FxTypography.label.copyWith(
+                    color: palette.textSecondary,
+                  ),
+                ),
+                const SizedBox(width: FxSpacing.xs),
+                Icon(
+                  Icons.chevron_left_rounded,
+                  size: 20,
+                  color: palette.textSecondary,
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );
@@ -181,12 +268,14 @@ class _ManageScaffoldState extends State<ManageScaffold> {
                 : widget.searchTooltip ?? searchHint,
             onPressed: _toggleSearch,
           ),
-          const SizedBox(width: FxSpacing.xs),
-          FxIconButton(
-            icon: Icons.add_rounded,
-            tooltip: widget.addTooltip ?? widget.title,
-            onPressed: _onAddPressed,
-          ),
+          if (widget.tab != ManageTab.recycleBin) ...[
+            const SizedBox(width: FxSpacing.xs),
+            FxIconButton(
+              icon: Icons.add_rounded,
+              tooltip: widget.addTooltip ?? widget.title,
+              onPressed: _onAddPressed,
+            ),
+          ],
         ],
       ),
     );

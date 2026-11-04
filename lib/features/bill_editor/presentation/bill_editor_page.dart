@@ -1,8 +1,9 @@
 import 'package:file_selector/file_selector.dart' as file_selector;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
+
 import 'package:fortuneboot/core/errors/fx_failure.dart';
 import 'package:fortuneboot/core/feedback/fx_feedback.dart';
 import 'package:fortuneboot/core/session/bill_mutations.dart';
@@ -18,8 +19,8 @@ import 'package:fortuneboot/features/bill_editor/presentation/widgets/extras_sec
 import 'package:fortuneboot/features/orders/data/order_money.dart';
 import 'package:fortuneboot/features/orders/data/orders_models.dart';
 import 'package:fortuneboot/features/shared/data/bill_attachment.dart';
-import 'package:fortuneboot/features/shared/data/bill_attachment_xfile_factory.dart';
 import 'package:fortuneboot/features/shared/data/bill_attachment_validator.dart';
+import 'package:fortuneboot/features/shared/data/bill_attachment_xfile_factory.dart';
 import 'package:fortuneboot/features/shared/data/bill_models.dart';
 import 'package:fortuneboot/features/shared/data/bill_service.dart';
 import 'package:fortuneboot/fx/components/fx_action_sheet.dart';
@@ -31,8 +32,8 @@ import 'package:fortuneboot/fx/components/fx_icon_button.dart';
 import 'package:fortuneboot/fx/components/fx_list_section.dart';
 import 'package:fortuneboot/fx/components/fx_money_text.dart';
 import 'package:fortuneboot/fx/components/fx_segmented.dart';
+import 'package:fortuneboot/fx/components/fx_select_row.dart';
 import 'package:fortuneboot/fx/components/fx_state_view.dart';
-import 'package:fortuneboot/fx/components/fx_tag_chip.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
@@ -502,27 +503,29 @@ class _OrderCategorySplitSection extends StatelessWidget {
             canRemove: state.categoryRows.length > 1,
             onPickCategory: () async {
               _dismissKeyboard();
-              final categories =
-                  (state.usesIncomeAssociations
-                          ? state.options.incomeCategories
-                          : state.options.expenseCategories)
-                      .expand((node) => node.flatten())
-                      .where((node) => node.isLeaf)
-                      .toList();
-              final picked = await showOptionPicker<CategoryNode>(
+              final categories = state.usesIncomeAssociations
+                  ? state.options.incomeCategories
+                  : state.options.expenseCategories;
+              final picked = await FxTreePicker.show<CategoryNode>(
                 context,
-                title: S.of(context).billEditorSelectCategory,
-                options: categories,
+                roots: categories,
+                childrenOf: (node) => node.children,
                 labelOf: (node) => node.categoryName ?? '',
-                selectedId: state.categoryRows[index].categoryId,
                 idOf: (node) => node.categoryId,
+                initialSelected: state.categoryRows[index].categoryId == null
+                    ? const {}
+                    : {state.categoryRows[index].categoryId! as Object},
+                leafOnly: true,
+                initiallyCollapsed: true,
+                title: S.of(context).billEditorSelectCategory,
               );
-              if (!context.mounted || picked == null) return;
+              if (!context.mounted || picked == null || picked.isEmpty) return;
+              final category = picked.first;
               bloc.add(
                 CategoryRowCategoryChanged(
                   state.categoryRows[index].rowId,
-                  picked.categoryId,
-                  picked.categoryName,
+                  category.categoryId,
+                  category.categoryName,
                 ),
               );
             },
@@ -950,7 +953,6 @@ class _TagsRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final palette = FxPalette.of(context);
     final bloc = context.read<BillEditorBloc>();
     // 按当前账单类型过滤标签树：保留可用节点及其祖先，维持树形层级。
     bool usable(TagNode t) {
@@ -981,7 +983,10 @@ class _TagsRow extends StatelessWidget {
 
     final roots = prune(state.options.tags);
 
-    return InkWell(
+    return FxSelectRow(
+      label: S.of(context).billEditorTags,
+      value: state.tagNames.isEmpty ? null : state.tagNames.join('、'),
+      placeholder: S.of(context).billEditorAddTags,
       onTap: () async {
         _dismissKeyboard();
         final selectableIds = <int>{};
@@ -1020,43 +1025,6 @@ class _TagsRow extends StatelessWidget {
           ),
         );
       },
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: FxSpacing.lg,
-          vertical: FxSpacing.md,
-        ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(
-              width: 72,
-              child: Text(
-                S.of(context).billEditorTags,
-                style: FxTypography.label.copyWith(
-                  color: palette.textSecondary,
-                ),
-              ),
-            ),
-            Expanded(
-              child: state.tagNames.isEmpty
-                  ? Text(
-                      S.of(context).billEditorAddTags,
-                      style: FxTypography.body.copyWith(
-                        color: palette.textTertiary,
-                      ),
-                    )
-                  : Wrap(
-                      spacing: FxSpacing.sm,
-                      runSpacing: FxSpacing.sm,
-                      children: state.tagNames
-                          .map((n) => FxTagChip(label: n, selected: true))
-                          .toList(),
-                    ),
-            ),
-            Icon(Icons.chevron_right_rounded, color: palette.textTertiary),
-          ],
-        ),
-      ),
     );
   }
 }
@@ -1115,62 +1083,12 @@ class _PickerRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final palette = FxPalette.of(context);
-    final hasValue = value != null && value!.isNotEmpty;
-    final placeholderText = placeholder ?? S.of(context).commonPleaseSelect;
-    return InkWell(
-      onTap: onTap == null
-          ? null
-          : () {
-              HapticFeedback.selectionClick();
-              onTap?.call();
-            },
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: FxSpacing.lg,
-          vertical: FxSpacing.md,
-        ),
-        child: Row(
-          children: [
-            SizedBox(
-              // 「关联报销单 *」等中文必填标签在 72 宽下会右溢出约 4px
-              width: 96,
-              child: Row(
-                children: [
-                  Flexible(
-                    child: Text(
-                      label,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: FxTypography.label.copyWith(
-                        color: palette.textSecondary,
-                      ),
-                    ),
-                  ),
-                  if (required)
-                    Text(
-                      ' *',
-                      style: FxTypography.label.copyWith(color: palette.danger),
-                    ),
-                ],
-              ),
-            ),
-            Expanded(
-              child: Text(
-                hasValue ? value! : placeholderText,
-                textAlign: TextAlign.right,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: FxTypography.body.copyWith(
-                  color: hasValue ? palette.textPrimary : palette.textTertiary,
-                ),
-              ),
-            ),
-            const SizedBox(width: FxSpacing.sm),
-            Icon(Icons.chevron_right_rounded, color: palette.textTertiary),
-          ],
-        ),
-      ),
+    return FxSelectRow(
+      label: label,
+      value: value,
+      placeholder: placeholder ?? S.of(context).commonPleaseSelect,
+      required: required,
+      onTap: onTap,
     );
   }
 }

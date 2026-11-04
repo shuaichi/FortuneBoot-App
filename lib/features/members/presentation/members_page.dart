@@ -11,6 +11,7 @@ import 'package:fortuneboot/features/members/data/member_service.dart';
 import 'package:fortuneboot/features/members/presentation/bloc/members_bloc.dart';
 import 'package:fortuneboot/features/members/presentation/widgets/member_card.dart';
 import 'package:fortuneboot/features/members/presentation/widgets/member_form_sheet.dart';
+import 'package:fortuneboot/fx/components/fx_list_section.dart';
 import 'package:fortuneboot/fx/components/fx_sheet.dart';
 import 'package:fortuneboot/fx/components/fx_state_view.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
@@ -164,7 +165,6 @@ class _MembersPageState extends State<MembersPage> {
             onSearch: (kw) => _bloc.add(MembersSearchChanged(kw)),
             tab: state.tab,
             onTabChanged: (t) => _bloc.add(MembersTabChanged(t)),
-            dangerTabIndex: 3,
             body: _buildBody(state, bookId),
           );
         },
@@ -202,7 +202,7 @@ class _MembersPageState extends State<MembersPage> {
     }
     return RefreshIndicator(
       onRefresh: () async => _bloc.add(const MembersLoaded()),
-      child: ListView.separated(
+      child: ListView(
         physics: const AlwaysScrollableScrollPhysics(),
         padding: const EdgeInsets.fromLTRB(
           FxSpacing.lg,
@@ -210,28 +210,26 @@ class _MembersPageState extends State<MembersPage> {
           FxSpacing.lg,
           FxSpacing.xxxl,
         ),
-        itemCount: list.length,
-        separatorBuilder: (_, i) => const SizedBox(height: FxSpacing.sm),
-        itemBuilder: (context, i) {
-          final member = list[i];
-          final inRecycle = state.tab.recycleBin;
-          return MemberCard(
-            member: member,
-            onTap: () => _openForm(member: member),
-            onMenu: () => _openMenu(member),
-            onToggleEnable: inRecycle
-                ? null
-                : () {
-                    HapticFeedback.selectionClick();
-                    _bloc.add(
-                      MemberEnableToggled(
-                        member: member,
-                        value: !member.enable,
-                      ),
-                    );
-                  },
-          );
-        },
+        children: [
+          FxListSection(
+            children: [
+              for (final member in list)
+                MemberCard(
+                  member: member,
+                  onTap: () => _openForm(member: member),
+                  onMenu: () => _openMenu(member),
+                  onToggleEnable: state.tab.recycleBin
+                      ? null
+                      : (value) {
+                          HapticFeedback.selectionClick();
+                          _bloc.add(
+                            MemberEnableToggled(member: member, value: value),
+                          );
+                        },
+                ),
+            ],
+          ),
+        ],
       ),
     );
   }

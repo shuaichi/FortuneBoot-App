@@ -19,6 +19,7 @@ import 'package:fortuneboot/features/accounts/presentation/widgets/balance_adjus
 import 'package:fortuneboot/features/accounts/presentation/widgets/net_worth_card.dart';
 import 'package:fortuneboot/features/accounts/presentation/widgets/recycle_bin_sheet.dart';
 import 'package:fortuneboot/fx/components/fx_icon_button.dart';
+import 'package:fortuneboot/fx/components/fx_list_section.dart';
 import 'package:fortuneboot/fx/components/fx_money_text.dart';
 import 'package:fortuneboot/fx/components/fx_sheet.dart';
 import 'package:fortuneboot/fx/components/fx_state_view.dart';
@@ -404,18 +405,23 @@ class _AccountsPageState extends State<AccountsPage> {
               SliverToBoxAdapter(
                 child: _groupHeader(group, state.currencyCode),
               ),
-              SliverList(
-                delegate: SliverChildBuilderDelegate((context, i) {
-                  final account = group.accounts[i];
-                  return AccountCard(
-                    account: account,
-                    currencyCode: state.currencyCode,
-                    onTap: () => _openForm(account: account),
-                    onMenu: () => _openMenu(account),
-                    onAdjustBalance: () => _openAdjust(account),
-                  );
-                }, childCount: group.accounts.length),
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: FxSpacing.lg),
+                  child: FxListSection(
+                    children: [
+                      for (final account in group.accounts)
+                        AccountCard(
+                          account: account,
+                          currencyCode: state.currencyCode,
+                          onTap: () => _openForm(account: account),
+                          onMenu: () => _openMenu(account),
+                        ),
+                    ],
+                  ),
+                ),
               ),
+              const SliverToBoxAdapter(child: SizedBox(height: FxSpacing.md)),
             ],
           const SliverToBoxAdapter(child: SizedBox(height: FxSpacing.xxxl)),
         ],
@@ -439,15 +445,6 @@ class _AccountsPageState extends State<AccountsPage> {
       ),
       child: Row(
         children: [
-          Container(
-            width: 4,
-            height: 16,
-            decoration: BoxDecoration(
-              color: group.meta.tint(context),
-              borderRadius: BorderRadius.circular(2),
-            ),
-          ),
-          const SizedBox(width: FxSpacing.sm),
           Expanded(
             child: Text(
               group.meta.localizedName(context),
@@ -459,16 +456,15 @@ class _AccountsPageState extends State<AccountsPage> {
           Flexible(
             child: Align(
               alignment: AlignmentDirectional.centerEnd,
-              child: FittedBox(
-                fit: BoxFit.scaleDown,
-                child: FxMoneyText(
-                  amount: group.subtotal,
-                  currencyCode: currencyCode,
-                  fontSize: 13,
-                  colorBySign: group.meta.isLiability,
-                  color: group.meta.isLiability ? null : palette.textPrimary,
-                  masked: hideAmounts,
-                ),
+              child: FxMoneyText(
+                amount: group.subtotal,
+                currencyCode: currencyCode,
+                fontSize: 13,
+                color: group.meta.isLiability
+                    ? palette.danger
+                    : palette.success,
+                masked: hideAmounts,
+                compactWhenNeeded: true,
               ),
             ),
           ),

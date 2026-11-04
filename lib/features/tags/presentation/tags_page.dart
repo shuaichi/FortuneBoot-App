@@ -11,6 +11,7 @@ import 'package:fortuneboot/features/tags/data/tag_service.dart';
 import 'package:fortuneboot/features/tags/presentation/bloc/tags_bloc.dart';
 import 'package:fortuneboot/features/tags/presentation/widgets/tag_form_sheet.dart';
 import 'package:fortuneboot/features/tags/presentation/widgets/tag_tile.dart';
+import 'package:fortuneboot/fx/components/fx_list_section.dart';
 import 'package:fortuneboot/fx/components/fx_sheet.dart';
 import 'package:fortuneboot/fx/components/fx_state_view.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
@@ -194,7 +195,6 @@ class _TagsPageState extends State<TagsPage> {
             onSearch: (kw) => _bloc.add(TagsSearchChanged(kw)),
             tab: state.tab,
             onTabChanged: (t) => _bloc.add(TagsTabChanged(t)),
-            dangerTabIndex: 3,
             body: _buildBody(state, bookId),
           );
         },
@@ -232,7 +232,7 @@ class _TagsPageState extends State<TagsPage> {
     }
     return RefreshIndicator(
       onRefresh: () async => _bloc.add(const TagsLoaded()),
-      child: ListView.separated(
+      child: ListView(
         physics: const AlwaysScrollableScrollPhysics(),
         padding: const EdgeInsets.fromLTRB(
           FxSpacing.lg,
@@ -240,22 +240,23 @@ class _TagsPageState extends State<TagsPage> {
           FxSpacing.lg,
           FxSpacing.xxxl,
         ),
-        itemCount: roots.length,
-        separatorBuilder: (_, i) => const SizedBox(height: FxSpacing.sm),
-        itemBuilder: (context, i) => TagTile(
-          node: roots[i],
-          expanded: state.isExpanded(roots[i].tagId),
-          onTap: (n) => _openForm(tag: n),
-          onMenu: _openMenu,
-          onToggleExpand: (id) => _bloc.add(ToggleTagExpandRequested(id)),
-          expandedFor: (child) => state.isExpanded(child.tagId),
-          matchCountFor: (child) => state.keyword.trim().isNotEmpty
-              ? state.matchCountFor(child.tagId)
-              : 0,
-          searchMatchCount: state.keyword.trim().isNotEmpty
-              ? state.matchCountFor(roots[i].tagId)
-              : 0,
-        ),
+        children: [
+          FxListSection(
+            dividerIndent: 48,
+            children: [
+              for (final root in roots)
+                TagTile(
+                  node: root,
+                  expanded: state.isExpanded(root.tagId),
+                  onTap: (n) => _openForm(tag: n),
+                  onMenu: _openMenu,
+                  onToggleExpand: (id) =>
+                      _bloc.add(ToggleTagExpandRequested(id)),
+                  expandedFor: (child) => state.isExpanded(child.tagId),
+                ),
+            ],
+          ),
+        ],
       ),
     );
   }

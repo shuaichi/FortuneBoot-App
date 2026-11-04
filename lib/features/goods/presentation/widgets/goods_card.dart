@@ -61,6 +61,7 @@ class GoodsCard extends StatelessWidget {
               fontSize: 18,
               color: palette.textPrimary,
               masked: masked,
+              compactWhenNeeded: true,
             ),
             const SizedBox(height: FxSpacing.sm),
             if (goods.holdingTime != null)
@@ -91,7 +92,7 @@ class GoodsCard extends StatelessWidget {
               runSpacing: FxSpacing.xs,
               children: [
                 if ((goods.statusDesc ?? '').isNotEmpty)
-                  _tag(goods.statusDesc!, palette.primary),
+                  _tag(goods.statusDesc!, _statusColor(context, goods)),
                 if ((goods.isOverWarranty ?? '').isNotEmpty)
                   _tag(
                     goods.isOverWarranty!,
@@ -169,5 +170,30 @@ class GoodsCard extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  /// 在役 / 退役 / 已出售使用不同的状态语义色，避免全部落回品牌蓝。
+  Color _statusColor(BuildContext context, FortuneGoodsKeeperVo goods) {
+    final palette = FxPalette.of(context);
+    // status 与 statusDesc 的整型映射后端尚未固化，展示色优先跟随实际文案。
+    final desc = (goods.statusDesc ?? '').toLowerCase();
+    if (desc.contains('退役') || desc.contains('retired')) {
+      return palette.textSecondary;
+    }
+    if (desc.contains('出售') || desc.contains('售') || desc.contains('sold')) {
+      return palette.info;
+    }
+    if (desc.contains('在役') || desc.contains('使用') || desc.contains('active')) {
+      return palette.success;
+    }
+    final status = GoodsStatus.fromValue(goods.status);
+    if (status != null) {
+      return switch (status) {
+        GoodsStatus.active => palette.success,
+        GoodsStatus.retired => palette.textSecondary,
+        GoodsStatus.sold => palette.info,
+      };
+    }
+    return palette.textSecondary;
   }
 }

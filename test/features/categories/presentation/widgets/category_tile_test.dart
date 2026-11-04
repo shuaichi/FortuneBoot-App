@@ -30,13 +30,11 @@ void main() {
         home: Scaffold(
           body: CategoryTile(
             node: parent,
-            typeTint: Colors.green,
             expanded: false,
             onTap: (_) => editCount++,
             onMenu: (_) {},
             onToggleExpand: (id) => expandedId = id,
             expandedFor: (_) => false,
-            matchCountFor: (_) => 0,
           ),
         ),
       ),
@@ -46,6 +44,8 @@ void main() {
 
     expect(expandedId, 1);
     expect(editCount, 0);
+    expect(find.byIcon(Icons.add_rounded), findsNothing);
+    expect(find.byIcon(Icons.more_horiz_rounded), findsOneWidget);
   });
 
   testWidgets('expanded descendants keep bounded indentation', (tester) async {
@@ -61,13 +61,11 @@ void main() {
         home: Scaffold(
           body: CategoryTile(
             node: parent,
-            typeTint: Colors.green,
             expanded: true,
             onTap: (_) {},
             onMenu: (_) {},
             onToggleExpand: (_) {},
             expandedFor: (_) => false,
-            matchCountFor: (_) => 0,
           ),
         ),
       ),

@@ -5,8 +5,9 @@ import 'package:fortuneboot/features/accounts/data/account_models.dart';
 import 'package:fortuneboot/features/accounts/presentation/widgets/account_type_filter_bar.dart';
 import 'package:fortuneboot/features/accounts/presentation/widgets/bank_icon.dart';
 import 'package:fortuneboot/features/bill_editor/data/editor_options_service.dart';
-import 'package:fortuneboot/fx/components/fx_button.dart';
+import 'package:fortuneboot/fx/components/fx_list_section.dart';
 import 'package:fortuneboot/fx/components/fx_money_text.dart';
+import 'package:fortuneboot/fx/components/fx_option_picker.dart';
 import 'package:fortuneboot/fx/components/fx_sheet.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
@@ -23,47 +24,14 @@ Future<T?> showOptionPicker<T>(
   int? selectedId,
   bool allowClear = false,
 }) {
-  final palette = FxPalette.of(context);
-  return FxSheet.show<T>(
+  return showFxOptionPicker<T>(
     context,
     title: title,
-    child: options.isEmpty
-        ? Padding(
-            padding: const EdgeInsets.all(FxSpacing.xxxl),
-            child: Center(child: Text(S.of(context).billEditorNoOptions)),
-          )
-        : ListView(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            padding: const EdgeInsets.only(bottom: FxSpacing.lg),
-            children: [
-              if (allowClear)
-                ListTile(
-                  title: Text(
-                    S.of(context).billEditorNoSelection,
-                    style: FxTypography.body.copyWith(
-                      color: palette.textSecondary,
-                    ),
-                  ),
-                  onTap: () => Navigator.of(context).pop<T?>(),
-                ),
-              ...options.map((o) {
-                final selected = idOf(o) == selectedId;
-                return ListTile(
-                  title: Text(
-                    labelOf(o),
-                    style: FxTypography.body.copyWith(
-                      color: palette.textPrimary,
-                    ),
-                  ),
-                  trailing: selected
-                      ? Icon(Icons.check_rounded, color: palette.primary)
-                      : null,
-                  onTap: () => Navigator.of(context).pop<T>(o),
-                );
-              }),
-            ],
-          ),
+    options: options,
+    labelOf: labelOf,
+    idOf: idOf,
+    selectedId: selectedId,
+    allowClear: allowClear,
   );
 }
 
@@ -77,6 +45,7 @@ Future<AccountOption?> showAccountOptionPicker(
   return FxSheet.show<AccountOption>(
     context,
     title: title,
+    maxHeightFactor: FxSheet.pickerHeightFactor,
     child: accounts.isEmpty
         ? Padding(
             padding: const EdgeInsets.all(FxSpacing.xxxl),
@@ -107,45 +76,6 @@ class _AccountOptionPickerBodyState extends State<_AccountOptionPickerBody> {
       counts[id] = (counts[id] ?? 0) + 1;
     }
     return counts;
-  }
-
-  Widget? _accountSubtitle(
-    BuildContext context,
-    AccountOption account,
-    FxPalette palette,
-  ) {
-    final lastFour = account.lastFour;
-    final remark = account.remark?.trim();
-    final hasRemark = remark != null && remark.isNotEmpty;
-    if (lastFour == null && !hasRemark) return null;
-
-    return Text.rich(
-      TextSpan(
-        children: [
-          if (lastFour != null)
-            TextSpan(
-              text: '···$lastFour',
-              style: FxTypography.caption.copyWith(
-                color: palette.textSecondary,
-              ),
-            ),
-          if (lastFour != null && hasRemark)
-            TextSpan(
-              text: '  ',
-              style: FxTypography.caption.copyWith(
-                color: palette.textSecondary,
-              ),
-            ),
-          if (hasRemark)
-            TextSpan(
-              text: remark,
-              style: FxTypography.caption.copyWith(color: palette.primary),
-            ),
-        ],
-      ),
-      maxLines: 1,
-      overflow: TextOverflow.ellipsis,
-    );
   }
 
   @override
@@ -192,61 +122,147 @@ class _AccountOptionPickerBodyState extends State<_AccountOptionPickerBody> {
                   padding: const EdgeInsets.only(bottom: FxSpacing.lg),
                   children: [
                     for (final group in groups) ...[
-                      _AccountTypeHeader(meta: group.meta),
-                      for (final account in group.accounts)
-                        ListTile(
-                          dense: true,
-                          visualDensity: VisualDensity.compact,
-                          // 相对类型标题缩进一个 tab（xl），形成层级。
-                          contentPadding: const EdgeInsets.only(
-                            left: FxSpacing.lg + FxSpacing.xl,
-                            right: FxSpacing.lg,
-                          ),
-                          minVerticalPadding: 0,
-                          leading: BankIcon.resolve(
-                            accountName: account.accountName,
-                            cardNo: account.cardNo,
-                            accountType: account.accountType,
-                            size: 32,
-                            iconSize: 16,
-                          ),
-                          title: Text(
-                            account.accountName ?? '',
-                            style: FxTypography.body.copyWith(
-                              color: palette.textPrimary,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          subtitle: _accountSubtitle(context, account, palette),
-                          trailing: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              FxMoneyText(
-                                amount: account.balance,
-                                currencyCode: account.currencyCode,
-                                fontSize: 13,
-                                fontWeight: FontWeight.w600,
-                                color: palette.textSecondary,
-                                masked: hideAmounts,
-                              ),
-                              if (account.accountId == widget.selectedId) ...[
-                                const SizedBox(width: FxSpacing.sm),
-                                Icon(
-                                  Icons.check_rounded,
-                                  color: palette.primary,
-                                ),
-                              ],
-                            ],
-                          ),
-                          onTap: () =>
-                              Navigator.of(context).pop<AccountOption>(account),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(
+                          FxSpacing.lg,
+                          FxSpacing.md,
+                          FxSpacing.lg,
+                          FxSpacing.xs,
                         ),
+                        child: Text(
+                          group.meta.localizedName(context),
+                          style: FxTypography.label.copyWith(
+                            color: palette.textSecondary,
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: FxSpacing.lg,
+                        ),
+                        child: FxListSection(
+                          children: [
+                            for (final account in group.accounts)
+                              _AccountOptionRow(
+                                account: account,
+                                selected:
+                                    account.accountId == widget.selectedId,
+                                hideAmounts: hideAmounts,
+                                onTap: () => Navigator.of(
+                                  context,
+                                ).pop<AccountOption>(account),
+                              ),
+                          ],
+                        ),
+                      ),
                     ],
                   ],
                 ),
         ),
       ],
+    );
+  }
+}
+
+class _AccountOptionRow extends StatelessWidget {
+  const _AccountOptionRow({
+    required this.account,
+    required this.selected,
+    required this.hideAmounts,
+    required this.onTap,
+  });
+
+  final AccountOption account;
+  final bool selected;
+  final bool hideAmounts;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = FxPalette.of(context);
+    final meta = AccountTypeMeta.of(account.accountType);
+    final lastFour = account.lastFour;
+    final remark = account.remark?.trim();
+    final details = [
+      if (lastFour != null) '···$lastFour',
+      if (remark != null && remark.isNotEmpty) remark,
+    ].join(' · ');
+    final balanceColor = meta.isLiability ? palette.danger : palette.success;
+
+    return Semantics(
+      button: true,
+      selected: selected,
+      label: account.accountName ?? '',
+      child: InkWell(
+        onTap: onTap,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(minHeight: 64),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(
+              FxSpacing.lg,
+              FxSpacing.md,
+              FxSpacing.sm,
+              FxSpacing.md,
+            ),
+            child: Row(
+              children: [
+                BankIcon.resolve(
+                  accountName: account.accountName,
+                  cardNo: account.cardNo,
+                  accountType: account.accountType,
+                  size: 36,
+                  iconSize: 18,
+                ),
+                const SizedBox(width: FxSpacing.md),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        account.accountName ?? '',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: FxTypography.body.copyWith(
+                          color: palette.textPrimary,
+                          fontWeight: selected ? FontWeight.w600 : null,
+                        ),
+                      ),
+                      if (details.isNotEmpty) ...[
+                        const SizedBox(height: 2),
+                        Text(
+                          details,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: FxTypography.caption.copyWith(
+                            color: palette.textTertiary,
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+                const SizedBox(width: FxSpacing.sm),
+                ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 96),
+                  child: FxMoneyText(
+                    amount: account.balance,
+                    currencyCode: account.currencyCode,
+                    fontSize: 13,
+                    color: balanceColor,
+                    masked: hideAmounts,
+                    compactWhenNeeded: true,
+                  ),
+                ),
+                if (selected) ...[
+                  const SizedBox(width: FxSpacing.xs),
+                  Icon(Icons.check_rounded, size: 18, color: palette.primary),
+                ],
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
@@ -283,45 +299,6 @@ List<_AccountTypeGroup> _groupAccountsByType(List<AccountOption> accounts) {
   return result;
 }
 
-class _AccountTypeHeader extends StatelessWidget {
-  const _AccountTypeHeader({required this.meta});
-  final AccountTypeMeta meta;
-
-  @override
-  Widget build(BuildContext context) {
-    final palette = FxPalette.of(context);
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(
-        FxSpacing.lg,
-        FxSpacing.sm,
-        FxSpacing.lg,
-        2,
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 4,
-            height: 16,
-            decoration: BoxDecoration(
-              color: meta.tint(context),
-              borderRadius: BorderRadius.circular(2),
-            ),
-          ),
-          const SizedBox(width: FxSpacing.sm),
-          Expanded(
-            child: Text(
-              meta.localizedName(context),
-              style: FxTypography.label.copyWith(color: palette.textSecondary),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
 /// 多选弹窗。确认返回所选项列表，取消返回 null。
 Future<List<T>?> showMultiSelect<T>(
   BuildContext context, {
@@ -331,92 +308,12 @@ Future<List<T>?> showMultiSelect<T>(
   required int Function(T) idOf,
   required List<int> selectedIds,
 }) {
-  return FxSheet.show<List<T>>(
+  return showFxMultiOptionPicker<T>(
     context,
     title: title,
-    child: _MultiSelectBody<T>(
-      options: options,
-      labelOf: labelOf,
-      idOf: idOf,
-      initialSelected: selectedIds,
-    ),
+    options: options,
+    labelOf: labelOf,
+    idOf: idOf,
+    selectedIds: selectedIds.toSet(),
   );
-}
-
-class _MultiSelectBody<T> extends StatefulWidget {
-  const _MultiSelectBody({
-    required this.options,
-    required this.labelOf,
-    required this.idOf,
-    required this.initialSelected,
-  });
-
-  final List<T> options;
-  final String Function(T) labelOf;
-  final int Function(T) idOf;
-  final List<int> initialSelected;
-
-  @override
-  State<_MultiSelectBody<T>> createState() => _MultiSelectBodyState<T>();
-}
-
-class _MultiSelectBodyState<T> extends State<_MultiSelectBody<T>> {
-  late Set<int> _selected;
-
-  @override
-  void initState() {
-    super.initState();
-    _selected = {...widget.initialSelected};
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if (widget.options.isEmpty) {
-      return Padding(
-        padding: const EdgeInsets.all(FxSpacing.xxxl),
-        child: Center(child: Text(S.of(context).billEditorNoOptions)),
-      );
-    }
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Flexible(
-          child: ListView(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            children: widget.options.map((o) {
-              final id = widget.idOf(o);
-              final checked = _selected.contains(id);
-              return CheckboxListTile.adaptive(
-                controlAffinity: ListTileControlAffinity.leading,
-                activeColor: FxPalette.of(context).primary,
-                title: Text(widget.labelOf(o), style: FxTypography.body),
-                value: checked,
-                onChanged: (v) => setState(() {
-                  if (v == true) {
-                    _selected.add(id);
-                  } else {
-                    _selected.remove(id);
-                  }
-                }),
-              );
-            }).toList(),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(FxSpacing.lg),
-          child: FxButton(
-            label: S.of(context).ok,
-            expand: true,
-            onPressed: () {
-              final result = widget.options
-                  .where((o) => _selected.contains(widget.idOf(o)))
-                  .toList();
-              Navigator.of(context).pop<List<T>>(result);
-            },
-          ),
-        ),
-      ],
-    );
-  }
 }

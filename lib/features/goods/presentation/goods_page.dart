@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -83,8 +84,6 @@ class _GoodsPageState extends State<GoodsPage> {
     await FxSheet.show<void>(
       context,
       title: goods.goodsName ?? S.of(context).goodsDetailTitle,
-      scrollable: true,
-      maxHeightFactor: FxSheet.detailHeightFactor,
       child: GoodsDetailSheet(goods: goods, currencyCode: _currency),
     );
   }
@@ -294,14 +293,6 @@ class _GoodsPageState extends State<GoodsPage> {
   }
 
   Widget _buildGrid(GoodsState state) {
-    final width = MediaQuery.of(context).size.width;
-    final crossAxisCount = width >= 900
-        ? 4
-        : width >= 600
-        ? 3
-        : width >= 360
-        ? 2
-        : 1;
     final hideAmounts = context
         .watch<PreferencesCubit>()
         .state
@@ -309,53 +300,88 @@ class _GoodsPageState extends State<GoodsPage> {
         .hideAmounts;
     return RefreshIndicator(
       onRefresh: _refreshGoods,
-      child: CustomScrollView(
-        physics: const AlwaysScrollableScrollPhysics(),
-        slivers: [
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(
-                FxSpacing.lg,
-                FxSpacing.xs,
-                FxSpacing.lg,
-                FxSpacing.sm,
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final availableWidth = constraints.maxWidth - FxSpacing.lg * 2;
+          final crossAxisCount = _crossAxisCount(availableWidth);
+          final rowCount =
+              (state.goods.length + crossAxisCount - 1) ~/ crossAxisCount;
+          return CustomScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            slivers: [
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(
+                    FxSpacing.lg,
+                    FxSpacing.xs,
+                    FxSpacing.lg,
+                    FxSpacing.sm,
+                  ),
+                  child: _StatBar(
+                    stats: state.statistics,
+                    currencyCode: state.currencyCode,
+                  ),
+                ),
               ),
-              child: _StatBar(
-                stats: state.statistics,
-                currencyCode: state.currencyCode,
+              SliverPadding(
+                padding: const EdgeInsets.fromLTRB(
+                  FxSpacing.lg,
+                  FxSpacing.xs,
+                  FxSpacing.lg,
+                  FxSpacing.xxxl,
+                ),
+                sliver: SliverList(
+                  delegate: SliverChildBuilderDelegate((context, rowIndex) {
+                    final start = rowIndex * crossAxisCount;
+                    final end = math.min(
+                      start + crossAxisCount,
+                      state.goods.length,
+                    );
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: FxSpacing.md),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          for (var i = start; i < end; i++) ...[
+                            if (i > start) const SizedBox(width: FxSpacing.md),
+                            Expanded(
+                              child: GoodsCard(
+                                goods: state.goods[i],
+                                currencyCode: state.currencyCode,
+                                masked: hideAmounts,
+                                onTap: () => _openDetail(state.goods[i]),
+                                onMenu: () => _openMenu(state.goods[i]),
+                                onLongPress: () => _openMenu(state.goods[i]),
+                              ),
+                            ),
+                          ],
+                          for (
+                            var i = end;
+                            i < start + crossAxisCount;
+                            i++
+                          ) ...[
+                            if (i > start) const SizedBox(width: FxSpacing.md),
+                            const Expanded(child: SizedBox.shrink()),
+                          ],
+                        ],
+                      ),
+                    );
+                  }, childCount: rowCount),
+                ),
               ),
-            ),
-          ),
-          SliverPadding(
-            padding: const EdgeInsets.fromLTRB(
-              FxSpacing.lg,
-              FxSpacing.xs,
-              FxSpacing.lg,
-              FxSpacing.xxxl,
-            ),
-            sliver: SliverGrid(
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: crossAxisCount,
-                mainAxisSpacing: FxSpacing.md,
-                crossAxisSpacing: FxSpacing.md,
-                childAspectRatio: 0.82,
-              ),
-              delegate: SliverChildBuilderDelegate((context, i) {
-                final goods = state.goods[i];
-                return GoodsCard(
-                  goods: goods,
-                  currencyCode: state.currencyCode,
-                  masked: hideAmounts,
-                  onTap: () => _openDetail(goods),
-                  onMenu: () => _openMenu(goods),
-                  onLongPress: () => _openMenu(goods),
-                );
-              }, childCount: state.goods.length),
-            ),
-          ),
-        ],
+            ],
+          );
+        },
       ),
     );
+  }
+
+  int _crossAxisCount(double width) {
+    // width 已是扣掉页面左右 padding 后的可用宽度，阈值同步内缩。
+    if (width >= 868) return 4;
+    if (width >= 568) return 3;
+    if (width >= 328) return 2;
+    return 1;
   }
 }
 
@@ -389,7 +415,7 @@ class _StatBar extends StatelessWidget {
             context,
             S.of(context).goodsStatActiveCost,
             stats.activePrice,
-            palette.primary,
+            palette.success,
             hideAmounts,
           ),
           _divider(context),
@@ -397,7 +423,7 @@ class _StatBar extends StatelessWidget {
             context,
             S.of(context).goodsStatDailyCost,
             stats.allDailyPrice,
-            FxFinanceColors.of(context).income,
+            palette.textSecondary,
             hideAmounts,
           ),
         ],
@@ -425,14 +451,14 @@ class _StatBar extends StatelessWidget {
             ),
           ),
           const SizedBox(height: FxSpacing.xs),
-          FittedBox(
-            fit: BoxFit.scaleDown,
+          Align(
             child: FxMoneyText(
               amount: amount,
               currencyCode: currencyCode,
               fontSize: 15,
               color: color,
               masked: hideAmounts,
+              compactWhenNeeded: true,
             ),
           ),
         ],
