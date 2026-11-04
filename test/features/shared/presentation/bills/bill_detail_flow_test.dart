@@ -34,8 +34,9 @@ void main() {
     expect(find.text('午餐'), findsOneWidget);
     expect(find.text('-¥28.00'), findsOneWidget);
     expect(find.text('编辑'), findsOneWidget);
-    expect(find.text('复制'), findsOneWidget);
-    expect(find.text('删除'), findsOneWidget);
+    expect(find.text('复制'), findsNothing);
+    expect(find.text('删除'), findsNothing);
+    expect(find.byTooltip('更多操作'), findsOneWidget);
 
     final sheetHeight = tester.getSize(find.byType(FxSheet)).height;
     final viewportHeight =
@@ -79,6 +80,8 @@ void main() {
       ),
     );
 
+    await tester.tap(find.byTooltip('更多操作'));
+    await tester.pumpAndSettle();
     await tester.tap(find.text('复制'));
 
     expect(copyCount, 1);
@@ -115,7 +118,8 @@ void main() {
 
     expect(find.text('编辑'), findsNothing);
     expect(find.text('复制'), findsNothing);
-    expect(find.text('删除'), findsOneWidget);
+    expect(find.text('删除'), findsNothing);
+    expect(find.byTooltip('更多操作'), findsOneWidget);
   });
 
   testWidgets('uses compact actions at 414 pixels without overflow', (
@@ -149,7 +153,8 @@ void main() {
       ),
     );
 
-    expect(find.text('复制'), findsOneWidget);
+    expect(find.text('复制'), findsNothing);
+    expect(find.byTooltip('更多操作'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 
@@ -174,9 +179,9 @@ void main() {
     await tester.pumpAndSettle();
 
     final editButton = find.text('编辑');
-    final copyButton = find.text('复制');
+    final moreButton = find.byTooltip('更多操作');
     final editTop = tester.getTopLeft(editButton).dy;
-    final copyTop = tester.getTopLeft(copyButton).dy;
+    final moreTop = tester.getTopLeft(moreButton).dy;
     final sheetHeight = tester.getSize(find.byType(FxSheet)).height;
 
     expect(tester.takeException(), isNull);
@@ -190,7 +195,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(tester.getTopLeft(editButton).dy, editTop);
-    expect(tester.getTopLeft(copyButton).dy, copyTop);
+    expect(tester.getTopLeft(moreButton).dy, moreTop);
     expect(tester.takeException(), isNull);
   });
 
@@ -236,6 +241,8 @@ void main() {
 
     await tester.tap(find.text('打开详情'));
     await tester.pumpAndSettle();
+    await tester.tap(find.byTooltip('更多操作'));
+    await tester.pumpAndSettle();
     await tester.tap(find.text('删除'));
     await tester.pumpAndSettle();
 
@@ -266,6 +273,8 @@ void main() {
     await tester.tap(find.text('打开详情'));
     await tester.pumpAndSettle();
 
+    await tester.tap(find.byTooltip('更多操作'));
+    await tester.pumpAndSettle();
     await tester.tap(find.text('删除'));
     await tester.pumpAndSettle();
 
@@ -294,6 +303,8 @@ void main() {
     await tester.tap(find.text('打开宿主'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('打开详情'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byTooltip('更多操作'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('删除'));
     await tester.pumpAndSettle();

@@ -10,10 +10,10 @@ import 'package:fortuneboot/features/orders/data/orders_models.dart';
 import 'package:fortuneboot/features/orders/data/orders_service.dart';
 import 'package:fortuneboot/features/orders/presentation/bloc/orders_bloc.dart';
 import 'package:fortuneboot/features/orders/presentation/widgets/order_card.dart';
+import 'package:fortuneboot/features/orders/presentation/widgets/order_filter_sheet.dart';
 import 'package:fortuneboot/features/orders/presentation/widgets/order_form_sheet.dart';
 import 'package:fortuneboot/features/orders/presentation/widgets/order_summary_strip.dart';
 import 'package:fortuneboot/fx/components/fx_button.dart';
-import 'package:fortuneboot/fx/components/fx_chip.dart';
 import 'package:fortuneboot/fx/components/fx_icon_button.dart';
 import 'package:fortuneboot/fx/components/fx_list_section.dart';
 import 'package:fortuneboot/fx/components/fx_segmented.dart';
@@ -193,25 +193,6 @@ class _OrdersPageState extends State<OrdersPage> {
             ],
           ),
           const SizedBox(height: FxSpacing.sm),
-          FxSegmented<int>(
-            value: state.statusFilter,
-            onChanged: (status) => _bloc.add(OrdersStatusFilterChanged(status)),
-            segments: [
-              FxSegment(
-                FinanceOrderStatus.using.value,
-                S.of(context).ordersStatusUsing,
-              ),
-              FxSegment(
-                FinanceOrderStatus.draft.value,
-                S.of(context).ordersStatusDraft,
-              ),
-              FxSegment(
-                FinanceOrderStatus.closed.value,
-                S.of(context).ordersStatusClosed,
-              ),
-            ],
-          ),
-          const SizedBox(height: FxSpacing.sm),
           Row(
             children: [
               Expanded(
@@ -220,9 +201,14 @@ class _OrdersPageState extends State<OrdersPage> {
                   onChanged: (value) => _bloc.add(OrdersSearchChanged(value)),
                   decoration: InputDecoration(
                     hintText: S.of(context).ordersSearchHint,
-                    prefixIcon: const Icon(Icons.search_rounded),
+                    prefixIcon: const Icon(Icons.search_rounded, size: 20),
                     filled: true,
                     fillColor: FxPalette.of(context).surfaceMuted,
+                    isDense: true,
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: FxSpacing.md,
+                      vertical: FxSpacing.md,
+                    ),
                     border: OutlineInputBorder(
                       borderRadius: FxRadius.tileBorder,
                       borderSide: BorderSide.none,
@@ -230,15 +216,77 @@ class _OrdersPageState extends State<OrdersPage> {
                   ),
                 ),
               ),
-              const SizedBox(width: FxSpacing.sm),
-              FxChip(
-                label: S.of(context).ordersOverdueOnly,
-                selected: state.overdueOnly,
-                onTap: () =>
-                    _bloc.add(OrdersOverdueOnlyChanged(!state.overdueOnly)),
-              ),
+              const SizedBox(width: FxSpacing.xs),
+              _filterButton(context, state),
             ],
           ),
+        ],
+      ),
+    );
+  }
+
+  Widget _filterButton(BuildContext context, OrdersState state) {
+    final activeCount =
+        (state.statusFilter == FinanceOrderStatus.using.value ? 0 : 1) +
+        (state.overdueOnly ? 1 : 0);
+    final palette = FxPalette.of(context);
+    return Semantics(
+      button: true,
+      label: S.of(context).billsFilterTitle,
+      value: activeCount == 0 ? null : '$activeCount',
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          FxIconButton(
+            key: const ValueKey('orders-filter'),
+            icon: Icons.tune_rounded,
+            tooltip: S.of(context).billsFilterTitle,
+            onPressed: () => FxSheet.show<void>(
+              context,
+              title: S.of(context).billsFilterTitle,
+              actions: [
+                Builder(
+                  builder: (sheetContext) => FxIconButton(
+                    icon: Icons.close_rounded,
+                    tooltip: MaterialLocalizations.of(
+                      sheetContext,
+                    ).closeButtonTooltip,
+                    onPressed: () => Navigator.of(sheetContext).pop(),
+                  ),
+                ),
+              ],
+              child: BlocProvider.value(
+                value: _bloc,
+                child: BlocBuilder<OrdersBloc, OrdersState>(
+                  builder: (context, state) => OrderFilterSheet(state: state),
+                ),
+              ),
+            ),
+          ),
+          if (activeCount > 0)
+            Positioned(
+              right: 3,
+              top: 3,
+              child: IgnorePointer(
+                child: Container(
+                  width: 18,
+                  height: 18,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: palette.primary,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Text(
+                    '$activeCount',
+                    style: FxTypography.caption.copyWith(
+                      color: palette.onPrimary,
+                      fontSize: 10,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ),
+            ),
         ],
       ),
     );

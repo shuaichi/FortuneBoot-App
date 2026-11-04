@@ -2,21 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:fortuneboot/core/preferences/preferences_cubit.dart';
-import 'package:fortuneboot/core/preferences/dashboard_display_preferences.dart';
 import 'package:fortuneboot/core/navigation/app_router.dart';
+import 'package:fortuneboot/core/preferences/dashboard_display_preferences.dart';
+import 'package:fortuneboot/core/preferences/preferences_cubit.dart';
 import 'package:fortuneboot/core/session/session_cubit.dart';
 import 'package:fortuneboot/core/session/session_models.dart';
 import 'package:fortuneboot/features/orders/data/order_money.dart';
-import 'package:fortuneboot/features/orders/data/orders_models.dart';
+import 'package:fortuneboot/features/orders/data/orders_models.dart'
+    hide OrdersPage;
 import 'package:fortuneboot/features/orders/data/orders_service.dart';
-import 'package:fortuneboot/features/orders/presentation/bloc/orders_bloc.dart';
-import 'package:fortuneboot/features/orders/presentation/orders_page.dart'
-    as orders_page;
 import 'package:fortuneboot/features/orders/orders_registration.dart';
+import 'package:fortuneboot/features/orders/presentation/bloc/orders_bloc.dart';
+import 'package:fortuneboot/features/orders/presentation/orders_page.dart';
 import 'package:fortuneboot/features/orders/presentation/widgets/order_card.dart';
 import 'package:fortuneboot/features/orders/presentation/widgets/order_summary_strip.dart';
+import 'package:fortuneboot/fx/components/fx_chip.dart';
 import 'package:fortuneboot/fx/components/fx_money_text.dart';
+import 'package:fortuneboot/fx/components/fx_segmented.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/generated/l10n.dart';
 
@@ -47,7 +49,7 @@ void main() {
     expect(find.text('张三'), findsOneWidget);
     expect(find.textContaining('600.00'), findsWidgets);
 
-    await tester.tap(find.text('张三借款'));
+    await tester.tap(find.text('张三'));
     await tester.pumpAndSettle();
 
     expect(service.detailRequests, [11]);
@@ -88,6 +90,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('600.00'), findsNothing);
+    expect(find.textContaining('1,000.00'), findsNothing);
     expect(find.bySemanticsLabel(RegExp(r'600\.00')), findsNothing);
     expect(
       tester
@@ -119,6 +122,111 @@ void main() {
 
     expect(tester.takeException(), isNull);
   });
+  testWidgets('keeps secondary filters collapsed and applies them from sheet', (
+    tester,
+  ) async {
+    final service = _FakeOrdersService();
+    final session = _TestSessionCubit(roleType: 2);
+    final preferences = _TestPreferencesCubit(hideAmounts: false);
+    addTearDown(session.close);
+    addTearDown(preferences.close);
+    await _pumpPage(
+      tester,
+      service: service,
+      session: session,
+      preferences: preferences,
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.byType(FxSegmented<FinanceOrderType>), findsOneWidget);
+    expect(find.byType(FxSegmented<int>), findsNothing);
+    expect(find.text(S.current.ordersOverdueOnly), findsNothing);
+
+    await tester.tap(find.byKey(const ValueKey('orders-filter')));
+    await tester.pumpAndSettle();
+    expect(find.byType(FxSegmented<int>), findsOneWidget);
+    await tester.tap(find.text(S.current.ordersStatusDraft));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byType(Switch));
+    await tester.pumpAndSettle();
+
+    final bloc = tester.element(find.byType(OrdersPage)).read<OrdersBloc>();
+    expect(bloc.state.statusFilter, FinanceOrderStatus.draft.value);
+    expect(bloc.state.overdueOnly, isTrue);
+    await tester.tap(find.byTooltip('关闭'));
+    await tester.pumpAndSettle();
+    expect(find.byType(FxSegmented<int>), findsNothing);
+    expect(find.text('2'), findsOneWidget);
+  });
+
+  testWidgets(
+    'uses readable order metadata without inert chips or raw decimals',
+    (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: FxTheme.light,
+          locale: const Locale('zh'),
+          localizationsDelegates: const [
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+            S.delegate,
+          ],
+          supportedLocales: S.delegate.supportedLocales,
+          home: Scaffold(
+            body: OrderCard(
+              order: FinanceOrderDetail(
+                orderId: 1,
+                type: FinanceOrderType.receivable,
+                issuedAmount: OrderMoney.fromCents(1000000),
+                settledAmount: OrderMoney.fromCents(0),
+                pendingAmount: OrderMoney.fromCents(1000000),
+                overdue: true,
+              ),
+              currencyCode: 'CNY',
+              hideAmounts: false,
+            ),
+          ),
+        ),
+      );
+
+      expect(find.text('未填写'), findsNothing);
+      expect(find.textContaining('10000.00'), findsNothing);
+      expect(find.textContaining('10,000.00'), findsWidgets);
+      expect(find.text('累计借出 ¥10,000.00 · 已收回 ¥0.00'), findsOneWidget);
+      expect(find.byType(FxChip), findsNothing);
+    },
+  );
+  testWidgets('hides amounts in textual order metadata', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: FxTheme.light,
+        locale: const Locale('zh'),
+        localizationsDelegates: const [
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+          S.delegate,
+        ],
+        supportedLocales: S.delegate.supportedLocales,
+        home: Scaffold(
+          body: OrderCard(
+            order: FinanceOrderDetail(
+              type: FinanceOrderType.receivable,
+              issuedAmount: OrderMoney.fromCents(1000000),
+              settledAmount: OrderMoney.fromCents(0),
+              pendingAmount: OrderMoney.fromCents(1000000),
+            ),
+            currencyCode: 'CNY',
+            hideAmounts: true,
+          ),
+        ),
+      ),
+    );
+
+    expect(find.textContaining('10,000.00'), findsNothing);
+    expect(find.text('累计借出 •••• · 已收回 ••••'), findsOneWidget);
+  });
 }
 
 Future<void> _pumpPage(
@@ -149,7 +257,7 @@ Future<void> _pumpPage(
           create: (_) =>
               OrdersBloc(bookId: 7, service: service)
                 ..add(const OrdersLoaded()),
-          child: orders_page.OrdersPage(service: service),
+          child: OrdersPage(service: service),
         ),
       ),
     ),
@@ -215,7 +323,7 @@ class _FakeOrdersService extends OrdersService {
     return _orders.firstWhere((order) => order.orderId == orderId);
   }
 
-  static final _orders = [
+  static final List<FinanceOrderDetail> _orders = [
     FinanceOrderDetail(
       orderId: 11,
       bookId: 7,
@@ -285,7 +393,7 @@ class _FakeOrdersService extends OrdersService {
       pendingAmount: OrderMoney.fromCents(50000),
       overdue: true,
     ),
-    FinanceOrderDetail(
+    const FinanceOrderDetail(
       orderId: 18,
       bookId: 7,
       title: '待核对',

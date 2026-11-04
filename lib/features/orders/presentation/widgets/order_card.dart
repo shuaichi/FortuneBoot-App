@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:fortuneboot/core/money/fx_money_formatter.dart';
 import 'package:fortuneboot/features/orders/data/orders_models.dart';
-import 'package:fortuneboot/fx/components/fx_chip.dart';
 import 'package:fortuneboot/fx/components/fx_ledger_row.dart';
 import 'package:fortuneboot/fx/components/fx_money_text.dart';
+import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
 import 'package:fortuneboot/generated/l10n.dart';
+import 'package:fortuneboot/util/currency_symbol.dart';
 
 /// 单据列表卡片。主金额始终使用服务端 pendingAmount。
 class OrderCard extends StatelessWidget {
@@ -26,10 +28,66 @@ class OrderCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final metadata = order.title?.isNotEmpty == true ? order.title : null;
+    final metadata = _metadata(context);
+    final status = <String>[
+      if (order.overdue) S.of(context).ordersOverdue,
+      if (order.settlementState == 'PARTIAL')
+        S.of(context).ordersPartiallySettled,
+      if (order.settlementState == 'SETTLED') S.of(context).ordersSettledTag,
+      if (order.pendingEntryCount > 0)
+        S.of(context).ordersPendingEntryCount(order.pendingEntryCount),
+      if (order.isReviewRequired) S.of(context).ordersReviewRequired,
+    ];
+    final detailChildren = <Widget>[
+      if (metadata.isNotEmpty)
+        Text(
+          metadata,
+          style: FxTypography.caption.copyWith(
+            color: FxPalette.of(context).textSecondary,
+          ),
+        ),
+      if (status.isNotEmpty) ...[
+        if (metadata.isNotEmpty) const SizedBox(height: FxSpacing.xs),
+        Text(
+          status.join(' · '),
+          style: FxTypography.caption.copyWith(
+            color: order.overdue
+                ? FxPalette.of(context).danger
+                : FxPalette.of(context).textSecondary,
+          ),
+        ),
+      ],
+      if (onReport != null) ...[
+        if (metadata.isNotEmpty || status.isNotEmpty)
+          const SizedBox(height: FxSpacing.xs),
+        InkWell(
+          onTap: onReport,
+          borderRadius: BorderRadius.circular(4),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: FxSpacing.xs),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  S.of(context).ordersViewReconciliation,
+                  style: FxTypography.label.copyWith(
+                    color: FxPalette.of(context).primary,
+                  ),
+                ),
+                const SizedBox(width: FxSpacing.xs),
+                Icon(
+                  Icons.arrow_forward_rounded,
+                  size: 16,
+                  color: FxPalette.of(context).primary,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    ];
     return FxLedgerRow(
-      title: order.counterpartyName ?? order.title ?? '',
-      subtitle: metadata,
+      title: _displayTitle(context),
       onTap: onTap,
       amount: order.pendingAmount == null
           ? Text(hideAmounts ? '****' : '-', style: FxTypography.bodyStrong)
@@ -41,39 +99,54 @@ class OrderCard extends StatelessWidget {
               compactWhenNeeded: true,
             ),
       amountCaption: _pendingLabel(context),
-      details: Wrap(
-        spacing: FxSpacing.sm,
-        runSpacing: FxSpacing.xs,
-        children: [
-          if (order.issuedAmount != null)
-            _moneyChip(
-              context,
-              label: _issuedLabel(context),
-              amount: order.issuedAmount?.cents,
+      details: detailChildren.isEmpty
+          ? null
+          : Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: detailChildren,
             ),
-          if (order.settledAmount != null)
-            _moneyChip(
-              context,
-              label: _settledLabel(context),
-              amount: order.settledAmount?.cents,
-            ),
-          if (order.overdue) _tag(S.of(context).ordersOverdue),
-          if (order.settlementState == 'PARTIAL')
-            _tag(S.of(context).ordersPartiallySettled),
-          if (order.settlementState == 'SETTLED')
-            _tag(S.of(context).ordersSettledTag),
-          if (order.pendingEntryCount > 0)
-            _tag(
-              S.of(context).ordersPendingEntryCount(order.pendingEntryCount),
-            ),
-          if (order.isReviewRequired)
-            _tag(S.of(context).ordersReviewRequired, onTap: onTap),
-          if (onReport != null)
-            _tag(S.of(context).ordersViewReconciliation, onTap: onReport),
-        ],
-      ),
     );
   }
+
+  String _displayTitle(BuildContext context) {
+    final counterparty = order.counterpartyName?.trim();
+    if (counterparty?.isNotEmpty == true) return counterparty!;
+    final title = order.title?.trim();
+    if (title?.isNotEmpty == true) return title!;
+    return switch (order.type) {
+      FinanceOrderType.receivable => '未命名${S.of(context).ordersTypeReceivable}',
+      FinanceOrderType.payable => '未命名${S.of(context).ordersTypePayable}',
+      FinanceOrderType.reimbursement ||
+      null => S.of(context).ordersUnnamedOrder,
+    };
+  }
+
+  String _metadata(BuildContext context) {
+    final locale = Localizations.localeOf(context).toString();
+    final parts = <String>[
+      if (order.title?.trim().isNotEmpty == true &&
+          order.title!.trim() != _displayTitle(context))
+        order.title!.trim(),
+      if (order.issuedAmount case final issued?)
+        '${_issuedLabel(context)} ${_money(context, issued.cents, locale)}',
+      if (order.settledAmount case final settled?)
+        '${_settledLabel(context)} ${_money(context, settled.cents, locale)}',
+    ];
+    return parts.join(' · ');
+  }
+
+  String _money(BuildContext context, int cents, String locale) =>
+      FxMoneyFormatter.format(
+        cents / 100,
+        locale: locale,
+        currencySymbol: getCurrencySymbol(
+          order.currencyCode ?? currencyCode ?? '',
+        ),
+        visibility: hideAmounts
+            ? FxAmountVisibility.hidden
+            : FxAmountVisibility.visible,
+      );
 
   String _pendingLabel(BuildContext context) => switch (order.type) {
     FinanceOrderType.receivable => S.of(context).ordersPendingReceivable,
@@ -81,27 +154,6 @@ class OrderCard extends StatelessWidget {
     FinanceOrderType.reimbursement => S.of(context).ordersPendingReimbursement,
     null => S.of(context).ordersPendingReceivable,
   };
-
-  Widget _moneyChip(
-    BuildContext context, {
-    required String label,
-    required int? amount,
-  }) {
-    if (amount == null) return const SizedBox.shrink();
-    return _tag('$label ${(amount / 100).toStringAsFixed(2)}');
-  }
-
-  /// 无 [onTap] 的状态标签不拦截手势，点到标签仍落到卡片打开详情。
-  Widget _tag(String label, {VoidCallback? onTap}) {
-    final chip = FxChip(
-      label: label,
-      selected: false,
-      isAction: onTap != null,
-      onTap: onTap ?? () {},
-    );
-    if (onTap != null) return chip;
-    return IgnorePointer(child: chip);
-  }
 
   String _issuedLabel(BuildContext context) => switch (order.type) {
     FinanceOrderType.receivable => S.of(context).ordersIssuedLoanOut,

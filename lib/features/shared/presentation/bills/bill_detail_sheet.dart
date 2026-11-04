@@ -9,6 +9,7 @@ import 'package:fortuneboot/core/preferences/preferences_cubit.dart';
 import 'package:fortuneboot/features/shared/data/bill_models.dart';
 import 'package:fortuneboot/features/shared/data/bill_service.dart';
 import 'package:fortuneboot/fx/components/fx_button.dart';
+import 'package:fortuneboot/fx/components/fx_icon_button.dart';
 import 'package:fortuneboot/fx/components/fx_money_text.dart';
 import 'package:fortuneboot/fx/components/fx_tag_chip.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
@@ -530,6 +531,7 @@ class BillDetailActions extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final palette = FxPalette.of(context);
+    final canEditOrCopy = bill.billType != FxBillType.adjust.value;
     return DecoratedBox(
       decoration: BoxDecoration(
         color: palette.surface,
@@ -537,80 +539,76 @@ class BillDetailActions extends StatelessWidget {
       ),
       child: Padding(
         padding: const EdgeInsets.fromLTRB(
-          FxSpacing.md,
+          FxSpacing.lg,
           FxSpacing.md,
           FxSpacing.md,
           FxSpacing.lg,
         ),
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            final useCompactActions = constraints.maxWidth < 560;
-            final confirmButton = FxButton(
-              label: bill.confirm
-                  ? S.of(context).billsUnconfirm
-                  : S.of(context).confirm,
-              variant: FxButtonVariant.text,
-              icon: useCompactActions
-                  ? null
-                  : (bill.confirm
-                        ? Icons.remove_done_rounded
-                        : Icons.done_all_rounded),
-              onPressed: () => onConfirmToggle(!bill.confirm),
-            );
-            final canEditOrCopy = bill.billType != FxBillType.adjust.value;
-            final editButton = FxButton.tonal(
-              label: S.of(context).billsEdit,
-              icon: useCompactActions ? null : Icons.edit_rounded,
-              onPressed: onEdit,
-            );
-            final copyButton = FxButton.tonal(
-              label: S.of(context).billsCopy,
-              icon: useCompactActions ? null : Icons.copy_rounded,
-              onPressed: onCopy,
-            );
-            final deleteButton = FxButton.critical(
-              label: S.of(context).billsDelete,
-              icon: useCompactActions ? null : Icons.delete_outline_rounded,
-              onPressed: onDelete,
-            );
-            if (useCompactActions) {
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  if (canEditOrCopy) ...[
-                    Row(
-                      children: [
-                        Expanded(child: editButton),
-                        const SizedBox(width: FxSpacing.sm),
-                        Expanded(child: copyButton),
-                      ],
-                    ),
-                    const SizedBox(height: FxSpacing.sm),
-                  ],
-                  Row(
-                    children: [
-                      Expanded(child: confirmButton),
-                      const SizedBox(width: FxSpacing.sm),
-                      Expanded(child: deleteButton),
-                    ],
-                  ),
-                ],
-              );
-            }
-            return Row(
-              children: [
-                if (canEditOrCopy) ...[
-                  Expanded(child: editButton),
-                  const SizedBox(width: FxSpacing.sm),
-                  Expanded(child: copyButton),
-                  const SizedBox(width: FxSpacing.sm),
-                ],
-                Expanded(child: confirmButton),
-                const SizedBox(width: FxSpacing.sm),
-                Expanded(child: deleteButton),
-              ],
-            );
-          },
+        child: Row(
+          children: [
+            if (canEditOrCopy)
+              Expanded(
+                child: FxButton(
+                  label: S.of(context).billsEdit,
+                  icon: Icons.edit_outlined,
+                  onPressed: onEdit,
+                ),
+              ),
+            if (canEditOrCopy) const SizedBox(width: FxSpacing.sm),
+            Expanded(
+              child: FxButton.tonal(
+                label: bill.confirm
+                    ? S.of(context).billsUnconfirm
+                    : S.of(context).confirm,
+                onPressed: () => onConfirmToggle(!bill.confirm),
+              ),
+            ),
+            const SizedBox(width: FxSpacing.xs),
+            FxIconButton(
+              key: const ValueKey('bill-detail-more'),
+              icon: Icons.more_horiz_rounded,
+              tooltip: '更多操作',
+              onPressed: () => _showMoreActions(context, canEditOrCopy),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showMoreActions(BuildContext context, bool canEditOrCopy) {
+    showModalBottomSheet<void>(
+      context: context,
+      builder: (sheetContext) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (canEditOrCopy)
+              ListTile(
+                key: const ValueKey('bill-detail-copy'),
+                leading: const Icon(Icons.copy_outlined),
+                title: Text(S.of(context).billsCopy),
+                onTap: () {
+                  Navigator.of(sheetContext).pop();
+                  onCopy();
+                },
+              ),
+            ListTile(
+              key: const ValueKey('bill-detail-delete'),
+              leading: Icon(
+                Icons.delete_outline_rounded,
+                color: FxPalette.of(context).danger,
+              ),
+              title: Text(
+                S.of(context).billsDelete,
+                style: TextStyle(color: FxPalette.of(context).danger),
+              ),
+              onTap: () {
+                Navigator.of(sheetContext).pop();
+                onDelete();
+              },
+            ),
+          ],
         ),
       ),
     );
