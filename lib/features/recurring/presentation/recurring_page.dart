@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fortuneboot/core/feedback/fx_feedback.dart';
+import 'package:fortuneboot/core/navigation/fx_page_route.dart';
+import 'package:fortuneboot/core/navigation/routes.dart';
 import 'package:fortuneboot/core/session/session_cubit.dart';
 import 'package:fortuneboot/features/books/presentation/widgets/destructive_confirm_sheet.dart';
 import 'package:fortuneboot/features/recurring/data/cron_builder.dart';
@@ -49,8 +51,9 @@ class _RecurringPageState extends State<RecurringPage> {
       return;
     }
     final changed = await Navigator.of(context).push<bool>(
-      PageRouteBuilder<bool>(
-        pageBuilder: (_, _, _) =>
+      buildFxRoute<bool>(
+        settings: const RouteSettings(name: Routes.recurringEditor),
+        builder: (_) =>
             RecurringEditorPage(bookId: bookId, groupId: groupId, rule: rule),
       ),
     );

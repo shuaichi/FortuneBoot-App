@@ -3,22 +3,26 @@ import 'dart:convert';
 import 'dart:ui'; // 引入以使用 FontFeature
 
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart' show timeDilation;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_login/flutter_login.dart';
 import 'package:fortuneboot/core/app_constants.dart';
 import 'package:fortuneboot/core/auth/auth_version_checker.dart';
 import 'package:fortuneboot/core/session/session_cubit.dart';
-import 'package:fortuneboot/login/auth/password_policy.dart';
 import 'package:fortuneboot/login/auth_version_source.dart';
 import 'package:fortuneboot/login/model/login_model.dart';
 import 'package:fortuneboot/request/login_request.dart';
-import 'package:fortuneboot/util/constants.dart';
-import 'package:fortuneboot/theme/app_theme.dart';
 import 'package:fortuneboot/core/navigation/app_nav.dart';
 import 'package:fortuneboot/core/navigation/routes.dart';
 import 'package:fortuneboot/login/model/users.dart';
 import 'package:fortuneboot/login/server/server_history_store.dart';
+import 'package:fortuneboot/login/view/auth_flow_form.dart';
+import 'package:fortuneboot/login/view/auth_scaffold.dart';
+import 'package:fortuneboot/fx/components/fx_button.dart';
+import 'package:fortuneboot/fx/components/fx_pressable.dart';
+import 'package:fortuneboot/fx/theme/fx_theme.dart';
+import 'package:fortuneboot/fx/tokens/fx_radius.dart';
+import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
+import 'package:fortuneboot/fx/tokens/fx_typography.dart';
 import 'package:fortuneboot/util/base64_img.dart';
 import 'package:fortuneboot/util/dio_client.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -26,6 +30,7 @@ import 'package:encrypt/encrypt.dart';
 import '../../generated/l10n.dart';
 import 'package:flutter/services.dart';
 import 'package:pointycastle/pointycastle.dart' as PC;
+import 'package:url_launcher/url_launcher.dart';
 
 class LoginScreen extends StatelessWidget {
   static const routeName = '/auth';
@@ -33,8 +38,6 @@ class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key, this.roles = const []});
 
   final List<Map<String, dynamic>> roles;
-
-  Duration get loginTime => Duration(milliseconds: timeDilation.ceil() * 0);
 
   String formatPublicKey(String rawBase64) {
     final header = '-----BEGIN PUBLIC KEY-----\n';
@@ -135,7 +138,10 @@ class LoginScreen extends StatelessWidget {
     appNavigatorKey.currentState?.pop(str);
   }
 
-  Future<String?> _signupUserWithRole(SignupData data, Map role) async {
+  Future<String?> _signupUserWithRole(
+    SignupData data,
+    Map<String, dynamic> role,
+  ) async {
     final loginService = LoginService();
     String userName = data.name!;
     String nickName = data.additionalSignupData!['nickname']!;
@@ -166,11 +172,9 @@ class LoginScreen extends StatelessWidget {
             return null;
           }
           debugPrint(value.toString());
-          return value.msg ?? '注册失败';
+          return value.msg;
         })
-        .catchError((err) {
-          return 'service error: $err';
-        });
+        .catchError((Object _) => S.current.default_comment);
   }
 
   Future<String?> _signupUser(SignupData data) async {
@@ -183,10 +187,7 @@ class LoginScreen extends StatelessWidget {
               registerRoles.data as List<dynamic>,
             );
         if (roles.length == 1) {
-          return _signupUserWithRole(
-            data,
-            roles.first as Map<String, dynamic>? ?? {},
-          );
+          return _signupUserWithRole(data, roles.first);
         } else if (roles.length > 1) {
           final List<SimpleDialogOption> simpleDialogs = roles.map((role) {
             return SimpleDialogOption(
@@ -217,17 +218,13 @@ class LoginScreen extends StatelessWidget {
           return 'service err role err';
         }
       }
-    } catch (e) {
-      return Future.delayed(loginTime).then((err) {
-        return 'service err $err';
-      });
+      return S.current.default_comment;
+    } on Object {
+      return S.current.default_comment;
     }
   }
 
   Future<String?> _recoverPassword(String name) async =>
-      S.current.default_comment;
-
-  Future<String?> _signupConfirm(String error, LoginData data) async =>
       S.current.default_comment;
 
   String _apiVersionFailureMessage(
@@ -253,129 +250,67 @@ class LoginScreen extends StatelessWidget {
     };
   }
 
+  Future<String?> _checkUsernameAvailable(String account) async {
+    final response = await LoginService().checkRepeat(account);
+    if (response.code == 0 && response.data is bool) {
+      return response.data as bool ? S.current.account_valid : null;
+    }
+    return S.current.account_valid;
+  }
+
+  Future<void> _completeLogin(BuildContext context) async {
+    final check = await AuthVersionChecker(
+      source: LoginApiVersionSource(),
+    ).check();
+    if (!context.mounted) {
+      return;
+    }
+    if (!check.isCompatible) {
+      DioClient().clearAuthHeader();
+      await UserDataSingleton().clearAuth();
+      if (!context.mounted) {
+        return;
+      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(_apiVersionFailureMessage(context, check))),
+      );
+      return;
+    }
+    context.read<SessionCubit>().reset();
+    Navigator.of(context).pushNamedAndRemoveUntil(Routes.main, (_) => false);
+  }
+
+  Future<void> _openTerms() async {
+    await launchUrl(
+      Uri.parse('https://privacy-policy.fortuneboot.com/privacy.html'),
+      mode: LaunchMode.externalApplication,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    final additionalSignupFields = fetchUserForms(context);
-    final theme = Theme.of(context);
-    // Material 3 输入文字用 bodyLarge。登录框是白底，深色主题下 bodyLarge 为浅色会看不见。
-    return Theme(
-      data: theme.copyWith(
-        iconTheme: theme.iconTheme.copyWith(color: AppTheme.textPrimaryColor),
-        textTheme: theme.textTheme.copyWith(
-          bodyLarge: (theme.textTheme.bodyLarge ?? const TextStyle()).copyWith(
-            color: AppTheme.textPrimaryColor,
-          ),
-        ),
-        inputDecorationTheme: theme.inputDecorationTheme.copyWith(
-          prefixIconColor: AppTheme.textPrimaryColor,
-          suffixIconColor: AppTheme.textPrimaryColor,
-        ),
+    final s = S.of(context);
+    return AuthScaffold(
+      title: s.main_logo,
+      subtitle: '${s.login_message} ${s.login_host}',
+      child: AuthFlowForm(
+        additionalSignupFields: fetchUserForms(context),
+        onCheckUsername: _checkUsernameAvailable,
+        onLogin: (data) {
+          HapticFeedback.mediumImpact();
+          return _loginUser(data);
+        },
+        onSignup: (data) {
+          HapticFeedback.mediumImpact();
+          return _signupUser(data);
+        },
+        onRecoverPassword: (account) {
+          HapticFeedback.lightImpact();
+          return _recoverPassword(account);
+        },
+        onLoginSuccess: () => _completeLogin(context),
+        onOpenTerms: _openTerms,
       ),
-      child: FlutterLogin(
-      title: S.of(context).main_logo,
-      keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-      logo: const AssetImage('assets/images/login_logo.webp'),
-      logoTag: Constants.logoTag,
-      titleTag: Constants.titleTag,
-      navigateBackAfterRecovery: true,
-      onConfirmRecover: _signupConfirm,
-      onSwitchToAdditionalFields: (p0) async {
-        final loginService = LoginService();
-        var response = await loginService.checkRepeat(p0.name ?? '');
-        print('lxjtodo: $response');
-        if (response.code == 0) {
-          if (response.data is bool) {
-            bool res = response.data as bool;
-            if (res) {
-              return S.current.account_valid;
-            }
-          }
-          return null;
-        } else {
-          return S.current.account_valid;
-        }
-      },
-      loginAfterSignUp: false,
-      termsOfService: [
-        TermOfService(
-          id: 'general-term',
-          mandatory: true,
-          text: S.of(context).term_of_services,
-          linkUrl: 'https://privacy-policy.fortuneboot.com/privacy.html',
-          validationErrorMessage: S.of(context).service_required,
-        ),
-      ],
-      additionalSignupFields: additionalSignupFields,
-      messages: LoginMessages(
-        userHint: S.of(context).login_account,
-        passwordHint: S.of(context).login_pass,
-        confirmPasswordHint: S.of(context).login_confirm,
-        loginButton: S.of(context).login_button_text,
-        signupButton: S.of(context).register,
-        forgotPasswordButton: S.of(context).forgot_huh,
-        recoverPasswordButton: S.of(context).help_me,
-        goBackButton: S.of(context).go_back,
-        confirmPasswordError: S.of(context).not_match,
-        recoverPasswordIntro: S.of(context).dont_worry_be_happy,
-        recoverPasswordDescription: S.of(context).default_comment,
-        recoverPasswordSuccess: S.of(context).password_rescued_successfully,
-        flushbarTitleError: S.of(context).oh_no,
-        flushbarTitleSuccess: S.of(context).succes,
-        providersTitleFirst: S.of(context).or_login_with,
-        additionalSignUpFormDescription: S.of(context).fill_to_signup,
-        additionalSignUpSubmitButton: S.of(context).sign_up_submit,
-        signUpSuccess: S.of(context).sign_up_success,
-      ),
-      theme: AppTheme.loginTheme(context),
-      userValidator: (value) {
-        if (value!.isEmpty) {
-          return S.of(context).user_auth_vaild;
-        }
-        return null;
-      },
-      passwordValidator: (value) {
-        if (value!.isEmpty) {
-          return S.of(context).password_is_empty;
-        }
-        if (!PasswordPolicy.isValid(value)) {
-          return '密码必须包含字母、数字或特殊字符，长度8-18位，不能包含中文';
-        }
-        return null;
-      },
-      onLogin: (loginData) {
-        HapticFeedback.mediumImpact(); // 登录按钮中等震动反馈
-        return _loginUser(loginData);
-      },
-      onSignup: (signupData) {
-        HapticFeedback.mediumImpact();
-        return _signupUser(signupData);
-      },
-      onSubmitAnimationCompleted: () async {
-        final check = await AuthVersionChecker(
-          source: LoginApiVersionSource(),
-        ).check();
-        if (!context.mounted) return;
-        if (!check.isCompatible) {
-          DioClient().clearAuthHeader();
-          await UserDataSingleton().clearAuth();
-          if (!context.mounted) return;
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(_apiVersionFailureMessage(context, check))),
-          );
-          return;
-        }
-        // 换服务器/重新登录后必须清空会话，否则 MainShell 可能跳过 load。
-        context.read<SessionCubit>().reset();
-        Navigator.of(
-          context,
-        ).pushNamedAndRemoveUntil(Routes.main, (route) => false);
-      },
-      onRecoverPassword: (name) {
-        HapticFeedback.lightImpact();
-        return _recoverPassword(name);
-      },
-      headerWidget: const IntroWidget(),
-    ),
     );
   }
 
@@ -454,105 +389,44 @@ class LoginScreen extends StatelessWidget {
   }
 }
 
-// 高级金融感：重写头部引导区
-class IntroWidget extends StatelessWidget {
-  const IntroWidget({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
-      child: Column(
-        children: [
-          Text.rich(
-            TextSpan(
-              children: [
-                TextSpan(
-                  text: S.of(context).login_message,
-                  style: const TextStyle(
-                    color: Color(0xFF8E8E93), // 次要信息降噪
-                    fontSize: 14,
-                    height: 1.5,
-                  ),
-                ),
-                TextSpan(
-                  text: ' ${S.of(context).login_host}',
-                  style: const TextStyle(
-                    color: Color(0xFF1C1C1E),
-                    fontWeight: FontWeight.w600,
-                    fontSize: 14,
-                    height: 1.5,
-                  ),
-                ),
-              ],
-            ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 24),
-          Row(
-            children: <Widget>[
-              const Expanded(
-                child: Divider(thickness: 0.5, color: Color(0xFFC6C6C8)),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Text(
-                  S.of(context).authenticate,
-                  style: const TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
-                    color: Color(0xFF8E8E93),
-                    letterSpacing: 1.2,
-                  ),
-                ),
-              ),
-              const Expanded(
-                child: Divider(thickness: 0.5, color: Color(0xFFC6C6C8)),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// ----------------------------------------------------------------------
-// 极致金融级安全验证码弹窗 - Top-Tier Fintech Captcha Dialog
-// ----------------------------------------------------------------------
-Future<Map?> showCaptchaDialog(Map captchaDic) async {
-  if (appNavigatorKey.currentContext == null) {
+/// 展示与认证页面同主题的验证码对话框。
+Future<Map<String, dynamic>?> showCaptchaDialog(
+  Map<String, dynamic> captchaDic,
+) async {
+  final rootContext = appNavigatorKey.currentContext;
+  if (rootContext == null) {
     return null;
   }
 
-  // 弹窗出现时的物理感知
   HapticFeedback.selectionClick();
-
   final controller = TextEditingController();
   final focusNode = FocusNode();
   String captchaCode = captchaDic['captchaCodeImg'] as String;
-  Map captchaData = captchaDic;
-  final LoginService loginService = LoginService();
-  bool isLoading = false; // 刷新状态防抖
+  var captchaData = captchaDic;
+  final loginService = LoginService();
+  bool isLoading = false;
+  bool showRequiredError = false;
 
-  return showDialog<Map?>(
-    context: appNavigatorKey.currentContext!,
+  final result = await showDialog<Map<String, dynamic>>(
+    context: rootContext,
     barrierDismissible: false,
-    barrierColor: Colors.black.withOpacity(0.4), // 沉浸式背景层
     builder: (context) => StatefulBuilder(
       builder: (context, setState) {
-        Future<void> _refreshCaptcha() async {
-          if (isLoading) return;
-          HapticFeedback.lightImpact(); // 轻按反馈
+        final s = S.of(context);
+        final palette = FxPalette.of(context);
+
+        Future<void> refreshCaptcha() async {
+          if (isLoading) {
+            return;
+          }
+          HapticFeedback.lightImpact();
           setState(() => isLoading = true);
           try {
-            final capImgRes = await loginService.captchaImage();
-            final Map<String, dynamic> capDic = Map<String, dynamic>.from(
-              capImgRes.data as Map,
-            );
+            final response = await loginService.captchaImage();
+            final data = Map<String, dynamic>.from(response.data as Map);
             setState(() {
-              captchaCode = capDic['captchaCodeImg'] as String;
-              captchaData = capDic;
+              captchaCode = data['captchaCodeImg'] as String;
+              captchaData = data;
             });
           } finally {
             setState(() => isLoading = false);
@@ -560,74 +434,62 @@ Future<Map?> showCaptchaDialog(Map captchaDic) async {
         }
 
         return Dialog(
-          backgroundColor: Colors.transparent, // 穿透以渲染自定义卡片
+          backgroundColor: palette.surface,
+          surfaceTintColor: Colors.transparent,
           elevation: 0,
-          insetPadding: const EdgeInsets.symmetric(horizontal: 32),
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(24), // 大圆角
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.04),
-                  blurRadius: 20,
-                  offset: const Offset(0, 10),
-                ),
-              ],
-            ),
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // 顶部图标 Affordance
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF007AFF).withOpacity(0.12), // iOS蓝态
-                    shape: BoxShape.circle,
+          insetPadding: const EdgeInsets.symmetric(horizontal: 24),
+          shape: RoundedRectangleBorder(borderRadius: FxRadius.cardBorder),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 400),
+            child: Padding(
+              padding: const EdgeInsets.all(FxSpacing.xxl),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    width: 48,
+                    height: 48,
+                    decoration: BoxDecoration(
+                      color: palette.primaryContainer,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      Icons.shield_outlined,
+                      color: palette.primary,
+                      size: 24,
+                    ),
                   ),
-                  child: const Icon(
-                    Icons.shield_rounded, // 安全护盾图标传达信任感
-                    color: Color(0xFF007AFF),
-                    size: 28,
+                  const SizedBox(height: FxSpacing.lg),
+                  Text(
+                    s.captchaTitle,
+                    style: FxTypography.titleLarge.copyWith(
+                      color: palette.textPrimary,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 16),
-                const Text(
-                  '请输入验证码',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w600,
-                    color: Color(0xFF1C1C1E),
-                    letterSpacing: -0.5,
+                  const SizedBox(height: FxSpacing.sm),
+                  Text(
+                    s.captchaSubtitle,
+                    textAlign: TextAlign.center,
+                    style: FxTypography.body.copyWith(
+                      color: palette.textSecondary,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 8),
-                const Text(
-                  '保障您的账户资金安全',
-                  style: TextStyle(fontSize: 14, color: Color(0xFF8E8E93)),
-                ),
-                const SizedBox(height: 24),
-
-                // 验证码图片与刷新按钮行
-                Row(
-                  children: [
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: _refreshCaptcha,
-                        child: Container(
-                          height: 54,
-                          clipBehavior: Clip.antiAlias,
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFF2F4F7),
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(
-                              color: const Color(0xFFE5E5EA),
-                              width: 1,
+                  const SizedBox(height: FxSpacing.xxl),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: FxPressable(
+                          semanticLabel: s.captchaRefresh,
+                          onPressed: isLoading ? null : refreshCaptcha,
+                          padding: EdgeInsets.zero,
+                          child: Container(
+                            height: 56,
+                            clipBehavior: Clip.antiAlias,
+                            decoration: BoxDecoration(
+                              color: palette.surfaceMuted,
+                              borderRadius: FxRadius.tileBorder,
+                              border: Border.all(color: palette.border),
                             ),
-                          ),
-                          child: AnimatedSwitcher(
-                            duration: const Duration(milliseconds: 300),
                             child: Base64Image(
                               key: ValueKey<String>(captchaCode),
                               base64String: captchaCode,
@@ -636,153 +498,116 @@ Future<Map?> showCaptchaDialog(Map captchaDic) async {
                           ),
                         ),
                       ),
-                    ),
-                    const SizedBox(width: 12),
-                    GestureDetector(
-                      onTap: _refreshCaptcha,
-                      child: AnimatedContainer(
-                        duration: const Duration(milliseconds: 200),
-                        padding: const EdgeInsets.all(14),
-                        decoration: BoxDecoration(
-                          color: isLoading
-                              ? const Color(0xFF007AFF).withOpacity(0.05)
-                              : const Color(0xFF007AFF).withOpacity(0.12),
-                          shape: BoxShape.circle,
-                        ),
-                        child: isLoading
-                            ? const SizedBox(
-                                width: 24,
-                                height: 24,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2.5,
-                                  color: Color(0xFF007AFF),
+                      const SizedBox(width: FxSpacing.sm),
+                      FxPressable(
+                        semanticLabel: s.captchaRefresh,
+                        onPressed: isLoading ? null : refreshCaptcha,
+                        padding: EdgeInsets.zero,
+                        borderRadius: FxRadius.pillBorder,
+                        child: SizedBox(
+                          width: 44,
+                          height: 44,
+                          child: isLoading
+                              ? Center(
+                                  child: SizedBox(
+                                    width: 20,
+                                    height: 20,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      color: palette.primary,
+                                    ),
+                                  ),
+                                )
+                              : Icon(
+                                  Icons.refresh_rounded,
+                                  color: palette.primary,
                                 ),
-                              )
-                            : const Icon(
-                                Icons.refresh_rounded,
-                                color: Color(0xFF007AFF),
-                                size: 24,
-                              ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-
-                // 极致抛光的数字输入区
-                TextFormField(
-                  controller: controller,
-                  focusNode: focusNode,
-                  autofocus: true,
-                  maxLength: 4,
-                  keyboardType: TextInputType.number,
-                  cursorColor: const Color(0xFF007AFF),
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontSize: 32,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF1C1C1E),
-                    letterSpacing: 24, // 增加字符间距营造高级感
-                    fontFeatures: [FontFeature.tabularFigures()],
-                  ),
-                  onChanged: (val) {
-                    HapticFeedback.lightImpact(); // 每次按键注入触觉反馈
-                  },
-                  decoration: InputDecoration(
-                    counterText: '',
-                    filled: true,
-                    fillColor: const Color(0xFFF2F4F7),
-                    contentPadding: const EdgeInsets.symmetric(vertical: 16),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16),
-                      borderSide: BorderSide.none,
-                    ),
-                    hintText: '· ·',
-                    hintStyle: TextStyle(
-                      fontSize: 32,
-                      fontWeight: FontWeight.w400,
-                      color: const Color(0xFF8E8E93).withOpacity(0.4),
-                      letterSpacing: 24,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 32),
-
-                // 底部操作区组
-                Row(
-                  children: [
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () {
-                          HapticFeedback.lightImpact();
-                          Navigator.pop(context);
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFF2F4F7),
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          alignment: Alignment.center,
-                          child: const Text(
-                            '取消',
-                            style: TextStyle(
-                              color: Color(0xFF8E8E93),
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
                         ),
                       ),
+                    ],
+                  ),
+                  const SizedBox(height: FxSpacing.lg),
+                  TextFormField(
+                    controller: controller,
+                    focusNode: focusNode,
+                    autofocus: true,
+                    maxLength: 4,
+                    keyboardType: TextInputType.number,
+                    cursorColor: palette.primary,
+                    textAlign: TextAlign.center,
+                    style: FxTypography.titleLarge.copyWith(
+                      color: palette.textPrimary,
+                      letterSpacing: 12,
+                      fontFeatures: const [FontFeature.tabularFigures()],
                     ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () {
-                          if (controller.text.isEmpty) {
-                            // 错误态震动
-                            HapticFeedback.heavyImpact();
-                            return;
-                          }
-                          HapticFeedback.mediumImpact(); // 提交时震动反馈
-                          Map<String, dynamic> userDic = {};
-                          userDic['captchaUserInput'] = controller.text;
-                          userDic['captchaCodeKey'] =
-                              captchaData['captchaCodeKey'];
-                          Navigator.pop(context, userDic);
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF007AFF), // 核心提交色
-                            borderRadius: BorderRadius.circular(16),
-                            boxShadow: [
-                              BoxShadow(
-                                color: const Color(0xFF007AFF).withOpacity(0.2),
-                                blurRadius: 10,
-                                offset: const Offset(0, 4),
-                              ),
-                            ],
-                          ),
-                          alignment: Alignment.center,
-                          child: const Text(
-                            '确认',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
+                    onChanged: (_) {
+                      if (showRequiredError) {
+                        setState(() => showRequiredError = false);
+                      }
+                    },
+                    onFieldSubmitted: (_) {
+                      if (controller.text.isNotEmpty) {
+                        Navigator.pop(context, {
+                          'captchaUserInput': controller.text,
+                          'captchaCodeKey': captchaData['captchaCodeKey'],
+                        });
+                      }
+                    },
+                    decoration:
+                        authInputDecoration(
+                          context,
+                          label: s.captchaTitle,
+                          hint: '••••',
+                        ).copyWith(
+                          counterText: '',
+                          errorText: showRequiredError
+                              ? s.captchaRequired
+                              : null,
+                        ),
+                  ),
+                  const SizedBox(height: FxSpacing.xxl),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: FxButton.tonal(
+                          label: s.commonCancel,
+                          expand: true,
+                          onPressed: isLoading
+                              ? null
+                              : () => Navigator.pop(context),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-              ],
+                      const SizedBox(width: FxSpacing.md),
+                      Expanded(
+                        child: FxButton(
+                          label: s.confirm,
+                          expand: true,
+                          onPressed: () {
+                            if (controller.text.isEmpty) {
+                              HapticFeedback.heavyImpact();
+                              setState(() => showRequiredError = true);
+                              return;
+                            }
+                            HapticFeedback.mediumImpact();
+                            Navigator.pop(context, {
+                              'captchaUserInput': controller.text,
+                              'captchaCodeKey': captchaData['captchaCodeKey'],
+                            });
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         );
       },
     ),
   );
+
+  controller.dispose();
+  focusNode.dispose();
+  return result;
 }

@@ -10,6 +10,7 @@ import 'package:fortuneboot/features/dashboard/presentation/widgets/dashboard_ca
 import 'package:fortuneboot/features/shared/data/bill_models.dart';
 import 'package:fortuneboot/fx/components/fx_card.dart';
 import 'package:fortuneboot/fx/components/fx_money_text.dart';
+import 'package:fortuneboot/fx/components/fx_pressable.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
@@ -51,8 +52,10 @@ class RecentBillsCard extends StatelessWidget {
           children: [
             FxCardLabel(
               S.of(context).dashboardRecentBills,
-              trailing: GestureDetector(
-                onTap: () => MainShell.selectTab(context, MainShellTab.bills),
+              trailing: FxPressable(
+                semanticLabel: S.of(context).dashboardViewAll,
+                onPressed: () =>
+                    MainShell.selectTab(context, MainShellTab.bills),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -96,12 +99,7 @@ class RecentBillsCard extends StatelessWidget {
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 for (final bill in bills)
-                                  _row(
-                                    context,
-                                    bill,
-                                    hideAmounts,
-                                    onBillTap,
-                                  ),
+                                  _row(context, bill, hideAmounts, onBillTap),
                               ],
                             ),
                           ),

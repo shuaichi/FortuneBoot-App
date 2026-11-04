@@ -1941,5 +1941,10 @@
   "statsLoanPendingCount": "待确认流水 {count} 笔",
   "@statsLoanPendingCount": {"placeholders": {"count": {"type": "int"}}},
   "statsArchivedLoanIncomeExpense": "已归档借款收支",
-  "statsArchivedLoanNote": "按已归档债权/债务单的利息、手续费和差额结清计算，不是投资收益率。"
+  "statsArchivedLoanNote": "按已归档债权/债务单的利息、手续费和差额结清计算，不是投资收益率。",
+  "passwordPolicyHint": "密码需为8-18位，包含字母、数字或特殊字符，且不能包含中文",
+  "captchaTitle": "请输入验证码",
+  "captchaSubtitle": "完成安全校验后继续登录",
+  "captchaRefresh": "刷新验证码",
+  "captchaRequired": "请输入图片中的验证码"
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fortuneboot/core/navigation/fx_page_route.dart';
 import 'package:fortuneboot/core/network/fx_api.dart';
 import 'package:fortuneboot/core/session/bill_mutations.dart';
 import 'package:fortuneboot/core/session/session_cubit.dart';
@@ -153,8 +154,9 @@ class _BooksPageState extends State<BooksPage> {
 
   Future<void> _openGroupDetail(ManagedGroup group) async {
     await Navigator.of(context).push<void>(
-      PageRouteBuilder<void>(
-        pageBuilder: (_, _, _) => GroupDetailPage(
+      buildFxRoute<void>(
+        settings: const RouteSettings(name: 'books/group-detail'),
+        builder: (_) => GroupDetailPage(
           group: group,
           service: _service,
           capabilities: _bloc.state.capabilitiesFor(group.groupId),
@@ -178,8 +180,9 @@ class _BooksPageState extends State<BooksPage> {
   Future<void> _openBookDetail(FortuneBookVo book) async {
     final state = _bloc.state;
     await Navigator.of(context).push<void>(
-      PageRouteBuilder<void>(
-        pageBuilder: (_, _, _) => BookDetailPage(
+      buildFxRoute<void>(
+        settings: const RouteSettings(name: 'books/book-detail'),
+        builder: (_) => BookDetailPage(
           book: book,
           group: state.selectedManagedGroup,
           service: _service,

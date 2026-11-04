@@ -49,4 +49,45 @@ void main() {
 
     expect(tappedBill, same(bill));
   });
+
+  testWidgets('view-all action exposes a minimum 44px interactive target', (
+    tester,
+  ) async {
+    final preferences = PreferencesCubit();
+    addTearDown(preferences.close);
+
+    await tester.pumpWidget(
+      BlocProvider.value(
+        value: preferences,
+        child: MaterialApp(
+          theme: FxTheme.light,
+          locale: const Locale('zh'),
+          localizationsDelegates: const [
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+            S.delegate,
+          ],
+          supportedLocales: S.delegate.supportedLocales,
+          home: const Scaffold(
+            body: RecentBillsCard(
+              section: DashboardSection<List<FortuneBillVo>>.ready([]),
+              currencyCode: 'CNY',
+              onRetry: _noRetry,
+            ),
+          ),
+        ),
+      ),
+    );
+
+    final target = find.ancestor(
+      of: find.text('全部'),
+      matching: find.byType(InkWell),
+    );
+    expect(target, findsOneWidget);
+    expect(tester.getSize(target).height, greaterThanOrEqualTo(44));
+    expect(tester.getSize(target).width, greaterThanOrEqualTo(44));
+  });
+
 }
+void _noRetry() {}

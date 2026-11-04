@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fortuneboot/util/custom_route.dart';
+import 'package:fortuneboot/core/navigation/fx_page_route.dart';
 
 /// 集中路由工厂。二级页面通过各 feature 的 Args 对象在 arguments 中传参。
 ///
@@ -19,7 +19,7 @@ class AppRouter {
   static Route<dynamic>? onGenerateRoute(RouteSettings settings) {
     final builder = _builders[settings.name];
     if (builder == null) return null;
-    return FadePageRoute(
+    return buildFxRoute<dynamic>(
       builder: (_) => builder(settings.arguments),
       settings: settings,
     );
@@ -27,7 +27,7 @@ class AppRouter {
 
   /// 便捷 push。
   ///
-  /// 注意：onGenerateRoute 统一返回 `FadePageRoute<dynamic>`，不能直接
+  /// 注意：onGenerateRoute 统一返回 `Route<dynamic>`，不能直接
   /// `pushNamed<T>`（Flutter 会把路由强转为 `Route<T>`，运行时会抛
   /// `Route<dynamic> is not a subtype of Route<T?>`）。因此这里以 dynamic
   /// 入栈，再对返回值做类型收敛。

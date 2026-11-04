@@ -1939,5 +1939,10 @@
   "statsLoanPendingCount": "{count} entries pending confirmation",
   "@statsLoanPendingCount": {"placeholders": {"count": {"type": "int"}}},
   "statsArchivedLoanIncomeExpense": "Archived loan income/expense",
-  "statsArchivedLoanNote": "Based on interest, fees and write-offs of archived receivable/payable orders; it is not an investment return."
+  "statsArchivedLoanNote": "Based on interest, fees and write-offs of archived receivable/payable orders; it is not an investment return.",
+  "passwordPolicyHint": "Use 8-18 characters with letters, numbers, or symbols; Chinese characters are not allowed",
+  "captchaTitle": "Enter verification code",
+  "captchaSubtitle": "Complete the security check to continue signing in",
+  "captchaRefresh": "Refresh verification code",
+  "captchaRequired": "Enter the code shown in the image"
 }

@@ -11,6 +11,7 @@ import 'package:fortuneboot/core/session/session_cubit.dart';
 import 'package:fortuneboot/core/session/session_permission.dart';
 import 'package:fortuneboot/core/shell/bills_navigation_controller.dart';
 import 'package:fortuneboot/features/shared/data/bill_models.dart';
+import 'package:fortuneboot/fx/components/fx_button.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
 import 'package:fortuneboot/generated/l10n.dart';
@@ -28,7 +29,7 @@ class MainShellSlots {
 
 enum MainShellTab { dashboard, bills, stats, profile }
 
-/// 底部导航容器：4 tab + 中央 FAB 记一笔。IndexedStack 保活。
+/// 响应式主导航：窄屏底部 Tab，宽屏侧边栏。IndexedStack 保活。
 /// 首次进入时触发 SessionCubit.load() 拉取分组/账本。
 class MainShell extends StatefulWidget {
   const MainShell({super.key});
@@ -102,119 +103,131 @@ class _MainShellState extends State<MainShell> {
     return Builder(builder: builder);
   }
 
+  static const double _desktopBreakpoint = 1080;
+  static const double _contentMaxWidth = 1360;
+
+  void _openQuickAdd() {
+    HapticFeedback.selectionClick();
+    final group = context.read<SessionCubit>().state.currentGroup;
+    if (!SessionPermission.canWrite(group)) {
+      FxFeedback.info(
+        context,
+        message: S.of(context).permissionVisitorNoAccess,
+      );
+      return;
+    }
+    AppRouter.push<void>(context, Routes.billEditor);
+  }
+
   @override
   Widget build(BuildContext context) {
+    final palette = FxPalette.of(context);
     final s = S.of(context);
+    final wide = MediaQuery.widthOf(context) >= _desktopBreakpoint;
     final pages = [
       _slot(MainShellSlots.dashboard, s.navDashboard),
       _slot(MainShellSlots.bills, s.navBills),
       _slot(MainShellSlots.stats, s.navStats),
       _slot(MainShellSlots.profile, s.navProfile),
     ];
+    final destinations = [
+      (Icons.dashboard_outlined, Icons.dashboard_rounded, s.navDashboard),
+      (Icons.receipt_long_outlined, Icons.receipt_long_rounded, s.navBills),
+      (Icons.bar_chart_outlined, Icons.bar_chart_rounded, s.navStats),
+      (Icons.person_outline_rounded, Icons.person_rounded, s.navProfile),
+    ];
+    final content = Align(
+      alignment: Alignment.topCenter,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: _contentMaxWidth),
+        child: SizedBox(
+          width: double.infinity,
+          child: IndexedStack(index: _index, children: pages),
+        ),
+      ),
+    );
 
     return BillsNavigationScope(
       controller: _billsNavigation,
       child: Scaffold(
-        body: IndexedStack(index: _index, children: pages),
-        floatingActionButton: FloatingActionButton(
-          tooltip: s.dashboardQuickAdd,
-          backgroundColor: FxPalette.of(context).primary,
-          foregroundColor: FxPalette.of(context).onPrimary,
-          elevation: 2,
-          shape: const CircleBorder(),
-          onPressed: () {
-            HapticFeedback.selectionClick();
-            final group = context.read<SessionCubit>().state.currentGroup;
-            if (!SessionPermission.canWrite(group)) {
-              FxFeedback.info(
-                context,
-                message: S.of(context).permissionVisitorNoAccess,
-              );
-              return;
-            }
-            AppRouter.push<void>(context, Routes.billEditor);
-          },
-          child: const Icon(Icons.add_rounded, size: 30),
-        ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-        bottomNavigationBar: _FxBottomBar(
-          index: _index,
-          onChanged: (index) => _selectTab(MainShellTab.values[index]),
-        ),
-      ),
-    );
-  }
-}
-
-class _FxBottomBar extends StatelessWidget {
-  final int index;
-  final ValueChanged<int> onChanged;
-  const _FxBottomBar({required this.index, required this.onChanged});
-
-  @override
-  Widget build(BuildContext context) {
-    final palette = FxPalette.of(context);
-    final s = S.of(context);
-    return BottomAppBar(
-      color: palette.surface,
-      surfaceTintColor: Colors.transparent,
-      shape: const CircularNotchedRectangle(),
-      notchMargin: 8,
-      padding: EdgeInsets.zero,
-      child: SafeArea(
-        top: false,
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(minHeight: 64),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              _item(context, 0, Icons.dashboard_rounded, s.navDashboard),
-              _item(context, 1, Icons.receipt_long_rounded, s.navBills),
-              const SizedBox(width: 48), // FAB 缺口
-              _item(context, 2, Icons.bar_chart_rounded, s.navStats),
-              _item(context, 3, Icons.person_rounded, s.navProfile),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _item(BuildContext context, int i, IconData icon, String label) {
-    final palette = FxPalette.of(context);
-    final selected = index == i;
-    final color = selected ? palette.primary : palette.textTertiary;
-    return Expanded(
-      child: Semantics(
-        button: true,
-        selected: selected,
-        label: label,
-        child: Tooltip(
-          message: label,
-          child: InkWell(
-            onTap: () {
-              HapticFeedback.selectionClick();
-              onChanged(i);
-            },
-            child: SizedBox(
-              height: 64,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+        body: wide
+            ? Row(
                 children: [
-                  Icon(icon, color: color, size: 24),
-                  const SizedBox(height: 2),
-                  Text(
-                    label,
-                    style: FxTypography.caption.copyWith(
-                      color: color,
-                      fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
+                  SafeArea(
+                    top: false,
+                    right: false,
+                    bottom: false,
+                    child: NavigationRail(
+                      extended: true,
+                      minExtendedWidth: 224,
+                      labelType: NavigationRailLabelType.none,
+                      backgroundColor: palette.surface,
+                      selectedIndex: _index,
+                      onDestinationSelected: (value) =>
+                          _selectTab(MainShellTab.values[value]),
+                      indicatorColor: palette.primaryContainer,
+                      indicatorShape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      leading: Padding(
+                        padding: const EdgeInsets.fromLTRB(16, 24, 16, 28),
+                        child: SizedBox(
+                          width: 192,
+                          child: FxButton(
+                            label: s.dashboardQuickAdd,
+                            icon: Icons.add_rounded,
+                            expand: true,
+                            onPressed: _openQuickAdd,
+                          ),
+                        ),
+                      ),
+                      destinations: [
+                        for (final destination in destinations)
+                          NavigationRailDestination(
+                            icon: Icon(destination.$1),
+                            selectedIcon: Icon(destination.$2),
+                            label: Text(destination.$3),
+                          ),
+                      ],
                     ),
                   ),
+                  VerticalDivider(width: 1, color: palette.border),
+                  Expanded(child: content),
+                ],
+              )
+            : content,
+        floatingActionButton: wide
+            ? null
+            : FloatingActionButton(
+                tooltip: s.dashboardQuickAdd,
+                onPressed: _openQuickAdd,
+                backgroundColor: palette.primary,
+                foregroundColor: palette.onPrimary,
+                elevation: 0,
+                shape: const CircleBorder(),
+                child: const Icon(Icons.add_rounded, size: 28),
+              ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+        bottomNavigationBar: wide
+            ? null
+            : NavigationBar(
+                height: 64,
+                selectedIndex: _index,
+                onDestinationSelected: (value) =>
+                    _selectTab(MainShellTab.values[value]),
+                backgroundColor: palette.surface,
+                surfaceTintColor: Colors.transparent,
+                shadowColor: Colors.transparent,
+                indicatorColor: palette.primaryContainer,
+                destinations: [
+                  for (final destination in destinations)
+                    NavigationDestination(
+                      icon: Icon(destination.$1),
+                      selectedIcon: Icon(destination.$2),
+                      label: destination.$3,
+                    ),
                 ],
               ),
-            ),
-          ),
-        ),
       ),
     );
   }

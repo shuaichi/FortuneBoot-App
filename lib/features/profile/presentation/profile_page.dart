@@ -6,6 +6,7 @@ import 'package:fortuneboot/core/app_constants.dart';
 import 'package:fortuneboot/core/app_lock/app_lock_cubit.dart';
 import 'package:fortuneboot/core/feedback/fx_feedback.dart';
 import 'package:fortuneboot/core/navigation/app_router.dart';
+import 'package:fortuneboot/core/navigation/fx_page_route.dart';
 import 'package:fortuneboot/core/navigation/routes.dart';
 import 'package:fortuneboot/core/preferences/locale_preferences.dart';
 import 'package:fortuneboot/core/preferences/preferences_cubit.dart';
@@ -82,7 +83,10 @@ class _ProfileView extends StatelessWidget {
 
   Future<void> _openEdit(BuildContext context, UserProfile profile) async {
     final changed = await Navigator.of(context).push<bool>(
-      MaterialPageRoute(builder: (_) => ProfileEditPage(profile: profile)),
+      buildFxRoute<bool>(
+        settings: const RouteSettings(name: Routes.profileEdit),
+        builder: (_) => ProfileEditPage(profile: profile),
+      ),
     );
     if (changed == true && context.mounted) {
       context.read<ProfileBloc>().add(const ProfileUserRefreshed());
@@ -471,7 +475,10 @@ class _ProfileView extends StatelessWidget {
             subtitle: S.of(context).profileAppLockSubtitle,
             showChevron: true,
             onTap: () => Navigator.of(context).push(
-              MaterialPageRoute(builder: (_) => const AppLockSettingsPage()),
+              buildFxRoute<void>(
+                settings: const RouteSettings(name: 'profile/app-lock'),
+                builder: (_) => const AppLockSettingsPage(),
+              ),
             ),
           ),
           _divider(context),

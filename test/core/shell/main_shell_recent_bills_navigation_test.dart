@@ -87,6 +87,65 @@ void main() {
     expect(tester.takeException(), isNull);
     expect(find.text('Bills tab'), findsOneWidget);
   });
+
+  testWidgets('wide layout uses sidebar navigation and bounded content', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(1280, 800);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+
+    MainShellSlots.dashboard = (_) => const Center(child: Text('Dashboard'));
+    MainShellSlots.bills = (_) => const Center(child: Text('Bills tab'));
+    MainShellSlots.stats = (_) => const SizedBox.shrink();
+    MainShellSlots.profile = (_) => const SizedBox.shrink();
+
+    await tester.pumpWidget(
+      MultiBlocProvider(
+        providers: [
+          BlocProvider.value(
+            value: SessionCubit(
+              groupService: const _EmptyGroupService(),
+              bookService: const _UnusedBookService(),
+            ),
+          ),
+          BlocProvider.value(value: PreferencesCubit()),
+          BlocProvider.value(
+            value: AppLockCubit(
+              settingsStore: const _FakeAppLockSettingsStore(),
+              secretStore: const _FakeAppLockSecretStore(),
+              biometricAuthenticator:
+                  const _FakeAppLockBiometricAuthenticator(),
+            ),
+          ),
+        ],
+        child: MaterialApp(
+          theme: FxTheme.light,
+          locale: const Locale('zh'),
+          localizationsDelegates: const [
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+            S.delegate,
+          ],
+          supportedLocales: S.delegate.supportedLocales,
+          home: const MainShell(),
+        ),
+      ),
+    );
+    await tester.pump();
+
+    expect(MediaQuery.widthOf(tester.element(find.byType(MainShell))), 1280);
+    expect(find.byType(NavigationRail), findsOneWidget);
+    expect(find.byType(BottomAppBar), findsNothing);
+    expect(
+      find.byWidgetPredicate(
+        (widget) =>
+            widget is ConstrainedBox && widget.constraints.maxWidth == 1360,
+      ),
+      findsOneWidget,
+    );
+  });
 }
 
 class _EmptyGroupService implements GroupService {

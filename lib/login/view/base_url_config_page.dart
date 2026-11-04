@@ -1,4 +1,10 @@
 import 'package:fortuneboot/core/auth/auth_version_checker.dart';
+import 'package:fortuneboot/fx/components/fx_button.dart';
+import 'package:fortuneboot/fx/components/fx_pressable.dart';
+import 'package:fortuneboot/fx/theme/fx_theme.dart';
+import 'package:fortuneboot/fx/tokens/fx_radius.dart';
+import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
+import 'package:fortuneboot/fx/tokens/fx_typography.dart';
 import 'package:flutter/material.dart';
 // 引入震动反馈
 import 'package:flutter/services.dart';
@@ -9,6 +15,7 @@ import 'package:fortuneboot/core/preferences/locale_preferences.dart';
 import 'package:fortuneboot/core/preferences/preferences_cubit.dart';
 import 'package:fortuneboot/core/session/session_cubit.dart';
 import 'package:fortuneboot/login/auth_version_source.dart';
+import 'package:fortuneboot/login/view/auth_scaffold.dart';
 import 'package:fortuneboot/login/model/users.dart';
 import 'package:fortuneboot/login/server/server_endpoint.dart';
 import 'package:fortuneboot/login/server/server_history_store.dart';
@@ -166,7 +173,10 @@ class _BaseUrlConfigPageState extends State<BaseUrlConfigPage> {
     final s = S.of(context);
     final current = context.watch<PreferencesCubit>().state.locale.code;
     return PopupMenuButton<String>(
-      icon: const Icon(Icons.language_rounded, color: Color(0xFF1C1C1E)),
+      icon: Icon(
+        Icons.language_rounded,
+        color: FxPalette.of(context).textPrimary,
+      ),
       tooltip: s.commonLanguage,
       onSelected: (code) =>
           context.read<PreferencesCubit>().setLocaleCode(code),
@@ -186,7 +196,11 @@ class _BaseUrlConfigPageState extends State<BaseUrlConfigPage> {
         children: [
           Text(label),
           if (code == current)
-            const Icon(Icons.check_rounded, size: 18, color: Color(0xFF007AFF)),
+            Icon(
+              Icons.check_rounded,
+              size: 18,
+              color: FxPalette.of(context).primary,
+            ),
         ],
       ),
     );
@@ -194,9 +208,11 @@ class _BaseUrlConfigPageState extends State<BaseUrlConfigPage> {
 
   Future<bool> _checkLoginSessionValid() async {
     try {
-      final response = await DioClient().dio.get('/system/user/profile');
+      final response = await DioClient().dio.get<Object?>(
+        '/system/user/profile',
+      );
       final data = response.data;
-      if (data is Map) {
+      if (data is Map<Object?, Object?>) {
         return data['code'] == 0;
       }
       return false;
@@ -216,55 +232,30 @@ class _BaseUrlConfigPageState extends State<BaseUrlConfigPage> {
 
   @override
   Widget build(BuildContext context) {
+    final s = S.of(context);
     return ValueListenableBuilder<AuthMode>(
       valueListenable: _authMode,
       builder: (context, mode, child) {
-        return Scaffold(
-          // 采用高端蓝灰底色，凸显卡片的纯白质感
-          backgroundColor: const Color(0xFFF2F4F7),
-          appBar: AppBar(
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-            centerTitle: true,
-            title: Text(
-              S.of(context).baseUrlConfig,
-              style: const TextStyle(
-                color: Color(0xFF1C1C1E),
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            iconTheme: const IconThemeData(color: Color(0xFF1C1C1E)),
-            actions: [_buildLanguageMenu(context)],
-          ),
-          body: mode == AuthMode.loading
-              ? const Center(
-                  child: CircularProgressIndicator(
-                    color: Color(
-                      0xFF007AFF,
-                    ), // iOS经典蓝 (Neutral / Config Action)
-                  ),
+        return AuthScaffold(
+          title: s.baseUrlConfig,
+          subtitle: s.login_message,
+          actions: [_buildLanguageMenu(context)],
+          child: mode == AuthMode.loading
+              ? const SizedBox(
+                  height: 240,
+                  child: Center(child: CircularProgressIndicator()),
                 )
-              : SafeArea(
-                  child: SingleChildScrollView(
-                    physics: const BouncingScrollPhysics(),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 20,
-                      vertical: 24,
-                    ),
-                    child: Form(
-                      key: _formKey,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          _buildHeader(),
-                          const SizedBox(height: 32),
-                          _buildConfigCard(),
-                          const SizedBox(height: 40),
-                          _buildSubmitButton(),
-                        ],
-                      ),
-                    ),
+              : Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      _buildHeader(),
+                      const SizedBox(height: FxSpacing.xxl),
+                      _buildConfigCard(),
+                      const SizedBox(height: FxSpacing.xxxl),
+                      _buildSubmitButton(),
+                    ],
                   ),
                 ),
         );
@@ -272,109 +263,87 @@ class _BaseUrlConfigPageState extends State<BaseUrlConfigPage> {
     );
   }
 
-  // --- 1. 高端金融级标题组件 ---
   Widget _buildHeader() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        GestureDetector(
-          behavior: HitTestBehavior.opaque,
-          onTap: _handleDevTap,
-          child: Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: const Color(0xFF007AFF).withOpacity(0.12),
-              shape: BoxShape.circle,
-            ),
-            child: const Icon(
-              Icons.dns_rounded,
-              color: Color(0xFF007AFF),
-              size: 24,
-            ),
+    final s = S.of(context);
+    final palette = FxPalette.of(context);
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: FxPressable(
+        semanticLabel: s.baseUrlConfig,
+        onPressed: _handleDevTap,
+        padding: EdgeInsets.zero,
+        borderRadius: FxRadius.pillBorder,
+        child: Container(
+          width: 44,
+          height: 44,
+          decoration: BoxDecoration(
+            color: palette.primaryContainer,
+            shape: BoxShape.circle,
           ),
+          child: Icon(Icons.dns_rounded, color: palette.primary, size: 22),
         ),
-        const SizedBox(height: 16),
-        Text(
-          S.of(context).baseUrlConfig,
-          style: const TextStyle(
-            fontSize: 28,
-            fontWeight: FontWeight.bold,
-            color: Color(0xFF1C1C1E),
-            letterSpacing: -0.5,
-          ),
-        ),
-      ],
+      ),
     );
   }
 
-  // --- 2. 玻璃态组合卡片视图 (Card Grouping) ---
   Widget _buildConfigCard() {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.02),
-            blurRadius: 20,
-            offset: const Offset(0, 4),
-          ),
+    final s = S.of(context);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        if (_history.isNotEmpty) ...[
+          _buildHistoryField(),
+          const SizedBox(height: FxSpacing.lg),
         ],
-      ),
-      child: Column(
-        children: [
-          if (_history.isNotEmpty) ...[
-            _buildHistoryRow(),
-            _buildDivider(),
-          ],
-          _buildProtocolRow(),
-          _buildDivider(),
-          _buildTextFieldRow(
-            label: S.of(context).domain,
-            controller: _domainController,
-            hint: "demo.fortuneboot.com",
-            icon: Icons.language_rounded,
+        _buildProtocolField(),
+        const SizedBox(height: FxSpacing.lg),
+        _buildTextField(
+          label: s.domain,
+          controller: _domainController,
+          hint: 'demo.fortuneboot.com',
+          icon: Icons.language_rounded,
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return s.pleaseEnterDomain;
+            }
+            return null;
+          },
+        ),
+        const SizedBox(height: FxSpacing.lg),
+        _buildTextField(
+          label: s.port,
+          controller: _portController,
+          hint: '443',
+          icon: Icons.numbers_rounded,
+          keyboardType: TextInputType.number,
+        ),
+        if (_devPrefixVisible) ...[
+          const SizedBox(height: FxSpacing.lg),
+          _buildTextField(
+            label: s.apiPrefixLabel,
+            controller: _apiPrefixController,
+            hint: ServerEndpoint.defaultApiPrefix,
+            icon: Icons.alt_route_rounded,
             validator: (value) {
-              if (value == null || value.isEmpty) {
-                return S.of(context).pleaseEnterDomain;
+              final prefix = value?.trim() ?? '';
+              if (prefix.isEmpty) {
+                return null;
+              }
+              if (!prefix.startsWith('/') ||
+                  prefix.endsWith('/') ||
+                  prefix == '/' ||
+                  prefix.contains(RegExp(r'\s'))) {
+                return s.apiPrefixInvalid;
               }
               return null;
             },
           ),
-          _buildDivider(),
-          _buildTextFieldRow(
-            label: S.of(context).port,
-            controller: _portController,
-            hint: "443",
-            icon: Icons.numbers_rounded,
-            keyboardType: TextInputType.number,
-          ),
-          if (_devPrefixVisible) ...[
-            _buildDivider(),
-            _buildTextFieldRow(
-              label: S.of(context).apiPrefixLabel,
-              controller: _apiPrefixController,
-              hint: ServerEndpoint.defaultApiPrefix,
-              icon: Icons.alt_route_rounded,
-              validator: (value) {
-                final v = value?.trim() ?? '';
-                if (v.isEmpty) return null; // 留空表示无前缀
-                if (!v.startsWith('/') ||
-                    v.endsWith('/') ||
-                    v == '/' ||
-                    v.contains(RegExp(r'\s'))) {
-                  return S.of(context).apiPrefixInvalid;
-                }
-                return null;
-              },
-            ),
-          ],
         ],
-      ),
+      ],
     );
   }
 
-  Widget _buildHistoryRow() {
+  Widget _buildHistoryField() {
     final s = S.of(context);
     final current = ServerHistoryEntry(
       protocol: _protocol,
@@ -388,263 +357,91 @@ class _BaseUrlConfigPageState extends State<BaseUrlConfigPage> {
         break;
       }
     }
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: const Color(0xFF007AFF).withOpacity(0.12),
-              shape: BoxShape.circle,
-            ),
-            child: const Icon(
-              Icons.history_rounded,
-              size: 20,
-              color: Color(0xFF007AFF),
-            ),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Text(
-              s.serverHistory,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-                color: Color(0xFF1C1C1E),
-              ),
-            ),
-          ),
-          Flexible(
-            child: DropdownButtonHideUnderline(
-              child: DropdownButton<ServerHistoryEntry>(
-                isExpanded: true,
-                value: matched,
-                hint: Text(
-                  s.serverHistorySelect,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    color: Color(0xFF8E8E93),
-                  ),
-                ),
-                icon: const Icon(
-                  Icons.expand_more_rounded,
-                  color: Color(0xFF8E8E93),
-                ),
-                style: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                  color: Color(0xFF007AFF),
-                ),
-                selectedItemBuilder: (context) {
-                  return _history.map((entry) {
-                    return Align(
-                      alignment: Alignment.centerRight,
-                      child: Text(
-                        entry.displayLabel,
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 1,
-                      ),
-                    );
-                  }).toList();
-                },
-                items: _history.map((entry) {
-                  return DropdownMenuItem<ServerHistoryEntry>(
-                    value: entry,
-                    child: Text(
-                      entry.displayLabel,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  );
-                }).toList(),
-                onChanged: (entry) {
-                  if (entry != null) _applyHistoryEntry(entry);
-                },
-              ),
-            ),
-          ),
-        ],
+    return DropdownButtonFormField<ServerHistoryEntry>(
+      initialValue: matched,
+      isExpanded: true,
+      decoration: _inputDecoration(
+        label: s.serverHistory,
+        hint: s.serverHistorySelect,
+        icon: Icons.history_rounded,
       ),
+      items: [
+        for (final entry in _history)
+          DropdownMenuItem<ServerHistoryEntry>(
+            value: entry,
+            child: Text(
+              entry.displayLabel,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+      ],
+      onChanged: (entry) {
+        if (entry != null) {
+          _applyHistoryEntry(entry);
+        }
+      },
     );
   }
 
-  Widget _buildProtocolRow() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: const Color(0xFF007AFF).withOpacity(0.12),
-              shape: BoxShape.circle,
-            ),
-            child: const Icon(
-              Icons.security_rounded,
-              size: 20,
-              color: Color(0xFF007AFF),
-            ),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Text(
-              S.of(context).protocol,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-                color: Color(0xFF1C1C1E),
-              ),
-            ),
-          ),
-          DropdownButtonHideUnderline(
-            child: DropdownButton<String>(
-              value: _protocol,
-              icon: const Icon(
-                Icons.expand_more_rounded,
-                color: Color(0xFF8E8E93),
-              ),
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: Color(0xFF007AFF),
-              ),
-              items: ['https', 'http'].map((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value.toUpperCase()),
-                );
-              }).toList(),
-              onChanged: (String? newValue) {
-                if (newValue != null) {
-                  HapticFeedback.selectionClick(); // 下拉选择触发轻触反馈
-                  setState(() {
-                    _protocol = newValue;
-                  });
-                }
-              },
-            ),
-          ),
-        ],
+  Widget _buildProtocolField() {
+    final s = S.of(context);
+    return DropdownButtonFormField<String>(
+      initialValue: _protocol,
+      decoration: _inputDecoration(
+        label: s.protocol,
+        icon: Icons.security_rounded,
       ),
+      items: const [
+        DropdownMenuItem(value: 'https', child: Text('HTTPS')),
+        DropdownMenuItem(value: 'http', child: Text('HTTP')),
+      ],
+      onChanged: (value) {
+        if (value == null) {
+          return;
+        }
+        HapticFeedback.selectionClick();
+        setState(() {
+          _protocol = value;
+          _portController.text = value == 'https' ? '443' : '80';
+        });
+      },
     );
   }
 
-  Widget _buildTextFieldRow({
+  InputDecoration _inputDecoration({
+    required String label,
+    required IconData icon,
+    String? hint,
+  }) {
+    return authInputDecoration(context, label: label, icon: icon, hint: hint);
+  }
+
+  Widget _buildTextField({
     required String label,
     required TextEditingController controller,
     required String hint,
     required IconData icon,
-    TextInputType keyboardType = TextInputType.text,
+    TextInputType? keyboardType,
     String? Function(String?)? validator,
   }) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: const Color(0xFF007AFF).withOpacity(0.12),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(icon, size: 20, color: const Color(0xFF007AFF)),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  label,
-                  style: const TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w500,
-                    color: Color(0xFF8E8E93), // 次要信息降噪
-                  ),
-                ),
-                TextFormField(
-                  controller: controller,
-                  keyboardType: keyboardType,
-                  cursorColor: const Color(0xFF007AFF),
-                  onTap: () => HapticFeedback.selectionClick(), // 激活输入时的反馈
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: Color(0xFF1C1C1E),
-                  ),
-                  decoration: InputDecoration(
-                    isDense: true,
-                    contentPadding: const EdgeInsets.only(top: 4, bottom: 4),
-                    border: InputBorder.none,
-                    hintText: hint,
-                    hintStyle: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w400,
-                      color: const Color(0xFF8E8E93).withOpacity(0.5),
-                    ),
-                  ),
-                  validator: validator,
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
+    final palette = FxPalette.of(context);
+    return TextFormField(
+      controller: controller,
+      keyboardType: keyboardType,
+      cursorColor: palette.primary,
+      style: FxTypography.bodyStrong.copyWith(color: palette.textPrimary),
+      decoration: _inputDecoration(label: label, hint: hint, icon: icon),
+      validator: validator,
     );
   }
 
-  // 精致发丝线分割器
-  Widget _buildDivider() {
-    return Padding(
-      padding: const EdgeInsets.only(left: 60),
-      child: Container(height: 0.5, color: const Color(0xFFC6C6C8)),
-    );
-  }
-
-  // --- 3. 动态加载确认按钮 ---
   Widget _buildSubmitButton() {
-    return GestureDetector(
-      onTap: _isConnecting ? null : _submitForm,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        width: double.infinity,
-        padding: const EdgeInsets.symmetric(vertical: 18),
-        decoration: BoxDecoration(
-          color: _isConnecting
-              ? const Color(0xFF007AFF).withOpacity(0.7)
-              : const Color(0xFF007AFF),
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: const Color(0xFF007AFF).withOpacity(0.2),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        alignment: Alignment.center,
-        child: _isConnecting
-            ? const SizedBox(
-                height: 20,
-                width: 20,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                ),
-              )
-            : Text(
-                S.of(context).confirm,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 17,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-      ),
+    return FxButton(
+      label: S.of(context).confirm,
+      expand: true,
+      loading: _isConnecting,
+      onPressed: _submitForm,
     );
   }
 
@@ -739,75 +536,38 @@ class _BaseUrlConfigPageState extends State<BaseUrlConfigPage> {
 
   // --- 4. 摒弃原生系统警告，重写高端金融级报错弹窗 ---
   void _showErrorDialog(String message) {
-    HapticFeedback.heavyImpact(); // 错误发生时强震动警告
-    showDialog(
+    HapticFeedback.heavyImpact();
+    showDialog<void>(
       context: context,
-      barrierColor: Colors.black.withOpacity(0.4),
-      builder: (context) => Dialog(
-        backgroundColor: Colors.white,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: const Color(
-                    0xFFFF3B30,
-                  ).withOpacity(0.12), // iOS Red State
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(
-                  Icons.error_outline_rounded,
-                  color: Color(0xFFFF3B30),
-                  size: 28,
-                ),
-              ),
-              const SizedBox(height: 16),
-              Text(
-                S.of(context).error,
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w600,
-                  color: Color(0xFF1C1C1E),
-                ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                message,
-                textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 15, color: Color(0xFF8E8E93)),
-              ),
-              const SizedBox(height: 24),
-              GestureDetector(
-                onTap: () {
-                  HapticFeedback.lightImpact();
-                  Navigator.of(context).pop();
-                },
-                child: Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF1C1C1E),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  alignment: Alignment.center,
-                  child: Text(
-                    S.of(context).ok,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-              ),
-            ],
+      builder: (dialogContext) {
+        final palette = FxPalette.of(dialogContext);
+        return AlertDialog(
+          backgroundColor: palette.surface,
+          surfaceTintColor: Colors.transparent,
+          shape: RoundedRectangleBorder(borderRadius: FxRadius.cardBorder),
+          icon: Icon(
+            Icons.error_outline_rounded,
+            color: palette.danger,
+            size: 28,
           ),
-        ),
-      ),
+          title: Text(
+            S.of(dialogContext).error,
+            style: FxTypography.title.copyWith(color: palette.textPrimary),
+          ),
+          content: Text(
+            message,
+            textAlign: TextAlign.center,
+            style: FxTypography.body.copyWith(color: palette.textSecondary),
+          ),
+          actions: [
+            FxButton(
+              label: S.of(dialogContext).ok,
+              expand: true,
+              onPressed: () => Navigator.of(dialogContext).pop(),
+            ),
+          ],
+        );
+      },
     );
   }
 }
