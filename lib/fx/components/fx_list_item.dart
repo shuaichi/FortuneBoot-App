@@ -10,6 +10,8 @@ class FxListItem extends StatelessWidget {
   final Widget? leading;
   final String title;
   final String? subtitle;
+  final int subtitleMaxLines;
+  final TextStyle? subtitleStyle;
   final Widget? trailing;
   final bool showChevron;
   final VoidCallback? onTap;
@@ -19,6 +21,8 @@ class FxListItem extends StatelessWidget {
     this.leading,
     required this.title,
     this.subtitle,
+    this.subtitleMaxLines = 1,
+    this.subtitleStyle,
     this.trailing,
     this.showChevron = false,
     this.onTap,
@@ -54,10 +58,12 @@ class FxListItem extends StatelessWidget {
                   const SizedBox(height: 2),
                   Text(
                     subtitle!,
-                    style: FxTypography.caption.copyWith(
-                      color: palette.textSecondary,
-                    ),
-                    maxLines: 1,
+                    style:
+                        subtitleStyle ??
+                        FxTypography.caption.copyWith(
+                          color: palette.textSecondary,
+                        ),
+                    maxLines: subtitleMaxLines,
                     overflow: TextOverflow.ellipsis,
                   ),
                 ],

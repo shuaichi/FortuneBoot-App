@@ -16,7 +16,12 @@ import 'package:fortuneboot/fx/components/fx_sheet.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/generated/l10n.dart';
 
-const _profile = UserProfile(userId: 7, nickname: 'fortune', username: 'admin');
+const _profile = UserProfile(
+  userId: 7,
+  nickname: 'fortune',
+  username: 'admin',
+  email: 'work.chi.zhang@gmail.com',
+);
 
 class _FakeDonationApi implements DonationApi {
   final List<String> purchasedIds = [];
@@ -110,6 +115,7 @@ void main() {
 
     // 注销账号入口已移至“查看个人资料”页。
     expect(find.text('注销账号'), findsNothing);
+    expect(find.text('work.chi.zhang@gmail.com'), findsOneWidget);
 
     await tester.tap(find.byTooltip('捐赠'));
     await tester.pumpAndSettle();

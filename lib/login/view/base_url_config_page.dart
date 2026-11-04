@@ -1,5 +1,6 @@
 import 'package:fortuneboot/core/auth/auth_version_checker.dart';
 import 'package:fortuneboot/fx/components/fx_button.dart';
+import 'package:fortuneboot/fx/components/fx_text_field.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
@@ -332,64 +333,99 @@ class _BaseUrlConfigPageState extends State<BaseUrlConfigPage> {
         break;
       }
     }
-    return DropdownButtonFormField<ServerHistoryEntry>(
-      initialValue: matched,
-      isExpanded: true,
-      decoration: _inputDecoration(
-        label: s.serverHistory,
-        hint: s.serverHistorySelect,
-        icon: Icons.history_rounded,
-      ),
-      items: [
-        for (final entry in _history)
-          DropdownMenuItem<ServerHistoryEntry>(
-            value: entry,
-            child: Text(
-              entry.displayLabel,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _fieldLabel(context, s.serverHistory),
+        const SizedBox(height: 8),
+        DropdownButtonFormField<ServerHistoryEntry>(
+          initialValue: matched,
+          isExpanded: true,
+          decoration: _selectDecoration(
+            hint: s.serverHistorySelect,
+            icon: Icons.history_rounded,
           ),
+          items: [
+            for (final entry in _history)
+              DropdownMenuItem<ServerHistoryEntry>(
+                value: entry,
+                child: Text(
+                  entry.displayLabel,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+          ],
+          onChanged: (entry) {
+            if (entry != null) {
+              _applyHistoryEntry(entry);
+            }
+          },
+        ),
       ],
-      onChanged: (entry) {
-        if (entry != null) {
-          _applyHistoryEntry(entry);
-        }
-      },
     );
   }
 
   Widget _buildProtocolField() {
     final s = S.of(context);
-    return DropdownButtonFormField<String>(
-      initialValue: _protocol,
-      decoration: _inputDecoration(
-        label: s.protocol,
-        icon: Icons.security_rounded,
-      ),
-      items: const [
-        DropdownMenuItem(value: 'https', child: Text('HTTPS')),
-        DropdownMenuItem(value: 'http', child: Text('HTTP')),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _fieldLabel(context, s.protocol),
+        const SizedBox(height: 8),
+        DropdownButtonFormField<String>(
+          initialValue: _protocol,
+          decoration: _selectDecoration(icon: Icons.security_rounded),
+          items: const [
+            DropdownMenuItem(value: 'https', child: Text('HTTPS')),
+            DropdownMenuItem(value: 'http', child: Text('HTTP')),
+          ],
+          onChanged: (value) {
+            if (value == null) {
+              return;
+            }
+            HapticFeedback.selectionClick();
+            setState(() {
+              _protocol = value;
+              _portController.text = value == 'https' ? '443' : '80';
+            });
+          },
+        ),
       ],
-      onChanged: (value) {
-        if (value == null) {
-          return;
-        }
-        HapticFeedback.selectionClick();
-        setState(() {
-          _protocol = value;
-          _portController.text = value == 'https' ? '443' : '80';
-        });
-      },
     );
   }
 
-  InputDecoration _inputDecoration({
-    required String label,
-    required IconData icon,
-    String? hint,
-  }) {
-    return authInputDecoration(context, label: label, icon: icon, hint: hint);
+  Widget _fieldLabel(BuildContext context, String label) {
+    return Text(
+      label,
+      style: FxTypography.label.copyWith(
+        color: FxPalette.of(context).textSecondary,
+      ),
+    );
+  }
+
+  InputDecoration _selectDecoration({String? hint, IconData? icon}) {
+    final palette = FxPalette.of(context);
+    final border = OutlineInputBorder(
+      borderRadius: FxRadius.tileBorder,
+      borderSide: BorderSide(color: palette.border),
+    );
+    return InputDecoration(
+      hintText: hint,
+      prefixIcon: icon == null ? null : Icon(icon, size: 20),
+      prefixIconColor: palette.textSecondary,
+      filled: true,
+      fillColor: palette.surfaceMuted,
+      isDense: false,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 16),
+      hintStyle: FxTypography.body.copyWith(color: palette.textTertiary),
+      border: border,
+      enabledBorder: border,
+      focusedBorder: OutlineInputBorder(
+        borderRadius: FxRadius.tileBorder,
+        borderSide: BorderSide(color: palette.primary, width: 1.5),
+      ),
+    );
   }
 
   Widget _buildTextField({
@@ -400,14 +436,14 @@ class _BaseUrlConfigPageState extends State<BaseUrlConfigPage> {
     TextInputType? keyboardType,
     String? Function(String?)? validator,
   }) {
-    final palette = FxPalette.of(context);
-    return TextFormField(
+    return FxTextField(
+      label: label,
       controller: controller,
+      hintText: hint,
       keyboardType: keyboardType,
-      cursorColor: palette.primary,
-      style: FxTypography.bodyStrong.copyWith(color: palette.textPrimary),
-      decoration: _inputDecoration(label: label, hint: hint, icon: icon),
       validator: validator,
+      prefixIcon: Icon(icon, size: 20),
+      scrollPadding: const EdgeInsets.only(bottom: 120),
     );
   }
 

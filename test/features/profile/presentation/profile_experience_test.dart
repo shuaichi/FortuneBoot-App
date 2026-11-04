@@ -54,6 +54,17 @@ void main() {
     expect(find.text('注销账号'), findsOneWidget);
   });
 
+  testWidgets('keeps a long email readable without heavy truncation', (
+    tester,
+  ) async {
+    await tester.pumpWidget(_page());
+    await tester.pumpAndSettle();
+
+    final email = tester.widget<Text>(find.text('work.chi.zhang@gmail.com'));
+    expect(email.maxLines, 3);
+    expect(email.style?.fontWeight, FontWeight.w400);
+  });
+
   testWidgets('opens the edit sheet only from the identity card', (
     tester,
   ) async {

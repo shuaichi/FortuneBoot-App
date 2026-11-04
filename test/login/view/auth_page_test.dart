@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_login/flutter_login.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:fortuneboot/fx/components/fx_button.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/generated/l10n.dart';
 import 'package:fortuneboot/login/view/auth_page.dart';
@@ -23,7 +24,7 @@ void main() {
 
     await tester.enterText(find.byType(TextFormField).at(0), ' legacy ');
     await tester.enterText(find.byType(TextFormField).at(1), 'abc123');
-    await tester.tap(find.widgetWithText(FilledButton, '登录'));
+    await tester.tap(find.widgetWithText(FxButton, '登录'));
     await tester.pumpAndSettle();
 
     expect(submitted?.name, 'legacy');
@@ -50,7 +51,7 @@ void main() {
     await _pumpAuth(tester);
 
     expect(
-      tester.getSize(find.widgetWithText(FilledButton, '登录')).height,
+      tester.getSize(find.widgetWithText(FxButton, '登录')).height,
       greaterThanOrEqualTo(50),
     );
     expect(
@@ -138,7 +139,7 @@ void main() {
     expect(tester.takeException(), isNull);
 
     await tester.scrollUntilVisible(
-      find.widgetWithText(FilledButton, '创建账户'),
+      find.widgetWithText(FxButton, '创建账户'),
       240,
       scrollable: find.byType(Scrollable).first,
     );

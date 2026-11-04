@@ -10,11 +10,11 @@ import 'package:fortuneboot/core/app_lock/presentation/pattern_lock_grid.dart';
 import 'package:fortuneboot/core/feedback/fx_feedback.dart';
 import 'package:fortuneboot/fx/components/fx_button.dart';
 import 'package:fortuneboot/fx/components/fx_card.dart';
-import 'package:fortuneboot/fx/components/fx_icon_button.dart';
 import 'package:fortuneboot/fx/components/fx_list_item.dart';
 import 'package:fortuneboot/fx/components/fx_segmented.dart';
 import 'package:fortuneboot/fx/components/fx_sheet.dart';
 import 'package:fortuneboot/fx/components/fx_text_field.dart';
+import 'package:fortuneboot/fx/layout/fx_page_scaffold.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
@@ -69,72 +69,32 @@ class _AppLockSettingsPageState extends State<AppLockSettingsPage> {
         settings != null && state.status != AppLockStatus.disabled;
     final activeMethod = isEnabled ? settings.method : _method;
 
-    return Scaffold(
-      backgroundColor: palette.canvas,
-      body: SafeArea(
-        child: Column(
-          children: [
-            _header(context, s),
-            Expanded(
-              child: ListView(
-                padding: const EdgeInsets.fromLTRB(
-                  FxSpacing.lg,
-                  FxSpacing.md,
-                  FxSpacing.lg,
-                  FxSpacing.xxxl,
-                ),
-                children: [
-                  Text(
-                    isEnabled
-                        ? s.appLockEnabledHeading
-                        : s.appLockEnableHeading,
-                    style: FxTypography.titleLarge.copyWith(
-                      color: palette.textPrimary,
-                    ),
-                  ),
-                  const SizedBox(height: FxSpacing.sm),
-                  Text(
-                    isEnabled
-                        ? s.appLockEnabledDescription
-                        : s.appLockEnableDescription,
-                    style: FxTypography.body.copyWith(
-                      color: palette.textSecondary,
-                    ),
-                  ),
-                  const SizedBox(height: FxSpacing.xl),
-                  if (isEnabled)
-                    _enabledContent(context, activeMethod)
-                  else
-                    _setupContent(context, activeMethod),
-                ],
-              ),
-            ),
-          ],
+    return FxPageScaffold(
+      title: s.appLockSettingsTitle,
+      child: ListView(
+        padding: const EdgeInsets.fromLTRB(
+          FxSpacing.lg,
+          FxSpacing.md,
+          FxSpacing.lg,
+          FxSpacing.xxxl,
         ),
-      ),
-    );
-  }
-
-  Widget _header(BuildContext context, S s) {
-    final palette = FxPalette.of(context);
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: FxSpacing.sm),
-      child: Row(
         children: [
-          FxIconButton(
-            icon: Icons.arrow_back_rounded,
-            tooltip: s.profileBack,
-            color: palette.textPrimary,
-            onPressed: () => Navigator.of(context).maybePop(),
+          Text(
+            isEnabled ? s.appLockEnabledHeading : s.appLockEnableHeading,
+            style: FxTypography.titleLarge.copyWith(color: palette.textPrimary),
           ),
-          const SizedBox(width: FxSpacing.xs),
-          Expanded(
-            child: Text(
-              s.appLockSettingsTitle,
-              style: FxTypography.title.copyWith(color: palette.textPrimary),
-            ),
+          const SizedBox(height: FxSpacing.sm),
+          Text(
+            isEnabled
+                ? s.appLockEnabledDescription
+                : s.appLockEnableDescription,
+            style: FxTypography.body.copyWith(color: palette.textSecondary),
           ),
-          const SizedBox(width: 48),
+          const SizedBox(height: FxSpacing.xl),
+          if (isEnabled)
+            _enabledContent(context, activeMethod)
+          else
+            _setupContent(context, activeMethod),
         ],
       ),
     );

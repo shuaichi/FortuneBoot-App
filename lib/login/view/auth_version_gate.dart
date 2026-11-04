@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:fortuneboot/core/app_constants.dart';
 import 'package:fortuneboot/core/auth/auth_version_checker.dart';
 import 'package:fortuneboot/core/navigation/routes.dart';
+import 'package:fortuneboot/fx/components/fx_button.dart';
 import 'package:fortuneboot/generated/l10n.dart';
 import 'package:fortuneboot/login/auth_version_source.dart';
 import 'package:fortuneboot/login/model/users.dart';
 import 'package:fortuneboot/login/server/server_endpoint.dart';
+import 'package:fortuneboot/login/view/auth_scaffold.dart';
 import 'package:fortuneboot/login/view/login_screen.dart';
 import 'package:fortuneboot/util/dio_client.dart';
 
@@ -104,34 +106,15 @@ class _AuthVersionFailurePage extends StatelessWidget {
       null => s.apiVersionUnavailable,
     };
 
-    return Scaffold(
-      appBar: AppBar(title: Text(s.baseUrlConfig)),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(
-                Icons.error_outline_rounded,
-                color: Color(0xFFFF3B30),
-                size: 48,
-              ),
-              const SizedBox(height: 16),
-              Text(s.error, style: Theme.of(context).textTheme.titleLarge),
-              const SizedBox(height: 8),
-              Text(message, textAlign: TextAlign.center),
-              const SizedBox(height: 24),
-              FilledButton(
-                onPressed: () => Navigator.of(context).pushNamedAndRemoveUntil(
-                  Routes.baseUrlConfig,
-                  (route) => false,
-                ),
-                child: Text(s.baseUrlConfig),
-              ),
-            ],
-          ),
-        ),
+    return AuthScaffold(
+      title: s.error,
+      subtitle: message,
+      child: FxButton(
+        label: s.baseUrlConfig,
+        expand: true,
+        onPressed: () => Navigator.of(
+          context,
+        ).pushNamedAndRemoveUntil(Routes.baseUrlConfig, (route) => false),
       ),
     );
   }

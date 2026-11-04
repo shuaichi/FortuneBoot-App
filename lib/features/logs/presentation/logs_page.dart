@@ -4,11 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:fortuneboot/core/network/fx_api.dart';
 import 'package:fortuneboot/features/logs/data/logs_models.dart';
 import 'package:fortuneboot/features/logs/data/logs_service.dart';
-import 'package:fortuneboot/fx/components/fx_icon_button.dart';
 import 'package:fortuneboot/fx/components/fx_list_item.dart';
 import 'package:fortuneboot/fx/components/fx_segmented.dart';
 import 'package:fortuneboot/fx/components/fx_sheet.dart';
 import 'package:fortuneboot/fx/components/fx_state_view.dart';
+import 'package:fortuneboot/fx/layout/fx_page_scaffold.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
@@ -146,81 +146,55 @@ class _LogsPageState extends State<LogsPage> {
   Widget build(BuildContext context) {
     final palette = FxPalette.of(context);
     final s = S.of(context);
-    return Scaffold(
-      backgroundColor: palette.canvas,
-      body: SafeArea(
-        bottom: false,
-        child: Column(
-          children: [
-            _header(s.profileLogs),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(
-                FxSpacing.lg,
-                FxSpacing.xs,
-                FxSpacing.lg,
-                FxSpacing.sm,
-              ),
-              child: FxSegmented<_LogsTab>(
-                value: _tab,
-                onChanged: _switchTab,
-                segments: [
-                  FxSegment(_LogsTab.operation, s.logsOperation),
-                  FxSegment(_LogsTab.login, s.logsLogin),
-                ],
-              ),
+    return FxPageScaffold(
+      title: s.profileLogs,
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(
+              FxSpacing.lg,
+              FxSpacing.xs,
+              FxSpacing.lg,
+              FxSpacing.sm,
             ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(
-                FxSpacing.lg,
-                0,
-                FxSpacing.lg,
-                FxSpacing.sm,
-              ),
-              child: TextField(
-                controller: _searchCtrl,
-                onChanged: _onSearchChanged,
-                textInputAction: TextInputAction.search,
-                decoration: InputDecoration(
-                  hintText: s.logsSearchHint,
-                  prefixIcon: const Icon(Icons.search_rounded, size: 20),
-                  filled: true,
-                  fillColor: palette.surfaceMuted,
-                  isDense: true,
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: FxSpacing.md,
-                    vertical: FxSpacing.md,
-                  ),
-                  border: OutlineInputBorder(
-                    borderRadius: FxRadius.tileBorder,
-                    borderSide: BorderSide.none,
-                  ),
+            child: FxSegmented<_LogsTab>(
+              value: _tab,
+              onChanged: _switchTab,
+              segments: [
+                FxSegment(_LogsTab.operation, s.logsOperation),
+                FxSegment(_LogsTab.login, s.logsLogin),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(
+              FxSpacing.lg,
+              0,
+              FxSpacing.lg,
+              FxSpacing.sm,
+            ),
+            child: TextField(
+              controller: _searchCtrl,
+              onChanged: _onSearchChanged,
+              textInputAction: TextInputAction.search,
+              decoration: InputDecoration(
+                hintText: s.logsSearchHint,
+                prefixIcon: const Icon(Icons.search_rounded, size: 20),
+                filled: true,
+                fillColor: palette.surfaceMuted,
+                isDense: true,
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: FxSpacing.md,
+                  vertical: FxSpacing.md,
+                ),
+                border: OutlineInputBorder(
+                  borderRadius: FxRadius.tileBorder,
+                  borderSide: BorderSide.none,
                 ),
               ),
             ),
-            Expanded(child: _body(s)),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _header(String title) {
-    final localizations = MaterialLocalizations.of(context);
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(
-        FxSpacing.sm,
-        FxSpacing.sm,
-        FxSpacing.lg,
-        FxSpacing.sm,
-      ),
-      child: Row(
-        children: [
-          FxIconButton(
-            icon: Icons.chevron_left_rounded,
-            tooltip: localizations.backButtonTooltip,
-            onPressed: () => Navigator.of(context).maybePop(),
           ),
-          Expanded(child: Text(title, style: FxTypography.title)),
+          Expanded(child: _body(s)),
         ],
       ),
     );
@@ -279,7 +253,7 @@ class _LogsPageState extends State<LogsPage> {
                 item.timeLabel,
                 item.statusStr,
               ),
-              trailing: _statusDot(item.status),
+              trailing: _statusLabel(item.status, item.statusStr),
               showChevron: true,
               onTap: () => _showDetail(
                 title: item.title,
@@ -304,7 +278,7 @@ class _LogsPageState extends State<LogsPage> {
           return FxListItem(
             title: item.title,
             subtitle: _subtitle(item.msg, item.timeLabel, item.statusStr),
-            trailing: _statusDot(item.status),
+            trailing: _statusLabel(item.status, item.statusStr),
             showChevron: true,
             onTap: () => _showDetail(
               title: item.title,
@@ -335,17 +309,17 @@ class _LogsPageState extends State<LogsPage> {
     return parts.join(' · ');
   }
 
-  Widget _statusDot(int? status) {
+  Widget? _statusLabel(int? status, String? label) {
+    final text = label?.trim();
+    if (text == null || text.isEmpty) return null;
     final palette = FxPalette.of(context);
-    final color = switch (status) {
-      1 => palette.success,
-      0 => palette.danger,
-      _ => palette.info,
-    };
-    return Container(
-      width: 8,
-      height: 8,
-      decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+    final failed = status == 0;
+    return Text(
+      text,
+      style: FxTypography.caption.copyWith(
+        color: failed ? palette.danger : palette.textTertiary,
+        fontWeight: failed ? FontWeight.w500 : FontWeight.w400,
+      ),
     );
   }
 
@@ -360,7 +334,6 @@ class _LogsPageState extends State<LogsPage> {
     FxSheet.show<void>(
       context,
       title: title,
-      scrollable: true,
       child: Padding(
         padding: const EdgeInsets.fromLTRB(
           FxSpacing.xxl,

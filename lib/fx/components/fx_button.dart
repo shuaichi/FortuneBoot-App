@@ -21,6 +21,12 @@ class FxButton extends StatelessWidget {
   final bool hugContent;
   final bool loading;
 
+  /// 主次操作统一使用 48dp 高度；认证等单列页面可显式提升到 50dp。
+  final double height;
+
+  /// 加载态文案；为空时只展示进度指示器。
+  final String? loadingLabel;
+
   const FxButton({
     super.key,
     required this.label,
@@ -30,6 +36,8 @@ class FxButton extends StatelessWidget {
     this.expand = false,
     this.hugContent = false,
     this.loading = false,
+    this.height = 48,
+    this.loadingLabel,
   });
 
   const FxButton.tonal({
@@ -40,6 +48,8 @@ class FxButton extends StatelessWidget {
     this.expand = false,
     this.hugContent = false,
     this.loading = false,
+    this.height = 48,
+    this.loadingLabel,
   }) : variant = FxButtonVariant.tonal;
 
   const FxButton.text({
@@ -50,6 +60,8 @@ class FxButton extends StatelessWidget {
     this.expand = false,
     this.hugContent = false,
     this.loading = false,
+    this.height = 48,
+    this.loadingLabel,
   }) : variant = FxButtonVariant.text;
 
   const FxButton.critical({
@@ -60,6 +72,8 @@ class FxButton extends StatelessWidget {
     this.expand = false,
     this.hugContent = false,
     this.loading = false,
+    this.height = 48,
+    this.loadingLabel,
   }) : variant = FxButtonVariant.critical;
 
   @override
@@ -85,10 +99,27 @@ class FxButton extends StatelessWidget {
     final disabled = onPressed == null || loading;
 
     final Widget child = loading
-        ? SizedBox(
-            width: 18,
-            height: 18,
-            child: CircularProgressIndicator(strokeWidth: 2, color: fg),
+        ? Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(
+                width: 18,
+                height: 18,
+                child: CircularProgressIndicator(strokeWidth: 2, color: fg),
+              ),
+              if (loadingLabel != null) ...[
+                const SizedBox(width: 10),
+                Flexible(
+                  child: Text(
+                    loadingLabel!,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: FxTypography.bodyStrong.copyWith(color: fg),
+                  ),
+                ),
+              ],
+            ],
           )
         : Row(
             mainAxisSize: MainAxisSize.min,
@@ -129,7 +160,7 @@ class FxButton extends StatelessWidget {
                   onPressed!();
                 },
           child: Container(
-            height: 48,
+            height: height,
             alignment: hug ? null : Alignment.center,
             padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
             child: child,

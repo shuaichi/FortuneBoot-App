@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
@@ -12,12 +11,12 @@ import 'package:fortuneboot/core/session/bill_mutations.dart';
 import 'package:fortuneboot/core/session/session_cubit.dart';
 import 'package:fortuneboot/features/io/data/io_service.dart';
 import 'package:fortuneboot/fx/components/fx_button.dart';
-import 'package:fortuneboot/fx/components/fx_icon_button.dart';
 import 'package:fortuneboot/fx/components/fx_card.dart';
+import 'package:fortuneboot/fx/components/fx_icon_tile.dart';
 import 'package:fortuneboot/fx/components/fx_sheet.dart';
 import 'package:fortuneboot/fx/components/fx_state_view.dart';
+import 'package:fortuneboot/fx/layout/fx_page_scaffold.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
-import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
 import 'package:fortuneboot/generated/l10n.dart';
@@ -209,56 +208,21 @@ class _IoPageState extends State<IoPage> {
     final bookId = context.select<SessionCubit, int?>(
       (c) => c.state.currentBookId,
     );
-    return Scaffold(
-      backgroundColor: FxPalette.of(context).canvas,
-      body: SafeArea(
-        bottom: false,
-        child: Column(
-          children: [
-            _buildHeader(context),
-            Expanded(
-              child: bookId == null
-                  ? FxStateView.empty(message: S.of(context).ioSelectBookFirst)
-                  : _buildBody(),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildHeader(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(
-        FxSpacing.sm,
-        FxSpacing.sm,
-        FxSpacing.lg,
-        FxSpacing.sm,
-      ),
-      child: Row(
-        children: [
-          FxIconButton(
-            icon: Icons.chevron_left_rounded,
-            tooltip: MaterialLocalizations.of(context).backButtonTooltip,
-            onPressed: () => Navigator.of(context).maybePop(),
-          ),
-          Expanded(
-            child: Text(S.of(context).ioTitle, style: FxTypography.title),
-          ),
-        ],
-      ),
+    return FxPageScaffold(
+      title: S.of(context).ioTitle,
+      child: bookId == null
+          ? FxStateView.empty(message: S.of(context).ioSelectBookFirst)
+          : _buildBody(),
     );
   }
 
   Widget _buildBody() {
-    final palette = FxPalette.of(context);
-    final finance = FxFinanceColors.of(context);
     return ListView(
       padding: const EdgeInsets.all(FxSpacing.lg),
       children: [
         _actionCard(
           icon: Icons.file_download_outlined,
-          tint: finance.income,
+          primary: true,
           title: S.of(context).ioExportBillsTitle,
           subtitle: S.of(context).ioExportBillsSubtitle,
           buttonLabel: S.of(context).ioExport,
@@ -268,7 +232,6 @@ class _IoPageState extends State<IoPage> {
         const SizedBox(height: FxSpacing.md),
         _actionCard(
           icon: Icons.description_outlined,
-          tint: palette.info,
           title: S.of(context).ioDownloadTemplateTitle,
           subtitle: S.of(context).ioDownloadTemplateSubtitle,
           buttonLabel: S.of(context).ioDownloadTemplate,
@@ -278,7 +241,6 @@ class _IoPageState extends State<IoPage> {
         const SizedBox(height: FxSpacing.md),
         _actionCard(
           icon: Icons.file_upload_outlined,
-          tint: palette.primary,
           title: S.of(context).ioImportBillsTitle,
           subtitle: S.of(context).ioImportBillsSubtitle,
           buttonLabel: S.of(context).ioSelectFileImport,
@@ -291,13 +253,26 @@ class _IoPageState extends State<IoPage> {
 
   Widget _actionCard({
     required IconData icon,
-    required Color tint,
     required String title,
     required String subtitle,
     required String buttonLabel,
     required bool loading,
     required VoidCallback? onTap,
+    bool primary = false,
   }) {
+    final button = primary
+        ? FxButton(
+            label: buttonLabel,
+            expand: true,
+            loading: loading,
+            onPressed: loading ? null : onTap,
+          )
+        : FxButton.tonal(
+            label: buttonLabel,
+            expand: true,
+            loading: loading,
+            onPressed: loading ? null : onTap,
+          );
     return Semantics(
       button: true,
       enabled: onTap != null && !loading,
@@ -308,15 +283,7 @@ class _IoPageState extends State<IoPage> {
           children: [
             Row(
               children: [
-                Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: tint.withValues(alpha: 0.12),
-                    borderRadius: FxRadius.tileBorder,
-                  ),
-                  child: Icon(icon, color: tint),
-                ),
+                FxIconTile(icon: icon, size: 40, iconSize: 22),
                 const SizedBox(width: FxSpacing.md),
                 Expanded(
                   child: Column(
@@ -336,12 +303,7 @@ class _IoPageState extends State<IoPage> {
               ],
             ),
             const SizedBox(height: FxSpacing.md),
-            FxButton(
-              label: buttonLabel,
-              expand: true,
-              loading: loading,
-              onPressed: loading ? null : onTap,
-            ),
+            button,
           ],
         ),
       ),
@@ -382,7 +344,7 @@ class _ImportResultBody extends StatelessWidget {
                   context,
                   S.of(context).ioSuccess,
                   result.successCount,
-                  palette.success,
+                  palette.textPrimary,
                 ),
                 _stat(
                   context,

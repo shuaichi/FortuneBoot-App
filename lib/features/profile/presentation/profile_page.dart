@@ -26,7 +26,9 @@ import 'package:fortuneboot/features/profile/presentation/widgets/iap_donation_s
 import 'package:fortuneboot/features/profile/presentation/widgets/profile_avatar.dart';
 import 'package:fortuneboot/fx/components/fx_button.dart';
 import 'package:fortuneboot/fx/components/fx_card.dart';
+import 'package:fortuneboot/fx/components/fx_icon_tile.dart';
 import 'package:fortuneboot/fx/components/fx_list_item.dart';
+import 'package:fortuneboot/fx/components/fx_list_section.dart';
 import 'package:fortuneboot/fx/components/fx_sheet.dart';
 import 'package:fortuneboot/fx/components/fx_state_view.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
@@ -179,6 +181,13 @@ class _ProfileView extends StatelessWidget {
     final displayName = profile.nickname?.isNotEmpty == true
         ? profile.nickname!
         : (profile.username ?? S.of(context).profileNotLoggedIn);
+    final email = profile.email?.trim();
+    final username = profile.username?.trim();
+    final secondary = email?.isNotEmpty == true
+        ? email!
+        : username?.isNotEmpty == true && username != displayName
+        ? username!
+        : S.of(context).profileViewProfile;
     final avatar = profile.avatar;
     return FxCard(
       onTap: () => _openEdit(context, profile),
@@ -199,31 +208,21 @@ class _ProfileView extends StatelessWidget {
               children: [
                 Text(
                   displayName,
-                  style: FxTypography.titleLarge.copyWith(
+                  style: FxTypography.title.copyWith(
                     color: palette.textPrimary,
+                    fontWeight: FontWeight.w600,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: FxSpacing.xs),
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Flexible(
-                      child: Text(
-                        S.of(context).profileViewProfile,
-                        style: FxTypography.body.copyWith(
-                          color: palette.textSecondary,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    Icon(
-                      Icons.chevron_right_rounded,
-                      color: palette.textTertiary,
-                    ),
-                  ],
+                Text(
+                  secondary,
+                  style: FxTypography.caption.copyWith(
+                    color: palette.textSecondary,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ],
             ),
@@ -250,30 +249,26 @@ class _ProfileView extends StatelessWidget {
   Widget _bookGroupSection(BuildContext context) {
     return BlocBuilder<SessionCubit, SessionState>(
       builder: (context, session) {
-        final palette = FxPalette.of(context);
-        final finance = FxFinanceColors.of(context);
         final groupName =
             session.currentGroup?.groupName ?? S.of(context).profileNotSelected;
         final bookName =
             session.currentBook?.bookName ?? S.of(context).profileNotSelected;
         return _sectionCard(context, S.of(context).profileBookGroup, [
           FxListItem(
-            leading: _tileIcon(Icons.swap_horiz_rounded, palette.primary),
+            leading: _tileIcon(Icons.swap_horiz_rounded),
             title: S.of(context).profileCurrentGroupBook,
             subtitle: '$groupName · $bookName',
             showChevron: true,
             onTap: () => _openSwitcher(context),
           ),
-          _divider(context),
           FxListItem(
-            leading: _tileIcon(Icons.folder_copy_rounded, palette.info),
+            leading: _tileIcon(Icons.folder_copy_rounded),
             title: S.of(context).booksManageTitle,
             showChevron: true,
             onTap: () => AppRouter.push<void>(context, Routes.groups),
           ),
-          _divider(context),
           FxListItem(
-            leading: _tileIcon(Icons.group_rounded, finance.income),
+            leading: _tileIcon(Icons.group_rounded),
             title: S.of(context).profileMemberManageGroup,
             showChevron: true,
             onTap: () => AppRouter.push<void>(context, Routes.groupUsers),
@@ -290,45 +285,34 @@ class _ProfileView extends StatelessWidget {
   // ---------------- 记账管理 ----------------
 
   Widget _billingSection(BuildContext context) {
-    final palette = FxPalette.of(context);
-    final finance = FxFinanceColors.of(context);
     return _sectionCard(context, S.of(context).profileBillingManage, [
       _navItem(
         context,
         Icons.category_rounded,
-        finance.expense,
         S.of(context).profileCategoryManage,
         Routes.categories,
       ),
-      _divider(context),
       _navItem(
         context,
         Icons.tag_rounded,
-        palette.info,
         S.of(context).profileTagManage,
         Routes.tags,
       ),
-      _divider(context),
       _navItem(
         context,
         Icons.storefront_rounded,
-        finance.adjust,
         S.of(context).profilePayeeManage,
         Routes.payees,
       ),
-      _divider(context),
       _navItem(
         context,
         Icons.people_alt_rounded,
-        finance.income,
         S.of(context).profileMemberManageBill,
         Routes.members,
       ),
-      _divider(context),
       _navItem(
         context,
         Icons.credit_card_rounded,
-        palette.primary,
         S.of(context).profileAccountManage,
         Routes.accounts,
       ),
@@ -338,45 +322,34 @@ class _ProfileView extends StatelessWidget {
   // ---------------- 工具箱 ----------------
 
   Widget _toolboxSection(BuildContext context) {
-    final palette = FxPalette.of(context);
-    final finance = FxFinanceColors.of(context);
     return _sectionCard(context, S.of(context).profileToolbox, [
       _navItem(
         context,
         Icons.inventory_2_rounded,
-        finance.transfer,
         S.of(context).profileGoodsManage,
         Routes.goods,
       ),
-      _divider(context),
       _navItem(
         context,
         Icons.description_rounded,
-        palette.info,
         S.of(context).profileOrdersManage,
         Routes.orders,
       ),
-      _divider(context),
       _navItem(
         context,
         Icons.repeat_rounded,
-        finance.income,
         S.of(context).profileRecurringManage,
         Routes.recurring,
       ),
-      _divider(context),
       _navItem(
         context,
         Icons.import_export_rounded,
-        finance.adjust,
         S.of(context).profileImportExport,
         Routes.io,
       ),
-      _divider(context),
       _navItem(
         context,
         Icons.history_rounded,
-        palette.primary,
         S.of(context).profileLogs,
         Routes.logs,
       ),
@@ -389,7 +362,6 @@ class _ProfileView extends StatelessWidget {
     return BlocBuilder<PreferencesCubit, PreferencesState>(
       builder: (context, preferences) {
         final palette = FxPalette.of(context);
-        final finance = FxFinanceColors.of(context);
         final startDay = preferences.billing.monthStartDay;
         final localeCode = preferences.locale.code;
         final langLabel = switch (localeCode) {
@@ -408,7 +380,7 @@ class _ProfileView extends StatelessWidget {
             : S.of(context).profileScreenCaptureAllowedSubtitle;
         return _sectionCard(context, S.of(context).profilePreferences, [
           FxListItem(
-            leading: _tileIcon(Icons.language_rounded, palette.primary),
+            leading: _tileIcon(Icons.language_rounded),
             title: S.of(context).profileLanguage,
             trailing: Text(
               langLabel,
@@ -419,9 +391,8 @@ class _ProfileView extends StatelessWidget {
             showChevron: true,
             onTap: () => _openLanguage(context),
           ),
-          _divider(context),
           FxListItem(
-            leading: _tileIcon(Icons.dark_mode_rounded, finance.transfer),
+            leading: _tileIcon(Icons.dark_mode_rounded),
             title: S.of(context).profileThemeMode,
             trailing: Text(
               themeLabel,
@@ -432,9 +403,8 @@ class _ProfileView extends StatelessWidget {
             showChevron: true,
             onTap: () => _openThemeMode(context),
           ),
-          _divider(context),
           FxListItem(
-            leading: _tileIcon(Icons.calendar_month_rounded, palette.info),
+            leading: _tileIcon(Icons.calendar_month_rounded),
             title: S.of(context).profileMonthStartDay,
             trailing: Text(
               S.of(context).profileMonthStartDayValue(startDay),
@@ -445,9 +415,8 @@ class _ProfileView extends StatelessWidget {
             showChevron: true,
             onTap: () => _openMonthStartDay(context, startDay),
           ),
-          _divider(context),
           FxListItem(
-            leading: _tileIcon(Icons.content_copy_rounded, palette.primary),
+            leading: _tileIcon(Icons.content_copy_rounded),
             title: S.of(context).profileCopyUsesCurrentTime,
             subtitle: S.of(context).profileCopyUsesCurrentTimeSubtitle,
             trailing: Switch.adaptive(
@@ -463,9 +432,8 @@ class _ProfileView extends StatelessWidget {
                     },
             ),
           ),
-          _divider(context),
           FxListItem(
-            leading: _tileIcon(Icons.currency_exchange_rounded, finance.income),
+            leading: _tileIcon(Icons.currency_exchange_rounded),
             title: S.of(context).profileCurrencyRefresh,
             trailing: Text(
               S.of(context).profileRefresh,
@@ -473,9 +441,8 @@ class _ProfileView extends StatelessWidget {
             ),
             onTap: () => _refreshCurrency(context),
           ),
-          _divider(context),
           FxListItem(
-            leading: _tileIcon(Icons.lock_rounded, palette.primary),
+            leading: _tileIcon(Icons.lock_rounded),
             title: S.of(context).profileAppLock,
             subtitle: S.of(context).profileAppLockSubtitle,
             showChevron: true,
@@ -486,9 +453,8 @@ class _ProfileView extends StatelessWidget {
               ),
             ),
           ),
-          _divider(context),
           FxListItem(
-            leading: _tileIcon(Icons.screenshot_monitor_rounded, palette.info),
+            leading: _tileIcon(Icons.screenshot_monitor_rounded),
             title: S.of(context).profileScreenCaptureAllowed,
             subtitle: screenCaptureSubtitle,
             trailing: Switch.adaptive(
@@ -507,9 +473,8 @@ class _ProfileView extends StatelessWidget {
                     },
             ),
           ),
-          _divider(context),
           FxListItem(
-            leading: _tileIcon(Icons.palette_rounded, finance.expense),
+            leading: _tileIcon(Icons.palette_rounded),
             title: S.of(context).profileFinanceColors,
             subtitle: S.of(context).profileFinanceColorsSubtitle,
             showChevron: true,
@@ -524,7 +489,6 @@ class _ProfileView extends StatelessWidget {
     final cubit = context.read<PreferencesCubit>();
     final current = cubit.state.theme.mode;
     final palette = FxPalette.of(context);
-    final finance = FxFinanceColors.of(context);
     await FxSheet.show<void>(
       context,
       title: S.of(context).profileThemeMode,
@@ -549,7 +513,7 @@ class _ProfileView extends StatelessWidget {
             ),
           ])
             FxListItem(
-              leading: _tileIcon(entry.$3, finance.transfer),
+              leading: _tileIcon(entry.$3),
               title: entry.$2,
               trailing: current == entry.$1
                   ? Icon(Icons.check_rounded, color: palette.primary)
@@ -591,7 +555,7 @@ class _ProfileView extends StatelessWidget {
         itemBuilder: (context, index) {
           final day = index + 1;
           return FxListItem(
-            leading: _tileIcon(Icons.event_rounded, palette.info),
+            leading: _tileIcon(Icons.event_rounded),
             title: S.of(context).profileMonthStartDayValue(day),
             subtitle: day > 28 ? S.of(context).profileMonthStartDayHint : null,
             trailing: currentDay == day
@@ -634,7 +598,7 @@ class _ProfileView extends StatelessWidget {
             ('en', 'English', Icons.translate_rounded),
           ])
             FxListItem(
-              leading: _tileIcon(entry.$3, palette.primary),
+              leading: _tileIcon(entry.$3),
               title: entry.$2,
               trailing: current == entry.$1
                   ? Icon(Icons.check_rounded, color: palette.primary)
@@ -672,11 +636,10 @@ class _ProfileView extends StatelessWidget {
 
   Widget _aboutSection(BuildContext context, AppAbout about) {
     final palette = FxPalette.of(context);
-    final finance = FxFinanceColors.of(context);
     final version = about.appVersion;
     return _sectionCard(context, S.of(context).profileAbout, [
       FxListItem(
-        leading: _tileIcon(Icons.info_outline_rounded, palette.primary),
+        leading: _tileIcon(Icons.info_outline_rounded),
         title: S.of(context).profileAboutApp,
         trailing: Text(
           version,
@@ -685,17 +648,15 @@ class _ProfileView extends StatelessWidget {
         showChevron: true,
         onTap: () => _openAbout(context, about),
       ),
-      _divider(context),
       FxListItem(
-        leading: _tileIcon(Icons.help_outline_rounded, palette.info),
+        leading: _tileIcon(Icons.help_outline_rounded),
         title: S.of(context).profileHelp,
         showChevron: true,
         onTap: () => _openHelp(context),
       ),
       if (_showDonationEntry) ...[
-        _divider(context),
         FxListItem(
-          leading: _tileIcon(Icons.favorite_border_rounded, finance.expense),
+          leading: _tileIcon(Icons.favorite_border_rounded),
           title: S.of(context).profileDonate,
           showChevron: true,
           onTap: () => _openDonate(context),
@@ -764,48 +725,36 @@ class _ProfileView extends StatelessWidget {
 
   Future<void> _openHelp(BuildContext context) async {
     final palette = FxPalette.of(context);
-    final finance = FxFinanceColors.of(context);
     final s = S.of(context);
-    final sections = <(IconData, Color, String, String)>[
+    final sections = <(IconData, String, String)>[
       (
         Icons.add_circle_rounded,
-        palette.primary,
         s.profileHelpQuickTitle,
         s.profileHelpQuickBody,
       ),
       (
         Icons.receipt_long_rounded,
-        finance.expense,
         s.profileHelpBillsTitle,
         s.profileHelpBillsBody,
       ),
-      (
-        Icons.menu_book_rounded,
-        finance.transfer,
-        s.profileHelpBookTitle,
-        s.profileHelpBookBody,
-      ),
+      (Icons.menu_book_rounded, s.profileHelpBookTitle, s.profileHelpBookBody),
       (
         Icons.category_rounded,
-        palette.info,
         s.profileHelpManageTitle,
         s.profileHelpManageBody,
       ),
       (
         Icons.autorenew_rounded,
-        finance.income,
         s.profileHelpRecurringTitle,
         s.profileHelpRecurringBody,
       ),
       (
         Icons.visibility_off_rounded,
-        finance.adjust,
         s.profileHelpPrivacyTitle,
         s.profileHelpPrivacyBody,
       ),
       (
         Icons.support_agent_rounded,
-        palette.textSecondary,
         s.profileHelpContactTitle,
         s.profileHelpContactBody,
       ),
@@ -829,7 +778,7 @@ class _ProfileView extends StatelessWidget {
           ),
           const SizedBox(height: FxSpacing.lg),
           for (final sec in sections) ...[
-            _helpSection(context, sec.$1, sec.$2, sec.$3, sec.$4),
+            _helpSection(context, sec.$1, sec.$2, sec.$3),
             const SizedBox(height: FxSpacing.md),
           ],
         ],
@@ -840,7 +789,6 @@ class _ProfileView extends StatelessWidget {
   Widget _helpSection(
     BuildContext context,
     IconData icon,
-    Color tint,
     String title,
     String body,
   ) {
@@ -851,7 +799,7 @@ class _ProfileView extends StatelessWidget {
         children: [
           Row(
             children: [
-              _tileIcon(icon, tint),
+              _tileIcon(icon),
               const SizedBox(width: FxSpacing.md),
               Expanded(child: Text(title, style: FxTypography.bodyStrong)),
             ],
@@ -883,7 +831,6 @@ class _ProfileView extends StatelessWidget {
       return;
     }
 
-    final finance = FxFinanceColors.of(context);
     final palette = FxPalette.of(context);
     await FxSheet.show<void>(
       context,
@@ -900,7 +847,11 @@ class _ProfileView extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.favorite_rounded, size: 44, color: finance.expense),
+            Icon(
+              Icons.favorite_rounded,
+              size: 44,
+              color: palette.textSecondary,
+            ),
             const SizedBox(height: FxSpacing.sm),
             Text(
               S.of(context).profileDonateContent,
@@ -918,7 +869,7 @@ class _ProfileView extends StatelessWidget {
                     semanticsLabel:
                         '${S.of(context).profileDonateWechat} '
                         '${S.of(context).profileDonateScanHint}',
-                    tint: finance.expense,
+                    tint: palette.textSecondary,
                     icon: Icons.wechat_rounded,
                     onSave: ImageSaveService.saveAssetImage,
                   ),
@@ -932,7 +883,7 @@ class _ProfileView extends StatelessWidget {
                     semanticsLabel:
                         '${S.of(context).profileDonateAlipay} '
                         '${S.of(context).profileDonateScanHint}',
-                    tint: palette.info,
+                    tint: palette.textSecondary,
                     icon: Icons.account_balance_wallet_rounded,
                     onSave: ImageSaveService.saveAssetImage,
                   ),
@@ -1038,10 +989,7 @@ class _ProfileView extends StatelessWidget {
             ),
           ),
         ),
-        FxCard(
-          padding: const EdgeInsets.symmetric(vertical: FxSpacing.xs),
-          child: Column(children: children),
-        ),
+        FxListSection(dividerIndent: 64, children: children),
       ],
     );
   }
@@ -1049,39 +997,20 @@ class _ProfileView extends StatelessWidget {
   Widget _navItem(
     BuildContext context,
     IconData icon,
-    Color tint,
     String title,
     String route,
   ) {
     return FxListItem(
-      leading: _tileIcon(icon, tint),
+      leading: _tileIcon(icon),
       title: title,
       showChevron: true,
       onTap: () => AppRouter.push<void>(context, route),
     );
   }
 
-  Widget _tileIcon(IconData icon, Color tint) {
-    return Container(
-      width: 36,
-      height: 36,
-      decoration: BoxDecoration(
-        color: tint.withValues(alpha: 0.12),
-        borderRadius: FxRadius.tileBorder,
-      ),
-      alignment: Alignment.center,
-      child: Icon(icon, size: 20, color: tint),
-    );
+  Widget _tileIcon(IconData icon) {
+    return FxIconTile(icon: icon);
   }
-
-  Widget _divider(BuildContext context) => Padding(
-    padding: const EdgeInsets.only(left: 64),
-    child: Divider(
-      height: 1,
-      thickness: 0.5,
-      color: FxPalette.of(context).border,
-    ),
-  );
 }
 
 /// 内联 loading（用于卡片内小高度占位）。

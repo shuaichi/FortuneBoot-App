@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:ui'; // 引入以使用 FontFeature
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -16,9 +15,12 @@ import 'package:fortuneboot/core/navigation/routes.dart';
 import 'package:fortuneboot/login/model/users.dart';
 import 'package:fortuneboot/login/server/server_history_store.dart';
 import 'package:fortuneboot/login/view/auth_page.dart';
-import 'package:fortuneboot/login/view/auth_scaffold.dart';
 import 'package:fortuneboot/fx/components/fx_button.dart';
+import 'package:fortuneboot/fx/components/fx_icon_tile.dart';
+import 'package:fortuneboot/fx/components/fx_list_item.dart';
 import 'package:fortuneboot/fx/components/fx_pressable.dart';
+import 'package:fortuneboot/fx/components/fx_sheet.dart';
+import 'package:fortuneboot/fx/components/fx_text_field.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
@@ -134,12 +136,6 @@ class LoginScreen extends StatelessWidget {
     }
   }
 
-  void _selectRole(SignupData data, Map<String, dynamic> role) async {
-    debugPrint("选择角色: $role");
-    var str = await _signupUserWithRole(data, role);
-    appNavigatorKey.currentState?.pop(str);
-  }
-
   Future<String?> _signupUserWithRole(
     SignupData data,
     Map<String, dynamic> role,
@@ -191,31 +187,27 @@ class LoginScreen extends StatelessWidget {
         if (roles.length == 1) {
           return _signupUserWithRole(data, roles.first);
         } else if (roles.length > 1) {
-          final List<SimpleDialogOption> simpleDialogs = roles.map((role) {
-            return SimpleDialogOption(
-              onPressed: () {
-                HapticFeedback.selectionClick();
-                _selectRole(data, role);
-              },
-              child: Text(role['roleName'] as String? ?? ''),
-            );
-          }).toList();
-          return showDialog<String?>(
-            context: appNavigatorKey.currentContext!,
-            builder: (context) => SimpleDialog(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
-              ),
-              title: const Text(
-                "选择角色",
-                style: TextStyle(
-                  fontWeight: FontWeight.w600,
-                  color: Color(0xFF1C1C1E),
-                ),
-              ),
-              children: simpleDialogs,
+          final selected = await FxSheet.show<String>(
+            appNavigatorKey.currentContext!,
+            title: S.current.groupUsersRoleRequired,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                for (final role in roles)
+                  FxListItem(
+                    leading: const FxIconTile(icon: Icons.badge_outlined),
+                    title: role['roleName'] as String? ?? '',
+                    showChevron: true,
+                    onTap: () async {
+                      HapticFeedback.selectionClick();
+                      final error = await _signupUserWithRole(data, role);
+                      appNavigatorKey.currentState?.pop(error);
+                    },
+                  ),
+              ],
             ),
           );
+          return selected ?? S.current.commonCancel;
         } else {
           return S.current.commonSystemBusy;
         }
@@ -391,7 +383,7 @@ class LoginScreen extends StatelessWidget {
   }
 }
 
-/// 展示与认证页面同主题的验证码对话框。
+/// 展示与认证页面同主题的验证码弹层。
 Future<Map<String, dynamic>?> showCaptchaDialog(
   Map<String, dynamic> captchaDic,
 ) async {
@@ -401,215 +393,254 @@ Future<Map<String, dynamic>?> showCaptchaDialog(
   }
 
   HapticFeedback.selectionClick();
-  final controller = TextEditingController();
-  final focusNode = FocusNode();
-  String captchaCode = captchaDic['captchaCodeImg'] as String;
-  var captchaData = captchaDic;
-  final loginService = LoginService();
-  bool isLoading = false;
-  bool showRequiredError = false;
-
-  final result = await showDialog<Map<String, dynamic>>(
+  final palette = FxPalette.of(rootContext);
+  return showModalBottomSheet<Map<String, dynamic>>(
     context: rootContext,
-    barrierDismissible: false,
-    builder: (context) => StatefulBuilder(
-      builder: (context, setState) {
-        final s = S.of(context);
-        final palette = FxPalette.of(context);
+    isScrollControlled: true,
+    isDismissible: false,
+    enableDrag: false,
+    useSafeArea: true,
+    backgroundColor: palette.surface,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: FxRadius.sheetRadius),
+    ),
+    builder: (_) => _CaptchaSheet(initialData: captchaDic),
+  );
+}
 
-        Future<void> refreshCaptcha() async {
-          if (isLoading) {
-            return;
-          }
-          HapticFeedback.lightImpact();
-          setState(() => isLoading = true);
-          try {
-            final response = await loginService.captchaImage();
-            final data = Map<String, dynamic>.from(response.data as Map);
-            setState(() {
-              captchaCode = data['captchaCodeImg'] as String;
-              captchaData = data;
-            });
-          } finally {
-            setState(() => isLoading = false);
-          }
-        }
+class _CaptchaSheet extends StatefulWidget {
+  const _CaptchaSheet({required this.initialData});
 
-        return Dialog(
-          backgroundColor: palette.surface,
-          surfaceTintColor: Colors.transparent,
-          elevation: 0,
-          insetPadding: const EdgeInsets.symmetric(horizontal: 24),
-          shape: RoundedRectangleBorder(borderRadius: FxRadius.cardBorder),
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 400),
-            child: Padding(
-              padding: const EdgeInsets.all(FxSpacing.xxl),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Container(
-                    width: 48,
-                    height: 48,
-                    decoration: BoxDecoration(
-                      color: palette.primaryContainer,
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(
-                      Icons.shield_outlined,
-                      color: palette.primary,
-                      size: 24,
+  final Map<String, dynamic> initialData;
+
+  @override
+  State<_CaptchaSheet> createState() => _CaptchaSheetState();
+}
+
+class _CaptchaSheetState extends State<_CaptchaSheet> {
+  final LoginService _service = LoginService();
+  final TextEditingController _controller = TextEditingController();
+  final FocusNode _focusNode = FocusNode();
+
+  late String _captchaCode;
+  late Map<String, dynamic> _captchaData;
+  bool _refreshing = false;
+  String? _inputError;
+  String? _refreshError;
+
+  @override
+  void initState() {
+    super.initState();
+    _captchaData = widget.initialData;
+    _captchaCode = widget.initialData['captchaCodeImg'] as String? ?? '';
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  Future<void> _refresh() async {
+    if (_refreshing) return;
+    HapticFeedback.lightImpact();
+    setState(() {
+      _refreshing = true;
+      _refreshError = null;
+    });
+    try {
+      final response = await _service.captchaImage();
+      if (!mounted) return;
+      final data = response.data is Map
+          ? Map<String, dynamic>.from(response.data as Map)
+          : <String, dynamic>{};
+      final code = data['captchaCodeImg'];
+      if (code is! String || code.isEmpty) {
+        throw StateError('captcha image missing');
+      }
+      setState(() {
+        _captchaCode = code;
+        _captchaData = data;
+      });
+    } on Object {
+      if (!mounted) return;
+      setState(() => _refreshError = S.of(context).commonSystemBusy);
+    } finally {
+      if (mounted) {
+        setState(() => _refreshing = false);
+      }
+    }
+  }
+
+  void _submit() {
+    final value = _controller.text.trim();
+    if (value.isEmpty) {
+      HapticFeedback.heavyImpact();
+      setState(() => _inputError = S.of(context).captchaRequired);
+      _focusNode.requestFocus();
+      return;
+    }
+    HapticFeedback.mediumImpact();
+    Navigator.of(context).pop({
+      'captchaUserInput': value,
+      'captchaCodeKey': _captchaData['captchaCodeKey'],
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final s = S.of(context);
+    final palette = FxPalette.of(context);
+    return FxSheet(
+      title: s.captchaTitle,
+      scrollable: true,
+      maxHeightFactor: 0.9,
+      footer: _footer(context, s),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(
+          FxSpacing.lg,
+          0,
+          FxSpacing.lg,
+          FxSpacing.lg,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              s.captchaSubtitle,
+              style: FxTypography.body.copyWith(color: palette.textSecondary),
+            ),
+            const SizedBox(height: FxSpacing.xl),
+            Row(
+              children: [
+                Expanded(
+                  child: Semantics(
+                    button: true,
+                    label: s.captchaRefresh,
+                    child: InkWell(
+                      onTap: _refreshing ? null : _refresh,
+                      borderRadius: FxRadius.tileBorder,
+                      child: Container(
+                        height: 64,
+                        clipBehavior: Clip.antiAlias,
+                        decoration: BoxDecoration(
+                          color: palette.surfaceMuted,
+                          borderRadius: FxRadius.tileBorder,
+                          border: Border.all(color: palette.border),
+                        ),
+                        child: Base64Image(
+                          key: ValueKey<String>(_captchaCode),
+                          base64String: _captchaCode,
+                          fit: BoxFit.contain,
+                        ),
+                      ),
                     ),
                   ),
-                  const SizedBox(height: FxSpacing.lg),
-                  Text(
-                    s.captchaTitle,
-                    style: FxTypography.titleLarge.copyWith(
-                      color: palette.textPrimary,
-                    ),
-                  ),
-                  const SizedBox(height: FxSpacing.sm),
-                  Text(
-                    s.captchaSubtitle,
-                    textAlign: TextAlign.center,
-                    style: FxTypography.body.copyWith(
-                      color: palette.textSecondary,
-                    ),
-                  ),
-                  const SizedBox(height: FxSpacing.xxl),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: FxPressable(
-                          semanticLabel: s.captchaRefresh,
-                          onPressed: isLoading ? null : refreshCaptcha,
-                          padding: EdgeInsets.zero,
-                          child: Container(
-                            height: 56,
-                            clipBehavior: Clip.antiAlias,
-                            decoration: BoxDecoration(
-                              color: palette.surfaceMuted,
-                              borderRadius: FxRadius.tileBorder,
-                              border: Border.all(color: palette.border),
+                ),
+                const SizedBox(width: FxSpacing.sm),
+                FxPressable(
+                  semanticLabel: s.captchaRefresh,
+                  onPressed: _refreshing ? null : _refresh,
+                  padding: EdgeInsets.zero,
+                  borderRadius: FxRadius.pillBorder,
+                  child: SizedBox(
+                    width: 44,
+                    height: 44,
+                    child: _refreshing
+                        ? Center(
+                            child: SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: palette.primary,
+                              ),
                             ),
-                            child: Base64Image(
-                              key: ValueKey<String>(captchaCode),
-                              base64String: captchaCode,
-                              fit: BoxFit.contain,
-                            ),
+                          )
+                        : Icon(
+                            Icons.refresh_rounded,
+                            color: palette.textSecondary,
                           ),
-                        ),
-                      ),
-                      const SizedBox(width: FxSpacing.sm),
-                      FxPressable(
-                        semanticLabel: s.captchaRefresh,
-                        onPressed: isLoading ? null : refreshCaptcha,
-                        padding: EdgeInsets.zero,
-                        borderRadius: FxRadius.pillBorder,
-                        child: SizedBox(
-                          width: 44,
-                          height: 44,
-                          child: isLoading
-                              ? Center(
-                                  child: SizedBox(
-                                    width: 20,
-                                    height: 20,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                      color: palette.primary,
-                                    ),
-                                  ),
-                                )
-                              : Icon(
-                                  Icons.refresh_rounded,
-                                  color: palette.primary,
-                                ),
-                        ),
-                      ),
-                    ],
                   ),
-                  const SizedBox(height: FxSpacing.lg),
-                  TextFormField(
-                    controller: controller,
-                    focusNode: focusNode,
-                    autofocus: true,
-                    maxLength: 4,
-                    keyboardType: TextInputType.number,
-                    cursorColor: palette.primary,
-                    textAlign: TextAlign.center,
-                    style: FxTypography.titleLarge.copyWith(
-                      color: palette.textPrimary,
-                      letterSpacing: 12,
-                      fontFeatures: const [FontFeature.tabularFigures()],
-                    ),
-                    onChanged: (_) {
-                      if (showRequiredError) {
-                        setState(() => showRequiredError = false);
-                      }
-                    },
-                    onFieldSubmitted: (_) {
-                      if (controller.text.isNotEmpty) {
-                        Navigator.pop(context, {
-                          'captchaUserInput': controller.text,
-                          'captchaCodeKey': captchaData['captchaCodeKey'],
-                        });
-                      }
-                    },
-                    decoration:
-                        authInputDecoration(
-                          context,
-                          label: s.captchaTitle,
-                          hint: '••••',
-                        ).copyWith(
-                          counterText: '',
-                          errorText: showRequiredError
-                              ? s.captchaRequired
-                              : null,
-                        ),
-                  ),
-                  const SizedBox(height: FxSpacing.xxl),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: FxButton.tonal(
-                          label: s.commonCancel,
-                          expand: true,
-                          onPressed: isLoading
-                              ? null
-                              : () => Navigator.pop(context),
-                        ),
-                      ),
-                      const SizedBox(width: FxSpacing.md),
-                      Expanded(
-                        child: FxButton(
-                          label: s.confirm,
-                          expand: true,
-                          onPressed: () {
-                            if (controller.text.isEmpty) {
-                              HapticFeedback.heavyImpact();
-                              setState(() => showRequiredError = true);
-                              return;
-                            }
-                            HapticFeedback.mediumImpact();
-                            Navigator.pop(context, {
-                              'captchaUserInput': controller.text,
-                              'captchaCodeKey': captchaData['captchaCodeKey'],
-                            });
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
+                ),
+              ],
+            ),
+            if (_refreshError case final message?) ...[
+              const SizedBox(height: FxSpacing.sm),
+              Semantics(
+                liveRegion: true,
+                child: Text(
+                  message,
+                  style: FxTypography.caption.copyWith(color: palette.danger),
+                ),
+              ),
+            ],
+            const SizedBox(height: FxSpacing.lg),
+            FxTextField(
+              label: s.captchaTitle,
+              controller: _controller,
+              focusNode: _focusNode,
+              hintText: '••••',
+              errorText: _inputError,
+              keyboardType: TextInputType.number,
+              textInputAction: TextInputAction.done,
+              maxLength: 4,
+              autofocus: true,
+              textAlign: TextAlign.center,
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+              style: FxTypography.titleLarge.copyWith(
+                color: palette.textPrimary,
+                letterSpacing: 12,
+                fontFeatures: const [FontFeature.tabularFigures()],
+              ),
+              onChanged: (_) {
+                if (_inputError != null) {
+                  setState(() => _inputError = null);
+                }
+              },
+              onSubmitted: (_) => _submit(),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _footer(BuildContext context, S s) {
+    final palette = FxPalette.of(context);
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: palette.surface,
+        border: Border(top: BorderSide(color: palette.border)),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(
+          FxSpacing.lg,
+          FxSpacing.md,
+          FxSpacing.lg,
+          FxSpacing.lg,
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: FxButton.tonal(
+                label: s.commonCancel,
+                expand: true,
+                onPressed: () => Navigator.of(context).pop(),
               ),
             ),
-          ),
-        );
-      },
-    ),
-  );
-
-  controller.dispose();
-  focusNode.dispose();
-  return result;
+            const SizedBox(width: FxSpacing.md),
+            Expanded(
+              child: FxButton(
+                label: s.confirm,
+                expand: true,
+                onPressed: _submit,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }

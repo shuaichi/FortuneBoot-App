@@ -9,6 +9,7 @@ import 'package:fortuneboot/fx/components/fx_card.dart';
 import 'package:fortuneboot/fx/components/fx_chip.dart';
 import 'package:fortuneboot/fx/components/fx_money_text.dart';
 import 'package:fortuneboot/fx/components/fx_state_view.dart';
+import 'package:fortuneboot/fx/layout/fx_page_scaffold.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
@@ -115,14 +116,9 @@ class _OrderReconciliationPageState extends State<OrderReconciliationPage> {
 
   @override
   Widget build(BuildContext context) {
-    final palette = FxPalette.of(context);
-    return Scaffold(
-      backgroundColor: palette.canvas,
-      appBar: AppBar(
-        title: Text(S.of(context).ordersReconciliationTitle),
-        backgroundColor: palette.canvas,
-      ),
-      body: SafeArea(child: _buildBody(context)),
+    return FxPageScaffold(
+      title: S.of(context).ordersReconciliationTitle,
+      child: _buildBody(context),
     );
   }
 

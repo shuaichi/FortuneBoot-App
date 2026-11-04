@@ -12,9 +12,12 @@ import 'package:fortuneboot/features/profile/presentation/widgets/account_deleti
 import 'package:fortuneboot/features/profile/presentation/widgets/profile_avatar.dart';
 import 'package:fortuneboot/fx/components/fx_button.dart';
 import 'package:fortuneboot/fx/components/fx_card.dart';
-import 'package:fortuneboot/fx/components/fx_icon_button.dart';
+import 'package:fortuneboot/fx/components/fx_icon_tile.dart';
 import 'package:fortuneboot/fx/components/fx_list_item.dart';
+import 'package:fortuneboot/fx/components/fx_list_section.dart';
 import 'package:fortuneboot/fx/components/fx_sheet.dart';
+import 'package:fortuneboot/fx/components/fx_text_field.dart';
+import 'package:fortuneboot/fx/layout/fx_page_scaffold.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
@@ -177,29 +180,16 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
 
   @override
   Widget build(BuildContext context) {
-    final palette = FxPalette.of(context);
     final s = S.of(context);
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, result) {
         if (!didPop) Navigator.of(context).pop(_dirty);
       },
-      child: Scaffold(
-        backgroundColor: palette.canvas,
-        appBar: AppBar(
-          backgroundColor: palette.canvas,
-          surfaceTintColor: Colors.transparent,
-          elevation: 0,
-          centerTitle: true,
-          title: Text(s.profileDetailsTitle, style: FxTypography.title),
-          leading: FxIconButton(
-            icon: Icons.arrow_back_rounded,
-            tooltip: s.profileBack,
-            color: palette.textPrimary,
-            onPressed: () => Navigator.of(context).pop(_dirty),
-          ),
-        ),
-        body: ListView(
+      child: FxPageScaffold(
+        title: s.profileDetailsTitle,
+        onBack: () => Navigator.of(context).pop(_dirty),
+        child: ListView(
           padding: const EdgeInsets.fromLTRB(
             FxSpacing.lg,
             FxSpacing.md,
@@ -213,23 +203,18 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
               _informationItem(
                 context,
                 icon: Icons.wc_rounded,
-                color: palette.warning,
                 title: s.profileSex,
                 value: _sexLabel(s),
               ),
-              _divider(context),
               _informationItem(
                 context,
                 icon: Icons.phone_iphone_rounded,
-                color: palette.warning,
                 title: s.profilePhone,
                 value: _valueOrPlaceholder(widget.profile.phoneNumber, s),
               ),
-              _divider(context),
               _informationItem(
                 context,
                 icon: Icons.mail_outline_rounded,
-                color: palette.info,
                 title: s.profileEmail,
                 value: _valueOrPlaceholder(widget.profile.email, s),
               ),
@@ -239,56 +224,44 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
               _informationItem(
                 context,
                 icon: Icons.person_outline_rounded,
-                color: palette.primary,
                 title: s.profileUsername,
                 value: _valueOrPlaceholder(widget.profile.username, s),
               ),
-              _divider(context),
               _informationItem(
                 context,
                 icon: Icons.verified_user_outlined,
-                color: palette.success,
                 title: s.profileRole,
                 value: _valueOrPlaceholder(widget.profile.roleName, s),
               ),
-              _divider(context),
               _informationItem(
                 context,
                 icon: Icons.language_rounded,
-                color: palette.info,
                 title: s.profileLoginIp,
                 value: _valueOrPlaceholder(widget.profile.loginIp, s),
               ),
-              _divider(context),
               _informationItem(
                 context,
                 icon: Icons.access_time_rounded,
-                color: palette.danger,
                 title: s.profileLoginTime,
                 value: _loginTimeLabel(widget.profile.loginDate, s),
               ),
-              _divider(context),
               _informationItem(
                 context,
                 icon: Icons.note_alt_outlined,
-                color: palette.textSecondary,
                 title: s.profileRemark,
                 value: _valueOrPlaceholder(widget.profile.remark, s),
               ),
-              _divider(context),
               _informationItem(
                 context,
                 icon: Icons.lock_outline_rounded,
-                color: palette.danger,
                 title: s.profileChangePassword,
                 value: '',
                 onTap: _openPasswordSheet,
               ),
-              _divider(context),
               _informationItem(
                 context,
                 icon: Icons.delete_forever_outlined,
-                color: palette.danger,
+                destructive: true,
                 title: s.profileDeleteAccount,
                 value: '',
                 onTap: _confirmDeleteAccount,
@@ -387,11 +360,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
             style: FxTypography.title.copyWith(color: palette.textSecondary),
           ),
         ),
-        FxCard(
-          padding: const EdgeInsets.symmetric(vertical: FxSpacing.xs),
-          radius: FxRadius.sheet,
-          child: Column(children: children),
-        ),
+        FxListSection(dividerIndent: 72, children: children),
       ],
     );
   }
@@ -399,55 +368,25 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
   Widget _informationItem(
     BuildContext context, {
     required IconData icon,
-    required Color color,
     required String title,
     required String value,
     VoidCallback? onTap,
+    bool destructive = false,
   }) {
     final palette = FxPalette.of(context);
     return FxListItem(
-      leading: _tileIcon(icon, color),
+      leading: FxIconTile(
+        icon: icon,
+        tone: destructive ? FxIconTone.danger : FxIconTone.neutral,
+        size: 44,
+        iconSize: 22,
+      ),
       title: title,
-      trailing: value.isEmpty
-          ? null
-          : ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 180),
-              child: Text(
-                value,
-                style: FxTypography.bodyStrong.copyWith(
-                  color: palette.textSecondary,
-                ),
-                textAlign: TextAlign.end,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
+      subtitle: value.isEmpty ? null : value,
+      subtitleMaxLines: 3,
+      subtitleStyle: FxTypography.body.copyWith(color: palette.textSecondary),
       showChevron: onTap != null,
       onTap: onTap,
-    );
-  }
-
-  Widget _tileIcon(IconData icon, Color color) {
-    return Container(
-      width: 44,
-      height: 44,
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.12),
-        shape: BoxShape.circle,
-      ),
-      alignment: Alignment.center,
-      child: Icon(icon, color: color),
-    );
-  }
-
-  Widget _divider(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 72),
-      child: Divider(
-        height: 1,
-        thickness: 0.5,
-        color: FxPalette.of(context).border,
-      ),
     );
   }
 
@@ -602,35 +541,15 @@ class _ProfileDetailsEditSheetState extends State<_ProfileDetailsEditSheet> {
     Iterable<String>? autofillHints,
     TextInputAction? textInputAction,
   }) {
-    final palette = FxPalette.of(context);
-    return TextField(
+    return FxTextField(
+      label: label,
       controller: controller,
+      hintText: hint,
       keyboardType: keyboardType,
       autofillHints: autofillHints,
       textInputAction: textInputAction,
-      style: FxTypography.bodyStrong.copyWith(color: palette.textPrimary),
-      decoration: InputDecoration(
-        labelText: label,
-        hintText: hint,
-        labelStyle: FxTypography.label.copyWith(color: palette.textSecondary),
-        hintStyle: FxTypography.body.copyWith(color: palette.textTertiary),
-        prefixIcon: Icon(icon, color: palette.textSecondary),
-        filled: true,
-        fillColor: palette.surfaceMuted,
-        contentPadding: const EdgeInsets.symmetric(vertical: FxSpacing.md),
-        border: OutlineInputBorder(
-          borderRadius: FxRadius.tileBorder,
-          borderSide: BorderSide.none,
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: FxRadius.tileBorder,
-          borderSide: BorderSide(color: palette.border),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: FxRadius.tileBorder,
-          borderSide: BorderSide(color: palette.primary, width: 1.5),
-        ),
-      ),
+      prefixIcon: Icon(icon),
+      scrollPadding: const EdgeInsets.only(bottom: 120),
     );
   }
 
@@ -799,33 +718,13 @@ class _PasswordSheetState extends State<_PasswordSheet> {
   }
 
   Widget _field(String label, TextEditingController controller) {
-    final palette = FxPalette.of(context);
-    return TextField(
+    return FxTextField(
+      label: label,
       controller: controller,
       obscureText: true,
-      style: FxTypography.body,
-      decoration: InputDecoration(
-        labelText: label,
-        labelStyle: FxTypography.label.copyWith(color: palette.textSecondary),
-        filled: true,
-        fillColor: palette.surfaceMuted,
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: FxSpacing.md,
-          vertical: FxSpacing.md,
-        ),
-        border: OutlineInputBorder(
-          borderRadius: FxRadius.tileBorder,
-          borderSide: BorderSide.none,
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: FxRadius.tileBorder,
-          borderSide: BorderSide(color: palette.border),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: FxRadius.tileBorder,
-          borderSide: BorderSide(color: palette.primary),
-        ),
-      ),
+      textInputAction: TextInputAction.next,
+      autofillHints: const [AutofillHints.password],
+      scrollPadding: const EdgeInsets.only(bottom: 160),
     );
   }
 }

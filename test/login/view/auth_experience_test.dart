@@ -5,6 +5,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_login/flutter_login.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fortuneboot/core/preferences/preferences_cubit.dart';
+import 'package:fortuneboot/fx/components/fx_text_field.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/generated/l10n.dart';
 import 'package:fortuneboot/login/view/auth_scaffold.dart';
@@ -81,6 +82,7 @@ void main() {
     final titleRect = tester.getRect(find.text('服务器配置'));
     final formRect = tester.getRect(find.byKey(const ValueKey('startup-form')));
     expect(titleRect.left, closeTo(formRect.left, 0.01));
+    expect(titleRect.top, lessThan(200));
     expect(formRect.width, lessThanOrEqualTo(400));
     expect(find.text('FORTUNEBOOT'), findsNothing);
     expect(tester.takeException(), isNull);
@@ -106,6 +108,7 @@ void main() {
     await tester.pump();
 
     expect(find.byType(FlutterLogin), findsNothing);
+    expect(find.byType(FxTextField), findsNWidgets(2));
     expect(find.text('账号'), findsOneWidget);
     expect(find.text('密码'), findsOneWidget);
   });

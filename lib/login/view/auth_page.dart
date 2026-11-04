@@ -3,7 +3,11 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_login/flutter_login.dart';
+import 'package:fortuneboot/fx/components/fx_button.dart';
+import 'package:fortuneboot/fx/components/fx_text_field.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
+import 'package:fortuneboot/fx/tokens/fx_radius.dart';
+import 'package:fortuneboot/fx/tokens/fx_typography.dart';
 import 'package:fortuneboot/login/auth/password_policy.dart';
 
 /// 认证页的本地化文案。
@@ -728,18 +732,11 @@ class _AuthPageState extends State<AuthPage> {
                 const SizedBox(height: 2),
                 Align(
                   alignment: Alignment.centerRight,
-                  child: TextButton(
+                  child: _AuthLink(
+                    label: copy.forgotPassword,
                     onPressed: _loading
                         ? null
                         : () => _changeMode(_AuthMode.recover),
-                    style: TextButton.styleFrom(
-                      foregroundColor: palette.textSecondary,
-                      minimumSize: const Size(44, 44),
-                      padding: const EdgeInsets.symmetric(horizontal: 8),
-                      textStyle: Theme.of(context).textTheme.labelMedium
-                          ?.copyWith(fontSize: 13, fontWeight: FontWeight.w500),
-                    ),
-                    child: Text(copy.forgotPassword),
                   ),
                 ),
               ],
@@ -783,7 +780,7 @@ class _AuthPageState extends State<AuthPage> {
               _StatusBanner(message: message, success: true),
             ],
             const SizedBox(height: 20),
-            _buildPrimaryButton(palette),
+            _buildPrimaryButton(),
             const SizedBox(height: 12),
             _buildFooter(palette),
           ],
@@ -853,33 +850,16 @@ class _AuthPageState extends State<AuthPage> {
     final options = [copy.male, copy.female];
     final current = options.contains(controller.text) ? controller.text : null;
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(
-          field.displayName,
-          style: Theme.of(context).textTheme.labelMedium?.copyWith(
-            fontSize: 13,
-            fontWeight: FontWeight.w500,
-            height: 1.2,
-            color: palette.textSecondary,
-          ),
-        ),
+        _fieldLabel(field.displayName),
         const SizedBox(height: 8),
         DropdownButtonFormField<String>(
           initialValue: current,
           isExpanded: true,
-          hint: Text(
-            copy.select,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              fontSize: 15,
-              color: palette.textSecondary,
-            ),
-          ),
-          decoration: _inputDecoration(context),
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-            fontSize: 15,
-            color: palette.textPrimary,
-          ),
+          hint: Text(copy.select),
+          decoration: _selectDecoration(context),
+          style: FxTypography.body.copyWith(color: palette.textPrimary),
           icon: Icon(
             Icons.keyboard_arrow_down_rounded,
             size: 20,
@@ -916,148 +896,79 @@ class _AuthPageState extends State<AuthPage> {
     bool obscureText = false,
     Widget? suffixIcon,
   }) {
-    final palette = FxPalette.of(context);
-    final textTheme = Theme.of(context).textTheme;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: textTheme.labelMedium?.copyWith(
-            fontSize: 13,
-            fontWeight: FontWeight.w500,
-            height: 1.2,
-            color: palette.textSecondary,
-          ),
-        ),
-        const SizedBox(height: 8),
-        TextFormField(
-          controller: controller,
-          enabled: !_loading,
-          validator: validator,
-          obscureText: obscureText,
-          keyboardType: keyboardType,
-          autofillHints: autofillHints,
-          textInputAction: textInputAction,
-          autocorrect: false,
-          enableSuggestions: false,
-          smartDashesType: SmartDashesType.disabled,
-          smartQuotesType: SmartQuotesType.disabled,
-          scrollPadding: const EdgeInsets.only(bottom: 120),
-          onFieldSubmitted: onSubmitted == null ? null : (_) => onSubmitted(),
-          onTapOutside: (_) => FocusScope.of(context).unfocus(),
-          style: textTheme.bodyMedium?.copyWith(
-            fontSize: 15,
-            color: palette.textPrimary,
-          ),
-          cursorColor: palette.primary,
-          decoration: _inputDecoration(context, helperText: helperText)
-              .copyWith(
-                suffixIcon: suffixIcon,
-                suffixIconConstraints: const BoxConstraints(
-                  minWidth: 48,
-                  minHeight: 48,
-                ),
-              ),
-        ),
-      ],
+    return FxTextField(
+      label: label,
+      controller: controller,
+      enabled: !_loading,
+      validator: validator,
+      obscureText: obscureText,
+      keyboardType: keyboardType,
+      autofillHints: autofillHints,
+      textInputAction: textInputAction,
+      autocorrect: false,
+      enableSuggestions: false,
+      helperText: helperText,
+      suffixIcon: suffixIcon,
+      scrollPadding: const EdgeInsets.only(bottom: 120),
+      onSubmitted: onSubmitted == null ? null : (_) => onSubmitted(),
+      onTapOutside: (_) => FocusScope.of(context).unfocus(),
     );
   }
 
-  InputDecoration _inputDecoration(BuildContext context, {String? helperText}) {
+  Widget _fieldLabel(String label) {
+    return Text(
+      label,
+      style: FxTypography.label.copyWith(
+        color: FxPalette.of(context).textSecondary,
+      ),
+    );
+  }
+
+  InputDecoration _selectDecoration(BuildContext context) {
     final palette = FxPalette.of(context);
-    final textTheme = Theme.of(context).textTheme;
     final border = OutlineInputBorder(
-      borderRadius: BorderRadius.circular(10),
+      borderRadius: FxRadius.tileBorder,
       borderSide: BorderSide(color: _fieldBorderColor(context)),
     );
     return InputDecoration(
-      isDense: true,
-      filled: false,
-      contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 17),
-      helperText: helperText,
-      helperMaxLines: 2,
-      helperStyle: textTheme.bodySmall?.copyWith(
-        fontSize: 12,
-        height: 1.35,
-        color: palette.textSecondary,
-      ),
-      errorMaxLines: 3,
-      errorStyle: textTheme.bodySmall?.copyWith(
-        fontSize: 12.5,
-        height: 1.35,
-        color: _dangerInk(context),
-      ),
+      isDense: false,
+      filled: true,
+      fillColor: palette.surfaceMuted,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 16),
+      hintStyle: FxTypography.body.copyWith(color: palette.textTertiary),
       border: border,
       enabledBorder: border,
       disabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: FxRadius.tileBorder,
         borderSide: BorderSide(
           color: _fieldBorderColor(context).withValues(alpha: 0.55),
         ),
       ),
       focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: FxRadius.tileBorder,
         borderSide: BorderSide(color: palette.primary, width: 1.5),
       ),
       errorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: FxRadius.tileBorder,
         borderSide: BorderSide(color: _dangerInk(context)),
       ),
       focusedErrorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: FxRadius.tileBorder,
         borderSide: BorderSide(color: _dangerInk(context), width: 1.5),
       ),
     );
   }
 
-  Widget _buildPrimaryButton(FxPalette palette) {
-    final theme = Theme.of(context);
+  Widget _buildPrimaryButton() {
     final label = _actionFor(_mode);
     final loadingLabel = _loadingLabelFor(_mode);
-    return SizedBox(
-      width: double.infinity,
-      child: FilledButton(
-        onPressed: _loading ? null : () => unawaited(_submit()),
-        style: FilledButton.styleFrom(
-          backgroundColor: palette.primary,
-          foregroundColor: palette.onPrimary,
-          disabledBackgroundColor: palette.primary.withValues(alpha: 0.45),
-          disabledForegroundColor: palette.onPrimary,
-          elevation: 0,
-          minimumSize: const Size.fromHeight(50),
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          textStyle: theme.textTheme.labelLarge?.copyWith(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-            height: 1.2,
-          ),
-        ),
-        child: AnimatedSwitcher(
-          duration: const Duration(milliseconds: 160),
-          child: _loading
-              ? Row(
-                  key: const ValueKey('auth-loading'),
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    SizedBox(
-                      width: 16,
-                      height: 16,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: palette.onPrimary,
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    Text(loadingLabel),
-                  ],
-                )
-              : Text(label, key: ValueKey(label)),
-        ),
-      ),
+    return FxButton(
+      label: label,
+      expand: true,
+      height: 50,
+      loading: _loading,
+      loadingLabel: loadingLabel,
+      onPressed: _loading ? null : () => unawaited(_submit()),
     );
   }
 
@@ -1077,22 +988,7 @@ class _AuthPageState extends State<AuthPage> {
         : () => _changeMode(
             _mode == _AuthMode.signIn ? _AuthMode.signUp : _AuthMode.signIn,
           );
-    final actionButton = TextButton(
-      onPressed: onPressed,
-      style: TextButton.styleFrom(
-        foregroundColor: palette.textPrimary,
-        minimumSize: const Size(44, 44),
-        padding: const EdgeInsets.symmetric(horizontal: 6),
-        textStyle: Theme.of(context).textTheme.labelMedium?.copyWith(
-          fontSize: 13.5,
-          fontWeight: FontWeight.w600,
-          decoration: TextDecoration.underline,
-          decorationColor: palette.textTertiary,
-          decorationThickness: 1,
-        ),
-      ),
-      child: Text(action),
-    );
+    final actionButton = _AuthLink(label: action, onPressed: onPressed);
     if (question == null) {
       return Center(child: actionButton);
     }
@@ -1131,22 +1027,45 @@ class _AuthPageState extends State<AuthPage> {
           ),
           if (widget.onChangeServer != null) ...[
             const SizedBox(width: 2),
-            TextButton(
+            _AuthLink(
+              label: widget.copy.changeServer,
               onPressed: widget.onChangeServer,
-              style: TextButton.styleFrom(
-                foregroundColor: palette.textSecondary,
-                minimumSize: const Size(44, 44),
-                padding: const EdgeInsets.symmetric(horizontal: 8),
-                textStyle: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              child: Text(widget.copy.changeServer),
+              compact: true,
             ),
           ],
         ],
       ),
+    );
+  }
+}
+
+/// 认证页底部辅助链接：统一使用链接色、无下划线、44dp 点击区。
+class _AuthLink extends StatelessWidget {
+  const _AuthLink({
+    required this.label,
+    required this.onPressed,
+    this.compact = false,
+  });
+
+  final String label;
+  final VoidCallback? onPressed;
+  final bool compact;
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = FxPalette.of(context);
+    return TextButton(
+      onPressed: onPressed,
+      style: TextButton.styleFrom(
+        foregroundColor: palette.primary,
+        minimumSize: const Size(44, 44),
+        padding: EdgeInsets.symmetric(horizontal: compact ? 6 : 8),
+        textStyle: FxTypography.label.copyWith(
+          fontSize: compact ? 12.5 : 13.5,
+          fontWeight: FontWeight.w500,
+        ),
+      ),
+      child: Text(label, maxLines: 1, overflow: TextOverflow.ellipsis),
     );
   }
 }
@@ -1274,19 +1193,7 @@ class _ConsentRow extends StatelessWidget {
                 ),
               ),
             ),
-            TextButton(
-              onPressed: onOpenTerms,
-              style: TextButton.styleFrom(
-                foregroundColor: palette.textSecondary,
-                minimumSize: const Size(44, 44),
-                padding: const EdgeInsets.symmetric(horizontal: 8),
-                textStyle: Theme.of(context).textTheme.labelMedium?.copyWith(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              child: Text(copy.view),
-            ),
+            _AuthLink(label: copy.view, onPressed: onOpenTerms, compact: true),
           ],
         ),
         if (errorText case final message?)
@@ -1310,9 +1217,7 @@ class _ConsentRow extends StatelessWidget {
 }
 
 Color _fieldBorderColor(BuildContext context) {
-  return Theme.of(context).brightness == Brightness.dark
-      ? const Color(0xFF46505F)
-      : const Color(0xFFAEB7C2);
+  return FxPalette.of(context).border;
 }
 
 Color _dangerInk(BuildContext context) {
