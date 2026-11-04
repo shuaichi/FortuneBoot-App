@@ -1,9 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:fortuneboot/core/preferences/preferences_cubit.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:fortuneboot/core/preferences/preferences_cubit.dart';
 import 'package:fortuneboot/features/shared/data/bill_models.dart';
+import 'package:fortuneboot/features/shared/data/bill_service.dart';
 import 'package:fortuneboot/features/shared/presentation/bills/bill_detail_flow.dart';
 import 'package:fortuneboot/features/shared/presentation/bills/bill_detail_sheet.dart';
 import 'package:fortuneboot/fx/components/fx_sheet.dart';
@@ -183,9 +186,114 @@ void main() {
     expect(tester.getTopLeft(copyButton).dy, copyTop);
     expect(tester.takeException(), isNull);
   });
+
+  testWidgets('wide viewport uses a bounded dialog instead of a bottom sheet', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(1440, 900);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+
+    const bill = FortuneBillVo(billId: 1, title: '午餐', amount: 28, billType: 1);
+    await tester.pumpWidget(_detailHarness(bill));
+
+    await tester.tap(find.text('打开详情'));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(Dialog), findsOneWidget);
+    expect(find.byType(FxSheet), findsNothing);
+    expect(find.byType(BillDetailSheet), findsOneWidget);
+    expect(
+      tester.getSize(find.byKey(const ValueKey('bill-detail-dialog'))).width,
+      560,
+    );
+  });
+
+  testWidgets('cancelling deletion preserves the open bill detail', (
+    tester,
+  ) async {
+    const bill = FortuneBillVo(billId: 1, title: '午餐', amount: 28, billType: 1);
+    await tester.pumpWidget(_detailHarness(bill));
+
+    await tester.tap(find.text('打开详情'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('删除'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('取消'), findsOneWidget);
+    expect(find.byType(BillDetailSheet), findsOneWidget);
+
+    await tester.tap(find.text('取消'));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(BillDetailSheet), findsOneWidget);
+    expect(find.text('午餐'), findsOneWidget);
+    expect(find.text('编辑'), findsOneWidget);
+  });
+
+  testWidgets('wide deletion confirmation also uses a dialog', (tester) async {
+    tester.view.physicalSize = const Size(1440, 900);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+
+    const bill = FortuneBillVo(billId: 1, title: '午餐', amount: 28, billType: 1);
+    await tester.pumpWidget(_detailHarness(bill));
+    await tester.tap(find.text('打开详情'));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('删除'));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(FxSheet), findsNothing);
+    expect(find.byType(Dialog), findsNWidgets(2));
+    expect(
+      tester.getSize(find.byKey(const ValueKey('destructive-dialog'))).width,
+      440,
+    );
+  });
+
+  testWidgets('dismissing detail during deletion never pops its host route', (
+    tester,
+  ) async {
+    final service = _PendingBillService();
+    const bill = FortuneBillVo(billId: 1, title: '午餐', amount: 28, billType: 1);
+    await tester.pumpWidget(
+      _detailHarness(bill, service: service, pushHostRoute: true),
+    );
+    await tester.tap(find.text('打开宿主'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('打开详情'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('删除'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('删除').last);
+    await tester.pump();
+
+    final detailContext = tester.element(find.byType(BillDetailSheet));
+    Navigator.of(detailContext).pop();
+    await tester.pumpAndSettle();
+    service.removeCompleter.complete();
+    await tester.pumpAndSettle();
+
+    expect(find.text('打开详情'), findsOneWidget);
+    expect(find.text('打开宿主'), findsNothing);
+  });
 }
 
-Widget _detailHarness(FortuneBillVo bill) {
+class _PendingBillService extends BillService {
+  final removeCompleter = Completer<void>();
+
+  @override
+  Future<void> remove({required int bookId, required int billId}) {
+    return removeCompleter.future;
+  }
+}
+
+Widget _detailHarness(
+  FortuneBillVo bill, {
+  BillService? service,
+  bool pushHostRoute = false,
+}) {
   return BlocProvider(
     create: (_) => PreferencesCubit(),
     child: MaterialApp(
@@ -201,9 +309,27 @@ Widget _detailHarness(FortuneBillVo bill) {
       home: Builder(
         builder: (context) => Scaffold(
           body: ElevatedButton(
-            onPressed: () =>
-                BillDetailFlow().show(context, bookId: 1, bill: bill),
-            child: const Text('打开详情'),
+            onPressed: () {
+              if (pushHostRoute) {
+                Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                    builder: (hostContext) => Scaffold(
+                      body: ElevatedButton(
+                        onPressed: () => BillDetailFlow(
+                          service: service,
+                        ).show(hostContext, bookId: 1, bill: bill),
+                        child: const Text('打开详情'),
+                      ),
+                    ),
+                  ),
+                );
+                return;
+              }
+              BillDetailFlow(
+                service: service,
+              ).show(context, bookId: 1, bill: bill);
+            },
+            child: Text(pushHostRoute ? '打开宿主' : '打开详情'),
           ),
         ),
       ),

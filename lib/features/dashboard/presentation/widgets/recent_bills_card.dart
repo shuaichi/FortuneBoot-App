@@ -1,24 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fortuneboot/core/icon/fx_icon_badge.dart';
-import 'package:fortuneboot/core/icon/smart_category_engine.dart';
 import 'package:fortuneboot/core/money/fx_money_formatter.dart';
 import 'package:fortuneboot/core/preferences/preferences_cubit.dart';
 import 'package:fortuneboot/core/shell/main_shell.dart';
 import 'package:fortuneboot/features/dashboard/presentation/bloc/dashboard_bloc.dart';
 import 'package:fortuneboot/features/dashboard/presentation/widgets/dashboard_card_shell.dart';
 import 'package:fortuneboot/features/shared/data/bill_models.dart';
-import 'package:fortuneboot/fx/components/fx_card.dart';
-import 'package:fortuneboot/fx/components/fx_money_text.dart';
 import 'package:fortuneboot/fx/components/fx_pressable.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
 import 'package:fortuneboot/generated/l10n.dart';
+import 'package:fortuneboot/util/currency_symbol.dart';
 import 'package:intl/intl.dart';
 
-/// ⑦ 最近账单卡（跨满）：最近 3 条 + "全部 >"。
+/// 最近账单预览。内容决定高度，不使用整体缩放适配固定卡片。
 class RecentBillsCard extends StatelessWidget {
   final DashboardSection<List<FortuneBillVo>> section;
   final String? currencyCode;
@@ -33,237 +30,253 @@ class RecentBillsCard extends StatelessWidget {
     this.onBillTap,
   });
 
-  static final DateFormat _md = DateFormat('MM-dd');
-
   @override
   Widget build(BuildContext context) {
     final palette = FxPalette.of(context);
-    final hideAmounts = context
-        .watch<PreferencesCubit>()
-        .state
-        .dashboard
-        .hideAmounts;
+    final hideAmounts = context.select<PreferencesCubit, bool>(
+      (cubit) => cubit.state.dashboard.hideAmounts,
+    );
     return DashboardCardShell<List<FortuneBillVo>>(
       section: section,
       onRetry: onRetry,
       builder: (bills) {
         return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            FxCardLabel(
-              S.of(context).dashboardRecentBills,
-              trailing: FxPressable(
-                semanticLabel: S.of(context).dashboardViewAll,
-                onPressed: () =>
-                    MainShell.selectTab(context, MainShellTab.bills),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      S.of(context).dashboardViewAll,
-                      style: FxTypography.caption.copyWith(
-                        color: palette.primary,
-                      ),
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    S.of(context).dashboardRecentBills,
+                    style: FxTypography.title.copyWith(
+                      fontSize: 17,
+                      fontWeight: FontWeight.w600,
+                      color: palette.textPrimary,
                     ),
-                    Icon(
-                      Icons.chevron_right_rounded,
-                      size: 16,
-                      color: palette.primary,
-                    ),
-                  ],
+                  ),
                 ),
-              ),
+                FxPressable(
+                  semanticLabel: S.of(context).dashboardViewAll,
+                  onPressed: () =>
+                      MainShell.selectTab(context, MainShellTab.bills),
+                  child: Text(
+                    S.of(context).dashboardViewAll,
+                    style: FxTypography.label.copyWith(color: palette.primary),
+                  ),
+                ),
+              ],
             ),
             const SizedBox(height: FxSpacing.sm),
-            Expanded(
-              child: bills.isEmpty
-                  ? Center(
-                      child: Text(
-                        S.of(context).dashboardNoBillsYet,
-                        style: FxTypography.caption.copyWith(
-                          color: palette.textTertiary,
-                        ),
-                      ),
-                    )
-                  : LayoutBuilder(
-                      builder: (context, constraints) {
-                        // 高度略紧时整体轻微缩小，避免滚动与黄黑条，同时保留可读间距。
-                        return FittedBox(
-                          fit: BoxFit.scaleDown,
-                          alignment: Alignment.topCenter,
-                          child: ConstrainedBox(
-                            constraints: BoxConstraints(
-                              maxWidth: constraints.maxWidth,
-                            ),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                for (final bill in bills)
-                                  _row(context, bill, hideAmounts, onBillTap),
-                              ],
-                            ),
-                          ),
-                        );
-                      },
+            if (bills.isEmpty)
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: FxSpacing.xxl),
+                child: Center(
+                  child: Text(
+                    S.of(context).dashboardNoBillsYet,
+                    style: FxTypography.body.copyWith(
+                      color: palette.textSecondary,
                     ),
-            ),
+                  ),
+                ),
+              )
+            else
+              for (var index = 0; index < bills.length; index++) ...[
+                if (index > 0) Divider(height: 1, color: palette.border),
+                _RecentBillRow(
+                  bill: bills[index],
+                  currencyCode: currencyCode,
+                  hidden: hideAmounts,
+                  onTap: onBillTap == null
+                      ? null
+                      : () => onBillTap!(bills[index]),
+                ),
+              ],
           ],
         );
       },
     );
   }
+}
 
-  Widget _row(
-    BuildContext context,
-    FortuneBillVo bill,
-    bool hideAmounts,
-    ValueChanged<FortuneBillVo>? onBillTap,
-  ) {
+class _RecentBillRow extends StatelessWidget {
+  const _RecentBillRow({
+    required this.bill,
+    required this.currencyCode,
+    required this.hidden,
+    required this.onTap,
+  });
+
+  static const double _minimumTitleWidth = 112;
+  static const double _amountFontSize = 16;
+
+  final FortuneBillVo bill;
+  final String? currencyCode;
+  final bool hidden;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
     final palette = FxPalette.of(context);
+    final strings = S.of(context);
     final locale = Localizations.localeOf(context).toString();
-    final s = S.of(context);
-    final title = (bill.title?.isNotEmpty ?? false)
+    final code = bill.currencyCode ?? currencyCode;
+    final symbol = code == null || code.isEmpty ? '' : getCurrencySymbol(code);
+    final amount = hidden
+        ? FxMoneyFormatter.hiddenPlaceholder
+        : FxMoneyFormatter.format(
+            bill.hasExtrasAdjustment ? bill.settledAmount : bill.displayAmount,
+            locale: locale,
+            currencySymbol: symbol,
+          );
+    final title = bill.title?.isNotEmpty == true
         ? bill.title!
-        : (bill.primaryCategoryName.isNotEmpty
-              ? bill.primaryCategoryName
-              : (bill.payeeName ?? s.dashboardBillFallback));
-    final dateText = bill.tradeTime == null ? '' : _md.format(bill.tradeTime!);
-    final hasExtras = bill.hasExtrasAdjustment && !hideAmounts;
-    final fee = bill.feeTotal;
-    final discount = bill.discountTotal;
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        borderRadius: FxRadius.tileBorder,
-        onTap: onBillTap == null ? null : () => onBillTap(bill),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: FxSpacing.xs),
-          child: Row(
-            children: [
-              FxIconBadge.forBill(
-                BillIconInput(
-                  billType: bill.billType,
-                  title: bill.title,
-                  payeeName: bill.payeeName,
-                  accountName: bill.accountName,
-                  categoryNames: bill.categoryNamesByAmount,
-                  toAccountId: bill.toAccountId,
-                ),
-                size: 34,
-              ),
-              const SizedBox(width: FxSpacing.md),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      title,
-                      style: FxTypography.bodyStrong,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    if (bill.accountName?.isNotEmpty ?? false)
-                      Text(
-                        bill.accountName!,
-                        style: FxTypography.caption.copyWith(
-                          color: palette.textTertiary,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: FxSpacing.sm),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  if (hasExtras)
-                    Text(
-                      FxMoneyFormatter.format(
-                        bill.displayAmount,
-                        locale: locale,
-                      ),
-                      style: FxTypography.caption.copyWith(
-                        color: palette.textTertiary,
-                        decoration: TextDecoration.lineThrough,
-                        decorationColor: palette.textTertiary,
-                        fontSize: 11,
-                        height: 1.15,
-                      ),
-                    ),
-                  FxMoneyText(
-                    amount: hasExtras ? bill.settledAmount : bill.displayAmount,
-                    currencyCode: bill.currencyCode ?? currencyCode,
-                    billType: bill.billType,
-                    fontSize: 15,
-                    masked: hideAmounts,
-                  ),
-                  if (dateText.isNotEmpty ||
-                      (hasExtras && (fee > 0 || discount > 0))) ...[
-                    const SizedBox(height: 2),
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        if (dateText.isNotEmpty)
-                          Text(
-                            dateText,
-                            style: FxTypography.caption.copyWith(
-                              color: palette.textTertiary,
-                            ),
-                          ),
-                        if (hasExtras && fee > 0) ...[
-                          if (dateText.isNotEmpty)
-                            const SizedBox(width: FxSpacing.xs),
-                          _extraBadge(
-                            label:
-                                '${s.billsFee} ${FxMoneyFormatter.format(fee, locale: locale)}',
-                            foreground: const Color(0xFFC47A2C),
-                            background: const Color(0xFFFFF0DD),
-                          ),
-                        ],
-                        if (hasExtras && discount > 0) ...[
-                          if (dateText.isNotEmpty || fee > 0)
-                            const SizedBox(width: FxSpacing.xs),
-                          _extraBadge(
-                            label:
-                                '${s.billsDiscount} ${FxMoneyFormatter.format(discount, locale: locale)}',
-                            foreground: const Color(0xFFD14343),
-                            background: const Color(0xFFFFE8E8),
-                          ),
-                        ],
-                      ],
-                    ),
-                  ],
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
+        : bill.primaryCategoryName.isNotEmpty
+        ? bill.primaryCategoryName
+        : (bill.payeeName ?? strings.dashboardBillFallback);
+    final metadata = <String>[
+      if (FxBillType.fromValue(bill.billType) case final billType?)
+        billType.localizedLabel(context),
+      if (bill.accountName?.isNotEmpty == true) bill.accountName!,
+      if (bill.tradeTime != null)
+        DateFormat.MMMd(locale).format(bill.tradeTime!),
+    ].join(' · ');
+    final amountStyle = FxTypography.money.copyWith(
+      fontSize: _amountFontSize,
+      height: 1.4,
+      fontWeight: FontWeight.w600,
+      color: palette.textPrimary,
     );
-  }
+    final metadataStyle = FxTypography.caption.copyWith(
+      fontSize: 13,
+      height: 1.4,
+      color: palette.textSecondary,
+    );
 
-  Widget _extraBadge({
-    required String label,
-    required Color foreground,
-    required Color background,
-  }) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-      decoration: BoxDecoration(
-        color: background,
-        borderRadius: BorderRadius.circular(999),
-      ),
-      child: Text(
-        label,
-        style: FxTypography.caption.copyWith(
-          color: foreground,
-          fontSize: 10,
-          fontWeight: FontWeight.w500,
-          height: 1.1,
+    return Semantics(
+      button: onTap != null,
+      label: title,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          mouseCursor: onTap == null
+              ? SystemMouseCursors.basic
+              : SystemMouseCursors.click,
+          borderRadius: FxRadius.tileBorder,
+          hoverColor: palette.textPrimary.withValues(alpha: 0.035),
+          focusColor: palette.primary.withValues(alpha: 0.10),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(minHeight: 64),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 14),
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  final painter = TextPainter(
+                    text: TextSpan(
+                      text: amount,
+                      style: DefaultTextStyle.of(
+                        context,
+                      ).style.merge(amountStyle),
+                    ),
+                    textDirection: Directionality.of(context),
+                    textScaler: MediaQuery.textScalerOf(context),
+                    locale: Localizations.localeOf(context),
+                    maxLines: 1,
+                  )..layout();
+                  final amountWidth = painter.width;
+                  painter.dispose();
+                  final stacked =
+                      constraints.maxWidth - amountWidth - FxSpacing.lg <
+                          _minimumTitleWidth ||
+                      MediaQuery.textScalerOf(context).scale(_amountFontSize) >
+                          24;
+                  final description = Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        title,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: FxTypography.bodyStrong.copyWith(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          color: palette.textPrimary,
+                        ),
+                      ),
+                      if (metadata.isNotEmpty) ...[
+                        const SizedBox(height: 3),
+                        Text(
+                          metadata,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: metadataStyle,
+                        ),
+                      ],
+                    ],
+                  );
+                  final amountText = Semantics(
+                    label: amount,
+                    child: ExcludeSemantics(
+                      child: Text(amount, style: amountStyle),
+                    ),
+                  );
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (stacked) ...[
+                        description,
+                        const SizedBox(height: FxSpacing.sm),
+                        Align(
+                          alignment: AlignmentDirectional.centerEnd,
+                          child: amountText,
+                        ),
+                      ] else
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(child: description),
+                            const SizedBox(width: FxSpacing.lg),
+                            amountText,
+                          ],
+                        ),
+                      if (!hidden && bill.hasExtrasAdjustment) ...[
+                        const SizedBox(height: FxSpacing.sm),
+                        Wrap(
+                          spacing: FxSpacing.md,
+                          runSpacing: FxSpacing.xs,
+                          children: [
+                            Text(
+                              FxMoneyFormatter.format(
+                                bill.displayAmount,
+                                locale: locale,
+                                currencySymbol: symbol,
+                              ),
+                              style: metadataStyle.copyWith(
+                                decoration: TextDecoration.lineThrough,
+                              ),
+                            ),
+                            if (bill.feeTotal > 0)
+                              Text(
+                                '${strings.billsFee} ${FxMoneyFormatter.format(bill.feeTotal, locale: locale, currencySymbol: symbol)}',
+                                style: metadataStyle,
+                              ),
+                            if (bill.discountTotal > 0)
+                              Text(
+                                '${strings.billsDiscount} ${FxMoneyFormatter.format(bill.discountTotal, locale: locale, currencySymbol: symbol)}',
+                                style: metadataStyle,
+                              ),
+                          ],
+                        ),
+                      ],
+                    ],
+                  );
+                },
+              ),
+            ),
+          ),
         ),
       ),
     );

@@ -92,7 +92,7 @@ class NetWorthCard extends StatelessWidget {
           children: [
             FxCardLabel(S.of(context).dashboardNetWorth),
             const SizedBox(height: FxSpacing.sm),
-            _AdaptiveMoney(
+            FxMoneyText(
               amount: data.netAssets,
               currencyCode: currencyCode,
               fontSize: 30,
@@ -151,7 +151,7 @@ class NetWorthCard extends StatelessWidget {
             Flexible(
               child: Align(
                 alignment: AlignmentDirectional.centerEnd,
-                child: _AdaptiveMoney(
+                child: FxMoneyText(
                   amount: amount,
                   currencyCode: currencyCode,
                   fontSize: 13,
@@ -165,47 +165,6 @@ class NetWorthCard extends StatelessWidget {
         const SizedBox(height: FxSpacing.xs),
         FxProgressBar(value: ratio, color: color, height: 6),
       ],
-    );
-  }
-}
-
-class _AdaptiveMoney extends StatelessWidget {
-  const _AdaptiveMoney({
-    required this.amount,
-    required this.currencyCode,
-    required this.fontSize,
-    required this.masked,
-    this.fontWeight = FontWeight.w600,
-    this.color,
-  });
-
-  final double amount;
-  final String? currencyCode;
-  final double fontSize;
-  final bool masked;
-  final FontWeight fontWeight;
-  final Color? color;
-
-  @override
-  Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        return FittedBox(
-          fit: BoxFit.scaleDown,
-          alignment: AlignmentDirectional.centerStart,
-          child: ConstrainedBox(
-            constraints: BoxConstraints(maxWidth: constraints.maxWidth),
-            child: FxMoneyText(
-              amount: amount,
-              currencyCode: currencyCode,
-              fontSize: fontSize,
-              fontWeight: fontWeight,
-              color: color,
-              masked: masked,
-            ),
-          ),
-        );
-      },
     );
   }
 }

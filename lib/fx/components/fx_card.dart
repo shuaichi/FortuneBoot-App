@@ -59,18 +59,19 @@ class _FxCardState extends State<FxCard> {
     }
 
     final card = AnimatedScale(
-      scale: _pressed ? 0.97 : 1.0,
+      scale: _pressed ? 0.985 : 1.0,
       duration: FxMotion.resolve(context, FxMotion.fast),
       child: Container(
         padding: widget.padding,
         decoration: BoxDecoration(
           color: widget.background ?? palette.surface,
           borderRadius: borderRadius,
+          border: Border.all(color: palette.border),
           boxShadow: [
             BoxShadow(
-              color: palette.shadow,
-              blurRadius: 16,
-              offset: const Offset(0, 4),
+              color: palette.shadow.withValues(alpha: 0.04),
+              blurRadius: 2,
+              offset: const Offset(0, 1),
             ),
           ],
         ),

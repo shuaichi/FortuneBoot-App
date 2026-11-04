@@ -141,7 +141,7 @@ void main() {
     expect(
       find.byWidgetPredicate(
         (widget) =>
-            widget is ConstrainedBox && widget.constraints.maxWidth == 1360,
+            widget is ConstrainedBox && widget.constraints.maxWidth == 1120,
       ),
       findsOneWidget,
     );

@@ -1,8 +1,9 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fortuneboot/features/dashboard/data/dashboard_card_catalog.dart';
+import 'package:fortuneboot/fx/components/fx_icon_button.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
-import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/generated/l10n.dart';
 
 /// 编辑态：长按拖拽；悬停另一张卡片时由父级重排网格，把对方挤开。
@@ -20,8 +21,12 @@ class DashboardDraggableCard extends StatefulWidget {
   final DashboardCardId id;
   final Widget child;
   final VoidCallback onRemove;
-  final void Function(DashboardCardId from, DashboardCardId to, {required bool after})
-      onInsertNear;
+  final void Function(
+    DashboardCardId from,
+    DashboardCardId to, {
+    required bool after,
+  })
+  onInsertNear;
   final VoidCallback? onDragStarted;
   final VoidCallback? onDragEnded;
 
@@ -66,83 +71,89 @@ class _DashboardDraggableCardState extends State<DashboardDraggableCard> {
           onMove: _maybeInsert,
           builder: (context, candidateData, rejectedData) {
             final dropTarget = candidateData.isNotEmpty;
+            final feedback = Material(
+              elevation: 4,
+              color: Colors.transparent,
+              borderRadius: FxRadius.cardBorder,
+              child: SizedBox(
+                width: width,
+                height: height,
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    borderRadius: FxRadius.cardBorder,
+                    border: Border.all(color: palette.border),
+                  ),
+                  child: Opacity(opacity: 0.96, child: widget.child),
+                ),
+              ),
+            );
+            final placeholder = DecoratedBox(
+              decoration: BoxDecoration(
+                borderRadius: FxRadius.cardBorder,
+                border: Border.all(color: palette.border),
+                color: palette.surfaceMuted,
+              ),
+            );
+            final editorContent = Stack(
+              clipBehavior: Clip.none,
+              children: [
+                Positioned.fill(child: IgnorePointer(child: widget.child)),
+                Positioned.fill(
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      borderRadius: FxRadius.cardBorder,
+                      border: Border.all(
+                        color: dropTarget || _dragging
+                            ? palette.primary
+                            : palette.border,
+                        width: dropTarget || _dragging ? 2 : 1,
+                      ),
+                      color: dropTarget
+                          ? palette.primary.withValues(alpha: 0.08)
+                          : Colors.transparent,
+                    ),
+                  ),
+                ),
+                Positioned(
+                  top: 0,
+                  right: 0,
+                  child: FxIconButton(
+                    icon: Icons.remove_circle_outline_rounded,
+                    tooltip: S.of(context).dashboardRemoveCard,
+                    color: palette.danger,
+                    onPressed: widget.onRemove,
+                  ),
+                ),
+              ],
+            );
+            final immediateDrag =
+                kIsWeb ||
+                defaultTargetPlatform == TargetPlatform.macOS ||
+                defaultTargetPlatform == TargetPlatform.windows ||
+                defaultTargetPlatform == TargetPlatform.linux;
+            if (immediateDrag) {
+              return MouseRegion(
+                cursor: SystemMouseCursors.grab,
+                child: Draggable<DashboardCardId>(
+                  data: widget.id,
+                  rootOverlay: true,
+                  onDragStarted: () => _setDragging(true),
+                  onDragEnd: (_) => _setDragging(false),
+                  feedback: feedback,
+                  childWhenDragging: placeholder,
+                  child: editorContent,
+                ),
+              );
+            }
             return LongPressDraggable<DashboardCardId>(
               data: widget.id,
               delay: const Duration(milliseconds: 280),
-              hapticFeedbackOnStart: true,
               rootOverlay: true,
               onDragStarted: () => _setDragging(true),
               onDragEnd: (_) => _setDragging(false),
-              feedback: Material(
-                elevation: 12,
-                color: Colors.transparent,
-                borderRadius: FxRadius.tileBorder,
-                child: SizedBox(
-                  width: width,
-                  height: height,
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(
-                      borderRadius: FxRadius.tileBorder,
-                      border: Border.all(color: palette.primary, width: 2),
-                    ),
-                    child: Opacity(opacity: 0.95, child: widget.child),
-                  ),
-                ),
-              ),
-              childWhenDragging: DecoratedBox(
-                decoration: BoxDecoration(
-                  borderRadius: FxRadius.tileBorder,
-                  border: Border.all(
-                    color: palette.primary.withValues(alpha: 0.35),
-                    width: 2,
-                  ),
-                  color: palette.primary.withValues(alpha: 0.06),
-                ),
-              ),
-              child: Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  Positioned.fill(child: IgnorePointer(child: widget.child)),
-                  Positioned.fill(
-                    child: DecoratedBox(
-                      decoration: BoxDecoration(
-                        borderRadius: FxRadius.tileBorder,
-                        border: Border.all(
-                          color: dropTarget || _dragging
-                              ? palette.primary
-                              : palette.primary.withValues(alpha: 0.45),
-                          width: dropTarget || _dragging ? 2 : 1,
-                        ),
-                        color: dropTarget
-                            ? palette.primary.withValues(alpha: 0.12)
-                            : Colors.transparent,
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    top: 2,
-                    right: 2,
-                    child: Material(
-                      color: palette.surface,
-                      shape: const CircleBorder(),
-                      elevation: 2,
-                      child: InkWell(
-                        customBorder: const CircleBorder(),
-                        onTap: widget.onRemove,
-                        child: Padding(
-                          padding: const EdgeInsets.all(FxSpacing.xs),
-                          child: Icon(
-                            Icons.remove_circle_rounded,
-                            size: 22,
-                            color: palette.danger,
-                            semanticLabel: S.of(context).dashboardRemoveCard,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+              feedback: feedback,
+              childWhenDragging: placeholder,
+              child: editorContent,
             );
           },
         );

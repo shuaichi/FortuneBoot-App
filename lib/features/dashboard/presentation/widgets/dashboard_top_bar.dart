@@ -6,6 +6,7 @@ import 'package:fortuneboot/core/preferences/preferences_cubit.dart';
 import 'package:fortuneboot/core/session/session_cubit.dart';
 import 'package:fortuneboot/core/session/widgets/session_switcher_sheet.dart';
 import 'package:fortuneboot/fx/components/fx_icon_button.dart';
+import 'package:fortuneboot/fx/components/fx_pressable.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
@@ -44,48 +45,52 @@ class DashboardTopBar extends StatelessWidget {
       child: Row(
         children: [
           Expanded(
-            child: GestureDetector(
-              onTap: editingLayout ? null : () => _openSwitcher(context),
-              behavior: HitTestBehavior.opaque,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Flexible(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          groupName,
-                          style: FxTypography.caption.copyWith(
-                            color: FxPalette.of(context).textTertiary,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
+            child: Align(
+              alignment: AlignmentDirectional.centerStart,
+              child: FxPressable(
+                semanticLabel: '$groupName，$bookName',
+                onPressed: editingLayout ? null : () => _openSwitcher(context),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: FxSpacing.sm,
+                  vertical: FxSpacing.xs,
+                ),
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(minHeight: 48),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        groupName,
+                        style: FxTypography.caption.copyWith(
+                          color: palette.textSecondary,
                         ),
-                        Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Flexible(
-                              child: Text(
-                                bookName,
-                                style: FxTypography.title,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Flexible(
+                            child: Text(
+                              bookName,
+                              style: FxTypography.title,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
-                            if (!editingLayout)
-                              Icon(
-                                Icons.expand_more_rounded,
-                                size: 22,
-                                color: palette.textSecondary,
-                              ),
-                          ],
-                        ),
-                      ],
-                    ),
+                          ),
+                          if (!editingLayout)
+                            Icon(
+                              Icons.expand_more_rounded,
+                              size: 22,
+                              color: palette.textSecondary,
+                            ),
+                        ],
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
             ),
           ),

@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:fortuneboot/core/navigation/app_router.dart';
 import 'package:fortuneboot/core/navigation/routes.dart';
@@ -8,6 +10,7 @@ import 'package:fortuneboot/features/shared/data/bill_service.dart';
 import 'package:fortuneboot/features/shared/presentation/bills/bill_delete_confirmation.dart';
 import 'package:fortuneboot/features/shared/presentation/bills/bill_detail_sheet.dart';
 import 'package:fortuneboot/fx/components/fx_sheet.dart';
+import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/generated/l10n.dart';
 
 class BillDetailFlow {
@@ -21,24 +24,64 @@ class BillDetailFlow {
     required int? bookId,
     required FortuneBillVo bill,
   }) {
-    FxSheet.show<void>(
-      context,
-      scrollable: true,
-      minHeightFactor: FxSheet.hintHeightFactor,
-      maxHeightFactor: FxSheet.detailHeightFactor,
-      child: BillDetailSheet(bill: bill, service: _service),
-      footer: BillDetailActions(
+    final detail = BillDetailSheet(bill: bill, service: _service);
+    final footer = Builder(
+      builder: (detailContext) => BillDetailActions(
         bill: bill,
-        onCopy: () => _copy(context, bill),
-        onEdit: () => _edit(context, bill),
-        onDelete: () => _delete(context, bookId: bookId, bill: bill),
+        onCopy: () => _copy(detailContext, bill),
+        onEdit: () => _edit(detailContext, bill),
+        onDelete: () => _delete(detailContext, bookId: bookId, bill: bill),
         onConfirmToggle: (confirm) => _toggleConfirm(
-          context,
+          detailContext,
           bookId: bookId,
           bill: bill,
           confirm: confirm,
         ),
       ),
+    );
+    if (MediaQuery.widthOf(context) < 840) {
+      FxSheet.show<void>(
+        context,
+        scrollable: true,
+        minHeightFactor: FxSheet.hintHeightFactor,
+        child: detail,
+        footer: footer,
+      );
+      return;
+    }
+
+    showDialog<void>(
+      context: context,
+      builder: (dialogContext) {
+        final palette = FxPalette.of(dialogContext);
+        final availableHeight = MediaQuery.heightOf(dialogContext) - 64;
+        return Dialog(
+          backgroundColor: palette.surface,
+          surfaceTintColor: Colors.transparent,
+          insetPadding: const EdgeInsets.all(32),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+            side: BorderSide(color: palette.border),
+          ),
+          clipBehavior: Clip.antiAlias,
+          child: SizedBox(
+            key: const ValueKey('bill-detail-dialog'),
+            width: 560,
+            height: math.min(760.0, availableHeight),
+            child: Column(
+              children: [
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.only(top: 24),
+                    child: detail,
+                  ),
+                ),
+                footer,
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -67,7 +110,6 @@ class BillDetailFlow {
     required int? bookId,
     required FortuneBillVo bill,
   }) async {
-    Navigator.of(context).pop();
     final billId = bill.billId;
     if (bookId == null || billId == null || _pendingBillIds.contains(billId)) {
       return;
@@ -81,6 +123,9 @@ class BillDetailFlow {
     _pendingBillIds.add(billId);
     try {
       await _service.remove(bookId: bookId, billId: billId);
+      if (context.mounted) {
+        Navigator.of(context).pop();
+      }
       BillMutations.bump();
     } on FxApiException catch (error) {
       if (context.mounted) _showError(context, error.message);
@@ -99,7 +144,6 @@ class BillDetailFlow {
     required FortuneBillVo bill,
     required bool confirm,
   }) async {
-    Navigator.of(context).pop();
     final billId = bill.billId;
     if (bookId == null || billId == null || _pendingBillIds.contains(billId)) {
       return;
@@ -111,6 +155,9 @@ class BillDetailFlow {
         await _service.confirm(bookId: bookId, billId: billId);
       } else {
         await _service.unConfirm(bookId: bookId, billId: billId);
+      }
+      if (context.mounted) {
+        Navigator.of(context).pop();
       }
       BillMutations.bump();
     } on FxApiException catch (error) {

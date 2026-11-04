@@ -103,8 +103,8 @@ class _MainShellState extends State<MainShell> {
     return Builder(builder: builder);
   }
 
-  static const double _desktopBreakpoint = 1080;
-  static const double _contentMaxWidth = 1360;
+  static const double _desktopBreakpoint = 1000;
+  static const double _contentMaxWidth = 1120;
 
   void _openQuickAdd() {
     HapticFeedback.selectionClick();
@@ -136,13 +136,17 @@ class _MainShellState extends State<MainShell> {
       (Icons.bar_chart_outlined, Icons.bar_chart_rounded, s.navStats),
       (Icons.person_outline_rounded, Icons.person_rounded, s.navProfile),
     ];
-    final content = Align(
-      alignment: Alignment.topCenter,
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: _contentMaxWidth),
-        child: SizedBox(
-          width: double.infinity,
-          child: IndexedStack(index: _index, children: pages),
+    final content = SafeArea(
+      top: false,
+      bottom: false,
+      child: Align(
+        alignment: Alignment.topCenter,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: _contentMaxWidth),
+          child: SizedBox(
+            width: double.infinity,
+            child: IndexedStack(index: _index, children: pages),
+          ),
         ),
       ),
     );

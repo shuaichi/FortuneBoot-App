@@ -51,24 +51,13 @@ class MonthStatCard extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             FxCardLabel(label, trailing: Icon(icon, size: 16, color: color)),
-            LayoutBuilder(
-              builder: (context, constraints) {
-                return FittedBox(
-                  fit: BoxFit.scaleDown,
-                  alignment: AlignmentDirectional.centerStart,
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(maxWidth: constraints.maxWidth),
-                    child: FxMoneyText(
-                      amount: amount,
-                      currencyCode: currencyCode,
-                      fontSize: 20,
-                      fontWeight: FontWeight.w700,
-                      color: color,
-                      masked: hideAmounts,
-                    ),
-                  ),
-                );
-              },
+            FxMoneyText(
+              amount: amount,
+              currencyCode: currencyCode,
+              fontSize: 20,
+              fontWeight: FontWeight.w700,
+              color: color,
+              masked: hideAmounts,
             ),
             const SizedBox(height: FxSpacing.xs),
           ],

@@ -43,18 +43,60 @@ class DestructiveConfirmSheet extends StatefulWidget {
     String? nameToMatch,
     String? checkboxLabel,
   }) async {
+    final content = DestructiveConfirmSheet(
+      message: message,
+      subMessage: subMessage,
+      nameToMatch: nameToMatch,
+      checkboxLabel: checkboxLabel,
+      confirmLabel: confirmLabel,
+      cancelLabel: cancelLabel,
+    );
+    if (MediaQuery.widthOf(context) >= 840) {
+      return await showDialog<bool>(
+            context: context,
+            builder: (dialogContext) {
+              final palette = FxPalette.of(dialogContext);
+              return Dialog(
+                backgroundColor: palette.surface,
+                surfaceTintColor: Colors.transparent,
+                insetPadding: const EdgeInsets.all(32),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                  side: BorderSide(color: palette.border),
+                ),
+                clipBehavior: Clip.antiAlias,
+                child: SizedBox(
+                  key: const ValueKey('destructive-dialog'),
+                  width: 440,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
+                          child: Text(
+                            title,
+                            style: FxTypography.title.copyWith(
+                              color: palette.textPrimary,
+                            ),
+                          ),
+                        ),
+                        content,
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            },
+          ) ??
+          false;
+    }
     return await FxSheet.show<bool>(
           context,
           title: title,
           scrollable: nameToMatch != null,
-          child: DestructiveConfirmSheet(
-            message: message,
-            subMessage: subMessage,
-            nameToMatch: nameToMatch,
-            checkboxLabel: checkboxLabel,
-            confirmLabel: confirmLabel,
-            cancelLabel: cancelLabel,
-          ),
+          child: content,
         ) ??
         false;
   }

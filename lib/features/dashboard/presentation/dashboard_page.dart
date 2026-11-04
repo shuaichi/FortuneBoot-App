@@ -120,6 +120,9 @@ class _Body extends StatefulWidget {
 }
 
 class _BodyState extends State<_Body> {
+  static const double _desktopBreakpoint = 960;
+
+  final ScrollController _scrollController = ScrollController();
   final ValueNotifier<int> _dragCount = ValueNotifier<int>(0);
   List<DashboardCardId>? _previewVisible;
   DashboardCardId? _draggingId;
@@ -198,6 +201,7 @@ class _BodyState extends State<_Body> {
 
   @override
   void dispose() {
+    _scrollController.dispose();
     _dragCount.dispose();
     super.dispose();
   }
@@ -230,12 +234,23 @@ class _BodyState extends State<_Body> {
                 !emptyUser &&
                 (!state.categories.isReady ||
                     (state.categories.data?.isNotEmpty ?? false));
+            final showTrend =
+                !emptyUser &&
+                (!state.expenseTrends.isReady ||
+                    !state.incomeTrends.isReady ||
+                    (state.expenseTrends.data?.isNotEmpty ?? false) ||
+                    (state.incomeTrends.data?.isNotEmpty ?? false));
+            final textScale = MediaQuery.textScalerOf(context).scale(1);
+            final accessibleSummary = textScale > 1.3;
+            final gridRowHeight = 100 + 40 * (textScale - 1).clamp(0.0, 2.0);
 
             final tiles = <FxBentoTile>[];
+            Widget? recentBills;
             for (final id in visibleIds) {
               final spec = DashboardCardCatalog.specOf(id);
               if (spec.requiresNonEmptyUser && emptyUser) continue;
               if (spec.hideWhenCategoryEmpty && !showCategories) continue;
+              if (id == DashboardCardId.trend && !showTrend) continue;
               final card = _cardFor(
                 context,
                 id: id,
@@ -244,20 +259,27 @@ class _BodyState extends State<_Body> {
                 emptyUser: emptyUser,
                 onRetry: retry,
               );
+              if (!_editingLayout && id == DashboardCardId.recentBills) {
+                recentBills = card;
+                continue;
+              }
               tiles.add(
                 FxBentoTile(
                   id: id,
-                  colSpan: spec.colSpan,
+                  colSpan:
+                      accessibleSummary &&
+                          (id == DashboardCardId.monthExpense ||
+                              id == DashboardCardId.monthIncome)
+                      ? FxBentoTile.fullSpan
+                      : spec.colSpan,
                   rowSpan: spec.rowSpan,
                   child: _editingLayout
                       ? DashboardDraggableCard(
                           key: ValueKey(id),
                           id: id,
                           onDragStarted: () => _onDragStarted(id),
-                          onDragEnded: () => _onDragEnded(
-                            snap.placeable,
-                            snap.hidden,
-                          ),
+                          onDragEnded: () =>
+                              _onDragEnded(snap.placeable, snap.hidden),
                           onInsertNear: _onInsertNear,
                           onRemove: () => DashboardLayoutController.hide(
                             context,
@@ -272,21 +294,54 @@ class _BodyState extends State<_Body> {
               );
             }
 
-            if (tiles.isEmpty && !_editingLayout) {
+            if (tiles.isEmpty && recentBills == null && !_editingLayout) {
               return FxStateView.empty(
                 message: S.of(context).dashboardNoVisibleCards,
               );
             }
 
+            final grid = FxBentoGrid(
+              tiles: tiles,
+              rowHeight: gridRowHeight,
+              padding: EdgeInsets.zero,
+              allowBackfill: !_editingLayout,
+            );
+            final browsingContent = LayoutBuilder(
+              builder: (context, constraints) {
+                final desktop = constraints.maxWidth >= _desktopBreakpoint;
+                if (!desktop || recentBills == null) {
+                  return Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (tiles.isNotEmpty) grid,
+                      if (tiles.isNotEmpty && recentBills != null)
+                        const SizedBox(height: FxSpacing.xl),
+                      if (recentBills != null) recentBills,
+                    ],
+                  );
+                }
+                return Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(child: grid),
+                    const SizedBox(width: FxSpacing.xxl),
+                    SizedBox(width: 360, child: recentBills),
+                  ],
+                );
+              },
+            );
             final gridChildren = <Widget>[
-              if (tiles.isNotEmpty)
-                FxBentoGrid(
-                  tiles: tiles,
-                  // 略高于默认 92，让「最近账单」3 条在 rowSpan=2 内更从容。
-                  rowHeight: 100,
-                  allowBackfill: !_editingLayout,
+              if (_editingLayout)
+                Padding(
+                  padding: const EdgeInsets.all(FxSpacing.lg),
+                  child: grid,
+                )
+              else
+                Padding(
+                  padding: const EdgeInsets.all(FxSpacing.xl),
+                  child: browsingContent,
                 ),
-              if (tiles.isEmpty)
+              if (tiles.isEmpty && recentBills == null)
                 Padding(
                   padding: const EdgeInsets.all(FxSpacing.lg),
                   child: Text(
@@ -300,12 +355,25 @@ class _BodyState extends State<_Body> {
             final content = ValueListenableBuilder<int>(
               valueListenable: _dragCount,
               builder: (context, dragCount, child) {
-                return ListView(
-                  physics: dragCount > 0
-                      ? const NeverScrollableScrollPhysics()
-                      : const AlwaysScrollableScrollPhysics(),
-                  padding: const EdgeInsets.only(bottom: FxSpacing.xxxl),
-                  children: [child!],
+                final desktop =
+                    MediaQuery.widthOf(context) >= _desktopBreakpoint;
+                final bottomInset = desktop
+                    ? FxSpacing.xxxl
+                    : 96 + MediaQuery.paddingOf(context).bottom;
+                return Scrollbar(
+                  controller: _scrollController,
+                  thumbVisibility: desktop,
+                  interactive: true,
+                  child: ListView(
+                    controller: _scrollController,
+                    keyboardDismissBehavior:
+                        ScrollViewKeyboardDismissBehavior.onDrag,
+                    physics: dragCount > 0
+                        ? const NeverScrollableScrollPhysics()
+                        : const AlwaysScrollableScrollPhysics(),
+                    padding: EdgeInsets.only(bottom: bottomInset),
+                    children: [child!],
+                  ),
                 );
               },
               child: Column(

@@ -89,5 +89,68 @@ void main() {
     expect(tester.getSize(target).width, greaterThanOrEqualTo(44));
   });
 
+  testWidgets('large accessibility text is not scaled down to fit a card', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(320, 720);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+
+    final preferences = PreferencesCubit();
+    addTearDown(preferences.close);
+
+    await tester.pumpWidget(
+      BlocProvider.value(
+        value: preferences,
+        child: MaterialApp(
+          theme: FxTheme.light,
+          locale: const Locale('zh'),
+          localizationsDelegates: const [
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+            S.delegate,
+          ],
+          supportedLocales: S.delegate.supportedLocales,
+          builder: (context, child) => MediaQuery(
+            data: MediaQuery.of(
+              context,
+            ).copyWith(textScaler: const TextScaler.linear(2)),
+            child: child!,
+          ),
+          home: const Scaffold(
+            body: SingleChildScrollView(
+              child: RecentBillsCard(
+                section: DashboardSection<List<FortuneBillVo>>.ready([
+                  FortuneBillVo(
+                    billId: 1,
+                    title: '午餐',
+                    amount: 28,
+                    billType: 1,
+                    accountName: '日常消费银行卡',
+                  ),
+                  FortuneBillVo(billId: 2, title: '交通', amount: 6, billType: 1),
+                ]),
+                currencyCode: 'CNY',
+                onRetry: _noRetry,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    await tester.pumpAndSettle();
+
+    expect(
+      find.descendant(
+        of: find.byType(RecentBillsCard),
+        matching: find.byType(FittedBox),
+      ),
+      findsNothing,
+    );
+    expect(tester.takeException(), isNull);
+  });
 }
+
 void _noRetry() {}
