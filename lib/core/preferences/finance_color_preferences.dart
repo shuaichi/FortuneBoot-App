@@ -22,7 +22,7 @@ enum FinanceColorPreset {
 /// 用户自定义账单语义颜色偏好。
 ///
 /// 默认值与 FxColors 保持一致：支出绿、收入红（国内记账习惯）、转账紫、调整橙。
-/// 垫付 / 报销默认复用支出色，允许用户单独调整。
+/// 垫付默认复用支出色；报销到账默认复用收入色，允许用户单独调整。
 /// 节假日默认紫；「休」绿、「班」琥珀。
 class FinanceColorPreferences extends Equatable {
   final int income;
@@ -51,7 +51,7 @@ class FinanceColorPreferences extends Equatable {
     this.transfer = _defaultTransfer,
     this.adjust = _defaultAdjust,
     this.advance = _defaultExpense,
-    this.reimburse = _defaultExpense,
+    this.reimburse = _defaultIncome,
     this.holiday = _defaultHoliday,
     this.rest = _defaultRest,
     this.work = _defaultWork,
@@ -70,7 +70,7 @@ class FinanceColorPreferences extends Equatable {
         transfer: _defaultTransfer,
         adjust: 0xFF64748B,
         advance: 0xFF3B82F6,
-        reimburse: 0xFF3B82F6,
+        reimburse: 0xFFF59E0B,
         rest: 0xFF3B82F6,
         work: 0xFFF59E0B,
         preset: 'deuteranopia',
@@ -81,7 +81,7 @@ class FinanceColorPreferences extends Equatable {
         transfer: _defaultTransfer,
         adjust: 0xFF64748B,
         advance: 0xFF1E40AF,
-        reimburse: 0xFF1E40AF,
+        reimburse: 0xFFF59E0B,
         rest: 0xFF1E40AF,
         work: 0xFFF59E0B,
         preset: 'protanopia',
@@ -92,7 +92,7 @@ class FinanceColorPreferences extends Equatable {
         transfer: _defaultTransfer,
         adjust: 0xFFF59E0B,
         advance: 0xFFDB2777,
-        reimburse: 0xFFDB2777,
+        reimburse: 0xFF1E40AF,
         rest: 0xFFDB2777,
         preset: 'tritanopia',
       ),

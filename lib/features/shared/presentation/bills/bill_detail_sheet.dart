@@ -143,10 +143,14 @@ class _BillDetailSheetState extends State<BillDetailSheet> {
         ),
         const SizedBox(width: FxSpacing.sm),
         FxMoneyText(
-          amount: _bill.displayAmount,
+          amount:
+              FxBillType.fromValue(
+                _bill.billType,
+              )?.signedFlowAmount(_bill.displayAmount) ??
+              _bill.displayAmount,
           currencyCode: _bill.currencyCode,
           billType: _bill.billType,
-          showSign: true,
+          showSign: !_isTransfer && _bill.billType != FxBillType.adjust.value,
           fontSize: 22,
           fontWeight: FontWeight.w700,
           color: color,

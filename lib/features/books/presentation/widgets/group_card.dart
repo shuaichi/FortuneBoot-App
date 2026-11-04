@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:fortuneboot/features/books/data/books_manage_models.dart';
 import 'package:fortuneboot/features/books/domain/books_manage_capabilities.dart';
 import 'package:fortuneboot/fx/components/fx_card.dart';
-import 'package:fortuneboot/fx/components/fx_chart_palette.dart';
 import 'package:fortuneboot/fx/components/fx_tag_chip.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
@@ -30,7 +29,7 @@ class GroupCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final palette = FxPalette.of(context);
-    final accent = _accentFor(group.groupId ?? group.name.hashCode);
+    final accent = palette.textSecondary;
     return Opacity(
       opacity: group.enable ? 1 : 0.62,
       child: FxCard(
@@ -45,7 +44,7 @@ class GroupCard extends StatelessWidget {
                   width: 44,
                   height: 44,
                   decoration: BoxDecoration(
-                    color: accent.withValues(alpha: 0.16),
+                    color: palette.surfaceMuted,
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: Icon(Icons.folder_rounded, color: accent),
@@ -57,9 +56,11 @@ class GroupCard extends StatelessWidget {
                     children: [
                       Text(
                         group.name,
-                        style: FxTypography.title.copyWith(
+                        style: FxTypography.bodyStrong.copyWith(
                           color: palette.textPrimary,
                         ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                       ),
                       const SizedBox(height: FxSpacing.xs),
                       Text(
@@ -69,6 +70,8 @@ class GroupCard extends StatelessWidget {
                         style: FxTypography.caption.copyWith(
                           color: palette.textSecondary,
                         ),
+                        maxLines: 3,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ],
                   ),
@@ -135,6 +138,4 @@ class GroupCard extends StatelessWidget {
       ),
     );
   }
-
-  Color _accentFor(int seed) => FxChartPalette.colorAt(seed.abs());
 }

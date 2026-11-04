@@ -159,10 +159,15 @@ class BillTile extends StatelessWidget {
                     ),
                   ),
                 FxMoneyText(
-                  amount: hasExtras ? bill.settledAmount : bill.displayAmount,
+                  amount:
+                      FxBillType.fromValue(bill.billType)?.signedFlowAmount(
+                        hasExtras ? bill.settledAmount : bill.displayAmount,
+                      ) ??
+                      (hasExtras ? bill.settledAmount : bill.displayAmount),
                   currencyCode: bill.currencyCode,
                   billType: bill.billType,
-                  showSign: true,
+                  showSign: bill.billType != FxBillType.transfer.value &&
+                      bill.billType != FxBillType.adjust.value,
                   masked: masked,
                 ),
                 if (bill.tradeTime != null ||

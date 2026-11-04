@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fortuneboot/core/shell/main_shell.dart';
 import 'package:fortuneboot/core/session/session_models.dart';
 import 'package:fortuneboot/features/books/presentation/bloc/books_bloc.dart';
 import 'package:fortuneboot/features/books/presentation/widgets/book_card.dart';
@@ -105,11 +106,11 @@ class BooksTabView extends StatelessWidget {
                         ],
                       )
                     : ListView.separated(
-                        padding: const EdgeInsets.fromLTRB(
+                        padding: EdgeInsets.fromLTRB(
                           FxSpacing.lg,
                           FxSpacing.md,
                           FxSpacing.lg,
-                          120,
+                          ShellContentInsets.bottomOf(context),
                         ),
                         itemBuilder: (context, index) {
                           final book = state.visibleBooks[index];

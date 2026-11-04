@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fortuneboot/core/preferences/preferences_cubit.dart';
 import 'package:fortuneboot/core/session/bill_mutations.dart';
 import 'package:fortuneboot/core/session/session_cubit.dart';
+import 'package:fortuneboot/core/shell/main_shell.dart';
 import 'package:fortuneboot/features/dashboard/data/dashboard_card_catalog.dart';
 import 'package:fortuneboot/features/dashboard/presentation/bloc/dashboard_bloc.dart';
 import 'package:fortuneboot/features/dashboard/presentation/widgets/category_top_card.dart';
@@ -357,9 +358,7 @@ class _BodyState extends State<_Body> {
               builder: (context, dragCount, child) {
                 final desktop =
                     MediaQuery.widthOf(context) >= _desktopBreakpoint;
-                final bottomInset = desktop
-                    ? FxSpacing.xxxl
-                    : 96 + MediaQuery.paddingOf(context).bottom;
+                final bottomInset = ShellContentInsets.bottomOf(context);
                 return Scrollbar(
                   controller: _scrollController,
                   thumbVisibility: desktop,

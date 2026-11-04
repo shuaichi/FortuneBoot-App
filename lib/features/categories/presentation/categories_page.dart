@@ -10,6 +10,7 @@ import 'package:fortuneboot/features/categories/presentation/widgets/category_fo
 import 'package:fortuneboot/features/categories/presentation/widgets/category_tile.dart';
 import 'package:fortuneboot/features/manage_shared/manage_menu.dart';
 import 'package:fortuneboot/features/manage_shared/manage_scaffold.dart';
+import 'package:fortuneboot/fx/components/fx_list_section.dart';
 import 'package:fortuneboot/fx/components/fx_sheet.dart';
 import 'package:fortuneboot/fx/components/fx_state_view.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
@@ -305,30 +306,34 @@ class _CategoriesPageState extends State<CategoriesPage> {
             ],
           ),
         ),
-        for (final node in roots) ...[
-          CategoryTile(
-            node: node,
-            typeTint: tint,
-            expanded: state.isExpanded(node.categoryId),
-            onTap: (n) => _openForm(category: n),
-            onToggleExpand: (id) =>
-                _bloc.add(ToggleCategoryExpandRequested(id)),
-            expandedFor: (child) => state.isExpanded(child.categoryId),
-            matchCountFor: (child) =>
-                isSearching ? state.matchCountFor(child.categoryId) : 0,
-            searchMatchCount: isSearching
-                ? state.matchCountFor(node.categoryId)
-                : 0,
-            onMenu: _openMenu,
-            onAddChild: inRecycle
-                ? null
-                : (parent) => _openForm(
-                    presetType: type,
-                    presetParentId: parent.categoryId,
-                  ),
-          ),
-          const SizedBox(height: FxSpacing.sm),
-        ],
+        FxListSection(
+          dividerIndent: 48,
+          children: [
+            for (final node in roots)
+              CategoryTile(
+                node: node,
+                typeTint: tint,
+                expanded: state.isExpanded(node.categoryId),
+                onTap: (n) => _openForm(category: n),
+                onToggleExpand: (id) =>
+                    _bloc.add(ToggleCategoryExpandRequested(id)),
+                expandedFor: (child) => state.isExpanded(child.categoryId),
+                matchCountFor: (child) =>
+                    isSearching ? state.matchCountFor(child.categoryId) : 0,
+                searchMatchCount: isSearching
+                    ? state.matchCountFor(node.categoryId)
+                    : 0,
+                onMenu: _openMenu,
+                onAddChild: inRecycle
+                    ? null
+                    : (parent) => _openForm(
+                        presetType: type,
+                        presetParentId: parent.categoryId,
+                      ),
+              ),
+          ],
+        ),
+        const SizedBox(height: FxSpacing.lg),
       ],
     );
   }

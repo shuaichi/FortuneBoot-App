@@ -10,6 +10,7 @@ import 'package:fortuneboot/features/recurring/data/recurring_models.dart';
 import 'package:fortuneboot/features/recurring/data/recurring_service.dart';
 import 'package:fortuneboot/features/recurring/presentation/bloc/recurring_bloc.dart';
 import 'package:fortuneboot/features/recurring/presentation/recurring_editor_page.dart';
+import 'package:fortuneboot/features/recurring/presentation/recurring_formatters.dart';
 import 'package:fortuneboot/features/recurring/presentation/widgets/cron_schedule_editor.dart';
 import 'package:fortuneboot/features/recurring/presentation/widgets/recurring_log_sheet.dart';
 import 'package:fortuneboot/fx/components/fx_card.dart';
@@ -17,7 +18,6 @@ import 'package:fortuneboot/fx/components/fx_icon_button.dart';
 import 'package:fortuneboot/fx/components/fx_sheet.dart';
 import 'package:fortuneboot/fx/components/fx_state_view.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
-import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
 import 'package:fortuneboot/generated/l10n.dart';
@@ -284,7 +284,7 @@ class _RecurringPageState extends State<RecurringPage> {
                   child: _meta(
                     context,
                     S.of(context).recurringNextExecution,
-                    rule.nextExecutionTime ?? '-',
+                    formatRecurringExecutionTime(rule.nextExecutionTime),
                   ),
                 ),
                 Expanded(
@@ -309,34 +309,12 @@ class _RecurringPageState extends State<RecurringPage> {
     final spec = CronBuilder.tryParse(cron);
     final label = spec != null
         ? CronScheduleEditor.summarize(context, spec)
-        : 'cron: ${cron ?? '-'}';
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: FxSpacing.sm,
-        vertical: 4,
-      ),
-      decoration: BoxDecoration(
-        color: palette.primaryContainer,
-        borderRadius: FxRadius.pillBorder,
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(Icons.schedule_rounded, size: 13, color: palette.primary),
-          const SizedBox(width: FxSpacing.xs),
-          Flexible(
-            child: Text(
-              label,
-              style: FxTypography.caption.copyWith(
-                color: palette.primary,
-                fontFamily: spec == null ? FxTypography.monoFamily : null,
-              ),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-        ],
-      ),
+        : S.of(context).recurringAdvancedCron;
+    return Text(
+      label,
+      style: FxTypography.bodyStrong.copyWith(color: palette.textPrimary),
+      maxLines: 1,
+      overflow: TextOverflow.ellipsis,
     );
   }
 

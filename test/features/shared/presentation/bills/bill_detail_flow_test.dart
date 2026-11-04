@@ -17,7 +17,13 @@ void main() {
   testWidgets('shows the shared bill detail sheet for a selected bill', (
     tester,
   ) async {
-    const bill = FortuneBillVo(billId: 1, title: '午餐', amount: 28, billType: 1);
+    const bill = FortuneBillVo(
+      billId: 1,
+      title: '午餐',
+      amount: 28,
+      billType: 1,
+      currencyCode: 'CNY',
+    );
 
     await tester.pumpWidget(_detailHarness(bill));
 
@@ -26,6 +32,7 @@ void main() {
 
     expect(find.byType(BillDetailSheet), findsOneWidget);
     expect(find.text('午餐'), findsOneWidget);
+    expect(find.text('-¥28.00'), findsOneWidget);
     expect(find.text('编辑'), findsOneWidget);
     expect(find.text('复制'), findsOneWidget);
     expect(find.text('删除'), findsOneWidget);
@@ -194,7 +201,13 @@ void main() {
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);
 
-    const bill = FortuneBillVo(billId: 1, title: '午餐', amount: 28, billType: 1);
+    const bill = FortuneBillVo(
+      billId: 1,
+      title: '午餐',
+      amount: 28,
+      billType: 1,
+      currencyCode: 'CNY',
+    );
     await tester.pumpWidget(_detailHarness(bill));
 
     await tester.tap(find.text('打开详情'));
@@ -212,7 +225,13 @@ void main() {
   testWidgets('cancelling deletion preserves the open bill detail', (
     tester,
   ) async {
-    const bill = FortuneBillVo(billId: 1, title: '午餐', amount: 28, billType: 1);
+    const bill = FortuneBillVo(
+      billId: 1,
+      title: '午餐',
+      amount: 28,
+      billType: 1,
+      currencyCode: 'CNY',
+    );
     await tester.pumpWidget(_detailHarness(bill));
 
     await tester.tap(find.text('打开详情'));
@@ -236,7 +255,13 @@ void main() {
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);
 
-    const bill = FortuneBillVo(billId: 1, title: '午餐', amount: 28, billType: 1);
+    const bill = FortuneBillVo(
+      billId: 1,
+      title: '午餐',
+      amount: 28,
+      billType: 1,
+      currencyCode: 'CNY',
+    );
     await tester.pumpWidget(_detailHarness(bill));
     await tester.tap(find.text('打开详情'));
     await tester.pumpAndSettle();
@@ -256,7 +281,13 @@ void main() {
     tester,
   ) async {
     final service = _PendingBillService();
-    const bill = FortuneBillVo(billId: 1, title: '午餐', amount: 28, billType: 1);
+    const bill = FortuneBillVo(
+      billId: 1,
+      title: '午餐',
+      amount: 28,
+      billType: 1,
+      currencyCode: 'CNY',
+    );
     await tester.pumpWidget(
       _detailHarness(bill, service: service, pushHostRoute: true),
     );

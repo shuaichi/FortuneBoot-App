@@ -13,6 +13,7 @@ import 'package:fortuneboot/core/shell/bills_navigation_controller.dart';
 import 'package:fortuneboot/features/shared/data/bill_models.dart';
 import 'package:fortuneboot/fx/components/fx_button.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
+import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
 import 'package:fortuneboot/generated/l10n.dart';
 
@@ -28,6 +29,29 @@ class MainShellSlots {
 }
 
 enum MainShellTab { dashboard, bills, stats, profile }
+
+/// 主壳层统一发布的滚动内容底部避让空间。
+///
+/// 页面不再猜测 FAB 或导航栏高度；列表末尾读取该值，保证金额和操作可完整滚出遮挡区。
+class ShellContentInsets extends InheritedWidget {
+  const ShellContentInsets({
+    super.key,
+    required this.bottom,
+    required super.child,
+  });
+
+  final double bottom;
+
+  static double bottomOf(BuildContext context) {
+    final inherited = context
+        .dependOnInheritedWidgetOfExactType<ShellContentInsets>();
+    return inherited?.bottom ?? 24 + MediaQuery.paddingOf(context).bottom;
+  }
+
+  @override
+  bool updateShouldNotify(ShellContentInsets oldWidget) =>
+      bottom != oldWidget.bottom;
+}
 
 /// 响应式主导航：窄屏底部 Tab，宽屏侧边栏。IndexedStack 保活。
 /// 首次进入时触发 SessionCubit.load() 拉取分组/账本。
@@ -151,87 +175,93 @@ class _MainShellState extends State<MainShell> {
       ),
     );
 
-    return BillsNavigationScope(
-      controller: _billsNavigation,
-      child: Scaffold(
-        body: wide
-            ? Row(
-                children: [
-                  SafeArea(
-                    top: false,
-                    right: false,
-                    bottom: false,
-                    child: NavigationRail(
-                      extended: true,
-                      minExtendedWidth: 224,
-                      labelType: NavigationRailLabelType.none,
-                      backgroundColor: palette.surface,
-                      selectedIndex: _index,
-                      onDestinationSelected: (value) =>
-                          _selectTab(MainShellTab.values[value]),
-                      indicatorColor: palette.primaryContainer,
-                      indicatorShape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      leading: Padding(
-                        padding: const EdgeInsets.fromLTRB(16, 24, 16, 28),
-                        child: SizedBox(
-                          width: 192,
-                          child: FxButton(
-                            label: s.dashboardQuickAdd,
-                            icon: Icons.add_rounded,
-                            expand: true,
-                            onPressed: _openQuickAdd,
+    final contentBottomInset = wide
+        ? FxSpacing.xxxl
+        : 96 + MediaQuery.paddingOf(context).bottom;
+    return ShellContentInsets(
+      bottom: contentBottomInset,
+      child: BillsNavigationScope(
+        controller: _billsNavigation,
+        child: Scaffold(
+          body: wide
+              ? Row(
+                  children: [
+                    SafeArea(
+                      top: false,
+                      right: false,
+                      bottom: false,
+                      child: NavigationRail(
+                        extended: true,
+                        minExtendedWidth: 224,
+                        labelType: NavigationRailLabelType.none,
+                        backgroundColor: palette.surface,
+                        selectedIndex: _index,
+                        onDestinationSelected: (value) =>
+                            _selectTab(MainShellTab.values[value]),
+                        indicatorColor: palette.primaryContainer,
+                        indicatorShape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        leading: Padding(
+                          padding: const EdgeInsets.fromLTRB(16, 24, 16, 28),
+                          child: SizedBox(
+                            width: 192,
+                            child: FxButton(
+                              label: s.dashboardQuickAdd,
+                              icon: Icons.add_rounded,
+                              expand: true,
+                              onPressed: _openQuickAdd,
+                            ),
                           ),
                         ),
+                        destinations: [
+                          for (final destination in destinations)
+                            NavigationRailDestination(
+                              icon: Icon(destination.$1),
+                              selectedIcon: Icon(destination.$2),
+                              label: Text(destination.$3),
+                            ),
+                        ],
                       ),
-                      destinations: [
-                        for (final destination in destinations)
-                          NavigationRailDestination(
-                            icon: Icon(destination.$1),
-                            selectedIcon: Icon(destination.$2),
-                            label: Text(destination.$3),
-                          ),
-                      ],
                     ),
-                  ),
-                  VerticalDivider(width: 1, color: palette.border),
-                  Expanded(child: content),
-                ],
-              )
-            : content,
-        floatingActionButton: wide
-            ? null
-            : FloatingActionButton(
-                tooltip: s.dashboardQuickAdd,
-                onPressed: _openQuickAdd,
-                backgroundColor: palette.primary,
-                foregroundColor: palette.onPrimary,
-                elevation: 0,
-                shape: const CircleBorder(),
-                child: const Icon(Icons.add_rounded, size: 28),
-              ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-        bottomNavigationBar: wide
-            ? null
-            : NavigationBar(
-                height: 64,
-                selectedIndex: _index,
-                onDestinationSelected: (value) =>
-                    _selectTab(MainShellTab.values[value]),
-                backgroundColor: palette.surface,
-                surfaceTintColor: Colors.transparent,
-                shadowColor: Colors.transparent,
-                indicatorColor: palette.primaryContainer,
-                destinations: [
-                  for (final destination in destinations)
-                    NavigationDestination(
-                      icon: Icon(destination.$1),
-                      selectedIcon: Icon(destination.$2),
-                      label: destination.$3,
-                    ),
-                ],
-              ),
+                    VerticalDivider(width: 1, color: palette.border),
+                    Expanded(child: content),
+                  ],
+                )
+              : content,
+          floatingActionButton: wide
+              ? null
+              : FloatingActionButton(
+                  tooltip: s.dashboardQuickAdd,
+                  onPressed: _openQuickAdd,
+                  backgroundColor: palette.primary,
+                  foregroundColor: palette.onPrimary,
+                  elevation: 0,
+                  shape: const CircleBorder(),
+                  child: const Icon(Icons.add_rounded, size: 28),
+                ),
+          floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+          bottomNavigationBar: wide
+              ? null
+              : NavigationBar(
+                  height: 64,
+                  selectedIndex: _index,
+                  onDestinationSelected: (value) =>
+                      _selectTab(MainShellTab.values[value]),
+                  backgroundColor: palette.surface,
+                  surfaceTintColor: Colors.transparent,
+                  shadowColor: Colors.transparent,
+                  indicatorColor: palette.primaryContainer,
+                  destinations: [
+                    for (final destination in destinations)
+                      NavigationDestination(
+                        icon: Icon(destination.$1),
+                        selectedIcon: Icon(destination.$2),
+                        label: destination.$3,
+                      ),
+                  ],
+                ),
+        ),
       ),
     );
   }

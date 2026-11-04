@@ -26,6 +26,7 @@ class DashboardCardShell<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FxCard(
+      elevated: true,
       onTap: section.isReady ? onTap : null,
       child: switch (section.status) {
         SectionStatus.loading => const _CardSkeleton(),

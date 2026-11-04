@@ -187,7 +187,7 @@ class FxFinanceColors extends ThemeExtension<FxFinanceColors> {
     transfer: FxColors.transfer,
     adjust: FxColors.adjust,
     advance: FxColors.expense,
-    reimburse: FxColors.expense,
+    reimburse: FxColors.income,
     loanOut: FxColors.expense,
     loanRecover: FxColors.income,
     loanIn: FxColors.income,
@@ -230,7 +230,8 @@ class FxFinanceColors extends ThemeExtension<FxFinanceColors> {
       case 7:
         return advance;
       case 8:
-        return reimburse;
+        // 报销到账增加当前账户余额，与垫付支出方向相反。
+        return income;
       case 9:
         return loanOut;
       case 10:

@@ -8,15 +8,17 @@ import 'package:fortuneboot/core/preferences/preferences_cubit.dart';
 import 'package:fortuneboot/core/session/bill_mutations.dart';
 import 'package:fortuneboot/core/session/session_cubit.dart';
 import 'package:fortuneboot/core/shell/bills_navigation_controller.dart';
+import 'package:fortuneboot/core/shell/main_shell.dart';
 import 'package:fortuneboot/core/time/month_window_resolver.dart';
 import 'package:fortuneboot/features/bills/presentation/bloc/bills_bloc.dart';
 import 'package:fortuneboot/features/bills/presentation/widgets/bill_tile.dart';
-import 'package:fortuneboot/features/bills/presentation/widgets/bills_filter_sheet.dart';
+import 'package:fortuneboot/features/bills/presentation/pages/bills_filter_page.dart';
 import 'package:fortuneboot/features/shared/data/bill_models.dart';
 import 'package:fortuneboot/features/shared/data/bill_service.dart';
 import 'package:fortuneboot/features/shared/presentation/bills/bill_delete_confirmation.dart';
 import 'package:fortuneboot/features/shared/presentation/bills/bill_detail_flow.dart';
 import 'package:fortuneboot/fx/components/fx_icon_button.dart';
+import 'package:fortuneboot/fx/components/fx_list_section.dart';
 import 'package:fortuneboot/fx/components/fx_money_text.dart';
 import 'package:fortuneboot/fx/components/fx_sheet.dart';
 import 'package:fortuneboot/fx/components/fx_state_view.dart';
@@ -274,9 +276,9 @@ class _BillsPageState extends State<BillsPage> {
     FxSheet.show<void>(
       context,
       title: S.of(context).billsFilterTitle,
-      scrollable: true,
-      maxHeightFactor: FxSheet.pickerHeightFactor,
-      child: BillsFilterSheet(
+      expand: true,
+      expandHeightFactor: FxSheet.pickerHeightFactor,
+      child: BillsFilterPage(
         initial: state.filter,
         bookId: _activeBookId,
         groupId:
@@ -743,8 +745,20 @@ class _BillsPageState extends State<BillsPage> {
               SliverStickyGroup(
                 header: _dayHeader(group),
                 children: [
-                  for (final bill in group.bills)
-                    _dismissibleTile(bill, hideAmounts),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(
+                      FxSpacing.lg,
+                      0,
+                      FxSpacing.lg,
+                      FxSpacing.md,
+                    ),
+                    child: FxListSection(
+                      children: [
+                        for (final bill in group.bills)
+                          _dismissibleTile(bill, hideAmounts),
+                      ],
+                    ),
+                  ),
                 ],
               ),
           ],
@@ -773,7 +787,9 @@ class _BillsPageState extends State<BillsPage> {
                 ),
               ),
             ),
-          const SliverToBoxAdapter(child: SizedBox(height: FxSpacing.xxxl * 2)),
+          SliverToBoxAdapter(
+            child: SizedBox(height: ShellContentInsets.bottomOf(context)),
+          ),
         ],
       ),
     );
@@ -912,29 +928,12 @@ class _BillsPageState extends State<BillsPage> {
 
   Widget _dismissibleTile(FortuneBillVo bill, bool hideAmounts) {
     final palette = FxPalette.of(context);
-    final tile = Container(
-      margin: const EdgeInsets.symmetric(
-        horizontal: FxSpacing.lg,
-        vertical: FxSpacing.xs,
-      ),
-      decoration: BoxDecoration(
-        color: palette.surface,
-        borderRadius: FxRadius.cardBorder,
-        boxShadow: [
-          BoxShadow(
-            color: palette.shadow,
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: ClipRRect(
-        borderRadius: FxRadius.cardBorder,
-        child: BillTile(
-          bill: bill,
-          masked: hideAmounts,
-          onTap: () => _openDetail(bill),
-        ),
+    final tile = ClipRRect(
+      borderRadius: FxRadius.cardBorder,
+      child: BillTile(
+        bill: bill,
+        masked: hideAmounts,
+        onTap: () => _openDetail(bill),
       ),
     );
 
@@ -956,12 +955,9 @@ class _BillsPageState extends State<BillsPage> {
       ),
       confirmDismiss: (direction) async {
         if (direction == DismissDirection.startToEnd) {
-          // 右滑 → 复制（不消除该行）。
           _goCopy(bill);
           return false;
         }
-        // 左滑 → 删除二次确认。返回 false，等待 Bloc 成功删除后由状态移除该行，
-        // 避免 Dismissible 动画结束时同 key 账单仍在树上导致崩溃。
         await _confirmDelete(bill);
         return false;
       },
@@ -976,10 +972,6 @@ class _BillsPageState extends State<BillsPage> {
     required String label,
   }) {
     return Container(
-      margin: const EdgeInsets.symmetric(
-        horizontal: FxSpacing.lg,
-        vertical: FxSpacing.xs,
-      ),
       decoration: BoxDecoration(
         color: color,
         borderRadius: FxRadius.cardBorder,

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fortuneboot/core/session/session_models.dart';
 import 'package:fortuneboot/fx/components/fx_card.dart';
-import 'package:fortuneboot/fx/components/fx_chart_palette.dart';
 import 'package:fortuneboot/fx/components/fx_tag_chip.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
@@ -37,7 +36,7 @@ class BookCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final palette = FxPalette.of(context);
-    final accent = _accentFor(book.bookId ?? book.bookName.hashCode);
+    final accent = palette.textSecondary;
     return Opacity(
       opacity: book.enable ? 1 : 0.62,
       child: FxCard(
@@ -52,7 +51,7 @@ class BookCard extends StatelessWidget {
                   width: 44,
                   height: 44,
                   decoration: BoxDecoration(
-                    color: accent.withValues(alpha: 0.16),
+                    color: palette.surfaceMuted,
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: Icon(Icons.menu_book_rounded, color: accent),
@@ -66,9 +65,11 @@ class BookCard extends StatelessWidget {
                         book.bookName?.trim().isNotEmpty == true
                             ? book.bookName!.trim()
                             : S.of(context).booksUnnamedBook,
-                        style: FxTypography.title.copyWith(
+                        style: FxTypography.bodyStrong.copyWith(
                           color: palette.textPrimary,
                         ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                       ),
                       const SizedBox(height: FxSpacing.xs),
                       Text(
@@ -83,6 +84,8 @@ class BookCard extends StatelessWidget {
                         style: FxTypography.caption.copyWith(
                           color: palette.textSecondary,
                         ),
+                        maxLines: 3,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ],
                   ),
@@ -156,6 +159,4 @@ class BookCard extends StatelessWidget {
       ),
     );
   }
-
-  Color _accentFor(int seed) => FxChartPalette.colorAt(seed.abs());
 }

@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:fortuneboot/features/bills/data/bills_filter.dart';
 import 'package:fortuneboot/features/bills/data/bills_filter_options_service.dart';
 import 'package:fortuneboot/features/shared/data/bill_models.dart';
-import 'package:fortuneboot/fx/components/fx_button.dart';
 import 'package:fortuneboot/fx/components/fx_tag_chip.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
@@ -32,10 +31,10 @@ class BillsFilterSheet extends StatefulWidget {
   final BillsFilterOptionsService? optionsService;
 
   @override
-  State<BillsFilterSheet> createState() => _BillsFilterSheetState();
+  State<BillsFilterSheet> createState() => BillsFilterSheetState();
 }
 
-class _BillsFilterSheetState extends State<BillsFilterSheet> {
+class BillsFilterSheetState extends State<BillsFilterSheet> {
   late final BillsFilterOptionsService _optionsService;
   late Set<int> _billTypes;
   late Set<int> _categoryIds;
@@ -179,7 +178,7 @@ class _BillsFilterSheetState extends State<BillsFilterSheet> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
+    return Padding(
       padding: const EdgeInsets.fromLTRB(
         FxSpacing.lg,
         0,
@@ -218,30 +217,16 @@ class _BillsFilterSheetState extends State<BillsFilterSheet> {
           ),
           const SizedBox(height: FxSpacing.lg),
           _optionsControls(),
-          const SizedBox(height: FxSpacing.xl),
-          Row(
-            children: [
-              Expanded(
-                child: FxButton.text(
-                  label: S.of(context).billsReset,
-                  onPressed: _reset,
-                ),
-              ),
-              const SizedBox(width: FxSpacing.md),
-              Expanded(
-                flex: 2,
-                child: FxButton(
-                  label: S.of(context).billsApply,
-                  expand: true,
-                  onPressed: _apply,
-                ),
-              ),
-            ],
-          ),
         ],
       ),
     );
   }
+
+  /// 由固定操作区触发，避免重置按钮随长表单滚出屏幕。
+  void reset() => _reset();
+
+  /// 由固定操作区触发；校验失败时保持弹层并显示字段错误。
+  void apply() => _apply();
 
   Widget _typeChoices() {
     return Wrap(
@@ -477,9 +462,7 @@ class _BillsFilterSheetState extends State<BillsFilterSheet> {
     setState(() {
       selectedIds
         ..clear()
-        ..addAll(
-          result.map((n) => n.id).whereType<int>(),
-        );
+        ..addAll(result.map((n) => n.id).whereType<int>());
     });
   }
 
@@ -616,4 +599,3 @@ class _BillsFilterSheetState extends State<BillsFilterSheet> {
     );
   }
 }
-

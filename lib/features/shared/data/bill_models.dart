@@ -111,6 +111,18 @@ enum FxBillType {
     loanRepay,
   ];
 
+  /// 用户所操作账户的资金方向。符号由类型决定，不能依赖后端存储金额的符号。
+  bool get isIncoming => switch (this) {
+    income || reimburse || loanRecover || loanIn => true,
+    _ => false,
+  };
+
+  /// 支出类流水在账户列表中显示为负，入账类显示为正，转账/调整保留原值。
+  double signedFlowAmount(double amount) {
+    if (this == transfer || this == adjust) return amount;
+    return isIncoming ? amount.abs() : -amount.abs();
+  }
+
   /// 周期记账模板可选类型（与 Web 一致：支出/收入/转账；垫付报销需单据，周期不支持）。
   static const List<FxBillType> recurringSelectable = [
     expense,

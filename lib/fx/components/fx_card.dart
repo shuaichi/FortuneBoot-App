@@ -14,6 +14,9 @@ class FxCard extends StatefulWidget {
   final Color? background;
   final double radius;
 
+  /// 数据面板允许轻阴影；连续业务列表关闭阴影以降低视觉噪声。
+  final bool elevated;
+
   const FxCard({
     super.key,
     required this.child,
@@ -22,6 +25,7 @@ class FxCard extends StatefulWidget {
     this.onTap,
     this.background,
     this.radius = FxRadius.card,
+    this.elevated = false,
   });
 
   @override
@@ -67,13 +71,15 @@ class _FxCardState extends State<FxCard> {
           color: widget.background ?? palette.surface,
           borderRadius: borderRadius,
           border: Border.all(color: palette.border),
-          boxShadow: [
-            BoxShadow(
-              color: palette.shadow.withValues(alpha: 0.04),
-              blurRadius: 2,
-              offset: const Offset(0, 1),
-            ),
-          ],
+          boxShadow: widget.elevated
+              ? [
+                  BoxShadow(
+                    color: palette.shadow.withValues(alpha: 0.04),
+                    blurRadius: 2,
+                    offset: const Offset(0, 1),
+                  ),
+                ]
+              : null,
         ),
         child: content,
       ),

@@ -23,7 +23,7 @@ abstract final class FxColors {
   // 表面
   static const Color surface = Color(0xFFFFFFFF);
   static const Color surfaceMuted = Color(0xFFF5F6F8);
-  static const Color canvas = Color(0xFFEEF0F4);
+  static const Color canvas = Color(0xFFF7F8FA);
   static const Color border = Color(0xFFE5E7EB);
 
   // 语义

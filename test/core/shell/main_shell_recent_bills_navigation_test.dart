@@ -80,6 +80,10 @@ void main() {
 
     expect(find.text('全部'), findsOneWidget);
     expect(find.text('Bills tab'), findsNothing);
+    final shellInsets = tester.widget<ShellContentInsets>(
+      find.byType(ShellContentInsets),
+    );
+    expect(shellInsets.bottom, 96);
 
     await tester.tap(find.text('全部'));
     await tester.pump();

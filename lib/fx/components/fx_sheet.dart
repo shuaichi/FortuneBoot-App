@@ -74,16 +74,13 @@ class FxSheet extends StatelessWidget {
     Widget body = child;
     if (scrollable) {
       body = usesAdaptiveHeight
-          ? SingleChildScrollView(
-              padding: EdgeInsets.only(bottom: keyboardInset),
-              child: child,
-            )
+          ? SingleChildScrollView(padding: EdgeInsets.zero, child: child)
           : ConstrainedBox(
               constraints: BoxConstraints(
                 maxHeight: MediaQuery.of(context).size.height * maxHeightFactor,
               ),
               child: SingleChildScrollView(
-                padding: EdgeInsets.only(bottom: keyboardInset),
+                padding: EdgeInsets.zero,
                 child: child,
               ),
             );
