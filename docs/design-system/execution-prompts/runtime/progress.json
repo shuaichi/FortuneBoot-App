@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
-  "currentStage": "S4-A",
-  "nextStage": "S4-B",
-  "lastCompletedStage": "S4-A",
-  "note": "S4-A attempt-001 本地、视觉和 iPhone 模拟器验收通过；按用户 2026-11-05 新规则，模拟器可替代真机且分配问题完成不依赖测试站联调。测试站未提供账号，真实接口 NOT_RUN。",
+  "currentStage": "S4-B",
+  "nextStage": "S5-A",
+  "lastCompletedStage": "S4-B",
+  "note": "S4-B attempt-001 本地、视觉和 iPhone 模拟器验收通过；按用户 2026-11-05 规则，模拟器可替代真机且分配问题不依赖测试站联调。系统文件查看器、读屏、原生点击与真实接口未执行。",
   "stages": {
     "S0-A": {
       "status": "PASSED",
@@ -98,14 +98,21 @@
       ]
     },
     "S4-B": {
-      "status": "NOT_STARTED",
-      "localGate": "NOT_RUN",
-      "visualGate": "NOT_RUN",
-      "externalGate": "NOT_RUN",
-      "attempt": 0,
-      "handoff": null,
-      "evidence": [],
-      "blockingIssues": []
+      "status": "PASSED",
+      "localGate": "PASSED",
+      "visualGate": "PASSED",
+      "externalGate": "PASSED",
+      "attempt": 1,
+      "handoff": "handoff/S4-B.md",
+      "evidence": [
+        "evidence/S4-B/attempt-001"
+      ],
+      "blockingIssues": [
+        "SYSTEM_FILE_VIEWER_NOT_RUN",
+        "VOICEOVER_TALKBACK_NOT_RUN",
+        "REAL_SERVER_NOT_RUN_NO_CREDENTIALS",
+        "SIMULATOR_NATIVE_INPUT_NOT_RUN"
+      ]
     },
     "S5-A": {
       "status": "NOT_STARTED",

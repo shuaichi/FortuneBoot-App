@@ -1,0 +1,16 @@
+{
+  "device": "iPhone 18 Pro Max iOS 27.0 simulator",
+  "deviceId": "FEBD5ED1-45FF-44F3-9B16-5D436B4114CA",
+  "businessBuildAndLaunch": "PASSED; isolated evidence-only BillDetailFlow using local fictitious bill and files; no production route or real ledger access.",
+  "viewed": [
+    "simulator-detail-light.png: settled amount, full tags, extras and fixed primary actions.",
+    "simulator-detail-dark-accessibility.png: system dark and accessibility-extra-extra-extra-large; complete title, fixed actions and scrollable body."
+  ],
+  "nativeActions": "NOT_RUN: simulator tap tooling unavailable; route, busy, permission and attachment actions covered by widget tests.",
+  "realServer": "NOT_RUN: no credentials, no login or real financial writes.",
+  "restoration": "Default light appearance and large content size restored; production entry relaunched.",
+  "artifacts": {
+    "simulator-detail-light.png": "3b931f4e0598eea2fe5188165f12906b8e67ea998e2e9768d451fd9d63a89a14",
+    "simulator-detail-dark-accessibility.png": "11cf95d4cc60f481769a3ab59b2fa889bacc2cc7134f1dfea06e96995ca77a6e"
+  }
+}

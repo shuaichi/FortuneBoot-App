@@ -1,0 +1,1176 @@
+Analyzing FortuneBoot-App...
+
+   info • Classes should define instance members • lib/core/app/fx_app.dart:163:1 • avoid_classes_with_only_static_members
+   info • Classes should define instance members • lib/core/app_lock/app_lock_stores.dart:302:1 • avoid_classes_with_only_static_members
+   info • The value of the argument is redundant because it matches the default value • lib/core/desktop_widget/ohos_desktop_widget.dart:59:40 • avoid_redundant_argument_values
+   info • The value of the argument is redundant because it matches the default value • lib/core/desktop_widget/ohos_desktop_widget.dart:164:7 • avoid_redundant_argument_values
+   info • The value of the argument is redundant because it matches the default value • lib/core/desktop_widget/ohos_desktop_widget.dart:401:20 • avoid_redundant_argument_values
+   info • The value of the argument is redundant because it matches the default value • lib/core/desktop_widget/ohos_desktop_widget.dart:402:21 • avoid_redundant_argument_values
+   info • Classes should define instance members • lib/core/errors/fx_failure_mapper.dart:5:1 • avoid_classes_with_only_static_members
+   info • Classes should define instance members • lib/core/feedback/fx_feedback.dart:6:1 • avoid_classes_with_only_static_members
+   info • Classes should define instance members • lib/core/money/fx_money_formatter.dart:6:1 • avoid_classes_with_only_static_members
+   info • The value of the argument is redundant because it matches the default value • lib/core/preferences/finance_color_preferences.dart:70:19 • avoid_redundant_argument_values
+   info • The value of the argument is redundant because it matches the default value • lib/core/preferences/finance_color_preferences.dart:75:15 • avoid_redundant_argument_values
+   info • The value of the argument is redundant because it matches the default value • lib/core/preferences/finance_color_preferences.dart:81:19 • avoid_redundant_argument_values
+   info • The value of the argument is redundant because it matches the default value • lib/core/preferences/finance_color_preferences.dart:86:15 • avoid_redundant_argument_values
+   info • The value of the argument is redundant because it matches the default value • lib/core/preferences/finance_color_preferences.dart:92:19 • avoid_redundant_argument_values
+   info • The value of the argument is redundant because it matches the default value • lib/core/preferences/finance_color_preferences.dart:93:17 • avoid_redundant_argument_values
+   info • The value of the argument is redundant because it matches the default value • lib/core/preferences/preferences_cubit.dart:194:25 • avoid_redundant_argument_values
+   info • The value of the argument is redundant because it matches the default value • lib/core/preferences/preferences_cubit.dart:441:25 • avoid_redundant_argument_values
+   info • The value of the argument is redundant because it matches the default value • lib/core/preferences/preferences_cubit.dart:478:27 • avoid_redundant_argument_values
+   info • The value of the argument is redundant because it matches the default value • lib/core/preferences/preferences_cubit.dart:491:23 • avoid_redundant_argument_values
+   info • The value of the argument is redundant because it matches the default value • lib/core/preferences/preferences_cubit.dart:517:27 • avoid_redundant_argument_values
+   info • The value of the argument is redundant because it matches the default value • lib/core/preferences/preferences_cubit.dart:527:38 • avoid_redundant_argument_values
+   info • The value of the argument is redundant because it matches the default value • lib/core/preferences/preferences_cubit.dart:546:27 • avoid_redundant_argument_values
+   info • The value of the argument is redundant because it matches the default value • lib/core/preferences/preferences_cubit.dart:556:38 • avoid_redundant_argument_values
+   info • Sort directive sections alphabetically • lib/core/session/widgets/session_switcher_sheet.dart:9:1 • directives_ordering
+   info • The value of the argument is redundant because it matches the default value • lib/core/session/widgets/session_switcher_sheet.dart:28:19 • avoid_redundant_argument_values
+   info • The value of the argument is redundant because it matches the default value • lib/core/session/widgets/session_switcher_sheet.dart:29:24 • avoid_redundant_argument_values
+   info • The value of the argument is redundant because it matches the default value • lib/features/accounts/data/bank_brand.dart:89:16 • avoid_redundant_argument_values
+   info • The value of the argument is redundant because it matches the default value • lib/features/accounts/data/bank_brand.dart:98:16 • avoid_redundant_argument_values
+   info • The value of the argument is redundant because it matches the default value • lib/features/accounts/data/bank_brand.dart:116:16 • avoid_redundant_argument_values
+   info • The value of the argument is redundant because it matches the default value • lib/features/accounts/data/bank_brand.dart:125:16 • avoid_redundant_argument_values
+   info • The value of the argument is redundant because it matches the default value • lib/features/accounts/data/bank_brand.dart:134:16 • avoid_redundant_argument_values
+   info • The value of the argument is redundant because it matches the default value • lib/features/accounts/data/bank_brand.dart:143:16 • avoid_redundant_argument_values
+   info • The value of the argument is redundant because it matches the default value • lib/features/accounts/data/bank_brand.dart:152:16 • avoid_redundant_argument_values
+   info • The value of the argument is redundant because it matches the default value • lib/features/accounts/data/bank_brand.dart:170:16 • avoid_redundant_argument_values
+   info • The value of the argument is redundant because it matches the default value • lib/features/accounts/data/bank_brand.dart:268:16 • avoid_redundant_argument_values
+   info • The value of the argument is redundant because it matches the default value • lib/features/accounts/data/bank_brand.dart:276:16 • avoid_redundant_argument_values
+   info • 'activeColor' is deprecated and shouldn't be used. Use activeThumbColor or activeTrackColor instead. This feature was deprecated after v3.31.0-2.0.pre • lib/features/accounts/presentation/widgets/account_form_sheet.dart:388:13 • deprecated_member_use
+   info • Unnecessary use of multiple underscores • lib/features/accounts/presentation/widgets/bank_icon.dart:71:35 • unnecessary_underscores
+   info • Unnecessary use of multiple underscores • lib/features/accounts/presentation/widgets/bank_icon.dart:71:39 • unnecessary_underscores
+   info • Sort directive sections alphabetically • lib/features/bill_editor/presentation/bill_editor_page.dart:7:1 • directives_ordering
+   info • Use 'const' literals as arguments to constructors of '@immutable' classes • lib/features/bill_editor/presentation/bill_editor_page.dart:755:28 • prefer_const_literals_to_create_immutables
+   info • Don't use 'BuildContext's across async gaps • lib/features/bill_editor/presentation/bill_editor_page.dart:1170:28 • use_build_context_synchronously
+   info • Don't use 'BuildContext's across async gaps • lib/features/bill_editor/presentation/bill_editor_page.dart:1172:26 • use_build_context_synchronously
+   info • Don't use 'BuildContext's across async gaps • lib/features/bill_editor/presentation/bill_editor_page.dart:1174:27 • use_build_context_synchronously
+   info • Don't use 'BuildContext's across async gaps • lib/features/bill_editor/presentation/bill_editor_page.dart:1202:28 • use_build_context_synchronously
+   info • Don't use 'BuildContext's across async gaps • lib/features/bill_editor/presentation/bill_editor_page.dart:1204:26 • use_build_context_synchronously
+   info • Don't use 'BuildContext's across async gaps • lib/features/bill_editor/presentation/bill_editor_page.dart:1206:27 • use_build_context_synchronously
+   info • Use 'const' for final variables initialized to a constant value • lib/features/bill_editor/presentation/bill_editor_page.dart:1223:5 • prefer_const_declarations
+   info • Classes should define instance members • lib/features/bill_editor/presentation/bill_editor_page.dart:1306:1 • avoid_classes_with_only_static_members
+   info • 'activeColor' is deprecated and shouldn't be used. Use activeThumbColor or activeTrackColor instead. This feature was deprecated after v3.31.0-2.0.pre • lib/features/bill_editor/presentation/bill_editor_page.dart:1494:13 • deprecated_member_use
+   info • 'activeColor' is deprecated and shouldn't be used. Use activeThumbColor or activeTrackColor instead. This feature was deprecated after v3.31.0-2.0.pre • lib/features/bill_editor/presentation/bill_editor_page.dart:1511:13 • deprecated_member_use
+   info • The value of the argument is redundant because it matches the default value • lib/features/bills/presentation/bloc/bills_bloc.dart:245:43 • avoid_redundant_argument_values
+   info • Don't cast a nullable value to a non-nullable type • lib/features/bills/presentation/bloc/bills_bloc.dart:247:20 • cast_nullable_to_non_nullable
+   info • Conditional expressions with a 'bool' literal can be simplified • lib/features/bills/presentation/bloc/bills_state.dart:171:27 • avoid_bool_literals_in_conditional_expressions
+   info • The value of the argument is redundant because it matches the default value • lib/features/bills/presentation/widgets/bills_filter_sheet.dart:550:18 • avoid_redundant_argument_values
+   info • Sort directive sections alphabetically • lib/features/books/presentation/books_page.dart:20:1 • directives_ordering
+   info • Sort directive sections alphabetically • lib/features/books/presentation/pages/books_tab.dart:4:1 • directives_ordering
+   info • Don't make a function 'async' if it doesn't use 'await' • lib/features/books/presentation/pages/group_detail_page.dart:119:50 • unnecessary_async
+   info • 'activeColor' is deprecated and shouldn't be used. Use activeThumbColor or activeTrackColor instead. This feature was deprecated after v3.31.0-2.0.pre • lib/features/books/presentation/widgets/book_form_sheet.dart:215:17 • deprecated_member_use
+   info • 'groupValue' is deprecated and shouldn't be used. Use a RadioGroup ancestor to manage group value instead. This feature was deprecated after v3.32.0-0.0.pre • lib/features/books/presentation/widgets/default_account_sheet.dart:58:19 • deprecated_member_use
+   info • 'onChanged' is deprecated and shouldn't be used. Use RadioGroup to handle value change instead. This feature was deprecated after v3.32.0-0.0.pre • lib/features/books/presentation/widgets/default_account_sheet.dart:59:19 • deprecated_member_use
+   info • 'activeColor' is deprecated and shouldn't be used. Use activeThumbColor or activeTrackColor instead. This feature was deprecated after v3.31.0-2.0.pre • lib/features/books/presentation/widgets/group_form_sheet.dart:153:17 • deprecated_member_use
+   info • Classes should define instance members • lib/features/dashboard/data/dashboard_card_catalog.dart:31:1 • avoid_classes_with_only_static_members
+   info • Local variables should be final • lib/features/dashboard/data/dashboard_card_catalog.dart:165:5 • prefer_final_locals
+   info • Classes should define instance members • lib/features/dashboard/presentation/widgets/dashboard_layout_controller.dart:10:1 • avoid_classes_with_only_static_members
+   info • 'activeColor' is deprecated and shouldn't be used. Use activeThumbColor or activeTrackColor instead. This feature was deprecated after v3.31.0-2.0.pre • lib/features/goods/presentation/widgets/goods_form_sheet.dart:396:23 • deprecated_member_use
+   info • 'activeColor' is deprecated and shouldn't be used. Use activeThumbColor or activeTrackColor instead. This feature was deprecated after v3.31.0-2.0.pre • lib/features/manage_shared/manage_menu.dart:121:13 • deprecated_member_use
+   info • The value of the argument is redundant because it matches the default value • lib/features/orders/presentation/bloc/order_detail_bloc.dart:52:23 • avoid_redundant_argument_values
+   info • The value of the argument is redundant because it matches the default value • lib/features/orders/presentation/bloc/order_detail_bloc.dart:61:20 • avoid_redundant_argument_values
+   info • The value of the argument is redundant because it matches the default value • lib/features/orders/presentation/bloc/order_detail_bloc.dart:62:21 • avoid_redundant_argument_values
+   info • The value of the argument is redundant because it matches the default value • lib/features/orders/presentation/bloc/order_detail_bloc.dart:79:25 • avoid_redundant_argument_values
+   info • The value of the argument is redundant because it matches the default value • lib/features/orders/presentation/bloc/order_detail_bloc.dart:122:18 • avoid_redundant_argument_values
+   info • The value of the argument is redundant because it matches the default value • lib/features/orders/presentation/bloc/order_detail_bloc.dart:123:19 • avoid_redundant_argument_values
+   info • The value of the argument is redundant because it matches the default value • lib/features/orders/presentation/bloc/order_detail_bloc.dart:152:59 • avoid_redundant_argument_values
+   info • The value of the argument is redundant because it matches the default value • lib/features/orders/presentation/bloc/order_detail_bloc.dart:158:19 • avoid_redundant_argument_values
+   info • The value of the argument is redundant because it matches the default value • lib/features/orders/presentation/bloc/order_detail_bloc.dart:167:26 • avoid_redundant_argument_values
+   info • The value of the argument is redundant because it matches the default value • lib/features/orders/presentation/bloc/order_detail_bloc.dart:188:60 • avoid_redundant_argument_values
+   info • The value of the argument is redundant because it matches the default value • lib/features/orders/presentation/bloc/order_detail_bloc.dart:220:60 • avoid_redundant_argument_values
+   info • The value of the argument is redundant because it matches the default value • lib/features/orders/presentation/bloc/orders_bloc.dart:62:18 • avoid_redundant_argument_values
+   info • The value of the argument is redundant because it matches the default value • lib/features/orders/presentation/bloc/orders_bloc.dart:63:23 • avoid_redundant_argument_values
+   info • The value of the argument is redundant because it matches the default value • lib/features/orders/presentation/bloc/orders_bloc.dart:64:24 • avoid_redundant_argument_values
+   info • The value of the argument is redundant because it matches the default value • lib/features/orders/presentation/bloc/orders_bloc.dart:83:23 • avoid_redundant_argument_values
+   info • The value of the argument is redundant because it matches the default value • lib/features/orders/presentation/bloc/orders_bloc.dart:84:24 • avoid_redundant_argument_values
+   info • The value of the argument is redundant because it matches the default value • lib/features/orders/presentation/bloc/orders_bloc.dart:103:23 • avoid_redundant_argument_values
+   info • The value of the argument is redundant because it matches the default value • lib/features/orders/presentation/bloc/orders_bloc.dart:104:24 • avoid_redundant_argument_values
+   info • The value of the argument is redundant because it matches the default value • lib/features/orders/presentation/bloc/orders_bloc.dart:132:23 • avoid_redundant_argument_values
+   info • The value of the argument is redundant because it matches the default value • lib/features/orders/presentation/bloc/orders_bloc.dart:133:24 • avoid_redundant_argument_values
+   info • The value of the argument is redundant because it matches the default value • lib/features/orders/presentation/bloc/orders_bloc.dart:147:23 • avoid_redundant_argument_values
+   info • The value of the argument is redundant because it matches the default value • lib/features/orders/presentation/bloc/orders_bloc.dart:148:24 • avoid_redundant_argument_values
+   info • The value of the argument is redundant because it matches the default value • lib/features/orders/presentation/bloc/orders_bloc.dart:167:20 • avoid_redundant_argument_values
+   info • The value of the argument is redundant because it matches the default value • lib/features/orders/presentation/bloc/orders_bloc.dart:168:21 • avoid_redundant_argument_values
+   info • The value of the argument is redundant because it matches the default value • lib/features/orders/presentation/bloc/orders_bloc.dart:188:27 • avoid_redundant_argument_values
+   info • The value of the argument is redundant because it matches the default value • lib/features/orders/presentation/bloc/orders_bloc.dart:189:28 • avoid_redundant_argument_values
+   info • The value of the argument is redundant because it matches the default value • lib/features/orders/presentation/bloc/orders_bloc.dart:222:59 • avoid_redundant_argument_values
+   info • The value of the argument is redundant because it matches the default value • lib/features/orders/presentation/bloc/orders_bloc.dart:227:19 • avoid_redundant_argument_values
+   info • The value of the argument is redundant because it matches the default value • lib/features/orders/presentation/bloc/orders_bloc.dart:241:26 • avoid_redundant_argument_values
+   info • The value of the argument is redundant because it matches the default value • lib/features/orders/presentation/widgets/order_audit_sheet.dart:65:19 • avoid_redundant_argument_values
+   info • 'activeColor' is deprecated and shouldn't be used. Use activeThumbColor or activeTrackColor instead. This feature was deprecated after v3.31.0-2.0.pre • lib/features/payees/presentation/widgets/payee_form_sheet.dart:190:13 • deprecated_member_use
+   info • The value of the argument is redundant because it matches the default value • lib/features/profile/presentation/app_lock_settings_page.dart:564:19 • avoid_redundant_argument_values
+   info • The value of the argument is redundant because it matches the default value • lib/features/profile/presentation/app_lock_settings_page.dart:580:21 • avoid_redundant_argument_values
+   info • The value of the argument is redundant because it matches the default value • lib/features/profile/presentation/bloc/profile_bloc.dart:35:70 • avoid_redundant_argument_values
+   info • The value of the argument is redundant because it matches the default value • lib/features/profile/presentation/profile_edit_page.dart:165:19 • avoid_redundant_argument_values
+   info • The value of the argument is redundant because it matches the default value • lib/features/profile/presentation/profile_page.dart:541:19 • avoid_redundant_argument_values
+   info • The value of the argument is redundant because it matches the default value • lib/features/profile/presentation/profile_page.dart:825:21 • avoid_redundant_argument_values
+   info • The value of the argument is redundant because it matches the default value • lib/features/profile/presentation/profile_page.dart:838:19 • avoid_redundant_argument_values
+   info • The value of the argument is redundant because it matches the default value • lib/features/profile/presentation/profile_page.dart:992:38 • avoid_redundant_argument_values
+   info • The value of the argument is redundant because it matches the default value • lib/features/recurring/data/cron_builder.dart:123:34 • avoid_redundant_argument_values
+   info • Unnecessary use of a null check ('!') • lib/features/recurring/presentation/bloc/recurring_bloc.dart:41:50 • unnecessary_null_checks
+   info • 'activeColor' is deprecated and shouldn't be used. Use activeThumbColor or activeTrackColor instead. This feature was deprecated after v3.31.0-2.0.pre • lib/features/recurring/presentation/recurring_editor_page.dart:482:17 • deprecated_member_use
+   info • 'activeColor' is deprecated and shouldn't be used. Use activeThumbColor or activeTrackColor instead. This feature was deprecated after v3.31.0-2.0.pre • lib/features/recurring/presentation/recurring_page.dart:268:19 • deprecated_member_use
+   info • Sort directive sections alphabetically • lib/features/shared/data/bill_attachment_xfile_factory.dart:2:1 • directives_ordering
+   info • Statements in an if should be enclosed in a block • lib/features/shared/data/bill_models.dart:424:7 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block • lib/features/shared/data/bill_service.dart:94:7 • curly_braces_in_flow_control_structures
+   info • Statements in an if should be enclosed in a block • lib/features/shared/data/bill_service.dart:101:7 • curly_braces_in_flow_control_structures
+   info • The value of the argument is redundant because it matches the default value • lib/features/shared/data/bill_service.dart:166:22 • avoid_redundant_argument_values
+   info • Sort directive sections alphabetically • lib/features/shared/presentation/bills/bill_delete_confirmation.dart:3:1 • directives_ordering
+   info • Don't make a function 'async' if it doesn't use 'await' • lib/features/shared/presentation/bills/bill_delete_confirmation.dart:9:3 • unnecessary_async
+   info • Static method should be a constructor • lib/features/stats/data/chinese_calendar_day.dart:43:29 • prefer_constructors_over_static_methods
+   info • The expression has no effect and can be removed • lib/features/stats/data/chinese_calendar_day.dart:73:25 • noop_primitive_operations
+   info • The expression has no effect and can be removed • lib/features/stats/data/chinese_calendar_day.dart:77:25 • noop_primitive_operations
+   info • The type 'FlutterError' should not be caught because it is a subclass of 'Error' • lib/features/stats/data/holiday_patch_service.dart:29:7 • avoid_catching_errors
+   info • Classes should define instance members • lib/features/stats/data/stats_card_catalog.dart:14:1 • avoid_classes_with_only_static_members
+   info • The value of the argument is redundant because it matches the default value • lib/features/stats/presentation/stats_assets_page.dart:296:37 • avoid_redundant_argument_values
+   info • Don't use adjacent strings in a list literal • lib/features/stats/presentation/stats_assets_page.dart:299:31 • no_adjacent_strings_in_list
+   info • Don't use adjacent strings in a list literal • lib/features/stats/presentation/stats_assets_page.dart:369:25 • no_adjacent_strings_in_list
+   info • Don't use adjacent strings in a list literal • lib/features/stats/presentation/stats_assets_page.dart:439:25 • no_adjacent_strings_in_list
+   info • Sort directive sections alphabetically • lib/features/stats/presentation/stats_loans_page.dart:7:1 • directives_ordering
+   info • The value of the argument is redundant because it matches the default value • lib/features/stats/presentation/widgets/calendar_day_summary_sheet.dart:36:17 • avoid_redundant_argument_values
+   info • The value of the argument is redundant because it matches the default value • lib/features/stats/presentation/widgets/calendar_day_summary_sheet.dart:306:53 • avoid_redundant_argument_values
+   info • The value of the argument is redundant because it matches the default value • lib/features/stats/presentation/widgets/calendar_day_summary_sheet.dart:318:41 • avoid_redundant_argument_values
+   info • The value of the argument is redundant because it matches the default value • lib/features/stats/presentation/widgets/calendar_day_summary_sheet.dart:418:50 • avoid_redundant_argument_values
+   info • The value of the argument is redundant because it matches the default value • lib/features/stats/presentation/widgets/stats_income_expense_calendar_card.dart:233:48 • avoid_redundant_argument_values
+   info • Classes should define instance members • lib/features/stats/presentation/widgets/stats_layout_editor.dart:33:1 • avoid_classes_with_only_static_members
+   info • The value of the argument is redundant because it matches the default value • lib/features/stats/presentation/widgets/stats_layout_editor.dart:165:34 • avoid_redundant_argument_values
+   info • Don't use adjacent strings in a list literal • lib/features/stats/presentation/widgets/stats_pie_card.dart:52:13 • no_adjacent_strings_in_list
+   info • Don't use adjacent strings in a list literal • lib/features/stats/presentation/widgets/stats_tag_card.dart:49:13 • no_adjacent_strings_in_list
+   info • 'activeColor' is deprecated and shouldn't be used. Use activeThumbColor or activeTrackColor instead. This feature was deprecated after v3.31.0-2.0.pre • lib/features/tags/presentation/widgets/tag_form_sheet.dart:235:13 • deprecated_member_use
+   info • Classes should define instance members • lib/fx/components/fx_action_sheet.dart:23:1 • avoid_classes_with_only_static_members
+   info • The value of the argument is redundant because it matches the default value • lib/fx/components/fx_amount_input.dart:77:17 • avoid_redundant_argument_values
+   info • The value of the argument is redundant because it matches the default value • lib/fx/components/fx_bar_chart.dart:159:71 • avoid_redundant_argument_values
+   info • Don't use adjacent strings in a list literal • lib/fx/components/fx_donut_chart.dart:67:13 • no_adjacent_strings_in_list
+   info • The value of the argument is redundant because it matches the default value • lib/fx/components/fx_donut_chart.dart:68:124 • avoid_redundant_argument_values
+   info • The value of the argument is redundant because it matches the default value • lib/fx/components/fx_icon_button.dart:32:20 • avoid_redundant_argument_values
+   info • The value of the argument is redundant because it matches the default value • lib/fx/components/fx_line_chart.dart:201:71 • avoid_redundant_argument_values
+   info • Don't use the type 'FutureOr<void>' • lib/fx/components/fx_sheet.dart:96:9 • avoid_futureor_void
+   info • Don't use the type 'FutureOr<void>' • lib/fx/components/fx_sheet.dart:99:9 • avoid_futureor_void
+   info • Don't use the type 'FutureOr<void>' • lib/fx/components/fx_sheet.dart:306:9 • avoid_futureor_void
+   info • Don't use the type 'FutureOr<void>' • lib/fx/components/fx_sheet.dart:309:9 • avoid_futureor_void
+   info • Classes should define instance members • lib/fx/theme/fx_theme.dart:344:1 • avoid_classes_with_only_static_members
+   info • Sort directive sections alphabetically • lib/fx/tree/fx_tree_picker.dart:6:1 • directives_ordering
+   info • The value of the argument is redundant because it matches the default value • lib/fx/tree/fx_tree_picker.dart:255:27 • avoid_redundant_argument_values
+   info • The diagnostic 'file_names' isn't produced in this file so it doesn't need to be ignored • lib/generated/intl/messages_all.dart:6:44 • unnecessary_ignore
+   info • The diagnostic 'unnecessary_brace_in_string_interps' isn't produced in this file so it doesn't need to be ignored • lib/generated/intl/messages_all.dart:7:20 • unnecessary_ignore
+   info • The diagnostic 'directives_ordering' isn't produced in this file so it doesn't need to be ignored • lib/generated/intl/messages_all.dart:7:57 • unnecessary_ignore
+   info • The diagnostic 'argument_type_not_assignable' isn't produced in this file so it doesn't need to be ignored • lib/generated/intl/messages_all.dart:8:20 • unnecessary_ignore
+   info • The diagnostic 'invalid_assignment' isn't produced in this file so it doesn't need to be ignored • lib/generated/intl/messages_all.dart:8:50 • unnecessary_ignore
+   info • The diagnostic 'prefer_single_quotes' isn't produced in this file so it doesn't need to be ignored • lib/generated/intl/messages_all.dart:9:20 • unnecessary_ignore
+   info • The diagnostic 'comment_references' isn't produced in this file so it doesn't need to be ignored • lib/generated/intl/messages_all.dart:10:20 • unnecessary_ignore
+   info • Use 'package:' imports for files in the 'lib' directory • lib/generated/intl/messages_all.dart:19:8 • always_use_package_imports
+   info • Use 'package:' imports for files in the 'lib' directory • lib/generated/intl/messages_all.dart:20:8 • always_use_package_imports
+   info • Local variables should be final • lib/generated/intl/messages_all.dart:41:3 • prefer_final_locals
+   info • Local variables should be final • lib/generated/intl/messages_all.dart:49:3 • prefer_final_locals
+   info • Local variables should be final • lib/generated/intl/messages_all.dart:65:3 • prefer_final_locals
+   info • The diagnostic 'prefer_single_quotes' isn't produced in this file so it doesn't need to be ignored • lib/generated/intl/messages_en.dart:8:20 • unnecessary_ignore
+   info • The diagnostic 'comment_references' isn't produced in this file so it doesn't need to be ignored • lib/generated/intl/messages_en.dart:8:41 • unnecessary_ignore
+   info • The diagnostic 'directives_ordering' isn't produced in this file so it doesn't need to be ignored • lib/generated/intl/messages_en.dart:8:61 • unnecessary_ignore
+   info • The diagnostic 'file_names' isn't produced in this file so it doesn't need to be ignored • lib/generated/intl/messages_en.dart:10:35 • unnecessary_ignore
+   info • The diagnostic 'unnecessary_string_interpolations' isn't produced in this file so it doesn't need to be ignored • lib/generated/intl/messages_en.dart:11:20 • unnecessary_ignore
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:23:20 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:23:20 • strict_top_level_inference
+warning • The type of 'name' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:23:20 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:25:20 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:25:20 • strict_top_level_inference
+warning • The type of 'rate' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:25:20 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:27:20 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:27:20 • strict_top_level_inference
+warning • The type of 'day' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:27:20 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:29:20 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:29:20 • strict_top_level_inference
+warning • The type of 'amount' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:29:20 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:31:20 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:31:20 • strict_top_level_inference
+warning • The type of 'name' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:31:20 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:34:20 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:34:20 • strict_top_level_inference
+warning • The type of 'name' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:34:20 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:36:20 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:36:20 • strict_top_level_inference
+warning • The type of 'day' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:36:20 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:38:20 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:38:20 • strict_top_level_inference
+warning • The type of 'required' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:38:20 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:41:20 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:41:20 • strict_top_level_inference
+warning • The type of 'actual' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:41:20 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:41:28 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:41:28 • strict_top_level_inference
+warning • The type of 'supportedMax' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:41:28 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:44:20 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:44:20 • strict_top_level_inference
+warning • The type of 'actual' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:44:20 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:44:28 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:44:28 • strict_top_level_inference
+warning • The type of 'required' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:44:28 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:47:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:47:21 • strict_top_level_inference
+warning • The type of 'row' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:47:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:47:26 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:47:26 • strict_top_level_inference
+warning • The type of 'column' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:47:26 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:47:34 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:47:34 • strict_top_level_inference
+warning • The type of 'state' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:47:34 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:50:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:50:21 • strict_top_level_inference
+warning • The type of 'count' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:50:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:52:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:52:21 • strict_top_level_inference
+warning • The type of 'type' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:52:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:54:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:54:21 • strict_top_level_inference
+warning • The type of 'count' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:54:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:56:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:56:21 • strict_top_level_inference
+warning • The type of 'count' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:56:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:58:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:58:21 • strict_top_level_inference
+warning • The type of 'name' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:58:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:60:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:60:21 • strict_top_level_inference
+warning • The type of 'month' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:60:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:62:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:62:21 • strict_top_level_inference
+warning • The type of 'amount' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:62:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:64:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:64:21 • strict_top_level_inference
+warning • The type of 'amount' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:64:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:66:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:66:21 • strict_top_level_inference
+warning • The type of 'title' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:66:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:69:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:69:21 • strict_top_level_inference
+warning • The type of 'type' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:69:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:69:27 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:69:27 • strict_top_level_inference
+warning • The type of 'side' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:69:27 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:71:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:71:21 • strict_top_level_inference
+warning • The type of 'name' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:71:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:73:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:73:21 • strict_top_level_inference
+warning • The type of 'tab' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:73:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:75:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:75:21 • strict_top_level_inference
+warning • The type of 'name' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:75:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:77:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:77:21 • strict_top_level_inference
+warning • The type of 'name' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:77:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:79:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:79:21 • strict_top_level_inference
+warning • The type of 'name' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:79:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:81:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:81:21 • strict_top_level_inference
+warning • The type of 'name' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:81:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:83:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:83:21 • strict_top_level_inference
+warning • The type of 'username' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:83:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:86:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:86:21 • strict_top_level_inference
+warning • The type of 'username' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:86:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:88:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:88:21 • strict_top_level_inference
+warning • The type of 'count' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:88:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:90:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:90:21 • strict_top_level_inference
+warning • The type of 'remark' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:90:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:92:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:92:21 • strict_top_level_inference
+warning • The type of 'name' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:92:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:95:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:95:21 • strict_top_level_inference
+warning • The type of 'name' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:95:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:98:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:98:21 • strict_top_level_inference
+warning • The type of 'sort' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:98:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:100:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:100:21 • strict_top_level_inference
+warning • The type of 'name' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:100:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:102:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:102:21 • strict_top_level_inference
+warning • The type of 'kind' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:102:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:104:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:104:21 • strict_top_level_inference
+warning • The type of 'name' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:104:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:107:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:107:21 • strict_top_level_inference
+warning • The type of 'name' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:107:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:109:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:109:21 • strict_top_level_inference
+warning • The type of 'label' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:109:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:111:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:111:21 • strict_top_level_inference
+warning • The type of 'count' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:111:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:113:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:113:21 • strict_top_level_inference
+warning • The type of 'label' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:113:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:115:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:115:21 • strict_top_level_inference
+warning • The type of 'amount' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:115:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:117:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:117:21 • strict_top_level_inference
+warning • The type of 'days' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:117:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:119:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:119:21 • strict_top_level_inference
+warning • The type of 'days' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:119:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:121:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:121:21 • strict_top_level_inference
+warning • The type of 'label' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:121:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:123:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:123:21 • strict_top_level_inference
+warning • The type of 'name' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:123:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:126:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:126:21 • strict_top_level_inference
+warning • The type of 'status' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:126:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:129:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:129:21 • strict_top_level_inference
+warning • The type of 'name' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:129:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:131:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:131:21 • strict_top_level_inference
+warning • The type of 'name' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:131:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:133:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:133:21 • strict_top_level_inference
+warning • The type of 'filename' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:133:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:135:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:135:21 • strict_top_level_inference
+warning • The type of 'path' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:135:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:137:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:137:21 • strict_top_level_inference
+warning • The type of 'count' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:137:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:139:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:139:21 • strict_top_level_inference
+warning • The type of 'name' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:139:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:142:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:142:21 • strict_top_level_inference
+warning • The type of 'name' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:142:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:144:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:144:21 • strict_top_level_inference
+warning • The type of 'group' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:144:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:146:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:146:21 • strict_top_level_inference
+warning • The type of 'group' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:146:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:146:28 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:146:28 • strict_top_level_inference
+warning • The type of 'book' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:146:28 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:148:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:148:21 • strict_top_level_inference
+warning • The type of 'name' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:148:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:150:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:150:21 • strict_top_level_inference
+warning • The type of 'time' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:150:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:152:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:152:21 • strict_top_level_inference
+warning • The type of 'type' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:152:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:154:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:154:21 • strict_top_level_inference
+warning • The type of 'count' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:154:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:156:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:156:21 • strict_top_level_inference
+warning • The type of 'count' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:156:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:158:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:158:21 • strict_top_level_inference
+warning • The type of 'count' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:158:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:160:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:160:21 • strict_top_level_inference
+warning • The type of 'id' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:160:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:162:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:162:21 • strict_top_level_inference
+warning • The type of 'id' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:162:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:164:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:164:21 • strict_top_level_inference
+warning • The type of 'name' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:164:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:166:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:166:21 • strict_top_level_inference
+warning • The type of 'count' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:166:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:169:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:169:21 • strict_top_level_inference
+warning • The type of 'time' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:169:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:171:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:171:21 • strict_top_level_inference
+warning • The type of 'type' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:171:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:173:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:173:21 • strict_top_level_inference
+warning • The type of 'amount' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:173:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:175:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:175:21 • strict_top_level_inference
+warning • The type of 'amount' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:175:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:178:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:178:21 • strict_top_level_inference
+warning • The type of 'name' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:178:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:181:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:181:21 • strict_top_level_inference
+warning • The type of 'name' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:181:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:183:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:183:21 • strict_top_level_inference
+warning • The type of 'sort' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:183:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:185:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:185:21 • strict_top_level_inference
+warning • The type of 'error' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:185:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:187:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:187:21 • strict_top_level_inference
+warning • The type of 'day' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:187:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:189:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:189:21 • strict_top_level_inference
+warning • The type of 'error' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:189:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:191:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:191:21 • strict_top_level_inference
+warning • The type of 'error' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:191:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:193:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:193:21 • strict_top_level_inference
+warning • The type of 'days' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:193:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:193:27 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:193:27 • strict_top_level_inference
+warning • The type of 'hours' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:193:27 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:193:34 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:193:34 • strict_top_level_inference
+warning • The type of 'minutes' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:193:34 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:196:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:196:21 • strict_top_level_inference
+warning • The type of 'date' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:196:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:198:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:198:21 • strict_top_level_inference
+warning • The type of 'error' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:198:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:200:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:200:21 • strict_top_level_inference
+warning • The type of 'day' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:200:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:202:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:202:21 • strict_top_level_inference
+warning • The type of 'count' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:202:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:204:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:204:21 • strict_top_level_inference
+warning • The type of 'id' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:204:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:206:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:206:21 • strict_top_level_inference
+warning • The type of 'ms' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:206:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:208:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:208:21 • strict_top_level_inference
+warning • The type of 'name' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:208:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:210:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:210:21 • strict_top_level_inference
+warning • The type of 'month' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:210:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:212:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:212:21 • strict_top_level_inference
+warning • The type of 'name' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:212:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:215:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:215:21 • strict_top_level_inference
+warning • The type of 'time' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:215:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:217:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:217:21 • strict_top_level_inference
+warning • The type of 'day' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:217:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:217:26 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:217:26 • strict_top_level_inference
+warning • The type of 'time' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:217:26 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:219:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:219:21 • strict_top_level_inference
+warning • The type of 'days' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:219:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:219:27 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:219:27 • strict_top_level_inference
+warning • The type of 'time' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:219:27 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:221:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:221:21 • strict_top_level_inference
+warning • The type of 'month' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:221:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:221:28 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:221:28 • strict_top_level_inference
+warning • The type of 'day' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:221:28 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:221:33 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:221:33 • strict_top_level_inference
+warning • The type of 'time' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:221:33 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:223:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:223:21 • strict_top_level_inference
+warning • The type of 'count' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:223:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:225:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:225:21 • strict_top_level_inference
+warning • The type of 'count' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:225:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:227:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:227:21 • strict_top_level_inference
+warning • The type of 'date' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:227:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:229:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:229:21 • strict_top_level_inference
+warning • The type of 'count' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:229:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:231:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:231:21 • strict_top_level_inference
+warning • The type of 'count' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:231:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:233:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:233:21 • strict_top_level_inference
+warning • The type of 'count' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:233:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:235:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:235:21 • strict_top_level_inference
+warning • The type of 'billing' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:235:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:235:30 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:235:30 • strict_top_level_inference
+warning • The type of 'repayment' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:235:30 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:238:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:238:21 • strict_top_level_inference
+warning • The type of 'count' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:238:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:240:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:240:21 • strict_top_level_inference
+warning • The type of 'count' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:240:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:242:22 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:242:22 • strict_top_level_inference
+warning • The type of 'count' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:242:22 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:244:22 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:244:22 • strict_top_level_inference
+warning • The type of 'date' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:244:22 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:246:22 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:246:22 • strict_top_level_inference
+warning • The type of 'amount' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:246:22 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:248:22 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:248:22 • strict_top_level_inference
+warning • The type of 'amount' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:248:22 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:250:22 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:250:22 • strict_top_level_inference
+warning • The type of 'id' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:250:22 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:252:22 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:252:22 • strict_top_level_inference
+warning • The type of 'count' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:252:22 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:254:22 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:254:22 • strict_top_level_inference
+warning • The type of 'name' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:254:22 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:257:22 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:257:22 • strict_top_level_inference
+warning • The type of 'name' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:257:22 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_en.dart:259:22 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_en.dart:259:22 • strict_top_level_inference
+warning • The type of 'todoTitle' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_en.dart:259:22 • inference_failure_on_untyped_parameter
+   info • The diagnostic 'prefer_single_quotes' isn't produced in this file so it doesn't need to be ignored • lib/generated/intl/messages_zh.dart:8:20 • unnecessary_ignore
+   info • The diagnostic 'comment_references' isn't produced in this file so it doesn't need to be ignored • lib/generated/intl/messages_zh.dart:8:41 • unnecessary_ignore
+   info • The diagnostic 'directives_ordering' isn't produced in this file so it doesn't need to be ignored • lib/generated/intl/messages_zh.dart:8:61 • unnecessary_ignore
+   info • The diagnostic 'file_names' isn't produced in this file so it doesn't need to be ignored • lib/generated/intl/messages_zh.dart:10:35 • unnecessary_ignore
+   info • The diagnostic 'unnecessary_string_interpolations' isn't produced in this file so it doesn't need to be ignored • lib/generated/intl/messages_zh.dart:11:20 • unnecessary_ignore
+   info • The diagnostic 'unnecessary_string_escapes' isn't produced in this file so it doesn't need to be ignored • lib/generated/intl/messages_zh.dart:11:55 • unnecessary_ignore
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:23:20 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:23:20 • strict_top_level_inference
+warning • The type of 'name' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:23:20 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:25:20 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:25:20 • strict_top_level_inference
+warning • The type of 'rate' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:25:20 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:27:20 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:27:20 • strict_top_level_inference
+warning • The type of 'day' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:27:20 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:29:20 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:29:20 • strict_top_level_inference
+warning • The type of 'amount' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:29:20 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:31:20 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:31:20 • strict_top_level_inference
+warning • The type of 'name' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:31:20 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:33:20 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:33:20 • strict_top_level_inference
+warning • The type of 'name' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:33:20 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:35:20 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:35:20 • strict_top_level_inference
+warning • The type of 'day' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:35:20 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:37:20 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:37:20 • strict_top_level_inference
+warning • The type of 'required' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:37:20 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:39:20 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:39:20 • strict_top_level_inference
+warning • The type of 'actual' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:39:20 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:39:28 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:39:28 • strict_top_level_inference
+warning • The type of 'supportedMax' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:39:28 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:42:20 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:42:20 • strict_top_level_inference
+warning • The type of 'actual' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:42:20 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:42:28 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:42:28 • strict_top_level_inference
+warning • The type of 'required' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:42:28 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:45:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:45:21 • strict_top_level_inference
+warning • The type of 'row' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:45:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:45:26 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:45:26 • strict_top_level_inference
+warning • The type of 'column' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:45:26 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:45:34 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:45:34 • strict_top_level_inference
+warning • The type of 'state' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:45:34 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:47:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:47:21 • strict_top_level_inference
+warning • The type of 'count' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:47:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:49:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:49:21 • strict_top_level_inference
+warning • The type of 'type' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:49:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:51:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:51:21 • strict_top_level_inference
+warning • The type of 'count' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:51:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:53:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:53:21 • strict_top_level_inference
+warning • The type of 'count' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:53:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:55:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:55:21 • strict_top_level_inference
+warning • The type of 'name' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:55:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:57:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:57:21 • strict_top_level_inference
+warning • The type of 'month' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:57:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:59:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:59:21 • strict_top_level_inference
+warning • The type of 'amount' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:59:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:61:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:61:21 • strict_top_level_inference
+warning • The type of 'amount' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:61:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:63:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:63:21 • strict_top_level_inference
+warning • The type of 'title' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:63:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:65:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:65:21 • strict_top_level_inference
+warning • The type of 'type' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:65:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:65:27 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:65:27 • strict_top_level_inference
+warning • The type of 'side' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:65:27 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:67:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:67:21 • strict_top_level_inference
+warning • The type of 'name' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:67:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:69:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:69:21 • strict_top_level_inference
+warning • The type of 'tab' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:69:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:71:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:71:21 • strict_top_level_inference
+warning • The type of 'name' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:71:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:73:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:73:21 • strict_top_level_inference
+warning • The type of 'name' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:73:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:75:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:75:21 • strict_top_level_inference
+warning • The type of 'name' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:75:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:77:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:77:21 • strict_top_level_inference
+warning • The type of 'name' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:77:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:79:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:79:21 • strict_top_level_inference
+warning • The type of 'username' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:79:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:81:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:81:21 • strict_top_level_inference
+warning • The type of 'username' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:81:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:83:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:83:21 • strict_top_level_inference
+warning • The type of 'count' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:83:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:85:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:85:21 • strict_top_level_inference
+warning • The type of 'remark' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:85:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:87:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:87:21 • strict_top_level_inference
+warning • The type of 'name' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:87:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:89:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:89:21 • strict_top_level_inference
+warning • The type of 'name' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:89:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:91:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:91:21 • strict_top_level_inference
+warning • The type of 'sort' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:91:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:93:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:93:21 • strict_top_level_inference
+warning • The type of 'name' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:93:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:95:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:95:21 • strict_top_level_inference
+warning • The type of 'kind' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:95:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:97:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:97:21 • strict_top_level_inference
+warning • The type of 'name' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:97:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:99:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:99:21 • strict_top_level_inference
+warning • The type of 'name' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:99:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:101:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:101:21 • strict_top_level_inference
+warning • The type of 'label' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:101:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:103:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:103:21 • strict_top_level_inference
+warning • The type of 'count' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:103:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:105:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:105:21 • strict_top_level_inference
+warning • The type of 'label' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:105:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:107:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:107:21 • strict_top_level_inference
+warning • The type of 'amount' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:107:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:109:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:109:21 • strict_top_level_inference
+warning • The type of 'days' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:109:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:111:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:111:21 • strict_top_level_inference
+warning • The type of 'days' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:111:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:113:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:113:21 • strict_top_level_inference
+warning • The type of 'label' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:113:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:115:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:115:21 • strict_top_level_inference
+warning • The type of 'name' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:115:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:117:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:117:21 • strict_top_level_inference
+warning • The type of 'status' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:117:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:119:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:119:21 • strict_top_level_inference
+warning • The type of 'name' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:119:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:121:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:121:21 • strict_top_level_inference
+warning • The type of 'name' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:121:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:123:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:123:21 • strict_top_level_inference
+warning • The type of 'filename' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:123:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:125:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:125:21 • strict_top_level_inference
+warning • The type of 'path' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:125:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:127:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:127:21 • strict_top_level_inference
+warning • The type of 'count' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:127:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:129:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:129:21 • strict_top_level_inference
+warning • The type of 'name' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:129:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:131:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:131:21 • strict_top_level_inference
+warning • The type of 'name' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:131:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:133:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:133:21 • strict_top_level_inference
+warning • The type of 'group' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:133:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:135:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:135:21 • strict_top_level_inference
+warning • The type of 'group' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:135:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:135:28 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:135:28 • strict_top_level_inference
+warning • The type of 'book' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:135:28 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:137:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:137:21 • strict_top_level_inference
+warning • The type of 'name' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:137:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:139:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:139:21 • strict_top_level_inference
+warning • The type of 'time' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:139:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:141:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:141:21 • strict_top_level_inference
+warning • The type of 'type' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:141:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:143:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:143:21 • strict_top_level_inference
+warning • The type of 'count' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:143:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:145:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:145:21 • strict_top_level_inference
+warning • The type of 'count' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:145:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:147:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:147:21 • strict_top_level_inference
+warning • The type of 'count' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:147:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:149:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:149:21 • strict_top_level_inference
+warning • The type of 'id' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:149:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:151:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:151:21 • strict_top_level_inference
+warning • The type of 'id' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:151:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:153:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:153:21 • strict_top_level_inference
+warning • The type of 'name' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:153:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:155:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:155:21 • strict_top_level_inference
+warning • The type of 'count' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:155:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:157:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:157:21 • strict_top_level_inference
+warning • The type of 'time' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:157:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:159:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:159:21 • strict_top_level_inference
+warning • The type of 'type' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:159:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:161:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:161:21 • strict_top_level_inference
+warning • The type of 'amount' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:161:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:163:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:163:21 • strict_top_level_inference
+warning • The type of 'amount' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:163:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:165:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:165:21 • strict_top_level_inference
+warning • The type of 'name' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:165:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:167:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:167:21 • strict_top_level_inference
+warning • The type of 'name' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:167:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:169:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:169:21 • strict_top_level_inference
+warning • The type of 'sort' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:169:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:171:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:171:21 • strict_top_level_inference
+warning • The type of 'error' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:171:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:173:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:173:21 • strict_top_level_inference
+warning • The type of 'day' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:173:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:175:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:175:21 • strict_top_level_inference
+warning • The type of 'error' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:175:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:177:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:177:21 • strict_top_level_inference
+warning • The type of 'error' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:177:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:179:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:179:21 • strict_top_level_inference
+warning • The type of 'days' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:179:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:179:27 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:179:27 • strict_top_level_inference
+warning • The type of 'hours' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:179:27 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:179:34 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:179:34 • strict_top_level_inference
+warning • The type of 'minutes' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:179:34 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:182:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:182:21 • strict_top_level_inference
+warning • The type of 'date' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:182:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:184:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:184:21 • strict_top_level_inference
+warning • The type of 'error' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:184:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:186:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:186:21 • strict_top_level_inference
+warning • The type of 'day' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:186:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:188:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:188:21 • strict_top_level_inference
+warning • The type of 'count' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:188:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:190:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:190:21 • strict_top_level_inference
+warning • The type of 'id' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:190:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:192:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:192:21 • strict_top_level_inference
+warning • The type of 'ms' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:192:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:194:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:194:21 • strict_top_level_inference
+warning • The type of 'name' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:194:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:196:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:196:21 • strict_top_level_inference
+warning • The type of 'month' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:196:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:198:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:198:21 • strict_top_level_inference
+warning • The type of 'name' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:198:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:200:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:200:21 • strict_top_level_inference
+warning • The type of 'time' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:200:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:202:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:202:21 • strict_top_level_inference
+warning • The type of 'day' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:202:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:202:26 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:202:26 • strict_top_level_inference
+warning • The type of 'time' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:202:26 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:204:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:204:21 • strict_top_level_inference
+warning • The type of 'days' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:204:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:204:27 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:204:27 • strict_top_level_inference
+warning • The type of 'time' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:204:27 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:206:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:206:21 • strict_top_level_inference
+warning • The type of 'month' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:206:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:206:28 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:206:28 • strict_top_level_inference
+warning • The type of 'day' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:206:28 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:206:33 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:206:33 • strict_top_level_inference
+warning • The type of 'time' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:206:33 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:208:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:208:21 • strict_top_level_inference
+warning • The type of 'count' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:208:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:210:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:210:21 • strict_top_level_inference
+warning • The type of 'count' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:210:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:212:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:212:21 • strict_top_level_inference
+warning • The type of 'date' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:212:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:214:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:214:21 • strict_top_level_inference
+warning • The type of 'count' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:214:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:216:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:216:21 • strict_top_level_inference
+warning • The type of 'count' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:216:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:218:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:218:21 • strict_top_level_inference
+warning • The type of 'count' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:218:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:220:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:220:21 • strict_top_level_inference
+warning • The type of 'billing' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:220:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:220:30 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:220:30 • strict_top_level_inference
+warning • The type of 'repayment' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:220:30 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:222:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:222:21 • strict_top_level_inference
+warning • The type of 'count' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:222:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:224:21 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:224:21 • strict_top_level_inference
+warning • The type of 'count' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:224:21 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:226:22 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:226:22 • strict_top_level_inference
+warning • The type of 'count' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:226:22 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:228:22 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:228:22 • strict_top_level_inference
+warning • The type of 'date' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:228:22 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:230:22 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:230:22 • strict_top_level_inference
+warning • The type of 'amount' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:230:22 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:232:22 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:232:22 • strict_top_level_inference
+warning • The type of 'amount' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:232:22 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:234:22 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:234:22 • strict_top_level_inference
+warning • The type of 'id' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:234:22 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:236:22 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:236:22 • strict_top_level_inference
+warning • The type of 'count' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:236:22 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:238:22 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:238:22 • strict_top_level_inference
+warning • The type of 'name' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:238:22 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:240:22 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:240:22 • strict_top_level_inference
+warning • The type of 'name' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:240:22 • inference_failure_on_untyped_parameter
+   info • Missing type annotation on a public API • lib/generated/intl/messages_zh.dart:242:22 • type_annotate_public_apis
+   info • Missing type annotation • lib/generated/intl/messages_zh.dart:242:22 • strict_top_level_inference
+warning • The type of 'todoTitle' can't be inferred; a type must be explicitly provided • lib/generated/intl/messages_zh.dart:242:22 • inference_failure_on_untyped_parameter
+   info • Use 'package:' imports for files in the 'lib' directory • lib/generated/l10n.dart:4:8 • always_use_package_imports
+   info • The diagnostic 'lines_longer_than_80_chars' isn't produced in this file so it doesn't need to be ignored • lib/generated/l10n.dart:11:52 • unnecessary_ignore
+   info • The diagnostic 'join_return_with_assignment' isn't produced in this file so it doesn't need to be ignored • lib/generated/l10n.dart:12:21 • unnecessary_ignore
+   info • Classes should define instance members • lib/login/auth/password_policy.dart:1:1 • avoid_classes_with_only_static_members
+   info • Use the end-of-line form ('///') for doc comments • lib/login/model/login_model.dart:44:1 • slash_for_doc_comments
+   info • The private field _userData could be 'final' • lib/login/model/users.dart:17:24 • prefer_final_fields
+   info • The method is used to change a property • lib/login/model/users.dart:25:8 • use_setters_to_change_properties
+   info • Local variables should be final • lib/login/model/users.dart:59:5 • prefer_final_locals
+   info • Local variables should be final • lib/login/model/users.dart:60:5 • prefer_final_locals
+   info • Local variables should be final • lib/login/model/users.dart:74:5 • prefer_final_locals
+   info • Unnecessary use of a raw string • lib/login/server/server_endpoint.dart:67:37 • unnecessary_raw_strings
+   info • Sort directive sections alphabetically • lib/login/view/base_url_config_page.dart:8:1 • directives_ordering
+   info • Sort directive sections alphabetically • lib/login/view/base_url_config_page.dart:19:1 • directives_ordering
+   info • Sort directive sections alphabetically • lib/login/view/base_url_config_page.dart:22:1 • directives_ordering
+   info • Parameter 'key' could be a super parameter • lib/login/view/base_url_config_page.dart:30:9 • use_super_parameters
+   info • Local variables should be final • lib/login/view/base_url_config_page.dart:115:5 • prefer_final_locals
+   info • Local variables should be final • lib/login/view/base_url_config_page.dart:118:5 • prefer_final_locals
+   info • Local variables should be final • lib/login/view/base_url_config_page.dart:121:5 • prefer_final_locals
+   info • Local variables should be final • lib/login/view/base_url_config_page.dart:133:5 • prefer_final_locals
+   info • Local variables should be final • lib/login/view/base_url_config_page.dart:134:5 • prefer_final_locals
+   info • Sort directive sections alphabetically • lib/login/view/login_screen.dart:13:1 • directives_ordering
+   info • Sort directive sections alphabetically • lib/login/view/login_screen.dart:18:1 • directives_ordering
+   info • Sort directive sections alphabetically • lib/login/view/login_screen.dart:30:1 • directives_ordering
+   info • Use 'package:' imports for files in the 'lib' directory • lib/login/view/login_screen.dart:31:8 • always_use_package_imports
+   info • Place 'package:' imports before relative imports • lib/login/view/login_screen.dart:32:1 • directives_ordering
+   info • Place 'package:' imports before relative imports • lib/login/view/login_screen.dart:33:1 • directives_ordering
+   info • The imported package 'pointycastle' isn't a dependency of the importing package • lib/login/view/login_screen.dart:33:8 • depend_on_referenced_packages
+   info • The prefix 'PC' isn't a lower_case_with_underscores identifier • lib/login/view/login_screen.dart:33:52 • library_prefixes
+   info • Place 'package:' imports before relative imports • lib/login/view/login_screen.dart:34:1 • directives_ordering
+   info • Use 'const' for final variables initialized to a constant value • lib/login/view/login_screen.dart:44:5 • prefer_const_declarations
+   info • Use 'const' for final variables initialized to a constant value • lib/login/view/login_screen.dart:45:5 • prefer_const_declarations
+   info • Local variables should be final • lib/login/view/login_screen.dart:62:5 • prefer_final_locals
+   info • Local variables should be final • lib/login/view/login_screen.dart:89:7 • prefer_final_locals
+   info • Local variables should be final • lib/login/view/login_screen.dart:90:7 • prefer_final_locals
+   info • Local variables should be final • lib/login/view/login_screen.dart:92:7 • prefer_final_locals
+   info • Local variables should be final • lib/login/view/login_screen.dart:96:7 • prefer_final_locals
+   info • Local variables should be final • lib/login/view/login_screen.dart:107:17 • prefer_final_locals
+   info • Local variables should be final • lib/login/view/login_screen.dart:110:17 • prefer_final_locals
+   info • Local variables should be final • lib/login/view/login_screen.dart:113:17 • prefer_final_locals
+   info • Local variables should be final • lib/login/view/login_screen.dart:117:17 • prefer_final_locals
+   info • Local variables should be final • lib/login/view/login_screen.dart:123:17 • prefer_final_locals
+   info • Don't make a function 'async' if it doesn't use 'await' • lib/login/view/login_screen.dart:142:5 • unnecessary_async
+   info • Local variables should be final • lib/login/view/login_screen.dart:144:5 • prefer_final_locals
+   info • Local variables should be final • lib/login/view/login_screen.dart:145:5 • prefer_final_locals
+   info • Local variables should be final • lib/login/view/login_screen.dart:146:5 • prefer_final_locals
+   info • Local variables should be final • lib/login/view/login_screen.dart:147:5 • prefer_final_locals
+   info • Local variables should be final • lib/login/view/login_screen.dart:151:5 • prefer_final_locals
+   info • Local variables should be final • lib/login/view/login_screen.dart:181:7 • prefer_final_locals
+   info • Unnecessary use of a raw string • lib/login/view/login_screen.dart:361:13 • unnecessary_raw_strings
+   info • Unnecessary use of a raw string • lib/login/view/login_screen.dart:362:13 • unnecessary_raw_strings
+   info • Unnecessary use of a raw string • lib/login/view/login_screen.dart:371:13 • unnecessary_raw_strings
+   info • Unnecessary use of a raw string • lib/login/view/login_screen.dart:372:13 • unnecessary_raw_strings
+warning • The generic type 'Response<dynamic>?' should have explicit type arguments but doesn't • lib/request/base_request.dart:16:5 • strict_raw_type
+   info • Sort directive sections alphabetically • lib/request/bill_request.dart:10:1 • directives_ordering
+warning • Unused import: 'package:json_annotation/json_annotation.dart' • lib/request/bill_request.dart:10:8 • unused_import
+   info • Local variables should be final • lib/request/bill_request.dart:21:5 • prefer_final_locals
+warning • The generic type 'Response<dynamic>?' should have explicit type arguments but doesn't • lib/request/bill_request.dart:92:10 • strict_raw_type
+warning • The type argument(s) of the function 'post' can't be inferred • lib/request/bill_request.dart:146:48 • inference_failure_on_function_invocation
+warning • The type argument(s) of the function 'put' can't be inferred • lib/request/bill_request.dart:160:48 • inference_failure_on_function_invocation
+   info • Don't invoke 'print' in production code • lib/request/bill_request.dart:176:7 • avoid_print
+   info • Unnecessary use of a raw string • lib/request/bill_request.g.dart:47:7 • unnecessary_raw_strings
+   info • Unnecessary use of a raw string • lib/request/bill_request.g.dart:48:7 • unnecessary_raw_strings
+   info • Unnecessary use of a raw string • lib/request/bill_request.g.dart:49:7 • unnecessary_raw_strings
+   info • Unnecessary use of a raw string • lib/request/bill_request.g.dart:50:7 • unnecessary_raw_strings
+   info • Unnecessary use of a raw string • lib/request/bill_request.g.dart:51:7 • unnecessary_raw_strings
+   info • Unnecessary use of a raw string • lib/request/bill_request.g.dart:52:7 • unnecessary_raw_strings
+   info • Unnecessary use of a raw string • lib/request/bill_request.g.dart:53:7 • unnecessary_raw_strings
+   info • Unnecessary use of a raw string • lib/request/bill_request.g.dart:54:7 • unnecessary_raw_strings
+   info • Unnecessary use of a raw string • lib/request/bill_request.g.dart:55:7 • unnecessary_raw_strings
+   info • Unnecessary use of a raw string • lib/request/bill_request.g.dart:56:7 • unnecessary_raw_strings
+   info • Unnecessary use of a raw string • lib/request/bill_request.g.dart:57:7 • unnecessary_raw_strings
+   info • Unnecessary use of a raw string • lib/request/bill_request.g.dart:58:7 • unnecessary_raw_strings
+   info • Unnecessary use of a raw string • lib/request/bill_request.g.dart:59:7 • unnecessary_raw_strings
+   info • Unnecessary use of a raw string • lib/request/bill_request.g.dart:60:7 • unnecessary_raw_strings
+   info • Unnecessary use of a raw string • lib/request/bill_request.g.dart:61:7 • unnecessary_raw_strings
+   info • Unnecessary use of a raw string • lib/request/bill_request.g.dart:62:7 • unnecessary_raw_strings
+   info • Unnecessary use of a raw string • lib/request/bill_request.g.dart:63:7 • unnecessary_raw_strings
+   info • Unnecessary use of a raw string • lib/request/bill_request.g.dart:64:7 • unnecessary_raw_strings
+   info • Unnecessary use of a raw string • lib/request/bill_request.g.dart:65:7 • unnecessary_raw_strings
+   info • Unnecessary use of a raw string • lib/request/bill_request.g.dart:66:7 • unnecessary_raw_strings
+warning • Unused import: 'package:flutter/widgets.dart' • lib/request/book_request.dart:2:8 • unused_import
+   info • Local variables should be final • lib/request/book_request.dart:17:5 • prefer_final_locals
+   info • The member 'getEnableList' overrides an inherited member but isn't annotated with '@override' • lib/request/book_request.dart:32:22 • annotate_overrides
+warning • Unused import: 'package:flutter/widgets.dart' • lib/request/category_request.dart:2:8 • unused_import
+   info • Local variables should be final • lib/request/category_request.dart:17:5 • prefer_final_locals
+   info • The member 'getEnableList' overrides an inherited member but isn't annotated with '@override' • lib/request/category_request.dart:27:22 • annotate_overrides
+   info • Unnecessary use of a raw string • lib/request/category_request.g.dart:25:47 • unnecessary_raw_strings
+warning • Unused import: 'package:flutter/widgets.dart' • lib/request/group_request.dart:2:8 • unused_import
+   info • Local variables should be final • lib/request/group_request.dart:17:5 • prefer_final_locals
+   info • Sort directive sections alphabetically • lib/request/include_request.dart:5:1 • directives_ordering
+   info • Local variables should be final • lib/request/include_request.dart:13:5 • prefer_final_locals
+   info • Unnecessary use of a raw string • lib/request/include_request.g.dart:84:7 • unnecessary_raw_strings
+   info • Unnecessary use of a raw string • lib/request/include_request.g.dart:85:7 • unnecessary_raw_strings
+   info • Unnecessary use of a raw string • lib/request/include_request.g.dart:86:7 • unnecessary_raw_strings
+   info • Unnecessary use of a raw string • lib/request/include_request.g.dart:119:7 • unnecessary_raw_strings
+   info • Unnecessary use of a raw string • lib/request/include_request.g.dart:120:7 • unnecessary_raw_strings
+   info • Unnecessary use of a raw string • lib/request/include_request.g.dart:121:7 • unnecessary_raw_strings
+   info • Unnecessary use of a raw string • lib/request/include_request.g.dart:154:7 • unnecessary_raw_strings
+   info • Unnecessary use of a raw string • lib/request/include_request.g.dart:155:7 • unnecessary_raw_strings
+   info • Unnecessary use of a raw string • lib/request/include_request.g.dart:156:7 • unnecessary_raw_strings
+   info • Unnecessary use of a raw string • lib/request/include_request.g.dart:189:7 • unnecessary_raw_strings
+   info • Unnecessary use of a raw string • lib/request/include_request.g.dart:190:7 • unnecessary_raw_strings
+   info • Unnecessary use of a raw string • lib/request/include_request.g.dart:191:7 • unnecessary_raw_strings
+   info • Unnecessary use of a raw string • lib/request/include_request.g.dart:224:7 • unnecessary_raw_strings
+   info • Unnecessary use of a raw string • lib/request/include_request.g.dart:225:7 • unnecessary_raw_strings
+   info • Unnecessary use of a raw string • lib/request/include_request.g.dart:226:7 • unnecessary_raw_strings
+   info • Unnecessary use of a raw string • lib/request/include_request.g.dart:259:7 • unnecessary_raw_strings
+   info • Unnecessary use of a raw string • lib/request/include_request.g.dart:260:7 • unnecessary_raw_strings
+   info • Unnecessary use of a raw string • lib/request/include_request.g.dart:261:7 • unnecessary_raw_strings
+   info • Unnecessary use of a raw string • lib/request/include_request.g.dart:294:7 • unnecessary_raw_strings
+   info • Unnecessary use of a raw string • lib/request/include_request.g.dart:295:7 • unnecessary_raw_strings
+   info • Unnecessary use of a raw string • lib/request/include_request.g.dart:296:7 • unnecessary_raw_strings
+   info • Use 'package:' imports for files in the 'lib' directory • lib/request/login_request.dart:5:8 • always_use_package_imports
+warning • The generic type 'Response<dynamic>?' should have explicit type arguments but doesn't • lib/request/login_request.dart:57:5 • strict_raw_type
+warning • Unused import: 'package:flutter/widgets.dart' • lib/request/payee_request.dart:2:8 • unused_import
+   info • Local variables should be final • lib/request/payee_request.dart:17:5 • prefer_final_locals
+   info • The member 'getEnableList' overrides an inherited member but isn't annotated with '@override' • lib/request/payee_request.dart:29:22 • annotate_overrides
+   info • Unnecessary use of a raw string • lib/request/payee_request.g.dart:25:47 • unnecessary_raw_strings
+warning • Unused import: 'package:flutter/widgets.dart' • lib/request/tag_request.dart:3:8 • unused_import
+   info • Local variables should be final • lib/request/tag_request.dart:18:5 • prefer_final_locals
+   info • The member 'getEnableList' overrides an inherited member but isn't annotated with '@override' • lib/request/tag_request.dart:29:22 • annotate_overrides
+   info • Unnecessary use of a raw string • lib/request/tag_request.g.dart:25:47 • unnecessary_raw_strings
+   info • Sort directive sections alphabetically • lib/util/base64_img.dart:8:1 • directives_ordering
+   info • Unnecessary use of multiple underscores • lib/util/base64_img.dart:78:29 • unnecessary_underscores
+   info • Unnecessary use of multiple underscores • lib/util/base64_img.dart:78:33 • unnecessary_underscores
+   info • 'dart:html' is deprecated and shouldn't be used. Use package:web and dart:js_interop instead • lib/util/base64_svg_web.dart:2:1 • deprecated_member_use
+   info • The diagnostic 'undefined_prefixed_name' isn't produced at this location so it doesn't need to be ignored • lib/util/base64_svg_web.dart:12:14 • unnecessary_ignore
+   info • Unnecessary 'break' statement • lib/util/base64_svg_web.dart:32:9 • unnecessary_breaks
+   info • Unnecessary 'break' statement • lib/util/base64_svg_web.dart:35:9 • unnecessary_breaks
+   info • Unnecessary 'break' statement • lib/util/base64_svg_web.dart:39:9 • unnecessary_breaks
+   info • The 'if' statement could be replaced by a null-aware assignment • lib/util/dio_client.dart:62:11 • prefer_conditional_assignment
+   info • The value of the argument is redundant because it matches the default value • lib/util/dio_client.dart:106:18 • avoid_redundant_argument_values
+   info • The value of the argument is redundant because it matches the default value • lib/util/dio_client.dart:107:22 • avoid_redundant_argument_values
+   info • The value of the argument is redundant because it matches the default value • lib/util/dio_client.dart:108:23 • avoid_redundant_argument_values
+   info • The method is used to change a property • lib/util/dio_client.dart:118:8 • use_setters_to_change_properties
+   info • Classes should define instance members • lib/util/image_save_service.dart:15:1 • avoid_classes_with_only_static_members
+   info • The imported package 'pointycastle' isn't a dependency of the importing package • lib/util/rsa_util.dart:4:8 • depend_on_referenced_packages
+   info • Unnecessary 'break' statement • lib/util/svg_painter.dart:47:9 • unnecessary_breaks
+   info • Unnecessary 'break' statement • lib/util/svg_painter.dart:50:9 • unnecessary_breaks
+   info • Unnecessary 'break' statement • lib/util/svg_painter.dart:53:9 • unnecessary_breaks
+   info • Unnecessary 'break' statement • lib/util/svg_painter.dart:56:9 • unnecessary_breaks
+   info • Unnecessary 'break' statement • lib/util/svg_painter.dart:59:9 • unnecessary_breaks
+   info • Unnecessary 'break' statement • lib/util/svg_painter.dart:62:9 • unnecessary_breaks
+   info • Unnecessary 'break' statement • lib/util/svg_painter.dart:70:9 • unnecessary_breaks
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/util/svg_painter.dart:120:31 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/util/svg_painter.dart:140:31 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/util/svg_painter.dart:150:28 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/util/svg_painter.dart:193:23 • deprecated_member_use
+   info • Multiple variables declared on a single line • lib/util/svg_painter.dart:307:20 • avoid_multiple_declarations_per_line
+   info • Unnecessary use of a raw string • lib/util/svg_painter.dart:314:18 • unnecessary_raw_strings
+   info • Unnecessary use of a raw string • lib/util/svg_painter.dart:326:23 • unnecessary_raw_strings
+   info • Unnecessary 'break' statement • lib/util/svg_painter.dart:331:11 • unnecessary_breaks
+   info • Unnecessary use of a raw string • lib/util/svg_painter.dart:337:23 • unnecessary_raw_strings
+   info • Unnecessary 'break' statement • lib/util/svg_painter.dart:342:11 • unnecessary_breaks
+   info • Unnecessary use of a raw string • lib/util/svg_painter.dart:345:23 • unnecessary_raw_strings
+   info • Unnecessary 'break' statement • lib/util/svg_painter.dart:350:11 • unnecessary_breaks
+   info • Unnecessary use of a raw string • lib/util/svg_painter.dart:353:23 • unnecessary_raw_strings
+   info • Unnecessary 'break' statement • lib/util/svg_painter.dart:358:11 • unnecessary_breaks
+   info • Unnecessary 'break' statement • lib/util/svg_painter.dart:362:11 • unnecessary_breaks
+   info • Unnecessary 'break' statement • lib/util/svg_painter.dart:366:11 • unnecessary_breaks
+   info • Unnecessary 'break' statement • lib/util/svg_painter.dart:370:11 • unnecessary_breaks
+   info • Unnecessary 'break' statement • lib/util/svg_painter.dart:374:11 • unnecessary_breaks
+   info • Unnecessary use of a raw string • lib/util/svg_painter.dart:377:23 • unnecessary_raw_strings
+   info • Multiple variables declared on a single line • lib/util/svg_painter.dart:378:32 • avoid_multiple_declarations_per_line
+   info • Unnecessary 'break' statement • lib/util/svg_painter.dart:383:11 • unnecessary_breaks
+   info • Unnecessary use of a raw string • lib/util/svg_painter.dart:386:23 • unnecessary_raw_strings
+   info • Multiple variables declared on a single line • lib/util/svg_painter.dart:387:37 • avoid_multiple_declarations_per_line
+   info • Multiple variables declared on a single line • lib/util/svg_painter.dart:388:37 • avoid_multiple_declarations_per_line
+   info • Unnecessary 'break' statement • lib/util/svg_painter.dart:393:11 • unnecessary_breaks
+   info • Unnecessary use of a raw string • lib/util/svg_painter.dart:396:23 • unnecessary_raw_strings
+   info • Multiple variables declared on a single line • lib/util/svg_painter.dart:397:32 • avoid_multiple_declarations_per_line
+   info • Unnecessary 'break' statement • lib/util/svg_painter.dart:402:11 • unnecessary_breaks
+   info • Unnecessary use of a raw string • lib/util/svg_painter.dart:405:23 • unnecessary_raw_strings
+   info • Multiple variables declared on a single line • lib/util/svg_painter.dart:406:37 • avoid_multiple_declarations_per_line
+   info • Unnecessary 'break' statement • lib/util/svg_painter.dart:411:11 • unnecessary_breaks
+   info • Unnecessary 'break' statement • lib/util/svg_painter.dart:415:11 • unnecessary_breaks
+   info • Unnecessary use of a raw string • lib/util/svg_painter.dart:419:23 • unnecessary_raw_strings
+   info • Unnecessary 'break' statement • lib/util/svg_painter.dart:422:11 • unnecessary_breaks
+   info • 'dart:html' is deprecated and shouldn't be used. Use package:web and dart:js_interop instead • lib/util/web_download.dart:3:1 • deprecated_member_use
+   info • Don't use web-only libraries outside Flutter web plugins • lib/util/web_download.dart:3:1 • avoid_web_libraries_in_flutter
+   info • Sort directive sections alphabetically • lib/util/web_download.dart:3:1 • directives_ordering
+warning • The URI 'package:flutter_lints/flutter.yaml' included in '/Users/zhangchi118/代码/FortuneBoot-App/packages/country_pickers/analysis_options.yaml' can't be found when analyzing '/Users/zhangchi118/代码/FortuneBoot-App' • packages/country_pickers/analysis_options.yaml:10:10 • include_file_not_found
+   info • 'ButtonBar' is deprecated and shouldn't be used. Use OverflowBar instead. This feature was deprecated after v3.21.0-10.0.pre • packages/country_pickers/lib/utils/my_alert_dialog.dart:65:43 • deprecated_member_use
+   info • 'ButtonBar' is deprecated and shouldn't be used. Use OverflowBar instead. This feature was deprecated after v3.21.0-10.0.pre • packages/country_pickers/lib/utils/my_alert_dialog.dart:69:45 • deprecated_member_use
+warning • This default clause is covered by the previous cases • packages/country_pickers/lib/utils/my_alert_dialog.dart:122:9 • unreachable_switch_default
+   info • 'ButtonBar' is deprecated and shouldn't be used. Use OverflowBar instead. This feature was deprecated after v3.21.0-10.0.pre • packages/country_pickers/lib/utils/my_alert_dialog.dart:142:20 • deprecated_member_use
+   info • Dependencies not sorted alphabetically • pubspec.yaml:25:3 • sort_pub_dependencies
+   info • Dependencies not sorted alphabetically • pubspec.yaml:89:3 • sort_pub_dependencies
+   info • Use 'const' for final variables initialized to a constant value • test/core/app_lock/app_lock_controller_test.dart:107:9 • prefer_const_declarations
+   info • Use 'const' for final variables initialized to a constant value • test/core/app_lock/app_lock_controller_test.dart:137:7 • prefer_const_declarations
+   info • Use 'const' with the constructor to improve performance • test/core/app_lock/app_lock_gate_test.dart:68:13 • prefer_const_constructors
+warning • The value of the local variable 'gridSize' isn't used • test/core/app_lock/pattern_lock_grid_test.dart:134:9 • unused_local_variable
+   info • Use 'const' with the constructor to improve performance • test/core/auth/auth_version_checker_test.dart:7:22 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance • test/core/auth/auth_version_checker_test.dart:17:22 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance • test/core/auth/auth_version_checker_test.dart:26:22 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance • test/core/auth/auth_version_checker_test.dart:36:22 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance • test/core/auth/auth_version_checker_test.dart:46:30 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance • test/core/auth/auth_version_checker_test.dart:47:17 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance • test/core/auth/auth_version_checker_test.dart:49:32 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance • test/core/auth/auth_version_checker_test.dart:50:17 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance • test/core/auth/auth_version_checker_test.dart:66:36 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance • test/core/auth/auth_version_checker_test.dart:67:19 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance • test/core/auth/auth_version_checker_test.dart:69:35 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance • test/core/auth/auth_version_checker_test.dart:70:19 • prefer_const_constructors
+warning • This function has a nullable return type of 'FutureOr<Object?>', but ends without returning a value • test/core/security/screen_capture_protection_test.dart:19:63 • body_might_complete_normally_nullable
+   info • Don't make a function 'async' if it doesn't use 'await' • test/core/security/screen_capture_protection_test.dart:36:57 • unnecessary_async
+warning • This function has a nullable return type of 'FutureOr<Object?>', but ends without returning a value • test/core/security/screen_capture_protection_test.dart:60:67 • body_might_complete_normally_nullable
+   info • Don't make a function 'async' if it doesn't use 'await' • test/core/security/screen_capture_protection_test.dart:79:61 • unnecessary_async
+   info • The value of the argument is redundant because it matches the default value • test/core/time/month_window_resolver_test.dart:72:50 • avoid_redundant_argument_values
+   info • The value of the argument is redundant because it matches the default value • test/core/time/month_window_resolver_test.dart:77:24 • avoid_redundant_argument_values
+   info • The value of the argument is redundant because it matches the default value • test/features/bill_editor/presentation/bill_editor_bloc_test.dart:85:17 • avoid_redundant_argument_values
+   info • The value of the argument is redundant because it matches the default value • test/features/bill_editor/presentation/bill_editor_bloc_test.dart:111:17 • avoid_redundant_argument_values
+   info • Use 'const' with the constructor to improve performance • test/features/bill_editor/presentation/bill_editor_bloc_test.dart:230:20 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance • test/features/bill_editor/presentation/bill_editor_bloc_test.dart:257:22 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance • test/features/bill_editor/presentation/bill_editor_bloc_test.dart:290:14 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance • test/features/bill_editor/presentation/bill_editor_bloc_test.dart:360:16 • prefer_const_constructors
+   info • The value of the argument is redundant because it matches the default value • test/features/bill_editor/presentation/bill_editor_bloc_test.dart:459:36 • avoid_redundant_argument_values
+   info • The value of the argument is redundant because it matches the default value • test/features/bill_editor/presentation/bill_editor_bloc_test.dart:478:36 • avoid_redundant_argument_values
+   info • The value of the argument is redundant because it matches the default value • test/features/bill_editor/presentation/bill_editor_bloc_test.dart:495:30 • avoid_redundant_argument_values
+   info • The value of the argument is redundant because it matches the default value • test/features/bill_editor/presentation/bill_editor_bloc_test.dart:512:30 • avoid_redundant_argument_values
+   info • The value of the argument is redundant because it matches the default value • test/features/bill_editor/presentation/bill_editor_bloc_test.dart:528:61 • avoid_redundant_argument_values
+   info • Use 'const' literals as arguments to constructors of '@immutable' classes • test/features/bill_editor/presentation/widgets/attachment_grid_test.dart:20:34 • prefer_const_literals_to_create_immutables
+   info • The value of the argument is redundant because it matches the default value • test/features/bill_editor/presentation/widgets/category_split_section_test.dart:42:61 • avoid_redundant_argument_values
+   info • The value of the argument is redundant because it matches the default value • test/features/bills/bills_filter_test.dart:49:36 • avoid_redundant_argument_values
+   info • The value of the argument is redundant because it matches the default value • test/features/bills/bills_filter_test.dart:76:45 • avoid_redundant_argument_values
+   info • The value of the argument is redundant because it matches the default value • test/features/bills/bills_state_test.dart:13:51 • avoid_redundant_argument_values
+   info • The value of the argument is redundant because it matches the default value • test/features/bills/bills_state_test.dart:13:62 • avoid_redundant_argument_values
+   info • The value of the argument is redundant because it matches the default value • test/features/bills/bills_state_test.dart:13:74 • avoid_redundant_argument_values
+   info • The value of the argument is redundant because it matches the default value • test/features/bills/bills_state_test.dart:17:21 • avoid_redundant_argument_values
+   info • The value of the argument is redundant because it matches the default value • test/features/bills/bills_state_test.dart:47:21 • avoid_redundant_argument_values
+   info • Use 'const' literals as arguments to constructors of '@immutable' classes • test/features/categories/presentation/categories_tree_state_test.dart:32:27 • prefer_const_literals_to_create_immutables
+   info • Use 'const' literals as arguments to constructors of '@immutable' classes • test/features/categories/presentation/categories_tree_state_test.dart:39:60 • prefer_const_literals_to_create_immutables
+   info • The value of the argument is redundant because it matches the default value • test/features/dashboard/dashboard_card_catalog_test.dart:56:18 • avoid_redundant_argument_values
+   info • The value of the argument is redundant because it matches the default value • test/features/goods/presentation/goods_detail_sheet_test.dart:61:31 • avoid_redundant_argument_values
+   info • Use 'const' literals as arguments to constructors of '@immutable' classes • test/features/orders/data/order_money_test.dart:63:32 • prefer_const_literals_to_create_immutables
+   info • Use 'const' literals as arguments to constructors of '@immutable' classes • test/features/orders/data/order_money_test.dart:64:32 • prefer_const_literals_to_create_immutables
+   info • Sort directive sections alphabetically • test/features/orders/presentation/order_detail_page_test.dart:4:1 • directives_ordering
+   info • Sort directive sections alphabetically • test/features/orders/presentation/order_detail_page_test.dart:16:1 • directives_ordering
+   info • The value of the argument is redundant because it matches the default value • test/features/orders/presentation/order_detail_page_test.dart:38:50 • avoid_redundant_argument_values
+   info • Missing type annotation on a public API • test/features/orders/presentation/order_detail_page_test.dart:337:7 • type_annotate_public_apis
+   info • Missing type annotation on a public API • test/features/orders/presentation/order_detail_page_test.dart:338:7 • type_annotate_public_apis
+   info • Missing type annotation on a public API • test/features/orders/presentation/order_detail_page_test.dart:339:7 • type_annotate_public_apis
+   info • Use 'const' with the constructor to improve performance • test/features/orders/presentation/order_detail_page_test.dart:445:12 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance • test/features/orders/presentation/order_form_sheet_test.dart:84:14 • prefer_const_constructors
+   info • The value of the argument is redundant because it matches the default value • test/features/orders/presentation/order_form_sheet_test.dart:92:20 • avoid_redundant_argument_values
+   info • Use 'const' with the constructor to improve performance • test/features/orders/presentation/order_form_sheet_test.dart:169:32 • prefer_const_constructors
+   info • The value of the argument is redundant because it matches the default value • test/features/orders/presentation/order_form_sheet_test.dart:177:38 • avoid_redundant_argument_values
+   info • Missing type annotation on a public API • test/features/orders/presentation/order_form_sheet_test.dart:242:7 • type_annotate_public_apis
+   info • Use 'const' with the constructor to improve performance • test/features/orders/presentation/order_form_sheet_test.dart:257:12 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance • test/features/orders/presentation/order_form_sheet_test.dart:268:15 • prefer_const_constructors
+   info • Missing type annotation on a public API • test/features/orders/presentation/orders_bloc_test.dart:111:7 • type_annotate_public_apis
+   info • Missing type annotation on a public API • test/features/orders/presentation/orders_bloc_test.dart:112:7 • type_annotate_public_apis
+   info • The value of the argument is redundant because it matches the default value • test/features/payees/presentation/widgets/payee_card_test.dart:28:26 • avoid_redundant_argument_values
+   info • The value of the argument is redundant because it matches the default value • test/features/recurring/data/cron_builder_test.dart:9:15 • avoid_redundant_argument_values
+   info • The value of the argument is redundant because it matches the default value • test/features/recurring/data/cron_builder_test.dart:52:17 • avoid_redundant_argument_values
+   info • Method invocation or property access on a 'dynamic' target • test/features/recurring/presentation/recurring_editor_page_test.dart:116:12 • avoid_dynamic_calls
+   info • Method invocation or property access on a 'dynamic' target • test/features/recurring/presentation/recurring_editor_page_test.dart:117:12 • avoid_dynamic_calls
+   info • Method invocation or property access on a 'dynamic' target • test/features/recurring/presentation/recurring_editor_page_test.dart:118:12 • avoid_dynamic_calls
+   info • Method invocation or property access on a 'dynamic' target • test/features/recurring/presentation/recurring_editor_page_test.dart:118:12 • avoid_dynamic_calls
+   info • Method invocation or property access on a 'dynamic' target • test/features/recurring/presentation/recurring_editor_page_test.dart:119:12 • avoid_dynamic_calls
+   info • Method invocation or property access on a 'dynamic' target • test/features/recurring/presentation/recurring_editor_page_test.dart:119:12 • avoid_dynamic_calls
+   info • Method invocation or property access on a 'dynamic' target • test/features/recurring/presentation/recurring_editor_page_test.dart:120:12 • avoid_dynamic_calls
+   info • Method invocation or property access on a 'dynamic' target • test/features/recurring/presentation/recurring_editor_page_test.dart:120:12 • avoid_dynamic_calls
+   info • The value of the argument is redundant because it matches the default value • test/features/stats/chinese_calendar_day_test.dart:57:54 • avoid_redundant_argument_values
+   info • The value of the argument is redundant because it matches the default value • test/features/stats/holiday_patch_service_test.dart:42:18 • avoid_redundant_argument_values
+   info • Don't make a function 'async' if it doesn't use 'await' • test/features/stats/holiday_patch_service_test.dart:56:22 • unnecessary_async
+   info • The value of the argument is redundant because it matches the default value • test/features/stats/stats_card_catalog_test.dart:35:18 • avoid_redundant_argument_values
+   info • Use 'const' literals as arguments to constructors of '@immutable' classes • test/features/tags/presentation/tags_tree_state_test.dart:28:54 • prefer_const_literals_to_create_immutables

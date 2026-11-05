@@ -8,6 +8,7 @@ import 'package:fortuneboot/core/session/bill_mutations.dart';
 import 'package:fortuneboot/features/shared/data/bill_models.dart';
 import 'package:fortuneboot/features/shared/data/bill_service.dart';
 import 'package:fortuneboot/features/shared/presentation/bills/bill_delete_confirmation.dart';
+import 'package:fortuneboot/features/shared/presentation/bills/bill_detail_permissions.dart';
 import 'package:fortuneboot/features/shared/presentation/bills/bill_detail_sheet.dart';
 import 'package:fortuneboot/fx/components/fx_sheet.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
@@ -18,6 +19,9 @@ class BillDetailFlow {
 
   final BillService _service;
   final Set<int> _pendingBillIds = <int>{};
+  final Set<int> _confirmPendingBillIds = <int>{};
+  final Set<int> _deletePendingBillIds = <int>{};
+  final ValueNotifier<int> _pendingRevision = ValueNotifier<int>(0);
 
   void show(
     BuildContext context, {
@@ -26,16 +30,21 @@ class BillDetailFlow {
   }) {
     final detail = BillDetailSheet(bill: bill, service: _service);
     final footer = Builder(
-      builder: (detailContext) => BillDetailActions(
-        bill: bill,
-        onCopy: () => _copy(detailContext, bill),
-        onEdit: () => _edit(detailContext, bill),
-        onDelete: () => _delete(detailContext, bookId: bookId, bill: bill),
-        onConfirmToggle: (confirm) => _toggleConfirm(
-          detailContext,
-          bookId: bookId,
+      builder: (detailContext) => ValueListenableBuilder<int>(
+        valueListenable: _pendingRevision,
+        builder: (context, _, _) => BillDetailActions(
           bill: bill,
-          confirm: confirm,
+          confirmBusy: _confirmPendingBillIds.contains(bill.billId),
+          deleteBusy: _deletePendingBillIds.contains(bill.billId),
+          onCopy: () => _copy(detailContext, bill),
+          onEdit: () => _edit(detailContext, bookId: bookId, bill: bill),
+          onDelete: () => _delete(detailContext, bookId: bookId, bill: bill),
+          onConfirmToggle: (confirm) => _toggleConfirm(
+            detailContext,
+            bookId: bookId,
+            bill: bill,
+            confirm: confirm,
+          ),
         ),
       ),
     );
@@ -43,7 +52,6 @@ class BillDetailFlow {
       FxSheet.show<void>(
         context,
         title: S.of(context).billsDetailTitle,
-        scrollable: true,
         child: detail,
         footer: footer,
       );
@@ -70,12 +78,16 @@ class BillDetailFlow {
             height: math.min(760.0, availableHeight),
             child: Column(
               children: [
-                Expanded(
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.only(top: 24),
-                    child: detail,
+                Align(
+                  alignment: AlignmentDirectional.centerEnd,
+                  child: IconButton(
+                    key: const ValueKey('bill-detail-dialog-close'),
+                    tooltip: S.of(dialogContext).billsClose,
+                    onPressed: () => Navigator.of(dialogContext).pop(),
+                    icon: const Icon(Icons.close_rounded),
                   ),
                 ),
+                Expanded(child: SingleChildScrollView(child: detail)),
                 footer,
               ],
             ),
@@ -86,24 +98,43 @@ class BillDetailFlow {
   }
 
   void _copy(BuildContext context, FortuneBillVo bill) {
-    if (bill.billType == FxBillType.adjust.value) return;
+    if (!BillDetailPermissions.of(bill).canCopy) return;
     Navigator.of(context).pop();
     AppRouter.push<void>(
       context,
       Routes.billEditor,
-      args: {'mode': 'copy', 'bill': bill},
+      args: _editorArgs(mode: 'copy', bill: bill, bookId: bill.bookId),
     );
   }
 
-  void _edit(BuildContext context, FortuneBillVo bill) {
-    if (bill.billType == FxBillType.adjust.value) return;
+  void _edit(
+    BuildContext context, {
+    required int? bookId,
+    required FortuneBillVo bill,
+  }) {
+    if (!BillDetailPermissions.of(bill).canEdit) return;
     Navigator.of(context).pop();
     AppRouter.push<void>(
       context,
       Routes.billEditor,
-      args: {'mode': 'edit', 'billId': bill.billId, 'bill': bill},
+      args: _editorArgs(mode: 'edit', bill: bill, bookId: bookId),
     );
   }
+
+  Map<String, Object?> _editorArgs({
+    required String mode,
+    required FortuneBillVo bill,
+    required int? bookId,
+  }) => {
+    'mode': mode,
+    'billId': bill.billId,
+    'bill': bill,
+    'presetBookId': bill.bookId ?? bookId,
+    'presetOrderId': bill.orderId,
+    'presetOrderComponent': bill.orderComponent?.value,
+    'expectedOrderVersion': bill.orderLedgerVersion,
+    'lockOrderContext': bill.orderId != null,
+  };
 
   Future<void> _delete(
     BuildContext context, {
@@ -121,6 +152,8 @@ class BillDetailFlow {
     }
 
     _pendingBillIds.add(billId);
+    _deletePendingBillIds.add(billId);
+    _pendingRevision.value++;
     try {
       await _service.remove(bookId: bookId, billId: billId);
       if (context.mounted) {
@@ -135,6 +168,8 @@ class BillDetailFlow {
       }
     } finally {
       _pendingBillIds.remove(billId);
+      _deletePendingBillIds.remove(billId);
+      _pendingRevision.value++;
     }
   }
 
@@ -150,6 +185,8 @@ class BillDetailFlow {
     }
 
     _pendingBillIds.add(billId);
+    _confirmPendingBillIds.add(billId);
+    _pendingRevision.value++;
     try {
       if (confirm) {
         await _service.confirm(bookId: bookId, billId: billId);
@@ -168,6 +205,8 @@ class BillDetailFlow {
       }
     } finally {
       _pendingBillIds.remove(billId);
+      _confirmPendingBillIds.remove(billId);
+      _pendingRevision.value++;
     }
   }
 

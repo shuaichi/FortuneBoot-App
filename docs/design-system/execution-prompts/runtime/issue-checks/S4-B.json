@@ -1,0 +1,2511 @@
+{
+  "schemaVersion": 1,
+  "stage": "S4-B",
+  "attempt": 1,
+  "sourceSha": "1243a5b3e4eb2603ca7ea7c0641f724b5ccd5e8e",
+  "sourceSnapshotSha256": "733ebeb8bcc583acfe5a4e44110a877f707578d52fb2e94e44ae2188816a1ad2",
+  "scope": "shared bill detail, attachment reading and shared bill amount, same-domain tests/localization/evidence only",
+  "summary": {
+    "total": 58,
+    "byState": {
+      "VERIFIED_LOCAL": 56,
+      "NOT_APPLICABLE": 2
+    }
+  },
+  "items": [
+    {
+      "issueId": "BO-063",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-B",
+      "sourcePaths": [
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart",
+        "lib/features/shared/data/bill_attachment_reader.dart",
+        "lib/features/shared/data/bill_attachment_reader_native.dart",
+        "lib/features/shared/data/bill_attachment_reader_web.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart": "43fbdf6b262819d93c6dc5e63bab04e1a89da7610c2ae734a03f763e26e6786d",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart": "b885f987cf0d1065a3dc60c6542bb8fbb36ed7280d46aee74410f627ea27e263",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart": "1dd717662b066f600c9d6ea5e7d420c6def2147da92436e1fbe9fe9db68a3cd7",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart": "3b58630130c48cf2671d2df5964a47ffcfea7906a0ace671c69675fa33544020",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart": "825851f2d54db305fd73c2fe2967b3b554a2391f339b9558cf7407dba35cb600",
+        "lib/features/shared/data/bill_attachment_reader.dart": "fde3aaba87e20ae3eac7659495750044bde5d581006dc135a00fc929ff4157fe",
+        "lib/features/shared/data/bill_attachment_reader_native.dart": "c013abce6781e807e49a77d6469b7ad8b9ed6d57d64a290154e9b84747617071",
+        "lib/features/shared/data/bill_attachment_reader_web.dart": "f1dbbeaa96a68080354e08492a13bd2eb516fd21a1ec3d84a9d61a20aaa0862b",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "0e2738cc0defc6baaec02f5e2963dd1352da7518b77e53e629574672614f8dd5"
+      },
+      "verified": "34/34 decisive tests; 601 passed/1 skipped full suite; 10 viewed Flutter renders and 2 viewed iOS simulator renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "真实服务端、系统文件查看器/分享面板、VoiceOver/TalkBack 和模拟器原生点击 NOT_RUN；按用户新规则不阻塞分配问题。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/decisive-tests-final-008.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/full-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/simulator-validation.json"
+      ],
+      "reason": "仅评 S4-B 详情/附件/列表金额实例，不代其它 owner 关闭全局编号。",
+      "observedBehavior": "详情原额与列表实付口径不同且无标签。",
+      "implemented": "BillFlowAmount 共用 settled/display、方向和掩码；详情实付为主，100+3-5分解。"
+    },
+    {
+      "issueId": "BO-064",
+      "priority": "P1",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-B",
+      "sourcePaths": [
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart",
+        "lib/features/shared/data/bill_attachment_reader.dart",
+        "lib/features/shared/data/bill_attachment_reader_native.dart",
+        "lib/features/shared/data/bill_attachment_reader_web.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart": "43fbdf6b262819d93c6dc5e63bab04e1a89da7610c2ae734a03f763e26e6786d",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart": "b885f987cf0d1065a3dc60c6542bb8fbb36ed7280d46aee74410f627ea27e263",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart": "1dd717662b066f600c9d6ea5e7d420c6def2147da92436e1fbe9fe9db68a3cd7",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart": "3b58630130c48cf2671d2df5964a47ffcfea7906a0ace671c69675fa33544020",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart": "825851f2d54db305fd73c2fe2967b3b554a2391f339b9558cf7407dba35cb600",
+        "lib/features/shared/data/bill_attachment_reader.dart": "fde3aaba87e20ae3eac7659495750044bde5d581006dc135a00fc929ff4157fe",
+        "lib/features/shared/data/bill_attachment_reader_native.dart": "c013abce6781e807e49a77d6469b7ad8b9ed6d57d64a290154e9b84747617071",
+        "lib/features/shared/data/bill_attachment_reader_web.dart": "f1dbbeaa96a68080354e08492a13bd2eb516fd21a1ec3d84a9d61a20aaa0862b",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "0e2738cc0defc6baaec02f5e2963dd1352da7518b77e53e629574672614f8dd5"
+      },
+      "verified": "34/34 decisive tests; 601 passed/1 skipped full suite; 10 viewed Flutter renders and 2 viewed iOS simulator renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "真实服务端、系统文件查看器/分享面板、VoiceOver/TalkBack 和模拟器原生点击 NOT_RUN；按用户新规则不阻塞分配问题。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/decisive-tests-final-008.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/full-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/simulator-validation.json"
+      ],
+      "reason": "仅评 S4-B 详情/附件/列表金额实例，不代其它 owner 关闭全局编号。",
+      "observedBehavior": "详情只显示前三标签，+N不可读。",
+      "implemented": "详情 Wrap 全部标签，6个标签在 Flutter/模拟器实际可见。"
+    },
+    {
+      "issueId": "BO-065",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-B",
+      "sourcePaths": [
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart",
+        "lib/features/shared/data/bill_attachment_reader.dart",
+        "lib/features/shared/data/bill_attachment_reader_native.dart",
+        "lib/features/shared/data/bill_attachment_reader_web.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart": "43fbdf6b262819d93c6dc5e63bab04e1a89da7610c2ae734a03f763e26e6786d",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart": "b885f987cf0d1065a3dc60c6542bb8fbb36ed7280d46aee74410f627ea27e263",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart": "1dd717662b066f600c9d6ea5e7d420c6def2147da92436e1fbe9fe9db68a3cd7",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart": "3b58630130c48cf2671d2df5964a47ffcfea7906a0ace671c69675fa33544020",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart": "825851f2d54db305fd73c2fe2967b3b554a2391f339b9558cf7407dba35cb600",
+        "lib/features/shared/data/bill_attachment_reader.dart": "fde3aaba87e20ae3eac7659495750044bde5d581006dc135a00fc929ff4157fe",
+        "lib/features/shared/data/bill_attachment_reader_native.dart": "c013abce6781e807e49a77d6469b7ad8b9ed6d57d64a290154e9b84747617071",
+        "lib/features/shared/data/bill_attachment_reader_web.dart": "f1dbbeaa96a68080354e08492a13bd2eb516fd21a1ec3d84a9d61a20aaa0862b",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "0e2738cc0defc6baaec02f5e2963dd1352da7518b77e53e629574672614f8dd5"
+      },
+      "verified": "34/34 decisive tests; 601 passed/1 skipped full suite; 10 viewed Flutter renders and 2 viewed iOS simulator renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "真实服务端、系统文件查看器/分享面板、VoiceOver/TalkBack 和模拟器原生点击 NOT_RUN；按用户新规则不阻塞分配问题。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/decisive-tests-final-008.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/full-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/simulator-validation.json"
+      ],
+      "reason": "仅评 S4-B 详情/附件/列表金额实例，不代其它 owner 关闭全局编号。",
+      "observedBehavior": "附加分类/备注丢失。",
+      "implemented": "显示 categoryId 的明确附加分类标识与备注；无分类名称字段，不伪造名称。"
+    },
+    {
+      "issueId": "BO-066",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-B",
+      "sourcePaths": [
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart",
+        "lib/features/shared/data/bill_attachment_reader.dart",
+        "lib/features/shared/data/bill_attachment_reader_native.dart",
+        "lib/features/shared/data/bill_attachment_reader_web.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart": "43fbdf6b262819d93c6dc5e63bab04e1a89da7610c2ae734a03f763e26e6786d",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart": "b885f987cf0d1065a3dc60c6542bb8fbb36ed7280d46aee74410f627ea27e263",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart": "1dd717662b066f600c9d6ea5e7d420c6def2147da92436e1fbe9fe9db68a3cd7",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart": "3b58630130c48cf2671d2df5964a47ffcfea7906a0ace671c69675fa33544020",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart": "825851f2d54db305fd73c2fe2967b3b554a2391f339b9558cf7407dba35cb600",
+        "lib/features/shared/data/bill_attachment_reader.dart": "fde3aaba87e20ae3eac7659495750044bde5d581006dc135a00fc929ff4157fe",
+        "lib/features/shared/data/bill_attachment_reader_native.dart": "c013abce6781e807e49a77d6469b7ad8b9ed6d57d64a290154e9b84747617071",
+        "lib/features/shared/data/bill_attachment_reader_web.dart": "f1dbbeaa96a68080354e08492a13bd2eb516fd21a1ec3d84a9d61a20aaa0862b",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "0e2738cc0defc6baaec02f5e2963dd1352da7518b77e53e629574672614f8dd5"
+      },
+      "verified": "34/34 decisive tests; 601 passed/1 skipped full suite; 10 viewed Flutter renders and 2 viewed iOS simulator renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "真实服务端、系统文件查看器/分享面板、VoiceOver/TalkBack 和模拟器原生点击 NOT_RUN；按用户新规则不阻塞分配问题。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/decisive-tests-final-008.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/full-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/simulator-validation.json"
+      ],
+      "reason": "仅评 S4-B 详情/附件/列表金额实例，不代其它 owner 关闭全局编号。",
+      "observedBehavior": "非图片附件只有通用图标。",
+      "implemented": "BillAttachmentCard 显示名称/MIME、打开/保存；原生文本系统查看器、其它保存、Web下载，unsupported明确反馈。"
+    },
+    {
+      "issueId": "BO-067",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-B",
+      "sourcePaths": [
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart",
+        "lib/features/shared/data/bill_attachment_reader.dart",
+        "lib/features/shared/data/bill_attachment_reader_native.dart",
+        "lib/features/shared/data/bill_attachment_reader_web.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart": "43fbdf6b262819d93c6dc5e63bab04e1a89da7610c2ae734a03f763e26e6786d",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart": "b885f987cf0d1065a3dc60c6542bb8fbb36ed7280d46aee74410f627ea27e263",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart": "1dd717662b066f600c9d6ea5e7d420c6def2147da92436e1fbe9fe9db68a3cd7",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart": "3b58630130c48cf2671d2df5964a47ffcfea7906a0ace671c69675fa33544020",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart": "825851f2d54db305fd73c2fe2967b3b554a2391f339b9558cf7407dba35cb600",
+        "lib/features/shared/data/bill_attachment_reader.dart": "fde3aaba87e20ae3eac7659495750044bde5d581006dc135a00fc929ff4157fe",
+        "lib/features/shared/data/bill_attachment_reader_native.dart": "c013abce6781e807e49a77d6469b7ad8b9ed6d57d64a290154e9b84747617071",
+        "lib/features/shared/data/bill_attachment_reader_web.dart": "f1dbbeaa96a68080354e08492a13bd2eb516fd21a1ec3d84a9d61a20aaa0862b",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "0e2738cc0defc6baaec02f5e2963dd1352da7518b77e53e629574672614f8dd5"
+      },
+      "verified": "34/34 decisive tests; 601 passed/1 skipped full suite; 10 viewed Flutter renders and 2 viewed iOS simulator renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "真实服务端、系统文件查看器/分享面板、VoiceOver/TalkBack 和模拟器原生点击 NOT_RUN；按用户新规则不阻塞分配问题。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/decisive-tests-final-008.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/full-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/simulator-validation.json"
+      ],
+      "reason": "仅评 S4-B 详情/附件/列表金额实例，不代其它 owner 关闭全局编号。",
+      "observedBehavior": "长备注右对齐、标题两行截断。",
+      "implemented": "备注独立段落，标题不截断；2x键值上下重排。"
+    },
+    {
+      "issueId": "BO-068",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-B",
+      "sourcePaths": [
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart",
+        "lib/features/shared/data/bill_attachment_reader.dart",
+        "lib/features/shared/data/bill_attachment_reader_native.dart",
+        "lib/features/shared/data/bill_attachment_reader_web.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart": "43fbdf6b262819d93c6dc5e63bab04e1a89da7610c2ae734a03f763e26e6786d",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart": "b885f987cf0d1065a3dc60c6542bb8fbb36ed7280d46aee74410f627ea27e263",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart": "1dd717662b066f600c9d6ea5e7d420c6def2147da92436e1fbe9fe9db68a3cd7",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart": "3b58630130c48cf2671d2df5964a47ffcfea7906a0ace671c69675fa33544020",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart": "825851f2d54db305fd73c2fe2967b3b554a2391f339b9558cf7407dba35cb600",
+        "lib/features/shared/data/bill_attachment_reader.dart": "fde3aaba87e20ae3eac7659495750044bde5d581006dc135a00fc929ff4157fe",
+        "lib/features/shared/data/bill_attachment_reader_native.dart": "c013abce6781e807e49a77d6469b7ad8b9ed6d57d64a290154e9b84747617071",
+        "lib/features/shared/data/bill_attachment_reader_web.dart": "f1dbbeaa96a68080354e08492a13bd2eb516fd21a1ec3d84a9d61a20aaa0862b",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "0e2738cc0defc6baaec02f5e2963dd1352da7518b77e53e629574672614f8dd5"
+      },
+      "verified": "34/34 decisive tests; 601 passed/1 skipped full suite; 10 viewed Flutter renders and 2 viewed iOS simulator renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "真实服务端、系统文件查看器/分享面板、VoiceOver/TalkBack 和模拟器原生点击 NOT_RUN；按用户新规则不阻塞分配问题。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/decisive-tests-final-008.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/full-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/simulator-validation.json"
+      ],
+      "reason": "仅评 S4-B 详情/附件/列表金额实例，不代其它 owner 关闭全局编号。",
+      "observedBehavior": "详情缺统计/确认状态。",
+      "implemented": "记录状态展示计入/不计入、已确认/待确认及来源组件。"
+    },
+    {
+      "issueId": "BO-069",
+      "priority": "P1",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-B",
+      "sourcePaths": [
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart",
+        "lib/features/shared/data/bill_attachment_reader.dart",
+        "lib/features/shared/data/bill_attachment_reader_native.dart",
+        "lib/features/shared/data/bill_attachment_reader_web.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart": "43fbdf6b262819d93c6dc5e63bab04e1a89da7610c2ae734a03f763e26e6786d",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart": "b885f987cf0d1065a3dc60c6542bb8fbb36ed7280d46aee74410f627ea27e263",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart": "1dd717662b066f600c9d6ea5e7d420c6def2147da92436e1fbe9fe9db68a3cd7",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart": "3b58630130c48cf2671d2df5964a47ffcfea7906a0ace671c69675fa33544020",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart": "825851f2d54db305fd73c2fe2967b3b554a2391f339b9558cf7407dba35cb600",
+        "lib/features/shared/data/bill_attachment_reader.dart": "fde3aaba87e20ae3eac7659495750044bde5d581006dc135a00fc929ff4157fe",
+        "lib/features/shared/data/bill_attachment_reader_native.dart": "c013abce6781e807e49a77d6469b7ad8b9ed6d57d64a290154e9b84747617071",
+        "lib/features/shared/data/bill_attachment_reader_web.dart": "f1dbbeaa96a68080354e08492a13bd2eb516fd21a1ec3d84a9d61a20aaa0862b",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "0e2738cc0defc6baaec02f5e2963dd1352da7518b77e53e629574672614f8dd5"
+      },
+      "verified": "34/34 decisive tests; 601 passed/1 skipped full suite; 10 viewed Flutter renders and 2 viewed iOS simulator renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "真实服务端、系统文件查看器/分享面板、VoiceOver/TalkBack 和模拟器原生点击 NOT_RUN；按用户新规则不阻塞分配问题。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/decisive-tests-final-008.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/full-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/simulator-validation.json"
+      ],
+      "reason": "仅评 S4-B 详情/附件/列表金额实例，不代其它 owner 关闭全局编号。",
+      "observedBehavior": "来源禁用动作在共享详情放开。",
+      "implemented": "BillDetailPermissions 继承 allowedActions/readOnlyReason，只读隐藏整个footer。"
+    },
+    {
+      "issueId": "BO-070",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-B",
+      "sourcePaths": [
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart",
+        "lib/features/shared/data/bill_attachment_reader.dart",
+        "lib/features/shared/data/bill_attachment_reader_native.dart",
+        "lib/features/shared/data/bill_attachment_reader_web.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart": "43fbdf6b262819d93c6dc5e63bab04e1a89da7610c2ae734a03f763e26e6786d",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart": "b885f987cf0d1065a3dc60c6542bb8fbb36ed7280d46aee74410f627ea27e263",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart": "1dd717662b066f600c9d6ea5e7d420c6def2147da92436e1fbe9fe9db68a3cd7",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart": "3b58630130c48cf2671d2df5964a47ffcfea7906a0ace671c69675fa33544020",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart": "825851f2d54db305fd73c2fe2967b3b554a2391f339b9558cf7407dba35cb600",
+        "lib/features/shared/data/bill_attachment_reader.dart": "fde3aaba87e20ae3eac7659495750044bde5d581006dc135a00fc929ff4157fe",
+        "lib/features/shared/data/bill_attachment_reader_native.dart": "c013abce6781e807e49a77d6469b7ad8b9ed6d57d64a290154e9b84747617071",
+        "lib/features/shared/data/bill_attachment_reader_web.dart": "f1dbbeaa96a68080354e08492a13bd2eb516fd21a1ec3d84a9d61a20aaa0862b",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "0e2738cc0defc6baaec02f5e2963dd1352da7518b77e53e629574672614f8dd5"
+      },
+      "verified": "34/34 decisive tests; 601 passed/1 skipped full suite; 10 viewed Flutter renders and 2 viewed iOS simulator renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "真实服务端、系统文件查看器/分享面板、VoiceOver/TalkBack 和模拟器原生点击 NOT_RUN；按用户新规则不阻塞分配问题。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/decisive-tests-final-008.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/full-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/simulator-validation.json"
+      ],
+      "reason": "仅评 S4-B 详情/附件/列表金额实例，不代其它 owner 关闭全局编号。",
+      "observedBehavior": "宽屏详情无显式关闭。",
+      "implemented": "Dialog 右上明确关闭，已测试/看图。"
+    },
+    {
+      "issueId": "BO-007",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-B",
+      "sourcePaths": [
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart",
+        "lib/features/shared/data/bill_attachment_reader.dart",
+        "lib/features/shared/data/bill_attachment_reader_native.dart",
+        "lib/features/shared/data/bill_attachment_reader_web.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart": "43fbdf6b262819d93c6dc5e63bab04e1a89da7610c2ae734a03f763e26e6786d",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart": "b885f987cf0d1065a3dc60c6542bb8fbb36ed7280d46aee74410f627ea27e263",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart": "1dd717662b066f600c9d6ea5e7d420c6def2147da92436e1fbe9fe9db68a3cd7",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart": "3b58630130c48cf2671d2df5964a47ffcfea7906a0ace671c69675fa33544020",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart": "825851f2d54db305fd73c2fe2967b3b554a2391f339b9558cf7407dba35cb600",
+        "lib/features/shared/data/bill_attachment_reader.dart": "fde3aaba87e20ae3eac7659495750044bde5d581006dc135a00fc929ff4157fe",
+        "lib/features/shared/data/bill_attachment_reader_native.dart": "c013abce6781e807e49a77d6469b7ad8b9ed6d57d64a290154e9b84747617071",
+        "lib/features/shared/data/bill_attachment_reader_web.dart": "f1dbbeaa96a68080354e08492a13bd2eb516fd21a1ec3d84a9d61a20aaa0862b",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "0e2738cc0defc6baaec02f5e2963dd1352da7518b77e53e629574672614f8dd5"
+      },
+      "verified": "34/34 decisive tests; 601 passed/1 skipped full suite; 10 viewed Flutter renders and 2 viewed iOS simulator renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "真实服务端、系统文件查看器/分享面板、VoiceOver/TalkBack 和模拟器原生点击 NOT_RUN；按用户新规则不阻塞分配问题。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/decisive-tests-final-008.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/full-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/simulator-validation.json"
+      ],
+      "reason": "仅评 S4-B 详情/附件/列表金额实例，不代其它 owner 关闭全局编号。",
+      "observedBehavior": "确认/删除请求无可见忙碌。",
+      "implemented": "pending revision更新确认中并禁用编辑/确认/更多，防重复；删除同类pending。"
+    },
+    {
+      "issueId": "BO-010",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-B",
+      "sourcePaths": [
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart",
+        "lib/features/shared/data/bill_attachment_reader.dart",
+        "lib/features/shared/data/bill_attachment_reader_native.dart",
+        "lib/features/shared/data/bill_attachment_reader_web.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart": "43fbdf6b262819d93c6dc5e63bab04e1a89da7610c2ae734a03f763e26e6786d",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart": "b885f987cf0d1065a3dc60c6542bb8fbb36ed7280d46aee74410f627ea27e263",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart": "1dd717662b066f600c9d6ea5e7d420c6def2147da92436e1fbe9fe9db68a3cd7",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart": "3b58630130c48cf2671d2df5964a47ffcfea7906a0ace671c69675fa33544020",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart": "825851f2d54db305fd73c2fe2967b3b554a2391f339b9558cf7407dba35cb600",
+        "lib/features/shared/data/bill_attachment_reader.dart": "fde3aaba87e20ae3eac7659495750044bde5d581006dc135a00fc929ff4157fe",
+        "lib/features/shared/data/bill_attachment_reader_native.dart": "c013abce6781e807e49a77d6469b7ad8b9ed6d57d64a290154e9b84747617071",
+        "lib/features/shared/data/bill_attachment_reader_web.dart": "f1dbbeaa96a68080354e08492a13bd2eb516fd21a1ec3d84a9d61a20aaa0862b",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "0e2738cc0defc6baaec02f5e2963dd1352da7518b77e53e629574672614f8dd5"
+      },
+      "verified": "34/34 decisive tests; 601 passed/1 skipped full suite; 10 viewed Flutter renders and 2 viewed iOS simulator renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "真实服务端、系统文件查看器/分享面板、VoiceOver/TalkBack 和模拟器原生点击 NOT_RUN；按用户新规则不阻塞分配问题。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/decisive-tests-final-008.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/full-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/simulator-validation.json"
+      ],
+      "reason": "仅评 S4-B 详情/附件/列表金额实例，不代其它 owner 关闭全局编号。",
+      "observedBehavior": "黑底媒体关闭对比待核。",
+      "implemented": "预览关闭白底黑字，实际渲染已查看。"
+    },
+    {
+      "issueId": "BO-072",
+      "priority": "P3",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-B",
+      "sourcePaths": [
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart",
+        "lib/features/shared/data/bill_attachment_reader.dart",
+        "lib/features/shared/data/bill_attachment_reader_native.dart",
+        "lib/features/shared/data/bill_attachment_reader_web.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart": "43fbdf6b262819d93c6dc5e63bab04e1a89da7610c2ae734a03f763e26e6786d",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart": "b885f987cf0d1065a3dc60c6542bb8fbb36ed7280d46aee74410f627ea27e263",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart": "1dd717662b066f600c9d6ea5e7d420c6def2147da92436e1fbe9fe9db68a3cd7",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart": "3b58630130c48cf2671d2df5964a47ffcfea7906a0ace671c69675fa33544020",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart": "825851f2d54db305fd73c2fe2967b3b554a2391f339b9558cf7407dba35cb600",
+        "lib/features/shared/data/bill_attachment_reader.dart": "fde3aaba87e20ae3eac7659495750044bde5d581006dc135a00fc929ff4157fe",
+        "lib/features/shared/data/bill_attachment_reader_native.dart": "c013abce6781e807e49a77d6469b7ad8b9ed6d57d64a290154e9b84747617071",
+        "lib/features/shared/data/bill_attachment_reader_web.dart": "f1dbbeaa96a68080354e08492a13bd2eb516fd21a1ec3d84a9d61a20aaa0862b",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "0e2738cc0defc6baaec02f5e2963dd1352da7518b77e53e629574672614f8dd5"
+      },
+      "verified": "34/34 decisive tests; 601 passed/1 skipped full suite; 10 viewed Flutter renders and 2 viewed iOS simulator renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "真实服务端、系统文件查看器/分享面板、VoiceOver/TalkBack 和模拟器原生点击 NOT_RUN；按用户新规则不阻塞分配问题。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/decisive-tests-final-008.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/full-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/simulator-validation.json"
+      ],
+      "reason": "仅评 S4-B 详情/附件/列表金额实例，不代其它 owner 关闭全局编号。",
+      "observedBehavior": "动作文案/日期不统一。",
+      "implemented": "新增动作/状态/附件文案均ARB中英，日期用DateFormat.yMMMd+Hm。"
+    },
+    {
+      "issueId": "BO-073",
+      "priority": "P1",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-B",
+      "sourcePaths": [
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart",
+        "lib/features/shared/data/bill_attachment_reader.dart",
+        "lib/features/shared/data/bill_attachment_reader_native.dart",
+        "lib/features/shared/data/bill_attachment_reader_web.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart": "43fbdf6b262819d93c6dc5e63bab04e1a89da7610c2ae734a03f763e26e6786d",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart": "b885f987cf0d1065a3dc60c6542bb8fbb36ed7280d46aee74410f627ea27e263",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart": "1dd717662b066f600c9d6ea5e7d420c6def2147da92436e1fbe9fe9db68a3cd7",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart": "3b58630130c48cf2671d2df5964a47ffcfea7906a0ace671c69675fa33544020",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart": "825851f2d54db305fd73c2fe2967b3b554a2391f339b9558cf7407dba35cb600",
+        "lib/features/shared/data/bill_attachment_reader.dart": "fde3aaba87e20ae3eac7659495750044bde5d581006dc135a00fc929ff4157fe",
+        "lib/features/shared/data/bill_attachment_reader_native.dart": "c013abce6781e807e49a77d6469b7ad8b9ed6d57d64a290154e9b84747617071",
+        "lib/features/shared/data/bill_attachment_reader_web.dart": "f1dbbeaa96a68080354e08492a13bd2eb516fd21a1ec3d84a9d61a20aaa0862b",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "0e2738cc0defc6baaec02f5e2963dd1352da7518b77e53e629574672614f8dd5"
+      },
+      "verified": "34/34 decisive tests; 601 passed/1 skipped full suite; 10 viewed Flutter renders and 2 viewed iOS simulator renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "真实服务端、系统文件查看器/分享面板、VoiceOver/TalkBack 和模拟器原生点击 NOT_RUN；按用户新规则不阻塞分配问题。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/decisive-tests-final-008.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/full-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/simulator-validation.json"
+      ],
+      "reason": "仅评 S4-B 详情/附件/列表金额实例，不代其它 owner 关闭全局编号。",
+      "observedBehavior": "来源组件进入编辑器丢失。",
+      "implemented": "显示来源组件，编辑/复制携带book/order/component/version/lock。"
+    },
+    {
+      "issueId": "BO-074",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-B",
+      "sourcePaths": [
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart",
+        "lib/features/shared/data/bill_attachment_reader.dart",
+        "lib/features/shared/data/bill_attachment_reader_native.dart",
+        "lib/features/shared/data/bill_attachment_reader_web.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart": "43fbdf6b262819d93c6dc5e63bab04e1a89da7610c2ae734a03f763e26e6786d",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart": "b885f987cf0d1065a3dc60c6542bb8fbb36ed7280d46aee74410f627ea27e263",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart": "1dd717662b066f600c9d6ea5e7d420c6def2147da92436e1fbe9fe9db68a3cd7",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart": "3b58630130c48cf2671d2df5964a47ffcfea7906a0ace671c69675fa33544020",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart": "825851f2d54db305fd73c2fe2967b3b554a2391f339b9558cf7407dba35cb600",
+        "lib/features/shared/data/bill_attachment_reader.dart": "fde3aaba87e20ae3eac7659495750044bde5d581006dc135a00fc929ff4157fe",
+        "lib/features/shared/data/bill_attachment_reader_native.dart": "c013abce6781e807e49a77d6469b7ad8b9ed6d57d64a290154e9b84747617071",
+        "lib/features/shared/data/bill_attachment_reader_web.dart": "f1dbbeaa96a68080354e08492a13bd2eb516fd21a1ec3d84a9d61a20aaa0862b",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "0e2738cc0defc6baaec02f5e2963dd1352da7518b77e53e629574672614f8dd5"
+      },
+      "verified": "34/34 decisive tests; 601 passed/1 skipped full suite; 10 viewed Flutter renders and 2 viewed iOS simulator renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "真实服务端、系统文件查看器/分享面板、VoiceOver/TalkBack 和模拟器原生点击 NOT_RUN；按用户新规则不阻塞分配问题。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/decisive-tests-final-008.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/full-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/simulator-validation.json"
+      ],
+      "reason": "仅评 S4-B 详情/附件/列表金额实例，不代其它 owner 关闭全局编号。",
+      "observedBehavior": "小高度详情控制固定挤正文。",
+      "implemented": "详情正文滚动，主动作固定；2x/短屏动作可达。"
+    },
+    {
+      "issueId": "DT-01",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-B",
+      "sourcePaths": [
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart",
+        "lib/features/shared/data/bill_attachment_reader.dart",
+        "lib/features/shared/data/bill_attachment_reader_native.dart",
+        "lib/features/shared/data/bill_attachment_reader_web.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart": "43fbdf6b262819d93c6dc5e63bab04e1a89da7610c2ae734a03f763e26e6786d",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart": "b885f987cf0d1065a3dc60c6542bb8fbb36ed7280d46aee74410f627ea27e263",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart": "1dd717662b066f600c9d6ea5e7d420c6def2147da92436e1fbe9fe9db68a3cd7",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart": "3b58630130c48cf2671d2df5964a47ffcfea7906a0ace671c69675fa33544020",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart": "825851f2d54db305fd73c2fe2967b3b554a2391f339b9558cf7407dba35cb600",
+        "lib/features/shared/data/bill_attachment_reader.dart": "fde3aaba87e20ae3eac7659495750044bde5d581006dc135a00fc929ff4157fe",
+        "lib/features/shared/data/bill_attachment_reader_native.dart": "c013abce6781e807e49a77d6469b7ad8b9ed6d57d64a290154e9b84747617071",
+        "lib/features/shared/data/bill_attachment_reader_web.dart": "f1dbbeaa96a68080354e08492a13bd2eb516fd21a1ec3d84a9d61a20aaa0862b",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "0e2738cc0defc6baaec02f5e2963dd1352da7518b77e53e629574672614f8dd5"
+      },
+      "verified": "34/34 decisive tests; 601 passed/1 skipped full suite; 10 viewed Flutter renders and 2 viewed iOS simulator renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "真实服务端、系统文件查看器/分享面板、VoiceOver/TalkBack 和模拟器原生点击 NOT_RUN；按用户新规则不阻塞分配问题。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/decisive-tests-final-008.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/full-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/simulator-validation.json"
+      ],
+      "reason": "仅评 S4-B 详情/附件/列表金额实例，不代其它 owner 关闭全局编号。",
+      "observedBehavior": "详情/附件沿用 canvas/surface/surfaceMuted/surfaceRaised分工。",
+      "implemented": "S4-B 详情/附件实例按当前 Fx 合同落地或验证；仅本scope。"
+    },
+    {
+      "issueId": "DT-02",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-B",
+      "sourcePaths": [
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart",
+        "lib/features/shared/data/bill_attachment_reader.dart",
+        "lib/features/shared/data/bill_attachment_reader_native.dart",
+        "lib/features/shared/data/bill_attachment_reader_web.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart": "43fbdf6b262819d93c6dc5e63bab04e1a89da7610c2ae734a03f763e26e6786d",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart": "b885f987cf0d1065a3dc60c6542bb8fbb36ed7280d46aee74410f627ea27e263",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart": "1dd717662b066f600c9d6ea5e7d420c6def2147da92436e1fbe9fe9db68a3cd7",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart": "3b58630130c48cf2671d2df5964a47ffcfea7906a0ace671c69675fa33544020",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart": "825851f2d54db305fd73c2fe2967b3b554a2391f339b9558cf7407dba35cb600",
+        "lib/features/shared/data/bill_attachment_reader.dart": "fde3aaba87e20ae3eac7659495750044bde5d581006dc135a00fc929ff4157fe",
+        "lib/features/shared/data/bill_attachment_reader_native.dart": "c013abce6781e807e49a77d6469b7ad8b9ed6d57d64a290154e9b84747617071",
+        "lib/features/shared/data/bill_attachment_reader_web.dart": "f1dbbeaa96a68080354e08492a13bd2eb516fd21a1ec3d84a9d61a20aaa0862b",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "0e2738cc0defc6baaec02f5e2963dd1352da7518b77e53e629574672614f8dd5"
+      },
+      "verified": "34/34 decisive tests; 601 passed/1 skipped full suite; 10 viewed Flutter renders and 2 viewed iOS simulator renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "真实服务端、系统文件查看器/分享面板、VoiceOver/TalkBack 和模拟器原生点击 NOT_RUN；按用户新规则不阻塞分配问题。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/decisive-tests-final-008.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/full-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/simulator-validation.json"
+      ],
+      "reason": "仅评 S4-B 详情/附件/列表金额实例，不代其它 owner 关闭全局编号。",
+      "observedBehavior": "亮色详情中性白表面与凹进附件卡区分，未铺无意义灰框。",
+      "implemented": "S4-B 详情/附件实例按当前 Fx 合同落地或验证；仅本scope。"
+    },
+    {
+      "issueId": "DT-03",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-B",
+      "sourcePaths": [
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart",
+        "lib/features/shared/data/bill_attachment_reader.dart",
+        "lib/features/shared/data/bill_attachment_reader_native.dart",
+        "lib/features/shared/data/bill_attachment_reader_web.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart": "43fbdf6b262819d93c6dc5e63bab04e1a89da7610c2ae734a03f763e26e6786d",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart": "b885f987cf0d1065a3dc60c6542bb8fbb36ed7280d46aee74410f627ea27e263",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart": "1dd717662b066f600c9d6ea5e7d420c6def2147da92436e1fbe9fe9db68a3cd7",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart": "3b58630130c48cf2671d2df5964a47ffcfea7906a0ace671c69675fa33544020",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart": "825851f2d54db305fd73c2fe2967b3b554a2391f339b9558cf7407dba35cb600",
+        "lib/features/shared/data/bill_attachment_reader.dart": "fde3aaba87e20ae3eac7659495750044bde5d581006dc135a00fc929ff4157fe",
+        "lib/features/shared/data/bill_attachment_reader_native.dart": "c013abce6781e807e49a77d6469b7ad8b9ed6d57d64a290154e9b84747617071",
+        "lib/features/shared/data/bill_attachment_reader_web.dart": "f1dbbeaa96a68080354e08492a13bd2eb516fd21a1ec3d84a9d61a20aaa0862b",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "0e2738cc0defc6baaec02f5e2963dd1352da7518b77e53e629574672614f8dd5"
+      },
+      "verified": "34/34 decisive tests; 601 passed/1 skipped full suite; 10 viewed Flutter renders and 2 viewed iOS simulator renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "真实服务端、系统文件查看器/分享面板、VoiceOver/TalkBack 和模拟器原生点击 NOT_RUN；按用户新规则不阻塞分配问题。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/decisive-tests-final-008.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/full-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/simulator-validation.json"
+      ],
+      "reason": "仅评 S4-B 详情/附件/列表金额实例，不代其它 owner 关闭全局编号。",
+      "observedBehavior": "暗色沿用中性 Fx 表面，实际查看。",
+      "implemented": "S4-B 详情/附件实例按当前 Fx 合同落地或验证；仅本scope。"
+    },
+    {
+      "issueId": "DT-04",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-B",
+      "sourcePaths": [
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart",
+        "lib/features/shared/data/bill_attachment_reader.dart",
+        "lib/features/shared/data/bill_attachment_reader_native.dart",
+        "lib/features/shared/data/bill_attachment_reader_web.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart": "43fbdf6b262819d93c6dc5e63bab04e1a89da7610c2ae734a03f763e26e6786d",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart": "b885f987cf0d1065a3dc60c6542bb8fbb36ed7280d46aee74410f627ea27e263",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart": "1dd717662b066f600c9d6ea5e7d420c6def2147da92436e1fbe9fe9db68a3cd7",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart": "3b58630130c48cf2671d2df5964a47ffcfea7906a0ace671c69675fa33544020",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart": "825851f2d54db305fd73c2fe2967b3b554a2391f339b9558cf7407dba35cb600",
+        "lib/features/shared/data/bill_attachment_reader.dart": "fde3aaba87e20ae3eac7659495750044bde5d581006dc135a00fc929ff4157fe",
+        "lib/features/shared/data/bill_attachment_reader_native.dart": "c013abce6781e807e49a77d6469b7ad8b9ed6d57d64a290154e9b84747617071",
+        "lib/features/shared/data/bill_attachment_reader_web.dart": "f1dbbeaa96a68080354e08492a13bd2eb516fd21a1ec3d84a9d61a20aaa0862b",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "0e2738cc0defc6baaec02f5e2963dd1352da7518b77e53e629574672614f8dd5"
+      },
+      "verified": "34/34 decisive tests; 601 passed/1 skipped full suite; 10 viewed Flutter renders and 2 viewed iOS simulator renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "真实服务端、系统文件查看器/分享面板、VoiceOver/TalkBack 和模拟器原生点击 NOT_RUN；按用户新规则不阻塞分配问题。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/decisive-tests-final-008.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/full-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/simulator-validation.json"
+      ],
+      "reason": "仅评 S4-B 详情/附件/列表金额实例，不代其它 owner 关闭全局编号。",
+      "observedBehavior": "分隔/装饰线职责沿用 Fx 底座，无新增输入边框。",
+      "implemented": "S4-B 详情/附件实例按当前 Fx 合同落地或验证；仅本scope。"
+    },
+    {
+      "issueId": "DT-05",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-B",
+      "sourcePaths": [
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart",
+        "lib/features/shared/data/bill_attachment_reader.dart",
+        "lib/features/shared/data/bill_attachment_reader_native.dart",
+        "lib/features/shared/data/bill_attachment_reader_web.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart": "43fbdf6b262819d93c6dc5e63bab04e1a89da7610c2ae734a03f763e26e6786d",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart": "b885f987cf0d1065a3dc60c6542bb8fbb36ed7280d46aee74410f627ea27e263",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart": "1dd717662b066f600c9d6ea5e7d420c6def2147da92436e1fbe9fe9db68a3cd7",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart": "3b58630130c48cf2671d2df5964a47ffcfea7906a0ace671c69675fa33544020",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart": "825851f2d54db305fd73c2fe2967b3b554a2391f339b9558cf7407dba35cb600",
+        "lib/features/shared/data/bill_attachment_reader.dart": "fde3aaba87e20ae3eac7659495750044bde5d581006dc135a00fc929ff4157fe",
+        "lib/features/shared/data/bill_attachment_reader_native.dart": "c013abce6781e807e49a77d6469b7ad8b9ed6d57d64a290154e9b84747617071",
+        "lib/features/shared/data/bill_attachment_reader_web.dart": "f1dbbeaa96a68080354e08492a13bd2eb516fd21a1ec3d84a9d61a20aaa0862b",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "0e2738cc0defc6baaec02f5e2963dd1352da7518b77e53e629574672614f8dd5"
+      },
+      "verified": "34/34 decisive tests; 601 passed/1 skipped full suite; 10 viewed Flutter renders and 2 viewed iOS simulator renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "真实服务端、系统文件查看器/分享面板、VoiceOver/TalkBack 和模拟器原生点击 NOT_RUN；按用户新规则不阻塞分配问题。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/decisive-tests-final-008.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/full-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/simulator-validation.json"
+      ],
+      "reason": "仅评 S4-B 详情/附件/列表金额实例，不代其它 owner 关闭全局编号。",
+      "observedBehavior": "未对 border 再加 alpha，未新增历史阴影。",
+      "implemented": "S4-B 详情/附件实例按当前 Fx 合同落地或验证；仅本scope。"
+    },
+    {
+      "issueId": "DT-06",
+      "priority": "P1",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-B",
+      "sourcePaths": [
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart",
+        "lib/features/shared/data/bill_attachment_reader.dart",
+        "lib/features/shared/data/bill_attachment_reader_native.dart",
+        "lib/features/shared/data/bill_attachment_reader_web.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart": "43fbdf6b262819d93c6dc5e63bab04e1a89da7610c2ae734a03f763e26e6786d",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart": "b885f987cf0d1065a3dc60c6542bb8fbb36ed7280d46aee74410f627ea27e263",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart": "1dd717662b066f600c9d6ea5e7d420c6def2147da92436e1fbe9fe9db68a3cd7",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart": "3b58630130c48cf2671d2df5964a47ffcfea7906a0ace671c69675fa33544020",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart": "825851f2d54db305fd73c2fe2967b3b554a2391f339b9558cf7407dba35cb600",
+        "lib/features/shared/data/bill_attachment_reader.dart": "fde3aaba87e20ae3eac7659495750044bde5d581006dc135a00fc929ff4157fe",
+        "lib/features/shared/data/bill_attachment_reader_native.dart": "c013abce6781e807e49a77d6469b7ad8b9ed6d57d64a290154e9b84747617071",
+        "lib/features/shared/data/bill_attachment_reader_web.dart": "f1dbbeaa96a68080354e08492a13bd2eb516fd21a1ec3d84a9d61a20aaa0862b",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "0e2738cc0defc6baaec02f5e2963dd1352da7518b77e53e629574672614f8dd5"
+      },
+      "verified": "34/34 decisive tests; 601 passed/1 skipped full suite; 10 viewed Flutter renders and 2 viewed iOS simulator renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "真实服务端、系统文件查看器/分享面板、VoiceOver/TalkBack 和模拟器原生点击 NOT_RUN；按用户新规则不阻塞分配问题。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/decisive-tests-final-008.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/full-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/simulator-validation.json"
+      ],
+      "reason": "仅评 S4-B 详情/附件/列表金额实例，不代其它 owner 关闭全局编号。",
+      "observedBehavior": "主按钮 primary 配 onPrimary。",
+      "implemented": "S4-B 详情/附件实例按当前 Fx 合同落地或验证；仅本scope。"
+    },
+    {
+      "issueId": "DT-07",
+      "priority": "P1",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-B",
+      "sourcePaths": [
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart",
+        "lib/features/shared/data/bill_attachment_reader.dart",
+        "lib/features/shared/data/bill_attachment_reader_native.dart",
+        "lib/features/shared/data/bill_attachment_reader_web.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart": "43fbdf6b262819d93c6dc5e63bab04e1a89da7610c2ae734a03f763e26e6786d",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart": "b885f987cf0d1065a3dc60c6542bb8fbb36ed7280d46aee74410f627ea27e263",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart": "1dd717662b066f600c9d6ea5e7d420c6def2147da92436e1fbe9fe9db68a3cd7",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart": "3b58630130c48cf2671d2df5964a47ffcfea7906a0ace671c69675fa33544020",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart": "825851f2d54db305fd73c2fe2967b3b554a2391f339b9558cf7407dba35cb600",
+        "lib/features/shared/data/bill_attachment_reader.dart": "fde3aaba87e20ae3eac7659495750044bde5d581006dc135a00fc929ff4157fe",
+        "lib/features/shared/data/bill_attachment_reader_native.dart": "c013abce6781e807e49a77d6469b7ad8b9ed6d57d64a290154e9b84747617071",
+        "lib/features/shared/data/bill_attachment_reader_web.dart": "f1dbbeaa96a68080354e08492a13bd2eb516fd21a1ec3d84a9d61a20aaa0862b",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "0e2738cc0defc6baaec02f5e2963dd1352da7518b77e53e629574672614f8dd5"
+      },
+      "verified": "34/34 decisive tests; 601 passed/1 skipped full suite; 10 viewed Flutter renders and 2 viewed iOS simulator renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "真实服务端、系统文件查看器/分享面板、VoiceOver/TalkBack 和模拟器原生点击 NOT_RUN；按用户新规则不阻塞分配问题。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/decisive-tests-final-008.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/full-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/simulator-validation.json"
+      ],
+      "reason": "仅评 S4-B 详情/附件/列表金额实例，不代其它 owner 关闭全局编号。",
+      "observedBehavior": "删除 danger 配 onDanger，删除确认保留。",
+      "implemented": "S4-B 详情/附件实例按当前 Fx 合同落地或验证；仅本scope。"
+    },
+    {
+      "issueId": "DT-08",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-B",
+      "sourcePaths": [
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart",
+        "lib/features/shared/data/bill_attachment_reader.dart",
+        "lib/features/shared/data/bill_attachment_reader_native.dart",
+        "lib/features/shared/data/bill_attachment_reader_web.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart": "43fbdf6b262819d93c6dc5e63bab04e1a89da7610c2ae734a03f763e26e6786d",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart": "b885f987cf0d1065a3dc60c6542bb8fbb36ed7280d46aee74410f627ea27e263",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart": "1dd717662b066f600c9d6ea5e7d420c6def2147da92436e1fbe9fe9db68a3cd7",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart": "3b58630130c48cf2671d2df5964a47ffcfea7906a0ace671c69675fa33544020",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart": "825851f2d54db305fd73c2fe2967b3b554a2391f339b9558cf7407dba35cb600",
+        "lib/features/shared/data/bill_attachment_reader.dart": "fde3aaba87e20ae3eac7659495750044bde5d581006dc135a00fc929ff4157fe",
+        "lib/features/shared/data/bill_attachment_reader_native.dart": "c013abce6781e807e49a77d6469b7ad8b9ed6d57d64a290154e9b84747617071",
+        "lib/features/shared/data/bill_attachment_reader_web.dart": "f1dbbeaa96a68080354e08492a13bd2eb516fd21a1ec3d84a9d61a20aaa0862b",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "0e2738cc0defc6baaec02f5e2963dd1352da7518b77e53e629574672614f8dd5"
+      },
+      "verified": "34/34 decisive tests; 601 passed/1 skipped full suite; 10 viewed Flutter renders and 2 viewed iOS simulator renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "真实服务端、系统文件查看器/分享面板、VoiceOver/TalkBack 和模拟器原生点击 NOT_RUN；按用户新规则不阻塞分配问题。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/decisive-tests-final-008.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/full-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/simulator-validation.json"
+      ],
+      "reason": "仅评 S4-B 详情/附件/列表金额实例，不代其它 owner 关闭全局编号。",
+      "observedBehavior": "未引入借用业务色的 Material secondary/tertiary。",
+      "implemented": "S4-B 详情/附件实例按当前 Fx 合同落地或验证；仅本scope。"
+    },
+    {
+      "issueId": "DT-09",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-B",
+      "sourcePaths": [
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart",
+        "lib/features/shared/data/bill_attachment_reader.dart",
+        "lib/features/shared/data/bill_attachment_reader_native.dart",
+        "lib/features/shared/data/bill_attachment_reader_web.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart": "43fbdf6b262819d93c6dc5e63bab04e1a89da7610c2ae734a03f763e26e6786d",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart": "b885f987cf0d1065a3dc60c6542bb8fbb36ed7280d46aee74410f627ea27e263",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart": "1dd717662b066f600c9d6ea5e7d420c6def2147da92436e1fbe9fe9db68a3cd7",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart": "3b58630130c48cf2671d2df5964a47ffcfea7906a0ace671c69675fa33544020",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart": "825851f2d54db305fd73c2fe2967b3b554a2391f339b9558cf7407dba35cb600",
+        "lib/features/shared/data/bill_attachment_reader.dart": "fde3aaba87e20ae3eac7659495750044bde5d581006dc135a00fc929ff4157fe",
+        "lib/features/shared/data/bill_attachment_reader_native.dart": "c013abce6781e807e49a77d6469b7ad8b9ed6d57d64a290154e9b84747617071",
+        "lib/features/shared/data/bill_attachment_reader_web.dart": "f1dbbeaa96a68080354e08492a13bd2eb516fd21a1ec3d84a9d61a20aaa0862b",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "0e2738cc0defc6baaec02f5e2963dd1352da7518b77e53e629574672614f8dd5"
+      },
+      "verified": "34/34 decisive tests; 601 passed/1 skipped full suite; 10 viewed Flutter renders and 2 viewed iOS simulator renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "真实服务端、系统文件查看器/分享面板、VoiceOver/TalkBack 和模拟器原生点击 NOT_RUN；按用户新规则不阻塞分配问题。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/decisive-tests-final-008.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/full-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/simulator-validation.json"
+      ],
+      "reason": "仅评 S4-B 详情/附件/列表金额实例，不代其它 owner 关闭全局编号。",
+      "observedBehavior": "sheet/dialog沿用显式 surface 映射。",
+      "implemented": "S4-B 详情/附件实例按当前 Fx 合同落地或验证；仅本scope。"
+    },
+    {
+      "issueId": "DT-10",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-B",
+      "sourcePaths": [
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart",
+        "lib/features/shared/data/bill_attachment_reader.dart",
+        "lib/features/shared/data/bill_attachment_reader_native.dart",
+        "lib/features/shared/data/bill_attachment_reader_web.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart": "43fbdf6b262819d93c6dc5e63bab04e1a89da7610c2ae734a03f763e26e6786d",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart": "b885f987cf0d1065a3dc60c6542bb8fbb36ed7280d46aee74410f627ea27e263",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart": "1dd717662b066f600c9d6ea5e7d420c6def2147da92436e1fbe9fe9db68a3cd7",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart": "3b58630130c48cf2671d2df5964a47ffcfea7906a0ace671c69675fa33544020",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart": "825851f2d54db305fd73c2fe2967b3b554a2391f339b9558cf7407dba35cb600",
+        "lib/features/shared/data/bill_attachment_reader.dart": "fde3aaba87e20ae3eac7659495750044bde5d581006dc135a00fc929ff4157fe",
+        "lib/features/shared/data/bill_attachment_reader_native.dart": "c013abce6781e807e49a77d6469b7ad8b9ed6d57d64a290154e9b84747617071",
+        "lib/features/shared/data/bill_attachment_reader_web.dart": "f1dbbeaa96a68080354e08492a13bd2eb516fd21a1ec3d84a9d61a20aaa0862b",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "0e2738cc0defc6baaec02f5e2963dd1352da7518b77e53e629574672614f8dd5"
+      },
+      "verified": "34/34 decisive tests; 601 passed/1 skipped full suite; 10 viewed Flutter renders and 2 viewed iOS simulator renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "真实服务端、系统文件查看器/分享面板、VoiceOver/TalkBack 和模拟器原生点击 NOT_RUN；按用户新规则不阻塞分配问题。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/decisive-tests-final-008.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/full-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/simulator-validation.json"
+      ],
+      "reason": "仅评 S4-B 详情/附件/列表金额实例，不代其它 owner 关闭全局编号。",
+      "observedBehavior": "详情弹层沿用独立 scrim。",
+      "implemented": "S4-B 详情/附件实例按当前 Fx 合同落地或验证；仅本scope。"
+    },
+    {
+      "issueId": "DT-11",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-B",
+      "sourcePaths": [
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart",
+        "lib/features/shared/data/bill_attachment_reader.dart",
+        "lib/features/shared/data/bill_attachment_reader_native.dart",
+        "lib/features/shared/data/bill_attachment_reader_web.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart": "43fbdf6b262819d93c6dc5e63bab04e1a89da7610c2ae734a03f763e26e6786d",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart": "b885f987cf0d1065a3dc60c6542bb8fbb36ed7280d46aee74410f627ea27e263",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart": "1dd717662b066f600c9d6ea5e7d420c6def2147da92436e1fbe9fe9db68a3cd7",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart": "3b58630130c48cf2671d2df5964a47ffcfea7906a0ace671c69675fa33544020",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart": "825851f2d54db305fd73c2fe2967b3b554a2391f339b9558cf7407dba35cb600",
+        "lib/features/shared/data/bill_attachment_reader.dart": "fde3aaba87e20ae3eac7659495750044bde5d581006dc135a00fc929ff4157fe",
+        "lib/features/shared/data/bill_attachment_reader_native.dart": "c013abce6781e807e49a77d6469b7ad8b9ed6d57d64a290154e9b84747617071",
+        "lib/features/shared/data/bill_attachment_reader_web.dart": "f1dbbeaa96a68080354e08492a13bd2eb516fd21a1ec3d84a9d61a20aaa0862b",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "0e2738cc0defc6baaec02f5e2963dd1352da7518b77e53e629574672614f8dd5"
+      },
+      "verified": "34/34 decisive tests; 601 passed/1 skipped full suite; 10 viewed Flutter renders and 2 viewed iOS simulator renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "真实服务端、系统文件查看器/分享面板、VoiceOver/TalkBack 和模拟器原生点击 NOT_RUN；按用户新规则不阻塞分配问题。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/decisive-tests-final-008.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/full-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/simulator-validation.json"
+      ],
+      "reason": "仅评 S4-B 详情/附件/列表金额实例，不代其它 owner 关闭全局编号。",
+      "observedBehavior": "金额 textPrimary，元信息 textSecondary。",
+      "implemented": "S4-B 详情/附件实例按当前 Fx 合同落地或验证；仅本scope。"
+    },
+    {
+      "issueId": "DT-12",
+      "priority": "P1",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-B",
+      "sourcePaths": [
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart",
+        "lib/features/shared/data/bill_attachment_reader.dart",
+        "lib/features/shared/data/bill_attachment_reader_native.dart",
+        "lib/features/shared/data/bill_attachment_reader_web.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart": "43fbdf6b262819d93c6dc5e63bab04e1a89da7610c2ae734a03f763e26e6786d",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart": "b885f987cf0d1065a3dc60c6542bb8fbb36ed7280d46aee74410f627ea27e263",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart": "1dd717662b066f600c9d6ea5e7d420c6def2147da92436e1fbe9fe9db68a3cd7",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart": "3b58630130c48cf2671d2df5964a47ffcfea7906a0ace671c69675fa33544020",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart": "825851f2d54db305fd73c2fe2967b3b554a2391f339b9558cf7407dba35cb600",
+        "lib/features/shared/data/bill_attachment_reader.dart": "fde3aaba87e20ae3eac7659495750044bde5d581006dc135a00fc929ff4157fe",
+        "lib/features/shared/data/bill_attachment_reader_native.dart": "c013abce6781e807e49a77d6469b7ad8b9ed6d57d64a290154e9b84747617071",
+        "lib/features/shared/data/bill_attachment_reader_web.dart": "f1dbbeaa96a68080354e08492a13bd2eb516fd21a1ec3d84a9d61a20aaa0862b",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "0e2738cc0defc6baaec02f5e2963dd1352da7518b77e53e629574672614f8dd5"
+      },
+      "verified": "34/34 decisive tests; 601 passed/1 skipped full suite; 10 viewed Flutter renders and 2 viewed iOS simulator renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "真实服务端、系统文件查看器/分享面板、VoiceOver/TalkBack 和模拟器原生点击 NOT_RUN；按用户新规则不阻塞分配问题。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/decisive-tests-final-008.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/full-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/simulator-validation.json"
+      ],
+      "reason": "仅评 S4-B 详情/附件/列表金额实例，不代其它 owner 关闭全局编号。",
+      "observedBehavior": "主金额不再用财务偏好色当普通文字。",
+      "implemented": "S4-B 详情/附件实例按当前 Fx 合同落地或验证；仅本scope。"
+    },
+    {
+      "issueId": "DT-13",
+      "priority": "P2",
+      "state": "NOT_APPLICABLE",
+      "stageId": "S4-B",
+      "sourcePaths": [
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart",
+        "lib/features/shared/data/bill_attachment_reader.dart",
+        "lib/features/shared/data/bill_attachment_reader_native.dart",
+        "lib/features/shared/data/bill_attachment_reader_web.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart": "43fbdf6b262819d93c6dc5e63bab04e1a89da7610c2ae734a03f763e26e6786d",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart": "b885f987cf0d1065a3dc60c6542bb8fbb36ed7280d46aee74410f627ea27e263",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart": "1dd717662b066f600c9d6ea5e7d420c6def2147da92436e1fbe9fe9db68a3cd7",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart": "3b58630130c48cf2671d2df5964a47ffcfea7906a0ace671c69675fa33544020",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart": "825851f2d54db305fd73c2fe2967b3b554a2391f339b9558cf7407dba35cb600",
+        "lib/features/shared/data/bill_attachment_reader.dart": "fde3aaba87e20ae3eac7659495750044bde5d581006dc135a00fc929ff4157fe",
+        "lib/features/shared/data/bill_attachment_reader_native.dart": "c013abce6781e807e49a77d6469b7ad8b9ed6d57d64a290154e9b84747617071",
+        "lib/features/shared/data/bill_attachment_reader_web.dart": "f1dbbeaa96a68080354e08492a13bd2eb516fd21a1ec3d84a9d61a20aaa0862b",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "0e2738cc0defc6baaec02f5e2963dd1352da7518b77e53e629574672614f8dd5"
+      },
+      "verified": "34/34 decisive tests; 601 passed/1 skipped full suite; 10 viewed Flutter renders and 2 viewed iOS simulator renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "真实服务端、系统文件查看器/分享面板、VoiceOver/TalkBack 和模拟器原生点击 NOT_RUN；按用户新规则不阻塞分配问题。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/decisive-tests-final-008.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/full-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/simulator-validation.json"
+      ],
+      "reason": "仅评 S4-B 详情/附件/列表金额实例，不代其它 owner 关闭全局编号。",
+      "observedBehavior": "本阶段无图表。",
+      "implemented": "S4-B 详情/附件实例按当前 Fx 合同落地或验证；仅本scope。"
+    },
+    {
+      "issueId": "DT-14",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-B",
+      "sourcePaths": [
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart",
+        "lib/features/shared/data/bill_attachment_reader.dart",
+        "lib/features/shared/data/bill_attachment_reader_native.dart",
+        "lib/features/shared/data/bill_attachment_reader_web.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart": "43fbdf6b262819d93c6dc5e63bab04e1a89da7610c2ae734a03f763e26e6786d",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart": "b885f987cf0d1065a3dc60c6542bb8fbb36ed7280d46aee74410f627ea27e263",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart": "1dd717662b066f600c9d6ea5e7d420c6def2147da92436e1fbe9fe9db68a3cd7",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart": "3b58630130c48cf2671d2df5964a47ffcfea7906a0ace671c69675fa33544020",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart": "825851f2d54db305fd73c2fe2967b3b554a2391f339b9558cf7407dba35cb600",
+        "lib/features/shared/data/bill_attachment_reader.dart": "fde3aaba87e20ae3eac7659495750044bde5d581006dc135a00fc929ff4157fe",
+        "lib/features/shared/data/bill_attachment_reader_native.dart": "c013abce6781e807e49a77d6469b7ad8b9ed6d57d64a290154e9b84747617071",
+        "lib/features/shared/data/bill_attachment_reader_web.dart": "f1dbbeaa96a68080354e08492a13bd2eb516fd21a1ec3d84a9d61a20aaa0862b",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "0e2738cc0defc6baaec02f5e2963dd1352da7518b77e53e629574672614f8dd5"
+      },
+      "verified": "34/34 decisive tests; 601 passed/1 skipped full suite; 10 viewed Flutter renders and 2 viewed iOS simulator renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "真实服务端、系统文件查看器/分享面板、VoiceOver/TalkBack 和模拟器原生点击 NOT_RUN；按用户新规则不阻塞分配问题。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/decisive-tests-final-008.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/full-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/simulator-validation.json"
+      ],
+      "reason": "仅评 S4-B 详情/附件/列表金额实例，不代其它 owner 关闭全局编号。",
+      "observedBehavior": "方向由标签/符号表达，未新增大面积红绿。",
+      "implemented": "S4-B 详情/附件实例按当前 Fx 合同落地或验证；仅本scope。"
+    },
+    {
+      "issueId": "DT-15",
+      "priority": "P1",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-B",
+      "sourcePaths": [
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart",
+        "lib/features/shared/data/bill_attachment_reader.dart",
+        "lib/features/shared/data/bill_attachment_reader_native.dart",
+        "lib/features/shared/data/bill_attachment_reader_web.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart": "43fbdf6b262819d93c6dc5e63bab04e1a89da7610c2ae734a03f763e26e6786d",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart": "b885f987cf0d1065a3dc60c6542bb8fbb36ed7280d46aee74410f627ea27e263",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart": "1dd717662b066f600c9d6ea5e7d420c6def2147da92436e1fbe9fe9db68a3cd7",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart": "3b58630130c48cf2671d2df5964a47ffcfea7906a0ace671c69675fa33544020",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart": "825851f2d54db305fd73c2fe2967b3b554a2391f339b9558cf7407dba35cb600",
+        "lib/features/shared/data/bill_attachment_reader.dart": "fde3aaba87e20ae3eac7659495750044bde5d581006dc135a00fc929ff4157fe",
+        "lib/features/shared/data/bill_attachment_reader_native.dart": "c013abce6781e807e49a77d6469b7ad8b9ed6d57d64a290154e9b84747617071",
+        "lib/features/shared/data/bill_attachment_reader_web.dart": "f1dbbeaa96a68080354e08492a13bd2eb516fd21a1ec3d84a9d61a20aaa0862b",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "0e2738cc0defc6baaec02f5e2963dd1352da7518b77e53e629574672614f8dd5"
+      },
+      "verified": "34/34 decisive tests; 601 passed/1 skipped full suite; 10 viewed Flutter renders and 2 viewed iOS simulator renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "真实服务端、系统文件查看器/分享面板、VoiceOver/TalkBack 和模拟器原生点击 NOT_RUN；按用户新规则不阻塞分配问题。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/decisive-tests-final-008.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/full-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/simulator-validation.json"
+      ],
+      "reason": "仅评 S4-B 详情/附件/列表金额实例，不代其它 owner 关闭全局编号。",
+      "observedBehavior": "费用主金额17、分解15/17，不使用10号强色小票。",
+      "implemented": "S4-B 详情/附件实例按当前 Fx 合同落地或验证；仅本scope。"
+    },
+    {
+      "issueId": "DT-16",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-B",
+      "sourcePaths": [
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart",
+        "lib/features/shared/data/bill_attachment_reader.dart",
+        "lib/features/shared/data/bill_attachment_reader_native.dart",
+        "lib/features/shared/data/bill_attachment_reader_web.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart": "43fbdf6b262819d93c6dc5e63bab04e1a89da7610c2ae734a03f763e26e6786d",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart": "b885f987cf0d1065a3dc60c6542bb8fbb36ed7280d46aee74410f627ea27e263",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart": "1dd717662b066f600c9d6ea5e7d420c6def2147da92436e1fbe9fe9db68a3cd7",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart": "3b58630130c48cf2671d2df5964a47ffcfea7906a0ace671c69675fa33544020",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart": "825851f2d54db305fd73c2fe2967b3b554a2391f339b9558cf7407dba35cb600",
+        "lib/features/shared/data/bill_attachment_reader.dart": "fde3aaba87e20ae3eac7659495750044bde5d581006dc135a00fc929ff4157fe",
+        "lib/features/shared/data/bill_attachment_reader_native.dart": "c013abce6781e807e49a77d6469b7ad8b9ed6d57d64a290154e9b84747617071",
+        "lib/features/shared/data/bill_attachment_reader_web.dart": "f1dbbeaa96a68080354e08492a13bd2eb516fd21a1ec3d84a9d61a20aaa0862b",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "0e2738cc0defc6baaec02f5e2963dd1352da7518b77e53e629574672614f8dd5"
+      },
+      "verified": "34/34 decisive tests; 601 passed/1 skipped full suite; 10 viewed Flutter renders and 2 viewed iOS simulator renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "真实服务端、系统文件查看器/分享面板、VoiceOver/TalkBack 和模拟器原生点击 NOT_RUN；按用户新规则不阻塞分配问题。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/decisive-tests-final-008.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/full-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/simulator-validation.json"
+      ],
+      "reason": "仅评 S4-B 详情/附件/列表金额实例，不代其它 owner 关闭全局编号。",
+      "observedBehavior": "沿用 FxTypography 角色，未另立字阶。",
+      "implemented": "S4-B 详情/附件实例按当前 Fx 合同落地或验证；仅本scope。"
+    },
+    {
+      "issueId": "DT-17",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-B",
+      "sourcePaths": [
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart",
+        "lib/features/shared/data/bill_attachment_reader.dart",
+        "lib/features/shared/data/bill_attachment_reader_native.dart",
+        "lib/features/shared/data/bill_attachment_reader_web.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart": "43fbdf6b262819d93c6dc5e63bab04e1a89da7610c2ae734a03f763e26e6786d",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart": "b885f987cf0d1065a3dc60c6542bb8fbb36ed7280d46aee74410f627ea27e263",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart": "1dd717662b066f600c9d6ea5e7d420c6def2147da92436e1fbe9fe9db68a3cd7",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart": "3b58630130c48cf2671d2df5964a47ffcfea7906a0ace671c69675fa33544020",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart": "825851f2d54db305fd73c2fe2967b3b554a2391f339b9558cf7407dba35cb600",
+        "lib/features/shared/data/bill_attachment_reader.dart": "fde3aaba87e20ae3eac7659495750044bde5d581006dc135a00fc929ff4157fe",
+        "lib/features/shared/data/bill_attachment_reader_native.dart": "c013abce6781e807e49a77d6469b7ad8b9ed6d57d64a290154e9b84747617071",
+        "lib/features/shared/data/bill_attachment_reader_web.dart": "f1dbbeaa96a68080354e08492a13bd2eb516fd21a1ec3d84a9d61a20aaa0862b",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "0e2738cc0defc6baaec02f5e2963dd1352da7518b77e53e629574672614f8dd5"
+      },
+      "verified": "34/34 decisive tests; 601 passed/1 skipped full suite; 10 viewed Flutter renders and 2 viewed iOS simulator renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "真实服务端、系统文件查看器/分享面板、VoiceOver/TalkBack 和模拟器原生点击 NOT_RUN；按用户新规则不阻塞分配问题。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/decisive-tests-final-008.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/full-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/simulator-validation.json"
+      ],
+      "reason": "仅评 S4-B 详情/附件/列表金额实例，不代其它 owner 关闭全局编号。",
+      "observedBehavior": "标题 titleLarge 600，正文400/500，非全部700。",
+      "implemented": "S4-B 详情/附件实例按当前 Fx 合同落地或验证；仅本scope。"
+    },
+    {
+      "issueId": "DT-18",
+      "priority": "P1",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-B",
+      "sourcePaths": [
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart",
+        "lib/features/shared/data/bill_attachment_reader.dart",
+        "lib/features/shared/data/bill_attachment_reader_native.dart",
+        "lib/features/shared/data/bill_attachment_reader_web.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart": "43fbdf6b262819d93c6dc5e63bab04e1a89da7610c2ae734a03f763e26e6786d",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart": "b885f987cf0d1065a3dc60c6542bb8fbb36ed7280d46aee74410f627ea27e263",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart": "1dd717662b066f600c9d6ea5e7d420c6def2147da92436e1fbe9fe9db68a3cd7",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart": "3b58630130c48cf2671d2df5964a47ffcfea7906a0ace671c69675fa33544020",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart": "825851f2d54db305fd73c2fe2967b3b554a2391f339b9558cf7407dba35cb600",
+        "lib/features/shared/data/bill_attachment_reader.dart": "fde3aaba87e20ae3eac7659495750044bde5d581006dc135a00fc929ff4157fe",
+        "lib/features/shared/data/bill_attachment_reader_native.dart": "c013abce6781e807e49a77d6469b7ad8b9ed6d57d64a290154e9b84747617071",
+        "lib/features/shared/data/bill_attachment_reader_web.dart": "f1dbbeaa96a68080354e08492a13bd2eb516fd21a1ec3d84a9d61a20aaa0862b",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "0e2738cc0defc6baaec02f5e2963dd1352da7518b77e53e629574672614f8dd5"
+      },
+      "verified": "34/34 decisive tests; 601 passed/1 skipped full suite; 10 viewed Flutter renders and 2 viewed iOS simulator renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "真实服务端、系统文件查看器/分享面板、VoiceOver/TalkBack 和模拟器原生点击 NOT_RUN；按用户新规则不阻塞分配问题。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/decisive-tests-final-008.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/full-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/simulator-validation.json"
+      ],
+      "reason": "仅评 S4-B 详情/附件/列表金额实例，不代其它 owner 关闭全局编号。",
+      "observedBehavior": "正文17、label15、辅助13；分类金额15，不再14/12。",
+      "implemented": "S4-B 详情/附件实例按当前 Fx 合同落地或验证；仅本scope。"
+    },
+    {
+      "issueId": "DT-19",
+      "priority": "P1",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-B",
+      "sourcePaths": [
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart",
+        "lib/features/shared/data/bill_attachment_reader.dart",
+        "lib/features/shared/data/bill_attachment_reader_native.dart",
+        "lib/features/shared/data/bill_attachment_reader_web.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart": "43fbdf6b262819d93c6dc5e63bab04e1a89da7610c2ae734a03f763e26e6786d",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart": "b885f987cf0d1065a3dc60c6542bb8fbb36ed7280d46aee74410f627ea27e263",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart": "1dd717662b066f600c9d6ea5e7d420c6def2147da92436e1fbe9fe9db68a3cd7",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart": "3b58630130c48cf2671d2df5964a47ffcfea7906a0ace671c69675fa33544020",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart": "825851f2d54db305fd73c2fe2967b3b554a2391f339b9558cf7407dba35cb600",
+        "lib/features/shared/data/bill_attachment_reader.dart": "fde3aaba87e20ae3eac7659495750044bde5d581006dc135a00fc929ff4157fe",
+        "lib/features/shared/data/bill_attachment_reader_native.dart": "c013abce6781e807e49a77d6469b7ad8b9ed6d57d64a290154e9b84747617071",
+        "lib/features/shared/data/bill_attachment_reader_web.dart": "f1dbbeaa96a68080354e08492a13bd2eb516fd21a1ec3d84a9d61a20aaa0862b",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "0e2738cc0defc6baaec02f5e2963dd1352da7518b77e53e629574672614f8dd5"
+      },
+      "verified": "34/34 decisive tests; 601 passed/1 skipped full suite; 10 viewed Flutter renders and 2 viewed iOS simulator renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "真实服务端、系统文件查看器/分享面板、VoiceOver/TalkBack 和模拟器原生点击 NOT_RUN；按用户新规则不阻塞分配问题。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/decisive-tests-final-008.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/full-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/simulator-validation.json"
+      ],
+      "reason": "仅评 S4-B 详情/附件/列表金额实例，不代其它 owner 关闭全局编号。",
+      "observedBehavior": "无9/10/12.5/13.5游离字号。",
+      "implemented": "S4-B 详情/附件实例按当前 Fx 合同落地或验证；仅本scope。"
+    },
+    {
+      "issueId": "DT-20",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-B",
+      "sourcePaths": [
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart",
+        "lib/features/shared/data/bill_attachment_reader.dart",
+        "lib/features/shared/data/bill_attachment_reader_native.dart",
+        "lib/features/shared/data/bill_attachment_reader_web.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart": "43fbdf6b262819d93c6dc5e63bab04e1a89da7610c2ae734a03f763e26e6786d",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart": "b885f987cf0d1065a3dc60c6542bb8fbb36ed7280d46aee74410f627ea27e263",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart": "1dd717662b066f600c9d6ea5e7d420c6def2147da92436e1fbe9fe9db68a3cd7",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart": "3b58630130c48cf2671d2df5964a47ffcfea7906a0ace671c69675fa33544020",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart": "825851f2d54db305fd73c2fe2967b3b554a2391f339b9558cf7407dba35cb600",
+        "lib/features/shared/data/bill_attachment_reader.dart": "fde3aaba87e20ae3eac7659495750044bde5d581006dc135a00fc929ff4157fe",
+        "lib/features/shared/data/bill_attachment_reader_native.dart": "c013abce6781e807e49a77d6469b7ad8b9ed6d57d64a290154e9b84747617071",
+        "lib/features/shared/data/bill_attachment_reader_web.dart": "f1dbbeaa96a68080354e08492a13bd2eb516fd21a1ec3d84a9d61a20aaa0862b",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "0e2738cc0defc6baaec02f5e2963dd1352da7518b77e53e629574672614f8dd5"
+      },
+      "verified": "34/34 decisive tests; 601 passed/1 skipped full suite; 10 viewed Flutter renders and 2 viewed iOS simulator renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "真实服务端、系统文件查看器/分享面板、VoiceOver/TalkBack 和模拟器原生点击 NOT_RUN；按用户新规则不阻塞分配问题。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/decisive-tests-final-008.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/full-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/simulator-validation.json"
+      ],
+      "reason": "仅评 S4-B 详情/附件/列表金额实例，不代其它 owner 关闭全局编号。",
+      "observedBehavior": "正文/标签保留行高，2x自然增高。",
+      "implemented": "S4-B 详情/附件实例按当前 Fx 合同落地或验证；仅本scope。"
+    },
+    {
+      "issueId": "DT-21",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-B",
+      "sourcePaths": [
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart",
+        "lib/features/shared/data/bill_attachment_reader.dart",
+        "lib/features/shared/data/bill_attachment_reader_native.dart",
+        "lib/features/shared/data/bill_attachment_reader_web.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart": "43fbdf6b262819d93c6dc5e63bab04e1a89da7610c2ae734a03f763e26e6786d",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart": "b885f987cf0d1065a3dc60c6542bb8fbb36ed7280d46aee74410f627ea27e263",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart": "1dd717662b066f600c9d6ea5e7d420c6def2147da92436e1fbe9fe9db68a3cd7",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart": "3b58630130c48cf2671d2df5964a47ffcfea7906a0ace671c69675fa33544020",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart": "825851f2d54db305fd73c2fe2967b3b554a2391f339b9558cf7407dba35cb600",
+        "lib/features/shared/data/bill_attachment_reader.dart": "fde3aaba87e20ae3eac7659495750044bde5d581006dc135a00fc929ff4157fe",
+        "lib/features/shared/data/bill_attachment_reader_native.dart": "c013abce6781e807e49a77d6469b7ad8b9ed6d57d64a290154e9b84747617071",
+        "lib/features/shared/data/bill_attachment_reader_web.dart": "f1dbbeaa96a68080354e08492a13bd2eb516fd21a1ec3d84a9d61a20aaa0862b",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "0e2738cc0defc6baaec02f5e2963dd1352da7518b77e53e629574672614f8dd5"
+      },
+      "verified": "34/34 decisive tests; 601 passed/1 skipped full suite; 10 viewed Flutter renders and 2 viewed iOS simulator renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "真实服务端、系统文件查看器/分享面板、VoiceOver/TalkBack 和模拟器原生点击 NOT_RUN；按用户新规则不阻塞分配问题。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/decisive-tests-final-008.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/full-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/simulator-validation.json"
+      ],
+      "reason": "仅评 S4-B 详情/附件/列表金额实例，不代其它 owner 关闭全局编号。",
+      "observedBehavior": "系统 tabular figures，无 RobotoMono。",
+      "implemented": "S4-B 详情/附件实例按当前 Fx 合同落地或验证；仅本scope。"
+    },
+    {
+      "issueId": "DT-22",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-B",
+      "sourcePaths": [
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart",
+        "lib/features/shared/data/bill_attachment_reader.dart",
+        "lib/features/shared/data/bill_attachment_reader_native.dart",
+        "lib/features/shared/data/bill_attachment_reader_web.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart": "43fbdf6b262819d93c6dc5e63bab04e1a89da7610c2ae734a03f763e26e6786d",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart": "b885f987cf0d1065a3dc60c6542bb8fbb36ed7280d46aee74410f627ea27e263",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart": "1dd717662b066f600c9d6ea5e7d420c6def2147da92436e1fbe9fe9db68a3cd7",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart": "3b58630130c48cf2671d2df5964a47ffcfea7906a0ace671c69675fa33544020",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart": "825851f2d54db305fd73c2fe2967b3b554a2391f339b9558cf7407dba35cb600",
+        "lib/features/shared/data/bill_attachment_reader.dart": "fde3aaba87e20ae3eac7659495750044bde5d581006dc135a00fc929ff4157fe",
+        "lib/features/shared/data/bill_attachment_reader_native.dart": "c013abce6781e807e49a77d6469b7ad8b9ed6d57d64a290154e9b84747617071",
+        "lib/features/shared/data/bill_attachment_reader_web.dart": "f1dbbeaa96a68080354e08492a13bd2eb516fd21a1ec3d84a9d61a20aaa0862b",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "0e2738cc0defc6baaec02f5e2963dd1352da7518b77e53e629574672614f8dd5"
+      },
+      "verified": "34/34 decisive tests; 601 passed/1 skipped full suite; 10 viewed Flutter renders and 2 viewed iOS simulator renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "真实服务端、系统文件查看器/分享面板、VoiceOver/TalkBack 和模拟器原生点击 NOT_RUN；按用户新规则不阻塞分配问题。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/decisive-tests-final-008.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/full-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/simulator-validation.json"
+      ],
+      "reason": "仅评 S4-B 详情/附件/列表金额实例，不代其它 owner 关闭全局编号。",
+      "observedBehavior": "FxTypography letterSpacing=0。",
+      "implemented": "S4-B 详情/附件实例按当前 Fx 合同落地或验证；仅本scope。"
+    },
+    {
+      "issueId": "DT-23",
+      "priority": "P1",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-B",
+      "sourcePaths": [
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart",
+        "lib/features/shared/data/bill_attachment_reader.dart",
+        "lib/features/shared/data/bill_attachment_reader_native.dart",
+        "lib/features/shared/data/bill_attachment_reader_web.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart": "43fbdf6b262819d93c6dc5e63bab04e1a89da7610c2ae734a03f763e26e6786d",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart": "b885f987cf0d1065a3dc60c6542bb8fbb36ed7280d46aee74410f627ea27e263",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart": "1dd717662b066f600c9d6ea5e7d420c6def2147da92436e1fbe9fe9db68a3cd7",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart": "3b58630130c48cf2671d2df5964a47ffcfea7906a0ace671c69675fa33544020",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart": "825851f2d54db305fd73c2fe2967b3b554a2391f339b9558cf7407dba35cb600",
+        "lib/features/shared/data/bill_attachment_reader.dart": "fde3aaba87e20ae3eac7659495750044bde5d581006dc135a00fc929ff4157fe",
+        "lib/features/shared/data/bill_attachment_reader_native.dart": "c013abce6781e807e49a77d6469b7ad8b9ed6d57d64a290154e9b84747617071",
+        "lib/features/shared/data/bill_attachment_reader_web.dart": "f1dbbeaa96a68080354e08492a13bd2eb516fd21a1ec3d84a9d61a20aaa0862b",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "0e2738cc0defc6baaec02f5e2963dd1352da7518b77e53e629574672614f8dd5"
+      },
+      "verified": "34/34 decisive tests; 601 passed/1 skipped full suite; 10 viewed Flutter renders and 2 viewed iOS simulator renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "真实服务端、系统文件查看器/分享面板、VoiceOver/TalkBack 和模拟器原生点击 NOT_RUN；按用户新规则不阻塞分配问题。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/decisive-tests-final-008.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/full-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/simulator-validation.json"
+      ],
+      "reason": "仅评 S4-B 详情/附件/列表金额实例，不代其它 owner 关闭全局编号。",
+      "observedBehavior": "主金额不compact，完整语义与掩码一致。",
+      "implemented": "S4-B 详情/附件实例按当前 Fx 合同落地或验证；仅本scope。"
+    },
+    {
+      "issueId": "DT-24",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-B",
+      "sourcePaths": [
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart",
+        "lib/features/shared/data/bill_attachment_reader.dart",
+        "lib/features/shared/data/bill_attachment_reader_native.dart",
+        "lib/features/shared/data/bill_attachment_reader_web.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart": "43fbdf6b262819d93c6dc5e63bab04e1a89da7610c2ae734a03f763e26e6786d",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart": "b885f987cf0d1065a3dc60c6542bb8fbb36ed7280d46aee74410f627ea27e263",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart": "1dd717662b066f600c9d6ea5e7d420c6def2147da92436e1fbe9fe9db68a3cd7",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart": "3b58630130c48cf2671d2df5964a47ffcfea7906a0ace671c69675fa33544020",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart": "825851f2d54db305fd73c2fe2967b3b554a2391f339b9558cf7407dba35cb600",
+        "lib/features/shared/data/bill_attachment_reader.dart": "fde3aaba87e20ae3eac7659495750044bde5d581006dc135a00fc929ff4157fe",
+        "lib/features/shared/data/bill_attachment_reader_native.dart": "c013abce6781e807e49a77d6469b7ad8b9ed6d57d64a290154e9b84747617071",
+        "lib/features/shared/data/bill_attachment_reader_web.dart": "f1dbbeaa96a68080354e08492a13bd2eb516fd21a1ec3d84a9d61a20aaa0862b",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "0e2738cc0defc6baaec02f5e2963dd1352da7518b77e53e629574672614f8dd5"
+      },
+      "verified": "34/34 decisive tests; 601 passed/1 skipped full suite; 10 viewed Flutter renders and 2 viewed iOS simulator renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "真实服务端、系统文件查看器/分享面板、VoiceOver/TalkBack 和模拟器原生点击 NOT_RUN；按用户新规则不阻塞分配问题。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/decisive-tests-final-008.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/full-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/simulator-validation.json"
+      ],
+      "reason": "仅评 S4-B 详情/附件/列表金额实例，不代其它 owner 关闭全局编号。",
+      "observedBehavior": "主标题600、正文常规、次级元信息常规。",
+      "implemented": "S4-B 详情/附件实例按当前 Fx 合同落地或验证；仅本scope。"
+    },
+    {
+      "issueId": "DT-25",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-B",
+      "sourcePaths": [
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart",
+        "lib/features/shared/data/bill_attachment_reader.dart",
+        "lib/features/shared/data/bill_attachment_reader_native.dart",
+        "lib/features/shared/data/bill_attachment_reader_web.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart": "43fbdf6b262819d93c6dc5e63bab04e1a89da7610c2ae734a03f763e26e6786d",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart": "b885f987cf0d1065a3dc60c6542bb8fbb36ed7280d46aee74410f627ea27e263",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart": "1dd717662b066f600c9d6ea5e7d420c6def2147da92436e1fbe9fe9db68a3cd7",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart": "3b58630130c48cf2671d2df5964a47ffcfea7906a0ace671c69675fa33544020",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart": "825851f2d54db305fd73c2fe2967b3b554a2391f339b9558cf7407dba35cb600",
+        "lib/features/shared/data/bill_attachment_reader.dart": "fde3aaba87e20ae3eac7659495750044bde5d581006dc135a00fc929ff4157fe",
+        "lib/features/shared/data/bill_attachment_reader_native.dart": "c013abce6781e807e49a77d6469b7ad8b9ed6d57d64a290154e9b84747617071",
+        "lib/features/shared/data/bill_attachment_reader_web.dart": "f1dbbeaa96a68080354e08492a13bd2eb516fd21a1ec3d84a9d61a20aaa0862b",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "0e2738cc0defc6baaec02f5e2963dd1352da7518b77e53e629574672614f8dd5"
+      },
+      "verified": "34/34 decisive tests; 601 passed/1 skipped full suite; 10 viewed Flutter renders and 2 viewed iOS simulator renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "真实服务端、系统文件查看器/分享面板、VoiceOver/TalkBack 和模拟器原生点击 NOT_RUN；按用户新规则不阻塞分配问题。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/decisive-tests-final-008.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/full-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/simulator-validation.json"
+      ],
+      "reason": "仅评 S4-B 详情/附件/列表金额实例，不代其它 owner 关闭全局编号。",
+      "observedBehavior": "标签/标题/长值不永久单行截断。",
+      "implemented": "S4-B 详情/附件实例按当前 Fx 合同落地或验证；仅本scope。"
+    },
+    {
+      "issueId": "DT-26",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-B",
+      "sourcePaths": [
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart",
+        "lib/features/shared/data/bill_attachment_reader.dart",
+        "lib/features/shared/data/bill_attachment_reader_native.dart",
+        "lib/features/shared/data/bill_attachment_reader_web.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart": "43fbdf6b262819d93c6dc5e63bab04e1a89da7610c2ae734a03f763e26e6786d",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart": "b885f987cf0d1065a3dc60c6542bb8fbb36ed7280d46aee74410f627ea27e263",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart": "1dd717662b066f600c9d6ea5e7d420c6def2147da92436e1fbe9fe9db68a3cd7",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart": "3b58630130c48cf2671d2df5964a47ffcfea7906a0ace671c69675fa33544020",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart": "825851f2d54db305fd73c2fe2967b3b554a2391f339b9558cf7407dba35cb600",
+        "lib/features/shared/data/bill_attachment_reader.dart": "fde3aaba87e20ae3eac7659495750044bde5d581006dc135a00fc929ff4157fe",
+        "lib/features/shared/data/bill_attachment_reader_native.dart": "c013abce6781e807e49a77d6469b7ad8b9ed6d57d64a290154e9b84747617071",
+        "lib/features/shared/data/bill_attachment_reader_web.dart": "f1dbbeaa96a68080354e08492a13bd2eb516fd21a1ec3d84a9d61a20aaa0862b",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "0e2738cc0defc6baaec02f5e2963dd1352da7518b77e53e629574672614f8dd5"
+      },
+      "verified": "34/34 decisive tests; 601 passed/1 skipped full suite; 10 viewed Flutter renders and 2 viewed iOS simulator renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "真实服务端、系统文件查看器/分享面板、VoiceOver/TalkBack 和模拟器原生点击 NOT_RUN；按用户新规则不阻塞分配问题。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/decisive-tests-final-008.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/full-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/simulator-validation.json"
+      ],
+      "reason": "仅评 S4-B 详情/附件/列表金额实例，不代其它 owner 关闭全局编号。",
+      "observedBehavior": "沿用 Color.computeLuminance 底座验证，无新错误公式。",
+      "implemented": "S4-B 详情/附件实例按当前 Fx 合同落地或验证；仅本scope。"
+    },
+    {
+      "issueId": "DT-27",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-B",
+      "sourcePaths": [
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart",
+        "lib/features/shared/data/bill_attachment_reader.dart",
+        "lib/features/shared/data/bill_attachment_reader_native.dart",
+        "lib/features/shared/data/bill_attachment_reader_web.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart": "43fbdf6b262819d93c6dc5e63bab04e1a89da7610c2ae734a03f763e26e6786d",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart": "b885f987cf0d1065a3dc60c6542bb8fbb36ed7280d46aee74410f627ea27e263",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart": "1dd717662b066f600c9d6ea5e7d420c6def2147da92436e1fbe9fe9db68a3cd7",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart": "3b58630130c48cf2671d2df5964a47ffcfea7906a0ace671c69675fa33544020",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart": "825851f2d54db305fd73c2fe2967b3b554a2391f339b9558cf7407dba35cb600",
+        "lib/features/shared/data/bill_attachment_reader.dart": "fde3aaba87e20ae3eac7659495750044bde5d581006dc135a00fc929ff4157fe",
+        "lib/features/shared/data/bill_attachment_reader_native.dart": "c013abce6781e807e49a77d6469b7ad8b9ed6d57d64a290154e9b84747617071",
+        "lib/features/shared/data/bill_attachment_reader_web.dart": "f1dbbeaa96a68080354e08492a13bd2eb516fd21a1ec3d84a9d61a20aaa0862b",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "0e2738cc0defc6baaec02f5e2963dd1352da7518b77e53e629574672614f8dd5"
+      },
+      "verified": "34/34 decisive tests; 601 passed/1 skipped full suite; 10 viewed Flutter renders and 2 viewed iOS simulator renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "真实服务端、系统文件查看器/分享面板、VoiceOver/TalkBack 和模拟器原生点击 NOT_RUN；按用户新规则不阻塞分配问题。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/decisive-tests-final-008.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/full-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/simulator-validation.json"
+      ],
+      "reason": "仅评 S4-B 详情/附件/列表金额实例，不代其它 owner 关闭全局编号。",
+      "observedBehavior": "页面20、内容16、区块/字段按语义间距。",
+      "implemented": "S4-B 详情/附件实例按当前 Fx 合同落地或验证；仅本scope。"
+    },
+    {
+      "issueId": "DT-28",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-B",
+      "sourcePaths": [
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart",
+        "lib/features/shared/data/bill_attachment_reader.dart",
+        "lib/features/shared/data/bill_attachment_reader_native.dart",
+        "lib/features/shared/data/bill_attachment_reader_web.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart": "43fbdf6b262819d93c6dc5e63bab04e1a89da7610c2ae734a03f763e26e6786d",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart": "b885f987cf0d1065a3dc60c6542bb8fbb36ed7280d46aee74410f627ea27e263",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart": "1dd717662b066f600c9d6ea5e7d420c6def2147da92436e1fbe9fe9db68a3cd7",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart": "3b58630130c48cf2671d2df5964a47ffcfea7906a0ace671c69675fa33544020",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart": "825851f2d54db305fd73c2fe2967b3b554a2391f339b9558cf7407dba35cb600",
+        "lib/features/shared/data/bill_attachment_reader.dart": "fde3aaba87e20ae3eac7659495750044bde5d581006dc135a00fc929ff4157fe",
+        "lib/features/shared/data/bill_attachment_reader_native.dart": "c013abce6781e807e49a77d6469b7ad8b9ed6d57d64a290154e9b84747617071",
+        "lib/features/shared/data/bill_attachment_reader_web.dart": "f1dbbeaa96a68080354e08492a13bd2eb516fd21a1ec3d84a9d61a20aaa0862b",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "0e2738cc0defc6baaec02f5e2963dd1352da7518b77e53e629574672614f8dd5"
+      },
+      "verified": "34/34 decisive tests; 601 passed/1 skipped full suite; 10 viewed Flutter renders and 2 viewed iOS simulator renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "真实服务端、系统文件查看器/分享面板、VoiceOver/TalkBack 和模拟器原生点击 NOT_RUN；按用户新规则不阻塞分配问题。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/decisive-tests-final-008.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/full-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/simulator-validation.json"
+      ],
+      "reason": "仅评 S4-B 详情/附件/列表金额实例，不代其它 owner 关闭全局编号。",
+      "observedBehavior": "详情20、附件卡16，未多层嵌套16。",
+      "implemented": "S4-B 详情/附件实例按当前 Fx 合同落地或验证；仅本scope。"
+    },
+    {
+      "issueId": "DT-29",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-B",
+      "sourcePaths": [
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart",
+        "lib/features/shared/data/bill_attachment_reader.dart",
+        "lib/features/shared/data/bill_attachment_reader_native.dart",
+        "lib/features/shared/data/bill_attachment_reader_web.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart": "43fbdf6b262819d93c6dc5e63bab04e1a89da7610c2ae734a03f763e26e6786d",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart": "b885f987cf0d1065a3dc60c6542bb8fbb36ed7280d46aee74410f627ea27e263",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart": "1dd717662b066f600c9d6ea5e7d420c6def2147da92436e1fbe9fe9db68a3cd7",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart": "3b58630130c48cf2671d2df5964a47ffcfea7906a0ace671c69675fa33544020",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart": "825851f2d54db305fd73c2fe2967b3b554a2391f339b9558cf7407dba35cb600",
+        "lib/features/shared/data/bill_attachment_reader.dart": "fde3aaba87e20ae3eac7659495750044bde5d581006dc135a00fc929ff4157fe",
+        "lib/features/shared/data/bill_attachment_reader_native.dart": "c013abce6781e807e49a77d6469b7ad8b9ed6d57d64a290154e9b84747617071",
+        "lib/features/shared/data/bill_attachment_reader_web.dart": "f1dbbeaa96a68080354e08492a13bd2eb516fd21a1ec3d84a9d61a20aaa0862b",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "0e2738cc0defc6baaec02f5e2963dd1352da7518b77e53e629574672614f8dd5"
+      },
+      "verified": "34/34 decisive tests; 601 passed/1 skipped full suite; 10 viewed Flutter renders and 2 viewed iOS simulator renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "真实服务端、系统文件查看器/分享面板、VoiceOver/TalkBack 和模拟器原生点击 NOT_RUN；按用户新规则不阻塞分配问题。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/decisive-tests-final-008.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/full-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/simulator-validation.json"
+      ],
+      "reason": "仅评 S4-B 详情/附件/列表金额实例，不代其它 owner 关闭全局编号。",
+      "observedBehavior": "详情与附件水平20/16语义边距。",
+      "implemented": "S4-B 详情/附件实例按当前 Fx 合同落地或验证；仅本scope。"
+    },
+    {
+      "issueId": "DT-30",
+      "priority": "P1",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-B",
+      "sourcePaths": [
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart",
+        "lib/features/shared/data/bill_attachment_reader.dart",
+        "lib/features/shared/data/bill_attachment_reader_native.dart",
+        "lib/features/shared/data/bill_attachment_reader_web.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart": "43fbdf6b262819d93c6dc5e63bab04e1a89da7610c2ae734a03f763e26e6786d",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart": "b885f987cf0d1065a3dc60c6542bb8fbb36ed7280d46aee74410f627ea27e263",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart": "1dd717662b066f600c9d6ea5e7d420c6def2147da92436e1fbe9fe9db68a3cd7",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart": "3b58630130c48cf2671d2df5964a47ffcfea7906a0ace671c69675fa33544020",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart": "825851f2d54db305fd73c2fe2967b3b554a2391f339b9558cf7407dba35cb600",
+        "lib/features/shared/data/bill_attachment_reader.dart": "fde3aaba87e20ae3eac7659495750044bde5d581006dc135a00fc929ff4157fe",
+        "lib/features/shared/data/bill_attachment_reader_native.dart": "c013abce6781e807e49a77d6469b7ad8b9ed6d57d64a290154e9b84747617071",
+        "lib/features/shared/data/bill_attachment_reader_web.dart": "f1dbbeaa96a68080354e08492a13bd2eb516fd21a1ec3d84a9d61a20aaa0862b",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "0e2738cc0defc6baaec02f5e2963dd1352da7518b77e53e629574672614f8dd5"
+      },
+      "verified": "34/34 decisive tests; 601 passed/1 skipped full suite; 10 viewed Flutter renders and 2 viewed iOS simulator renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "真实服务端、系统文件查看器/分享面板、VoiceOver/TalkBack 和模拟器原生点击 NOT_RUN；按用户新规则不阻塞分配问题。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/decisive-tests-final-008.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/full-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/simulator-validation.json"
+      ],
+      "reason": "仅评 S4-B 详情/附件/列表金额实例，不代其它 owner 关闭全局编号。",
+      "observedBehavior": "主动作 FxButton 内容增高，小屏稳定。",
+      "implemented": "S4-B 详情/附件实例按当前 Fx 合同落地或验证；仅本scope。"
+    },
+    {
+      "issueId": "DT-31",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-B",
+      "sourcePaths": [
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart",
+        "lib/features/shared/data/bill_attachment_reader.dart",
+        "lib/features/shared/data/bill_attachment_reader_native.dart",
+        "lib/features/shared/data/bill_attachment_reader_web.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart": "43fbdf6b262819d93c6dc5e63bab04e1a89da7610c2ae734a03f763e26e6786d",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart": "b885f987cf0d1065a3dc60c6542bb8fbb36ed7280d46aee74410f627ea27e263",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart": "1dd717662b066f600c9d6ea5e7d420c6def2147da92436e1fbe9fe9db68a3cd7",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart": "3b58630130c48cf2671d2df5964a47ffcfea7906a0ace671c69675fa33544020",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart": "825851f2d54db305fd73c2fe2967b3b554a2391f339b9558cf7407dba35cb600",
+        "lib/features/shared/data/bill_attachment_reader.dart": "fde3aaba87e20ae3eac7659495750044bde5d581006dc135a00fc929ff4157fe",
+        "lib/features/shared/data/bill_attachment_reader_native.dart": "c013abce6781e807e49a77d6469b7ad8b9ed6d57d64a290154e9b84747617071",
+        "lib/features/shared/data/bill_attachment_reader_web.dart": "f1dbbeaa96a68080354e08492a13bd2eb516fd21a1ec3d84a9d61a20aaa0862b",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "0e2738cc0defc6baaec02f5e2963dd1352da7518b77e53e629574672614f8dd5"
+      },
+      "verified": "34/34 decisive tests; 601 passed/1 skipped full suite; 10 viewed Flutter renders and 2 viewed iOS simulator renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "真实服务端、系统文件查看器/分享面板、VoiceOver/TalkBack 和模拟器原生点击 NOT_RUN；按用户新规则不阻塞分配问题。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/decisive-tests-final-008.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/full-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/simulator-validation.json"
+      ],
+      "reason": "仅评 S4-B 详情/附件/列表金额实例，不代其它 owner 关闭全局编号。",
+      "observedBehavior": "详情键值/标题/按钮随内容重排，无固定文本行高裁切。",
+      "implemented": "S4-B 详情/附件实例按当前 Fx 合同落地或验证；仅本scope。"
+    },
+    {
+      "issueId": "DT-32",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-B",
+      "sourcePaths": [
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart",
+        "lib/features/shared/data/bill_attachment_reader.dart",
+        "lib/features/shared/data/bill_attachment_reader_native.dart",
+        "lib/features/shared/data/bill_attachment_reader_web.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart": "43fbdf6b262819d93c6dc5e63bab04e1a89da7610c2ae734a03f763e26e6786d",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart": "b885f987cf0d1065a3dc60c6542bb8fbb36ed7280d46aee74410f627ea27e263",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart": "1dd717662b066f600c9d6ea5e7d420c6def2147da92436e1fbe9fe9db68a3cd7",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart": "3b58630130c48cf2671d2df5964a47ffcfea7906a0ace671c69675fa33544020",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart": "825851f2d54db305fd73c2fe2967b3b554a2391f339b9558cf7407dba35cb600",
+        "lib/features/shared/data/bill_attachment_reader.dart": "fde3aaba87e20ae3eac7659495750044bde5d581006dc135a00fc929ff4157fe",
+        "lib/features/shared/data/bill_attachment_reader_native.dart": "c013abce6781e807e49a77d6469b7ad8b9ed6d57d64a290154e9b84747617071",
+        "lib/features/shared/data/bill_attachment_reader_web.dart": "f1dbbeaa96a68080354e08492a13bd2eb516fd21a1ec3d84a9d61a20aaa0862b",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "0e2738cc0defc6baaec02f5e2963dd1352da7518b77e53e629574672614f8dd5"
+      },
+      "verified": "34/34 decisive tests; 601 passed/1 skipped full suite; 10 viewed Flutter renders and 2 viewed iOS simulator renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "真实服务端、系统文件查看器/分享面板、VoiceOver/TalkBack 和模拟器原生点击 NOT_RUN；按用户新规则不阻塞分配问题。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/decisive-tests-final-008.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/full-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/simulator-validation.json"
+      ],
+      "reason": "仅评 S4-B 详情/附件/列表金额实例，不代其它 owner 关闭全局编号。",
+      "observedBehavior": "标签仅少量语义chip，未新增大量胶囊。",
+      "implemented": "S4-B 详情/附件实例按当前 Fx 合同落地或验证；仅本scope。"
+    },
+    {
+      "issueId": "DT-33",
+      "priority": "P2",
+      "state": "NOT_APPLICABLE",
+      "stageId": "S4-B",
+      "sourcePaths": [
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart",
+        "lib/features/shared/data/bill_attachment_reader.dart",
+        "lib/features/shared/data/bill_attachment_reader_native.dart",
+        "lib/features/shared/data/bill_attachment_reader_web.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart": "43fbdf6b262819d93c6dc5e63bab04e1a89da7610c2ae734a03f763e26e6786d",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart": "b885f987cf0d1065a3dc60c6542bb8fbb36ed7280d46aee74410f627ea27e263",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart": "1dd717662b066f600c9d6ea5e7d420c6def2147da92436e1fbe9fe9db68a3cd7",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart": "3b58630130c48cf2671d2df5964a47ffcfea7906a0ace671c69675fa33544020",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart": "825851f2d54db305fd73c2fe2967b3b554a2391f339b9558cf7407dba35cb600",
+        "lib/features/shared/data/bill_attachment_reader.dart": "fde3aaba87e20ae3eac7659495750044bde5d581006dc135a00fc929ff4157fe",
+        "lib/features/shared/data/bill_attachment_reader_native.dart": "c013abce6781e807e49a77d6469b7ad8b9ed6d57d64a290154e9b84747617071",
+        "lib/features/shared/data/bill_attachment_reader_web.dart": "f1dbbeaa96a68080354e08492a13bd2eb516fd21a1ec3d84a9d61a20aaa0862b",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "0e2738cc0defc6baaec02f5e2963dd1352da7518b77e53e629574672614f8dd5"
+      },
+      "verified": "34/34 decisive tests; 601 passed/1 skipped full suite; 10 viewed Flutter renders and 2 viewed iOS simulator renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "真实服务端、系统文件查看器/分享面板、VoiceOver/TalkBack 和模拟器原生点击 NOT_RUN；按用户新规则不阻塞分配问题。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/decisive-tests-final-008.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/full-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/simulator-validation.json"
+      ],
+      "reason": "仅评 S4-B 详情/附件/列表金额实例，不代其它 owner 关闭全局编号。",
+      "observedBehavior": "本阶段无图表。",
+      "implemented": "S4-B 详情/附件实例按当前 Fx 合同落地或验证；仅本scope。"
+    },
+    {
+      "issueId": "DT-34",
+      "priority": "P1",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-B",
+      "sourcePaths": [
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart",
+        "lib/features/shared/data/bill_attachment_reader.dart",
+        "lib/features/shared/data/bill_attachment_reader_native.dart",
+        "lib/features/shared/data/bill_attachment_reader_web.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart": "43fbdf6b262819d93c6dc5e63bab04e1a89da7610c2ae734a03f763e26e6786d",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart": "b885f987cf0d1065a3dc60c6542bb8fbb36ed7280d46aee74410f627ea27e263",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart": "1dd717662b066f600c9d6ea5e7d420c6def2147da92436e1fbe9fe9db68a3cd7",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart": "3b58630130c48cf2671d2df5964a47ffcfea7906a0ace671c69675fa33544020",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart": "825851f2d54db305fd73c2fe2967b3b554a2391f339b9558cf7407dba35cb600",
+        "lib/features/shared/data/bill_attachment_reader.dart": "fde3aaba87e20ae3eac7659495750044bde5d581006dc135a00fc929ff4157fe",
+        "lib/features/shared/data/bill_attachment_reader_native.dart": "c013abce6781e807e49a77d6469b7ad8b9ed6d57d64a290154e9b84747617071",
+        "lib/features/shared/data/bill_attachment_reader_web.dart": "f1dbbeaa96a68080354e08492a13bd2eb516fd21a1ec3d84a9d61a20aaa0862b",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "0e2738cc0defc6baaec02f5e2963dd1352da7518b77e53e629574672614f8dd5"
+      },
+      "verified": "34/34 decisive tests; 601 passed/1 skipped full suite; 10 viewed Flutter renders and 2 viewed iOS simulator renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "真实服务端、系统文件查看器/分享面板、VoiceOver/TalkBack 和模拟器原生点击 NOT_RUN；按用户新规则不阻塞分配问题。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/decisive-tests-final-008.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/full-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/simulator-validation.json"
+      ],
+      "reason": "仅评 S4-B 详情/附件/列表金额实例，不代其它 owner 关闭全局编号。",
+      "observedBehavior": "关闭/更多/附件操作由44+共享控件承载。",
+      "implemented": "S4-B 详情/附件实例按当前 Fx 合同落地或验证；仅本scope。"
+    },
+    {
+      "issueId": "DT-35",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-B",
+      "sourcePaths": [
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart",
+        "lib/features/shared/data/bill_attachment_reader.dart",
+        "lib/features/shared/data/bill_attachment_reader_native.dart",
+        "lib/features/shared/data/bill_attachment_reader_web.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart": "43fbdf6b262819d93c6dc5e63bab04e1a89da7610c2ae734a03f763e26e6786d",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart": "b885f987cf0d1065a3dc60c6542bb8fbb36ed7280d46aee74410f627ea27e263",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart": "1dd717662b066f600c9d6ea5e7d420c6def2147da92436e1fbe9fe9db68a3cd7",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart": "3b58630130c48cf2671d2df5964a47ffcfea7906a0ace671c69675fa33544020",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart": "825851f2d54db305fd73c2fe2967b3b554a2391f339b9558cf7407dba35cb600",
+        "lib/features/shared/data/bill_attachment_reader.dart": "fde3aaba87e20ae3eac7659495750044bde5d581006dc135a00fc929ff4157fe",
+        "lib/features/shared/data/bill_attachment_reader_native.dart": "c013abce6781e807e49a77d6469b7ad8b9ed6d57d64a290154e9b84747617071",
+        "lib/features/shared/data/bill_attachment_reader_web.dart": "f1dbbeaa96a68080354e08492a13bd2eb516fd21a1ec3d84a9d61a20aaa0862b",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "0e2738cc0defc6baaec02f5e2963dd1352da7518b77e53e629574672614f8dd5"
+      },
+      "verified": "34/34 decisive tests; 601 passed/1 skipped full suite; 10 viewed Flutter renders and 2 viewed iOS simulator renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "真实服务端、系统文件查看器/分享面板、VoiceOver/TalkBack 和模拟器原生点击 NOT_RUN；按用户新规则不阻塞分配问题。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/decisive-tests-final-008.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/full-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/simulator-validation.json"
+      ],
+      "reason": "仅评 S4-B 详情/附件/列表金额实例，不代其它 owner 关闭全局编号。",
+      "observedBehavior": "详情底部只由实际footer占高，不重复预留导航。",
+      "implemented": "S4-B 详情/附件实例按当前 Fx 合同落地或验证；仅本scope。"
+    },
+    {
+      "issueId": "DT-36",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-B",
+      "sourcePaths": [
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart",
+        "lib/features/shared/data/bill_attachment_reader.dart",
+        "lib/features/shared/data/bill_attachment_reader_native.dart",
+        "lib/features/shared/data/bill_attachment_reader_web.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart": "43fbdf6b262819d93c6dc5e63bab04e1a89da7610c2ae734a03f763e26e6786d",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart": "b885f987cf0d1065a3dc60c6542bb8fbb36ed7280d46aee74410f627ea27e263",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart": "1dd717662b066f600c9d6ea5e7d420c6def2147da92436e1fbe9fe9db68a3cd7",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart": "3b58630130c48cf2671d2df5964a47ffcfea7906a0ace671c69675fa33544020",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart": "825851f2d54db305fd73c2fe2967b3b554a2391f339b9558cf7407dba35cb600",
+        "lib/features/shared/data/bill_attachment_reader.dart": "fde3aaba87e20ae3eac7659495750044bde5d581006dc135a00fc929ff4157fe",
+        "lib/features/shared/data/bill_attachment_reader_native.dart": "c013abce6781e807e49a77d6469b7ad8b9ed6d57d64a290154e9b84747617071",
+        "lib/features/shared/data/bill_attachment_reader_web.dart": "f1dbbeaa96a68080354e08492a13bd2eb516fd21a1ec3d84a9d61a20aaa0862b",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "0e2738cc0defc6baaec02f5e2963dd1352da7518b77e53e629574672614f8dd5"
+      },
+      "verified": "34/34 decisive tests; 601 passed/1 skipped full suite; 10 viewed Flutter renders and 2 viewed iOS simulator renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "真实服务端、系统文件查看器/分享面板、VoiceOver/TalkBack 和模拟器原生点击 NOT_RUN；按用户新规则不阻塞分配问题。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/decisive-tests-final-008.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/full-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/simulator-validation.json"
+      ],
+      "reason": "仅评 S4-B 详情/附件/列表金额实例，不代其它 owner 关闭全局编号。",
+      "observedBehavior": "附件卡tile/详情dialog沿用既有圆角。",
+      "implemented": "S4-B 详情/附件实例按当前 Fx 合同落地或验证；仅本scope。"
+    },
+    {
+      "issueId": "DT-37",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-B",
+      "sourcePaths": [
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart",
+        "lib/features/shared/data/bill_attachment_reader.dart",
+        "lib/features/shared/data/bill_attachment_reader_native.dart",
+        "lib/features/shared/data/bill_attachment_reader_web.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart": "43fbdf6b262819d93c6dc5e63bab04e1a89da7610c2ae734a03f763e26e6786d",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart": "b885f987cf0d1065a3dc60c6542bb8fbb36ed7280d46aee74410f627ea27e263",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart": "1dd717662b066f600c9d6ea5e7d420c6def2147da92436e1fbe9fe9db68a3cd7",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart": "3b58630130c48cf2671d2df5964a47ffcfea7906a0ace671c69675fa33544020",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart": "825851f2d54db305fd73c2fe2967b3b554a2391f339b9558cf7407dba35cb600",
+        "lib/features/shared/data/bill_attachment_reader.dart": "fde3aaba87e20ae3eac7659495750044bde5d581006dc135a00fc929ff4157fe",
+        "lib/features/shared/data/bill_attachment_reader_native.dart": "c013abce6781e807e49a77d6469b7ad8b9ed6d57d64a290154e9b84747617071",
+        "lib/features/shared/data/bill_attachment_reader_web.dart": "f1dbbeaa96a68080354e08492a13bd2eb516fd21a1ec3d84a9d61a20aaa0862b",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "0e2738cc0defc6baaec02f5e2963dd1352da7518b77e53e629574672614f8dd5"
+      },
+      "verified": "34/34 decisive tests; 601 passed/1 skipped full suite; 10 viewed Flutter renders and 2 viewed iOS simulator renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "真实服务端、系统文件查看器/分享面板、VoiceOver/TalkBack 和模拟器原生点击 NOT_RUN；按用户新规则不阻塞分配问题。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/decisive-tests-final-008.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/full-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/simulator-validation.json"
+      ],
+      "reason": "仅评 S4-B 详情/附件/列表金额实例，不代其它 owner 关闭全局编号。",
+      "observedBehavior": "状态、来源组件、附件类型用文字区分，不混同胶囊。",
+      "implemented": "S4-B 详情/附件实例按当前 Fx 合同落地或验证；仅本scope。"
+    },
+    {
+      "issueId": "DT-38",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-B",
+      "sourcePaths": [
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart",
+        "lib/features/shared/data/bill_attachment_reader.dart",
+        "lib/features/shared/data/bill_attachment_reader_native.dart",
+        "lib/features/shared/data/bill_attachment_reader_web.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart": "43fbdf6b262819d93c6dc5e63bab04e1a89da7610c2ae734a03f763e26e6786d",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart": "b885f987cf0d1065a3dc60c6542bb8fbb36ed7280d46aee74410f627ea27e263",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart": "1dd717662b066f600c9d6ea5e7d420c6def2147da92436e1fbe9fe9db68a3cd7",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart": "3b58630130c48cf2671d2df5964a47ffcfea7906a0ace671c69675fa33544020",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart": "825851f2d54db305fd73c2fe2967b3b554a2391f339b9558cf7407dba35cb600",
+        "lib/features/shared/data/bill_attachment_reader.dart": "fde3aaba87e20ae3eac7659495750044bde5d581006dc135a00fc929ff4157fe",
+        "lib/features/shared/data/bill_attachment_reader_native.dart": "c013abce6781e807e49a77d6469b7ad8b9ed6d57d64a290154e9b84747617071",
+        "lib/features/shared/data/bill_attachment_reader_web.dart": "f1dbbeaa96a68080354e08492a13bd2eb516fd21a1ec3d84a9d61a20aaa0862b",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "0e2738cc0defc6baaec02f5e2963dd1352da7518b77e53e629574672614f8dd5"
+      },
+      "verified": "34/34 decisive tests; 601 passed/1 skipped full suite; 10 viewed Flutter renders and 2 viewed iOS simulator renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "真实服务端、系统文件查看器/分享面板、VoiceOver/TalkBack 和模拟器原生点击 NOT_RUN；按用户新规则不阻塞分配问题。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/decisive-tests-final-008.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/full-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/simulator-validation.json"
+      ],
+      "reason": "仅评 S4-B 详情/附件/列表金额实例，不代其它 owner 关闭全局编号。",
+      "observedBehavior": "详情连续阅读表面，附件单卡承载任务，不层层造框。",
+      "implemented": "S4-B 详情/附件实例按当前 Fx 合同落地或验证；仅本scope。"
+    },
+    {
+      "issueId": "DT-39",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-B",
+      "sourcePaths": [
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart",
+        "lib/features/shared/data/bill_attachment_reader.dart",
+        "lib/features/shared/data/bill_attachment_reader_native.dart",
+        "lib/features/shared/data/bill_attachment_reader_web.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart": "43fbdf6b262819d93c6dc5e63bab04e1a89da7610c2ae734a03f763e26e6786d",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart": "b885f987cf0d1065a3dc60c6542bb8fbb36ed7280d46aee74410f627ea27e263",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart": "1dd717662b066f600c9d6ea5e7d420c6def2147da92436e1fbe9fe9db68a3cd7",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart": "3b58630130c48cf2671d2df5964a47ffcfea7906a0ace671c69675fa33544020",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart": "825851f2d54db305fd73c2fe2967b3b554a2391f339b9558cf7407dba35cb600",
+        "lib/features/shared/data/bill_attachment_reader.dart": "fde3aaba87e20ae3eac7659495750044bde5d581006dc135a00fc929ff4157fe",
+        "lib/features/shared/data/bill_attachment_reader_native.dart": "c013abce6781e807e49a77d6469b7ad8b9ed6d57d64a290154e9b84747617071",
+        "lib/features/shared/data/bill_attachment_reader_web.dart": "f1dbbeaa96a68080354e08492a13bd2eb516fd21a1ec3d84a9d61a20aaa0862b",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "0e2738cc0defc6baaec02f5e2963dd1352da7518b77e53e629574672614f8dd5"
+      },
+      "verified": "34/34 decisive tests; 601 passed/1 skipped full suite; 10 viewed Flutter renders and 2 viewed iOS simulator renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "真实服务端、系统文件查看器/分享面板、VoiceOver/TalkBack 和模拟器原生点击 NOT_RUN；按用户新规则不阻塞分配问题。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/decisive-tests-final-008.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/full-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/simulator-validation.json"
+      ],
+      "reason": "仅评 S4-B 详情/附件/列表金额实例，不代其它 owner 关闭全局编号。",
+      "observedBehavior": "详情无显式阴影。",
+      "implemented": "S4-B 详情/附件实例按当前 Fx 合同落地或验证；仅本scope。"
+    },
+    {
+      "issueId": "DT-40",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-B",
+      "sourcePaths": [
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart",
+        "lib/features/shared/data/bill_attachment_reader.dart",
+        "lib/features/shared/data/bill_attachment_reader_native.dart",
+        "lib/features/shared/data/bill_attachment_reader_web.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart": "43fbdf6b262819d93c6dc5e63bab04e1a89da7610c2ae734a03f763e26e6786d",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart": "b885f987cf0d1065a3dc60c6542bb8fbb36ed7280d46aee74410f627ea27e263",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart": "1dd717662b066f600c9d6ea5e7d420c6def2147da92436e1fbe9fe9db68a3cd7",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart": "3b58630130c48cf2671d2df5964a47ffcfea7906a0ace671c69675fa33544020",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart": "825851f2d54db305fd73c2fe2967b3b554a2391f339b9558cf7407dba35cb600",
+        "lib/features/shared/data/bill_attachment_reader.dart": "fde3aaba87e20ae3eac7659495750044bde5d581006dc135a00fc929ff4157fe",
+        "lib/features/shared/data/bill_attachment_reader_native.dart": "c013abce6781e807e49a77d6469b7ad8b9ed6d57d64a290154e9b84747617071",
+        "lib/features/shared/data/bill_attachment_reader_web.dart": "f1dbbeaa96a68080354e08492a13bd2eb516fd21a1ec3d84a9d61a20aaa0862b",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "0e2738cc0defc6baaec02f5e2963dd1352da7518b77e53e629574672614f8dd5"
+      },
+      "verified": "34/34 decisive tests; 601 passed/1 skipped full suite; 10 viewed Flutter renders and 2 viewed iOS simulator renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "真实服务端、系统文件查看器/分享面板、VoiceOver/TalkBack 和模拟器原生点击 NOT_RUN；按用户新规则不阻塞分配问题。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/decisive-tests-final-008.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/full-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/simulator-validation.json"
+      ],
+      "reason": "仅评 S4-B 详情/附件/列表金额实例，不代其它 owner 关闭全局编号。",
+      "observedBehavior": "无拖动/首页elevation新增。",
+      "implemented": "S4-B 详情/附件实例按当前 Fx 合同落地或验证；仅本scope。"
+    },
+    {
+      "issueId": "DT-41",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-B",
+      "sourcePaths": [
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart",
+        "lib/features/shared/data/bill_attachment_reader.dart",
+        "lib/features/shared/data/bill_attachment_reader_native.dart",
+        "lib/features/shared/data/bill_attachment_reader_web.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart": "43fbdf6b262819d93c6dc5e63bab04e1a89da7610c2ae734a03f763e26e6786d",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart": "b885f987cf0d1065a3dc60c6542bb8fbb36ed7280d46aee74410f627ea27e263",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart": "1dd717662b066f600c9d6ea5e7d420c6def2147da92436e1fbe9fe9db68a3cd7",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart": "3b58630130c48cf2671d2df5964a47ffcfea7906a0ace671c69675fa33544020",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart": "825851f2d54db305fd73c2fe2967b3b554a2391f339b9558cf7407dba35cb600",
+        "lib/features/shared/data/bill_attachment_reader.dart": "fde3aaba87e20ae3eac7659495750044bde5d581006dc135a00fc929ff4157fe",
+        "lib/features/shared/data/bill_attachment_reader_native.dart": "c013abce6781e807e49a77d6469b7ad8b9ed6d57d64a290154e9b84747617071",
+        "lib/features/shared/data/bill_attachment_reader_web.dart": "f1dbbeaa96a68080354e08492a13bd2eb516fd21a1ec3d84a9d61a20aaa0862b",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "0e2738cc0defc6baaec02f5e2963dd1352da7518b77e53e629574672614f8dd5"
+      },
+      "verified": "34/34 decisive tests; 601 passed/1 skipped full suite; 10 viewed Flutter renders and 2 viewed iOS simulator renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "真实服务端、系统文件查看器/分享面板、VoiceOver/TalkBack 和模拟器原生点击 NOT_RUN；按用户新规则不阻塞分配问题。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/decisive-tests-final-008.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/full-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/simulator-validation.json"
+      ],
+      "reason": "仅评 S4-B 详情/附件/列表金额实例，不代其它 owner 关闭全局编号。",
+      "observedBehavior": "未新增InkWell下不透明Container。",
+      "implemented": "S4-B 详情/附件实例按当前 Fx 合同落地或验证；仅本scope。"
+    },
+    {
+      "issueId": "DT-42",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-B",
+      "sourcePaths": [
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart",
+        "lib/features/shared/data/bill_attachment_reader.dart",
+        "lib/features/shared/data/bill_attachment_reader_native.dart",
+        "lib/features/shared/data/bill_attachment_reader_web.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart": "43fbdf6b262819d93c6dc5e63bab04e1a89da7610c2ae734a03f763e26e6786d",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart": "b885f987cf0d1065a3dc60c6542bb8fbb36ed7280d46aee74410f627ea27e263",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart": "1dd717662b066f600c9d6ea5e7d420c6def2147da92436e1fbe9fe9db68a3cd7",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart": "3b58630130c48cf2671d2df5964a47ffcfea7906a0ace671c69675fa33544020",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart": "825851f2d54db305fd73c2fe2967b3b554a2391f339b9558cf7407dba35cb600",
+        "lib/features/shared/data/bill_attachment_reader.dart": "fde3aaba87e20ae3eac7659495750044bde5d581006dc135a00fc929ff4157fe",
+        "lib/features/shared/data/bill_attachment_reader_native.dart": "c013abce6781e807e49a77d6469b7ad8b9ed6d57d64a290154e9b84747617071",
+        "lib/features/shared/data/bill_attachment_reader_web.dart": "f1dbbeaa96a68080354e08492a13bd2eb516fd21a1ec3d84a9d61a20aaa0862b",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "0e2738cc0defc6baaec02f5e2963dd1352da7518b77e53e629574672614f8dd5"
+      },
+      "verified": "34/34 decisive tests; 601 passed/1 skipped full suite; 10 viewed Flutter renders and 2 viewed iOS simulator renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "真实服务端、系统文件查看器/分享面板、VoiceOver/TalkBack 和模拟器原生点击 NOT_RUN；按用户新规则不阻塞分配问题。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/decisive-tests-final-008.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/full-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/simulator-validation.json"
+      ],
+      "reason": "仅评 S4-B 详情/附件/列表金额实例，不代其它 owner 关闭全局编号。",
+      "observedBehavior": "标签沿用FxTagChip，附件Ink/按钮语义。",
+      "implemented": "S4-B 详情/附件实例按当前 Fx 合同落地或验证；仅本scope。"
+    },
+    {
+      "issueId": "DT-43",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-B",
+      "sourcePaths": [
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart",
+        "lib/features/shared/data/bill_attachment_reader.dart",
+        "lib/features/shared/data/bill_attachment_reader_native.dart",
+        "lib/features/shared/data/bill_attachment_reader_web.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart": "43fbdf6b262819d93c6dc5e63bab04e1a89da7610c2ae734a03f763e26e6786d",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart": "b885f987cf0d1065a3dc60c6542bb8fbb36ed7280d46aee74410f627ea27e263",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart": "1dd717662b066f600c9d6ea5e7d420c6def2147da92436e1fbe9fe9db68a3cd7",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart": "3b58630130c48cf2671d2df5964a47ffcfea7906a0ace671c69675fa33544020",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart": "825851f2d54db305fd73c2fe2967b3b554a2391f339b9558cf7407dba35cb600",
+        "lib/features/shared/data/bill_attachment_reader.dart": "fde3aaba87e20ae3eac7659495750044bde5d581006dc135a00fc929ff4157fe",
+        "lib/features/shared/data/bill_attachment_reader_native.dart": "c013abce6781e807e49a77d6469b7ad8b9ed6d57d64a290154e9b84747617071",
+        "lib/features/shared/data/bill_attachment_reader_web.dart": "f1dbbeaa96a68080354e08492a13bd2eb516fd21a1ec3d84a9d61a20aaa0862b",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "0e2738cc0defc6baaec02f5e2963dd1352da7518b77e53e629574672614f8dd5"
+      },
+      "verified": "34/34 decisive tests; 601 passed/1 skipped full suite; 10 viewed Flutter renders and 2 viewed iOS simulator renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "真实服务端、系统文件查看器/分享面板、VoiceOver/TalkBack 和模拟器原生点击 NOT_RUN；按用户新规则不阻塞分配问题。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/decisive-tests-final-008.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/full-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/simulator-validation.json"
+      ],
+      "reason": "仅评 S4-B 详情/附件/列表金额实例，不代其它 owner 关闭全局编号。",
+      "observedBehavior": "未新增绕过disableAnimations的动画。",
+      "implemented": "S4-B 详情/附件实例按当前 Fx 合同落地或验证；仅本scope。"
+    },
+    {
+      "issueId": "DT-44",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-B",
+      "sourcePaths": [
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart",
+        "lib/features/shared/data/bill_attachment_reader.dart",
+        "lib/features/shared/data/bill_attachment_reader_native.dart",
+        "lib/features/shared/data/bill_attachment_reader_web.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart": "43fbdf6b262819d93c6dc5e63bab04e1a89da7610c2ae734a03f763e26e6786d",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart": "b885f987cf0d1065a3dc60c6542bb8fbb36ed7280d46aee74410f627ea27e263",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart": "1dd717662b066f600c9d6ea5e7d420c6def2147da92436e1fbe9fe9db68a3cd7",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart": "3b58630130c48cf2671d2df5964a47ffcfea7906a0ace671c69675fa33544020",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart": "825851f2d54db305fd73c2fe2967b3b554a2391f339b9558cf7407dba35cb600",
+        "lib/features/shared/data/bill_attachment_reader.dart": "fde3aaba87e20ae3eac7659495750044bde5d581006dc135a00fc929ff4157fe",
+        "lib/features/shared/data/bill_attachment_reader_native.dart": "c013abce6781e807e49a77d6469b7ad8b9ed6d57d64a290154e9b84747617071",
+        "lib/features/shared/data/bill_attachment_reader_web.dart": "f1dbbeaa96a68080354e08492a13bd2eb516fd21a1ec3d84a9d61a20aaa0862b",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "0e2738cc0defc6baaec02f5e2963dd1352da7518b77e53e629574672614f8dd5"
+      },
+      "verified": "34/34 decisive tests; 601 passed/1 skipped full suite; 10 viewed Flutter renders and 2 viewed iOS simulator renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "真实服务端、系统文件查看器/分享面板、VoiceOver/TalkBack 和模拟器原生点击 NOT_RUN；按用户新规则不阻塞分配问题。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/decisive-tests-final-008.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/full-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/simulator-validation.json"
+      ],
+      "reason": "仅评 S4-B 详情/附件/列表金额实例，不代其它 owner 关闭全局编号。",
+      "observedBehavior": "未新增重复普通卡selection haptic。",
+      "implemented": "S4-B 详情/附件实例按当前 Fx 合同落地或验证；仅本scope。"
+    },
+    {
+      "issueId": "DT-45",
+      "priority": "P1",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-B",
+      "sourcePaths": [
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart",
+        "lib/features/shared/data/bill_attachment_reader.dart",
+        "lib/features/shared/data/bill_attachment_reader_native.dart",
+        "lib/features/shared/data/bill_attachment_reader_web.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart": "43fbdf6b262819d93c6dc5e63bab04e1a89da7610c2ae734a03f763e26e6786d",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart": "b885f987cf0d1065a3dc60c6542bb8fbb36ed7280d46aee74410f627ea27e263",
+        "lib/features/shared/presentation/bills/bill_flow_amount.dart": "1dd717662b066f600c9d6ea5e7d420c6def2147da92436e1fbe9fe9db68a3cd7",
+        "lib/features/shared/presentation/bills/bill_detail_permissions.dart": "3b58630130c48cf2671d2df5964a47ffcfea7906a0ace671c69675fa33544020",
+        "lib/features/shared/presentation/bills/bill_attachment_card.dart": "825851f2d54db305fd73c2fe2967b3b554a2391f339b9558cf7407dba35cb600",
+        "lib/features/shared/data/bill_attachment_reader.dart": "fde3aaba87e20ae3eac7659495750044bde5d581006dc135a00fc929ff4157fe",
+        "lib/features/shared/data/bill_attachment_reader_native.dart": "c013abce6781e807e49a77d6469b7ad8b9ed6d57d64a290154e9b84747617071",
+        "lib/features/shared/data/bill_attachment_reader_web.dart": "f1dbbeaa96a68080354e08492a13bd2eb516fd21a1ec3d84a9d61a20aaa0862b",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "0e2738cc0defc6baaec02f5e2963dd1352da7518b77e53e629574672614f8dd5"
+      },
+      "verified": "34/34 decisive tests; 601 passed/1 skipped full suite; 10 viewed Flutter renders and 2 viewed iOS simulator renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "真实服务端、系统文件查看器/分享面板、VoiceOver/TalkBack 和模拟器原生点击 NOT_RUN；按用户新规则不阻塞分配问题。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/decisive-tests-final-008.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/full-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/simulator-validation.json"
+      ],
+      "reason": "仅评 S4-B 详情/附件/列表金额实例，不代其它 owner 关闭全局编号。",
+      "observedBehavior": "附件失败保留账单上下文和重试；只读明确来源原因。",
+      "implemented": "S4-B 详情/附件实例按当前 Fx 合同落地或验证；仅本scope。"
+    }
+  ]
+}

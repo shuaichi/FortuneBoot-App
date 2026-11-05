@@ -1,0 +1,25 @@
+{
+  "baseline": {
+    "source": "S4-A committed final analysis",
+    "issues": 1175,
+    "error": 0,
+    "warning": 260,
+    "info": 915
+  },
+  "final": {
+    "issues": 1174,
+    "error": 0,
+    "warning": 260,
+    "info": 914
+  },
+  "added": [],
+  "removed": [
+    {
+      "file": "lib/features/shared/presentation/bills/bill_detail_flow.dart",
+      "rule": "avoid_redundant_argument_values",
+      "message": "The value of the argument is redundant because it matches the default value",
+      "severity": "info",
+      "count": 1
+    }
+  ]
+}

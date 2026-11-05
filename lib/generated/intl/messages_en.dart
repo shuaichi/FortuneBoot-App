@@ -808,7 +808,30 @@ class MessageLookup extends MessageLookupByLibrary {
     "billsAdvancedFiltersHint": MessageLookupByLibrary.simpleMessage(
       "Confirmation, statistics, categories, and people",
     ),
+    "billsAmountBreakdown": MessageLookupByLibrary.simpleMessage(
+      "Amount breakdown",
+    ),
     "billsApply": MessageLookupByLibrary.simpleMessage("Apply"),
+    "billsAttachmentActionFailed": MessageLookupByLibrary.simpleMessage(
+      "Attachment action failed. Try again.",
+    ),
+    "billsAttachmentDownloadStarted": MessageLookupByLibrary.simpleMessage(
+      "Attachment download started",
+    ),
+    "billsAttachmentFile": MessageLookupByLibrary.simpleMessage("Attachment"),
+    "billsAttachmentOpen": MessageLookupByLibrary.simpleMessage("Open"),
+    "billsAttachmentOpened": MessageLookupByLibrary.simpleMessage(
+      "Opened with the system viewer",
+    ),
+    "billsAttachmentSave": MessageLookupByLibrary.simpleMessage("Save"),
+    "billsAttachmentSaved": MessageLookupByLibrary.simpleMessage("Saved"),
+    "billsAttachmentUnknownType": MessageLookupByLibrary.simpleMessage(
+      "Unknown file type",
+    ),
+    "billsAttachmentUnsupported": MessageLookupByLibrary.simpleMessage(
+      "This file cannot be opened or saved here. Try again later.",
+    ),
+    "billsAttachmentWorking": MessageLookupByLibrary.simpleMessage("Working…"),
     "billsAttachments": MessageLookupByLibrary.simpleMessage("Attachments"),
     "billsBalance": MessageLookupByLibrary.simpleMessage("Balance"),
     "billsBillDefaultTitle": MessageLookupByLibrary.simpleMessage("Bill"),
@@ -819,6 +842,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "billsCharge": MessageLookupByLibrary.simpleMessage("Charge"),
     "billsClearFilters": MessageLookupByLibrary.simpleMessage("Clear filters"),
     "billsClose": MessageLookupByLibrary.simpleMessage("Close"),
+    "billsConfirming": MessageLookupByLibrary.simpleMessage("Confirming…"),
     "billsCopy": MessageLookupByLibrary.simpleMessage("Copy"),
     "billsDayExpense": m17,
     "billsDayIncome": m18,
@@ -832,6 +856,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "No bills in this cycle",
     ),
     "billsExpense": MessageLookupByLibrary.simpleMessage("Expense"),
+    "billsExtraCategory": MessageLookupByLibrary.simpleMessage(
+      "Extra category",
+    ),
     "billsExtraWithSide": m20,
     "billsExtras": MessageLookupByLibrary.simpleMessage("Extra charges"),
     "billsFee": MessageLookupByLibrary.simpleMessage("Fee"),
@@ -917,6 +944,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "billsReceivedAmount": MessageLookupByLibrary.simpleMessage(
       "Received amount",
     ),
+    "billsRecordStatus": MessageLookupByLibrary.simpleMessage("Record status"),
     "billsRefreshFailed": MessageLookupByLibrary.simpleMessage(
       "Refresh failed. Existing bills are still here.",
     ),

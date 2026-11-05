@@ -3192,6 +3192,146 @@ class S {
     );
   }
 
+  /// `Amount breakdown`
+  String get billsAmountBreakdown {
+    return Intl.message(
+      'Amount breakdown',
+      name: 'billsAmountBreakdown',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Record status`
+  String get billsRecordStatus {
+    return Intl.message(
+      'Record status',
+      name: 'billsRecordStatus',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Extra category`
+  String get billsExtraCategory {
+    return Intl.message(
+      'Extra category',
+      name: 'billsExtraCategory',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Attachment`
+  String get billsAttachmentFile {
+    return Intl.message(
+      'Attachment',
+      name: 'billsAttachmentFile',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Unknown file type`
+  String get billsAttachmentUnknownType {
+    return Intl.message(
+      'Unknown file type',
+      name: 'billsAttachmentUnknownType',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Open`
+  String get billsAttachmentOpen {
+    return Intl.message(
+      'Open',
+      name: 'billsAttachmentOpen',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Save`
+  String get billsAttachmentSave {
+    return Intl.message(
+      'Save',
+      name: 'billsAttachmentSave',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Working…`
+  String get billsAttachmentWorking {
+    return Intl.message(
+      'Working…',
+      name: 'billsAttachmentWorking',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Opened with the system viewer`
+  String get billsAttachmentOpened {
+    return Intl.message(
+      'Opened with the system viewer',
+      name: 'billsAttachmentOpened',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Saved`
+  String get billsAttachmentSaved {
+    return Intl.message(
+      'Saved',
+      name: 'billsAttachmentSaved',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Attachment download started`
+  String get billsAttachmentDownloadStarted {
+    return Intl.message(
+      'Attachment download started',
+      name: 'billsAttachmentDownloadStarted',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `This file cannot be opened or saved here. Try again later.`
+  String get billsAttachmentUnsupported {
+    return Intl.message(
+      'This file cannot be opened or saved here. Try again later.',
+      name: 'billsAttachmentUnsupported',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Attachment action failed. Try again.`
+  String get billsAttachmentActionFailed {
+    return Intl.message(
+      'Attachment action failed. Try again.',
+      name: 'billsAttachmentActionFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Confirming…`
+  String get billsConfirming {
+    return Intl.message(
+      'Confirming…',
+      name: 'billsConfirming',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Please select a ledger before adding a bill`
   String get billEditorSelectBookFirst {
     return Intl.message(

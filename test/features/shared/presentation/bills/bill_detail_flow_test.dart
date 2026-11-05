@@ -4,7 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:fortuneboot/core/navigation/app_router.dart';
+import 'package:fortuneboot/core/navigation/routes.dart';
 import 'package:fortuneboot/core/preferences/preferences_cubit.dart';
+import 'package:fortuneboot/features/bill_editor/presentation/bill_editor_args.dart';
+import 'package:fortuneboot/features/orders/data/orders_models.dart';
 import 'package:fortuneboot/features/shared/data/bill_models.dart';
 import 'package:fortuneboot/features/shared/data/bill_service.dart';
 import 'package:fortuneboot/features/shared/presentation/bills/bill_detail_flow.dart';
@@ -14,6 +18,14 @@ import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/generated/l10n.dart';
 
 void main() {
+  setUp(() {
+    AppRouter.register(
+      Routes.billEditor,
+      (_) =>
+          const Scaffold(body: SizedBox(key: ValueKey('editor-route-marker'))),
+    );
+  });
+
   testWidgets('shows the shared bill detail sheet for a selected bill', (
     tester,
   ) async {
@@ -32,7 +44,7 @@ void main() {
 
     expect(find.byType(BillDetailSheet), findsOneWidget);
     expect(find.text('午餐'), findsOneWidget);
-    expect(find.text('-¥28.00'), findsOneWidget);
+    expect(find.bySemanticsLabel('-¥28.00'), findsOneWidget);
     expect(find.text('编辑'), findsOneWidget);
     expect(find.text('复制'), findsNothing);
     expect(find.text('删除'), findsNothing);
@@ -224,6 +236,72 @@ void main() {
       tester.getSize(find.byKey(const ValueKey('bill-detail-dialog'))).width,
       560,
     );
+    expect(
+      find.byKey(const ValueKey('bill-detail-dialog-close')),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('confirm request exposes a busy action and prevents duplicates', (
+    tester,
+  ) async {
+    final service = _PendingConfirmService();
+    const bill = FortuneBillVo(
+      billId: 1,
+      title: '待确认账单',
+      amount: 28,
+      billType: 1,
+      currencyCode: 'CNY',
+      confirm: false,
+      allowedActions: ['CONFIRM'],
+    );
+    await tester.pumpWidget(_detailHarness(bill, service: service));
+    await tester.tap(find.text('打开详情'));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('确认'));
+    await tester.pump();
+    expect(find.text('确认中…'), findsOneWidget);
+    await tester.tap(find.text('确认中…'));
+    await tester.pump();
+    expect(service.confirmCount, 1);
+
+    service.completer.complete();
+    await tester.pumpAndSettle();
+    expect(find.byType(BillDetailSheet), findsNothing);
+  });
+
+  testWidgets('source editor receives order component and version', (
+    tester,
+  ) async {
+    const bill = FortuneBillVo(
+      billId: 1,
+      bookId: 7,
+      orderId: 9,
+      orderComponent: FinanceOrderComponent.fee,
+      orderLedgerVersion: 4,
+      title: '手续费',
+      amount: 28,
+      billType: 1,
+      currencyCode: 'CNY',
+      allowedActions: ['EDIT'],
+    );
+    await tester.pumpWidget(_detailHarness(bill));
+    await tester.tap(find.text('打开详情'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('编辑'));
+    await tester.pumpAndSettle();
+
+    final editorRoute = ModalRoute.of(
+      tester.element(find.byKey(const ValueKey('editor-route-marker'))),
+    );
+    final editorArgs = BillEditorArgs.fromRouteArgs(
+      editorRoute?.settings.arguments,
+    );
+    expect(editorArgs.presetOrderComponent, FinanceOrderComponent.fee);
+    expect(editorArgs.expectedOrderVersion, 4);
+    expect(editorArgs.presetBookId, 7);
+    expect(editorArgs.presetOrderId, 9);
   });
 
   testWidgets('cancelling deletion preserves the open bill detail', (
@@ -330,6 +408,17 @@ class _PendingBillService extends BillService {
   }
 }
 
+class _PendingConfirmService extends BillService {
+  final completer = Completer<void>();
+  int confirmCount = 0;
+
+  @override
+  Future<void> confirm({required int bookId, required int billId}) {
+    confirmCount += 1;
+    return completer.future;
+  }
+}
+
 Widget _detailHarness(
   FortuneBillVo bill, {
   BillService? service,
@@ -347,6 +436,7 @@ Widget _detailHarness(
         S.delegate,
       ],
       supportedLocales: S.delegate.supportedLocales,
+      onGenerateRoute: AppRouter.onGenerateRoute,
       home: Builder(
         builder: (context) => Scaffold(
           body: ElevatedButton(

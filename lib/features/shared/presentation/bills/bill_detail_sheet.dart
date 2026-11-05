@@ -6,8 +6,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fortuneboot/core/icon/fx_icon_badge.dart';
 import 'package:fortuneboot/core/icon/smart_category_engine.dart';
 import 'package:fortuneboot/core/preferences/preferences_cubit.dart';
+import 'package:fortuneboot/features/orders/data/orders_models.dart';
 import 'package:fortuneboot/features/shared/data/bill_models.dart';
 import 'package:fortuneboot/features/shared/data/bill_service.dart';
+import 'package:fortuneboot/features/shared/presentation/bills/bill_attachment_card.dart';
+import 'package:fortuneboot/features/shared/presentation/bills/bill_detail_permissions.dart';
+import 'package:fortuneboot/features/shared/presentation/bills/bill_flow_amount.dart';
 import 'package:fortuneboot/fx/components/fx_button.dart';
 import 'package:fortuneboot/fx/components/fx_icon_button.dart';
 import 'package:fortuneboot/fx/components/fx_money_text.dart';
@@ -103,7 +107,6 @@ class _BillDetailSheetState extends State<BillDetailSheet> {
   }
 
   Widget _header(BuildContext context, bool hideAmounts) {
-    final color = FxFinanceColors.of(context).forBillType(_bill.billType);
     final catLine = <String>[];
     if (_bill.primaryCategoryName.isNotEmpty) {
       catLine.add(_bill.primaryCategoryName);
@@ -121,19 +124,7 @@ class _BillDetailSheetState extends State<BillDetailSheet> {
       catLine.add(_bill.accountName!);
     }
 
-    final amount = FxMoneyText(
-      amount:
-          FxBillType.fromValue(
-            _bill.billType,
-          )?.signedFlowAmount(_bill.displayAmount) ??
-          _bill.displayAmount,
-      currencyCode: _bill.currencyCode,
-      billType: _bill.billType,
-      showSign: !_isTransfer && _bill.billType != FxBillType.adjust.value,
-      color: color,
-      masked: hideAmounts,
-      compactWhenNeeded: true,
-    );
+    final amount = BillFlowAmount(bill: _bill, masked: hideAmounts);
     return LayoutBuilder(
       builder: (context, constraints) {
         final stacked =
@@ -153,8 +144,6 @@ class _BillDetailSheetState extends State<BillDetailSheet> {
                     style: FxTypography.titleLarge.copyWith(
                       fontWeight: FontWeight.w600,
                     ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
                   ),
                   if (catLine.isNotEmpty) ...[
                     const SizedBox(height: FxSpacing.xs),
@@ -176,6 +165,13 @@ class _BillDetailSheetState extends State<BillDetailSheet> {
             children: [
               heading,
               const SizedBox(height: FxSpacing.lg),
+              if (_bill.hasExtrasAdjustment)
+                Text(
+                  S.of(context).billsSettledAmount,
+                  style: FxTypography.label.copyWith(
+                    color: FxPalette.of(context).textSecondary,
+                  ),
+                ),
               Align(alignment: AlignmentDirectional.centerEnd, child: amount),
             ],
           );
@@ -185,7 +181,19 @@ class _BillDetailSheetState extends State<BillDetailSheet> {
           children: [
             Expanded(child: heading),
             const SizedBox(width: FxSpacing.lg),
-            amount,
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                if (_bill.hasExtrasAdjustment)
+                  Text(
+                    S.of(context).billsSettledAmount,
+                    style: FxTypography.label.copyWith(
+                      color: FxPalette.of(context).textSecondary,
+                    ),
+                  ),
+                amount,
+              ],
+            ),
           ],
         );
       },
@@ -194,6 +202,44 @@ class _BillDetailSheetState extends State<BillDetailSheet> {
 
   List<Widget> _infoRows(BuildContext context, bool hideAmounts) {
     final rows = <Widget>[];
+
+    if (_bill.hasExtrasAdjustment) {
+      rows.add(_sectionLabel(S.of(context).billsAmountBreakdown));
+      rows.add(
+        _kv(
+          S.of(context).billsOriginalAmount,
+          trailing: FxMoneyText(
+            amount: _bill.displayAmount,
+            currencyCode: _bill.currencyCode,
+            masked: hideAmounts,
+          ),
+        ),
+      );
+      if (_bill.feeTotal > 0) {
+        rows.add(
+          _kv(
+            S.of(context).billsFee,
+            trailing: FxMoneyText(
+              amount: _bill.feeTotal,
+              currencyCode: _bill.currencyCode,
+              masked: hideAmounts,
+            ),
+          ),
+        );
+      }
+      if (_bill.discountTotal > 0) {
+        rows.add(
+          _kv(
+            S.of(context).billsDiscount,
+            trailing: FxMoneyText(
+              amount: _bill.discountTotal,
+              currencyCode: _bill.currencyCode,
+              masked: hideAmounts,
+            ),
+          ),
+        );
+      }
+    }
 
     // 多分类拆分
     if (_bill.categoryAmountPair.length > 1) {
@@ -206,7 +252,7 @@ class _BillDetailSheetState extends State<BillDetailSheet> {
               amount: c.amount,
               currencyCode: _bill.currencyCode,
               billType: _bill.billType,
-              fontSize: 14,
+              fontSize: 15,
               masked: hideAmounts,
             ),
           ),
@@ -235,7 +281,7 @@ class _BillDetailSheetState extends State<BillDetailSheet> {
             trailing: FxMoneyText(
               amount: _bill.convertedAmount!,
               currencyCode: _bill.toCurrencyCode ?? _bill.currencyCode,
-              fontSize: 14,
+              fontSize: 15,
               masked: hideAmounts,
             ),
           ),
@@ -259,10 +305,7 @@ class _BillDetailSheetState extends State<BillDetailSheet> {
             alignment: WrapAlignment.end,
             spacing: FxSpacing.xs,
             runSpacing: FxSpacing.xs,
-            children: [
-              ...tags.take(3).map((tag) => FxTagChip(label: tag)),
-              if (tags.length > 3) FxTagChip(label: '+${tags.length - 3}'),
-            ],
+            children: [...tags.map((tag) => FxTagChip(label: tag))],
           ),
         ),
       );
@@ -286,16 +329,87 @@ class _BillDetailSheetState extends State<BillDetailSheet> {
             trailing: FxMoneyText(
               amount: e.amount,
               currencyCode: _bill.currencyCode,
-              fontSize: 14,
+              fontSize: 15,
               masked: hideAmounts,
             ),
           ),
         );
+        final metadata = [
+          if (e.categoryId != null)
+            '${S.of(context).billsExtraCategory} #${e.categoryId!}',
+          if (e.remark?.isNotEmpty == true) e.remark!,
+        ];
+        if (metadata.isNotEmpty) {
+          rows.add(
+            Padding(
+              padding: const EdgeInsets.only(bottom: FxSpacing.sm),
+              child: Text(
+                metadata.join(' · '),
+                style: FxTypography.body.copyWith(
+                  color: FxPalette.of(context).textSecondary,
+                ),
+              ),
+            ),
+          );
+        }
       }
     }
 
     if (_bill.remark != null && _bill.remark!.isNotEmpty) {
-      rows.add(_kv(S.of(context).billsRemark, value: _bill.remark));
+      rows.add(_sectionLabel(S.of(context).billsRemark));
+      rows.add(
+        Padding(
+          padding: const EdgeInsets.only(bottom: FxSpacing.md),
+          child: Text(_bill.remark!, style: FxTypography.body),
+        ),
+      );
+    }
+
+    rows.add(_sectionLabel(S.of(context).billsRecordStatus));
+    final component = _bill.orderComponent;
+    if (component != null) {
+      rows.add(
+        Padding(
+          padding: const EdgeInsets.only(bottom: FxSpacing.sm),
+          child: Text(
+            _componentLabel(context, component),
+            style: FxTypography.body,
+          ),
+        ),
+      );
+    }
+    rows.add(
+      Wrap(
+        spacing: FxSpacing.sm,
+        runSpacing: FxSpacing.sm,
+        children: [
+          Text(
+            _bill.include
+                ? S.of(context).billsFilterIncluded
+                : S.of(context).billsFilterExcluded,
+            style: FxTypography.body,
+          ),
+          Text(
+            _bill.confirm
+                ? S.of(context).billsFilterConfirmed
+                : S.of(context).billsPendingConfirm,
+            style: FxTypography.body,
+          ),
+        ],
+      ),
+    );
+    if (_bill.readOnlyReason?.isNotEmpty == true) {
+      rows.add(
+        Padding(
+          padding: const EdgeInsets.only(top: FxSpacing.sm),
+          child: Text(
+            _bill.readOnlyReason!,
+            style: FxTypography.body.copyWith(
+              color: FxPalette.of(context).textSecondary,
+            ),
+          ),
+        ),
+      );
     }
 
     if (_bill.hasFile) {
@@ -304,6 +418,22 @@ class _BillDetailSheetState extends State<BillDetailSheet> {
     }
 
     return rows;
+  }
+
+  String _componentLabel(
+    BuildContext context,
+    FinanceOrderComponent component,
+  ) {
+    if (component == FinanceOrderComponent.interest) {
+      return S.of(context).ordersComponentInterest;
+    }
+    if (component == FinanceOrderComponent.fee) {
+      return S.of(context).ordersComponentFee;
+    }
+    if (component == FinanceOrderComponent.writeOff) {
+      return S.of(context).ordersComponentWriteOff;
+    }
+    return S.of(context).ordersComponentPrincipal;
   }
 
   String _extraLabel(BuildContext context, BillExtra e) {
@@ -343,20 +473,32 @@ class _BillDetailSheetState extends State<BillDetailSheet> {
   }
 
   Widget _kvWidget(String key, Widget trailing) {
+    final textScale = MediaQuery.textScalerOf(context).scale(1);
+    final label = Text(
+      key,
+      style: FxTypography.label.copyWith(
+        color: FxPalette.of(context).textSecondary,
+      ),
+    );
+    if (textScale > 1.2) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: FxSpacing.sm),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            label,
+            const SizedBox(height: FxSpacing.xs),
+            Align(alignment: Alignment.centerRight, child: trailing),
+          ],
+        ),
+      );
+    }
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: FxSpacing.sm),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(
-            width: 72,
-            child: Text(
-              key,
-              style: FxTypography.label.copyWith(
-                color: FxPalette.of(context).textSecondary,
-              ),
-            ),
-          ),
+          label,
           const SizedBox(width: FxSpacing.md),
           Expanded(
             child: Align(alignment: Alignment.centerRight, child: trailing),
@@ -430,6 +572,7 @@ class _BillDetailSheetState extends State<BillDetailSheet> {
         button: true,
         label: file.originalName ?? S.of(context).billsAttachments,
         child: GestureDetector(
+          key: const ValueKey('bill-attachment-image'),
           onTap: () => _previewImage(bytes, file.originalName),
           child: ClipRRect(
             borderRadius: FxRadius.tileBorder,
@@ -444,8 +587,10 @@ class _BillDetailSheetState extends State<BillDetailSheet> {
         ),
       );
     }
-    return _fileFallback(file);
+    return _fileCard(file);
   }
+
+  Widget _fileCard(BillFileVo file) => BillAttachmentCard(file: file);
 
   Widget _fileFallback(BillFileVo file) {
     final palette = FxPalette.of(context);
@@ -499,11 +644,18 @@ class _BillDetailSheetState extends State<BillDetailSheet> {
                 ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.all(FxSpacing.sm),
-              child: FxButton.text(
-                label: S.of(context).billsClose,
-                onPressed: () => Navigator.of(ctx).pop(),
+            SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.all(FxSpacing.sm),
+                child: FilledButton(
+                  key: const ValueKey('bill-image-preview-close'),
+                  style: FilledButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    foregroundColor: Colors.black,
+                  ),
+                  onPressed: () => Navigator.of(ctx).pop(),
+                  child: Text(S.of(context).billsClose),
+                ),
               ),
             ),
           ],
@@ -521,6 +673,8 @@ class BillDetailActions extends StatelessWidget {
     required this.onEdit,
     required this.onDelete,
     required this.onConfirmToggle,
+    this.confirmBusy = false,
+    this.deleteBusy = false,
   });
 
   final FortuneBillVo bill;
@@ -528,11 +682,15 @@ class BillDetailActions extends StatelessWidget {
   final VoidCallback onEdit;
   final VoidCallback onDelete;
   final ValueChanged<bool> onConfirmToggle;
+  final bool confirmBusy;
+  final bool deleteBusy;
 
   @override
   Widget build(BuildContext context) {
     final palette = FxPalette.of(context);
-    final canEditOrCopy = bill.billType != FxBillType.adjust.value;
+    final permissions = BillDetailPermissions.of(bill);
+    final canEditOrCopy = permissions.canEdit || permissions.canCopy;
+    if (permissions.isReadOnly) return const SizedBox.shrink();
     return DecoratedBox(
       decoration: BoxDecoration(
         color: palette.surface,
@@ -552,16 +710,20 @@ class BillDetailActions extends StatelessWidget {
                 child: FxButton(
                   label: S.of(context).billsEdit,
                   icon: Icons.edit_outlined,
-                  onPressed: onEdit,
+                  onPressed: confirmBusy || deleteBusy ? null : onEdit,
                 ),
               ),
             if (canEditOrCopy) const SizedBox(width: FxSpacing.sm),
             Expanded(
               child: FxButton.tonal(
-                label: bill.confirm
+                label: confirmBusy
+                    ? S.of(context).billsConfirming
+                    : bill.confirm
                     ? S.of(context).billsUnconfirm
                     : S.of(context).confirm,
-                onPressed: () => onConfirmToggle(!bill.confirm),
+                onPressed: confirmBusy || deleteBusy
+                    ? null
+                    : () => onConfirmToggle(!bill.confirm),
               ),
             ),
             const SizedBox(width: FxSpacing.xs),
@@ -569,7 +731,9 @@ class BillDetailActions extends StatelessWidget {
               key: const ValueKey('bill-detail-more'),
               icon: Icons.more_horiz_rounded,
               tooltip: '更多操作',
-              onPressed: () => _showMoreActions(context, canEditOrCopy),
+              onPressed: confirmBusy || deleteBusy
+                  ? null
+                  : () => _showMoreActions(context, permissions),
             ),
           ],
         ),
@@ -577,7 +741,10 @@ class BillDetailActions extends StatelessWidget {
     );
   }
 
-  void _showMoreActions(BuildContext context, bool canEditOrCopy) {
+  void _showMoreActions(
+    BuildContext context,
+    BillDetailPermissions permissions,
+  ) {
     FxSheet.show<void>(
       context,
       title: S.of(context).billsDetailTitle,
@@ -585,7 +752,7 @@ class BillDetailActions extends StatelessWidget {
         builder: (sheetContext) => Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            if (canEditOrCopy)
+            if (permissions.canCopy)
               ListTile(
                 key: const ValueKey('bill-detail-copy'),
                 leading: const Icon(Icons.copy_outlined),
@@ -595,21 +762,22 @@ class BillDetailActions extends StatelessWidget {
                   onCopy();
                 },
               ),
-            ListTile(
-              key: const ValueKey('bill-detail-delete'),
-              leading: Icon(
-                Icons.delete_outline_rounded,
-                color: FxPalette.of(context).danger,
+            if (permissions.canDelete)
+              ListTile(
+                key: const ValueKey('bill-detail-delete'),
+                leading: Icon(
+                  Icons.delete_outline_rounded,
+                  color: FxPalette.of(context).danger,
+                ),
+                title: Text(
+                  S.of(context).billsDelete,
+                  style: TextStyle(color: FxPalette.of(context).danger),
+                ),
+                onTap: () {
+                  Navigator.of(sheetContext).pop();
+                  onDelete();
+                },
               ),
-              title: Text(
-                S.of(context).billsDelete,
-                style: TextStyle(color: FxPalette.of(context).danger),
-              ),
-              onTap: () {
-                Navigator.of(sheetContext).pop();
-                onDelete();
-              },
-            ),
           ],
         ),
       ),

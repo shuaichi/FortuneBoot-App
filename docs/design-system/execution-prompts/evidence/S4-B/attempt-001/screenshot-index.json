@@ -1,0 +1,162 @@
+[
+  {
+    "page": "Detail full",
+    "state": "full",
+    "theme": "LIGHT",
+    "logicalSize": [
+      390,
+      1400
+    ],
+    "textScale": 1,
+    "sourceHead": "1243a5b3e4eb2603ca7ea7c0641f724b5ccd5e8e",
+    "sourceSha256": "733ebeb8bcc583acfe5a4e44110a877f707578d52fb2e94e44ae2188816a1ad2",
+    "path": "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/detail-light-390-full.png",
+    "pathSha256": "8c592fad4c904b07056303fc0c4b65ee0b4dce5a945a147bee132005218d8e79",
+    "actuallyViewed": true,
+    "observation": "实付98与100+3-5分解、6标签、附加备注和段落备注已查看。"
+  },
+  {
+    "page": "Detail dark full",
+    "state": "full",
+    "theme": "DARK",
+    "logicalSize": [
+      390,
+      1400
+    ],
+    "textScale": 1,
+    "sourceHead": "1243a5b3e4eb2603ca7ea7c0641f724b5ccd5e8e",
+    "sourceSha256": "733ebeb8bcc583acfe5a4e44110a877f707578d52fb2e94e44ae2188816a1ad2",
+    "path": "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/detail-dark-390-full.png",
+    "pathSha256": "896f313cdca80cd8e2474a9086c858632ddd2e1dd4304eb232d7b82551cb5cbc",
+    "actuallyViewed": true,
+    "observation": "暗色下金额、标签和阅读层级清晰，无新增阴影，已查看。"
+  },
+  {
+    "page": "Detail 2x",
+    "state": "full",
+    "theme": "LIGHT",
+    "logicalSize": [
+      320,
+      1700
+    ],
+    "textScale": 2,
+    "sourceHead": "1243a5b3e4eb2603ca7ea7c0641f724b5ccd5e8e",
+    "sourceSha256": "733ebeb8bcc583acfe5a4e44110a877f707578d52fb2e94e44ae2188816a1ad2",
+    "path": "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/detail-light-320-2x-full.png",
+    "pathSha256": "db2c95eeac91e6a6156848e4b1b662f31109093b376096259264ec69d7ec600b",
+    "actuallyViewed": true,
+    "observation": "320/2x 长标题、键值与标签重排，无裁切，已查看。"
+  },
+  {
+    "page": "Detail masked 2x",
+    "state": "masked",
+    "theme": "DARK",
+    "logicalSize": [
+      440,
+      1700
+    ],
+    "textScale": 2,
+    "sourceHead": "1243a5b3e4eb2603ca7ea7c0641f724b5ccd5e8e",
+    "sourceSha256": "733ebeb8bcc583acfe5a4e44110a877f707578d52fb2e94e44ae2188816a1ad2",
+    "path": "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/detail-dark-440-2x-masked.png",
+    "pathSha256": "03ee3912b033c139458ca2f71ee05be26c568b0ec1b00d76a89c65fee145a04f",
+    "actuallyViewed": true,
+    "observation": "440/2x 金额及分解均为掩码，标签与备注仍可读，已查看。"
+  },
+  {
+    "page": "Attachment failure",
+    "state": "file-error",
+    "theme": "LIGHT",
+    "logicalSize": [
+      390,
+      900
+    ],
+    "textScale": 1,
+    "sourceHead": "1243a5b3e4eb2603ca7ea7c0641f724b5ccd5e8e",
+    "sourceSha256": "733ebeb8bcc583acfe5a4e44110a877f707578d52fb2e94e44ae2188816a1ad2",
+    "path": "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/detail-light-390-file-error.png",
+    "pathSha256": "b7de81d80908e07679e282132295a51c55d07bfb56379a265bb35b35700b5733",
+    "actuallyViewed": true,
+    "observation": "附件失败保留账单上下文和重试，已查看。"
+  },
+  {
+    "page": "Attachments",
+    "state": "attachments",
+    "theme": "LIGHT",
+    "logicalSize": [
+      390,
+      1100
+    ],
+    "textScale": 1,
+    "sourceHead": "1243a5b3e4eb2603ca7ea7c0641f724b5ccd5e8e",
+    "sourceSha256": "733ebeb8bcc583acfe5a4e44110a877f707578d52fb2e94e44ae2188816a1ad2",
+    "path": "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/detail-light-390-attachments.png",
+    "pathSha256": "7ffe395edb6b23dad7938d689969502a878aef0f5408a29886ec51ff5679b43f",
+    "actuallyViewed": true,
+    "observation": "PDF 文件名、类型、打开/保存可见，已查看。"
+  },
+  {
+    "page": "Image preview",
+    "state": "image-preview",
+    "theme": "DARK",
+    "logicalSize": [
+      390,
+      900
+    ],
+    "textScale": 1,
+    "sourceHead": "1243a5b3e4eb2603ca7ea7c0641f724b5ccd5e8e",
+    "sourceSha256": "733ebeb8bcc583acfe5a4e44110a877f707578d52fb2e94e44ae2188816a1ad2",
+    "path": "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/detail-dark-390-image-preview.png",
+    "pathSha256": "a080515966d02062ccf7533294d5dcec3eb6f702d9fe47965fbdd209b2145081",
+    "actuallyViewed": true,
+    "observation": "黑底预览关闭白底黑字，已查看。"
+  },
+  {
+    "page": "Read only",
+    "state": "readonly",
+    "theme": "LIGHT",
+    "logicalSize": [
+      390,
+      1100
+    ],
+    "textScale": 1,
+    "sourceHead": "1243a5b3e4eb2603ca7ea7c0641f724b5ccd5e8e",
+    "sourceSha256": "733ebeb8bcc583acfe5a4e44110a877f707578d52fb2e94e44ae2188816a1ad2",
+    "path": "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/detail-light-390-readonly.png",
+    "pathSha256": "f2845ea5731446d1139fa9b51d44d9628e14e9d24bb40d06341f06b391255f87",
+    "actuallyViewed": true,
+    "observation": "来源锁定原因明确，无编辑/复制/删除动作，已查看。"
+  },
+  {
+    "page": "Wide dialog close",
+    "state": "wide-close",
+    "theme": "DARK",
+    "logicalSize": [
+      1440,
+      1100
+    ],
+    "textScale": 1,
+    "sourceHead": "1243a5b3e4eb2603ca7ea7c0641f724b5ccd5e8e",
+    "sourceSha256": "733ebeb8bcc583acfe5a4e44110a877f707578d52fb2e94e44ae2188816a1ad2",
+    "path": "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/detail-dark-1440-wide-close.png",
+    "pathSha256": "6bb4c7a34a3ee7db94b299e24bef931c9bb3a27d3fd89c4b5978217572519873",
+    "actuallyViewed": true,
+    "observation": "宽屏详情有显式关闭和稳定动作，已查看。"
+  },
+  {
+    "page": "English 2x",
+    "state": "english",
+    "theme": "LIGHT",
+    "logicalSize": [
+      440,
+      1700
+    ],
+    "textScale": 2,
+    "sourceHead": "1243a5b3e4eb2603ca7ea7c0641f724b5ccd5e8e",
+    "sourceSha256": "733ebeb8bcc583acfe5a4e44110a877f707578d52fb2e94e44ae2188816a1ad2",
+    "path": "docs/design-system/execution-prompts/evidence/S4-B/attempt-001/detail-light-440-2x-english.png",
+    "pathSha256": "a0913b228d430afd91108d1d63e706b6cadff179b9bae23e9d3f3187122100f6",
+    "actuallyViewed": true,
+    "observation": "英文 Original/Fee/Discount 完整，无断词，已查看。"
+  }
+]
