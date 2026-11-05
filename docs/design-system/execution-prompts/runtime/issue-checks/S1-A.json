@@ -1,0 +1,2255 @@
+{
+  "schemaVersion": 1,
+  "stage": "S1-A",
+  "attempt": 1,
+  "sourceSha": "6061359de0d6db6597176a9158ee826de490f6c4",
+  "scope": "64 S1-A contributing instances; local shared contracts and behavior only, no global VERIFIED_CLOSED.",
+  "summary": {
+    "total": 64,
+    "byState": {
+      "CONFIRMED": 9,
+      "DISPROVED": 25,
+      "IMPLEMENTED_LOCAL": 6,
+      "VERIFIED_LOCAL": 24
+    },
+    "verifiedClosed": 0
+  },
+  "items": [
+    {
+      "issueId": "DS-021",
+      "stageId": "S1-A",
+      "state": "CONFIRMED",
+      "priority": "P2",
+      "title": "长按拖动是唯一排序方式，缺少可访问的等效操作",
+      "sourcePaths": [
+        "lib/features/dashboard/presentation/widgets/dashboard_draggable_card.dart",
+        "lib/features/stats/presentation/widgets/stats_layout_editor.dart",
+        "lib/fx/layout/fx_bento_grid.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/dashboard/presentation/widgets/dashboard_draggable_card.dart": "c928929c27aea9dcd95fb6739cab8ceea6809ac9e4e2f6876a5166ca81b020ac",
+        "lib/features/stats/presentation/widgets/stats_layout_editor.dart": "655f1e271b65e028fc97a1da10ca2e7fc6755c4248b8ea850c8d55a44423b7b6",
+        "lib/fx/layout/fx_bento_grid.dart": "61ce6051b6e96dc6e32d89ade91505320d434bd7d0310ce47e1ed6b5cbb90073"
+      },
+      "observedBehavior": "Dashboard/Stats 当前仍只有拖动排序，没有上移/下移或 CustomSemanticsAction；本阶段未创建无真实调用方的共享排序协议。",
+      "implemented": "NO_S1-A_IMPLEMENTATION_OUTSIDE_ALLOWED_SHARED_SCOPE",
+      "verified": "NOT_VERIFIED_CONSUMER_BEHAVIOR_UNCHANGED",
+      "disproved": false,
+      "blocked_external": [],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/flutter-analyze.txt",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/full-tests.json"
+      ],
+      "unverified": [
+        "S2 独立审查",
+        "真机、VoiceOver/TalkBack、平台编译与相关消费者验收"
+      ],
+      "reason": "保留给对应消费者 owner；S1-A 不宣布完成，也不伪造共享能力。",
+      "closure": "PENDING_S2_INDEPENDENT_REVIEW_NO_VERIFIED_CLOSED"
+    },
+    {
+      "issueId": "DS-022",
+      "stageId": "S1-A",
+      "state": "CONFIRMED",
+      "priority": "P2",
+      "title": "拖动时禁止列表滚动，跨屏排序缺少路径",
+      "sourcePaths": [
+        "lib/features/dashboard/presentation/dashboard_page.dart",
+        "lib/features/dashboard/presentation/widgets/dashboard_draggable_card.dart",
+        "lib/features/stats/presentation/stats_page.dart",
+        "lib/features/stats/presentation/widgets/stats_layout_editor.dart",
+        "lib/fx/layout/fx_bento_grid.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/dashboard/presentation/dashboard_page.dart": "cf496f419711e45182c9340aa914a99bbea1905b8eb1aacd711a4c489683c9b8",
+        "lib/features/dashboard/presentation/widgets/dashboard_draggable_card.dart": "c928929c27aea9dcd95fb6739cab8ceea6809ac9e4e2f6876a5166ca81b020ac",
+        "lib/features/stats/presentation/stats_page.dart": "474ab99b7a684fbef6b3582fe21cb9edc2b71b6d9db95915e50ee93ee7c81311",
+        "lib/features/stats/presentation/widgets/stats_layout_editor.dart": "655f1e271b65e028fc97a1da10ca2e7fc6755c4248b8ea850c8d55a44423b7b6",
+        "lib/fx/layout/fx_bento_grid.dart": "61ce6051b6e96dc6e32d89ade91505320d434bd7d0310ce47e1ed6b5cbb90073"
+      },
+      "observedBehavior": "拖动时列表滚动和跨屏路径属于 Dashboard/Stats 编辑器，本阶段未改。",
+      "implemented": "NO_S1-A_IMPLEMENTATION_OUTSIDE_ALLOWED_SHARED_SCOPE",
+      "verified": "NOT_VERIFIED_CONSUMER_BEHAVIOR_UNCHANGED",
+      "disproved": false,
+      "blocked_external": [],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/flutter-analyze.txt",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/full-tests.json"
+      ],
+      "unverified": [
+        "S2 独立审查",
+        "真机、VoiceOver/TalkBack、平台编译与相关消费者验收"
+      ],
+      "reason": "保留给对应消费者 owner；S1-A 不宣布完成，也不伪造共享能力。",
+      "closure": "PENDING_S2_INDEPENDENT_REVIEW_NO_VERIFIED_CLOSED"
+    },
+    {
+      "issueId": "DS-023",
+      "stageId": "S1-A",
+      "state": "CONFIRMED",
+      "priority": "P2",
+      "title": "统计拖动占位骤缩为 72，打乱当前布局参照",
+      "sourcePaths": [
+        "lib/features/dashboard/presentation/widgets/dashboard_draggable_card.dart",
+        "lib/features/stats/presentation/widgets/stats_layout_editor.dart",
+        "lib/fx/layout/fx_bento_grid.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/dashboard/presentation/widgets/dashboard_draggable_card.dart": "c928929c27aea9dcd95fb6739cab8ceea6809ac9e4e2f6876a5166ca81b020ac",
+        "lib/features/stats/presentation/widgets/stats_layout_editor.dart": "655f1e271b65e028fc97a1da10ca2e7fc6755c4248b8ea850c8d55a44423b7b6",
+        "lib/fx/layout/fx_bento_grid.dart": "61ce6051b6e96dc6e32d89ade91505320d434bd7d0310ce47e1ed6b5cbb90073"
+      },
+      "observedBehavior": "统计拖动占位 72 的行为不在 lib/fx 共享组件内，本阶段未改。",
+      "implemented": "NO_S1-A_IMPLEMENTATION_OUTSIDE_ALLOWED_SHARED_SCOPE",
+      "verified": "NOT_VERIFIED_CONSUMER_BEHAVIOR_UNCHANGED",
+      "disproved": false,
+      "blocked_external": [],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/flutter-analyze.txt",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/full-tests.json"
+      ],
+      "unverified": [
+        "S2 独立审查",
+        "真机、VoiceOver/TalkBack、平台编译与相关消费者验收"
+      ],
+      "reason": "保留给对应消费者 owner；S1-A 不宣布完成，也不伪造共享能力。",
+      "closure": "PENDING_S2_INDEPENDENT_REVIEW_NO_VERIFIED_CLOSED"
+    },
+    {
+      "issueId": "DS-024",
+      "stageId": "S1-A",
+      "state": "CONFIRMED",
+      "priority": "P2",
+      "title": "移动浏览器编辑首页时直接按下即拖，和滚动竞争",
+      "sourcePaths": [
+        "lib/features/dashboard/presentation/widgets/dashboard_draggable_card.dart",
+        "lib/features/stats/presentation/widgets/stats_layout_editor.dart",
+        "lib/fx/layout/fx_bento_grid.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/dashboard/presentation/widgets/dashboard_draggable_card.dart": "c928929c27aea9dcd95fb6739cab8ceea6809ac9e4e2f6876a5166ca81b020ac",
+        "lib/features/stats/presentation/widgets/stats_layout_editor.dart": "655f1e271b65e028fc97a1da10ca2e7fc6755c4248b8ea850c8d55a44423b7b6",
+        "lib/fx/layout/fx_bento_grid.dart": "61ce6051b6e96dc6e32d89ade91505320d434bd7d0310ce47e1ed6b5cbb90073"
+      },
+      "observedBehavior": "移动浏览器按下即拖与滚动竞争属于具体编辑器手势，本阶段未改。",
+      "implemented": "NO_S1-A_IMPLEMENTATION_OUTSIDE_ALLOWED_SHARED_SCOPE",
+      "verified": "NOT_VERIFIED_CONSUMER_BEHAVIOR_UNCHANGED",
+      "disproved": false,
+      "blocked_external": [],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/flutter-analyze.txt",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/full-tests.json"
+      ],
+      "unverified": [
+        "S2 独立审查",
+        "真机、VoiceOver/TalkBack、平台编译与相关消费者验收"
+      ],
+      "reason": "保留给对应消费者 owner；S1-A 不宣布完成，也不伪造共享能力。",
+      "closure": "PENDING_S2_INDEPENDENT_REVIEW_NO_VERIFIED_CLOSED"
+    },
+    {
+      "issueId": "BO-004",
+      "stageId": "S1-A",
+      "state": "VERIFIED_LOCAL",
+      "priority": "P2",
+      "title": "共性｜表单的视觉标签没有形成明确的输入语义",
+      "sourcePaths": [
+        "lib/features/bill_editor/presentation/bill_editor_page.dart",
+        "lib/features/bill_editor/presentation/widgets/amount_field.dart",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart",
+        "lib/features/orders/presentation/widgets/order_filter_sheet.dart",
+        "lib/features/orders/presentation/widgets/order_form_sheet.dart",
+        "lib/fx/components/fx_amount_input.dart",
+        "lib/fx/components/fx_text_field.dart",
+        "test/fx/components/fx_amount_input_test.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/bill_editor/presentation/bill_editor_page.dart": "5451407c3e3d50517d492044963c196edb1c7031e082c90c8b31e89d0341685c",
+        "lib/features/bill_editor/presentation/widgets/amount_field.dart": "202347fab1b9740116c05583db2bf7fd9fbee562241e3483e88f8ba364d5bad0",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart": "3fccf45dff945532525a8f4dd176f3405f38b88b5a4fbe7854025d11eaa8e43e",
+        "lib/features/orders/presentation/widgets/order_filter_sheet.dart": "c2cb3fa0333e4effc502137dc4581d77cb5a448546deb6b8c607241fd830a92d",
+        "lib/features/orders/presentation/widgets/order_form_sheet.dart": "8d46a549f22eba0a871192e2bf5c4ff755535f61024c3458eae4709167cdf0f8",
+        "lib/fx/components/fx_amount_input.dart": "653c91a33775c7366a553a8f9dbc83682f9976d86645dfaa8f898b3e7315e441",
+        "lib/fx/components/fx_text_field.dart": "6859f072793143019bc412e1b33af9d8b0878785d4ee4765fddefe538186e3ff",
+        "test/fx/components/fx_amount_input_test.dart": "b0b8f5ac3eb275c0d869517f8fbf1574ccecbcfdfa86cd7ac85004d2f731f63a"
+      },
+      "observedBehavior": "FxTextField 的框外 label 通过 MergeSemantics 与输入关联。",
+      "implemented": "保留持久 label/error，并验证字段语义。",
+      "verified": "当前决定性测试通过：test/fx/components/fx_amount_input_test.dart；最终全量 521 通过、1 跳过、0 失败。",
+      "disproved": false,
+      "blocked_external": [
+        "S2_INDEPENDENT_REVIEW",
+        "DEVICE_AND_PLATFORM_ACCEPTANCE"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/flutter-analyze.txt",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/full-tests.json",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/screenshot-index.json",
+        "test/fx/components/fx_amount_input_test.dart"
+      ],
+      "unverified": [
+        "S2 独立审查",
+        "真机、VoiceOver/TalkBack、平台编译与相关消费者验收"
+      ],
+      "reason": "仅 S1-A 共享实例本地验证，不代替全局 owner 或独立审查关闭。",
+      "closure": "PENDING_S2_INDEPENDENT_REVIEW_NO_VERIFIED_CLOSED"
+    },
+    {
+      "issueId": "BO-005",
+      "stageId": "S1-A",
+      "state": "VERIFIED_LOCAL",
+      "priority": "P2",
+      "title": "共性｜数字键盘与长表单缺少一致的结束编辑路径",
+      "sourcePaths": [
+        "lib/features/bill_editor/presentation/bill_editor_page.dart",
+        "lib/features/bill_editor/presentation/widgets/amount_field.dart",
+        "lib/features/orders/presentation/widgets/order_form_sheet.dart",
+        "lib/fx/components/fx_amount_input.dart",
+        "lib/fx/components/fx_text_field.dart",
+        "test/fx/components/fx_amount_input_test.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/bill_editor/presentation/bill_editor_page.dart": "5451407c3e3d50517d492044963c196edb1c7031e082c90c8b31e89d0341685c",
+        "lib/features/bill_editor/presentation/widgets/amount_field.dart": "202347fab1b9740116c05583db2bf7fd9fbee562241e3483e88f8ba364d5bad0",
+        "lib/features/orders/presentation/widgets/order_form_sheet.dart": "8d46a549f22eba0a871192e2bf5c4ff755535f61024c3458eae4709167cdf0f8",
+        "lib/fx/components/fx_amount_input.dart": "653c91a33775c7366a553a8f9dbc83682f9976d86645dfaa8f898b3e7315e441",
+        "lib/fx/components/fx_text_field.dart": "6859f072793143019bc412e1b33af9d8b0878785d4ee4765fddefe538186e3ff",
+        "test/fx/components/fx_amount_input_test.dart": "b0b8f5ac3eb275c0d869517f8fbf1574ccecbcfdfa86cd7ac85004d2f731f63a"
+      },
+      "observedBehavior": "数字键盘 Done 与点击外部原先缺少一致结束路径。",
+      "implemented": "FxAmountInput Done unfocus；FxTextField 默认点击外部 unfocus。",
+      "verified": "当前决定性测试通过：test/fx/components/fx_amount_input_test.dart；最终全量 521 通过、1 跳过、0 失败。",
+      "disproved": false,
+      "blocked_external": [
+        "S2_INDEPENDENT_REVIEW",
+        "DEVICE_AND_PLATFORM_ACCEPTANCE"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/flutter-analyze.txt",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/full-tests.json",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/screenshot-index.json",
+        "test/fx/components/fx_amount_input_test.dart"
+      ],
+      "unverified": [
+        "S2 独立审查",
+        "真机、VoiceOver/TalkBack、平台编译与相关消费者验收"
+      ],
+      "reason": "仅 S1-A 共享实例本地验证，不代替全局 owner 或独立审查关闭。",
+      "closure": "PENDING_S2_INDEPENDENT_REVIEW_NO_VERIFIED_CLOSED"
+    },
+    {
+      "issueId": "BO-006",
+      "stageId": "S1-A",
+      "state": "VERIFIED_LOCAL",
+      "priority": "P2",
+      "title": "共性｜金额输入对常见粘贴内容静默拒绝",
+      "sourcePaths": [
+        "lib/features/bill_editor/presentation/bill_editor_page.dart",
+        "lib/features/bill_editor/presentation/widgets/amount_field.dart",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart",
+        "lib/fx/components/fx_amount_input.dart",
+        "lib/fx/components/fx_text_field.dart",
+        "test/fx/components/fx_amount_input_test.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/bill_editor/presentation/bill_editor_page.dart": "5451407c3e3d50517d492044963c196edb1c7031e082c90c8b31e89d0341685c",
+        "lib/features/bill_editor/presentation/widgets/amount_field.dart": "202347fab1b9740116c05583db2bf7fd9fbee562241e3483e88f8ba364d5bad0",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart": "3fccf45dff945532525a8f4dd176f3405f38b88b5a4fbe7854025d11eaa8e43e",
+        "lib/fx/components/fx_amount_input.dart": "653c91a33775c7366a553a8f9dbc83682f9976d86645dfaa8f898b3e7315e441",
+        "lib/fx/components/fx_text_field.dart": "6859f072793143019bc412e1b33af9d8b0878785d4ee4765fddefe538186e3ff",
+        "test/fx/components/fx_amount_input_test.dart": "b0b8f5ac3eb275c0d869517f8fbf1574ccecbcfdfa86cd7ac85004d2f731f63a"
+      },
+      "observedBehavior": "金额粘贴货币符号/千分位原先被整体静默拒绝。",
+      "implemented": "规范化常见货币符号、空格、千分位、全角数字后校验，修正光标范围。",
+      "verified": "当前决定性测试通过：test/fx/components/fx_amount_input_test.dart；最终全量 521 通过、1 跳过、0 失败。",
+      "disproved": false,
+      "blocked_external": [
+        "S2_INDEPENDENT_REVIEW",
+        "DEVICE_AND_PLATFORM_ACCEPTANCE"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/flutter-analyze.txt",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/full-tests.json",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/screenshot-index.json",
+        "test/fx/components/fx_amount_input_test.dart"
+      ],
+      "unverified": [
+        "S2 独立审查",
+        "真机、VoiceOver/TalkBack、平台编译与相关消费者验收"
+      ],
+      "reason": "仅 S1-A 共享实例本地验证，不代替全局 owner 或独立审查关闭。",
+      "closure": "PENDING_S2_INDEPENDENT_REVIEW_NO_VERIFIED_CLOSED"
+    },
+    {
+      "issueId": "DT-01",
+      "stageId": "S1-A",
+      "state": "DISPROVED",
+      "priority": "P2",
+      "title": "原 palette 只有 canvas/surface/surfaceMuted，sheet 也取 surface；`fx_theme.dart`、`fx_sheet.dart`（S）",
+      "sourcePaths": [
+        "lib/fx/theme/fx_theme.dart",
+        "lib/fx/tokens/fx_typography.dart"
+      ],
+      "sourceSha256": {
+        "lib/fx/theme/fx_theme.dart": "14696bcb234330fecf2719860372f4d38645e8358f60c1c6a65473de0040ff8d",
+        "lib/fx/tokens/fx_typography.dart": "50ef1a62747520689df0cac356128c14478702cffb6a1d338cae6f855bcbe959"
+      },
+      "observedBehavior": "FxPalette 已有独立 surfaceRaised，FxSheet 与模态弹层使用该浮层表面。",
+      "implemented": "既有底座或本轮当前源码已包含反证；未为凑工作量重改。",
+      "verified": "当前源码 SHA、相关回归、分析以及适用的已查看 Flutter fixture 支持原审计描述在本共享实例不成立。",
+      "disproved": true,
+      "blocked_external": [
+        "S2_INDEPENDENT_REVIEW",
+        "DEVICE_AND_PLATFORM_ACCEPTANCE"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/flutter-analyze.txt",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/full-tests.json",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/screenshot-index.json"
+      ],
+      "unverified": [
+        "S2 独立审查",
+        "真机、VoiceOver/TalkBack、平台编译与相关消费者验收"
+      ],
+      "reason": "仅证伪原报告对当前共享实例的描述，不抹掉历史审计。",
+      "closure": "PENDING_S2_INDEPENDENT_REVIEW_NO_VERIFIED_CLOSED"
+    },
+    {
+      "issueId": "DT-02",
+      "stageId": "S1-A",
+      "state": "DISPROVED",
+      "priority": "P2",
+      "title": "原亮色 canvas #F7F8FA、muted #F5F6F8 与白表面极近（S/V）",
+      "sourcePaths": [
+        "lib/fx/theme/fx_theme.dart",
+        "lib/fx/tokens/fx_typography.dart"
+      ],
+      "sourceSha256": {
+        "lib/fx/theme/fx_theme.dart": "14696bcb234330fecf2719860372f4d38645e8358f60c1c6a65473de0040ff8d",
+        "lib/fx/tokens/fx_typography.dart": "50ef1a62747520689df0cac356128c14478702cffb6a1d338cae6f855bcbe959"
+      },
+      "observedBehavior": "当前 canvas/surfaceMuted/surface 为可区分的中性色阶，亮暗 fixture 已查看。",
+      "implemented": "既有底座或本轮当前源码已包含反证；未为凑工作量重改。",
+      "verified": "当前源码 SHA、相关回归、分析以及适用的已查看 Flutter fixture 支持原审计描述在本共享实例不成立。",
+      "disproved": true,
+      "blocked_external": [
+        "S2_INDEPENDENT_REVIEW",
+        "DEVICE_AND_PLATFORM_ACCEPTANCE"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/flutter-analyze.txt",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/full-tests.json",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/screenshot-index.json"
+      ],
+      "unverified": [
+        "S2 独立审查",
+        "真机、VoiceOver/TalkBack、平台编译与相关消费者验收"
+      ],
+      "reason": "仅证伪原报告对当前共享实例的描述，不抹掉历史审计。",
+      "closure": "PENDING_S2_INDEPENDENT_REVIEW_NO_VERIFIED_CLOSED"
+    },
+    {
+      "issueId": "DT-03",
+      "stageId": "S1-A",
+      "state": "DISPROVED",
+      "priority": "P2",
+      "title": "原暗色 #0B0F17/#161B24/#1F2630 带明显蓝色底调（S）",
+      "sourcePaths": [
+        "lib/fx/theme/fx_theme.dart",
+        "lib/fx/tokens/fx_typography.dart"
+      ],
+      "sourceSha256": {
+        "lib/fx/theme/fx_theme.dart": "14696bcb234330fecf2719860372f4d38645e8358f60c1c6a65473de0040ff8d",
+        "lib/fx/tokens/fx_typography.dart": "50ef1a62747520689df0cac356128c14478702cffb6a1d338cae6f855bcbe959"
+      },
+      "observedBehavior": "当前暗色为中性 #101012/#18181B/#202024，不再使用原蓝色底调。",
+      "implemented": "既有底座或本轮当前源码已包含反证；未为凑工作量重改。",
+      "verified": "当前源码 SHA、相关回归、分析以及适用的已查看 Flutter fixture 支持原审计描述在本共享实例不成立。",
+      "disproved": true,
+      "blocked_external": [
+        "S2_INDEPENDENT_REVIEW",
+        "DEVICE_AND_PLATFORM_ACCEPTANCE"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/flutter-analyze.txt",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/full-tests.json",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/screenshot-index.json"
+      ],
+      "unverified": [
+        "S2 独立审查",
+        "真机、VoiceOver/TalkBack、平台编译与相关消费者验收"
+      ],
+      "reason": "仅证伪原报告对当前共享实例的描述，不抹掉历史审计。",
+      "closure": "PENDING_S2_INDEPENDENT_REVIEW_NO_VERIFIED_CLOSED"
+    },
+    {
+      "issueId": "DT-04",
+      "stageId": "S1-A",
+      "state": "DISPROVED",
+      "priority": "P2",
+      "title": "border 同时用于卡片轮廓、分隔线、输入框、图表网格（S）",
+      "sourcePaths": [
+        "lib/fx/theme/fx_theme.dart",
+        "lib/fx/tokens/fx_typography.dart"
+      ],
+      "sourceSha256": {
+        "lib/fx/theme/fx_theme.dart": "14696bcb234330fecf2719860372f4d38645e8358f60c1c6a65473de0040ff8d",
+        "lib/fx/tokens/fx_typography.dart": "50ef1a62747520689df0cac356128c14478702cffb6a1d338cae6f855bcbe959"
+      },
+      "observedBehavior": "卡片 border、输入 borderStrong、分隔 separator 与图表网格 separator 已分工。",
+      "implemented": "既有底座或本轮当前源码已包含反证；未为凑工作量重改。",
+      "verified": "当前源码 SHA、相关回归、分析以及适用的已查看 Flutter fixture 支持原审计描述在本共享实例不成立。",
+      "disproved": true,
+      "blocked_external": [
+        "S2_INDEPENDENT_REVIEW",
+        "DEVICE_AND_PLATFORM_ACCEPTANCE"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/flutter-analyze.txt",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/full-tests.json",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/screenshot-index.json"
+      ],
+      "unverified": [
+        "S2 独立审查",
+        "真机、VoiceOver/TalkBack、平台编译与相关消费者验收"
+      ],
+      "reason": "仅证伪原报告对当前共享实例的描述，不抹掉历史审计。",
+      "closure": "PENDING_S2_INDEPENDENT_REVIEW_NO_VERIFIED_CLOSED"
+    },
+    {
+      "issueId": "DT-05",
+      "stageId": "S1-A",
+      "state": "DISPROVED",
+      "priority": "P2",
+      "title": "`FxListSection` 对 border 再加 0.72 alpha；其他调用各用不同 alpha（S）",
+      "sourcePaths": [
+        "lib/fx/theme/fx_theme.dart",
+        "lib/fx/tokens/fx_typography.dart"
+      ],
+      "sourceSha256": {
+        "lib/fx/theme/fx_theme.dart": "14696bcb234330fecf2719860372f4d38645e8358f60c1c6a65473de0040ff8d",
+        "lib/fx/tokens/fx_typography.dart": "50ef1a62747520689df0cac356128c14478702cffb6a1d338cae6f855bcbe959"
+      },
+      "observedBehavior": "FxListSection 使用 separator，不再对 border 叠加 0.72 alpha。",
+      "implemented": "既有底座或本轮当前源码已包含反证；未为凑工作量重改。",
+      "verified": "当前源码 SHA、相关回归、分析以及适用的已查看 Flutter fixture 支持原审计描述在本共享实例不成立。",
+      "disproved": true,
+      "blocked_external": [
+        "S2_INDEPENDENT_REVIEW",
+        "DEVICE_AND_PLATFORM_ACCEPTANCE"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/flutter-analyze.txt",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/full-tests.json",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/screenshot-index.json"
+      ],
+      "unverified": [
+        "S2 独立审查",
+        "真机、VoiceOver/TalkBack、平台编译与相关消费者验收"
+      ],
+      "reason": "仅证伪原报告对当前共享实例的描述，不抹掉历史审计。",
+      "closure": "PENDING_S2_INDEPENDENT_REVIEW_NO_VERIFIED_CLOSED"
+    },
+    {
+      "issueId": "DT-06",
+      "stageId": "S1-A",
+      "state": "DISPROVED",
+      "priority": "P1",
+      "title": "原暗色 primary #4D94FF 搭白字约3.00:1（T）",
+      "sourcePaths": [
+        "lib/fx/theme/fx_theme.dart",
+        "lib/fx/tokens/fx_typography.dart"
+      ],
+      "sourceSha256": {
+        "lib/fx/theme/fx_theme.dart": "14696bcb234330fecf2719860372f4d38645e8358f60c1c6a65473de0040ff8d",
+        "lib/fx/tokens/fx_typography.dart": "50ef1a62747520689df0cac356128c14478702cffb6a1d338cae6f855bcbe959"
+      },
+      "observedBehavior": "暗色 primary 与 onPrimary 已成对设置，现有对比测试通过。",
+      "implemented": "既有底座或本轮当前源码已包含反证；未为凑工作量重改。",
+      "verified": "当前源码 SHA、相关回归、分析以及适用的已查看 Flutter fixture 支持原审计描述在本共享实例不成立。",
+      "disproved": true,
+      "blocked_external": [
+        "S2_INDEPENDENT_REVIEW",
+        "DEVICE_AND_PLATFORM_ACCEPTANCE"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/flutter-analyze.txt",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/full-tests.json",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/screenshot-index.json"
+      ],
+      "unverified": [
+        "S2 独立审查",
+        "真机、VoiceOver/TalkBack、平台编译与相关消费者验收"
+      ],
+      "reason": "仅证伪原报告对当前共享实例的描述，不抹掉历史审计。",
+      "closure": "PENDING_S2_INDEPENDENT_REVIEW_NO_VERIFIED_CLOSED"
+    },
+    {
+      "issueId": "DT-07",
+      "stageId": "S1-A",
+      "state": "DISPROVED",
+      "priority": "P1",
+      "title": "原 danger #EF4444 配白字约3.76:1（T）",
+      "sourcePaths": [
+        "lib/fx/theme/fx_theme.dart",
+        "lib/fx/tokens/fx_typography.dart"
+      ],
+      "sourceSha256": {
+        "lib/fx/theme/fx_theme.dart": "14696bcb234330fecf2719860372f4d38645e8358f60c1c6a65473de0040ff8d",
+        "lib/fx/tokens/fx_typography.dart": "50ef1a62747520689df0cac356128c14478702cffb6a1d338cae6f855bcbe959"
+      },
+      "observedBehavior": "danger 与 onDanger 已成对设置，现有对比测试通过。",
+      "implemented": "既有底座或本轮当前源码已包含反证；未为凑工作量重改。",
+      "verified": "当前源码 SHA、相关回归、分析以及适用的已查看 Flutter fixture 支持原审计描述在本共享实例不成立。",
+      "disproved": true,
+      "blocked_external": [
+        "S2_INDEPENDENT_REVIEW",
+        "DEVICE_AND_PLATFORM_ACCEPTANCE"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/flutter-analyze.txt",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/full-tests.json",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/screenshot-index.json"
+      ],
+      "unverified": [
+        "S2 独立审查",
+        "真机、VoiceOver/TalkBack、平台编译与相关消费者验收"
+      ],
+      "reason": "仅证伪原报告对当前共享实例的描述，不抹掉历史审计。",
+      "closure": "PENDING_S2_INDEPENDENT_REVIEW_NO_VERIFIED_CLOSED"
+    },
+    {
+      "issueId": "DT-08",
+      "stageId": "S1-A",
+      "state": "DISPROVED",
+      "priority": "P2",
+      "title": "secondary 与 tertiary 分别借用 info 蓝、warning 橙（S）",
+      "sourcePaths": [
+        "lib/fx/theme/fx_theme.dart",
+        "lib/fx/tokens/fx_typography.dart"
+      ],
+      "sourceSha256": {
+        "lib/fx/theme/fx_theme.dart": "14696bcb234330fecf2719860372f4d38645e8358f60c1c6a65473de0040ff8d",
+        "lib/fx/tokens/fx_typography.dart": "50ef1a62747520689df0cac356128c14478702cffb6a1d338cae6f855bcbe959"
+      },
+      "observedBehavior": "ColorScheme 次级/第三级不再借用 info/warning 作为文字角色。",
+      "implemented": "既有底座或本轮当前源码已包含反证；未为凑工作量重改。",
+      "verified": "当前源码 SHA、相关回归、分析以及适用的已查看 Flutter fixture 支持原审计描述在本共享实例不成立。",
+      "disproved": true,
+      "blocked_external": [
+        "S2_INDEPENDENT_REVIEW",
+        "DEVICE_AND_PLATFORM_ACCEPTANCE"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/flutter-analyze.txt",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/full-tests.json",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/screenshot-index.json"
+      ],
+      "unverified": [
+        "S2 独立审查",
+        "真机、VoiceOver/TalkBack、平台编译与相关消费者验收"
+      ],
+      "reason": "仅证伪原报告对当前共享实例的描述，不抹掉历史审计。",
+      "closure": "PENDING_S2_INDEPENDENT_REVIEW_NO_VERIFIED_CLOSED"
+    },
+    {
+      "issueId": "DT-09",
+      "stageId": "S1-A",
+      "state": "DISPROVED",
+      "priority": "P2",
+      "title": "ColorScheme 只设置最高 surfaceContainer，其余依赖默认（S）",
+      "sourcePaths": [
+        "lib/fx/theme/fx_theme.dart",
+        "lib/fx/tokens/fx_typography.dart"
+      ],
+      "sourceSha256": {
+        "lib/fx/theme/fx_theme.dart": "14696bcb234330fecf2719860372f4d38645e8358f60c1c6a65473de0040ff8d",
+        "lib/fx/tokens/fx_typography.dart": "50ef1a62747520689df0cac356128c14478702cffb6a1d338cae6f855bcbe959"
+      },
+      "observedBehavior": "ColorScheme 已显式设置 surface 容器层级，不只设置最高层。",
+      "implemented": "既有底座或本轮当前源码已包含反证；未为凑工作量重改。",
+      "verified": "当前源码 SHA、相关回归、分析以及适用的已查看 Flutter fixture 支持原审计描述在本共享实例不成立。",
+      "disproved": true,
+      "blocked_external": [
+        "S2_INDEPENDENT_REVIEW",
+        "DEVICE_AND_PLATFORM_ACCEPTANCE"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/flutter-analyze.txt",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/full-tests.json",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/screenshot-index.json"
+      ],
+      "unverified": [
+        "S2 独立审查",
+        "真机、VoiceOver/TalkBack、平台编译与相关消费者验收"
+      ],
+      "reason": "仅证伪原报告对当前共享实例的描述，不抹掉历史审计。",
+      "closure": "PENDING_S2_INDEPENDENT_REVIEW_NO_VERIFIED_CLOSED"
+    },
+    {
+      "issueId": "DT-10",
+      "stageId": "S1-A",
+      "state": "DISPROVED",
+      "priority": "P2",
+      "title": "scrim 原先借用 shadow（S）",
+      "sourcePaths": [
+        "lib/fx/theme/fx_theme.dart",
+        "lib/fx/tokens/fx_typography.dart"
+      ],
+      "sourceSha256": {
+        "lib/fx/theme/fx_theme.dart": "14696bcb234330fecf2719860372f4d38645e8358f60c1c6a65473de0040ff8d",
+        "lib/fx/tokens/fx_typography.dart": "50ef1a62747520689df0cac356128c14478702cffb6a1d338cae6f855bcbe959"
+      },
+      "observedBehavior": "scrim 独立于 shadow，弹层使用 palette.scrim。",
+      "implemented": "既有底座或本轮当前源码已包含反证；未为凑工作量重改。",
+      "verified": "当前源码 SHA、相关回归、分析以及适用的已查看 Flutter fixture 支持原审计描述在本共享实例不成立。",
+      "disproved": true,
+      "blocked_external": [
+        "S2_INDEPENDENT_REVIEW",
+        "DEVICE_AND_PLATFORM_ACCEPTANCE"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/flutter-analyze.txt",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/full-tests.json",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/screenshot-index.json"
+      ],
+      "unverified": [
+        "S2 独立审查",
+        "真机、VoiceOver/TalkBack、平台编译与相关消费者验收"
+      ],
+      "reason": "仅证伪原报告对当前共享实例的描述，不抹掉历史审计。",
+      "closure": "PENDING_S2_INDEPENDENT_REVIEW_NO_VERIFIED_CLOSED"
+    },
+    {
+      "issueId": "DT-11",
+      "stageId": "S1-A",
+      "state": "DISPROVED",
+      "priority": "P2",
+      "title": "textSecondary #5B6470 与 tertiary #646C78 彼此约1.13:1（T）",
+      "sourcePaths": [
+        "lib/fx/theme/fx_theme.dart",
+        "lib/fx/tokens/fx_typography.dart"
+      ],
+      "sourceSha256": {
+        "lib/fx/theme/fx_theme.dart": "14696bcb234330fecf2719860372f4d38645e8358f60c1c6a65473de0040ff8d",
+        "lib/fx/tokens/fx_typography.dart": "50ef1a62747520689df0cac356128c14478702cffb6a1d338cae6f855bcbe959"
+      },
+      "observedBehavior": "textSecondary/textTertiary 为独立中性阶，不再只有约 1.13:1 的彼此差异。",
+      "implemented": "既有底座或本轮当前源码已包含反证；未为凑工作量重改。",
+      "verified": "当前源码 SHA、相关回归、分析以及适用的已查看 Flutter fixture 支持原审计描述在本共享实例不成立。",
+      "disproved": true,
+      "blocked_external": [
+        "S2_INDEPENDENT_REVIEW",
+        "DEVICE_AND_PLATFORM_ACCEPTANCE"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/flutter-analyze.txt",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/full-tests.json",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/screenshot-index.json"
+      ],
+      "unverified": [
+        "S2 独立审查",
+        "真机、VoiceOver/TalkBack、平台编译与相关消费者验收"
+      ],
+      "reason": "仅证伪原报告对当前共享实例的描述，不抹掉历史审计。",
+      "closure": "PENDING_S2_INDEPENDENT_REVIEW_NO_VERIFIED_CLOSED"
+    },
+    {
+      "issueId": "DT-12",
+      "stageId": "S1-A",
+      "state": "VERIFIED_LOCAL",
+      "priority": "P1",
+      "title": "income/expense/adjust 等财务默认色由偏好直接用作文字，明暗共用；亮色绿/橙等普通小字对比不足（S/T）",
+      "sourcePaths": [
+        "lib/fx/theme/fx_theme.dart",
+        "lib/fx/tokens/fx_typography.dart",
+        "test/fx/components/fx_money_text_test.dart"
+      ],
+      "sourceSha256": {
+        "lib/fx/theme/fx_theme.dart": "14696bcb234330fecf2719860372f4d38645e8358f60c1c6a65473de0040ff8d",
+        "lib/fx/tokens/fx_typography.dart": "50ef1a62747520689df0cac356128c14478702cffb6a1d338cae6f855bcbe959",
+        "test/fx/components/fx_money_text_test.dart": "f9249443628d142ee32b26ab0766dacf7ecfcedd73398c1207a4a6d937ae96e7"
+      },
+      "observedBehavior": "用户业务色直接作为金额小字前景可能低对比。",
+      "implemented": "默认金额使用 textPrimary；显式 color 与用户业务色存储不改。",
+      "verified": "当前决定性测试通过：test/fx/components/fx_money_text_test.dart；最终全量 521 通过、1 跳过、0 失败。",
+      "disproved": false,
+      "blocked_external": [
+        "S2_INDEPENDENT_REVIEW",
+        "DEVICE_AND_PLATFORM_ACCEPTANCE"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/flutter-analyze.txt",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/full-tests.json",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/screenshot-index.json",
+        "test/fx/components/fx_money_text_test.dart"
+      ],
+      "unverified": [
+        "S2 独立审查",
+        "真机、VoiceOver/TalkBack、平台编译与相关消费者验收"
+      ],
+      "reason": "仅 S1-A 共享实例本地验证，不代替全局 owner 或独立审查关闭。",
+      "closure": "PENDING_S2_INDEPENDENT_REVIEW_NO_VERIFIED_CLOSED"
+    },
+    {
+      "issueId": "DT-13",
+      "stageId": "S1-A",
+      "state": "IMPLEMENTED_LOCAL",
+      "priority": "P2",
+      "title": "图表 categorical 是一套静态亮色列表，财务色、排名色、分类色混用（S）",
+      "sourcePaths": [
+        "lib/fx/components/fx_chart_palette.dart",
+        "lib/fx/theme/fx_theme.dart",
+        "lib/fx/tokens/fx_typography.dart"
+      ],
+      "sourceSha256": {
+        "lib/fx/components/fx_chart_palette.dart": "299d33c64ff25990c85123791a7e5938071d53df03bb4f3efb0f493289791cb9",
+        "lib/fx/theme/fx_theme.dart": "14696bcb234330fecf2719860372f4d38645e8358f60c1c6a65473de0040ff8d",
+        "lib/fx/tokens/fx_typography.dart": "50ef1a62747520689df0cac356128c14478702cffb6a1d338cae6f855bcbe959"
+      },
+      "observedBehavior": "分类色只有静态亮色列表，显式财务/排名色与默认分类色并存。",
+      "implemented": "FxChartPalette 新增 darkCategorical，FxBarChart/FxDonutChart 默认填色随亮度；显式业务色不变。",
+      "verified": "共享改动有当前测试和/或实际 Flutter 渲染证据；消费者部分未验证。",
+      "disproved": false,
+      "blocked_external": [
+        "S2_INDEPENDENT_REVIEW",
+        "DEVICE_AND_PLATFORM_ACCEPTANCE"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/flutter-analyze.txt",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/full-tests.json"
+      ],
+      "unverified": [
+        "S2 独立审查",
+        "真机、VoiceOver/TalkBack、平台编译与相关消费者验收",
+        "StatsPalette 及其它显式排名色消费者由 S8/S1-C 核对。"
+      ],
+      "reason": "StatsPalette 及其它显式排名色消费者由 S8/S1-C 核对。",
+      "closure": "PENDING_S2_INDEPENDENT_REVIEW_NO_VERIFIED_CLOSED"
+    },
+    {
+      "issueId": "DT-14",
+      "stageId": "S1-A",
+      "state": "CONFIRMED",
+      "priority": "P2",
+      "title": "净资产、借贷、资产/负债条和卡片色域大面积红绿；V04/V18/V20（V）",
+      "sourcePaths": [
+        "lib/fx/theme/fx_theme.dart",
+        "lib/fx/tokens/fx_typography.dart"
+      ],
+      "sourceSha256": {
+        "lib/fx/theme/fx_theme.dart": "14696bcb234330fecf2719860372f4d38645e8358f60c1c6a65473de0040ff8d",
+        "lib/fx/tokens/fx_typography.dart": "50ef1a62747520689df0cac356128c14478702cffb6a1d338cae6f855bcbe959"
+      },
+      "observedBehavior": "净资产、借贷、资产/负债页面的大面积业务色不在本阶段允许的消费者范围，未改。",
+      "implemented": "NO_S1-A_IMPLEMENTATION_OUTSIDE_ALLOWED_SHARED_SCOPE",
+      "verified": "NOT_VERIFIED_CONSUMER_BEHAVIOR_UNCHANGED",
+      "disproved": false,
+      "blocked_external": [],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/flutter-analyze.txt",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/full-tests.json"
+      ],
+      "unverified": [
+        "S2 独立审查",
+        "真机、VoiceOver/TalkBack、平台编译与相关消费者验收"
+      ],
+      "reason": "保留给对应消费者 owner；S1-A 不宣布完成，也不伪造共享能力。",
+      "closure": "PENDING_S2_INDEPENDENT_REVIEW_NO_VERIFIED_CLOSED"
+    },
+    {
+      "issueId": "DT-15",
+      "stageId": "S1-A",
+      "state": "CONFIRMED",
+      "priority": "P1",
+      "title": "小票费用 #C47A2C/#FFF0DD≈3.04；优惠 #D14343/#FFE8E8≈3.91，10号字；DS-037（S/T）",
+      "sourcePaths": [
+        "lib/fx/theme/fx_theme.dart",
+        "lib/fx/tokens/fx_typography.dart"
+      ],
+      "sourceSha256": {
+        "lib/fx/theme/fx_theme.dart": "14696bcb234330fecf2719860372f4d38645e8358f60c1c6a65473de0040ff8d",
+        "lib/fx/tokens/fx_typography.dart": "50ef1a62747520689df0cac356128c14478702cffb6a1d338cae6f855bcbe959"
+      },
+      "observedBehavior": "日小票费用/优惠文案样式属于 S8-B 页面，本阶段未改。",
+      "implemented": "NO_S1-A_IMPLEMENTATION_OUTSIDE_ALLOWED_SHARED_SCOPE",
+      "verified": "NOT_VERIFIED_CONSUMER_BEHAVIOR_UNCHANGED",
+      "disproved": false,
+      "blocked_external": [],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/flutter-analyze.txt",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/full-tests.json"
+      ],
+      "unverified": [
+        "S2 独立审查",
+        "真机、VoiceOver/TalkBack、平台编译与相关消费者验收"
+      ],
+      "reason": "保留给对应消费者 owner；S1-A 不宣布完成，也不伪造共享能力。",
+      "closure": "PENDING_S2_INDEPENDENT_REVIEW_NO_VERIFIED_CLOSED"
+    },
+    {
+      "issueId": "DT-16",
+      "stageId": "S1-A",
+      "state": "DISPROVED",
+      "priority": "P2",
+      "title": "原 `TextTheme` 只改颜色，FxTypography 单独设15/13/12（S）",
+      "sourcePaths": [
+        "lib/fx/theme/fx_theme.dart",
+        "lib/fx/tokens/fx_typography.dart"
+      ],
+      "sourceSha256": {
+        "lib/fx/theme/fx_theme.dart": "14696bcb234330fecf2719860372f4d38645e8358f60c1c6a65473de0040ff8d",
+        "lib/fx/tokens/fx_typography.dart": "50ef1a62747520689df0cac356128c14478702cffb6a1d338cae6f855bcbe959"
+      },
+      "observedBehavior": "TextTheme 已接入 FxTypography 的完整角色，不再只改颜色。",
+      "implemented": "既有底座或本轮当前源码已包含反证；未为凑工作量重改。",
+      "verified": "当前源码 SHA、相关回归、分析以及适用的已查看 Flutter fixture 支持原审计描述在本共享实例不成立。",
+      "disproved": true,
+      "blocked_external": [
+        "S2_INDEPENDENT_REVIEW",
+        "DEVICE_AND_PLATFORM_ACCEPTANCE"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/flutter-analyze.txt",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/full-tests.json",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/screenshot-index.json"
+      ],
+      "unverified": [
+        "S2 独立审查",
+        "真机、VoiceOver/TalkBack、平台编译与相关消费者验收"
+      ],
+      "reason": "仅证伪原报告对当前共享实例的描述，不抹掉历史审计。",
+      "closure": "PENDING_S2_INDEPENDENT_REVIEW_NO_VERIFIED_CLOSED"
+    },
+    {
+      "issueId": "DT-17",
+      "stageId": "S1-A",
+      "state": "DISPROVED",
+      "priority": "P2",
+      "title": "display34/titleLarge22/title18 全部700（S/V）",
+      "sourcePaths": [
+        "lib/fx/theme/fx_theme.dart",
+        "lib/fx/tokens/fx_typography.dart"
+      ],
+      "sourceSha256": {
+        "lib/fx/theme/fx_theme.dart": "14696bcb234330fecf2719860372f4d38645e8358f60c1c6a65473de0040ff8d",
+        "lib/fx/tokens/fx_typography.dart": "50ef1a62747520689df0cac356128c14478702cffb6a1d338cae6f855bcbe959"
+      },
+      "observedBehavior": "display34 为 700，titleLarge22/title18 为 600，不再全部 700。",
+      "implemented": "既有底座或本轮当前源码已包含反证；未为凑工作量重改。",
+      "verified": "当前源码 SHA、相关回归、分析以及适用的已查看 Flutter fixture 支持原审计描述在本共享实例不成立。",
+      "disproved": true,
+      "blocked_external": [
+        "S2_INDEPENDENT_REVIEW",
+        "DEVICE_AND_PLATFORM_ACCEPTANCE"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/flutter-analyze.txt",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/full-tests.json",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/screenshot-index.json"
+      ],
+      "unverified": [
+        "S2 独立审查",
+        "真机、VoiceOver/TalkBack、平台编译与相关消费者验收"
+      ],
+      "reason": "仅证伪原报告对当前共享实例的描述，不抹掉历史审计。",
+      "closure": "PENDING_S2_INDEPENDENT_REVIEW_NO_VERIFIED_CLOSED"
+    },
+    {
+      "issueId": "DT-18",
+      "stageId": "S1-A",
+      "state": "DISPROVED",
+      "priority": "P1",
+      "title": "原正文15、标签13、辅助12，而账单时间/账户/状态大量降到caption（S/V）",
+      "sourcePaths": [
+        "lib/fx/theme/fx_theme.dart",
+        "lib/fx/tokens/fx_typography.dart"
+      ],
+      "sourceSha256": {
+        "lib/fx/theme/fx_theme.dart": "14696bcb234330fecf2719860372f4d38645e8358f60c1c6a65473de0040ff8d",
+        "lib/fx/tokens/fx_typography.dart": "50ef1a62747520689df0cac356128c14478702cffb6a1d338cae6f855bcbe959"
+      },
+      "observedBehavior": "共享正文/标签/辅助字阶为 17/15/13。",
+      "implemented": "既有底座或本轮当前源码已包含反证；未为凑工作量重改。",
+      "verified": "当前源码 SHA、相关回归、分析以及适用的已查看 Flutter fixture 支持原审计描述在本共享实例不成立。",
+      "disproved": true,
+      "blocked_external": [
+        "S2_INDEPENDENT_REVIEW",
+        "DEVICE_AND_PLATFORM_ACCEPTANCE"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/flutter-analyze.txt",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/full-tests.json",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/screenshot-index.json"
+      ],
+      "unverified": [
+        "S2 独立审查",
+        "真机、VoiceOver/TalkBack、平台编译与相关消费者验收"
+      ],
+      "reason": "仅证伪原报告对当前共享实例的描述，不抹掉历史审计。",
+      "closure": "PENDING_S2_INDEPENDENT_REVIEW_NO_VERIFIED_CLOSED"
+    },
+    {
+      "issueId": "DT-19",
+      "stageId": "S1-A",
+      "state": "DISPROVED",
+      "priority": "P1",
+      "title": "日历农历/年月金额9、状态10、图表11/12；还有12.5/13.5等游离字号（S）",
+      "sourcePaths": [
+        "lib/fx/theme/fx_theme.dart",
+        "lib/fx/tokens/fx_typography.dart"
+      ],
+      "sourceSha256": {
+        "lib/fx/theme/fx_theme.dart": "14696bcb234330fecf2719860372f4d38645e8358f60c1c6a65473de0040ff8d",
+        "lib/fx/tokens/fx_typography.dart": "50ef1a62747520689df0cac356128c14478702cffb6a1d338cae6f855bcbe959"
+      },
+      "observedBehavior": "本阶段共享组件不再使用原 9/10/11 字号；甜甜圈中心金额为 17、标题为 13。",
+      "implemented": "既有底座或本轮当前源码已包含反证；未为凑工作量重改。",
+      "verified": "当前源码 SHA、相关回归、分析以及适用的已查看 Flutter fixture 支持原审计描述在本共享实例不成立。",
+      "disproved": true,
+      "blocked_external": [
+        "S2_INDEPENDENT_REVIEW",
+        "DEVICE_AND_PLATFORM_ACCEPTANCE"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/flutter-analyze.txt",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/full-tests.json",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/screenshot-index.json"
+      ],
+      "unverified": [
+        "S2 独立审查",
+        "真机、VoiceOver/TalkBack、平台编译与相关消费者验收"
+      ],
+      "reason": "仅证伪原报告对当前共享实例的描述，不抹掉历史审计。",
+      "closure": "PENDING_S2_INDEPENDENT_REVIEW_NO_VERIFIED_CLOSED"
+    },
+    {
+      "issueId": "DT-20",
+      "stageId": "S1-A",
+      "state": "DISPROVED",
+      "priority": "P2",
+      "title": "原标题height1.1/1.2、label/caption1.3，部分局部height1（S）",
+      "sourcePaths": [
+        "lib/fx/theme/fx_theme.dart",
+        "lib/fx/tokens/fx_typography.dart"
+      ],
+      "sourceSha256": {
+        "lib/fx/theme/fx_theme.dart": "14696bcb234330fecf2719860372f4d38645e8358f60c1c6a65473de0040ff8d",
+        "lib/fx/tokens/fx_typography.dart": "50ef1a62747520689df0cac356128c14478702cffb6a1d338cae6f855bcbe959"
+      },
+      "observedBehavior": "共享字阶保留可读的 height，不再使用标题 1.1、caption 1.3 或局部 height 1。",
+      "implemented": "既有底座或本轮当前源码已包含反证；未为凑工作量重改。",
+      "verified": "当前源码 SHA、相关回归、分析以及适用的已查看 Flutter fixture 支持原审计描述在本共享实例不成立。",
+      "disproved": true,
+      "blocked_external": [
+        "S2_INDEPENDENT_REVIEW",
+        "DEVICE_AND_PLATFORM_ACCEPTANCE"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/flutter-analyze.txt",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/full-tests.json",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/screenshot-index.json"
+      ],
+      "unverified": [
+        "S2 独立审查",
+        "真机、VoiceOver/TalkBack、平台编译与相关消费者验收"
+      ],
+      "reason": "仅证伪原报告对当前共享实例的描述，不抹掉历史审计。",
+      "closure": "PENDING_S2_INDEPENDENT_REVIEW_NO_VERIFIED_CLOSED"
+    },
+    {
+      "issueId": "DT-21",
+      "stageId": "S1-A",
+      "state": "DISPROVED",
+      "priority": "P2",
+      "title": "`RobotoMono` 未在 pubspec 注册，金额却显式指向它（S）",
+      "sourcePaths": [
+        "lib/fx/theme/fx_theme.dart",
+        "lib/fx/tokens/fx_typography.dart"
+      ],
+      "sourceSha256": {
+        "lib/fx/theme/fx_theme.dart": "14696bcb234330fecf2719860372f4d38645e8358f60c1c6a65473de0040ff8d",
+        "lib/fx/tokens/fx_typography.dart": "50ef1a62747520689df0cac356128c14478702cffb6a1d338cae6f855bcbe959"
+      },
+      "observedBehavior": "金额使用系统字体 tabular figures，不引用未注册 RobotoMono。",
+      "implemented": "既有底座或本轮当前源码已包含反证；未为凑工作量重改。",
+      "verified": "当前源码 SHA、相关回归、分析以及适用的已查看 Flutter fixture 支持原审计描述在本共享实例不成立。",
+      "disproved": true,
+      "blocked_external": [
+        "S2_INDEPENDENT_REVIEW",
+        "DEVICE_AND_PLATFORM_ACCEPTANCE"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/flutter-analyze.txt",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/full-tests.json",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/screenshot-index.json"
+      ],
+      "unverified": [
+        "S2 独立审查",
+        "真机、VoiceOver/TalkBack、平台编译与相关消费者验收"
+      ],
+      "reason": "仅证伪原报告对当前共享实例的描述，不抹掉历史审计。",
+      "closure": "PENDING_S2_INDEPENDENT_REVIEW_NO_VERIFIED_CLOSED"
+    },
+    {
+      "issueId": "DT-22",
+      "stageId": "S1-A",
+      "state": "DISPROVED",
+      "priority": "P2",
+      "title": "默认 Material 字距可能继承进中文自定义字号（S）",
+      "sourcePaths": [
+        "lib/fx/theme/fx_theme.dart",
+        "lib/fx/tokens/fx_typography.dart"
+      ],
+      "sourceSha256": {
+        "lib/fx/theme/fx_theme.dart": "14696bcb234330fecf2719860372f4d38645e8358f60c1c6a65473de0040ff8d",
+        "lib/fx/tokens/fx_typography.dart": "50ef1a62747520689df0cac356128c14478702cffb6a1d338cae6f855bcbe959"
+      },
+      "observedBehavior": "FxTypography 明确 letterSpacing=0，避免默认字距进入中文。",
+      "implemented": "既有底座或本轮当前源码已包含反证；未为凑工作量重改。",
+      "verified": "当前源码 SHA、相关回归、分析以及适用的已查看 Flutter fixture 支持原审计描述在本共享实例不成立。",
+      "disproved": true,
+      "blocked_external": [
+        "S2_INDEPENDENT_REVIEW",
+        "DEVICE_AND_PLATFORM_ACCEPTANCE"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/flutter-analyze.txt",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/full-tests.json",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/screenshot-index.json"
+      ],
+      "unverified": [
+        "S2 独立审查",
+        "真机、VoiceOver/TalkBack、平台编译与相关消费者验收"
+      ],
+      "reason": "仅证伪原报告对当前共享实例的描述，不抹掉历史审计。",
+      "closure": "PENDING_S2_INDEPENDENT_REVIEW_NO_VERIFIED_CLOSED"
+    },
+    {
+      "issueId": "DT-23",
+      "stageId": "S1-A",
+      "state": "VERIFIED_LOCAL",
+      "priority": "P1",
+      "title": "主金额普遍单行ellipsis；V18直接看到金额末尾“…”（V/S）",
+      "sourcePaths": [
+        "lib/fx/theme/fx_theme.dart",
+        "lib/fx/tokens/fx_typography.dart",
+        "test/fx/components/fx_money_text_test.dart"
+      ],
+      "sourceSha256": {
+        "lib/fx/theme/fx_theme.dart": "14696bcb234330fecf2719860372f4d38645e8358f60c1c6a65473de0040ff8d",
+        "lib/fx/tokens/fx_typography.dart": "50ef1a62747520689df0cac356128c14478702cffb6a1d338cae6f855bcbe959",
+        "test/fx/components/fx_money_text_test.dart": "f9249443628d142ee32b26ab0766dacf7ecfcedd73398c1207a4a6d937ae96e7"
+      },
+      "observedBehavior": "主金额默认单行 ellipsis，大字下精确值不完整。",
+      "implemented": "默认完整换行；只有显式 compactWhenNeeded 才紧凑/省略。",
+      "verified": "当前决定性测试通过：test/fx/components/fx_money_text_test.dart；最终全量 521 通过、1 跳过、0 失败。",
+      "disproved": false,
+      "blocked_external": [
+        "S2_INDEPENDENT_REVIEW",
+        "DEVICE_AND_PLATFORM_ACCEPTANCE"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/flutter-analyze.txt",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/full-tests.json",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/screenshot-index.json",
+        "test/fx/components/fx_money_text_test.dart"
+      ],
+      "unverified": [
+        "S2 独立审查",
+        "真机、VoiceOver/TalkBack、平台编译与相关消费者验收"
+      ],
+      "reason": "仅 S1-A 共享实例本地验证，不代替全局 owner 或独立审查关闭。",
+      "closure": "PENDING_S2_INDEPENDENT_REVIEW_NO_VERIFIED_CLOSED"
+    },
+    {
+      "issueId": "DT-24",
+      "stageId": "S1-A",
+      "state": "DISPROVED",
+      "priority": "P2",
+      "title": "行标题600、金额600、次级操作600同时出现（S/V）",
+      "sourcePaths": [
+        "lib/fx/theme/fx_theme.dart",
+        "lib/fx/tokens/fx_typography.dart"
+      ],
+      "sourceSha256": {
+        "lib/fx/theme/fx_theme.dart": "14696bcb234330fecf2719860372f4d38645e8358f60c1c6a65473de0040ff8d",
+        "lib/fx/tokens/fx_typography.dart": "50ef1a62747520689df0cac356128c14478702cffb6a1d338cae6f855bcbe959"
+      },
+      "observedBehavior": "正文、标签、金额和次级操作按角色使用 400/500/600，不再同层全部 600。",
+      "implemented": "既有底座或本轮当前源码已包含反证；未为凑工作量重改。",
+      "verified": "当前源码 SHA、相关回归、分析以及适用的已查看 Flutter fixture 支持原审计描述在本共享实例不成立。",
+      "disproved": true,
+      "blocked_external": [
+        "S2_INDEPENDENT_REVIEW",
+        "DEVICE_AND_PLATFORM_ACCEPTANCE"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/flutter-analyze.txt",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/full-tests.json",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/screenshot-index.json"
+      ],
+      "unverified": [
+        "S2 独立审查",
+        "真机、VoiceOver/TalkBack、平台编译与相关消费者验收"
+      ],
+      "reason": "仅证伪原报告对当前共享实例的描述，不抹掉历史审计。",
+      "closure": "PENDING_S2_INDEPENDENT_REVIEW_NO_VERIFIED_CLOSED"
+    },
+    {
+      "issueId": "DT-25",
+      "stageId": "S1-A",
+      "state": "VERIFIED_LOCAL",
+      "priority": "P2",
+      "title": "FxListItem/FxSelectRow 的名称、当前值常永久单行截断（S）",
+      "sourcePaths": [
+        "lib/fx/theme/fx_theme.dart",
+        "lib/fx/tokens/fx_typography.dart",
+        "test/fx/components/fx_interaction_accessibility_test.dart"
+      ],
+      "sourceSha256": {
+        "lib/fx/theme/fx_theme.dart": "14696bcb234330fecf2719860372f4d38645e8358f60c1c6a65473de0040ff8d",
+        "lib/fx/tokens/fx_typography.dart": "50ef1a62747520689df0cac356128c14478702cffb6a1d338cae6f855bcbe959",
+        "test/fx/components/fx_interaction_accessibility_test.dart": "a1304015070686e74e1f5f9827de732e0c20dbc32a7ad3db10cfe629c71d727b"
+      },
+      "observedBehavior": "FxListItem/FxSelectRow 名称和值永久单行截断。",
+      "implemented": "标题、值和长 trailing 支持内容增高与上下重排。",
+      "verified": "当前决定性测试通过：test/fx/components/fx_interaction_accessibility_test.dart；最终全量 521 通过、1 跳过、0 失败。",
+      "disproved": false,
+      "blocked_external": [
+        "S2_INDEPENDENT_REVIEW",
+        "DEVICE_AND_PLATFORM_ACCEPTANCE"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/flutter-analyze.txt",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/full-tests.json",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/screenshot-index.json",
+        "test/fx/components/fx_interaction_accessibility_test.dart"
+      ],
+      "unverified": [
+        "S2 独立审查",
+        "真机、VoiceOver/TalkBack、平台编译与相关消费者验收"
+      ],
+      "reason": "仅 S1-A 共享实例本地验证，不代替全局 owner 或独立审查关闭。",
+      "closure": "PENDING_S2_INDEPENDENT_REVIEW_NO_VERIFIED_CLOSED"
+    },
+    {
+      "issueId": "DT-26",
+      "stageId": "S1-A",
+      "state": "DISPROVED",
+      "priority": "P2",
+      "title": "原颜色对比测试使用sRGB指数3而非2.4（S/T）",
+      "sourcePaths": [
+        "lib/fx/theme/fx_theme.dart",
+        "lib/fx/tokens/fx_typography.dart"
+      ],
+      "sourceSha256": {
+        "lib/fx/theme/fx_theme.dart": "14696bcb234330fecf2719860372f4d38645e8358f60c1c6a65473de0040ff8d",
+        "lib/fx/tokens/fx_typography.dart": "50ef1a62747520689df0cac356128c14478702cffb6a1d338cae6f855bcbe959"
+      },
+      "observedBehavior": "现有对比测试使用正确 sRGB 2.4 指数并通过。",
+      "implemented": "既有底座或本轮当前源码已包含反证；未为凑工作量重改。",
+      "verified": "当前源码 SHA、相关回归、分析以及适用的已查看 Flutter fixture 支持原审计描述在本共享实例不成立。",
+      "disproved": true,
+      "blocked_external": [
+        "S2_INDEPENDENT_REVIEW",
+        "DEVICE_AND_PLATFORM_ACCEPTANCE"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/flutter-analyze.txt",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/full-tests.json",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/screenshot-index.json"
+      ],
+      "unverified": [
+        "S2 独立审查",
+        "真机、VoiceOver/TalkBack、平台编译与相关消费者验收"
+      ],
+      "reason": "仅证伪原报告对当前共享实例的描述，不抹掉历史审计。",
+      "closure": "PENDING_S2_INDEPENDENT_REVIEW_NO_VERIFIED_CLOSED"
+    },
+    {
+      "issueId": "DT-27",
+      "stageId": "S1-A",
+      "state": "DISPROVED",
+      "priority": "P2",
+      "title": "`FxSpacing`自称8pt，但包含4/12/20，且仅大小序列无用途（S）",
+      "sourcePaths": [
+        "lib/fx/theme/fx_theme.dart",
+        "lib/fx/tokens/fx_typography.dart"
+      ],
+      "sourceSha256": {
+        "lib/fx/theme/fx_theme.dart": "14696bcb234330fecf2719860372f4d38645e8358f60c1c6a65473de0040ff8d",
+        "lib/fx/tokens/fx_typography.dart": "50ef1a62747520689df0cac356128c14478702cffb6a1d338cae6f855bcbe959"
+      },
+      "observedBehavior": "FxSpacing 以 4pt 网格和 page/card/field 等用途组织，不再自称纯 8pt 序列。",
+      "implemented": "既有底座或本轮当前源码已包含反证；未为凑工作量重改。",
+      "verified": "当前源码 SHA、相关回归、分析以及适用的已查看 Flutter fixture 支持原审计描述在本共享实例不成立。",
+      "disproved": true,
+      "blocked_external": [
+        "S2_INDEPENDENT_REVIEW",
+        "DEVICE_AND_PLATFORM_ACCEPTANCE"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/flutter-analyze.txt",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/full-tests.json",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/screenshot-index.json"
+      ],
+      "unverified": [
+        "S2 独立审查",
+        "真机、VoiceOver/TalkBack、平台编译与相关消费者验收"
+      ],
+      "reason": "仅证伪原报告对当前共享实例的描述，不抹掉历史审计。",
+      "closure": "PENDING_S2_INDEPENDENT_REVIEW_NO_VERIFIED_CLOSED"
+    },
+    {
+      "issueId": "DT-28",
+      "stageId": "S1-A",
+      "state": "CONFIRMED",
+      "priority": "P2",
+      "title": "页面、sheet、内卡、字段多层16叠加，归物尤其明显；V50—51（V/S）",
+      "sourcePaths": [
+        "lib/fx/theme/fx_theme.dart",
+        "lib/fx/tokens/fx_typography.dart"
+      ],
+      "sourceSha256": {
+        "lib/fx/theme/fx_theme.dart": "14696bcb234330fecf2719860372f4d38645e8358f60c1c6a65473de0040ff8d",
+        "lib/fx/tokens/fx_typography.dart": "50ef1a62747520689df0cac356128c14478702cffb6a1d338cae6f855bcbe959"
+      },
+      "observedBehavior": "页面、sheet、内卡多层 padding 的消费者组合未在本阶段重排。",
+      "implemented": "NO_S1-A_IMPLEMENTATION_OUTSIDE_ALLOWED_SHARED_SCOPE",
+      "verified": "NOT_VERIFIED_CONSUMER_BEHAVIOR_UNCHANGED",
+      "disproved": false,
+      "blocked_external": [],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/flutter-analyze.txt",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/full-tests.json"
+      ],
+      "unverified": [
+        "S2 独立审查",
+        "真机、VoiceOver/TalkBack、平台编译与相关消费者验收"
+      ],
+      "reason": "保留给对应消费者 owner；S1-A 不宣布完成，也不伪造共享能力。",
+      "closure": "PENDING_S2_INDEPENDENT_REVIEW_NO_VERIFIED_CLOSED"
+    },
+    {
+      "issueId": "DT-29",
+      "stageId": "S1-A",
+      "state": "DISPROVED",
+      "priority": "P2",
+      "title": "自定义导航标题常16，FxSheet/pageH原16；更新后部分显式16仍存在（S）",
+      "sourcePaths": [
+        "lib/fx/theme/fx_theme.dart",
+        "lib/fx/tokens/fx_typography.dart"
+      ],
+      "sourceSha256": {
+        "lib/fx/theme/fx_theme.dart": "14696bcb234330fecf2719860372f4d38645e8358f60c1c6a65473de0040ff8d",
+        "lib/fx/tokens/fx_typography.dart": "50ef1a62747520689df0cac356128c14478702cffb6a1d338cae6f855bcbe959"
+      },
+      "observedBehavior": "共享 pageH 为 20、sheet 标题为 17；本阶段没有新增 16 的页面导航标题。",
+      "implemented": "既有底座或本轮当前源码已包含反证；未为凑工作量重改。",
+      "verified": "当前源码 SHA、相关回归、分析以及适用的已查看 Flutter fixture 支持原审计描述在本共享实例不成立。",
+      "disproved": true,
+      "blocked_external": [
+        "S2_INDEPENDENT_REVIEW",
+        "DEVICE_AND_PLATFORM_ACCEPTANCE"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/flutter-analyze.txt",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/full-tests.json",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/screenshot-index.json"
+      ],
+      "unverified": [
+        "S2 独立审查",
+        "真机、VoiceOver/TalkBack、平台编译与相关消费者验收"
+      ],
+      "reason": "仅证伪原报告对当前共享实例的描述，不抹掉历史审计。",
+      "closure": "PENDING_S2_INDEPENDENT_REVIEW_NO_VERIFIED_CLOSED"
+    },
+    {
+      "issueId": "DT-30",
+      "stageId": "S1-A",
+      "state": "DISPROVED",
+      "priority": "P1",
+      "title": "FxButton原固定48＋单行ellipsis（T）",
+      "sourcePaths": [
+        "lib/fx/theme/fx_theme.dart",
+        "lib/fx/tokens/fx_typography.dart"
+      ],
+      "sourceSha256": {
+        "lib/fx/theme/fx_theme.dart": "14696bcb234330fecf2719860372f4d38645e8358f60c1c6a65473de0040ff8d",
+        "lib/fx/tokens/fx_typography.dart": "50ef1a62747520689df0cac356128c14478702cffb6a1d338cae6f855bcbe959"
+      },
+      "observedBehavior": "FxButton 以 48 为最小高度并按内容增高，现有多行 CTA 测试和 8 图通过。",
+      "implemented": "既有底座或本轮当前源码已包含反证；未为凑工作量重改。",
+      "verified": "当前源码 SHA、相关回归、分析以及适用的已查看 Flutter fixture 支持原审计描述在本共享实例不成立。",
+      "disproved": true,
+      "blocked_external": [
+        "S2_INDEPENDENT_REVIEW",
+        "DEVICE_AND_PLATFORM_ACCEPTANCE"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/flutter-analyze.txt",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/full-tests.json",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/screenshot-index.json"
+      ],
+      "unverified": [
+        "S2 独立审查",
+        "真机、VoiceOver/TalkBack、平台编译与相关消费者验收"
+      ],
+      "reason": "仅证伪原报告对当前共享实例的描述，不抹掉历史审计。",
+      "closure": "PENDING_S2_INDEPENDENT_REVIEW_NO_VERIFIED_CLOSED"
+    },
+    {
+      "issueId": "DT-31",
+      "stageId": "S1-A",
+      "state": "VERIFIED_LOCAL",
+      "priority": "P2",
+      "title": "固定网格行高、固定图高、固定导航高与局部大字策略并存（S）",
+      "sourcePaths": [
+        "lib/fx/theme/fx_theme.dart",
+        "lib/fx/tokens/fx_typography.dart",
+        "test/fx/layout/fx_bento_grid_test.dart"
+      ],
+      "sourceSha256": {
+        "lib/fx/theme/fx_theme.dart": "14696bcb234330fecf2719860372f4d38645e8358f60c1c6a65473de0040ff8d",
+        "lib/fx/tokens/fx_typography.dart": "50ef1a62747520689df0cac356128c14478702cffb6a1d338cae6f855bcbe959",
+        "test/fx/layout/fx_bento_grid_test.dart": "271dd9fe7a405c0ea7366fb23ce35e011f892e235cd4a26bcd2ff2865c8e5b61"
+      },
+      "observedBehavior": "固定网格和控件高度无法容纳大字内容。",
+      "implemented": "Bento 窄屏/大字转固有高度摘要清单；分段和列表内容增高。",
+      "verified": "当前决定性测试通过：test/fx/layout/fx_bento_grid_test.dart；最终全量 521 通过、1 跳过、0 失败。",
+      "disproved": false,
+      "blocked_external": [
+        "S2_INDEPENDENT_REVIEW",
+        "DEVICE_AND_PLATFORM_ACCEPTANCE"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/flutter-analyze.txt",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/full-tests.json",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/screenshot-index.json",
+        "test/fx/layout/fx_bento_grid_test.dart"
+      ],
+      "unverified": [
+        "S2 独立审查",
+        "真机、VoiceOver/TalkBack、平台编译与相关消费者验收"
+      ],
+      "reason": "仅 S1-A 共享实例本地验证，不代替全局 owner 或独立审查关闭。",
+      "closure": "PENDING_S2_INDEPENDENT_REVIEW_NO_VERIFIED_CLOSED"
+    },
+    {
+      "issueId": "DT-32",
+      "stageId": "S1-A",
+      "state": "IMPLEMENTED_LOCAL",
+      "priority": "P2",
+      "title": "小字号标签反复呈现为胶囊，但一屏出现几十上百个；V30—33（V）",
+      "sourcePaths": [
+        "lib/fx/theme/fx_theme.dart",
+        "lib/fx/tokens/fx_typography.dart"
+      ],
+      "sourceSha256": {
+        "lib/fx/theme/fx_theme.dart": "14696bcb234330fecf2719860372f4d38645e8358f60c1c6a65473de0040ff8d",
+        "lib/fx/tokens/fx_typography.dart": "50ef1a62747520689df0cac356128c14478702cffb6a1d338cae6f855bcbe959"
+      },
+      "observedBehavior": "胶囊同时高频表达状态、筛选和标签。",
+      "implemented": "共享静态 tag 与 44 触区操作 chip 已在语义和尺寸上区分。",
+      "verified": "共享改动有当前测试和/或实际 Flutter 渲染证据；消费者部分未验证。",
+      "disproved": false,
+      "blocked_external": [
+        "S2_INDEPENDENT_REVIEW",
+        "DEVICE_AND_PLATFORM_ACCEPTANCE"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/flutter-analyze.txt",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/full-tests.json"
+      ],
+      "unverified": [
+        "S2 独立审查",
+        "真机、VoiceOver/TalkBack、平台编译与相关消费者验收",
+        "各页面胶囊密度与是否改列表由消费者 owner 处理。"
+      ],
+      "reason": "各页面胶囊密度与是否改列表由消费者 owner 处理。",
+      "closure": "PENDING_S2_INDEPENDENT_REVIEW_NO_VERIFIED_CLOSED"
+    },
+    {
+      "issueId": "DT-33",
+      "stageId": "S1-A",
+      "state": "IMPLEMENTED_LOCAL",
+      "priority": "P2",
+      "title": "图表留白巨大而图例/金额很小，V18—20（V）",
+      "sourcePaths": [
+        "lib/fx/theme/fx_theme.dart",
+        "lib/fx/tokens/fx_typography.dart"
+      ],
+      "sourceSha256": {
+        "lib/fx/theme/fx_theme.dart": "14696bcb234330fecf2719860372f4d38645e8358f60c1c6a65473de0040ff8d",
+        "lib/fx/tokens/fx_typography.dart": "50ef1a62747520689df0cac356128c14478702cffb6a1d338cae6f855bcbe959"
+      },
+      "observedBehavior": "图表容器留白与小中心文字失衡。",
+      "implemented": "中心金额/标题提升为 17/13，暗色分类填色补齐。",
+      "verified": "共享改动有当前测试和/或实际 Flutter 渲染证据；消费者部分未验证。",
+      "disproved": false,
+      "blocked_external": [
+        "S2_INDEPENDENT_REVIEW",
+        "DEVICE_AND_PLATFORM_ACCEPTANCE"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/flutter-analyze.txt",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/full-tests.json"
+      ],
+      "unverified": [
+        "S2 独立审查",
+        "真机、VoiceOver/TalkBack、平台编译与相关消费者验收",
+        "图表容器尺寸、图例布局与页面留白由 S8 页面 owner 验收。"
+      ],
+      "reason": "图表容器尺寸、图例布局与页面留白由 S8 页面 owner 验收。",
+      "closure": "PENDING_S2_INDEPENDENT_REVIEW_NO_VERIFIED_CLOSED"
+    },
+    {
+      "issueId": "DT-34",
+      "stageId": "S1-A",
+      "state": "VERIFIED_LOCAL",
+      "priority": "P1",
+      "title": "局部clear16/18、select clear32宽、tree40，与44/48按钮并存（S）",
+      "sourcePaths": [
+        "lib/fx/theme/fx_theme.dart",
+        "lib/fx/tokens/fx_typography.dart",
+        "test/fx/components/fx_interaction_accessibility_test.dart"
+      ],
+      "sourceSha256": {
+        "lib/fx/theme/fx_theme.dart": "14696bcb234330fecf2719860372f4d38645e8358f60c1c6a65473de0040ff8d",
+        "lib/fx/tokens/fx_typography.dart": "50ef1a62747520689df0cac356128c14478702cffb6a1d338cae6f855bcbe959",
+        "test/fx/components/fx_interaction_accessibility_test.dart": "a1304015070686e74e1f5f9827de732e0c20dbc32a7ad3db10cfe629c71d727b"
+      },
+      "observedBehavior": "选择行清空 32 宽、树展开 40×40。",
+      "implemented": "清除至少 44×48，树展开至少 44×44。",
+      "verified": "当前决定性测试通过：test/fx/components/fx_interaction_accessibility_test.dart；最终全量 521 通过、1 跳过、0 失败。",
+      "disproved": false,
+      "blocked_external": [
+        "S2_INDEPENDENT_REVIEW",
+        "DEVICE_AND_PLATFORM_ACCEPTANCE"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/flutter-analyze.txt",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/full-tests.json",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/screenshot-index.json",
+        "test/fx/components/fx_interaction_accessibility_test.dart"
+      ],
+      "unverified": [
+        "S2 独立审查",
+        "真机、VoiceOver/TalkBack、平台编译与相关消费者验收"
+      ],
+      "reason": "仅 S1-A 共享实例本地验证，不代替全局 owner 或独立审查关闭。",
+      "closure": "PENDING_S2_INDEPENDENT_REVIEW_NO_VERIFIED_CLOSED"
+    },
+    {
+      "issueId": "DT-35",
+      "stageId": "S1-A",
+      "state": "CONFIRMED",
+      "priority": "P2",
+      "title": "列表底部重复预留导航、FAB、安全区；部分末尾留白过长（S/I）",
+      "sourcePaths": [
+        "lib/fx/theme/fx_theme.dart",
+        "lib/fx/tokens/fx_typography.dart"
+      ],
+      "sourceSha256": {
+        "lib/fx/theme/fx_theme.dart": "14696bcb234330fecf2719860372f4d38645e8358f60c1c6a65473de0040ff8d",
+        "lib/fx/tokens/fx_typography.dart": "50ef1a62747520689df0cac356128c14478702cffb6a1d338cae6f855bcbe959"
+      },
+      "observedBehavior": "列表底部导航/FAB/安全区叠加属于页面消费者，本阶段未改。",
+      "implemented": "NO_S1-A_IMPLEMENTATION_OUTSIDE_ALLOWED_SHARED_SCOPE",
+      "verified": "NOT_VERIFIED_CONSUMER_BEHAVIOR_UNCHANGED",
+      "disproved": false,
+      "blocked_external": [],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/flutter-analyze.txt",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/full-tests.json"
+      ],
+      "unverified": [
+        "S2 独立审查",
+        "真机、VoiceOver/TalkBack、平台编译与相关消费者验收"
+      ],
+      "reason": "保留给对应消费者 owner；S1-A 不宣布完成，也不伪造共享能力。",
+      "closure": "PENDING_S2_INDEPENDENT_REVIEW_NO_VERIFIED_CLOSED"
+    },
+    {
+      "issueId": "DT-36",
+      "stageId": "S1-A",
+      "state": "IMPLEMENTED_LOCAL",
+      "priority": "P2",
+      "title": "token12/16/20，但列表14、彩色内框18及多处10/8（S）",
+      "sourcePaths": [
+        "lib/fx/theme/fx_theme.dart",
+        "lib/fx/tokens/fx_typography.dart"
+      ],
+      "sourceSha256": {
+        "lib/fx/theme/fx_theme.dart": "14696bcb234330fecf2719860372f4d38645e8358f60c1c6a65473de0040ff8d",
+        "lib/fx/tokens/fx_typography.dart": "50ef1a62747520689df0cac356128c14478702cffb6a1d338cae6f855bcbe959"
+      },
+      "observedBehavior": "共享 token 与消费者局部 10/14/18 尺寸并存。",
+      "implemented": "本阶段共享触区、圆角与内容增高按 token/用途修复。",
+      "verified": "共享改动有当前测试和/或实际 Flutter 渲染证据；消费者部分未验证。",
+      "disproved": false,
+      "blocked_external": [
+        "S2_INDEPENDENT_REVIEW",
+        "DEVICE_AND_PLATFORM_ACCEPTANCE"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/flutter-analyze.txt",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/full-tests.json"
+      ],
+      "unverified": [
+        "S2 独立审查",
+        "真机、VoiceOver/TalkBack、平台编译与相关消费者验收",
+        "消费者局部尺寸由 S1-C 全工程核对。"
+      ],
+      "reason": "消费者局部尺寸由 S1-C 全工程核对。",
+      "closure": "PENDING_S2_INDEPENDENT_REVIEW_NO_VERIFIED_CLOSED"
+    },
+    {
+      "issueId": "DT-37",
+      "stageId": "S1-A",
+      "state": "VERIFIED_LOCAL",
+      "priority": "P2",
+      "title": "胶囊同时表达筛选、状态、颜色、树属性和导航（V/S）",
+      "sourcePaths": [
+        "lib/fx/theme/fx_theme.dart",
+        "lib/fx/tokens/fx_typography.dart",
+        "test/fx/components/fx_interaction_accessibility_test.dart"
+      ],
+      "sourceSha256": {
+        "lib/fx/theme/fx_theme.dart": "14696bcb234330fecf2719860372f4d38645e8358f60c1c6a65473de0040ff8d",
+        "lib/fx/tokens/fx_typography.dart": "50ef1a62747520689df0cac356128c14478702cffb6a1d338cae6f855bcbe959",
+        "test/fx/components/fx_interaction_accessibility_test.dart": "a1304015070686e74e1f5f9827de732e0c20dbc32a7ad3db10cfe629c71d727b"
+      },
+      "observedBehavior": "静态 tag 与可操作 chip 语义混淆。",
+      "implemented": "静态无按钮语义；选择/删除有命名、选中、键盘/Ink 路径。",
+      "verified": "当前决定性测试通过：test/fx/components/fx_interaction_accessibility_test.dart；最终全量 521 通过、1 跳过、0 失败。",
+      "disproved": false,
+      "blocked_external": [
+        "S2_INDEPENDENT_REVIEW",
+        "DEVICE_AND_PLATFORM_ACCEPTANCE"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/flutter-analyze.txt",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/full-tests.json",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/screenshot-index.json",
+        "test/fx/components/fx_interaction_accessibility_test.dart"
+      ],
+      "unverified": [
+        "S2 独立审查",
+        "真机、VoiceOver/TalkBack、平台编译与相关消费者验收"
+      ],
+      "reason": "仅 S1-A 共享实例本地验证，不代替全局 owner 或独立审查关闭。",
+      "closure": "PENDING_S2_INDEPENDENT_REVIEW_NO_VERIFIED_CLOSED"
+    },
+    {
+      "issueId": "DT-38",
+      "stageId": "S1-A",
+      "state": "CONFIRMED",
+      "priority": "P2",
+      "title": "“卡片标题—内卡—输入框—圆图标底座”层层造框；V18/V50—51/V63/V66（V/S）",
+      "sourcePaths": [
+        "lib/fx/theme/fx_theme.dart",
+        "lib/fx/tokens/fx_typography.dart"
+      ],
+      "sourceSha256": {
+        "lib/fx/theme/fx_theme.dart": "14696bcb234330fecf2719860372f4d38645e8358f60c1c6a65473de0040ff8d",
+        "lib/fx/tokens/fx_typography.dart": "50ef1a62747520689df0cac356128c14478702cffb6a1d338cae6f855bcbe959"
+      },
+      "observedBehavior": "卡片标题—内卡—输入框—图标底座的页面嵌套未在本阶段重排。",
+      "implemented": "NO_S1-A_IMPLEMENTATION_OUTSIDE_ALLOWED_SHARED_SCOPE",
+      "verified": "NOT_VERIFIED_CONSUMER_BEHAVIOR_UNCHANGED",
+      "disproved": false,
+      "blocked_external": [],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/flutter-analyze.txt",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/full-tests.json"
+      ],
+      "unverified": [
+        "S2 独立审查",
+        "真机、VoiceOver/TalkBack、平台编译与相关消费者验收"
+      ],
+      "reason": "保留给对应消费者 owner；S1-A 不宣布完成，也不伪造共享能力。",
+      "closure": "PENDING_S2_INDEPENDENT_REVIEW_NO_VERIFIED_CLOSED"
+    },
+    {
+      "issueId": "DT-39",
+      "stageId": "S1-A",
+      "state": "DISPROVED",
+      "priority": "P2",
+      "title": "FxCard注释仍称柔阴影，默认已false；DashboardShell却显式true（S）",
+      "sourcePaths": [
+        "lib/fx/theme/fx_theme.dart",
+        "lib/fx/tokens/fx_typography.dart"
+      ],
+      "sourceSha256": {
+        "lib/fx/theme/fx_theme.dart": "14696bcb234330fecf2719860372f4d38645e8358f60c1c6a65473de0040ff8d",
+        "lib/fx/tokens/fx_typography.dart": "50ef1a62747520689df0cac356128c14478702cffb6a1d338cae6f855bcbe959"
+      },
+      "observedBehavior": "FxCard 默认 elevated=false，注释与当前无重阴影行为一致。",
+      "implemented": "既有底座或本轮当前源码已包含反证；未为凑工作量重改。",
+      "verified": "当前源码 SHA、相关回归、分析以及适用的已查看 Flutter fixture 支持原审计描述在本共享实例不成立。",
+      "disproved": true,
+      "blocked_external": [
+        "S2_INDEPENDENT_REVIEW",
+        "DEVICE_AND_PLATFORM_ACCEPTANCE"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/flutter-analyze.txt",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/full-tests.json",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/screenshot-index.json"
+      ],
+      "unverified": [
+        "S2 独立审查",
+        "真机、VoiceOver/TalkBack、平台编译与相关消费者验收"
+      ],
+      "reason": "仅证伪原报告对当前共享实例的描述，不抹掉历史审计。",
+      "closure": "PENDING_S2_INDEPENDENT_REVIEW_NO_VERIFIED_CLOSED"
+    },
+    {
+      "issueId": "DT-40",
+      "stageId": "S1-A",
+      "state": "VERIFIED_LOCAL",
+      "priority": "P2",
+      "title": "统计拖动elevation10、首页4、移除按钮2、分段选中另加阴影（S）",
+      "sourcePaths": [
+        "lib/fx/theme/fx_theme.dart",
+        "lib/fx/tokens/fx_typography.dart",
+        "test/fx/components/fx_interaction_accessibility_test.dart"
+      ],
+      "sourceSha256": {
+        "lib/fx/theme/fx_theme.dart": "14696bcb234330fecf2719860372f4d38645e8358f60c1c6a65473de0040ff8d",
+        "lib/fx/tokens/fx_typography.dart": "50ef1a62747520689df0cac356128c14478702cffb6a1d338cae6f855bcbe959",
+        "test/fx/components/fx_interaction_accessibility_test.dart": "a1304015070686e74e1f5f9827de732e0c20dbc32a7ad3db10cfe629c71d727b"
+      },
+      "observedBehavior": "分段选中另加阴影，与默认无重阴影不一致。",
+      "implemented": "分段选中只用表面/文字角色，不加阴影。",
+      "verified": "当前决定性测试通过：test/fx/components/fx_interaction_accessibility_test.dart；最终全量 521 通过、1 跳过、0 失败。",
+      "disproved": false,
+      "blocked_external": [
+        "S2_INDEPENDENT_REVIEW",
+        "DEVICE_AND_PLATFORM_ACCEPTANCE"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/flutter-analyze.txt",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/full-tests.json",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/screenshot-index.json",
+        "test/fx/components/fx_interaction_accessibility_test.dart"
+      ],
+      "unverified": [
+        "S2 独立审查",
+        "真机、VoiceOver/TalkBack、平台编译与相关消费者验收"
+      ],
+      "reason": "仅 S1-A 共享实例本地验证，不代替全局 owner 或独立审查关闭。",
+      "closure": "PENDING_S2_INDEPENDENT_REVIEW_NO_VERIFIED_CLOSED"
+    },
+    {
+      "issueId": "DT-41",
+      "stageId": "S1-A",
+      "state": "DISPROVED",
+      "priority": "P2",
+      "title": "原卡片InkWell下面绘制不透明Container，又以缩放反馈（S）",
+      "sourcePaths": [
+        "lib/fx/theme/fx_theme.dart",
+        "lib/fx/tokens/fx_typography.dart"
+      ],
+      "sourceSha256": {
+        "lib/fx/theme/fx_theme.dart": "14696bcb234330fecf2719860372f4d38645e8358f60c1c6a65473de0040ff8d",
+        "lib/fx/tokens/fx_typography.dart": "50ef1a62747520689df0cac356128c14478702cffb6a1d338cae6f855bcbe959"
+      },
+      "observedBehavior": "FxCard 的按压/焦点与表面在同一 Material 上绘制，亮暗 pressed/focus 测试通过。",
+      "implemented": "既有底座或本轮当前源码已包含反证；未为凑工作量重改。",
+      "verified": "当前源码 SHA、相关回归、分析以及适用的已查看 Flutter fixture 支持原审计描述在本共享实例不成立。",
+      "disproved": true,
+      "blocked_external": [
+        "S2_INDEPENDENT_REVIEW",
+        "DEVICE_AND_PLATFORM_ACCEPTANCE"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/flutter-analyze.txt",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/full-tests.json",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/screenshot-index.json"
+      ],
+      "unverified": [
+        "S2 独立审查",
+        "真机、VoiceOver/TalkBack、平台编译与相关消费者验收"
+      ],
+      "reason": "仅证伪原报告对当前共享实例的描述，不抹掉历史审计。",
+      "closure": "PENDING_S2_INDEPENDENT_REVIEW_NO_VERIFIED_CLOSED"
+    },
+    {
+      "issueId": "DT-42",
+      "stageId": "S1-A",
+      "state": "VERIFIED_LOCAL",
+      "priority": "P2",
+      "title": "FxChip仍是Material→InkWell→不透明Container，TagChip用裸GestureDetector（S）",
+      "sourcePaths": [
+        "lib/fx/theme/fx_theme.dart",
+        "lib/fx/tokens/fx_typography.dart",
+        "test/fx/components/fx_interaction_accessibility_test.dart"
+      ],
+      "sourceSha256": {
+        "lib/fx/theme/fx_theme.dart": "14696bcb234330fecf2719860372f4d38645e8358f60c1c6a65473de0040ff8d",
+        "lib/fx/tokens/fx_typography.dart": "50ef1a62747520689df0cac356128c14478702cffb6a1d338cae6f855bcbe959",
+        "test/fx/components/fx_interaction_accessibility_test.dart": "a1304015070686e74e1f5f9827de732e0c20dbc32a7ad3db10cfe629c71d727b"
+      },
+      "observedBehavior": "FxChip Ink 下有不透明 Container，TagChip 使用裸 GestureDetector。",
+      "implemented": "背景移到 Material；TagChip 使用 Ink/InkResponse 和 44 触区。",
+      "verified": "当前决定性测试通过：test/fx/components/fx_interaction_accessibility_test.dart；最终全量 521 通过、1 跳过、0 失败。",
+      "disproved": false,
+      "blocked_external": [
+        "S2_INDEPENDENT_REVIEW",
+        "DEVICE_AND_PLATFORM_ACCEPTANCE"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/flutter-analyze.txt",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/full-tests.json",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/screenshot-index.json",
+        "test/fx/components/fx_interaction_accessibility_test.dart"
+      ],
+      "unverified": [
+        "S2 独立审查",
+        "真机、VoiceOver/TalkBack、平台编译与相关消费者验收"
+      ],
+      "reason": "仅 S1-A 共享实例本地验证，不代替全局 owner 或独立审查关闭。",
+      "closure": "PENDING_S2_INDEPENDENT_REVIEW_NO_VERIFIED_CLOSED"
+    },
+    {
+      "issueId": "DT-43",
+      "stageId": "S1-A",
+      "state": "VERIFIED_LOCAL",
+      "priority": "P2",
+      "title": "Motion已支持disableAnimations，但分组160ms、部分认证/网格仍直接写动画（S）",
+      "sourcePaths": [
+        "lib/fx/theme/fx_theme.dart",
+        "lib/fx/tokens/fx_typography.dart",
+        "test/fx/layout/fx_bento_grid_test.dart"
+      ],
+      "sourceSha256": {
+        "lib/fx/theme/fx_theme.dart": "14696bcb234330fecf2719860372f4d38645e8358f60c1c6a65473de0040ff8d",
+        "lib/fx/tokens/fx_typography.dart": "50ef1a62747520689df0cac356128c14478702cffb6a1d338cae6f855bcbe959",
+        "test/fx/layout/fx_bento_grid_test.dart": "271dd9fe7a405c0ea7366fb23ce35e011f892e235cd4a26bcd2ff2865c8e5b61"
+      },
+      "observedBehavior": "Bento animationDuration 未 resolve 减少动态。",
+      "implemented": "AnimatedSize/AnimatedPositioned 统一 FxMotion.resolve。",
+      "verified": "当前决定性测试通过：test/fx/layout/fx_bento_grid_test.dart；最终全量 521 通过、1 跳过、0 失败。",
+      "disproved": false,
+      "blocked_external": [
+        "S2_INDEPENDENT_REVIEW",
+        "DEVICE_AND_PLATFORM_ACCEPTANCE"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/flutter-analyze.txt",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/full-tests.json",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/screenshot-index.json",
+        "test/fx/layout/fx_bento_grid_test.dart"
+      ],
+      "unverified": [
+        "S2 独立审查",
+        "真机、VoiceOver/TalkBack、平台编译与相关消费者验收"
+      ],
+      "reason": "仅 S1-A 共享实例本地验证，不代替全局 owner 或独立审查关闭。",
+      "closure": "PENDING_S2_INDEPENDENT_REVIEW_NO_VERIFIED_CLOSED"
+    },
+    {
+      "issueId": "DT-44",
+      "stageId": "S1-A",
+      "state": "VERIFIED_LOCAL",
+      "priority": "P2",
+      "title": "普通操作普遍selectionClick，卡和回调可能重复触感（S）",
+      "sourcePaths": [
+        "lib/fx/theme/fx_theme.dart",
+        "lib/fx/tokens/fx_typography.dart",
+        "test/fx/components/fx_foundation_integration_test.dart"
+      ],
+      "sourceSha256": {
+        "lib/fx/theme/fx_theme.dart": "14696bcb234330fecf2719860372f4d38645e8358f60c1c6a65473de0040ff8d",
+        "lib/fx/tokens/fx_typography.dart": "50ef1a62747520689df0cac356128c14478702cffb6a1d338cae6f855bcbe959",
+        "test/fx/components/fx_foundation_integration_test.dart": "9df54b99b23bd0e411335c0b62cf021984b8ccac1146d8ba1f3258dc096351d3"
+      },
+      "observedBehavior": "普通卡片和回调可能重复 selection haptic。",
+      "implemented": "普通 FxCard/FxSelectRow/FxListItem 激活不再发送 selection haptic。",
+      "verified": "当前决定性测试通过：test/fx/components/fx_foundation_integration_test.dart；最终全量 521 通过、1 跳过、0 失败。",
+      "disproved": false,
+      "blocked_external": [
+        "S2_INDEPENDENT_REVIEW",
+        "DEVICE_AND_PLATFORM_ACCEPTANCE"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/flutter-analyze.txt",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/full-tests.json",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/screenshot-index.json",
+        "test/fx/components/fx_foundation_integration_test.dart"
+      ],
+      "unverified": [
+        "S2 独立审查",
+        "真机、VoiceOver/TalkBack、平台编译与相关消费者验收"
+      ],
+      "reason": "仅 S1-A 共享实例本地验证，不代替全局 owner 或独立审查关闭。",
+      "closure": "PENDING_S2_INDEPENDENT_REVIEW_NO_VERIFIED_CLOSED"
+    },
+    {
+      "issueId": "DT-45",
+      "stageId": "S1-A",
+      "state": "IMPLEMENTED_LOCAL",
+      "priority": "P2",
+      "title": "多页loading/error把有标题内容换成无上下文小转圈/错误（S）",
+      "sourcePaths": [
+        "lib/fx/theme/fx_theme.dart",
+        "lib/fx/tokens/fx_typography.dart"
+      ],
+      "sourceSha256": {
+        "lib/fx/theme/fx_theme.dart": "14696bcb234330fecf2719860372f4d38645e8358f60c1c6a65473de0040ff8d",
+        "lib/fx/tokens/fx_typography.dart": "50ef1a62747520689df0cac356128c14478702cffb6a1d338cae6f855bcbe959"
+      },
+      "observedBehavior": "多页 loading/error 把对象上下文替换成小转圈/错误。",
+      "implemented": "FxStateView 新增可选 title 并保留恢复动作。",
+      "verified": "共享改动有当前测试和/或实际 Flutter 渲染证据；消费者部分未验证。",
+      "disproved": false,
+      "blocked_external": [
+        "S2_INDEPENDENT_REVIEW",
+        "DEVICE_AND_PLATFORM_ACCEPTANCE"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/flutter-analyze.txt",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/full-tests.json"
+      ],
+      "unverified": [
+        "S2 独立审查",
+        "真机、VoiceOver/TalkBack、平台编译与相关消费者验收",
+        "未传 title 的页面消费者仍需各自迁移，未宣布全局完成。"
+      ],
+      "reason": "未传 title 的页面消费者仍需各自迁移，未宣布全局完成。",
+      "closure": "PENDING_S2_INDEPENDENT_REVIEW_NO_VERIFIED_CLOSED"
+    },
+    {
+      "issueId": "CX-01",
+      "stageId": "S1-A",
+      "state": "VERIFIED_LOCAL",
+      "priority": "P2",
+      "title": "`FxTagChip` 的删除图标13px、裸GestureDetector，无最小触区与明确删除对象；将静态tag与可操作chip分成清楚的呈现。",
+      "sourcePaths": [
+        "lib/fx/components/fx_tag_chip.dart",
+        "test/fx/components/fx_interaction_accessibility_test.dart"
+      ],
+      "sourceSha256": {
+        "lib/fx/components/fx_tag_chip.dart": "52f9c293ab1905b29e5bc715f178c81783647fe4a7b9a617b960ae077432807a",
+        "test/fx/components/fx_interaction_accessibility_test.dart": "a1304015070686e74e1f5f9827de732e0c20dbc32a7ad3db10cfe629c71d727b"
+      },
+      "observedBehavior": "删除图标 13px 且无命名触区，静态标签像按钮。",
+      "implemented": "删除命名包含对象、44×44 InkResponse；静态标签无按钮语义。",
+      "verified": "当前决定性测试通过：test/fx/components/fx_interaction_accessibility_test.dart；最终全量 521 通过、1 跳过、0 失败。",
+      "disproved": false,
+      "blocked_external": [
+        "S2_INDEPENDENT_REVIEW",
+        "DEVICE_AND_PLATFORM_ACCEPTANCE"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/flutter-analyze.txt",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/full-tests.json",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/screenshot-index.json",
+        "test/fx/components/fx_interaction_accessibility_test.dart"
+      ],
+      "unverified": [
+        "S2 独立审查",
+        "真机、VoiceOver/TalkBack、平台编译与相关消费者验收"
+      ],
+      "reason": "仅 S1-A 共享实例本地验证，不代替全局 owner 或独立审查关闭。",
+      "closure": "PENDING_S2_INDEPENDENT_REVIEW_NO_VERIFIED_CLOSED"
+    },
+    {
+      "issueId": "CX-02",
+      "stageId": "S1-A",
+      "state": "VERIFIED_LOCAL",
+      "priority": "P2",
+      "title": "`FxSelectRow`清空目标32×48，固定96标签列、单行当前值；大字时应上下重排，清除语义带字段名。",
+      "sourcePaths": [
+        "lib/fx/components/fx_select_row.dart",
+        "test/fx/components/fx_interaction_accessibility_test.dart"
+      ],
+      "sourceSha256": {
+        "lib/fx/components/fx_select_row.dart": "2275c752c9e06b9ba5ab5a6447dc1fe9b7b9fd01dff6dd9189ab86349ade037d",
+        "test/fx/components/fx_interaction_accessibility_test.dart": "a1304015070686e74e1f5f9827de732e0c20dbc32a7ad3db10cfe629c71d727b"
+      },
+      "observedBehavior": "SelectRow 清除目标小、固定标签列且单行值。",
+      "implemented": "44×48 字段命名清除，窄屏/大字上下重排完整值。",
+      "verified": "当前决定性测试通过：test/fx/components/fx_interaction_accessibility_test.dart；最终全量 521 通过、1 跳过、0 失败。",
+      "disproved": false,
+      "blocked_external": [
+        "S2_INDEPENDENT_REVIEW",
+        "DEVICE_AND_PLATFORM_ACCEPTANCE"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/flutter-analyze.txt",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/full-tests.json",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/screenshot-index.json",
+        "test/fx/components/fx_interaction_accessibility_test.dart"
+      ],
+      "unverified": [
+        "S2 独立审查",
+        "真机、VoiceOver/TalkBack、平台编译与相关消费者验收"
+      ],
+      "reason": "仅 S1-A 共享实例本地验证，不代替全局 owner 或独立审查关闭。",
+      "closure": "PENDING_S2_INDEPENDENT_REVIEW_NO_VERIFIED_CLOSED"
+    },
+    {
+      "issueId": "CX-03",
+      "stageId": "S1-A",
+      "state": "VERIFIED_LOCAL",
+      "priority": "P2",
+      "title": "`FxTreePicker`展开按钮40×40，树深度缩进进一步减少名称宽度；搜索后仍需父路径上下文和足够触区。",
+      "sourcePaths": [
+        "lib/fx/tree/fx_tree_picker.dart",
+        "test/fx/components/fx_selection_contract_test.dart"
+      ],
+      "sourceSha256": {
+        "lib/fx/tree/fx_tree_picker.dart": "66fc99a7ff9661797d933e13b3c316380d10e618c3bb75aaafabefb82a41b45e",
+        "test/fx/components/fx_selection_contract_test.dart": "5f3bbf32c168ed0280e28ce76b845cad7cbadb47b939aad4f3031ca68247e96e"
+      },
+      "observedBehavior": "树展开 40×40，长名称和搜索父路径被截断。",
+      "implemented": "展开 44×44，名称/父路径可换行，选中语义补齐。",
+      "verified": "当前决定性测试通过：test/fx/components/fx_selection_contract_test.dart；最终全量 521 通过、1 跳过、0 失败。",
+      "disproved": false,
+      "blocked_external": [
+        "S2_INDEPENDENT_REVIEW",
+        "DEVICE_AND_PLATFORM_ACCEPTANCE"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/flutter-analyze.txt",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/full-tests.json",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/screenshot-index.json",
+        "test/fx/components/fx_selection_contract_test.dart"
+      ],
+      "unverified": [
+        "S2 独立审查",
+        "真机、VoiceOver/TalkBack、平台编译与相关消费者验收"
+      ],
+      "reason": "仅 S1-A 共享实例本地验证，不代替全局 owner 或独立审查关闭。",
+      "closure": "PENDING_S2_INDEPENDENT_REVIEW_NO_VERIFIED_CLOSED"
+    },
+    {
+      "issueId": "CX-04",
+      "stageId": "S1-A",
+      "state": "IMPLEMENTED_LOCAL",
+      "priority": "P2",
+      "title": "分组切换`_GroupPill`以caption+上下8生成约32px高目标；没有selected/button语义和键盘路径。不能因颜色显著就当可访问性完成。",
+      "sourcePaths": [
+        "lib/core/session/widgets/session_switcher_sheet.dart",
+        "lib/fx/components/fx_segmented.dart"
+      ],
+      "sourceSha256": {
+        "lib/core/session/widgets/session_switcher_sheet.dart": "dd999a5234ee247ce1e56cc50d9e345acdb8ab47228c6169985b7930a47aa37b",
+        "lib/fx/components/fx_segmented.dart": "5f2f151fd283f71a60757fbaaa44a4e41a0e001cfc96af1bdca98f4fe782cd58"
+      },
+      "observedBehavior": "_GroupPill 约 32px 且缺少完整 button/selected/键盘路径。",
+      "implemented": "共享 FxSegmented 已补 button/selected、Ink、48 最小高度与长文本。",
+      "verified": "共享改动有当前测试和/或实际 Flutter 渲染证据；消费者部分未验证。",
+      "disproved": false,
+      "blocked_external": [
+        "S2_INDEPENDENT_REVIEW",
+        "DEVICE_AND_PLATFORM_ACCEPTANCE"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/flutter-analyze.txt",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/full-tests.json"
+      ],
+      "unverified": [
+        "S2 独立审查",
+        "真机、VoiceOver/TalkBack、平台编译与相关消费者验收",
+        "lib/core/session 的 _GroupPill 超出本阶段允许写入范围，由 S3-A 迁移。"
+      ],
+      "reason": "lib/core/session 的 _GroupPill 超出本阶段允许写入范围，由 S3-A 迁移。",
+      "closure": "PENDING_S2_INDEPENDENT_REVIEW_NO_VERIFIED_CLOSED"
+    },
+    {
+      "issueId": "CX-05",
+      "stageId": "S1-A",
+      "state": "VERIFIED_LOCAL",
+      "priority": "P2",
+      "title": "`FxActionSheet`普通操作图标统一primary，导航、复制、编辑全部蓝；用中性图标，选中和危险才强调。",
+      "sourcePaths": [
+        "lib/fx/components/fx_action_sheet.dart",
+        "test/fx/components/fx_interaction_accessibility_test.dart"
+      ],
+      "sourceSha256": {
+        "lib/fx/components/fx_action_sheet.dart": "0199969728e2d87f58bcef1355bf0ccef3c3b917ff8272f0cb551fde8cb3f9a2",
+        "test/fx/components/fx_interaction_accessibility_test.dart": "a1304015070686e74e1f5f9827de732e0c20dbc32a7ad3db10cfe629c71d727b"
+      },
+      "observedBehavior": "ActionSheet 普通导航/复制/编辑图标全部 primary。",
+      "implemented": "普通图标 textSecondary，仅选中/危险强调。",
+      "verified": "当前决定性测试通过：test/fx/components/fx_interaction_accessibility_test.dart；最终全量 521 通过、1 跳过、0 失败。",
+      "disproved": false,
+      "blocked_external": [
+        "S2_INDEPENDENT_REVIEW",
+        "DEVICE_AND_PLATFORM_ACCEPTANCE"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/flutter-analyze.txt",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/full-tests.json",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/screenshot-index.json",
+        "test/fx/components/fx_interaction_accessibility_test.dart"
+      ],
+      "unverified": [
+        "S2 独立审查",
+        "真机、VoiceOver/TalkBack、平台编译与相关消费者验收"
+      ],
+      "reason": "仅 S1-A 共享实例本地验证，不代替全局 owner 或独立审查关闭。",
+      "closure": "PENDING_S2_INDEPENDENT_REVIEW_NO_VERIFIED_CLOSED"
+    },
+    {
+      "issueId": "CX-06",
+      "stageId": "S1-A",
+      "state": "VERIFIED_LOCAL",
+      "priority": "P2",
+      "title": "`FxListItem`主标题/副标题常单行；trailing没有预留长值预算；保持行内关联，并提供大字重排。",
+      "sourcePaths": [
+        "lib/fx/components/fx_list_item.dart",
+        "test/fx/components/fx_interaction_accessibility_test.dart"
+      ],
+      "sourceSha256": {
+        "lib/fx/components/fx_list_item.dart": "af61402f72728a75a08b2c9b3c588ed6c9ea0ee8670e450cab0914049dff9657",
+        "test/fx/components/fx_interaction_accessibility_test.dart": "a1304015070686e74e1f5f9827de732e0c20dbc32a7ad3db10cfe629c71d727b"
+      },
+      "observedBehavior": "ListItem 主标题/副标题和 trailing 挤在同一行。",
+      "implemented": "标题换行、副标题最多 3 行，大字 trailing 下行关联。",
+      "verified": "当前决定性测试通过：test/fx/components/fx_interaction_accessibility_test.dart；最终全量 521 通过、1 跳过、0 失败。",
+      "disproved": false,
+      "blocked_external": [
+        "S2_INDEPENDENT_REVIEW",
+        "DEVICE_AND_PLATFORM_ACCEPTANCE"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/flutter-analyze.txt",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/full-tests.json",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/screenshot-index.json",
+        "test/fx/components/fx_interaction_accessibility_test.dart"
+      ],
+      "unverified": [
+        "S2 独立审查",
+        "真机、VoiceOver/TalkBack、平台编译与相关消费者验收"
+      ],
+      "reason": "仅 S1-A 共享实例本地验证，不代替全局 owner 或独立审查关闭。",
+      "closure": "PENDING_S2_INDEPENDENT_REVIEW_NO_VERIFIED_CLOSED"
+    },
+    {
+      "issueId": "CX-07",
+      "stageId": "S1-A",
+      "state": "VERIFIED_LOCAL",
+      "priority": "P2",
+      "title": "`FxSegmented`先按等分列宽再单行ellipsis，增高无法修复长名称宽度；少项分段/更多项选择列表，避免同一个控件承接所有基数。",
+      "sourcePaths": [
+        "lib/fx/components/fx_option_picker.dart",
+        "lib/fx/components/fx_segmented.dart",
+        "test/fx/components/fx_interaction_accessibility_test.dart"
+      ],
+      "sourceSha256": {
+        "lib/fx/components/fx_option_picker.dart": "897df0e12a7c9c94e15a4f7eb4e7b93698cd4e4e14597ff7be30f161abbd6c8f",
+        "lib/fx/components/fx_segmented.dart": "5f2f151fd283f71a60757fbaaa44a4e41a0e001cfc96af1bdca98f4fe782cd58",
+        "test/fx/components/fx_interaction_accessibility_test.dart": "a1304015070686e74e1f5f9827de732e0c20dbc32a7ad3db10cfe629c71d727b"
+      },
+      "observedBehavior": "Segmented 等宽后单行 ellipsis，增高不能恢复名称。",
+      "implemented": "少量分段按内容增高并完整换行；更多项合同指向共享选择列表。",
+      "verified": "当前决定性测试通过：test/fx/components/fx_interaction_accessibility_test.dart；最终全量 521 通过、1 跳过、0 失败。",
+      "disproved": false,
+      "blocked_external": [
+        "S2_INDEPENDENT_REVIEW",
+        "DEVICE_AND_PLATFORM_ACCEPTANCE"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/flutter-analyze.txt",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/full-tests.json",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/screenshot-index.json",
+        "test/fx/components/fx_interaction_accessibility_test.dart"
+      ],
+      "unverified": [
+        "S2 独立审查",
+        "真机、VoiceOver/TalkBack、平台编译与相关消费者验收"
+      ],
+      "reason": "仅 S1-A 共享实例本地验证，不代替全局 owner 或独立审查关闭。",
+      "closure": "PENDING_S2_INDEPENDENT_REVIEW_NO_VERIFIED_CLOSED"
+    },
+    {
+      "issueId": "CX-08",
+      "stageId": "S1-A",
+      "state": "VERIFIED_LOCAL",
+      "priority": "P2",
+      "title": "`FxBentoGrid`固定2列起和rowSpan，不考虑文字内容高度，且animationDuration未统一resolve；对编辑态提供紧凑摘要清单，减少动态时避免位移动画。",
+      "sourcePaths": [
+        "lib/fx/layout/fx_bento_grid.dart",
+        "test/fx/layout/fx_bento_grid_test.dart"
+      ],
+      "sourceSha256": {
+        "lib/fx/layout/fx_bento_grid.dart": "61ce6051b6e96dc6e32d89ade91505320d434bd7d0310ce47e1ed6b5cbb90073",
+        "test/fx/layout/fx_bento_grid_test.dart": "271dd9fe7a405c0ea7366fb23ce35e011f892e235cd4a26bcd2ff2865c8e5b61"
+      },
+      "observedBehavior": "Bento 固定列/行高且动画不尊重减少动态。",
+      "implemented": "窄屏/大字单列固有高度摘要清单，动画统一 resolve。",
+      "verified": "当前决定性测试通过：test/fx/layout/fx_bento_grid_test.dart；最终全量 521 通过、1 跳过、0 失败。",
+      "disproved": false,
+      "blocked_external": [
+        "S2_INDEPENDENT_REVIEW",
+        "DEVICE_AND_PLATFORM_ACCEPTANCE"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/flutter-analyze.txt",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/full-tests.json",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/screenshot-index.json",
+        "test/fx/layout/fx_bento_grid_test.dart"
+      ],
+      "unverified": [
+        "S2 独立审查",
+        "真机、VoiceOver/TalkBack、平台编译与相关消费者验收"
+      ],
+      "reason": "仅 S1-A 共享实例本地验证，不代替全局 owner 或独立审查关闭。",
+      "closure": "PENDING_S2_INDEPENDENT_REVIEW_NO_VERIFIED_CLOSED"
+    },
+    {
+      "issueId": "CX-09",
+      "stageId": "S1-A",
+      "state": "VERIFIED_LOCAL",
+      "priority": "P2",
+      "title": "`FxStateView`空态/失败都使用48图标＋居中短文，场景上下文弱；真实空态、筛选零结果、首次创建与加载失败使用不同任务说明和恢复动作。",
+      "sourcePaths": [
+        "lib/fx/components/fx_state_view.dart",
+        "test/fx/components/fx_interaction_accessibility_test.dart"
+      ],
+      "sourceSha256": {
+        "lib/fx/components/fx_state_view.dart": "2912e1858741ef6622580c4bdef5ad102d9ebf1cd3ef99e73b49d57e7fc17e18",
+        "test/fx/components/fx_interaction_accessibility_test.dart": "a1304015070686e74e1f5f9827de732e0c20dbc32a7ad3db10cfe629c71d727b"
+      },
+      "observedBehavior": "StateView 空态/失败缺少对象与任务上下文。",
+      "implemented": "三种工厂支持 title，保留 message 与恢复动作。",
+      "verified": "当前决定性测试通过：test/fx/components/fx_interaction_accessibility_test.dart；最终全量 521 通过、1 跳过、0 失败。",
+      "disproved": false,
+      "blocked_external": [
+        "S2_INDEPENDENT_REVIEW",
+        "DEVICE_AND_PLATFORM_ACCEPTANCE"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/flutter-analyze.txt",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/full-tests.json",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/screenshot-index.json",
+        "test/fx/components/fx_interaction_accessibility_test.dart"
+      ],
+      "unverified": [
+        "S2 独立审查",
+        "真机、VoiceOver/TalkBack、平台编译与相关消费者验收"
+      ],
+      "reason": "仅 S1-A 共享实例本地验证，不代替全局 owner 或独立审查关闭。",
+      "closure": "PENDING_S2_INDEPENDENT_REVIEW_NO_VERIFIED_CLOSED"
+    },
+    {
+      "issueId": "CX-10",
+      "stageId": "S1-A",
+      "state": "VERIFIED_LOCAL",
+      "priority": "P2",
+      "title": "`FxFeedback`读屏标签拼入英文tone.name，4秒toast承载字段错误且新提示替掉旧提示；字段错误改持久就地，状态播报使用本地化文本。",
+      "sourcePaths": [
+        "lib/core/feedback/fx_feedback.dart",
+        "lib/fx/components/fx_text_field.dart",
+        "test/fx/components/fx_interaction_accessibility_test.dart"
+      ],
+      "sourceSha256": {
+        "lib/core/feedback/fx_feedback.dart": "e8f7a2fa36e2b7017e5e98f2483d88872f8e33adfebd03b4181e24e9d10935b8",
+        "lib/fx/components/fx_text_field.dart": "6859f072793143019bc412e1b33af9d8b0878785d4ee4765fddefe538186e3ff",
+        "test/fx/components/fx_interaction_accessibility_test.dart": "a1304015070686e74e1f5f9827de732e0c20dbc32a7ad3db10cfe629c71d727b"
+      },
+      "observedBehavior": "Feedback 拼入英文 tone.name，字段错误依赖短暂 toast。",
+      "implemented": "播报只用本地化 message，不主动替换旧提示；字段错误继续持久显示。",
+      "verified": "当前决定性测试通过：test/fx/components/fx_interaction_accessibility_test.dart；最终全量 521 通过、1 跳过、0 失败。",
+      "disproved": false,
+      "blocked_external": [
+        "S2_INDEPENDENT_REVIEW",
+        "DEVICE_AND_PLATFORM_ACCEPTANCE"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/flutter-analyze.txt",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/full-tests.json",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/screenshot-index.json",
+        "test/fx/components/fx_interaction_accessibility_test.dart"
+      ],
+      "unverified": [
+        "S2 独立审查",
+        "真机、VoiceOver/TalkBack、平台编译与相关消费者验收"
+      ],
+      "reason": "仅 S1-A 共享实例本地验证，不代替全局 owner 或独立审查关闭。",
+      "closure": "PENDING_S2_INDEPENDENT_REVIEW_NO_VERIFIED_CLOSED"
+    },
+    {
+      "issueId": "CX-11",
+      "stageId": "S1-A",
+      "state": "VERIFIED_LOCAL",
+      "priority": "P2",
+      "title": "`FxConfirmSheet`等待期间只禁内部按钮，外层默认可dismiss；`failureMessage`缺失时失败没有可见解释。调用侧明确忙碌期退出和失败文案。",
+      "sourcePaths": [
+        "lib/fx/components/fx_confirm_sheet.dart",
+        "lib/fx/components/fx_sheet.dart",
+        "test/fx/components/fx_sheet_guard_test.dart"
+      ],
+      "sourceSha256": {
+        "lib/fx/components/fx_confirm_sheet.dart": "b849fb5f83a0127f3c93c4e0c0e43201fb86aea9845042c0b7b68343be438fa4",
+        "lib/fx/components/fx_sheet.dart": "ddb091b4bab9dcfb473aad06dc014d4c0e60ca3e3553f30aa4876452aecc11b0",
+        "test/fx/components/fx_sheet_guard_test.dart": "ce69a28c513a3429f8cea6d67eb7c24a3a5feddd432125fbcc77104f76136636"
+      },
+      "observedBehavior": "ConfirmSheet 忙碌可 dismiss，失败可无可见解释。",
+      "implemented": "FxSheetPopGuard 忙碌锁退出；失败默认本地化文案并保持打开。",
+      "verified": "当前决定性测试通过：test/fx/components/fx_sheet_guard_test.dart；最终全量 521 通过、1 跳过、0 失败。",
+      "disproved": false,
+      "blocked_external": [
+        "S2_INDEPENDENT_REVIEW",
+        "DEVICE_AND_PLATFORM_ACCEPTANCE"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/flutter-analyze.txt",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/full-tests.json",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/screenshot-index.json",
+        "test/fx/components/fx_sheet_guard_test.dart"
+      ],
+      "unverified": [
+        "S2 独立审查",
+        "真机、VoiceOver/TalkBack、平台编译与相关消费者验收"
+      ],
+      "reason": "仅 S1-A 共享实例本地验证，不代替全局 owner 或独立审查关闭。",
+      "closure": "PENDING_S2_INDEPENDENT_REVIEW_NO_VERIFIED_CLOSED"
+    },
+    {
+      "issueId": "CX-12",
+      "stageId": "S1-A",
+      "state": "VERIFIED_LOCAL",
+      "priority": "P2",
+      "title": "图表网格线仍复用border、甜甜圈金额12、中心标题11；图和表的视图切换不应让数据可读性退化。",
+      "sourcePaths": [
+        "lib/fx/components/fx_bar_chart.dart",
+        "lib/fx/components/fx_donut_chart.dart",
+        "lib/fx/components/fx_line_chart.dart",
+        "test/fx/components/fx_chart_test.dart"
+      ],
+      "sourceSha256": {
+        "lib/fx/components/fx_bar_chart.dart": "bfeb8979c748d3e638caa4720328bf3f27829ec4953d8904575f4a52be190872",
+        "lib/fx/components/fx_donut_chart.dart": "a8be9f45e0afc40ce30e0709c775ebcaae1a395b51c102cce3f1e27c41a3a878",
+        "lib/fx/components/fx_line_chart.dart": "8411739644d71edd7b4e6c8d64446b58abd2a844dc572beab7a0e19692b768e9",
+        "test/fx/components/fx_chart_test.dart": "410de7536e21767e62594c58832407d1de54cc311928205f7d3738adc6949a37"
+      },
+      "observedBehavior": "图表网格复用 border，中心金额 11。",
+      "implemented": "折线/柱状网格改 separator；中心金额 17、标题 13。",
+      "verified": "当前决定性测试通过：test/fx/components/fx_chart_test.dart；最终全量 521 通过、1 跳过、0 失败。",
+      "disproved": false,
+      "blocked_external": [
+        "S2_INDEPENDENT_REVIEW",
+        "DEVICE_AND_PLATFORM_ACCEPTANCE"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/flutter-analyze.txt",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/full-tests.json",
+        "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/screenshot-index.json",
+        "test/fx/components/fx_chart_test.dart"
+      ],
+      "unverified": [
+        "S2 独立审查",
+        "真机、VoiceOver/TalkBack、平台编译与相关消费者验收"
+      ],
+      "reason": "仅 S1-A 共享实例本地验证，不代替全局 owner 或独立审查关闭。",
+      "closure": "PENDING_S2_INDEPENDENT_REVIEW_NO_VERIFIED_CLOSED"
+    }
+  ]
+}

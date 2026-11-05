@@ -1,0 +1,31 @@
+00:00 +0: loading /Users/zhangchi118/代码/FortuneBoot-App/test/fx/components/fx_sheet_guard_test.dart
+00:00 +0: unchanged sheet closes without a confirmation
+00:00 +1: dirty sheet can keep editing or explicitly discard
+00:00 +2: busy guarded sheet cannot be dismissed from the barrier
+00:00 +3: confirm sheet stays open while pending and explains failure
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown running a test:
+pumpAndSettle timed out
+
+When the exception was thrown, this was the stack:
+#0      WidgetTester.pumpAndSettle.<anonymous closure> (package:flutter_test/src/widget_tester.dart:717:11)
+<asynchronous suspension>
+#1      TestAsyncUtils.guard.<anonymous closure> (package:flutter_test/src/test_async_utils.dart:130:27)
+<asynchronous suspension>
+#2      main.<anonymous closure> (file:///Users/zhangchi118/%E4%BB%A3%E7%A0%81/FortuneBoot-App/test/fx/components/fx_sheet_guard_test.dart:113:5)
+<asynchronous suspension>
+#3      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#4      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1682:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+The test description was:
+  confirm sheet stays open while pending and explains failure
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:02 +3 -1: confirm sheet stays open while pending and explains failure [E]
+  Test failed. See exception logs above.
+  The test description was: confirm sheet stays open while pending and explains failure
+  
+00:02 +3 -1: Some tests failed.

@@ -194,6 +194,13 @@
   "mine": "我的",
   "commonSave": "保存",
   "commonCancel": "取消",
+  "fxUnsavedChangesTitle": "放弃未保存的修改？",
+  "fxUnsavedChangesMessage": "当前内容尚未保存，离开后本次修改将丢失。",
+  "fxKeepEditing": "继续编辑",
+  "fxDiscardChanges": "放弃修改",
+  "fxConfirmFailure": "操作未完成，请重试",
+  "fxClearLabel": "清空",
+  "fxDeleteLabel": "删除",
   "commonMoreActions": "更多操作",
   "manageSearchBranchResults": "该分支有 {count} 条搜索结果",
   "@manageSearchBranchResults": {

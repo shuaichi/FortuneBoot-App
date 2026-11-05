@@ -6,6 +6,7 @@ import 'package:fortuneboot/features/bill_editor/presentation/widgets/amount_fie
 import 'package:fortuneboot/features/bill_editor/presentation/widgets/editor_pickers.dart';
 import 'package:fortuneboot/fx/components/fx_card.dart';
 import 'package:fortuneboot/fx/components/fx_icon_button.dart';
+import 'package:fortuneboot/fx/components/fx_option_picker.dart';
 import 'package:fortuneboot/fx/components/fx_segmented.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
@@ -49,8 +50,12 @@ class ExtrasSection extends StatelessWidget {
         labelOf: (row) => row.categoryName ?? '',
         idOf: (row) => row.categoryId,
       );
-      if (!context.mounted || category?.categoryId == null) return;
-      bloc.add(ExtraRowAdded(categoryId: category!.categoryId));
+      if (!context.mounted || category.kind != FxSelectionKind.selected) {
+        return;
+      }
+      final selected = category.value!;
+      if (selected.categoryId == null) return;
+      bloc.add(ExtraRowAdded(categoryId: selected.categoryId));
     }
 
     Future<void> pickCategory(ExtraRow row) async {
@@ -62,11 +67,15 @@ class ExtrasSection extends StatelessWidget {
         idOf: (item) => item.categoryId,
         selectedId: row.categoryId,
       );
-      if (!context.mounted || category?.categoryId == null) return;
+      if (!context.mounted || category.kind != FxSelectionKind.selected) {
+        return;
+      }
+      final selected = category.value!;
+      if (selected.categoryId == null) return;
       bloc.add(
         ExtraRowChanged(
           row.rowId,
-          row.copyWith(categoryId: category!.categoryId),
+          row.copyWith(categoryId: selected.categoryId),
         ),
       );
     }

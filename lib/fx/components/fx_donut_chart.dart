@@ -87,7 +87,11 @@ class FxDonutChart extends StatelessWidget {
                     for (var i = 0; i < positive.length; i++)
                       PieChartSectionData(
                         value: positive[i].value,
-                        color: _colorAt(i, positive[i]),
+                        color: _colorAt(
+                          i,
+                          positive[i],
+                          Theme.of(context).brightness,
+                        ),
                         radius: radius,
                         showTitle: false,
                       ),
@@ -133,8 +137,8 @@ class FxDonutChart extends StatelessWidget {
     );
   }
 
-  static Color _colorAt(int index, FxDonutSlice slice) =>
-      slice.color ?? FxChartPalette.colorAt(index);
+  static Color _colorAt(int index, FxDonutSlice slice, Brightness brightness) =>
+      slice.color ?? FxChartPalette.colorAt(index, brightness: brightness);
 }
 
 class _CenterLabel extends StatelessWidget {
@@ -154,7 +158,6 @@ class _CenterLabel extends StatelessWidget {
           FxMoneyText(
             amount: amount!,
             currencyCode: currencyCode,
-            fontSize: 11,
             color: palette.textPrimary,
           ),
         if (label != null)
@@ -201,7 +204,9 @@ class _SliceList extends StatelessWidget {
     FxDonutSlice slice,
     FxPalette palette,
   ) {
-    final color = slice.color ?? FxChartPalette.colorAt(index);
+    final color =
+        slice.color ??
+        FxChartPalette.colorAt(index, brightness: Theme.of(context).brightness);
     final name = slice.name.isEmpty ? emptyName : slice.name;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

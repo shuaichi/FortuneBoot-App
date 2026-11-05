@@ -1,0 +1,43 @@
+{
+  "source": "flutter-test.json current full run",
+  "count": 6,
+  "passed": 6,
+  "tests": [
+    {
+      "file": "/Users/zhangchi118/代码/FortuneBoot-App/test/fx/components/fx_foundation_integration_test.dart",
+      "name": "theme preserves compact borderless ledger amount editing",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "file": "/Users/zhangchi118/代码/FortuneBoot-App/test/fx/components/fx_foundation_integration_test.dart",
+      "name": "solid dark cards have visible pressed and focused states",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "file": "/Users/zhangchi118/代码/FortuneBoot-App/test/fx/components/fx_foundation_integration_test.dart",
+      "name": "solid light cards have visible pressed and focused states",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "file": "/Users/zhangchi118/代码/FortuneBoot-App/test/fx/components/fx_button_test.dart",
+      "name": "large text keeps the complete action readable and tappable",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "file": "/Users/zhangchi118/代码/FortuneBoot-App/test/features/bill_editor/presentation/widgets/attachment_grid_test.dart",
+      "name": "renders a named file card for a non-image attachment",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "file": "/Users/zhangchi118/代码/FortuneBoot-App/test/features/bill_editor/presentation/widgets/attachment_grid_test.dart",
+      "name": "disables attachment removal while submitting",
+      "result": "success",
+      "skipped": false
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "initialConsumerAdaptation": {
+    "exitCode": 1,
+    "kind": "COMPILE_FAILURE",
+    "observed": "bill_editor_page lacked FxSelectionKind import and extras_section still consumed nullable values",
+    "repair": "Added the shared import and atomically adapted both extras_section call sites"
+  },
+  "segmentedLayoutRegression": {
+    "exitCode": 1,
+    "passed": 49,
+    "errors": 5,
+    "failedTests": [
+      "category total uses a currency symbol instead of CNY",
+      "core editor fields share one continuous grouped form",
+      "monthly days use a seven-column grid with 44pt targets",
+      "an unsupported legacy schedule becomes a visual daily rule",
+      "converted legacy schedule validates and saves the visual rule"
+    ],
+    "rootCause": "FxSegmented Row crossAxisAlignment.stretch received unbounded height in scrolling forms",
+    "repair": "IntrinsicHeight preserves equal segment heights with finite constraints",
+    "finalEvidence": "affected-consumer-tests.json: 54 passed, 0 failed, 0 skipped"
+  }
+}

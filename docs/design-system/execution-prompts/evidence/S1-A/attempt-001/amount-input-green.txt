@@ -1,0 +1,4 @@
+00:00 +0: loading /Users/zhangchi118/代码/FortuneBoot-App/test/fx/components/fx_amount_input_test.dart
+00:00 +0: amount input normalizes common pasted currency text
+00:00 +1: done action finishes numeric editing
+00:00 +2: All tests passed!

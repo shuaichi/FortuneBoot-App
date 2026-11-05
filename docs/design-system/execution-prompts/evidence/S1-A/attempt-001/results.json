@@ -1,0 +1,98 @@
+{
+  "stage": "S1-A",
+  "attempt": 1,
+  "status": "PARTIAL",
+  "sourceShaBefore": "6061359de0d6db6597176a9158ee826de490f6c4",
+  "sourceShaAfter": "6061359de0d6db6597176a9158ee826de490f6c4",
+  "sourceSnapshot": "Uncommitted working-tree changes; per-file SHA256 in source-sha256.json",
+  "baselineTargeted": {
+    "totalVisible": 43,
+    "passed": 43,
+    "skipped": 0,
+    "failed": 0
+  },
+  "targeted": {
+    "totalVisible": 76,
+    "passed": 76,
+    "skipped": 0,
+    "failed": 0,
+    "errorEvents": 0,
+    "runner": [
+      {
+        "success": true,
+        "type": "done",
+        "time": 4204
+      }
+    ],
+    "skippedTests": [],
+    "failedTests": []
+  },
+  "affectedConsumers": {
+    "totalVisible": 54,
+    "passed": 54,
+    "skipped": 0,
+    "failed": 0,
+    "errorEvents": 0,
+    "runner": [
+      {
+        "success": true,
+        "type": "done",
+        "time": 3642
+      }
+    ],
+    "skippedTests": [],
+    "failedTests": []
+  },
+  "full": {
+    "totalVisible": 523,
+    "passed": 522,
+    "skipped": 1,
+    "failed": 0,
+    "errorEvents": 0,
+    "runner": [
+      {
+        "success": true,
+        "type": "done",
+        "time": 36590
+      }
+    ],
+    "skippedTests": [
+      "uses In-App Purchase for donations on Apple platforms"
+    ],
+    "failedTests": []
+  },
+  "analysis": {
+    "exitCode": 1,
+    "count": 1159,
+    "baselineCount": 1159,
+    "currentCount": 1159,
+    "bySeverity": {
+      "error": 0,
+      "warning": 252,
+      "info": 907
+    },
+    "new": [],
+    "removed": []
+  },
+  "visual": {
+    "rendered": 8,
+    "actuallyViewed": 8,
+    "index": "screenshot-index.json"
+  },
+  "issueChecks": {
+    "total": 64,
+    "byState": {
+      "CONFIRMED": 9,
+      "DISPROVED": 25,
+      "IMPLEMENTED_LOCAL": 6,
+      "VERIFIED_LOCAL": 24
+    },
+    "verifiedClosed": 0
+  },
+  "deviceGate": {
+    "simulatorOrDevice": "NOT_RUN",
+    "voiceOverTalkBack": "NOT_RUN",
+    "platformBuild": "NOT_RUN",
+    "serverIntegration": "NOT_RUN"
+  }
+}

@@ -1,0 +1,17 @@
+00:00 +0: loading /Users/zhangchi118/代码/FortuneBoot-App/test/fx/components/fx_chart_test.dart
+test/fx/components/fx_chart_test.dart:86:44: Error: No named parameter with the name 'brightness'.
+    final dark = FxChartPalette.colorAt(0, brightness: Brightness.dark);
+                                           ^^^^^^^^^^
+lib/fx/components/fx_chart_palette.dart:17:16: Context: Found this candidate, but the arguments don't match.
+  static Color colorAt(int index) => categorical[index % categorical.length];
+               ^^^^^^^
+00:00 +0 -1: loading /Users/zhangchi118/代码/FortuneBoot-App/test/fx/components/fx_chart_test.dart [E]
+  Failed to load "/Users/zhangchi118/代码/FortuneBoot-App/test/fx/components/fx_chart_test.dart":
+  Compilation failed for testPath=/Users/zhangchi118/代码/FortuneBoot-App/test/fx/components/fx_chart_test.dart: test/fx/components/fx_chart_test.dart:86:44: Error: No named parameter with the name 'brightness'.
+      final dark = FxChartPalette.colorAt(0, brightness: Brightness.dark);
+                                             ^^^^^^^^^^
+  lib/fx/components/fx_chart_palette.dart:17:16: Context: Found this candidate, but the arguments don't match.
+    static Color colorAt(int index) => categorical[index % categorical.length];
+                 ^^^^^^^
+  .
+00:00 +0 -1: Some tests failed.

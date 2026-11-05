@@ -1,0 +1,32 @@
+[
+  {
+    "field": "nextStage",
+    "before": "S0-A",
+    "after": "S1-A"
+  },
+  {
+    "field": "stages.S0-A",
+    "before": {
+      "status": "NOT_STARTED",
+      "localGate": "NOT_RUN",
+      "visualGate": "NOT_RUN",
+      "externalGate": "NOT_RUN",
+      "attempt": 0,
+      "handoff": null,
+      "evidence": [],
+      "blockingIssues": []
+    },
+    "after": {
+      "status": "PASSED",
+      "localGate": "PASSED",
+      "visualGate": "PASSED",
+      "externalGate": "PARTIAL",
+      "attempt": 1,
+      "handoff": "handoff/S0-A.md",
+      "evidence": [
+        "evidence/S0-A/attempt-001"
+      ],
+      "blockingIssues": []
+    }
+  }
+]

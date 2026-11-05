@@ -14,6 +14,7 @@ class FxStateView extends StatelessWidget {
     this.compact = false,
     this.loadingLabel,
     this.retryLabel,
+    this.title,
   });
 
   final _Kind kind;
@@ -23,16 +24,19 @@ class FxStateView extends StatelessWidget {
   final bool compact;
   final String? loadingLabel;
   final String? retryLabel;
+  final String? title;
 
   factory FxStateView.loading({
     String? message,
     bool compact = false,
     String? loadingLabel,
+    String? title,
   }) => FxStateView._(
     kind: _Kind.loading,
     message: message,
     compact: compact,
     loadingLabel: loadingLabel,
+    title: title,
   );
 
   factory FxStateView.error({
@@ -40,12 +44,14 @@ class FxStateView extends StatelessWidget {
     VoidCallback? onRetry,
     String? retryLabel,
     bool compact = false,
+    String? title,
   }) => FxStateView._(
     kind: _Kind.error,
     message: message,
     onRetry: onRetry,
     retryLabel: retryLabel,
     compact: compact,
+    title: title,
   );
 
   factory FxStateView.empty({
@@ -54,6 +60,7 @@ class FxStateView extends StatelessWidget {
     VoidCallback? onRetry,
     String? retryLabel,
     bool compact = false,
+    String? title,
   }) => FxStateView._(
     kind: _Kind.empty,
     message: message,
@@ -61,6 +68,7 @@ class FxStateView extends StatelessWidget {
     onRetry: onRetry,
     retryLabel: retryLabel,
     compact: compact,
+    title: title,
   );
 
   @override
@@ -70,7 +78,8 @@ class FxStateView extends StatelessWidget {
       case _Kind.loading:
         return Semantics(
           liveRegion: true,
-          label: loadingLabel ?? message,
+          label:
+              loadingLabel ?? [title, message].whereType<String>().join(', '),
           child: Center(
             child: Padding(
               padding: EdgeInsets.all(compact ? FxSpacing.md : FxSpacing.xxxl),
@@ -78,6 +87,16 @@ class FxStateView extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   const CircularProgressIndicator(strokeWidth: 2.5),
+                  if (title != null) ...[
+                    const SizedBox(height: FxSpacing.sm),
+                    Text(
+                      title!,
+                      style: FxTypography.bodyStrong.copyWith(
+                        color: palette.textPrimary,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
                   if (message != null) ...[
                     const SizedBox(height: FxSpacing.sm),
                     Text(message!),
@@ -93,6 +112,7 @@ class FxStateView extends StatelessWidget {
           icon ?? Icons.error_outline_rounded,
           message ?? '',
           palette.danger,
+          title: title,
           retryLabel: retryLabel,
         );
       case _Kind.empty:
@@ -101,6 +121,7 @@ class FxStateView extends StatelessWidget {
           icon ?? Icons.inbox_rounded,
           message ?? '',
           palette.textTertiary,
+          title: title,
           retryLabel: onRetry != null ? retryLabel : null,
         );
     }
@@ -111,6 +132,7 @@ class FxStateView extends StatelessWidget {
     IconData iconData,
     String text,
     Color tint, {
+    String? title,
     String? retryLabel,
   }) {
     final palette = FxPalette.of(context);
@@ -122,6 +144,16 @@ class FxStateView extends StatelessWidget {
           children: [
             Icon(iconData, size: 48, color: tint),
             const SizedBox(height: FxSpacing.md),
+            if (title != null) ...[
+              Text(
+                title,
+                style: FxTypography.bodyStrong.copyWith(
+                  color: palette.textPrimary,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: FxSpacing.sm),
+            ],
             Text(
               text,
               style: FxTypography.label.copyWith(color: palette.textSecondary),

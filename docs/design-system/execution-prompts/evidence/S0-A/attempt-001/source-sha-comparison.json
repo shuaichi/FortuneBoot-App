@@ -1,0 +1,116 @@
+[
+  {
+    "path": "lib/features/bill_editor/presentation/widgets/attachment_grid.dart",
+    "verificationSha256": "d3a198242eab4cb847ab3efad1088cdfd15a9a2b6e064542acf71ba3ddeccdd8",
+    "currentSha256": "d3a198242eab4cb847ab3efad1088cdfd15a9a2b6e064542acf71ba3ddeccdd8",
+    "match": true
+  },
+  {
+    "path": "lib/features/bills/presentation/bills_page.dart",
+    "verificationSha256": "b7fd42c9aec7038b6a387ba4359430d67576fa125542885ce74f79c8a56b4b15",
+    "currentSha256": "b7fd42c9aec7038b6a387ba4359430d67576fa125542885ce74f79c8a56b4b15",
+    "match": true
+  },
+  {
+    "path": "lib/features/dashboard/presentation/widgets/quick_add_card.dart",
+    "verificationSha256": "57aacdce6843329373a70e7acdbfeba55fa0e59932bcc801dc79ea40b86eac6a",
+    "currentSha256": "57aacdce6843329373a70e7acdbfeba55fa0e59932bcc801dc79ea40b86eac6a",
+    "match": true
+  },
+  {
+    "path": "lib/fx/components/fx_button.dart",
+    "verificationSha256": "c0653f86c2f89119b1e954a456b45cd055ced734cf0d0262c5a04cedd879b049",
+    "currentSha256": "c0653f86c2f89119b1e954a456b45cd055ced734cf0d0262c5a04cedd879b049",
+    "match": true
+  },
+  {
+    "path": "lib/fx/components/fx_card.dart",
+    "verificationSha256": "e1b8ecefb6efd5e001a209b0454632b5089a22f918ba36464874ec56518a1561",
+    "currentSha256": "e1b8ecefb6efd5e001a209b0454632b5089a22f918ba36464874ec56518a1561",
+    "match": true
+  },
+  {
+    "path": "lib/fx/components/fx_list_section.dart",
+    "verificationSha256": "693b3eafef7db30ca86543dbf7464458fc69a2283d9057036f1ba4f67b106190",
+    "currentSha256": "693b3eafef7db30ca86543dbf7464458fc69a2283d9057036f1ba4f67b106190",
+    "match": true
+  },
+  {
+    "path": "lib/fx/components/fx_money_text.dart",
+    "verificationSha256": "74bf094efc27c9fd2121f556ccfe662fb8123612f9866e7187e487a469a470c4",
+    "currentSha256": "74bf094efc27c9fd2121f556ccfe662fb8123612f9866e7187e487a469a470c4",
+    "match": true
+  },
+  {
+    "path": "lib/fx/components/fx_sheet.dart",
+    "verificationSha256": "803764d53d4b7b77c9631ce8616eaa46fc41ce6811d2dd2d1aa1aab7b6f7b35f",
+    "currentSha256": "803764d53d4b7b77c9631ce8616eaa46fc41ce6811d2dd2d1aa1aab7b6f7b35f",
+    "match": true
+  },
+  {
+    "path": "lib/fx/components/fx_text_field.dart",
+    "verificationSha256": "721dd708540b18402078b85b2e7c6f3582a92dd1a635ab9928ff625b613a243c",
+    "currentSha256": "721dd708540b18402078b85b2e7c6f3582a92dd1a635ab9928ff625b613a243c",
+    "match": true
+  },
+  {
+    "path": "lib/fx/theme/fx_theme.dart",
+    "verificationSha256": "14696bcb234330fecf2719860372f4d38645e8358f60c1c6a65473de0040ff8d",
+    "currentSha256": "14696bcb234330fecf2719860372f4d38645e8358f60c1c6a65473de0040ff8d",
+    "match": true
+  },
+  {
+    "path": "lib/fx/tokens/fx_colors.dart",
+    "verificationSha256": "26d090f792f06e0743e82d3cb79d60b03c8bd0b387abe164c350379cdb14bc8b",
+    "currentSha256": "26d090f792f06e0743e82d3cb79d60b03c8bd0b387abe164c350379cdb14bc8b",
+    "match": true
+  },
+  {
+    "path": "lib/fx/tokens/fx_radius.dart",
+    "verificationSha256": "42a850cc5a8b403808abd1f68d1744a5aa61f51687da3b6e05e3dc5655f800b2",
+    "currentSha256": "42a850cc5a8b403808abd1f68d1744a5aa61f51687da3b6e05e3dc5655f800b2",
+    "match": true
+  },
+  {
+    "path": "lib/fx/tokens/fx_spacing.dart",
+    "verificationSha256": "07da8325b12f4b4bc9f99f6b6eb834fc2ad30ba75c8ff5ff2a76e053a3cf9cb7",
+    "currentSha256": "07da8325b12f4b4bc9f99f6b6eb834fc2ad30ba75c8ff5ff2a76e053a3cf9cb7",
+    "match": true
+  },
+  {
+    "path": "lib/fx/tokens/fx_typography.dart",
+    "verificationSha256": "50ef1a62747520689df0cac356128c14478702cffb6a1d338cae6f855bcbe959",
+    "currentSha256": "50ef1a62747520689df0cac356128c14478702cffb6a1d338cae6f855bcbe959",
+    "match": true
+  },
+  {
+    "path": "test/fx/theme/fx_palette_contrast_test.dart",
+    "verificationSha256": "13a5cc77996d7a57dd216b707bac2e95744f20f3750da9c0904659114185f298",
+    "currentSha256": "13a5cc77996d7a57dd216b707bac2e95744f20f3750da9c0904659114185f298",
+    "match": true
+  },
+  {
+    "path": "lib/fx/components/fx_text.dart",
+    "verificationSha256": "b39a6f3966001c830445e0181306d2b359dc0f8b165b411cea1a9ca1194627f6",
+    "currentSha256": "b39a6f3966001c830445e0181306d2b359dc0f8b165b411cea1a9ca1194627f6",
+    "match": true
+  },
+  {
+    "path": "test/fx/components/fx_button_test.dart",
+    "verificationSha256": "cf4835f887a722151b112d4ec2b94912d80d455fd804a97e2baf35e24e210338",
+    "currentSha256": "cf4835f887a722151b112d4ec2b94912d80d455fd804a97e2baf35e24e210338",
+    "match": true
+  },
+  {
+    "path": "test/fx/components/fx_foundation_integration_test.dart",
+    "verificationSha256": "a4dc33ade7a37310b110f8702974887b01b8ad5577d59add85f266cfbc18a3df",
+    "currentSha256": "a4dc33ade7a37310b110f8702974887b01b8ad5577d59add85f266cfbc18a3df",
+    "match": true
+  },
+  {
+    "path": "tool/design_system_preview_test.dart",
+    "verificationSha256": "aa69de166ddb7c7828f34cd59e31e9f328587596fbfe641893bd9961ee302e80",
+    "currentSha256": "aa69de166ddb7c7828f34cd59e31e9f328587596fbfe641893bd9961ee302e80",
+    "match": true
+  }
+]

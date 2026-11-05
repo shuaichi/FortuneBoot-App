@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fortuneboot/fx/components/fx_button.dart';
 import 'package:fortuneboot/fx/components/fx_sheet.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
+import 'package:fortuneboot/generated/l10n.dart';
 
 /// Confirmation sheet for actions that need an explicit user decision.
 class FxConfirmSheet extends StatefulWidget {
@@ -93,33 +94,42 @@ class _FxConfirmSheetState extends State<FxConfirmSheet> {
             loading: _loading,
             onPressed: _confirm,
           );
-    return Padding(
-      padding: const EdgeInsets.all(FxSpacing.lg),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Text(widget.message),
-          if (_failed && widget.failureMessage != null) ...[
-            const SizedBox(height: FxSpacing.sm),
-            Semantics(liveRegion: true, child: Text(widget.failureMessage!)),
-          ],
-          const SizedBox(height: FxSpacing.lg),
-          Row(
-            children: [
-              Expanded(
-                child: FxButton.tonal(
-                  label: widget.cancelLabel,
-                  onPressed: _loading
-                      ? null
-                      : () => Navigator.of(context).pop(false),
+    return FxSheetPopGuard(
+      hasUnsavedChanges: false,
+      isBusy: _loading,
+      child: Padding(
+        padding: const EdgeInsets.all(FxSpacing.lg),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(widget.message),
+            if (_failed) ...[
+              const SizedBox(height: FxSpacing.sm),
+              Semantics(
+                liveRegion: true,
+                child: Text(
+                  widget.failureMessage ?? S.of(context).fxConfirmFailure,
                 ),
               ),
-              const SizedBox(width: FxSpacing.sm),
-              Expanded(child: confirm),
             ],
-          ),
-        ],
+            const SizedBox(height: FxSpacing.lg),
+            Row(
+              children: [
+                Expanded(
+                  child: FxButton.tonal(
+                    label: widget.cancelLabel,
+                    onPressed: _loading
+                        ? null
+                        : () => Navigator.of(context).pop(false),
+                  ),
+                ),
+                const SizedBox(width: FxSpacing.sm),
+                Expanded(child: confirm),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

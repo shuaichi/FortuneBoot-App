@@ -1,0 +1,24 @@
+{
+  "historicalVerification": {
+    "baseline": 1159,
+    "final": 1159,
+    "new": 0,
+    "removed": 0,
+    "bySeverity": {
+      "error": 0,
+      "warning": 252,
+      "info": 907
+    }
+  },
+  "current": {
+    "count": 1159,
+    "bySeverity": {
+      "error": 0,
+      "warning": 252,
+      "info": 907
+    }
+  },
+  "countDelta": 0,
+  "diagnosticListDelta": "NOT_COMPUTED_HISTORICAL_RAW_LIST_NOT_STORED",
+  "currentDiagnosticList": "evidence/S0-A/attempt-001/analysis-diagnostics.json"
+}

@@ -1,0 +1,1995 @@
+{
+  "schemaVersion": 1,
+  "stage": "S1-A",
+  "sourceSha": "6061359de0d6db6597176a9158ee826de490f6c4",
+  "contractState": "FROZEN_LOCAL",
+  "method": "S1-A reviewed current Dart declarations, direct lib consumers, affected tests and real Flutter preview references; definitionSha256 identifies the current working snapshot.",
+  "components": [
+    {
+      "symbol": "FxActionSheet",
+      "definition": "lib/fx/components/fx_action_sheet.dart",
+      "definitionSha256": "0199969728e2d87f58bcef1355bf0ccef3c3b917ff8272f0cb551fde8cb3f9a2",
+      "directConsumers": [
+        "lib/features/bill_editor/presentation/bill_editor_page.dart",
+        "lib/features/orders/presentation/widgets/order_action_sheet.dart"
+      ],
+      "consumerCount": 2,
+      "consumerStages": [
+        "S5-A",
+        "S6-A"
+      ],
+      "testAndPreviewReferences": [
+        "test/fx/components/fx_interaction_accessibility_test.dart",
+        "tool/s1_a_component_preview_test.dart"
+      ]
+    },
+    {
+      "symbol": "FxAmountInput",
+      "definition": "lib/fx/components/fx_amount_input.dart",
+      "definitionSha256": "653c91a33775c7366a553a8f9dbc83682f9976d86645dfaa8f898b3e7315e441",
+      "directConsumers": [],
+      "consumerCount": 0,
+      "consumerStages": [],
+      "testAndPreviewReferences": [
+        "test/fx/components/fx_amount_input_test.dart",
+        "tool/s1_a_component_preview_test.dart"
+      ]
+    },
+    {
+      "symbol": "FxBarChart",
+      "definition": "lib/fx/components/fx_bar_chart.dart",
+      "definitionSha256": "bfeb8979c748d3e638caa4720328bf3f27829ec4953d8904575f4a52be190872",
+      "directConsumers": [
+        "lib/features/stats/presentation/stats_assets_page.dart",
+        "lib/features/stats/presentation/widgets/stats_tag_card.dart"
+      ],
+      "consumerCount": 2,
+      "consumerStages": [
+        "S8-A",
+        "S8-C"
+      ],
+      "testAndPreviewReferences": [
+        "test/fx/components/fx_chart_test.dart",
+        "tool/s1_a_component_preview_test.dart"
+      ]
+    },
+    {
+      "symbol": "FxBarItem",
+      "definition": "lib/fx/components/fx_bar_chart.dart",
+      "definitionSha256": "bfeb8979c748d3e638caa4720328bf3f27829ec4953d8904575f4a52be190872",
+      "directConsumers": [
+        "lib/features/stats/presentation/stats_assets_page.dart",
+        "lib/features/stats/presentation/widgets/stats_tag_card.dart"
+      ],
+      "consumerCount": 2,
+      "consumerStages": [
+        "S8-A",
+        "S8-C"
+      ],
+      "testAndPreviewReferences": []
+    },
+    {
+      "symbol": "FxBentoGrid",
+      "definition": "lib/fx/layout/fx_bento_grid.dart",
+      "definitionSha256": "61ce6051b6e96dc6e32d89ade91505320d434bd7d0310ce47e1ed6b5cbb90073",
+      "directConsumers": [
+        "lib/features/dashboard/presentation/dashboard_page.dart"
+      ],
+      "consumerCount": 1,
+      "consumerStages": [
+        "S7-A"
+      ],
+      "testAndPreviewReferences": [
+        "test/fx/layout/fx_bento_grid_test.dart",
+        "tool/s1_a_component_preview_test.dart"
+      ]
+    },
+    {
+      "symbol": "FxBentoTile",
+      "definition": "lib/fx/layout/fx_bento_grid.dart",
+      "definitionSha256": "61ce6051b6e96dc6e32d89ade91505320d434bd7d0310ce47e1ed6b5cbb90073",
+      "directConsumers": [
+        "lib/features/dashboard/data/dashboard_card_catalog.dart",
+        "lib/features/dashboard/presentation/dashboard_page.dart"
+      ],
+      "consumerCount": 2,
+      "consumerStages": [
+        "S7-A"
+      ],
+      "testAndPreviewReferences": [
+        "test/fx/layout/fx_bento_grid_test.dart"
+      ]
+    },
+    {
+      "symbol": "FxButton",
+      "definition": "lib/fx/components/fx_button.dart",
+      "definitionSha256": "c0653f86c2f89119b1e954a456b45cd055ced734cf0d0262c5a04cedd879b049",
+      "directConsumers": [
+        "lib/core/shell/main_shell.dart",
+        "lib/features/accounts/presentation/widgets/balance_adjust_sheet.dart",
+        "lib/features/bill_editor/presentation/bill_editor_page.dart",
+        "lib/features/bills/presentation/pages/bills_filter_page.dart",
+        "lib/features/books/presentation/books_page.dart",
+        "lib/features/books/presentation/pages/book_detail_page.dart",
+        "lib/features/books/presentation/pages/group_detail_page.dart",
+        "lib/features/books/presentation/widgets/default_account_sheet.dart",
+        "lib/features/books/presentation/widgets/destructive_confirm_sheet.dart",
+        "lib/features/dashboard/presentation/widgets/dashboard_layout_editor.dart",
+        "lib/features/group_users/presentation/group_users_page.dart",
+        "lib/features/io/presentation/io_page.dart",
+        "lib/features/orders/presentation/order_detail_page.dart",
+        "lib/features/orders/presentation/orders_page.dart",
+        "lib/features/orders/presentation/widgets/order_form_sheet.dart",
+        "lib/features/profile/presentation/app_lock_settings_page.dart",
+        "lib/features/profile/presentation/profile_edit_page.dart",
+        "lib/features/profile/presentation/profile_page.dart",
+        "lib/features/profile/presentation/widgets/account_deletion_sheet.dart",
+        "lib/features/profile/presentation/widgets/finance_color_editor.dart",
+        "lib/features/profile/presentation/widgets/iap_donation_section.dart",
+        "lib/features/recurring/presentation/recurring_editor_page.dart",
+        "lib/features/shared/invite_member_sheet.dart",
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart",
+        "lib/features/stats/presentation/widgets/calendar_day_summary_sheet.dart",
+        "lib/features/stats/presentation/widgets/stats_layout_editor.dart",
+        "lib/fx/components/fx_confirm_sheet.dart",
+        "lib/fx/components/fx_option_picker.dart",
+        "lib/fx/components/fx_sheet.dart",
+        "lib/fx/components/fx_state_view.dart",
+        "lib/fx/tree/fx_tree_picker.dart",
+        "lib/login/view/auth_page.dart",
+        "lib/login/view/auth_version_gate.dart",
+        "lib/login/view/base_url_config_page.dart",
+        "lib/login/view/login_screen.dart"
+      ],
+      "consumerCount": 35,
+      "consumerStages": [
+        "S1-A",
+        "S11-A",
+        "S12-A",
+        "S13-A",
+        "S13-B",
+        "S14-A",
+        "S15-A",
+        "S3-A",
+        "S4-A",
+        "S5-A",
+        "S6-A",
+        "S6-B",
+        "S7-A",
+        "S8-A",
+        "S8-B",
+        "S9-A"
+      ],
+      "testAndPreviewReferences": [
+        "test/fx/components/fx_button_test.dart",
+        "tool/design_system_preview_test.dart"
+      ]
+    },
+    {
+      "symbol": "FxButtonVariant",
+      "definition": "lib/fx/components/fx_button.dart",
+      "definitionSha256": "c0653f86c2f89119b1e954a456b45cd055ced734cf0d0262c5a04cedd879b049",
+      "directConsumers": [],
+      "consumerCount": 0,
+      "consumerStages": [],
+      "testAndPreviewReferences": [
+        "test/features/books/presentation/widgets/destructive_confirm_sheet_test.dart"
+      ]
+    },
+    {
+      "symbol": "FxCard",
+      "definition": "lib/fx/components/fx_card.dart",
+      "definitionSha256": "c8cf07a696d61b1d89be6c1cc75f5163db87553464c63855f41e266277265f71",
+      "directConsumers": [
+        "lib/features/accounts/presentation/widgets/net_worth_card.dart",
+        "lib/features/bill_editor/presentation/bill_editor_page.dart",
+        "lib/features/bill_editor/presentation/widgets/extras_section.dart",
+        "lib/features/books/presentation/pages/book_detail_page.dart",
+        "lib/features/books/presentation/pages/group_detail_page.dart",
+        "lib/features/books/presentation/widgets/book_card.dart",
+        "lib/features/books/presentation/widgets/group_card.dart",
+        "lib/features/dashboard/presentation/widgets/dashboard_card_shell.dart",
+        "lib/features/dashboard/presentation/widgets/net_worth_card.dart",
+        "lib/features/dashboard/presentation/widgets/quick_add_card.dart",
+        "lib/features/dashboard/presentation/widgets/trend_card.dart",
+        "lib/features/goods/presentation/goods_page.dart",
+        "lib/features/goods/presentation/widgets/goods_card.dart",
+        "lib/features/goods/presentation/widgets/goods_form_sheet.dart",
+        "lib/features/group_users/presentation/group_users_page.dart",
+        "lib/features/io/presentation/io_page.dart",
+        "lib/features/orders/presentation/order_detail_page.dart",
+        "lib/features/orders/presentation/order_reconciliation_page.dart",
+        "lib/features/orders/presentation/widgets/order_summary_strip.dart",
+        "lib/features/profile/presentation/app_lock_settings_page.dart",
+        "lib/features/profile/presentation/profile_edit_page.dart",
+        "lib/features/profile/presentation/profile_page.dart",
+        "lib/features/recurring/presentation/recurring_page.dart",
+        "lib/features/stats/presentation/stats_assets_page.dart",
+        "lib/features/stats/presentation/stats_loans_page.dart",
+        "lib/features/stats/presentation/stats_page.dart",
+        "lib/features/stats/presentation/stats_policy_page.dart",
+        "lib/features/stats/presentation/widgets/stats_card_shell.dart",
+        "lib/features/stats/presentation/widgets/stats_income_expense_calendar_card.dart",
+        "lib/features/stats/presentation/widgets/stats_overview_bar.dart"
+      ],
+      "consumerCount": 30,
+      "consumerStages": [
+        "S11-A",
+        "S11-B",
+        "S13-A",
+        "S13-B",
+        "S14-A",
+        "S15-A",
+        "S5-A",
+        "S6-A",
+        "S6-B",
+        "S6-C",
+        "S7-A",
+        "S8-A",
+        "S8-B",
+        "S8-C",
+        "S9-A"
+      ],
+      "testAndPreviewReferences": [
+        "test/fx/components/fx_foundation_integration_test.dart",
+        "tool/design_system_preview_test.dart",
+        "tool/s1_a_component_preview_test.dart"
+      ]
+    },
+    {
+      "symbol": "FxCardLabel",
+      "definition": "lib/fx/components/fx_card.dart",
+      "definitionSha256": "c8cf07a696d61b1d89be6c1cc75f5163db87553464c63855f41e266277265f71",
+      "directConsumers": [
+        "lib/features/accounts/presentation/widgets/net_worth_card.dart",
+        "lib/features/dashboard/presentation/widgets/category_top_card.dart",
+        "lib/features/dashboard/presentation/widgets/month_stat_card.dart",
+        "lib/features/dashboard/presentation/widgets/net_worth_card.dart",
+        "lib/features/dashboard/presentation/widgets/trend_card.dart",
+        "lib/features/stats/presentation/stats_assets_page.dart",
+        "lib/features/stats/presentation/stats_page.dart",
+        "lib/features/stats/presentation/stats_policy_page.dart",
+        "lib/features/stats/presentation/widgets/stats_card_shell.dart"
+      ],
+      "consumerCount": 9,
+      "consumerStages": [
+        "S11-A",
+        "S7-A",
+        "S8-A",
+        "S8-C"
+      ],
+      "testAndPreviewReferences": [
+        "tool/design_system_preview_test.dart"
+      ]
+    },
+    {
+      "symbol": "FxCardVariant",
+      "definition": "lib/fx/components/fx_card.dart",
+      "definitionSha256": "c8cf07a696d61b1d89be6c1cc75f5163db87553464c63855f41e266277265f71",
+      "directConsumers": [],
+      "consumerCount": 0,
+      "consumerStages": [],
+      "testAndPreviewReferences": []
+    },
+    {
+      "symbol": "FxChartPalette",
+      "definition": "lib/fx/components/fx_chart_palette.dart",
+      "definitionSha256": "299d33c64ff25990c85123791a7e5938071d53df03bb4f3efb0f493289791cb9",
+      "directConsumers": [
+        "lib/features/stats/presentation/widgets/stats_palette.dart",
+        "lib/fx/components/fx_bar_chart.dart",
+        "lib/fx/components/fx_donut_chart.dart"
+      ],
+      "consumerCount": 3,
+      "consumerStages": [
+        "S1-A",
+        "S8-A"
+      ],
+      "testAndPreviewReferences": []
+    },
+    {
+      "symbol": "FxChartSemanticsOverlay",
+      "definition": "lib/fx/components/fx_chart_semantics.dart",
+      "definitionSha256": "1520460d10ab76bde75da4987bde322dc5f7d0cd13deb08836cda8701dfed062",
+      "directConsumers": [
+        "lib/fx/components/fx_bar_chart.dart",
+        "lib/fx/components/fx_donut_chart.dart",
+        "lib/fx/components/fx_line_chart.dart"
+      ],
+      "consumerCount": 3,
+      "consumerStages": [
+        "S1-A"
+      ],
+      "testAndPreviewReferences": []
+    },
+    {
+      "symbol": "FxChip",
+      "definition": "lib/fx/components/fx_chip.dart",
+      "definitionSha256": "d1f42a112f1a60cef4f833e34c1cc838969ced5b12f08f0d95e7537415c26e3d",
+      "directConsumers": [
+        "lib/features/accounts/presentation/widgets/account_form_sheet.dart",
+        "lib/features/books/presentation/widgets/book_form_sheet.dart",
+        "lib/features/books/presentation/widgets/group_form_sheet.dart",
+        "lib/features/categories/presentation/widgets/category_form_sheet.dart",
+        "lib/features/orders/presentation/order_detail_page.dart",
+        "lib/features/orders/presentation/order_reconciliation_page.dart",
+        "lib/features/orders/presentation/widgets/order_form_sheet.dart",
+        "lib/features/profile/presentation/widgets/finance_color_editor.dart",
+        "lib/features/recurring/presentation/recurring_editor_page.dart",
+        "lib/features/recurring/presentation/widgets/cron_schedule_editor.dart",
+        "lib/features/shared/invite_member_sheet.dart"
+      ],
+      "consumerCount": 11,
+      "consumerStages": [
+        "S10-A",
+        "S11-A",
+        "S13-A",
+        "S14-A",
+        "S6-A",
+        "S6-B",
+        "S6-C",
+        "S9-A"
+      ],
+      "testAndPreviewReferences": [
+        "test/fx/components/fx_interaction_accessibility_test.dart",
+        "tool/s1_a_component_preview_test.dart"
+      ]
+    },
+    {
+      "symbol": "FxColors",
+      "definition": "lib/fx/tokens/fx_colors.dart",
+      "definitionSha256": "26d090f792f06e0743e82d3cb79d60b03c8bd0b387abe164c350379cdb14bc8b",
+      "directConsumers": [
+        "lib/core/icon/smart_category_engine.dart",
+        "lib/fx/components/fx_chart_palette.dart",
+        "lib/fx/theme/fx_theme.dart"
+      ],
+      "consumerCount": 3,
+      "consumerStages": [
+        "S1-A"
+      ],
+      "testAndPreviewReferences": []
+    },
+    {
+      "symbol": "FxConfirmSheet",
+      "definition": "lib/fx/components/fx_confirm_sheet.dart",
+      "definitionSha256": "b849fb5f83a0127f3c93c4e0c0e43201fb86aea9845042c0b7b68343be438fa4",
+      "directConsumers": [
+        "lib/features/accounts/presentation/widgets/account_menu.dart",
+        "lib/features/bill_editor/presentation/bill_editor_page.dart",
+        "lib/features/orders/presentation/order_detail_page.dart"
+      ],
+      "consumerCount": 3,
+      "consumerStages": [
+        "S11-A",
+        "S5-A",
+        "S6-B"
+      ],
+      "testAndPreviewReferences": [
+        "test/fx/components/fx_sheet_guard_test.dart",
+        "tool/s1_a_component_preview_test.dart"
+      ]
+    },
+    {
+      "symbol": "FxDonutChart",
+      "definition": "lib/fx/components/fx_donut_chart.dart",
+      "definitionSha256": "a8be9f45e0afc40ce30e0709c775ebcaae1a395b51c102cce3f1e27c41a3a878",
+      "directConsumers": [
+        "lib/features/stats/presentation/stats_assets_page.dart",
+        "lib/features/stats/presentation/widgets/stats_pie_card.dart"
+      ],
+      "consumerCount": 2,
+      "consumerStages": [
+        "S8-A",
+        "S8-C"
+      ],
+      "testAndPreviewReferences": [
+        "test/fx/components/fx_chart_test.dart",
+        "tool/s1_a_component_preview_test.dart"
+      ]
+    },
+    {
+      "symbol": "FxDonutSlice",
+      "definition": "lib/fx/components/fx_donut_chart.dart",
+      "definitionSha256": "a8be9f45e0afc40ce30e0709c775ebcaae1a395b51c102cce3f1e27c41a3a878",
+      "directConsumers": [
+        "lib/features/stats/presentation/stats_assets_page.dart",
+        "lib/features/stats/presentation/widgets/stats_pie_card.dart"
+      ],
+      "consumerCount": 2,
+      "consumerStages": [
+        "S8-A",
+        "S8-C"
+      ],
+      "testAndPreviewReferences": []
+    },
+    {
+      "symbol": "FxFeedback",
+      "definition": "lib/core/feedback/fx_feedback.dart",
+      "definitionSha256": "e8f7a2fa36e2b7017e5e98f2483d88872f8e33adfebd03b4181e24e9d10935b8",
+      "directConsumers": [
+        "lib/core/shell/main_shell.dart",
+        "lib/features/accounts/presentation/accounts_page.dart",
+        "lib/features/accounts/presentation/widgets/recycle_bin_sheet.dart",
+        "lib/features/bill_editor/presentation/bill_editor_page.dart",
+        "lib/features/bill_editor/presentation/widgets/extras_section.dart",
+        "lib/features/bills/presentation/bills_page.dart",
+        "lib/features/books/presentation/books_page.dart",
+        "lib/features/dashboard/presentation/widgets/dashboard_layout_controller.dart",
+        "lib/features/dashboard/presentation/widgets/dashboard_top_bar.dart",
+        "lib/features/dashboard/presentation/widgets/quick_add_card.dart",
+        "lib/features/goods/presentation/goods_page.dart",
+        "lib/features/group_users/presentation/group_users_page.dart",
+        "lib/features/io/presentation/io_page.dart",
+        "lib/features/manage_shared/manage_scaffold.dart",
+        "lib/features/members/presentation/members_page.dart",
+        "lib/features/payees/presentation/payees_page.dart",
+        "lib/features/profile/presentation/app_lock_settings_page.dart",
+        "lib/features/profile/presentation/profile_edit_page.dart",
+        "lib/features/profile/presentation/profile_page.dart",
+        "lib/features/profile/presentation/widgets/finance_color_editor.dart",
+        "lib/features/recurring/presentation/recurring_page.dart",
+        "lib/features/stats/presentation/widgets/calendar_day_summary_sheet.dart",
+        "lib/features/stats/presentation/widgets/stats_layout_editor.dart",
+        "lib/features/tags/presentation/tags_page.dart"
+      ],
+      "consumerCount": 24,
+      "consumerStages": [
+        "S10-A",
+        "S11-A",
+        "S11-B",
+        "S13-A",
+        "S13-B",
+        "S14-A",
+        "S15-A",
+        "S3-A",
+        "S4-A",
+        "S5-A",
+        "S7-A",
+        "S8-A",
+        "S8-B",
+        "S9-A"
+      ],
+      "testAndPreviewReferences": [
+        "test/fx/components/fx_interaction_accessibility_test.dart",
+        "tool/s1_a_component_preview_test.dart"
+      ]
+    },
+    {
+      "symbol": "FxFeedbackTone",
+      "definition": "lib/core/feedback/fx_feedback.dart",
+      "definitionSha256": "e8f7a2fa36e2b7017e5e98f2483d88872f8e33adfebd03b4181e24e9d10935b8",
+      "directConsumers": [
+        "lib/features/accounts/presentation/accounts_page.dart",
+        "lib/features/goods/presentation/goods_page.dart",
+        "lib/features/profile/presentation/profile_edit_page.dart",
+        "lib/features/profile/presentation/profile_page.dart"
+      ],
+      "consumerCount": 4,
+      "consumerStages": [
+        "S11-A",
+        "S11-B",
+        "S13-A"
+      ],
+      "testAndPreviewReferences": []
+    },
+    {
+      "symbol": "FxFinanceColors",
+      "definition": "lib/fx/theme/fx_theme.dart",
+      "definitionSha256": "14696bcb234330fecf2719860372f4d38645e8358f60c1c6a65473de0040ff8d",
+      "directConsumers": [
+        "lib/core/app/fx_app.dart",
+        "lib/features/bill_editor/presentation/bill_editor_page.dart",
+        "lib/features/bills/presentation/bills_page.dart",
+        "lib/features/categories/presentation/widgets/category_form_sheet.dart",
+        "lib/features/dashboard/presentation/widgets/category_top_card.dart",
+        "lib/features/dashboard/presentation/widgets/month_stat_card.dart",
+        "lib/features/dashboard/presentation/widgets/trend_card.dart",
+        "lib/features/goods/presentation/widgets/goods_detail_sheet.dart",
+        "lib/features/profile/presentation/widgets/iap_donation_section.dart",
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart",
+        "lib/features/stats/presentation/stats_assets_page.dart",
+        "lib/features/stats/presentation/stats_page.dart",
+        "lib/features/stats/presentation/stats_policy_page.dart",
+        "lib/features/stats/presentation/widgets/calendar_day_summary_sheet.dart",
+        "lib/features/stats/presentation/widgets/stats_income_expense_calendar_card.dart",
+        "lib/features/stats/presentation/widgets/stats_overview_bar.dart",
+        "lib/features/stats/presentation/widgets/stats_palette.dart",
+        "lib/features/stats/presentation/widgets/stats_trend_card.dart",
+        "lib/fx/components/fx_money_text.dart"
+      ],
+      "consumerCount": 19,
+      "consumerStages": [
+        "S1-A",
+        "S10-A",
+        "S11-B",
+        "S13-A",
+        "S3-A",
+        "S4-A",
+        "S5-A",
+        "S7-A",
+        "S8-A",
+        "S8-B",
+        "S8-C"
+      ],
+      "testAndPreviewReferences": [
+        "test/features/bills/presentation/widgets/bill_tile_test.dart"
+      ]
+    },
+    {
+      "symbol": "FxFlatNode",
+      "definition": "lib/fx/tree/fx_tree_utils.dart",
+      "definitionSha256": "2257e897d5ce07c4f30d8c3a9b5699b9e1db539ff692bab60fc7f9adf230baa5",
+      "directConsumers": [],
+      "consumerCount": 0,
+      "consumerStages": [],
+      "testAndPreviewReferences": []
+    },
+    {
+      "symbol": "FxHeatmapDay",
+      "definition": "lib/fx/components/fx_heatmap_grid.dart",
+      "definitionSha256": "d54971ec27089e8b866116bbe453d0ca4d6ff93c61da426a64d2de71123d8aae",
+      "directConsumers": [],
+      "consumerCount": 0,
+      "consumerStages": [],
+      "testAndPreviewReferences": []
+    },
+    {
+      "symbol": "FxHeatmapGrid",
+      "definition": "lib/fx/components/fx_heatmap_grid.dart",
+      "definitionSha256": "d54971ec27089e8b866116bbe453d0ca4d6ff93c61da426a64d2de71123d8aae",
+      "directConsumers": [],
+      "consumerCount": 0,
+      "consumerStages": [],
+      "testAndPreviewReferences": []
+    },
+    {
+      "symbol": "FxIconButton",
+      "definition": "lib/fx/components/fx_icon_button.dart",
+      "definitionSha256": "4c636d8fa6a3d3ec1a6a59b700b54805db522e8c5fae82d4c20e85cdbb0360f4",
+      "directConsumers": [
+        "lib/features/accounts/presentation/accounts_page.dart",
+        "lib/features/accounts/presentation/widgets/recycle_bin_sheet.dart",
+        "lib/features/bill_editor/presentation/bill_editor_page.dart",
+        "lib/features/bill_editor/presentation/widgets/attachment_grid.dart",
+        "lib/features/bill_editor/presentation/widgets/category_split_section.dart",
+        "lib/features/bill_editor/presentation/widgets/extras_section.dart",
+        "lib/features/bills/presentation/bills_page.dart",
+        "lib/features/books/presentation/books_page.dart",
+        "lib/features/books/presentation/pages/book_detail_page.dart",
+        "lib/features/books/presentation/pages/group_detail_page.dart",
+        "lib/features/categories/presentation/widgets/category_tile.dart",
+        "lib/features/dashboard/presentation/widgets/dashboard_draggable_card.dart",
+        "lib/features/dashboard/presentation/widgets/dashboard_top_bar.dart",
+        "lib/features/goods/presentation/goods_page.dart",
+        "lib/features/group_users/presentation/group_users_page.dart",
+        "lib/features/manage_shared/manage_scaffold.dart",
+        "lib/features/orders/presentation/orders_page.dart",
+        "lib/features/orders/presentation/widgets/order_entry_tile.dart",
+        "lib/features/recurring/presentation/recurring_editor_page.dart",
+        "lib/features/recurring/presentation/recurring_page.dart",
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart",
+        "lib/features/stats/presentation/widgets/stats_chart_table_toggle.dart",
+        "lib/features/tags/presentation/widgets/tag_tile.dart",
+        "lib/fx/components/fx_date_picker.dart",
+        "lib/fx/components/fx_sheet.dart",
+        "lib/fx/layout/fx_page_scaffold.dart"
+      ],
+      "consumerCount": 26,
+      "consumerStages": [
+        "S1-A",
+        "S10-A",
+        "S11-A",
+        "S11-B",
+        "S14-A",
+        "S4-A",
+        "S5-A",
+        "S6-A",
+        "S7-A",
+        "S8-A",
+        "S9-A"
+      ],
+      "testAndPreviewReferences": []
+    },
+    {
+      "symbol": "FxIconTile",
+      "definition": "lib/fx/components/fx_icon_tile.dart",
+      "definitionSha256": "69deb3f56e62c8e058ba9f06148b47101d1ee2c83ddc85e3025013cb9f7fb46d",
+      "directConsumers": [
+        "lib/features/io/presentation/io_page.dart",
+        "lib/features/profile/presentation/profile_edit_page.dart",
+        "lib/features/profile/presentation/profile_page.dart",
+        "lib/login/view/login_screen.dart"
+      ],
+      "consumerCount": 4,
+      "consumerStages": [
+        "S12-A",
+        "S13-A",
+        "S15-A"
+      ],
+      "testAndPreviewReferences": []
+    },
+    {
+      "symbol": "FxIconTone",
+      "definition": "lib/fx/components/fx_icon_tile.dart",
+      "definitionSha256": "69deb3f56e62c8e058ba9f06148b47101d1ee2c83ddc85e3025013cb9f7fb46d",
+      "directConsumers": [
+        "lib/features/profile/presentation/profile_edit_page.dart"
+      ],
+      "consumerCount": 1,
+      "consumerStages": [
+        "S13-A"
+      ],
+      "testAndPreviewReferences": []
+    },
+    {
+      "symbol": "FxLedgerRow",
+      "definition": "lib/fx/components/fx_ledger_row.dart",
+      "definitionSha256": "1d6f69825173817a1c9286186ba0b64b24ea0284c81521b5ab3600063acb9665",
+      "directConsumers": [
+        "lib/features/bills/presentation/widgets/bill_tile.dart",
+        "lib/features/dashboard/presentation/widgets/recent_bills_card.dart",
+        "lib/features/orders/presentation/widgets/order_card.dart",
+        "lib/features/orders/presentation/widgets/order_entry_tile.dart"
+      ],
+      "consumerCount": 4,
+      "consumerStages": [
+        "S4-A",
+        "S6-A",
+        "S7-A"
+      ],
+      "testAndPreviewReferences": [
+        "test/fx/components/fx_ledger_row_test.dart"
+      ]
+    },
+    {
+      "symbol": "FxLineChart",
+      "definition": "lib/fx/components/fx_line_chart.dart",
+      "definitionSha256": "8411739644d71edd7b4e6c8d64446b58abd2a844dc572beab7a0e19692b768e9",
+      "directConsumers": [
+        "lib/features/dashboard/presentation/widgets/trend_card.dart",
+        "lib/features/stats/presentation/stats_assets_page.dart",
+        "lib/features/stats/presentation/widgets/stats_trend_card.dart"
+      ],
+      "consumerCount": 3,
+      "consumerStages": [
+        "S7-A",
+        "S8-A",
+        "S8-C"
+      ],
+      "testAndPreviewReferences": [
+        "test/fx/components/fx_chart_test.dart",
+        "tool/s1_a_component_preview_test.dart"
+      ]
+    },
+    {
+      "symbol": "FxLinePoint",
+      "definition": "lib/fx/components/fx_line_chart.dart",
+      "definitionSha256": "8411739644d71edd7b4e6c8d64446b58abd2a844dc572beab7a0e19692b768e9",
+      "directConsumers": [
+        "lib/features/dashboard/presentation/widgets/trend_card.dart",
+        "lib/features/stats/presentation/stats_assets_page.dart",
+        "lib/features/stats/presentation/widgets/stats_trend_card.dart"
+      ],
+      "consumerCount": 3,
+      "consumerStages": [
+        "S7-A",
+        "S8-A",
+        "S8-C"
+      ],
+      "testAndPreviewReferences": []
+    },
+    {
+      "symbol": "FxLineSeries",
+      "definition": "lib/fx/components/fx_line_chart.dart",
+      "definitionSha256": "8411739644d71edd7b4e6c8d64446b58abd2a844dc572beab7a0e19692b768e9",
+      "directConsumers": [
+        "lib/features/dashboard/presentation/widgets/trend_card.dart",
+        "lib/features/stats/presentation/stats_assets_page.dart",
+        "lib/features/stats/presentation/widgets/stats_trend_card.dart"
+      ],
+      "consumerCount": 3,
+      "consumerStages": [
+        "S7-A",
+        "S8-A",
+        "S8-C"
+      ],
+      "testAndPreviewReferences": []
+    },
+    {
+      "symbol": "FxListItem",
+      "definition": "lib/fx/components/fx_list_item.dart",
+      "definitionSha256": "af61402f72728a75a08b2c9b3c588ed6c9ea0ee8670e450cab0914049dff9657",
+      "directConsumers": [
+        "lib/features/logs/presentation/logs_page.dart",
+        "lib/features/profile/presentation/app_lock_settings_page.dart",
+        "lib/features/profile/presentation/profile_edit_page.dart",
+        "lib/features/profile/presentation/profile_page.dart",
+        "lib/features/stats/presentation/stats_page.dart",
+        "lib/login/view/login_screen.dart"
+      ],
+      "consumerCount": 6,
+      "consumerStages": [
+        "S12-A",
+        "S13-A",
+        "S13-B",
+        "S15-B",
+        "S8-A"
+      ],
+      "testAndPreviewReferences": [
+        "test/fx/components/fx_interaction_accessibility_test.dart",
+        "tool/s1_a_component_preview_test.dart"
+      ]
+    },
+    {
+      "symbol": "FxListSection",
+      "definition": "lib/fx/components/fx_list_section.dart",
+      "definitionSha256": "693b3eafef7db30ca86543dbf7464458fc69a2283d9057036f1ba4f67b106190",
+      "directConsumers": [
+        "lib/features/accounts/presentation/accounts_page.dart",
+        "lib/features/bill_editor/presentation/bill_editor_page.dart",
+        "lib/features/bill_editor/presentation/widgets/editor_pickers.dart",
+        "lib/features/bills/presentation/bills_page.dart",
+        "lib/features/categories/presentation/categories_page.dart",
+        "lib/features/members/presentation/members_page.dart",
+        "lib/features/orders/presentation/order_detail_page.dart",
+        "lib/features/orders/presentation/orders_page.dart",
+        "lib/features/payees/presentation/payees_page.dart",
+        "lib/features/profile/presentation/profile_edit_page.dart",
+        "lib/features/profile/presentation/profile_page.dart",
+        "lib/features/tags/presentation/tags_page.dart",
+        "lib/fx/components/fx_option_picker.dart"
+      ],
+      "consumerCount": 13,
+      "consumerStages": [
+        "S1-A",
+        "S10-A",
+        "S11-A",
+        "S13-A",
+        "S4-A",
+        "S5-A",
+        "S6-A",
+        "S6-B"
+      ],
+      "testAndPreviewReferences": [
+        "test/fx/components/fx_list_section_test.dart",
+        "tool/design_system_preview_test.dart"
+      ]
+    },
+    {
+      "symbol": "FxMoneyText",
+      "definition": "lib/fx/components/fx_money_text.dart",
+      "definitionSha256": "300241e41d2fbc23eeb6f80058e864a36fab7e0032df483323d057be255b707e",
+      "directConsumers": [
+        "lib/features/accounts/presentation/accounts_page.dart",
+        "lib/features/accounts/presentation/widgets/account_card.dart",
+        "lib/features/accounts/presentation/widgets/net_worth_card.dart",
+        "lib/features/accounts/presentation/widgets/recycle_bin_sheet.dart",
+        "lib/features/bill_editor/presentation/bill_editor_page.dart",
+        "lib/features/bill_editor/presentation/widgets/editor_pickers.dart",
+        "lib/features/bills/presentation/bills_page.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart",
+        "lib/features/dashboard/presentation/widgets/category_top_card.dart",
+        "lib/features/dashboard/presentation/widgets/month_stat_card.dart",
+        "lib/features/dashboard/presentation/widgets/net_worth_card.dart",
+        "lib/features/dashboard/presentation/widgets/recent_bills_card.dart",
+        "lib/features/goods/presentation/goods_page.dart",
+        "lib/features/goods/presentation/widgets/goods_card.dart",
+        "lib/features/goods/presentation/widgets/goods_detail_sheet.dart",
+        "lib/features/orders/presentation/order_detail_page.dart",
+        "lib/features/orders/presentation/order_reconciliation_page.dart",
+        "lib/features/orders/presentation/widgets/order_card.dart",
+        "lib/features/orders/presentation/widgets/order_entry_tile.dart",
+        "lib/features/orders/presentation/widgets/order_summary_strip.dart",
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart",
+        "lib/features/stats/presentation/stats_assets_page.dart",
+        "lib/features/stats/presentation/stats_page.dart",
+        "lib/features/stats/presentation/widgets/stats_overview_bar.dart",
+        "lib/fx/components/fx_donut_chart.dart"
+      ],
+      "consumerCount": 25,
+      "consumerStages": [
+        "S1-A",
+        "S11-A",
+        "S11-B",
+        "S4-A",
+        "S5-A",
+        "S6-A",
+        "S6-B",
+        "S6-C",
+        "S7-A",
+        "S8-A",
+        "S8-C"
+      ],
+      "testAndPreviewReferences": [
+        "test/fx/components/fx_ledger_row_test.dart",
+        "test/fx/components/fx_money_text_test.dart",
+        "tool/design_system_preview_test.dart",
+        "tool/s1_a_component_preview_test.dart"
+      ]
+    },
+    {
+      "symbol": "FxMotion",
+      "definition": "lib/fx/tokens/fx_radius.dart",
+      "definitionSha256": "42a850cc5a8b403808abd1f68d1744a5aa61f51687da3b6e05e3dc5655f800b2",
+      "directConsumers": [
+        "lib/features/bills/presentation/bills_page.dart",
+        "lib/fx/components/fx_segmented.dart",
+        "lib/fx/components/fx_skeleton.dart",
+        "lib/util/custom_route.dart"
+      ],
+      "consumerCount": 4,
+      "consumerStages": [
+        "S1-A",
+        "S4-A"
+      ],
+      "testAndPreviewReferences": []
+    },
+    {
+      "symbol": "FxPageScaffold",
+      "definition": "lib/fx/layout/fx_page_scaffold.dart",
+      "definitionSha256": "c430fb42a2c09d67cd066591450dd08badbf40b0283dcb5e8af5e63782c13b07",
+      "directConsumers": [
+        "lib/features/io/presentation/io_page.dart",
+        "lib/features/logs/presentation/logs_page.dart",
+        "lib/features/orders/presentation/order_reconciliation_page.dart",
+        "lib/features/profile/presentation/app_lock_settings_page.dart",
+        "lib/features/profile/presentation/profile_edit_page.dart"
+      ],
+      "consumerCount": 5,
+      "consumerStages": [
+        "S13-A",
+        "S13-B",
+        "S15-A",
+        "S15-B",
+        "S6-C"
+      ],
+      "testAndPreviewReferences": [
+        "test/fx/layout/fx_page_scaffold_test.dart"
+      ]
+    },
+    {
+      "symbol": "FxPalette",
+      "definition": "lib/fx/theme/fx_theme.dart",
+      "definitionSha256": "14696bcb234330fecf2719860372f4d38645e8358f60c1c6a65473de0040ff8d",
+      "directConsumers": [
+        "lib/core/app_lock/app_lock_gate.dart",
+        "lib/core/app_lock/presentation/pattern_lock_grid.dart",
+        "lib/core/security/app_lock_gesture_pad.dart",
+        "lib/core/session/widgets/session_switcher_sheet.dart",
+        "lib/core/shell/main_shell.dart",
+        "lib/features/accounts/data/account_models.dart",
+        "lib/features/accounts/presentation/accounts_page.dart",
+        "lib/features/accounts/presentation/widgets/account_card.dart",
+        "lib/features/accounts/presentation/widgets/account_form_sheet.dart",
+        "lib/features/accounts/presentation/widgets/account_menu.dart",
+        "lib/features/accounts/presentation/widgets/account_type_filter_bar.dart",
+        "lib/features/accounts/presentation/widgets/balance_adjust_sheet.dart",
+        "lib/features/accounts/presentation/widgets/net_worth_card.dart",
+        "lib/features/accounts/presentation/widgets/recycle_bin_sheet.dart",
+        "lib/features/bill_editor/presentation/bill_editor_page.dart",
+        "lib/features/bill_editor/presentation/widgets/amount_field.dart",
+        "lib/features/bill_editor/presentation/widgets/attachment_grid.dart",
+        "lib/features/bill_editor/presentation/widgets/category_split_section.dart",
+        "lib/features/bill_editor/presentation/widgets/editor_pickers.dart",
+        "lib/features/bill_editor/presentation/widgets/extras_section.dart",
+        "lib/features/bills/presentation/bills_page.dart",
+        "lib/features/bills/presentation/pages/bills_filter_page.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart",
+        "lib/features/books/presentation/books_page.dart",
+        "lib/features/books/presentation/pages/book_detail_page.dart",
+        "lib/features/books/presentation/pages/books_tab.dart",
+        "lib/features/books/presentation/pages/group_detail_page.dart",
+        "lib/features/books/presentation/pages/groups_tab.dart",
+        "lib/features/books/presentation/widgets/book_card.dart",
+        "lib/features/books/presentation/widgets/book_form_sheet.dart",
+        "lib/features/books/presentation/widgets/default_account_sheet.dart",
+        "lib/features/books/presentation/widgets/destructive_confirm_sheet.dart",
+        "lib/features/books/presentation/widgets/group_card.dart",
+        "lib/features/books/presentation/widgets/group_form_sheet.dart",
+        "lib/features/books/presentation/widgets/manage_inline_banner.dart",
+        "lib/features/categories/presentation/categories_page.dart",
+        "lib/features/categories/presentation/widgets/category_form_sheet.dart",
+        "lib/features/categories/presentation/widgets/category_tile.dart",
+        "lib/features/dashboard/presentation/dashboard_page.dart",
+        "lib/features/dashboard/presentation/widgets/category_top_card.dart",
+        "lib/features/dashboard/presentation/widgets/dashboard_card_shell.dart",
+        "lib/features/dashboard/presentation/widgets/dashboard_draggable_card.dart",
+        "lib/features/dashboard/presentation/widgets/dashboard_layout_editor.dart",
+        "lib/features/dashboard/presentation/widgets/dashboard_top_bar.dart",
+        "lib/features/dashboard/presentation/widgets/month_stat_card.dart",
+        "lib/features/dashboard/presentation/widgets/net_worth_card.dart",
+        "lib/features/dashboard/presentation/widgets/quick_add_card.dart",
+        "lib/features/dashboard/presentation/widgets/recent_bills_card.dart",
+        "lib/features/dashboard/presentation/widgets/trend_card.dart",
+        "lib/features/goods/presentation/goods_page.dart",
+        "lib/features/goods/presentation/widgets/goods_card.dart",
+        "lib/features/goods/presentation/widgets/goods_detail_sheet.dart",
+        "lib/features/goods/presentation/widgets/goods_form_sheet.dart",
+        "lib/features/group_users/presentation/group_users_page.dart",
+        "lib/features/io/presentation/io_page.dart",
+        "lib/features/logs/presentation/logs_page.dart",
+        "lib/features/manage_shared/manage_menu.dart",
+        "lib/features/manage_shared/manage_scaffold.dart",
+        "lib/features/members/presentation/widgets/member_card.dart",
+        "lib/features/members/presentation/widgets/member_form_sheet.dart",
+        "lib/features/orders/presentation/order_detail_page.dart",
+        "lib/features/orders/presentation/order_reconciliation_page.dart",
+        "lib/features/orders/presentation/orders_page.dart",
+        "lib/features/orders/presentation/widgets/order_card.dart",
+        "lib/features/orders/presentation/widgets/order_filter_sheet.dart",
+        "lib/features/orders/presentation/widgets/order_form_sheet.dart",
+        "lib/features/orders/presentation/widgets/order_summary_strip.dart",
+        "lib/features/payees/presentation/widgets/payee_card.dart",
+        "lib/features/payees/presentation/widgets/payee_form_sheet.dart",
+        "lib/features/profile/presentation/app_lock_settings_page.dart",
+        "lib/features/profile/presentation/profile_edit_page.dart",
+        "lib/features/profile/presentation/profile_page.dart",
+        "lib/features/profile/presentation/widgets/account_deletion_sheet.dart",
+        "lib/features/profile/presentation/widgets/donate_qr_tile.dart",
+        "lib/features/profile/presentation/widgets/finance_color_editor.dart",
+        "lib/features/profile/presentation/widgets/iap_donation_section.dart",
+        "lib/features/profile/presentation/widgets/profile_avatar.dart",
+        "lib/features/recurring/presentation/recurring_editor_page.dart",
+        "lib/features/recurring/presentation/recurring_page.dart",
+        "lib/features/recurring/presentation/widgets/cron_schedule_editor.dart",
+        "lib/features/recurring/presentation/widgets/recurring_log_sheet.dart",
+        "lib/features/shared/invite_member_sheet.dart",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart",
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart",
+        "lib/features/stats/presentation/stats_assets_page.dart",
+        "lib/features/stats/presentation/stats_loans_page.dart",
+        "lib/features/stats/presentation/stats_page.dart",
+        "lib/features/stats/presentation/stats_policy_page.dart",
+        "lib/features/stats/presentation/widgets/calendar_day_summary_sheet.dart",
+        "lib/features/stats/presentation/widgets/stats_card_shell.dart",
+        "lib/features/stats/presentation/widgets/stats_chart_table_toggle.dart",
+        "lib/features/stats/presentation/widgets/stats_income_expense_calendar_card.dart",
+        "lib/features/stats/presentation/widgets/stats_layout_editor.dart",
+        "lib/features/stats/presentation/widgets/stats_overview_bar.dart",
+        "lib/features/stats/presentation/widgets/stats_pie_card.dart",
+        "lib/features/stats/presentation/widgets/stats_top_bar.dart",
+        "lib/features/tags/presentation/widgets/tag_form_sheet.dart",
+        "lib/features/tags/presentation/widgets/tag_tile.dart",
+        "lib/fx/components/fx_action_sheet.dart",
+        "lib/fx/components/fx_bar_chart.dart",
+        "lib/fx/components/fx_button.dart",
+        "lib/fx/components/fx_card.dart",
+        "lib/fx/components/fx_chip.dart",
+        "lib/fx/components/fx_date_picker.dart",
+        "lib/fx/components/fx_donut_chart.dart",
+        "lib/fx/components/fx_heatmap_grid.dart",
+        "lib/fx/components/fx_icon_button.dart",
+        "lib/fx/components/fx_icon_tile.dart",
+        "lib/fx/components/fx_ledger_row.dart",
+        "lib/fx/components/fx_line_chart.dart",
+        "lib/fx/components/fx_list_item.dart",
+        "lib/fx/components/fx_list_section.dart",
+        "lib/fx/components/fx_money_text.dart",
+        "lib/fx/components/fx_option_picker.dart",
+        "lib/fx/components/fx_progress_bar.dart",
+        "lib/fx/components/fx_segmented.dart",
+        "lib/fx/components/fx_select_row.dart",
+        "lib/fx/components/fx_sheet.dart",
+        "lib/fx/components/fx_skeleton.dart",
+        "lib/fx/components/fx_state_view.dart",
+        "lib/fx/components/fx_tag_chip.dart",
+        "lib/fx/components/fx_text.dart",
+        "lib/fx/components/fx_text_field.dart",
+        "lib/fx/layout/fx_page_scaffold.dart",
+        "lib/fx/tree/fx_tree_picker.dart",
+        "lib/login/view/auth_page.dart",
+        "lib/login/view/auth_scaffold.dart",
+        "lib/login/view/base_url_config_page.dart",
+        "lib/login/view/login_screen.dart"
+      ],
+      "consumerCount": 130,
+      "consumerStages": [
+        "S1-A",
+        "S10-A",
+        "S11-A",
+        "S11-B",
+        "S12-A",
+        "S13-A",
+        "S13-B",
+        "S14-A",
+        "S15-A",
+        "S15-B",
+        "S3-A",
+        "S4-A",
+        "S5-A",
+        "S6-A",
+        "S6-B",
+        "S6-C",
+        "S7-A",
+        "S8-A",
+        "S8-B",
+        "S8-C",
+        "S9-A"
+      ],
+      "testAndPreviewReferences": [
+        "test/features/accounts/presentation/widgets/account_card_test.dart",
+        "test/features/bills/presentation/widgets/bill_tile_test.dart",
+        "test/features/dashboard/presentation/dashboard_page_test.dart",
+        "test/features/goods/presentation/widgets/goods_card_test.dart",
+        "test/fx/components/fx_foundation_integration_test.dart",
+        "test/fx/components/fx_list_section_test.dart",
+        "test/fx/theme/fx_palette_contrast_test.dart",
+        "test/login/view/auth_experience_test.dart",
+        "tool/design_system_preview_test.dart"
+      ]
+    },
+    {
+      "symbol": "FxPressable",
+      "definition": "lib/fx/components/fx_pressable.dart",
+      "definitionSha256": "9c95a20fc20fd3935f515c8fdcddf096dd6997ade96434cff47573898cf412c0",
+      "directConsumers": [
+        "lib/features/dashboard/presentation/widgets/dashboard_top_bar.dart",
+        "lib/features/dashboard/presentation/widgets/recent_bills_card.dart",
+        "lib/login/view/login_screen.dart"
+      ],
+      "consumerCount": 3,
+      "consumerStages": [
+        "S12-A",
+        "S7-A"
+      ],
+      "testAndPreviewReferences": []
+    },
+    {
+      "symbol": "FxProgressBar",
+      "definition": "lib/fx/components/fx_progress_bar.dart",
+      "definitionSha256": "19df4e7caf01dee57f838234a3beedb51e8f9c0d042fa7f8fecd76f89c8a869f",
+      "directConsumers": [
+        "lib/features/accounts/presentation/widgets/net_worth_card.dart",
+        "lib/features/dashboard/presentation/widgets/category_top_card.dart",
+        "lib/features/dashboard/presentation/widgets/net_worth_card.dart",
+        "lib/features/stats/presentation/stats_page.dart",
+        "lib/fx/components/fx_donut_chart.dart"
+      ],
+      "consumerCount": 5,
+      "consumerStages": [
+        "S1-A",
+        "S11-A",
+        "S7-A",
+        "S8-A"
+      ],
+      "testAndPreviewReferences": []
+    },
+    {
+      "symbol": "FxRadius",
+      "definition": "lib/fx/tokens/fx_radius.dart",
+      "definitionSha256": "42a850cc5a8b403808abd1f68d1744a5aa61f51687da3b6e05e3dc5655f800b2",
+      "directConsumers": [
+        "lib/core/session/widgets/session_switcher_sheet.dart",
+        "lib/features/accounts/presentation/widgets/account_form_sheet.dart",
+        "lib/features/accounts/presentation/widgets/account_type_filter_bar.dart",
+        "lib/features/accounts/presentation/widgets/balance_adjust_sheet.dart",
+        "lib/features/accounts/presentation/widgets/bank_icon.dart",
+        "lib/features/accounts/presentation/widgets/recycle_bin_sheet.dart",
+        "lib/features/bill_editor/presentation/bill_editor_page.dart",
+        "lib/features/bill_editor/presentation/widgets/attachment_grid.dart",
+        "lib/features/bill_editor/presentation/widgets/category_split_section.dart",
+        "lib/features/bill_editor/presentation/widgets/extras_section.dart",
+        "lib/features/bills/presentation/bills_page.dart",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart",
+        "lib/features/books/presentation/pages/books_tab.dart",
+        "lib/features/books/presentation/pages/groups_tab.dart",
+        "lib/features/books/presentation/widgets/book_form_sheet.dart",
+        "lib/features/books/presentation/widgets/group_form_sheet.dart",
+        "lib/features/books/presentation/widgets/manage_inline_banner.dart",
+        "lib/features/categories/presentation/widgets/category_form_sheet.dart",
+        "lib/features/dashboard/presentation/widgets/dashboard_draggable_card.dart",
+        "lib/features/goods/presentation/widgets/goods_card.dart",
+        "lib/features/goods/presentation/widgets/goods_form_sheet.dart",
+        "lib/features/group_users/presentation/group_users_page.dart",
+        "lib/features/logs/presentation/logs_page.dart",
+        "lib/features/manage_shared/manage_menu.dart",
+        "lib/features/manage_shared/manage_scaffold.dart",
+        "lib/features/orders/presentation/orders_page.dart",
+        "lib/features/orders/presentation/widgets/order_form_sheet.dart",
+        "lib/features/profile/presentation/profile_edit_page.dart",
+        "lib/features/profile/presentation/profile_page.dart",
+        "lib/features/profile/presentation/widgets/donate_qr_tile.dart",
+        "lib/features/profile/presentation/widgets/finance_color_editor.dart",
+        "lib/features/recurring/presentation/recurring_editor_page.dart",
+        "lib/features/recurring/presentation/widgets/cron_schedule_editor.dart",
+        "lib/features/recurring/presentation/widgets/recurring_log_sheet.dart",
+        "lib/features/shared/invite_member_sheet.dart",
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart",
+        "lib/features/stats/presentation/widgets/stats_layout_editor.dart",
+        "lib/features/stats/presentation/widgets/stats_top_bar.dart",
+        "lib/features/tags/presentation/widgets/tag_form_sheet.dart",
+        "lib/fx/components/fx_button.dart",
+        "lib/fx/components/fx_card.dart",
+        "lib/fx/components/fx_chip.dart",
+        "lib/fx/components/fx_date_picker.dart",
+        "lib/fx/components/fx_heatmap_grid.dart",
+        "lib/fx/components/fx_icon_tile.dart",
+        "lib/fx/components/fx_ledger_row.dart",
+        "lib/fx/components/fx_list_item.dart",
+        "lib/fx/components/fx_list_section.dart",
+        "lib/fx/components/fx_option_picker.dart",
+        "lib/fx/components/fx_pressable.dart",
+        "lib/fx/components/fx_segmented.dart",
+        "lib/fx/components/fx_sheet.dart",
+        "lib/fx/components/fx_skeleton.dart",
+        "lib/fx/components/fx_tag_chip.dart",
+        "lib/fx/components/fx_text_field.dart",
+        "lib/fx/theme/fx_theme.dart",
+        "lib/fx/tree/fx_tree_picker.dart",
+        "lib/login/view/auth_page.dart",
+        "lib/login/view/base_url_config_page.dart",
+        "lib/login/view/login_screen.dart"
+      ],
+      "consumerCount": 60,
+      "consumerStages": [
+        "S1-A",
+        "S10-A",
+        "S11-A",
+        "S11-B",
+        "S12-A",
+        "S13-A",
+        "S14-A",
+        "S15-B",
+        "S3-A",
+        "S4-A",
+        "S5-A",
+        "S6-A",
+        "S7-A",
+        "S8-A",
+        "S9-A"
+      ],
+      "testAndPreviewReferences": []
+    },
+    {
+      "symbol": "FxSegment",
+      "definition": "lib/fx/components/fx_segmented.dart",
+      "definitionSha256": "5f2f151fd283f71a60757fbaaa44a4e41a0e001cfc96af1bdca98f4fe782cd58",
+      "directConsumers": [
+        "lib/features/bill_editor/presentation/bill_editor_page.dart",
+        "lib/features/bill_editor/presentation/widgets/extras_section.dart",
+        "lib/features/books/presentation/books_page.dart",
+        "lib/features/books/presentation/pages/books_tab.dart",
+        "lib/features/logs/presentation/logs_page.dart",
+        "lib/features/manage_shared/manage_scaffold.dart",
+        "lib/features/orders/presentation/orders_page.dart",
+        "lib/features/orders/presentation/widgets/order_filter_sheet.dart",
+        "lib/features/profile/presentation/app_lock_settings_page.dart",
+        "lib/features/recurring/presentation/recurring_editor_page.dart",
+        "lib/features/recurring/presentation/widgets/cron_schedule_editor.dart",
+        "lib/features/stats/presentation/widgets/stats_income_expense_calendar_card.dart",
+        "lib/features/stats/presentation/widgets/stats_top_bar.dart"
+      ],
+      "consumerCount": 13,
+      "consumerStages": [
+        "S10-A",
+        "S13-B",
+        "S14-A",
+        "S15-B",
+        "S5-A",
+        "S6-A",
+        "S8-A",
+        "S8-B",
+        "S9-A"
+      ],
+      "testAndPreviewReferences": []
+    },
+    {
+      "symbol": "FxSegmented",
+      "definition": "lib/fx/components/fx_segmented.dart",
+      "definitionSha256": "5f2f151fd283f71a60757fbaaa44a4e41a0e001cfc96af1bdca98f4fe782cd58",
+      "directConsumers": [],
+      "consumerCount": 0,
+      "consumerStages": [],
+      "testAndPreviewReferences": [
+        "test/fx/components/fx_interaction_accessibility_test.dart",
+        "tool/s1_a_component_preview_test.dart"
+      ]
+    },
+    {
+      "symbol": "FxSelectRow",
+      "definition": "lib/fx/components/fx_select_row.dart",
+      "definitionSha256": "2275c752c9e06b9ba5ab5a6447dc1fe9b7b9fd01dff6dd9189ab86349ade037d",
+      "directConsumers": [
+        "lib/features/bill_editor/presentation/bill_editor_page.dart",
+        "lib/features/goods/presentation/widgets/goods_form_sheet.dart",
+        "lib/features/recurring/presentation/recurring_editor_page.dart"
+      ],
+      "consumerCount": 3,
+      "consumerStages": [
+        "S11-B",
+        "S14-A",
+        "S5-A"
+      ],
+      "testAndPreviewReferences": [
+        "test/fx/components/fx_interaction_accessibility_test.dart",
+        "test/fx/components/fx_select_row_test.dart",
+        "tool/s1_a_component_preview_test.dart"
+      ]
+    },
+    {
+      "symbol": "FxSelectionKind",
+      "definition": "lib/fx/components/fx_option_picker.dart",
+      "directConsumers": [
+        "lib/features/bill_editor/presentation/bill_editor_page.dart",
+        "lib/features/bill_editor/presentation/widgets/extras_section.dart"
+      ],
+      "consumerStages": [
+        "S5-A"
+      ],
+      "testAndPreviewReferences": [
+        "test/fx/components/fx_selection_contract_test.dart"
+      ],
+      "definitionSha256": "897df0e12a7c9c94e15a4f7eb4e7b93698cd4e4e14597ff7be30f161abbd6c8f",
+      "consumerCount": 2
+    },
+    {
+      "symbol": "FxSelectionResult",
+      "definition": "lib/fx/components/fx_option_picker.dart",
+      "directConsumers": [
+        "lib/features/bill_editor/presentation/widgets/editor_pickers.dart"
+      ],
+      "consumerStages": [
+        "S5-A"
+      ],
+      "testAndPreviewReferences": [
+        "test/fx/components/fx_selection_contract_test.dart"
+      ],
+      "definitionSha256": "897df0e12a7c9c94e15a4f7eb4e7b93698cd4e4e14597ff7be30f161abbd6c8f",
+      "consumerCount": 1
+    },
+    {
+      "symbol": "FxSheet",
+      "definition": "lib/fx/components/fx_sheet.dart",
+      "definitionSha256": "ddb091b4bab9dcfb473aad06dc014d4c0e60ca3e3553f30aa4876452aecc11b0",
+      "directConsumers": [
+        "lib/core/session/widgets/session_switcher_sheet.dart",
+        "lib/features/accounts/presentation/accounts_page.dart",
+        "lib/features/accounts/presentation/widgets/account_menu.dart",
+        "lib/features/bill_editor/presentation/widgets/editor_pickers.dart",
+        "lib/features/bills/presentation/bills_page.dart",
+        "lib/features/books/presentation/books_page.dart",
+        "lib/features/books/presentation/pages/book_detail_page.dart",
+        "lib/features/books/presentation/pages/books_tab.dart",
+        "lib/features/books/presentation/pages/group_detail_page.dart",
+        "lib/features/books/presentation/widgets/destructive_confirm_sheet.dart",
+        "lib/features/categories/presentation/categories_page.dart",
+        "lib/features/goods/presentation/goods_page.dart",
+        "lib/features/group_users/presentation/group_users_page.dart",
+        "lib/features/io/presentation/io_page.dart",
+        "lib/features/logs/presentation/logs_page.dart",
+        "lib/features/manage_shared/manage_menu.dart",
+        "lib/features/members/presentation/members_page.dart",
+        "lib/features/orders/presentation/order_detail_page.dart",
+        "lib/features/orders/presentation/orders_page.dart",
+        "lib/features/orders/presentation/widgets/order_audit_sheet.dart",
+        "lib/features/orders/presentation/widgets/order_form_sheet.dart",
+        "lib/features/payees/presentation/payees_page.dart",
+        "lib/features/profile/presentation/app_lock_settings_page.dart",
+        "lib/features/profile/presentation/profile_edit_page.dart",
+        "lib/features/profile/presentation/profile_page.dart",
+        "lib/features/recurring/presentation/recurring_page.dart",
+        "lib/features/shared/presentation/bills/bill_detail_flow.dart",
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart",
+        "lib/features/stats/presentation/widgets/calendar_day_summary_sheet.dart",
+        "lib/features/tags/presentation/tags_page.dart",
+        "lib/fx/components/fx_action_sheet.dart",
+        "lib/fx/components/fx_confirm_sheet.dart",
+        "lib/fx/components/fx_date_picker.dart",
+        "lib/fx/components/fx_option_picker.dart",
+        "lib/fx/tree/fx_tree_picker.dart",
+        "lib/login/view/login_screen.dart"
+      ],
+      "consumerCount": 36,
+      "consumerStages": [
+        "S1-A",
+        "S10-A",
+        "S11-A",
+        "S11-B",
+        "S12-A",
+        "S13-A",
+        "S13-B",
+        "S14-A",
+        "S15-A",
+        "S15-B",
+        "S3-A",
+        "S4-A",
+        "S5-A",
+        "S6-A",
+        "S6-B",
+        "S8-B",
+        "S9-A"
+      ],
+      "testAndPreviewReferences": [
+        "test/features/bills/presentation/widgets/bills_filter_sheet_test.dart",
+        "test/features/goods/presentation/goods_detail_sheet_test.dart",
+        "test/features/orders/presentation/order_form_sheet_test.dart",
+        "test/features/profile/presentation/widgets/account_deletion_sheet_test.dart",
+        "test/fx/components/fx_sheet_guard_test.dart",
+        "test/fx/components/fx_sheet_test.dart",
+        "tool/s1_a_component_preview_test.dart"
+      ]
+    },
+    {
+      "symbol": "FxSheetAction",
+      "definition": "lib/fx/components/fx_action_sheet.dart",
+      "definitionSha256": "0199969728e2d87f58bcef1355bf0ccef3c3b917ff8272f0cb551fde8cb3f9a2",
+      "directConsumers": [
+        "lib/features/bill_editor/presentation/bill_editor_page.dart",
+        "lib/features/orders/presentation/widgets/order_action_sheet.dart"
+      ],
+      "consumerCount": 2,
+      "consumerStages": [
+        "S5-A",
+        "S6-A"
+      ],
+      "testAndPreviewReferences": []
+    },
+    {
+      "symbol": "FxSheetPopGuard",
+      "definition": "lib/fx/components/fx_sheet.dart",
+      "directConsumers": [
+        "lib/fx/components/fx_confirm_sheet.dart"
+      ],
+      "consumerStages": [
+        "S1-A"
+      ],
+      "testAndPreviewReferences": [
+        "test/fx/components/fx_sheet_guard_test.dart"
+      ],
+      "definitionSha256": "ddb091b4bab9dcfb473aad06dc014d4c0e60ca3e3553f30aa4876452aecc11b0",
+      "consumerCount": 1
+    },
+    {
+      "symbol": "FxShimmer",
+      "definition": "lib/fx/components/fx_skeleton.dart",
+      "definitionSha256": "cfc8f320a3dd4b23a0d7aa729030c8665a576acc57cc3c5b84da6ef8a0b389be",
+      "directConsumers": [],
+      "consumerCount": 0,
+      "consumerStages": [],
+      "testAndPreviewReferences": []
+    },
+    {
+      "symbol": "FxSkeleton",
+      "definition": "lib/fx/components/fx_skeleton.dart",
+      "definitionSha256": "cfc8f320a3dd4b23a0d7aa729030c8665a576acc57cc3c5b84da6ef8a0b389be",
+      "directConsumers": [
+        "lib/features/dashboard/presentation/widgets/dashboard_card_shell.dart"
+      ],
+      "consumerCount": 1,
+      "consumerStages": [
+        "S7-A"
+      ],
+      "testAndPreviewReferences": []
+    },
+    {
+      "symbol": "FxSpacing",
+      "definition": "lib/fx/tokens/fx_spacing.dart",
+      "definitionSha256": "07da8325b12f4b4bc9f99f6b6eb834fc2ad30ba75c8ff5ff2a76e053a3cf9cb7",
+      "directConsumers": [
+        "lib/core/session/widgets/session_switcher_sheet.dart",
+        "lib/core/shell/main_shell.dart",
+        "lib/features/accounts/presentation/accounts_page.dart",
+        "lib/features/accounts/presentation/widgets/account_card.dart",
+        "lib/features/accounts/presentation/widgets/account_form_sheet.dart",
+        "lib/features/accounts/presentation/widgets/account_type_filter_bar.dart",
+        "lib/features/accounts/presentation/widgets/balance_adjust_sheet.dart",
+        "lib/features/accounts/presentation/widgets/net_worth_card.dart",
+        "lib/features/accounts/presentation/widgets/recycle_bin_sheet.dart",
+        "lib/features/bill_editor/presentation/bill_editor_page.dart",
+        "lib/features/bill_editor/presentation/widgets/amount_field.dart",
+        "lib/features/bill_editor/presentation/widgets/attachment_grid.dart",
+        "lib/features/bill_editor/presentation/widgets/category_split_section.dart",
+        "lib/features/bill_editor/presentation/widgets/editor_pickers.dart",
+        "lib/features/bill_editor/presentation/widgets/extras_section.dart",
+        "lib/features/bills/presentation/bills_page.dart",
+        "lib/features/bills/presentation/pages/bills_filter_page.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart",
+        "lib/features/books/presentation/books_page.dart",
+        "lib/features/books/presentation/pages/book_detail_page.dart",
+        "lib/features/books/presentation/pages/books_tab.dart",
+        "lib/features/books/presentation/pages/group_detail_page.dart",
+        "lib/features/books/presentation/pages/groups_tab.dart",
+        "lib/features/books/presentation/widgets/book_card.dart",
+        "lib/features/books/presentation/widgets/book_form_sheet.dart",
+        "lib/features/books/presentation/widgets/default_account_sheet.dart",
+        "lib/features/books/presentation/widgets/destructive_confirm_sheet.dart",
+        "lib/features/books/presentation/widgets/group_card.dart",
+        "lib/features/books/presentation/widgets/group_form_sheet.dart",
+        "lib/features/books/presentation/widgets/manage_inline_banner.dart",
+        "lib/features/categories/presentation/categories_page.dart",
+        "lib/features/categories/presentation/widgets/category_form_sheet.dart",
+        "lib/features/categories/presentation/widgets/category_tile.dart",
+        "lib/features/dashboard/presentation/dashboard_page.dart",
+        "lib/features/dashboard/presentation/widgets/category_top_card.dart",
+        "lib/features/dashboard/presentation/widgets/dashboard_card_shell.dart",
+        "lib/features/dashboard/presentation/widgets/dashboard_layout_editor.dart",
+        "lib/features/dashboard/presentation/widgets/dashboard_top_bar.dart",
+        "lib/features/dashboard/presentation/widgets/month_stat_card.dart",
+        "lib/features/dashboard/presentation/widgets/net_worth_card.dart",
+        "lib/features/dashboard/presentation/widgets/quick_add_card.dart",
+        "lib/features/dashboard/presentation/widgets/recent_bills_card.dart",
+        "lib/features/dashboard/presentation/widgets/trend_card.dart",
+        "lib/features/goods/presentation/goods_page.dart",
+        "lib/features/goods/presentation/widgets/goods_card.dart",
+        "lib/features/goods/presentation/widgets/goods_detail_sheet.dart",
+        "lib/features/goods/presentation/widgets/goods_form_sheet.dart",
+        "lib/features/group_users/presentation/group_users_page.dart",
+        "lib/features/io/presentation/io_page.dart",
+        "lib/features/logs/presentation/logs_page.dart",
+        "lib/features/manage_shared/manage_menu.dart",
+        "lib/features/manage_shared/manage_scaffold.dart",
+        "lib/features/members/presentation/members_page.dart",
+        "lib/features/members/presentation/widgets/member_card.dart",
+        "lib/features/members/presentation/widgets/member_form_sheet.dart",
+        "lib/features/orders/presentation/order_detail_page.dart",
+        "lib/features/orders/presentation/order_reconciliation_page.dart",
+        "lib/features/orders/presentation/orders_page.dart",
+        "lib/features/orders/presentation/widgets/order_card.dart",
+        "lib/features/orders/presentation/widgets/order_filter_sheet.dart",
+        "lib/features/orders/presentation/widgets/order_form_sheet.dart",
+        "lib/features/orders/presentation/widgets/order_summary_strip.dart",
+        "lib/features/payees/presentation/payees_page.dart",
+        "lib/features/payees/presentation/widgets/payee_card.dart",
+        "lib/features/payees/presentation/widgets/payee_form_sheet.dart",
+        "lib/features/profile/presentation/app_lock_settings_page.dart",
+        "lib/features/profile/presentation/profile_edit_page.dart",
+        "lib/features/profile/presentation/profile_page.dart",
+        "lib/features/profile/presentation/widgets/account_deletion_sheet.dart",
+        "lib/features/profile/presentation/widgets/donate_qr_tile.dart",
+        "lib/features/profile/presentation/widgets/finance_color_editor.dart",
+        "lib/features/profile/presentation/widgets/iap_donation_section.dart",
+        "lib/features/recurring/presentation/recurring_editor_page.dart",
+        "lib/features/recurring/presentation/recurring_page.dart",
+        "lib/features/recurring/presentation/widgets/cron_schedule_editor.dart",
+        "lib/features/recurring/presentation/widgets/recurring_log_sheet.dart",
+        "lib/features/shared/invite_member_sheet.dart",
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart",
+        "lib/features/stats/presentation/stats_assets_page.dart",
+        "lib/features/stats/presentation/stats_loans_page.dart",
+        "lib/features/stats/presentation/stats_page.dart",
+        "lib/features/stats/presentation/stats_policy_page.dart",
+        "lib/features/stats/presentation/widgets/calendar_day_summary_sheet.dart",
+        "lib/features/stats/presentation/widgets/stats_card_shell.dart",
+        "lib/features/stats/presentation/widgets/stats_chart_table_toggle.dart",
+        "lib/features/stats/presentation/widgets/stats_income_expense_calendar_card.dart",
+        "lib/features/stats/presentation/widgets/stats_layout_editor.dart",
+        "lib/features/stats/presentation/widgets/stats_overview_bar.dart",
+        "lib/features/stats/presentation/widgets/stats_pie_card.dart",
+        "lib/features/stats/presentation/widgets/stats_top_bar.dart",
+        "lib/features/tags/presentation/tags_page.dart",
+        "lib/features/tags/presentation/widgets/tag_form_sheet.dart",
+        "lib/features/tags/presentation/widgets/tag_tile.dart",
+        "lib/fx/components/fx_button.dart",
+        "lib/fx/components/fx_card.dart",
+        "lib/fx/components/fx_chip.dart",
+        "lib/fx/components/fx_confirm_sheet.dart",
+        "lib/fx/components/fx_date_picker.dart",
+        "lib/fx/components/fx_donut_chart.dart",
+        "lib/fx/components/fx_heatmap_grid.dart",
+        "lib/fx/components/fx_ledger_row.dart",
+        "lib/fx/components/fx_list_item.dart",
+        "lib/fx/components/fx_list_section.dart",
+        "lib/fx/components/fx_option_picker.dart",
+        "lib/fx/components/fx_select_row.dart",
+        "lib/fx/components/fx_sheet.dart",
+        "lib/fx/components/fx_state_view.dart",
+        "lib/fx/components/fx_text_field.dart",
+        "lib/fx/layout/fx_bento_grid.dart",
+        "lib/fx/layout/fx_page_scaffold.dart",
+        "lib/fx/theme/fx_theme.dart",
+        "lib/fx/tree/fx_tree_picker.dart",
+        "lib/login/view/base_url_config_page.dart",
+        "lib/login/view/login_screen.dart"
+      ],
+      "consumerCount": 115,
+      "consumerStages": [
+        "S1-A",
+        "S10-A",
+        "S11-A",
+        "S11-B",
+        "S12-A",
+        "S13-A",
+        "S13-B",
+        "S14-A",
+        "S15-A",
+        "S15-B",
+        "S3-A",
+        "S4-A",
+        "S5-A",
+        "S6-A",
+        "S6-B",
+        "S6-C",
+        "S7-A",
+        "S8-A",
+        "S8-B",
+        "S8-C",
+        "S9-A"
+      ],
+      "testAndPreviewReferences": [
+        "tool/design_system_preview_test.dart"
+      ]
+    },
+    {
+      "symbol": "FxStateView",
+      "definition": "lib/fx/components/fx_state_view.dart",
+      "definitionSha256": "2912e1858741ef6622580c4bdef5ad102d9ebf1cd3ef99e73b49d57e7fc17e18",
+      "directConsumers": [
+        "lib/core/session/widgets/session_switcher_sheet.dart",
+        "lib/features/accounts/presentation/accounts_page.dart",
+        "lib/features/accounts/presentation/widgets/recycle_bin_sheet.dart",
+        "lib/features/bill_editor/bill_editor_registration.dart",
+        "lib/features/bill_editor/presentation/bill_editor_page.dart",
+        "lib/features/bills/presentation/bills_page.dart",
+        "lib/features/books/presentation/pages/book_detail_page.dart",
+        "lib/features/books/presentation/pages/books_tab.dart",
+        "lib/features/books/presentation/pages/group_detail_page.dart",
+        "lib/features/books/presentation/pages/groups_tab.dart",
+        "lib/features/books/presentation/widgets/default_account_sheet.dart",
+        "lib/features/categories/presentation/categories_page.dart",
+        "lib/features/dashboard/presentation/dashboard_page.dart",
+        "lib/features/goods/presentation/goods_page.dart",
+        "lib/features/group_users/presentation/group_users_page.dart",
+        "lib/features/io/presentation/io_page.dart",
+        "lib/features/logs/presentation/logs_page.dart",
+        "lib/features/members/presentation/members_page.dart",
+        "lib/features/orders/presentation/order_detail_page.dart",
+        "lib/features/orders/presentation/order_reconciliation_page.dart",
+        "lib/features/orders/presentation/orders_page.dart",
+        "lib/features/orders/presentation/widgets/order_audit_sheet.dart",
+        "lib/features/payees/presentation/payees_page.dart",
+        "lib/features/profile/presentation/profile_page.dart",
+        "lib/features/recurring/presentation/recurring_editor_page.dart",
+        "lib/features/recurring/presentation/recurring_page.dart",
+        "lib/features/recurring/presentation/widgets/recurring_log_sheet.dart",
+        "lib/features/shared/invite_member_sheet.dart",
+        "lib/features/stats/presentation/stats_assets_page.dart",
+        "lib/features/stats/presentation/stats_loans_page.dart",
+        "lib/features/stats/presentation/stats_page.dart",
+        "lib/features/stats/presentation/stats_policy_page.dart",
+        "lib/features/stats/presentation/widgets/stats_card_shell.dart",
+        "lib/features/stats/presentation/widgets/stats_income_expense_calendar_card.dart",
+        "lib/features/tags/presentation/tags_page.dart"
+      ],
+      "consumerCount": 35,
+      "consumerStages": [
+        "S10-A",
+        "S11-A",
+        "S11-B",
+        "S13-A",
+        "S14-A",
+        "S15-A",
+        "S15-B",
+        "S3-A",
+        "S4-A",
+        "S5-A",
+        "S6-A",
+        "S6-B",
+        "S6-C",
+        "S7-A",
+        "S8-A",
+        "S8-B",
+        "S8-C",
+        "S9-A"
+      ],
+      "testAndPreviewReferences": [
+        "test/fx/components/fx_interaction_accessibility_test.dart",
+        "tool/s1_a_component_preview_test.dart"
+      ]
+    },
+    {
+      "symbol": "FxTagChip",
+      "definition": "lib/fx/components/fx_tag_chip.dart",
+      "definitionSha256": "52f9c293ab1905b29e5bc715f178c81783647fe4a7b9a617b960ae077432807a",
+      "directConsumers": [
+        "lib/features/bills/presentation/widgets/bill_tile.dart",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart",
+        "lib/features/books/presentation/pages/book_detail_page.dart",
+        "lib/features/books/presentation/pages/books_tab.dart",
+        "lib/features/books/presentation/pages/group_detail_page.dart",
+        "lib/features/books/presentation/pages/groups_tab.dart",
+        "lib/features/books/presentation/widgets/book_card.dart",
+        "lib/features/books/presentation/widgets/group_card.dart",
+        "lib/features/dashboard/presentation/widgets/dashboard_layout_editor.dart",
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart",
+        "lib/features/stats/presentation/widgets/stats_layout_editor.dart"
+      ],
+      "consumerCount": 11,
+      "consumerStages": [
+        "S1-A",
+        "S4-A",
+        "S7-A",
+        "S8-A",
+        "S9-A"
+      ],
+      "testAndPreviewReferences": [
+        "test/fx/components/fx_interaction_accessibility_test.dart",
+        "tool/s1_a_component_preview_test.dart"
+      ]
+    },
+    {
+      "symbol": "FxText",
+      "definition": "lib/fx/components/fx_text.dart",
+      "definitionSha256": "b39a6f3966001c830445e0181306d2b359dc0f8b165b411cea1a9ca1194627f6",
+      "directConsumers": [
+        "lib/fx/components/fx_card.dart"
+      ],
+      "consumerCount": 1,
+      "consumerStages": [
+        "S1-A"
+      ],
+      "testAndPreviewReferences": [
+        "tool/design_system_preview_test.dart"
+      ]
+    },
+    {
+      "symbol": "FxTextField",
+      "definition": "lib/fx/components/fx_text_field.dart",
+      "definitionSha256": "6859f072793143019bc412e1b33af9d8b0878785d4ee4765fddefe538186e3ff",
+      "directConsumers": [
+        "lib/features/profile/presentation/app_lock_settings_page.dart",
+        "lib/features/profile/presentation/profile_edit_page.dart",
+        "lib/features/profile/presentation/widgets/account_deletion_sheet.dart",
+        "lib/fx/components/fx_amount_input.dart",
+        "lib/login/view/auth_page.dart",
+        "lib/login/view/base_url_config_page.dart",
+        "lib/login/view/login_screen.dart"
+      ],
+      "consumerCount": 7,
+      "consumerStages": [
+        "S1-A",
+        "S12-A",
+        "S13-A",
+        "S13-B"
+      ],
+      "testAndPreviewReferences": [
+        "test/fx/components/fx_amount_input_test.dart",
+        "test/fx/components/fx_foundation_integration_test.dart",
+        "tool/design_system_preview_test.dart",
+        "tool/s1_a_component_preview_test.dart"
+      ]
+    },
+    {
+      "symbol": "FxTextRole",
+      "definition": "lib/fx/components/fx_text.dart",
+      "definitionSha256": "b39a6f3966001c830445e0181306d2b359dc0f8b165b411cea1a9ca1194627f6",
+      "directConsumers": [
+        "lib/fx/components/fx_card.dart"
+      ],
+      "consumerCount": 1,
+      "consumerStages": [
+        "S1-A"
+      ],
+      "testAndPreviewReferences": [
+        "tool/design_system_preview_test.dart"
+      ]
+    },
+    {
+      "symbol": "FxTextTone",
+      "definition": "lib/fx/components/fx_text.dart",
+      "definitionSha256": "b39a6f3966001c830445e0181306d2b359dc0f8b165b411cea1a9ca1194627f6",
+      "directConsumers": [
+        "lib/fx/components/fx_card.dart"
+      ],
+      "consumerCount": 1,
+      "consumerStages": [
+        "S1-A"
+      ],
+      "testAndPreviewReferences": [
+        "tool/design_system_preview_test.dart"
+      ]
+    },
+    {
+      "symbol": "FxTheme",
+      "definition": "lib/fx/theme/fx_theme.dart",
+      "definitionSha256": "14696bcb234330fecf2719860372f4d38645e8358f60c1c6a65473de0040ff8d",
+      "directConsumers": [
+        "lib/core/app/fx_app.dart"
+      ],
+      "consumerCount": 1,
+      "consumerStages": [
+        "S3-A"
+      ],
+      "testAndPreviewReferences": [
+        "test/core/app_lock/app_lock_gate_test.dart",
+        "test/core/app_lock/pattern_lock_grid_test.dart",
+        "test/core/shell/main_shell_recent_bills_navigation_test.dart",
+        "test/features/accounts/presentation/widgets/account_card_test.dart",
+        "test/features/accounts/presentation/widgets/net_worth_card_test.dart",
+        "test/features/bill_editor/presentation/bill_editor_order_flow_test.dart",
+        "test/features/bill_editor/presentation/widgets/attachment_grid_test.dart",
+        "test/features/bill_editor/presentation/widgets/category_split_section_test.dart",
+        "test/features/bills/presentation/widgets/bill_tile_test.dart",
+        "test/features/bills/presentation/widgets/bills_filter_sheet_test.dart",
+        "test/features/books/presentation/widgets/destructive_confirm_sheet_test.dart",
+        "test/features/categories/presentation/widgets/category_tile_test.dart",
+        "test/features/dashboard/presentation/dashboard_page_test.dart",
+        "test/features/dashboard/presentation/widgets/dashboard_draggable_card_test.dart",
+        "test/features/dashboard/presentation/widgets/recent_bills_card_test.dart",
+        "test/features/goods/presentation/goods_detail_sheet_test.dart",
+        "test/features/goods/presentation/widgets/goods_card_test.dart",
+        "test/features/manage_shared/manage_scaffold_test.dart",
+        "test/features/orders/presentation/order_detail_page_test.dart",
+        "test/features/orders/presentation/order_form_sheet_test.dart",
+        "test/features/orders/presentation/order_reconciliation_page_test.dart",
+        "test/features/orders/presentation/orders_page_test.dart",
+        "test/features/payees/presentation/widgets/payee_card_test.dart",
+        "test/features/profile/presentation/profile_experience_test.dart",
+        "test/features/profile/presentation/profile_page_test.dart",
+        "test/features/profile/presentation/widgets/account_deletion_sheet_test.dart",
+        "test/features/profile/presentation/widgets/donate_qr_tile_test.dart",
+        "test/features/profile/presentation/widgets/iap_donation_section_test.dart",
+        "test/features/recurring/presentation/recurring_editor_page_test.dart",
+        "test/features/recurring/presentation/widgets/cron_schedule_editor_test.dart",
+        "test/features/shared/presentation/bills/bill_detail_flow_test.dart",
+        "test/features/stats/presentation/widgets/stats_card_shell_test.dart",
+        "test/features/stats/presentation/widgets/stats_chart_cards_test.dart",
+        "test/features/stats/presentation/widgets/stats_income_expense_calendar_card_test.dart",
+        "test/features/stats/presentation/widgets/stats_loading_consistency_test.dart",
+        "test/features/stats/presentation/widgets/stats_top_bar_test.dart",
+        "test/features/tags/presentation/widgets/tag_tile_test.dart",
+        "test/fx/components/fx_button_test.dart",
+        "test/fx/components/fx_foundation_integration_test.dart",
+        "test/fx/components/fx_ledger_row_test.dart",
+        "test/fx/components/fx_list_section_test.dart",
+        "test/fx/components/fx_option_picker_test.dart",
+        "test/fx/components/fx_select_row_test.dart",
+        "test/fx/components/fx_sheet_test.dart",
+        "test/fx/layout/fx_page_scaffold_test.dart",
+        "test/fx_date_picker_test.dart",
+        "test/fx_tree_picker_test.dart",
+        "test/login/view/auth_experience_test.dart",
+        "test/login/view/auth_page_test.dart",
+        "test/widget_test.dart",
+        "tool/design_system_preview_test.dart"
+      ]
+    },
+    {
+      "symbol": "FxTreePicker",
+      "definition": "lib/fx/tree/fx_tree_picker.dart",
+      "definitionSha256": "66fc99a7ff9661797d933e13b3c316380d10e618c3bb75aaafabefb82a41b45e",
+      "directConsumers": [
+        "lib/features/bill_editor/presentation/bill_editor_page.dart",
+        "lib/features/bill_editor/presentation/widgets/category_split_section.dart",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart"
+      ],
+      "consumerCount": 3,
+      "consumerStages": [
+        "S4-A",
+        "S5-A"
+      ],
+      "testAndPreviewReferences": [
+        "test/fx/components/fx_selection_contract_test.dart",
+        "tool/s1_a_component_preview_test.dart"
+      ]
+    },
+    {
+      "symbol": "FxTypography",
+      "definition": "lib/fx/tokens/fx_typography.dart",
+      "definitionSha256": "50ef1a62747520689df0cac356128c14478702cffb6a1d338cae6f855bcbe959",
+      "directConsumers": [
+        "lib/core/session/widgets/session_switcher_sheet.dart",
+        "lib/core/shell/main_shell.dart",
+        "lib/features/accounts/presentation/accounts_page.dart",
+        "lib/features/accounts/presentation/widgets/account_card.dart",
+        "lib/features/accounts/presentation/widgets/account_form_sheet.dart",
+        "lib/features/accounts/presentation/widgets/account_menu.dart",
+        "lib/features/accounts/presentation/widgets/account_type_filter_bar.dart",
+        "lib/features/accounts/presentation/widgets/balance_adjust_sheet.dart",
+        "lib/features/accounts/presentation/widgets/net_worth_card.dart",
+        "lib/features/accounts/presentation/widgets/recycle_bin_sheet.dart",
+        "lib/features/bill_editor/presentation/bill_editor_page.dart",
+        "lib/features/bill_editor/presentation/widgets/amount_field.dart",
+        "lib/features/bill_editor/presentation/widgets/attachment_grid.dart",
+        "lib/features/bill_editor/presentation/widgets/category_split_section.dart",
+        "lib/features/bill_editor/presentation/widgets/editor_pickers.dart",
+        "lib/features/bill_editor/presentation/widgets/extras_section.dart",
+        "lib/features/bills/presentation/bills_page.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart",
+        "lib/features/books/presentation/books_page.dart",
+        "lib/features/books/presentation/pages/book_detail_page.dart",
+        "lib/features/books/presentation/pages/books_tab.dart",
+        "lib/features/books/presentation/pages/group_detail_page.dart",
+        "lib/features/books/presentation/widgets/book_card.dart",
+        "lib/features/books/presentation/widgets/book_form_sheet.dart",
+        "lib/features/books/presentation/widgets/default_account_sheet.dart",
+        "lib/features/books/presentation/widgets/destructive_confirm_sheet.dart",
+        "lib/features/books/presentation/widgets/group_card.dart",
+        "lib/features/books/presentation/widgets/group_form_sheet.dart",
+        "lib/features/books/presentation/widgets/manage_inline_banner.dart",
+        "lib/features/categories/presentation/categories_page.dart",
+        "lib/features/categories/presentation/widgets/category_form_sheet.dart",
+        "lib/features/categories/presentation/widgets/category_tile.dart",
+        "lib/features/dashboard/presentation/widgets/category_top_card.dart",
+        "lib/features/dashboard/presentation/widgets/dashboard_card_shell.dart",
+        "lib/features/dashboard/presentation/widgets/dashboard_layout_editor.dart",
+        "lib/features/dashboard/presentation/widgets/dashboard_top_bar.dart",
+        "lib/features/dashboard/presentation/widgets/net_worth_card.dart",
+        "lib/features/dashboard/presentation/widgets/quick_add_card.dart",
+        "lib/features/dashboard/presentation/widgets/recent_bills_card.dart",
+        "lib/features/dashboard/presentation/widgets/trend_card.dart",
+        "lib/features/goods/presentation/goods_page.dart",
+        "lib/features/goods/presentation/widgets/goods_card.dart",
+        "lib/features/goods/presentation/widgets/goods_detail_sheet.dart",
+        "lib/features/goods/presentation/widgets/goods_form_sheet.dart",
+        "lib/features/group_users/presentation/group_users_page.dart",
+        "lib/features/io/presentation/io_page.dart",
+        "lib/features/logs/presentation/logs_page.dart",
+        "lib/features/manage_shared/manage_menu.dart",
+        "lib/features/manage_shared/manage_scaffold.dart",
+        "lib/features/members/presentation/widgets/member_card.dart",
+        "lib/features/members/presentation/widgets/member_form_sheet.dart",
+        "lib/features/orders/presentation/order_detail_page.dart",
+        "lib/features/orders/presentation/order_reconciliation_page.dart",
+        "lib/features/orders/presentation/orders_page.dart",
+        "lib/features/orders/presentation/widgets/order_card.dart",
+        "lib/features/orders/presentation/widgets/order_filter_sheet.dart",
+        "lib/features/orders/presentation/widgets/order_form_sheet.dart",
+        "lib/features/orders/presentation/widgets/order_summary_strip.dart",
+        "lib/features/payees/presentation/widgets/payee_card.dart",
+        "lib/features/payees/presentation/widgets/payee_form_sheet.dart",
+        "lib/features/profile/presentation/app_lock_settings_page.dart",
+        "lib/features/profile/presentation/profile_edit_page.dart",
+        "lib/features/profile/presentation/profile_page.dart",
+        "lib/features/profile/presentation/widgets/account_deletion_sheet.dart",
+        "lib/features/profile/presentation/widgets/donate_qr_tile.dart",
+        "lib/features/profile/presentation/widgets/finance_color_editor.dart",
+        "lib/features/profile/presentation/widgets/iap_donation_section.dart",
+        "lib/features/profile/presentation/widgets/profile_avatar.dart",
+        "lib/features/recurring/presentation/recurring_editor_page.dart",
+        "lib/features/recurring/presentation/recurring_page.dart",
+        "lib/features/recurring/presentation/widgets/cron_schedule_editor.dart",
+        "lib/features/recurring/presentation/widgets/recurring_log_sheet.dart",
+        "lib/features/shared/invite_member_sheet.dart",
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart",
+        "lib/features/stats/presentation/stats_assets_page.dart",
+        "lib/features/stats/presentation/stats_loans_page.dart",
+        "lib/features/stats/presentation/stats_page.dart",
+        "lib/features/stats/presentation/stats_policy_page.dart",
+        "lib/features/stats/presentation/widgets/calendar_day_summary_sheet.dart",
+        "lib/features/stats/presentation/widgets/stats_card_shell.dart",
+        "lib/features/stats/presentation/widgets/stats_chart_table_toggle.dart",
+        "lib/features/stats/presentation/widgets/stats_income_expense_calendar_card.dart",
+        "lib/features/stats/presentation/widgets/stats_layout_editor.dart",
+        "lib/features/stats/presentation/widgets/stats_overview_bar.dart",
+        "lib/features/stats/presentation/widgets/stats_pie_card.dart",
+        "lib/features/stats/presentation/widgets/stats_top_bar.dart",
+        "lib/features/tags/presentation/widgets/tag_form_sheet.dart",
+        "lib/features/tags/presentation/widgets/tag_tile.dart",
+        "lib/fx/components/fx_bar_chart.dart",
+        "lib/fx/components/fx_button.dart",
+        "lib/fx/components/fx_chip.dart",
+        "lib/fx/components/fx_date_picker.dart",
+        "lib/fx/components/fx_donut_chart.dart",
+        "lib/fx/components/fx_heatmap_grid.dart",
+        "lib/fx/components/fx_ledger_row.dart",
+        "lib/fx/components/fx_line_chart.dart",
+        "lib/fx/components/fx_list_item.dart",
+        "lib/fx/components/fx_money_text.dart",
+        "lib/fx/components/fx_option_picker.dart",
+        "lib/fx/components/fx_segmented.dart",
+        "lib/fx/components/fx_select_row.dart",
+        "lib/fx/components/fx_sheet.dart",
+        "lib/fx/components/fx_state_view.dart",
+        "lib/fx/components/fx_tag_chip.dart",
+        "lib/fx/components/fx_text_field.dart",
+        "lib/fx/layout/fx_page_scaffold.dart",
+        "lib/fx/theme/fx_theme.dart",
+        "lib/fx/tree/fx_tree_picker.dart",
+        "lib/login/view/auth_page.dart",
+        "lib/login/view/base_url_config_page.dart",
+        "lib/login/view/login_screen.dart"
+      ],
+      "consumerCount": 112,
+      "consumerStages": [
+        "S1-A",
+        "S10-A",
+        "S11-A",
+        "S11-B",
+        "S12-A",
+        "S13-A",
+        "S13-B",
+        "S14-A",
+        "S15-A",
+        "S15-B",
+        "S3-A",
+        "S4-A",
+        "S5-A",
+        "S6-A",
+        "S6-B",
+        "S6-C",
+        "S7-A",
+        "S8-A",
+        "S8-B",
+        "S8-C",
+        "S9-A"
+      ],
+      "testAndPreviewReferences": []
+    },
+    {
+      "symbol": "showFxDatePicker",
+      "definition": "lib/fx/components/fx_date_picker.dart",
+      "definitionSha256": "2943790c186ccb987b020b93f257ea243f3dad7f04846748c4e52c44ac6da12f",
+      "directConsumers": [
+        "lib/features/goods/presentation/widgets/goods_form_sheet.dart"
+      ],
+      "consumerCount": 1,
+      "consumerStages": [
+        "S11-B"
+      ],
+      "testAndPreviewReferences": [
+        "test/fx_date_picker_test.dart"
+      ]
+    },
+    {
+      "symbol": "showFxDateTimePicker",
+      "definition": "lib/fx/components/fx_date_picker.dart",
+      "definitionSha256": "2943790c186ccb987b020b93f257ea243f3dad7f04846748c4e52c44ac6da12f",
+      "directConsumers": [
+        "lib/features/bill_editor/presentation/bill_editor_page.dart"
+      ],
+      "consumerCount": 1,
+      "consumerStages": [
+        "S5-A"
+      ],
+      "testAndPreviewReferences": [
+        "test/fx_date_picker_test.dart"
+      ]
+    },
+    {
+      "symbol": "showFxMultiOptionPicker",
+      "definition": "lib/fx/components/fx_option_picker.dart",
+      "directConsumers": [
+        "lib/features/bill_editor/presentation/widgets/editor_pickers.dart",
+        "lib/features/recurring/presentation/recurring_editor_page.dart"
+      ],
+      "consumerStages": [
+        "S5-A",
+        "S14-A"
+      ],
+      "testAndPreviewReferences": [
+        "test/fx/components/fx_option_picker_test.dart"
+      ],
+      "definitionSha256": "897df0e12a7c9c94e15a4f7eb4e7b93698cd4e4e14597ff7be30f161abbd6c8f",
+      "consumerCount": 2
+    },
+    {
+      "symbol": "showFxOptionPicker",
+      "definition": "lib/fx/components/fx_option_picker.dart",
+      "directConsumers": [
+        "lib/features/bill_editor/presentation/widgets/editor_pickers.dart",
+        "lib/features/goods/presentation/widgets/goods_form_sheet.dart",
+        "lib/features/recurring/presentation/recurring_editor_page.dart"
+      ],
+      "consumerStages": [
+        "S5-A",
+        "S11-B",
+        "S14-A"
+      ],
+      "testAndPreviewReferences": [
+        "test/fx/components/fx_option_picker_test.dart",
+        "test/fx/components/fx_selection_contract_test.dart"
+      ],
+      "definitionSha256": "897df0e12a7c9c94e15a4f7eb4e7b93698cd4e4e14597ff7be30f161abbd6c8f",
+      "consumerCount": 3
+    },
+    {
+      "symbol": "showFxOptionPickerResult",
+      "definition": "lib/fx/components/fx_option_picker.dart",
+      "directConsumers": [
+        "lib/features/bill_editor/presentation/widgets/editor_pickers.dart"
+      ],
+      "consumerStages": [
+        "S5-A"
+      ],
+      "testAndPreviewReferences": [
+        "test/fx/components/fx_selection_contract_test.dart"
+      ],
+      "definitionSha256": "897df0e12a7c9c94e15a4f7eb4e7b93698cd4e4e14597ff7be30f161abbd6c8f",
+      "consumerCount": 1
+    }
+  ]
+}

@@ -383,7 +383,6 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
       ),
       title: title,
       subtitle: value.isEmpty ? null : value,
-      subtitleMaxLines: 3,
       subtitleStyle: FxTypography.body.copyWith(color: palette.textSecondary),
       showChevron: onTap != null,
       onTap: onTap,

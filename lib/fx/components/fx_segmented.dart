@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
+import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
 
-/// iOS 风滑动指示块分段控件。
+/// 少量选项的分段控件；更多或很长选项应使用选择列表。
 class FxSegmented<T> extends StatelessWidget {
   final List<FxSegment<T>> segments;
   final T value;
@@ -20,94 +21,93 @@ class FxSegmented<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final palette = FxPalette.of(context);
-    final index = segments.indexWhere((s) => s.value == value);
-    final height = (40 * MediaQuery.textScalerOf(context).scale(1)).clamp(
-      48.0,
-      96.0,
-    );
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final count = segments.length;
-        final segWidth = constraints.maxWidth / count;
-        final selectedSegment = index < 0 ? null : segments[index];
-        final selectedIsDangerous =
-            selectedSegment?.dangerWhenSelected ?? false;
-        return Container(
-          height: height,
-          decoration: BoxDecoration(
-            color: palette.surfaceMuted,
-            borderRadius: FxRadius.tileBorder,
-          ),
-          child: Stack(
-            children: [
-              if (index >= 0)
-                AnimatedPositioned(
-                  duration: FxMotion.resolve(context, FxMotion.normal),
-                  curve: Curves.easeOutCubic,
-                  left: index * segWidth + 3,
-                  top: 3,
-                  bottom: 3,
-                  width: segWidth - 6,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: selectedIsDangerous
-                          ? palette.danger.withValues(alpha: 0.08)
-                          : palette.surface,
-                      borderRadius: BorderRadius.circular(FxRadius.tile - 2),
-                      boxShadow: [
-                        BoxShadow(
-                          color: palette.shadow,
-                          blurRadius: 6,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
-                    ),
+    return Container(
+      decoration: BoxDecoration(
+        color: palette.surfaceMuted,
+        borderRadius: FxRadius.tileBorder,
+      ),
+      child: IntrinsicHeight(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            for (final segment in segments)
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(3),
+                  child: _FxSegmentButton<T>(
+                    segment: segment,
+                    selected: segment.value == value,
+                    onChanged: onChanged,
                   ),
                 ),
-              Row(
-                children: segments.map((s) {
-                  final selected = s.value == value;
-                  return Expanded(
-                    child: Semantics(
-                      inMutuallyExclusiveGroup: true,
-                      selected: selected,
-                      label: s.label,
-                      child: Material(
-                        color: Colors.transparent,
-                        child: InkWell(
-                          onTap: () {
-                            if (!selected) {
-                              HapticFeedback.selectionClick();
-                              onChanged(s.value);
-                            }
-                          },
-                          child: Center(
-                            child: Text(
-                              s.label,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: FxTypography.label.copyWith(
-                                color: selected
-                                    ? s.dangerWhenSelected
-                                          ? palette.danger
-                                          : palette.textPrimary
-                                    : palette.textSecondary,
-                                fontWeight: selected
-                                    ? FontWeight.w600
-                                    : FontWeight.w500,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  );
-                }).toList(),
               ),
-            ],
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _FxSegmentButton<T> extends StatelessWidget {
+  const _FxSegmentButton({
+    required this.segment,
+    required this.selected,
+    required this.onChanged,
+  });
+
+  final FxSegment<T> segment;
+  final bool selected;
+  final ValueChanged<T> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = FxPalette.of(context);
+    return Semantics(
+      button: true,
+      enabled: true,
+      inMutuallyExclusiveGroup: true,
+      selected: selected,
+      label: segment.label,
+      child: Material(
+        color: selected
+            ? segment.dangerWhenSelected
+                  ? palette.danger.withValues(alpha: 0.08)
+                  : palette.surface
+            : Colors.transparent,
+        borderRadius: BorderRadius.circular(FxRadius.tile - 2),
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: () {
+            if (!selected) {
+              HapticFeedback.selectionClick();
+              onChanged(segment.value);
+            }
+          },
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(minHeight: 48),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: FxSpacing.sm,
+                vertical: FxSpacing.sm,
+              ),
+              child: Center(
+                child: Text(
+                  segment.label,
+                  textAlign: TextAlign.center,
+                  style: FxTypography.label.copyWith(
+                    color: selected
+                        ? segment.dangerWhenSelected
+                              ? palette.danger
+                              : palette.textPrimary
+                        : palette.textSecondary,
+                    fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
+                  ),
+                ),
+              ),
+            ),
           ),
-        );
-      },
+        ),
+      ),
     );
   }
 }

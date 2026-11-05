@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:fortuneboot/fx/components/fx_text.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
@@ -121,10 +120,7 @@ class _FxCardState extends State<FxCard> {
                   borderRadius: borderRadius,
                 ),
                 onFocusChange: (focused) => setState(() => _focused = focused),
-                onTap: () {
-                  HapticFeedback.selectionClick();
-                  widget.onTap!();
-                },
+                onTap: widget.onTap,
                 child: ConstrainedBox(
                   constraints: const BoxConstraints(
                     minWidth: FxSpacing.touchTarget,

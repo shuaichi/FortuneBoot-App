@@ -1,0 +1,5 @@
+00:00 +0: loading /Users/zhangchi118/代码/FortuneBoot-App/test/fx/components/fx_chart_test.dart
+00:00 +0: chart grids use separator instead of control border
+00:00 +1: donut center amount uses primary body size
+00:00 +2: chart categorical fills adapt to dark brightness
+00:00 +3: All tests passed!

@@ -1,0 +1,692 @@
+[
+  {
+    "id": "V01",
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.42.15.png",
+    "state": "基础URL配置",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sha256": "d9161c02be63b69695e18a4e2060b4f5c10544b25971d405e4587eecc8103ae6"
+  },
+  {
+    "id": "V02",
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.42.34.png",
+    "state": "登录页与键盘",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sha256": "52d8c1aaa7556e23b9a48a496eccf9b99e77dc9c3f6cf321fbdb48d1b53a73a4"
+  },
+  {
+    "id": "V03",
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.42.44.png",
+    "state": "登录图形验证码",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sha256": "ec0c574c453c8446a1c819a9c11afcf5f4c18e8166690c7f471b41b07598b459"
+  },
+  {
+    "id": "V04",
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.42.48.png",
+    "state": "仪表盘上半屏",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sha256": "300039848e58670c1bbc451cca60a184c8a5bb9772da4d5be38e6eefa8392f5b"
+  },
+  {
+    "id": "V05",
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.42.52.png",
+    "state": "仪表盘下半屏",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sha256": "8335d1b489a4dbb29db8d60d78b9ba9e181db648739b415317ff64c0b464c8cb"
+  },
+  {
+    "id": "V06",
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.42.54.png",
+    "state": "分组与账本切换",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sha256": "f9d68e63a4a4119870b59f77f457d4356d8e7d18e920919f88b5643223e983ce"
+  },
+  {
+    "id": "V07",
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.42.59.png",
+    "state": "仪表盘布局编辑",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sha256": "98312e8c59d7c7a5f565621a4469ca9f6797fa6b2971475751fc88c599f57363"
+  },
+  {
+    "id": "V08",
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.43.04.png",
+    "state": "账单列表",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sha256": "a14244f794fa504912794ea8a543c6c9f35ee097fe68b20e099e8711df3dda8e"
+  },
+  {
+    "id": "V09",
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.43.24.png",
+    "state": "账单详情",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sha256": "d5747ca00851d731ed378e866c85fa2e2c700bd4910eb1e0ddf9ee7118353c0d"
+  },
+  {
+    "id": "V10",
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.43.28.png",
+    "state": "账单详情更多菜单",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sha256": "8ce60d1a932f71ad1bde2703196e18444cc052ea06ac33d539210a07f862fd72"
+  },
+  {
+    "id": "V11",
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.43.40.png",
+    "state": "记账编辑上半屏",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sha256": "631eb18863dc55f5df454658800294a9d49bc992a9f39b8f4c8ed8e8e9d66e7a"
+  },
+  {
+    "id": "V12",
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.43.43.png",
+    "state": "记账编辑下半屏",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sha256": "d64652b5a885c68fef3c5618bd0c235bf00ec0879288ce1d82d2b6d1906dd47f"
+  },
+  {
+    "id": "V13",
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.43.50.png",
+    "state": "账单筛选上半屏",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sha256": "9d0a3dcb3eff1d0a676a9ae2295297bdb03ffee6839e7d8573ee7774013c9cee"
+  },
+  {
+    "id": "V14",
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.43.54.png",
+    "state": "账单筛选下半屏",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sha256": "83938628c75cde9c13fb6e3861dc56bcef637e2d6816dc731019145473f14c78"
+  },
+  {
+    "id": "V15",
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.43.59.png",
+    "state": "统计日历",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sha256": "eb6ffb6bfcf76860c9eae127395e1852d73d68a8ecef33b463fc9dec6b154839"
+  },
+  {
+    "id": "V16",
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.44.03.png",
+    "state": "统计分析与趋势",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sha256": "b5054230322980e62fec1629ced0059fa88194dacbb1a8a617db9b29b9584228"
+  },
+  {
+    "id": "V17",
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.44.06.png",
+    "state": "统计下半屏",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sha256": "eefe5fdae04a76c719d62bf0cd88505e245d3a38c35516adb9f490f06cdc14cc"
+  },
+  {
+    "id": "V18",
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.44.10.png",
+    "state": "资产统计上半屏",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sha256": "45534a6e63f5045c6052f744fc5e977b4a4776bb32c24393f8227ab5a0a90842"
+  },
+  {
+    "id": "V19",
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.44.12.png",
+    "state": "资产统计下半屏",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sha256": "4e2522892279797f4a0df96f4e1b3508782e60c288828b5a1dc9e6312c26b44a"
+  },
+  {
+    "id": "V20",
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.44.16.png",
+    "state": "借贷理财",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sha256": "72c780b96d26f221fc63a8f5128901db619e5bd287ad3c02e2611894c25916d0"
+  },
+  {
+    "id": "V21",
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.44.20.png",
+    "state": "统计策略说明",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sha256": "c16f589e4ec902b23ae157b88d7f6f10d1a5d8dbfb73ee3da4972e76ce24b35d"
+  },
+  {
+    "id": "V22",
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.44.30.png",
+    "state": "统计时间范围菜单",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sha256": "5a80a81a2d61c26b552601730d89e63b3a4e8e3c0472722860db89670a65677d"
+  },
+  {
+    "id": "V23",
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.44.35.png",
+    "state": "我的上半屏",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sha256": "5c519f979b246c5d362e27ec7e4e6644ec1e6b564ede2c761b1f9cd563a124f2"
+  },
+  {
+    "id": "V24",
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.44.38.png",
+    "state": "个人资料",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sha256": "ca25de48f29ff130d91580bc20d447f7f23861a4e9bf6125b86278c712249210"
+  },
+  {
+    "id": "V25",
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.44.42.png",
+    "state": "注销账号",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sha256": "3a9423072cd06d2721ccd909fcfce57eeb9f4dd4e059518ee20318dd24f69306"
+  },
+  {
+    "id": "V26",
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.44.45.png",
+    "state": "修改密码",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sha256": "2f03b962a0d2f9c8a6c19d3ce6d12c632878d888b76b06bfc1fb169ee6e9aa0f"
+  },
+  {
+    "id": "V27",
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.44.49.png",
+    "state": "编辑资料",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sha256": "3ca92eb203dde8cb224c344df2c163b727b5ad0c71a5da1c390e286bbaf0f151"
+  },
+  {
+    "id": "V28",
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.44.57.png",
+    "state": "账本分组管理",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sha256": "0cdbff1140abea39527b061a1c6dac210224d9ac7ba0827375f4efcc4bf68bdf"
+  },
+  {
+    "id": "V29",
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.45.01.png",
+    "state": "账本管理",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sha256": "9a1dd32771f30291326a5c142a800e136fc12ffb6c3b7676ef8f1e3d48d8f713"
+  },
+  {
+    "id": "V30",
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.45.06.png",
+    "state": "新增账本币种",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sha256": "7fe28ab1fb325060c02cafd9f33bef750507924292b2cfe67a71676ecf81ced1"
+  },
+  {
+    "id": "V31",
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.45.09.png",
+    "state": "新增账本下半屏",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sha256": "de26d63b99a85f4455d13cb4c28608595d0f9c5d3d1a74cb44c73485d31bdf10"
+  },
+  {
+    "id": "V32",
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.45.15.png",
+    "state": "新增分组币种",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sha256": "d526c7876e2a3e5a47feeeff97679cc5d6cad2ff8574ac65ce1b245701a34386"
+  },
+  {
+    "id": "V33",
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.45.18.png",
+    "state": "新增分组下半屏",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sha256": "264d6085f5f52653d66456d355d2e2fb79b046f19d8328c64c3cf8cf92c18ad3"
+  },
+  {
+    "id": "V34",
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.45.25.png",
+    "state": "协作成员管理",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sha256": "e9c5a9e9c3eed9ab4f743bc0e97f041a9d3e68016f8bd0431e65acf48ab00043"
+  },
+  {
+    "id": "V35",
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.45.28.png",
+    "state": "邀请用户",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sha256": "448d67cc5f3f530437c0716b8153f4ad5b22ebde126ed0d157824f348317e53c"
+  },
+  {
+    "id": "V36",
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.45.33.png",
+    "state": "分类管理",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sha256": "808947fa236b7e1d2d086285e2a563e2e62c3ac20b112b7dea1c5624a505d706"
+  },
+  {
+    "id": "V37",
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.45.37.png",
+    "state": "新增分类",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sha256": "5493902c32a0a1494ef6f909bc8a2882fccc2448db245a1ca90e8f59efc71abc"
+  },
+  {
+    "id": "V38",
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.45.43.png",
+    "state": "编辑分类",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sha256": "0d0c9583d10d5a12aecc3297af8360d4f5fb1af0939a2ebc8d38f7bb78db3746"
+  },
+  {
+    "id": "V39",
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.45.49.png",
+    "state": "标签管理",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sha256": "43243b98a7fc273f397b92471dfba7a856750623ce01d1e07058a7978bd9ca04"
+  },
+  {
+    "id": "V40",
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.45.54.png",
+    "state": "新增标签",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sha256": "7d7d60b5892fa7a0479f780d64fdc65752476ee72a694efc17d7402e336fb8e6"
+  },
+  {
+    "id": "V41",
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.45.59.png",
+    "state": "编辑标签",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sha256": "a58d429b647e288c1d4cb319b8191b963e04d72e5c23e65ed1bc268b8fb814b5"
+  },
+  {
+    "id": "V42",
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.46.05.png",
+    "state": "标签回收站",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sha256": "79b2becfe5d63e74a24f5d6be2c233b92575068111b227e5ba0496fe626c53dd"
+  },
+  {
+    "id": "V43",
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.46.10.png",
+    "state": "交易对象管理",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sha256": "7e3b532135dacf2d84600eaed319a651dd9bdb5bec2cf237a717b22d181016b4"
+  },
+  {
+    "id": "V44",
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.46.14.png",
+    "state": "编辑交易对象",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sha256": "84d4e11add30547b6aa4556adf1f73ee6520e5c7bf2da0013f25f68d4197da3b"
+  },
+  {
+    "id": "V45",
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.46.20.png",
+    "state": "成员管理",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sha256": "56e490e4f4989f23cee5e83a1d466985c55d94d727776d57679bcce6f0c002d5"
+  },
+  {
+    "id": "V46",
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.46.23.png",
+    "state": "新增成员",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sha256": "ed3fb2d22d2e02c3a25160a2fac06712e2333661feaf6cd6cd326a9e320aec6d"
+  },
+  {
+    "id": "V47",
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.46.48.png",
+    "state": "成员创建后的列表",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sha256": "82fd66a008abc32f9e09dca329ebe4a69c3e4ae79ef5a7839bb9167e9fcad3fc"
+  },
+  {
+    "id": "V48",
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.46.54.png",
+    "state": "归物列表",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sha256": "28821bd6b80d4e47889f09473cabb13ab322185bc13f1667fa553ecc16f85ed7"
+  },
+  {
+    "id": "V49",
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.47.01.png",
+    "state": "归物详情",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sha256": "5597f23788c139838e7e413ef1916209ce923bc3f5ba45283983b4e52cd1a5f1"
+  },
+  {
+    "id": "V50",
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.47.15.png",
+    "state": "编辑归物上半屏",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sha256": "e40a0bc40c2705264328efb21f43d5e3c9db1900ef7009bf2b34b5d4e01be7a5"
+  },
+  {
+    "id": "V51",
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.47.18.png",
+    "state": "编辑归物下半屏",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sha256": "b0d4b62e7a433c287dfaaae0de1c67f2770c8efae378d8a7c42fdd009026ee29"
+  },
+  {
+    "id": "V52",
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.47.40.png",
+    "state": "单据管理",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sha256": "5b79a91d5bf1651885c271be10a3db7985772dff631fff1c25f36cbe6f4b73fe"
+  },
+  {
+    "id": "V53",
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.47.43.png",
+    "state": "单据详情",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sha256": "c5d038350dedbd17961f1d1ad541513a838c8848af7d75b5bd0699be83a32ed8"
+  },
+  {
+    "id": "V54",
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.47.56.png",
+    "state": "单据详情重复采样",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sha256": "c5d038350dedbd17961f1d1ad541513a838c8848af7d75b5bd0699be83a32ed8"
+  },
+  {
+    "id": "V55",
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.48.18.png",
+    "state": "周期记账列表",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sha256": "8072f70fea6d0babe935d69974f87a4e48ee7122b1296a6e264fa935fb4ec069"
+  },
+  {
+    "id": "V56",
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.48.27.png",
+    "state": "编辑周期规则上半屏",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sha256": "c7a780f258af560e33461216fc456df59d31f98cdbf89b459fd934a6f4235325"
+  },
+  {
+    "id": "V57",
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.48.31.png",
+    "state": "编辑周期规则下半屏",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sha256": "54deb6da0b1362e210a002e51229cfbb2d892dd57201e27ccaa5e69bd244b8a5"
+  },
+  {
+    "id": "V58",
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.48.45.png",
+    "state": "导入导出",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sha256": "bdac8a70962bf6ac9f0790372cde505fc2f68a8c997addecd3bc785b53151d32"
+  },
+  {
+    "id": "V59",
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.48.54.png",
+    "state": "日志列表",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sha256": "880e917bc13c053f27fe04b49f142423f5db0ef2349388038570ea23a598bdbe"
+  },
+  {
+    "id": "V60",
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.49.04.png",
+    "state": "语言选择",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sha256": "2dcf0508e2de4078e6ee2561c0b4a0eaea5c0c5a0520a3e39b13b6097440b1be"
+  },
+  {
+    "id": "V61",
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.49.07.png",
+    "state": "主题模式",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sha256": "7ae940faabbc7bafa36fb411095ac8e29c6b25b749f54bd6d39fd8214ee0952d"
+  },
+  {
+    "id": "V62",
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.49.12.png",
+    "state": "账单月开始日",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sha256": "31e4648b761297ebe69aec7abd3fe4db68980f1a8d63f63c108ef23b11e29971"
+  },
+  {
+    "id": "V63",
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.49.19.png",
+    "state": "应用锁设置",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sha256": "98e19d57ede90996da00dda720ff25cfee07ccb8866b5c4f9e721c1dfd81f945"
+  },
+  {
+    "id": "V64",
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.49.30.png",
+    "state": "账单颜色",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sha256": "d3abc33a5d29ab5691029aba6a6bb813a602847a76b595d25f5a462bce9626a4"
+  },
+  {
+    "id": "V65",
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.49.36.png",
+    "state": "关于好记",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sha256": "1e44f3f59f08387e7a5f5c965e001ba5f6448ad1d259c71f3b613247122b5527"
+  },
+  {
+    "id": "V66",
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.49.40.png",
+    "state": "帮助",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sha256": "589b2584f9d946bfd387c6aed3829df37d944fb274a91e633e3677953d1bfa41"
+  },
+  {
+    "id": "V67",
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.49.44.png",
+    "state": "退出登录",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sha256": "59a610f9019353dffccd03c9aa9a8db4908ba73d4fcfae6f66d48c13c6c114b2"
+  },
+  {
+    "id": "V68",
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.49.55.png",
+    "state": "注册上半屏",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sha256": "7c01c5035e04dd233224e00e3cedc67d2c660a5e6d40e90d3bf2a740bc7d8b46"
+  },
+  {
+    "id": "V69",
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.49.58.png",
+    "state": "注册下半屏",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sha256": "7d54948caf6a160d61edea7ca75961d6edfcc054906bd726cf7f3ef0f292607a"
+  }
+]

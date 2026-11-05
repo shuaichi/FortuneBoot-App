@@ -1,0 +1,449 @@
+{
+  "schemaVersion": 1,
+  "currentStage": null,
+  "nextStage": "S0-A",
+  "lastCompletedStage": null,
+  "note": "只生成提示词包，所有阶段未执行；历史底座结果不是本包阶段通过记录。",
+  "stages": {
+    "S0-A": {
+      "status": "NOT_STARTED",
+      "localGate": "NOT_RUN",
+      "visualGate": "NOT_RUN",
+      "externalGate": "NOT_RUN",
+      "attempt": 0,
+      "handoff": null,
+      "evidence": [],
+      "blockingIssues": []
+    },
+    "S1-A": {
+      "status": "NOT_STARTED",
+      "localGate": "NOT_RUN",
+      "visualGate": "NOT_RUN",
+      "externalGate": "NOT_RUN",
+      "attempt": 0,
+      "handoff": null,
+      "evidence": [],
+      "blockingIssues": []
+    },
+    "S2-A": {
+      "status": "NOT_STARTED",
+      "localGate": "NOT_RUN",
+      "visualGate": "NOT_RUN",
+      "externalGate": "NOT_RUN",
+      "attempt": 0,
+      "handoff": null,
+      "evidence": [],
+      "blockingIssues": []
+    },
+    "S3-A": {
+      "status": "NOT_STARTED",
+      "localGate": "NOT_RUN",
+      "visualGate": "NOT_RUN",
+      "externalGate": "NOT_RUN",
+      "attempt": 0,
+      "handoff": null,
+      "evidence": [],
+      "blockingIssues": []
+    },
+    "S4-A": {
+      "status": "NOT_STARTED",
+      "localGate": "NOT_RUN",
+      "visualGate": "NOT_RUN",
+      "externalGate": "NOT_RUN",
+      "attempt": 0,
+      "handoff": null,
+      "evidence": [],
+      "blockingIssues": []
+    },
+    "S4-B": {
+      "status": "NOT_STARTED",
+      "localGate": "NOT_RUN",
+      "visualGate": "NOT_RUN",
+      "externalGate": "NOT_RUN",
+      "attempt": 0,
+      "handoff": null,
+      "evidence": [],
+      "blockingIssues": []
+    },
+    "S5-A": {
+      "status": "NOT_STARTED",
+      "localGate": "NOT_RUN",
+      "visualGate": "NOT_RUN",
+      "externalGate": "NOT_RUN",
+      "attempt": 0,
+      "handoff": null,
+      "evidence": [],
+      "blockingIssues": []
+    },
+    "S6-A": {
+      "status": "NOT_STARTED",
+      "localGate": "NOT_RUN",
+      "visualGate": "NOT_RUN",
+      "externalGate": "NOT_RUN",
+      "attempt": 0,
+      "handoff": null,
+      "evidence": [],
+      "blockingIssues": []
+    },
+    "S6-B": {
+      "status": "NOT_STARTED",
+      "localGate": "NOT_RUN",
+      "visualGate": "NOT_RUN",
+      "externalGate": "NOT_RUN",
+      "attempt": 0,
+      "handoff": null,
+      "evidence": [],
+      "blockingIssues": []
+    },
+    "S6-C": {
+      "status": "NOT_STARTED",
+      "localGate": "NOT_RUN",
+      "visualGate": "NOT_RUN",
+      "externalGate": "NOT_RUN",
+      "attempt": 0,
+      "handoff": null,
+      "evidence": [],
+      "blockingIssues": []
+    },
+    "S7-A": {
+      "status": "NOT_STARTED",
+      "localGate": "NOT_RUN",
+      "visualGate": "NOT_RUN",
+      "externalGate": "NOT_RUN",
+      "attempt": 0,
+      "handoff": null,
+      "evidence": [],
+      "blockingIssues": []
+    },
+    "S8-A": {
+      "status": "NOT_STARTED",
+      "localGate": "NOT_RUN",
+      "visualGate": "NOT_RUN",
+      "externalGate": "NOT_RUN",
+      "attempt": 0,
+      "handoff": null,
+      "evidence": [],
+      "blockingIssues": []
+    },
+    "S8-B": {
+      "status": "NOT_STARTED",
+      "localGate": "NOT_RUN",
+      "visualGate": "NOT_RUN",
+      "externalGate": "NOT_RUN",
+      "attempt": 0,
+      "handoff": null,
+      "evidence": [],
+      "blockingIssues": []
+    },
+    "S8-C": {
+      "status": "NOT_STARTED",
+      "localGate": "NOT_RUN",
+      "visualGate": "NOT_RUN",
+      "externalGate": "NOT_RUN",
+      "attempt": 0,
+      "handoff": null,
+      "evidence": [],
+      "blockingIssues": []
+    },
+    "S9-A": {
+      "status": "NOT_STARTED",
+      "localGate": "NOT_RUN",
+      "visualGate": "NOT_RUN",
+      "externalGate": "NOT_RUN",
+      "attempt": 0,
+      "handoff": null,
+      "evidence": [],
+      "blockingIssues": []
+    },
+    "S10-A": {
+      "status": "NOT_STARTED",
+      "localGate": "NOT_RUN",
+      "visualGate": "NOT_RUN",
+      "externalGate": "NOT_RUN",
+      "attempt": 0,
+      "handoff": null,
+      "evidence": [],
+      "blockingIssues": []
+    },
+    "S11-A": {
+      "status": "NOT_STARTED",
+      "localGate": "NOT_RUN",
+      "visualGate": "NOT_RUN",
+      "externalGate": "NOT_RUN",
+      "attempt": 0,
+      "handoff": null,
+      "evidence": [],
+      "blockingIssues": []
+    },
+    "S11-B": {
+      "status": "NOT_STARTED",
+      "localGate": "NOT_RUN",
+      "visualGate": "NOT_RUN",
+      "externalGate": "NOT_RUN",
+      "attempt": 0,
+      "handoff": null,
+      "evidence": [],
+      "blockingIssues": []
+    },
+    "S12-A": {
+      "status": "NOT_STARTED",
+      "localGate": "NOT_RUN",
+      "visualGate": "NOT_RUN",
+      "externalGate": "NOT_RUN",
+      "attempt": 0,
+      "handoff": null,
+      "evidence": [],
+      "blockingIssues": []
+    },
+    "S13-A": {
+      "status": "NOT_STARTED",
+      "localGate": "NOT_RUN",
+      "visualGate": "NOT_RUN",
+      "externalGate": "NOT_RUN",
+      "attempt": 0,
+      "handoff": null,
+      "evidence": [],
+      "blockingIssues": []
+    },
+    "S13-B": {
+      "status": "NOT_STARTED",
+      "localGate": "NOT_RUN",
+      "visualGate": "NOT_RUN",
+      "externalGate": "NOT_RUN",
+      "attempt": 0,
+      "handoff": null,
+      "evidence": [],
+      "blockingIssues": []
+    },
+    "S14-A": {
+      "status": "NOT_STARTED",
+      "localGate": "NOT_RUN",
+      "visualGate": "NOT_RUN",
+      "externalGate": "NOT_RUN",
+      "attempt": 0,
+      "handoff": null,
+      "evidence": [],
+      "blockingIssues": []
+    },
+    "S15-A": {
+      "status": "NOT_STARTED",
+      "localGate": "NOT_RUN",
+      "visualGate": "NOT_RUN",
+      "externalGate": "NOT_RUN",
+      "attempt": 0,
+      "handoff": null,
+      "evidence": [],
+      "blockingIssues": []
+    },
+    "S15-B": {
+      "status": "NOT_STARTED",
+      "localGate": "NOT_RUN",
+      "visualGate": "NOT_RUN",
+      "externalGate": "NOT_RUN",
+      "attempt": 0,
+      "handoff": null,
+      "evidence": [],
+      "blockingIssues": []
+    },
+    "S1-C": {
+      "status": "NOT_STARTED",
+      "localGate": "NOT_RUN",
+      "visualGate": "NOT_RUN",
+      "externalGate": "NOT_RUN",
+      "attempt": 0,
+      "handoff": null,
+      "evidence": [],
+      "blockingIssues": []
+    },
+    "S2-B": {
+      "status": "NOT_STARTED",
+      "localGate": "NOT_RUN",
+      "visualGate": "NOT_RUN",
+      "externalGate": "NOT_RUN",
+      "attempt": 0,
+      "handoff": null,
+      "evidence": [],
+      "blockingIssues": []
+    },
+    "S2-C": {
+      "status": "NOT_STARTED",
+      "localGate": "NOT_RUN",
+      "visualGate": "NOT_RUN",
+      "externalGate": "NOT_RUN",
+      "attempt": 0,
+      "handoff": null,
+      "evidence": [],
+      "blockingIssues": []
+    },
+    "S0-B": {
+      "status": "NOT_STARTED",
+      "localGate": "NOT_RUN",
+      "visualGate": "NOT_RUN",
+      "externalGate": "NOT_RUN",
+      "attempt": 0,
+      "handoff": null,
+      "evidence": [],
+      "blockingIssues": []
+    },
+    "S1-B": {
+      "status": "NOT_STARTED",
+      "localGate": "NOT_RUN",
+      "visualGate": "NOT_RUN",
+      "externalGate": "NOT_RUN",
+      "attempt": 0,
+      "handoff": null,
+      "evidence": [],
+      "blockingIssues": []
+    },
+    "S1-D": {
+      "status": "NOT_STARTED",
+      "localGate": "NOT_RUN",
+      "visualGate": "NOT_RUN",
+      "externalGate": "NOT_RUN",
+      "attempt": 0,
+      "handoff": null,
+      "evidence": [],
+      "blockingIssues": []
+    },
+    "S3-B": {
+      "status": "NOT_STARTED",
+      "localGate": "NOT_RUN",
+      "visualGate": "NOT_RUN",
+      "externalGate": "NOT_RUN",
+      "attempt": 0,
+      "handoff": null,
+      "evidence": [],
+      "blockingIssues": []
+    },
+    "S4-C": {
+      "status": "NOT_STARTED",
+      "localGate": "NOT_RUN",
+      "visualGate": "NOT_RUN",
+      "externalGate": "NOT_RUN",
+      "attempt": 0,
+      "handoff": null,
+      "evidence": [],
+      "blockingIssues": []
+    },
+    "S5-B": {
+      "status": "NOT_STARTED",
+      "localGate": "NOT_RUN",
+      "visualGate": "NOT_RUN",
+      "externalGate": "NOT_RUN",
+      "attempt": 0,
+      "handoff": null,
+      "evidence": [],
+      "blockingIssues": []
+    },
+    "S6-D": {
+      "status": "NOT_STARTED",
+      "localGate": "NOT_RUN",
+      "visualGate": "NOT_RUN",
+      "externalGate": "NOT_RUN",
+      "attempt": 0,
+      "handoff": null,
+      "evidence": [],
+      "blockingIssues": []
+    },
+    "S7-B": {
+      "status": "NOT_STARTED",
+      "localGate": "NOT_RUN",
+      "visualGate": "NOT_RUN",
+      "externalGate": "NOT_RUN",
+      "attempt": 0,
+      "handoff": null,
+      "evidence": [],
+      "blockingIssues": []
+    },
+    "S8-D": {
+      "status": "NOT_STARTED",
+      "localGate": "NOT_RUN",
+      "visualGate": "NOT_RUN",
+      "externalGate": "NOT_RUN",
+      "attempt": 0,
+      "handoff": null,
+      "evidence": [],
+      "blockingIssues": []
+    },
+    "S9-B": {
+      "status": "NOT_STARTED",
+      "localGate": "NOT_RUN",
+      "visualGate": "NOT_RUN",
+      "externalGate": "NOT_RUN",
+      "attempt": 0,
+      "handoff": null,
+      "evidence": [],
+      "blockingIssues": []
+    },
+    "S10-B": {
+      "status": "NOT_STARTED",
+      "localGate": "NOT_RUN",
+      "visualGate": "NOT_RUN",
+      "externalGate": "NOT_RUN",
+      "attempt": 0,
+      "handoff": null,
+      "evidence": [],
+      "blockingIssues": []
+    },
+    "S11-C": {
+      "status": "NOT_STARTED",
+      "localGate": "NOT_RUN",
+      "visualGate": "NOT_RUN",
+      "externalGate": "NOT_RUN",
+      "attempt": 0,
+      "handoff": null,
+      "evidence": [],
+      "blockingIssues": []
+    },
+    "S12-B": {
+      "status": "NOT_STARTED",
+      "localGate": "NOT_RUN",
+      "visualGate": "NOT_RUN",
+      "externalGate": "NOT_RUN",
+      "attempt": 0,
+      "handoff": null,
+      "evidence": [],
+      "blockingIssues": []
+    },
+    "S13-C": {
+      "status": "NOT_STARTED",
+      "localGate": "NOT_RUN",
+      "visualGate": "NOT_RUN",
+      "externalGate": "NOT_RUN",
+      "attempt": 0,
+      "handoff": null,
+      "evidence": [],
+      "blockingIssues": []
+    },
+    "S14-B": {
+      "status": "NOT_STARTED",
+      "localGate": "NOT_RUN",
+      "visualGate": "NOT_RUN",
+      "externalGate": "NOT_RUN",
+      "attempt": 0,
+      "handoff": null,
+      "evidence": [],
+      "blockingIssues": []
+    },
+    "S15-C": {
+      "status": "NOT_STARTED",
+      "localGate": "NOT_RUN",
+      "visualGate": "NOT_RUN",
+      "externalGate": "NOT_RUN",
+      "attempt": 0,
+      "handoff": null,
+      "evidence": [],
+      "blockingIssues": []
+    },
+    "S1-E": {
+      "status": "NOT_STARTED",
+      "localGate": "NOT_RUN",
+      "visualGate": "NOT_RUN",
+      "externalGate": "NOT_RUN",
+      "attempt": 0,
+      "handoff": null,
+      "evidence": [],
+      "blockingIssues": []
+    }
+  }
+}

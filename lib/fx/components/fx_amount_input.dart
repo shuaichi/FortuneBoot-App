@@ -2,6 +2,35 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fortuneboot/fx/components/fx_text_field.dart';
 
+class _FxAmountTextInputFormatter extends TextInputFormatter {
+  const _FxAmountTextInputFormatter({required this.allowNegative});
+
+  final bool allowNegative;
+
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    const fullWidthDigits = '０１２３４５６７８９';
+    var normalized = newValue.text.trim();
+    for (var index = 0; index < fullWidthDigits.length; index++) {
+      normalized = normalized.replaceAll(fullWidthDigits[index], '$index');
+    }
+    normalized = normalized
+        .replaceAll('．', '.')
+        .replaceAll('－', '-')
+        .replaceAll(RegExp(r'[\s,，¥￥$€£]'), '');
+    final pattern = allowNegative ? r'^-?\d*\.?\d{0,2}$' : r'^\d*\.?\d{0,2}$';
+    if (!RegExp(pattern).hasMatch(normalized)) return oldValue;
+    if (normalized == newValue.text) return newValue;
+    return TextEditingValue(
+      text: normalized,
+      selection: TextSelection.collapsed(offset: normalized.length),
+    );
+  }
+}
+
 /// Numeric amount input for newly migrated forms.
 class FxAmountInput extends StatelessWidget {
   const FxAmountInput({
@@ -27,7 +56,6 @@ class FxAmountInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final pattern = allowNegative ? r'^-?\d*\.?\d{0,2}$' : r'^\d*\.?\d{0,2}$';
     return FxTextField(
       label: label,
       controller: controller,
@@ -37,10 +65,15 @@ class FxAmountInput extends StatelessWidget {
           ? null
           : Center(child: Text(currencySymbol!)),
       keyboardType: const TextInputType.numberWithOptions(decimal: true),
-      inputFormatters: [FilteringTextInputFormatter.allow(RegExp(pattern))],
+      inputFormatters: [
+        _FxAmountTextInputFormatter(allowNegative: allowNegative),
+      ],
       textInputAction: TextInputAction.done,
       onChanged: (value) => onChanged?.call(double.tryParse(value)),
-      onSubmitted: (value) => onSubmitted?.call(double.tryParse(value)),
+      onSubmitted: (value) {
+        FocusManager.instance.primaryFocus?.unfocus();
+        onSubmitted?.call(double.tryParse(value));
+      },
       maxLines: 1,
     );
   }

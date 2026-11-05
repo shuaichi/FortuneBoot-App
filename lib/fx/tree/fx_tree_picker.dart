@@ -159,12 +159,19 @@ class _FxTreePickerState<T> extends State<FxTreePicker<T>> {
     final actions = Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        TextButton(
-          onPressed: () => setState(() => _selected.clear()),
-          child: Text(
-            s.fxTreePickerClear,
-            style: FxTypography.body.copyWith(color: palette.textSecondary),
-          ),
+        FxButton.text(
+          label: s.fxTreePickerClear,
+          hugContent: true,
+          height: 44,
+          onPressed: () {
+            if (widget.multiSelect) {
+              setState(() => _selected.clear());
+              return;
+            }
+            // 单选也复用 list + null 合同：空列表只表示明确清空，取消才返回 null。
+            _selected.clear();
+            _confirm();
+          },
         ),
       ],
     );
@@ -284,102 +291,104 @@ class _FxTreePickerState<T> extends State<FxTreePicker<T>> {
     final collapsed = _collapsed.contains(f);
     final indent = searching ? 0.0 : f.depth * 16.0;
 
-    return InkWell(
-      onTap: selectable ? () => _toggle(f) : null,
-      child: Padding(
-        padding: EdgeInsets.fromLTRB(
-          FxSpacing.lg + indent,
-          FxSpacing.sm,
-          FxSpacing.lg,
-          FxSpacing.sm,
-        ),
-        child: Row(
-          children: [
-            if (f.hasChildren && !searching)
-              SizedBox(
-                width: 40,
-                height: 40,
-                child: Semantics(
-                  expanded: !collapsed,
-                  child: IconButton(
-                    padding: EdgeInsets.zero,
-                    visualDensity: VisualDensity.compact,
-                    constraints: const BoxConstraints.tightFor(
-                      width: 40,
-                      height: 40,
-                    ),
-                    tooltip: collapsed
-                        ? S
-                              .of(context)
-                              .fxTreePickerExpand(widget.labelOf(f.node))
-                        : S
-                              .of(context)
-                              .fxTreePickerCollapse(widget.labelOf(f.node)),
-                    onPressed: () => setState(() {
-                      if (collapsed) {
-                        _collapsed.remove(f);
-                      } else {
-                        _collapsed.add(f);
-                      }
-                    }),
-                    icon: Icon(
-                      collapsed
-                          ? Icons.chevron_right_rounded
-                          : Icons.expand_more_rounded,
-                      size: 22,
-                      color: palette.textTertiary,
-                    ),
-                  ),
-                ),
-              )
-            else
-              const SizedBox(width: 40),
-            const SizedBox(width: FxSpacing.sm),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    widget.labelOf(f.node),
-                    style: FxTypography.body.copyWith(
-                      color: selectable
-                          ? (selected ? palette.primary : palette.textPrimary)
-                          : palette.textTertiary,
-                      fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  if (searching && f.path.length > 1) ...[
-                    const SizedBox(height: 2),
-                    Text(
-                      f.pathLabel,
-                      style: FxTypography.caption.copyWith(
+    return Semantics(
+      button: selectable,
+      enabled: selectable,
+      selected: selected,
+      child: InkWell(
+        onTap: selectable ? () => _toggle(f) : null,
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(
+            FxSpacing.lg + indent,
+            FxSpacing.sm,
+            FxSpacing.lg,
+            FxSpacing.sm,
+          ),
+          child: Row(
+            children: [
+              if (f.hasChildren && !searching)
+                SizedBox(
+                  width: 44,
+                  height: 44,
+                  child: Semantics(
+                    expanded: !collapsed,
+                    child: IconButton(
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints.tightFor(
+                        width: 44,
+                        height: 44,
+                      ),
+                      tooltip: collapsed
+                          ? S
+                                .of(context)
+                                .fxTreePickerExpand(widget.labelOf(f.node))
+                          : S
+                                .of(context)
+                                .fxTreePickerCollapse(widget.labelOf(f.node)),
+                      onPressed: () => setState(() {
+                        if (collapsed) {
+                          _collapsed.remove(f);
+                        } else {
+                          _collapsed.add(f);
+                        }
+                      }),
+                      icon: Icon(
+                        collapsed
+                            ? Icons.chevron_right_rounded
+                            : Icons.expand_more_rounded,
+                        size: 22,
                         color: palette.textTertiary,
                       ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
                     ),
+                  ),
+                )
+              else
+                const SizedBox(width: 44),
+              const SizedBox(width: FxSpacing.sm),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      widget.labelOf(f.node),
+                      style: FxTypography.body.copyWith(
+                        color: selectable
+                            ? (selected ? palette.primary : palette.textPrimary)
+                            : palette.textTertiary,
+                        fontWeight: selected
+                            ? FontWeight.w600
+                            : FontWeight.w400,
+                      ),
+                    ),
+                    if (searching && f.path.length > 1) ...[
+                      const SizedBox(height: 2),
+                      Text(
+                        f.pathLabel,
+                        style: FxTypography.caption.copyWith(
+                          color: palette.textTertiary,
+                        ),
+                      ),
+                    ],
                   ],
-                ],
+                ),
               ),
-            ),
-            if (selected)
-              Icon(
-                widget.multiSelect
-                    ? Icons.check_box_rounded
-                    : Icons.check_rounded,
-                size: 20,
-                color: palette.primary,
-              )
-            else if (selectable && widget.multiSelect)
-              Icon(
-                Icons.check_box_outline_blank_rounded,
-                size: 20,
-                color: palette.textTertiary,
-              ),
-          ],
+              if (selected)
+                Icon(
+                  widget.multiSelect
+                      ? Icons.check_box_rounded
+                      : Icons.check_rounded,
+                  size: 20,
+                  color: palette.primary,
+                )
+              else if (selectable && widget.multiSelect)
+                Icon(
+                  Icons.check_box_outline_blank_rounded,
+                  size: 20,
+                  color: palette.textTertiary,
+                ),
+            ],
+          ),
         ),
       ),
     );

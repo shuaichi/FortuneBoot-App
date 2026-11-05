@@ -1,0 +1,63 @@
+00:00 +0: loading /Users/zhangchi118/代码/FortuneBoot-App/test/fx/components/fx_sheet_guard_test.dart
+00:00 +0: /Users/zhangchi118/代码/FortuneBoot-App/test/fx/components/fx_sheet_guard_test.dart: unchanged sheet closes without a confirmation
+00:00 +1: /Users/zhangchi118/代码/FortuneBoot-App/test/fx/components/fx_sheet_guard_test.dart: unchanged sheet closes without a confirmation
+00:00 +2: /Users/zhangchi118/代码/FortuneBoot-App/test/fx/components/fx_sheet_guard_test.dart: unchanged sheet closes without a confirmation
+00:00 +3: /Users/zhangchi118/代码/FortuneBoot-App/test/fx/components/fx_sheet_guard_test.dart: unchanged sheet closes without a confirmation
+00:00 +3: /Users/zhangchi118/代码/FortuneBoot-App/test/fx/components/fx_amount_input_test.dart: amount input normalizes common pasted currency text
+══╡ EXCEPTION CAUGHT BY SERVICES LIBRARY ╞══════════════════════════════════════════════════════════
+The following assertion was thrown during method call TextInputClient.updateEditingState:
+Range start 10 is out of text of length 7
+'package:flutter/src/services/text_input.dart':
+Failed assertion: line 1155 pos 7: 'range.start >= 0 && range.start <= text.length'
+
+Either the assertion indicates an error in the framework itself, or we should provide substantially
+more information in this error message to help you determine and fix the underlying cause.
+In either case, please report this assertion by filing a bug on GitHub:
+  https://github.com/flutter/flutter/issues/new?template=02_bug.yml
+
+When the exception was thrown, this was the stack:
+#2      TextEditingValue._textRangeIsValid (package:flutter/src/services/text_input.dart:1155:7)
+#3      TextEditingValue.toJSON (package:flutter/src/services/text_input.dart:1112:12)
+#4      _PlatformTextInputControl.setEditingState (package:flutter/src/services/text_input.dart:2493:68)
+#5      TextInput._setEditingState (package:flutter/src/services/text_input.dart:2182:15)
+#6      TextInputConnection.setEditingState (package:flutter/src/services/text_input.dart:1594:25)
+#7      EditableTextState._updateRemoteEditingValueIfNeeded (package:flutter/src/widgets/editable_text.dart:3860:27)
+#8      EditableTextState.endBatchEdit (package:flutter/src/widgets/editable_text.dart:3849:5)
+#9      EditableTextState._formatAndSetValue (package:flutter/src/widgets/editable_text.dart:4591:5)
+#10     EditableTextState.updateEditingValue (package:flutter/src/widgets/editable_text.dart:3549:7)
+#11     TextInput._updateEditingValue (package:flutter/src/services/text_input.dart:2256:43)
+#12     TextInput._handleTextInputInvocation (package:flutter/src/services/text_input.dart:2090:29)
+#13     TextInput._loudlyHandleTextInputInvocation (package:flutter/src/services/text_input.dart:1973:20)
+#14     MethodChannel._handleAsMethodCall (package:flutter/src/services/platform_channel.dart:607:55)
+#15     MethodChannel.setMethodCallHandler.<anonymous closure> (package:flutter/src/services/platform_channel.dart:597:55)
+#16     TestDefaultBinaryMessenger.handlePlatformMessage (package:flutter_test/src/test_default_binary_messenger.dart:99:42)
+#17     TestTextInput.updateEditingValue (package:flutter_test/src/test_text_input.dart:211:71)
+#18     TestTextInput.enterText (package:flutter_test/src/test_text_input.dart:187:5)
+#19     WidgetTester.enterText.<anonymous closure> (package:flutter_test/src/widget_tester.dart:1161:21)
+<asynchronous suspension>
+#20     TestAsyncUtils.guard.<anonymous closure> (package:flutter_test/src/test_async_utils.dart:130:27)
+<asynchronous suspension>
+#21     main.<anonymous closure> (file:///Users/zhangchi118/%E4%BB%A3%E7%A0%81/FortuneBoot-App/test/fx/components/fx_amount_input_test.dart:27:5)
+<asynchronous suspension>
+#22     testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#23     TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1682:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from class _AssertionError and package:stack_trace)
+
+call:
+  MethodCall(TextInputClient.updateEditingState, [1, {text: ￥ 1,234.56, selectionBase: 10,
+  selectionExtent: 10, selectionAffinity: TextAffinity.downstream, selectionIsDirectional: false,
+  composingBase: -1, composingExtent: -1}])
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:00 +3 -1: /Users/zhangchi118/代码/FortuneBoot-App/test/fx/components/fx_sheet_guard_test.dart: unchanged sheet closes without a confirmation
+00:00 +3 -1: /Users/zhangchi118/代码/FortuneBoot-App/test/fx/components/fx_amount_input_test.dart: amount input normalizes common pasted currency text [E]
+  Test failed. See exception logs above.
+  The test description was: amount input normalizes common pasted currency text
+  
+00:00 +4 -1: /Users/zhangchi118/代码/FortuneBoot-App/test/fx/components/fx_sheet_guard_test.dart: unchanged sheet closes without a confirmation
+00:00 +5 -1: /Users/zhangchi118/代码/FortuneBoot-App/test/fx/components/fx_sheet_guard_test.dart: dirty sheet can keep editing or explicitly discard
+00:00 +6 -1: /Users/zhangchi118/代码/FortuneBoot-App/test/fx/components/fx_sheet_guard_test.dart: busy guarded sheet cannot be dismissed from the barrier
+00:00 +7 -1: /Users/zhangchi118/代码/FortuneBoot-App/test/fx/components/fx_sheet_guard_test.dart: confirm sheet stays open while pending and explains failure
+00:00 +8 -1: Some tests failed.

@@ -1,0 +1,11 @@
+{
+  "baselineCount": 1159,
+  "currentCount": 1159,
+  "bySeverity": {
+    "error": 0,
+    "warning": 252,
+    "info": 907
+  },
+  "new": [],
+  "removed": []
+}

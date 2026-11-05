@@ -1,0 +1,1946 @@
+[
+  {
+    "id": "V01",
+    "page": "基础URL配置",
+    "state": "基础URL配置",
+    "route": "/base_url_config",
+    "theme": "LIGHT_OBSERVED",
+    "logicalSize": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "textScale": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sourceSha": "6061359de0d6db6597176a9158ee826de490f6c4",
+    "sourceSha256": {
+      "lib/login/view/base_url_config_page.dart": "2bbc32148af827c94ec3fe01bb928630d90d771f0e327d2d2af6e015faf3ae91"
+    },
+    "sourceFiles": [
+      "lib/login/view/base_url_config_page.dart"
+    ],
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.42.15.png",
+    "pathSha256": "d9161c02be63b69695e18a4e2060b4f5c10544b25971d405e4587eecc8103ae6",
+    "contactSheet": "evidence/S0-A/attempt-001/contact-sheet-01.jpg",
+    "actuallyViewed": true,
+    "viewMethod": "6张本地联系表逐张打开，覆盖全部69张原图；未上传原图",
+    "observation": "历史地址、协议、域名、端口与确认按钮可辨；映射一致。",
+    "goldenEligible": false,
+    "goldenReason": "截图无构建SHA、logicalSize或TextScaler记录，且本轮未重拍当前业务页面"
+  },
+  {
+    "id": "V02",
+    "page": "登录页与键盘",
+    "state": "登录页与键盘",
+    "route": "/auth",
+    "theme": "LIGHT_OBSERVED",
+    "logicalSize": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "textScale": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sourceSha": "6061359de0d6db6597176a9158ee826de490f6c4",
+    "sourceSha256": {
+      "lib/login/view/login_screen.dart": "059b7073e8aa343f9f330f5092ccd8e16cbc8913be23d6d0ba764f09f6d87c69",
+      "lib/login/view/auth_page.dart": "b14f4c22aadfb6e24b937f7f0bd32de91e1c99060d67ab4781db729a6616f951"
+    },
+    "sourceFiles": [
+      "lib/login/view/login_screen.dart",
+      "lib/login/view/auth_page.dart"
+    ],
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.42.34.png",
+    "pathSha256": "52d8c1aaa7556e23b9a48a496eccf9b99e77dc9c3f6cf321fbdb48d1b53a73a4",
+    "contactSheet": "evidence/S0-A/attempt-001/contact-sheet-01.jpg",
+    "actuallyViewed": true,
+    "viewMethod": "6张本地联系表逐张打开，覆盖全部69张原图；未上传原图",
+    "observation": "登录表单、密码焦点与系统键盘可见；未复测键盘真机行为。",
+    "goldenEligible": false,
+    "goldenReason": "截图无构建SHA、logicalSize或TextScaler记录，且本轮未重拍当前业务页面"
+  },
+  {
+    "id": "V03",
+    "page": "登录图形验证码",
+    "state": "登录图形验证码",
+    "route": "/auth + captcha sheet",
+    "theme": "LIGHT_OBSERVED",
+    "logicalSize": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "textScale": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sourceSha": "6061359de0d6db6597176a9158ee826de490f6c4",
+    "sourceSha256": {
+      "lib/login/view/login_screen.dart": "059b7073e8aa343f9f330f5092ccd8e16cbc8913be23d6d0ba764f09f6d87c69"
+    },
+    "sourceFiles": [
+      "lib/login/view/login_screen.dart"
+    ],
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.42.44.png",
+    "pathSha256": "ec0c574c453c8446a1c819a9c11afcf5f4c18e8166690c7f471b41b07598b459",
+    "contactSheet": "evidence/S0-A/attempt-001/contact-sheet-01.jpg",
+    "actuallyViewed": true,
+    "viewMethod": "6张本地联系表逐张打开，覆盖全部69张原图；未上传原图",
+    "observation": "图形验证码、输入、刷新、取消/确认与数字键盘可见；没有非视觉通道证据。",
+    "goldenEligible": false,
+    "goldenReason": "截图无构建SHA、logicalSize或TextScaler记录，且本轮未重拍当前业务页面"
+  },
+  {
+    "id": "V04",
+    "page": "仪表盘上半屏",
+    "state": "仪表盘上半屏",
+    "route": "/dashboard",
+    "theme": "LIGHT_OBSERVED",
+    "logicalSize": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "textScale": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sourceSha": "6061359de0d6db6597176a9158ee826de490f6c4",
+    "sourceSha256": {
+      "lib/features/dashboard/presentation/dashboard_page.dart": "cf496f419711e45182c9340aa914a99bbea1905b8eb1aacd711a4c489683c9b8"
+    },
+    "sourceFiles": [
+      "lib/features/dashboard/presentation/dashboard_page.dart"
+    ],
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.42.48.png",
+    "pathSha256": "300039848e58670c1bbc451cca60a184c8a5bb9772da4d5be38e6eefa8392f5b",
+    "contactSheet": "evidence/S0-A/attempt-001/contact-sheet-01.jpg",
+    "actuallyViewed": true,
+    "viewMethod": "6张本地联系表逐张打开，覆盖全部69张原图；未上传原图",
+    "observation": "账期、净资产、收支与趋势层级可辨；截图未绑定当前构建。",
+    "goldenEligible": false,
+    "goldenReason": "截图无构建SHA、logicalSize或TextScaler记录，且本轮未重拍当前业务页面"
+  },
+  {
+    "id": "V05",
+    "page": "仪表盘下半屏",
+    "state": "仪表盘下半屏",
+    "route": "/dashboard",
+    "theme": "LIGHT_OBSERVED",
+    "logicalSize": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "textScale": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sourceSha": "6061359de0d6db6597176a9158ee826de490f6c4",
+    "sourceSha256": {
+      "lib/features/dashboard/presentation/dashboard_page.dart": "cf496f419711e45182c9340aa914a99bbea1905b8eb1aacd711a4c489683c9b8"
+    },
+    "sourceFiles": [
+      "lib/features/dashboard/presentation/dashboard_page.dart"
+    ],
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.42.52.png",
+    "pathSha256": "8335d1b489a4dbb29db8d60d78b9ba9e181db648739b415317ff64c0b464c8cb",
+    "contactSheet": "evidence/S0-A/attempt-001/contact-sheet-01.jpg",
+    "actuallyViewed": true,
+    "viewMethod": "6张本地联系表逐张打开，覆盖全部69张原图；未上传原图",
+    "observation": "分类摘要、最近账单、底部导航和快捷记账入口可辨。",
+    "goldenEligible": false,
+    "goldenReason": "截图无构建SHA、logicalSize或TextScaler记录，且本轮未重拍当前业务页面"
+  },
+  {
+    "id": "V06",
+    "page": "分组与账本切换",
+    "state": "分组与账本切换",
+    "route": "/dashboard + session sheet",
+    "theme": "LIGHT_OBSERVED",
+    "logicalSize": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "textScale": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sourceSha": "6061359de0d6db6597176a9158ee826de490f6c4",
+    "sourceSha256": {
+      "lib/core/session/widgets/session_switcher_sheet.dart": "dd999a5234ee247ce1e56cc50d9e345acdb8ab47228c6169985b7930a47aa37b"
+    },
+    "sourceFiles": [
+      "lib/core/session/widgets/session_switcher_sheet.dart"
+    ],
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.42.54.png",
+    "pathSha256": "f9d68e63a4a4119870b59f77f457d4356d8e7d18e920919f88b5643223e983ce",
+    "contactSheet": "evidence/S0-A/attempt-001/contact-sheet-01.jpg",
+    "actuallyViewed": true,
+    "viewMethod": "6张本地联系表逐张打开，覆盖全部69张原图；未上传原图",
+    "observation": "分组 pill、账本列表、当前选择与默认标记可辨。",
+    "goldenEligible": false,
+    "goldenReason": "截图无构建SHA、logicalSize或TextScaler记录，且本轮未重拍当前业务页面"
+  },
+  {
+    "id": "V07",
+    "page": "仪表盘布局编辑",
+    "state": "仪表盘布局编辑",
+    "route": "/dashboard + layout editor",
+    "theme": "LIGHT_OBSERVED",
+    "logicalSize": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "textScale": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sourceSha": "6061359de0d6db6597176a9158ee826de490f6c4",
+    "sourceSha256": {
+      "lib/features/dashboard/presentation/widgets/dashboard_layout_editor.dart": "350f3064bad8996399fdbfd56ad2a49397b00b4d5dec7476e5f513e074828e74"
+    },
+    "sourceFiles": [
+      "lib/features/dashboard/presentation/widgets/dashboard_layout_editor.dart"
+    ],
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.42.59.png",
+    "pathSha256": "98312e8c59d7c7a5f565621a4469ca9f6797fa6b2971475751fc88c599f57363",
+    "contactSheet": "evidence/S0-A/attempt-001/contact-sheet-01.jpg",
+    "actuallyViewed": true,
+    "viewMethod": "6张本地联系表逐张打开，覆盖全部69张原图；未上传原图",
+    "observation": "布局编辑清单、显示开关、排序和完成动作可辨。",
+    "goldenEligible": false,
+    "goldenReason": "截图无构建SHA、logicalSize或TextScaler记录，且本轮未重拍当前业务页面"
+  },
+  {
+    "id": "V08",
+    "page": "账单列表",
+    "state": "账单列表",
+    "route": "/bills",
+    "theme": "LIGHT_OBSERVED",
+    "logicalSize": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "textScale": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sourceSha": "6061359de0d6db6597176a9158ee826de490f6c4",
+    "sourceSha256": {
+      "lib/features/bills/presentation/bills_page.dart": "b7fd42c9aec7038b6a387ba4359430d67576fa125542885ce74f79c8a56b4b15"
+    },
+    "sourceFiles": [
+      "lib/features/bills/presentation/bills_page.dart"
+    ],
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.43.04.png",
+    "pathSha256": "a14244f794fa504912794ea8a543c6c9f35ee097fe68b20e099e8711df3dda8e",
+    "contactSheet": "evidence/S0-A/attempt-001/contact-sheet-01.jpg",
+    "actuallyViewed": true,
+    "viewMethod": "6张本地联系表逐张打开，覆盖全部69张原图；未上传原图",
+    "observation": "连续账期列表、账期导航、汇总与金额掩码入口可辨。",
+    "goldenEligible": false,
+    "goldenReason": "截图无构建SHA、logicalSize或TextScaler记录，且本轮未重拍当前业务页面"
+  },
+  {
+    "id": "V09",
+    "page": "账单详情",
+    "state": "账单详情",
+    "route": "/bills + detail sheet",
+    "theme": "LIGHT_OBSERVED",
+    "logicalSize": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "textScale": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sourceSha": "6061359de0d6db6597176a9158ee826de490f6c4",
+    "sourceSha256": {
+      "lib/features/shared/presentation/bills/bill_detail_sheet.dart": "c78c5b912c3a431fa871cbe6bf905e6435b0d35dd80a488001db5ac5bc4a72a5"
+    },
+    "sourceFiles": [
+      "lib/features/shared/presentation/bills/bill_detail_sheet.dart"
+    ],
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.43.24.png",
+    "pathSha256": "d5747ca00851d731ed378e866c85fa2e2c700bd4910eb1e0ddf9ee7118353c0d",
+    "contactSheet": "evidence/S0-A/attempt-001/contact-sheet-01.jpg",
+    "actuallyViewed": true,
+    "viewMethod": "6张本地联系表逐张打开，覆盖全部69张原图；未上传原图",
+    "observation": "标题、分类拆分、交易属性、附件和底部动作可辨。",
+    "goldenEligible": false,
+    "goldenReason": "截图无构建SHA、logicalSize或TextScaler记录，且本轮未重拍当前业务页面"
+  },
+  {
+    "id": "V10",
+    "page": "账单详情更多菜单",
+    "state": "账单详情更多菜单",
+    "route": "/bills + detail actions",
+    "theme": "LIGHT_OBSERVED",
+    "logicalSize": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "textScale": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sourceSha": "6061359de0d6db6597176a9158ee826de490f6c4",
+    "sourceSha256": {
+      "lib/features/shared/presentation/bills/bill_detail_sheet.dart": "c78c5b912c3a431fa871cbe6bf905e6435b0d35dd80a488001db5ac5bc4a72a5"
+    },
+    "sourceFiles": [
+      "lib/features/shared/presentation/bills/bill_detail_sheet.dart"
+    ],
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.43.28.png",
+    "pathSha256": "8ce60d1a932f71ad1bde2703196e18444cc052ea06ac33d539210a07f862fd72",
+    "contactSheet": "evidence/S0-A/attempt-001/contact-sheet-01.jpg",
+    "actuallyViewed": true,
+    "viewMethod": "6张本地联系表逐张打开，覆盖全部69张原图；未上传原图",
+    "observation": "详情更多菜单中的复制与删除可辨，危险动作有区分。",
+    "goldenEligible": false,
+    "goldenReason": "截图无构建SHA、logicalSize或TextScaler记录，且本轮未重拍当前业务页面"
+  },
+  {
+    "id": "V11",
+    "page": "记账编辑上半屏",
+    "state": "记账编辑上半屏",
+    "route": "/bill_editor",
+    "theme": "LIGHT_OBSERVED",
+    "logicalSize": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "textScale": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sourceSha": "6061359de0d6db6597176a9158ee826de490f6c4",
+    "sourceSha256": {
+      "lib/features/bill_editor/presentation/bill_editor_page.dart": "f40d7d9e3cea1ba4c4cbeaf0d7e5050c910d3477ab73319dbc84b71d35e9287b"
+    },
+    "sourceFiles": [
+      "lib/features/bill_editor/presentation/bill_editor_page.dart"
+    ],
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.43.40.png",
+    "pathSha256": "631eb18863dc55f5df454658800294a9d49bc992a9f39b8f4c8ed8e8e9d66e7a",
+    "contactSheet": "evidence/S0-A/attempt-001/contact-sheet-01.jpg",
+    "actuallyViewed": true,
+    "viewMethod": "6张本地联系表逐张打开，覆盖全部69张原图；未上传原图",
+    "observation": "两级记账类型、金额、分类拆分、账户与保存动作可辨。",
+    "goldenEligible": false,
+    "goldenReason": "截图无构建SHA、logicalSize或TextScaler记录，且本轮未重拍当前业务页面"
+  },
+  {
+    "id": "V12",
+    "page": "记账编辑下半屏",
+    "state": "记账编辑下半屏",
+    "route": "/bill_editor",
+    "theme": "LIGHT_OBSERVED",
+    "logicalSize": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "textScale": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sourceSha": "6061359de0d6db6597176a9158ee826de490f6c4",
+    "sourceSha256": {
+      "lib/features/bill_editor/presentation/bill_editor_page.dart": "f40d7d9e3cea1ba4c4cbeaf0d7e5050c910d3477ab73319dbc84b71d35e9287b"
+    },
+    "sourceFiles": [
+      "lib/features/bill_editor/presentation/bill_editor_page.dart"
+    ],
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.43.43.png",
+    "pathSha256": "d64652b5a885c68fef3c5618bd0c235bf00ec0879288ce1d82d2b6d1906dd47f",
+    "contactSheet": "evidence/S0-A/attempt-001/contact-sheet-01.jpg",
+    "actuallyViewed": true,
+    "viewMethod": "6张本地联系表逐张打开，覆盖全部69张原图；未上传原图",
+    "observation": "费用、附件、确认/计入开关和底部保存动作可辨。",
+    "goldenEligible": false,
+    "goldenReason": "截图无构建SHA、logicalSize或TextScaler记录，且本轮未重拍当前业务页面"
+  },
+  {
+    "id": "V13",
+    "page": "账单筛选上半屏",
+    "state": "账单筛选上半屏",
+    "route": "/bills + filter sheet",
+    "theme": "LIGHT_OBSERVED",
+    "logicalSize": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "textScale": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sourceSha": "6061359de0d6db6597176a9158ee826de490f6c4",
+    "sourceSha256": {
+      "lib/features/bills/presentation/widgets/bills_filter_sheet.dart": "3fccf45dff945532525a8f4dd176f3405f38b88b5a4fbe7854025d11eaa8e43e"
+    },
+    "sourceFiles": [
+      "lib/features/bills/presentation/widgets/bills_filter_sheet.dart"
+    ],
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.43.50.png",
+    "pathSha256": "9d0a3dcb3eff1d0a676a9ae2295297bdb03ffee6839e7d8573ee7774013c9cee",
+    "contactSheet": "evidence/S0-A/attempt-001/contact-sheet-02.jpg",
+    "actuallyViewed": true,
+    "viewMethod": "6张本地联系表逐张打开，覆盖全部69张原图；未上传原图",
+    "observation": "标题搜索、类型、金额区间、账期和重置/应用可辨。",
+    "goldenEligible": false,
+    "goldenReason": "截图无构建SHA、logicalSize或TextScaler记录，且本轮未重拍当前业务页面"
+  },
+  {
+    "id": "V14",
+    "page": "账单筛选下半屏",
+    "state": "账单筛选下半屏",
+    "route": "/bills + filter sheet",
+    "theme": "LIGHT_OBSERVED",
+    "logicalSize": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "textScale": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sourceSha": "6061359de0d6db6597176a9158ee826de490f6c4",
+    "sourceSha256": {
+      "lib/features/bills/presentation/widgets/bills_filter_sheet.dart": "3fccf45dff945532525a8f4dd176f3405f38b88b5a4fbe7854025d11eaa8e43e"
+    },
+    "sourceFiles": [
+      "lib/features/bills/presentation/widgets/bills_filter_sheet.dart"
+    ],
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.43.54.png",
+    "pathSha256": "83938628c75cde9c13fb6e3861dc56bcef637e2d6816dc731019145473f14c78",
+    "contactSheet": "evidence/S0-A/attempt-001/contact-sheet-02.jpg",
+    "actuallyViewed": true,
+    "viewMethod": "6张本地联系表逐张打开，覆盖全部69张原图；未上传原图",
+    "observation": "确认状态、统计范围、分类、标签、账户、交易对象和成员可辨。",
+    "goldenEligible": false,
+    "goldenReason": "截图无构建SHA、logicalSize或TextScaler记录，且本轮未重拍当前业务页面"
+  },
+  {
+    "id": "V15",
+    "page": "统计日历",
+    "state": "统计日历",
+    "route": "/stats",
+    "theme": "LIGHT_OBSERVED",
+    "logicalSize": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "textScale": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sourceSha": "6061359de0d6db6597176a9158ee826de490f6c4",
+    "sourceSha256": {
+      "lib/features/stats/presentation/stats_page.dart": "474ab99b7a684fbef6b3582fe21cb9edc2b71b6d9db95915e50ee93ee7c81311",
+      "lib/features/stats/presentation/widgets/stats_income_expense_calendar_card.dart": "e05e9b23220ca907211b748290ccf9a262d52821ba203547b39900377fb273c4"
+    },
+    "sourceFiles": [
+      "lib/features/stats/presentation/stats_page.dart",
+      "lib/features/stats/presentation/widgets/stats_income_expense_calendar_card.dart"
+    ],
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.43.59.png",
+    "pathSha256": "eb6ffb6bfcf76860c9eae127395e1852d73d68a8ecef33b463fc9dec6b154839",
+    "contactSheet": "evidence/S0-A/attempt-001/contact-sheet-02.jpg",
+    "actuallyViewed": true,
+    "viewMethod": "6张本地联系表逐张打开，覆盖全部69张原图；未上传原图",
+    "observation": "月/年/历史分段、月历与选中日期详情可辨；小字问题保留给S8-B。",
+    "goldenEligible": false,
+    "goldenReason": "截图无构建SHA、logicalSize或TextScaler记录，且本轮未重拍当前业务页面"
+  },
+  {
+    "id": "V16",
+    "page": "统计分析与趋势",
+    "state": "统计分析与趋势",
+    "route": "/stats",
+    "theme": "LIGHT_OBSERVED",
+    "logicalSize": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "textScale": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sourceSha": "6061359de0d6db6597176a9158ee826de490f6c4",
+    "sourceSha256": {
+      "lib/features/stats/presentation/stats_page.dart": "474ab99b7a684fbef6b3582fe21cb9edc2b71b6d9db95915e50ee93ee7c81311",
+      "lib/features/stats/presentation/widgets/stats_trend_card.dart": "d303f61ce8328d08b6702b033b9078059c77e40d3666cf55e61e6b0fd2a25059"
+    },
+    "sourceFiles": [
+      "lib/features/stats/presentation/stats_page.dart",
+      "lib/features/stats/presentation/widgets/stats_trend_card.dart"
+    ],
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.44.03.png",
+    "pathSha256": "b5054230322980e62fec1629ced0059fa88194dacbb1a8a617db9b29b9584228",
+    "contactSheet": "evidence/S0-A/attempt-001/contact-sheet-02.jpg",
+    "actuallyViewed": true,
+    "viewMethod": "6张本地联系表逐张打开，覆盖全部69张原图；未上传原图",
+    "observation": "账期、收支方向、空维度状态和趋势卡可辨。",
+    "goldenEligible": false,
+    "goldenReason": "截图无构建SHA、logicalSize或TextScaler记录，且本轮未重拍当前业务页面"
+  },
+  {
+    "id": "V17",
+    "page": "统计下半屏",
+    "state": "统计下半屏",
+    "route": "/stats",
+    "theme": "LIGHT_OBSERVED",
+    "logicalSize": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "textScale": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sourceSha": "6061359de0d6db6597176a9158ee826de490f6c4",
+    "sourceSha256": {
+      "lib/features/stats/presentation/stats_page.dart": "474ab99b7a684fbef6b3582fe21cb9edc2b71b6d9db95915e50ee93ee7c81311"
+    },
+    "sourceFiles": [
+      "lib/features/stats/presentation/stats_page.dart"
+    ],
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.44.06.png",
+    "pathSha256": "eefe5fdae04a76c719d62bf0cd88505e245d3a38c35516adb9f490f06cdc14cc",
+    "contactSheet": "evidence/S0-A/attempt-001/contact-sheet-02.jpg",
+    "actuallyViewed": true,
+    "viewMethod": "6张本地联系表逐张打开，覆盖全部69张原图；未上传原图",
+    "observation": "资产、借贷、统计口径入口位于分析内容之后，映射一致。",
+    "goldenEligible": false,
+    "goldenReason": "截图无构建SHA、logicalSize或TextScaler记录，且本轮未重拍当前业务页面"
+  },
+  {
+    "id": "V18",
+    "page": "资产统计上半屏",
+    "state": "资产统计上半屏",
+    "route": "/stats/assets",
+    "theme": "LIGHT_OBSERVED",
+    "logicalSize": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "textScale": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sourceSha": "6061359de0d6db6597176a9158ee826de490f6c4",
+    "sourceSha256": {
+      "lib/features/stats/presentation/stats_assets_page.dart": "180cf2282de1ed14f7a4d4e6440a6c92fa338c216035125d0308aa9417f09c0e"
+    },
+    "sourceFiles": [
+      "lib/features/stats/presentation/stats_assets_page.dart"
+    ],
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.44.10.png",
+    "pathSha256": "45534a6e63f5045c6052f744fc5e977b4a4776bb32c24393f8227ab5a0a90842",
+    "contactSheet": "evidence/S0-A/attempt-001/contact-sheet-02.jpg",
+    "actuallyViewed": true,
+    "viewMethod": "6张本地联系表逐张打开，覆盖全部69张原图；未上传原图",
+    "observation": "资产/负债摘要、占比图、账户列表与趋势可辨；金额有截断风险。",
+    "goldenEligible": false,
+    "goldenReason": "截图无构建SHA、logicalSize或TextScaler记录，且本轮未重拍当前业务页面"
+  },
+  {
+    "id": "V19",
+    "page": "资产统计下半屏",
+    "state": "资产统计下半屏",
+    "route": "/stats/assets",
+    "theme": "LIGHT_OBSERVED",
+    "logicalSize": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "textScale": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sourceSha": "6061359de0d6db6597176a9158ee826de490f6c4",
+    "sourceSha256": {
+      "lib/features/stats/presentation/stats_assets_page.dart": "180cf2282de1ed14f7a4d4e6440a6c92fa338c216035125d0308aa9417f09c0e"
+    },
+    "sourceFiles": [
+      "lib/features/stats/presentation/stats_assets_page.dart"
+    ],
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.44.12.png",
+    "pathSha256": "4e2522892279797f4a0df96f4e1b3508782e60c288828b5a1dc9e6312c26b44a",
+    "contactSheet": "evidence/S0-A/attempt-001/contact-sheet-02.jpg",
+    "actuallyViewed": true,
+    "viewMethod": "6张本地联系表逐张打开，覆盖全部69张原图；未上传原图",
+    "observation": "趋势、账户类型和信用卡摘要可辨；未证明百分比分母一致。",
+    "goldenEligible": false,
+    "goldenReason": "截图无构建SHA、logicalSize或TextScaler记录，且本轮未重拍当前业务页面"
+  },
+  {
+    "id": "V20",
+    "page": "借贷理财",
+    "state": "借贷理财",
+    "route": "/stats/loans",
+    "theme": "LIGHT_OBSERVED",
+    "logicalSize": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "textScale": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sourceSha": "6061359de0d6db6597176a9158ee826de490f6c4",
+    "sourceSha256": {
+      "lib/features/stats/presentation/stats_loans_page.dart": "b8147ab33d507e5825c888af3b9b37d260d4c3a79158150a1fb54fc63a75924d"
+    },
+    "sourceFiles": [
+      "lib/features/stats/presentation/stats_loans_page.dart"
+    ],
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.44.16.png",
+    "pathSha256": "72c780b96d26f221fc63a8f5128901db619e5bd287ad3c02e2611894c25916d0",
+    "contactSheet": "evidence/S0-A/attempt-001/contact-sheet-02.jpg",
+    "actuallyViewed": true,
+    "viewMethod": "6张本地联系表逐张打开，覆盖全部69张原图；未上传原图",
+    "observation": "借贷汇总、逾期/核对数值和已归档信息可辨。",
+    "goldenEligible": false,
+    "goldenReason": "截图无构建SHA、logicalSize或TextScaler记录，且本轮未重拍当前业务页面"
+  },
+  {
+    "id": "V21",
+    "page": "统计策略说明",
+    "state": "统计策略说明",
+    "route": "/stats/policy",
+    "theme": "LIGHT_OBSERVED",
+    "logicalSize": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "textScale": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sourceSha": "6061359de0d6db6597176a9158ee826de490f6c4",
+    "sourceSha256": {
+      "lib/features/stats/presentation/stats_policy_page.dart": "ac54ffaeb26257972d3ba525bd4fd8bdf11f1ae7ca71cc07996a5653eec4eaca"
+    },
+    "sourceFiles": [
+      "lib/features/stats/presentation/stats_policy_page.dart"
+    ],
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.44.20.png",
+    "pathSha256": "c16f589e4ec902b23ae157b88d7f6f10d1a5d8dbfb73ee3da4972e76ce24b35d",
+    "contactSheet": "evidence/S0-A/attempt-001/contact-sheet-02.jpg",
+    "actuallyViewed": true,
+    "viewMethod": "6张本地联系表逐张打开，覆盖全部69张原图；未上传原图",
+    "observation": "统计口径与账单类型说明可辨；不代表请求失败时仍正确。",
+    "goldenEligible": false,
+    "goldenReason": "截图无构建SHA、logicalSize或TextScaler记录，且本轮未重拍当前业务页面"
+  },
+  {
+    "id": "V22",
+    "page": "统计时间范围菜单",
+    "state": "统计时间范围菜单",
+    "route": "/stats + range sheet",
+    "theme": "LIGHT_OBSERVED",
+    "logicalSize": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "textScale": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sourceSha": "6061359de0d6db6597176a9158ee826de490f6c4",
+    "sourceSha256": {
+      "lib/features/stats/presentation/widgets/stats_top_bar.dart": "e9d5d9bc76c0c40678e3d9a91dade4b47f3ec2aed6193a76be68d484617d3da9"
+    },
+    "sourceFiles": [
+      "lib/features/stats/presentation/widgets/stats_top_bar.dart"
+    ],
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.44.30.png",
+    "pathSha256": "5a80a81a2d61c26b552601730d89e63b3a4e8e3c0472722860db89670a65677d",
+    "contactSheet": "evidence/S0-A/attempt-001/contact-sheet-02.jpg",
+    "actuallyViewed": true,
+    "viewMethod": "6张本地联系表逐张打开，覆盖全部69张原图；未上传原图",
+    "observation": "本周/账期/本年/自定义及年月日选择可辨；实际请求范围需另验。",
+    "goldenEligible": false,
+    "goldenReason": "截图无构建SHA、logicalSize或TextScaler记录，且本轮未重拍当前业务页面"
+  },
+  {
+    "id": "V23",
+    "page": "我的上半屏",
+    "state": "我的上半屏",
+    "route": "/profile",
+    "theme": "LIGHT_OBSERVED",
+    "logicalSize": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "textScale": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sourceSha": "6061359de0d6db6597176a9158ee826de490f6c4",
+    "sourceSha256": {
+      "lib/features/profile/presentation/profile_page.dart": "363a0c2c01a9fff0c4fd532379916591480ec140c694b8b6a8a6a847fb8d785d"
+    },
+    "sourceFiles": [
+      "lib/features/profile/presentation/profile_page.dart"
+    ],
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.44.35.png",
+    "pathSha256": "5c519f979b246c5d362e27ec7e4e6644ec1e6b564ede2c761b1f9cd563a124f2",
+    "contactSheet": "evidence/S0-A/attempt-001/contact-sheet-02.jpg",
+    "actuallyViewed": true,
+    "viewMethod": "6张本地联系表逐张打开，覆盖全部69张原图；未上传原图",
+    "observation": "用户摘要、账本协作和基础数据管理入口可辨。",
+    "goldenEligible": false,
+    "goldenReason": "截图无构建SHA、logicalSize或TextScaler记录，且本轮未重拍当前业务页面"
+  },
+  {
+    "id": "V24",
+    "page": "个人资料",
+    "state": "个人资料",
+    "route": "/profile_edit",
+    "theme": "LIGHT_OBSERVED",
+    "logicalSize": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "textScale": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sourceSha": "6061359de0d6db6597176a9158ee826de490f6c4",
+    "sourceSha256": {
+      "lib/features/profile/presentation/profile_edit_page.dart": "26dd78816687f42bfd6a089f2e35f36d9a99580e69c1c211860f8243e1938712"
+    },
+    "sourceFiles": [
+      "lib/features/profile/presentation/profile_edit_page.dart"
+    ],
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.44.38.png",
+    "pathSha256": "ca25de48f29ff130d91580bc20d447f7f23861a4e9bf6125b86278c712249210",
+    "contactSheet": "evidence/S0-A/attempt-001/contact-sheet-02.jpg",
+    "actuallyViewed": true,
+    "viewMethod": "6张本地联系表逐张打开，覆盖全部69张原图；未上传原图",
+    "observation": "资料字段与系统记录可辨，截图含个人数据但未外传。",
+    "goldenEligible": false,
+    "goldenReason": "截图无构建SHA、logicalSize或TextScaler记录，且本轮未重拍当前业务页面"
+  },
+  {
+    "id": "V25",
+    "page": "注销账号",
+    "state": "注销账号",
+    "route": "/profile_edit + deletion sheet",
+    "theme": "LIGHT_OBSERVED",
+    "logicalSize": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "textScale": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sourceSha": "6061359de0d6db6597176a9158ee826de490f6c4",
+    "sourceSha256": {
+      "lib/features/profile/presentation/widgets/account_deletion_sheet.dart": "97259983c96540097ac972759cb68e8a2fc4d6655427bf5173b3020bbc4c7b2f"
+    },
+    "sourceFiles": [
+      "lib/features/profile/presentation/widgets/account_deletion_sheet.dart"
+    ],
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.44.42.png",
+    "pathSha256": "3a9423072cd06d2721ccd909fcfce57eeb9f4dd4e059518ee20318dd24f69306",
+    "contactSheet": "evidence/S0-A/attempt-001/contact-sheet-03.jpg",
+    "actuallyViewed": true,
+    "viewMethod": "6张本地联系表逐张打开，覆盖全部69张原图；未上传原图",
+    "observation": "危险说明、密码、确认注销与取消可辨；未执行真实注销。",
+    "goldenEligible": false,
+    "goldenReason": "截图无构建SHA、logicalSize或TextScaler记录，且本轮未重拍当前业务页面"
+  },
+  {
+    "id": "V26",
+    "page": "修改密码",
+    "state": "修改密码",
+    "route": "/profile_edit + password sheet",
+    "theme": "LIGHT_OBSERVED",
+    "logicalSize": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "textScale": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sourceSha": "6061359de0d6db6597176a9158ee826de490f6c4",
+    "sourceSha256": {
+      "lib/features/profile/presentation/profile_edit_page.dart": "26dd78816687f42bfd6a089f2e35f36d9a99580e69c1c211860f8243e1938712"
+    },
+    "sourceFiles": [
+      "lib/features/profile/presentation/profile_edit_page.dart"
+    ],
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.44.45.png",
+    "pathSha256": "2f03b962a0d2f9c8a6c19d3ce6d12c632878d888b76b06bfc1fb169ee6e9aa0f",
+    "contactSheet": "evidence/S0-A/attempt-001/contact-sheet-03.jpg",
+    "actuallyViewed": true,
+    "viewMethod": "6张本地联系表逐张打开，覆盖全部69张原图；未上传原图",
+    "observation": "旧密码、新密码、确认与提交可辨；未执行真实修改。",
+    "goldenEligible": false,
+    "goldenReason": "截图无构建SHA、logicalSize或TextScaler记录，且本轮未重拍当前业务页面"
+  },
+  {
+    "id": "V27",
+    "page": "编辑资料",
+    "state": "编辑资料",
+    "route": "/profile_edit + details sheet",
+    "theme": "LIGHT_OBSERVED",
+    "logicalSize": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "textScale": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sourceSha": "6061359de0d6db6597176a9158ee826de490f6c4",
+    "sourceSha256": {
+      "lib/features/profile/presentation/profile_edit_page.dart": "26dd78816687f42bfd6a089f2e35f36d9a99580e69c1c211860f8243e1938712"
+    },
+    "sourceFiles": [
+      "lib/features/profile/presentation/profile_edit_page.dart"
+    ],
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.44.49.png",
+    "pathSha256": "3ca92eb203dde8cb224c344df2c163b727b5ad0c71a5da1c390e286bbaf0f151",
+    "contactSheet": "evidence/S0-A/attempt-001/contact-sheet-03.jpg",
+    "actuallyViewed": true,
+    "viewMethod": "6张本地联系表逐张打开，覆盖全部69张原图；未上传原图",
+    "observation": "昵称、电话、邮箱、性别和保存可辨；清空语义未由截图证明。",
+    "goldenEligible": false,
+    "goldenReason": "截图无构建SHA、logicalSize或TextScaler记录，且本轮未重拍当前业务页面"
+  },
+  {
+    "id": "V28",
+    "page": "账本分组管理",
+    "state": "账本分组管理",
+    "route": "/groups",
+    "theme": "LIGHT_OBSERVED",
+    "logicalSize": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "textScale": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sourceSha": "6061359de0d6db6597176a9158ee826de490f6c4",
+    "sourceSha256": {
+      "lib/features/books/presentation/books_page.dart": "56016f23352e8af3c633052dac72600be711bebd7f9ddfd91217495767a4d54a"
+    },
+    "sourceFiles": [
+      "lib/features/books/presentation/books_page.dart"
+    ],
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.44.57.png",
+    "pathSha256": "0cdbff1140abea39527b061a1c6dac210224d9ac7ba0827375f4efcc4bf68bdf",
+    "contactSheet": "evidence/S0-A/attempt-001/contact-sheet-03.jpg",
+    "actuallyViewed": true,
+    "viewMethod": "6张本地联系表逐张打开，覆盖全部69张原图；未上传原图",
+    "observation": "分组列表、搜索、状态筛选、默认标识与新增入口可辨。",
+    "goldenEligible": false,
+    "goldenReason": "截图无构建SHA、logicalSize或TextScaler记录，且本轮未重拍当前业务页面"
+  },
+  {
+    "id": "V29",
+    "page": "账本管理",
+    "state": "账本管理",
+    "route": "/books",
+    "theme": "LIGHT_OBSERVED",
+    "logicalSize": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "textScale": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sourceSha": "6061359de0d6db6597176a9158ee826de490f6c4",
+    "sourceSha256": {
+      "lib/features/books/presentation/books_page.dart": "56016f23352e8af3c633052dac72600be711bebd7f9ddfd91217495767a4d54a"
+    },
+    "sourceFiles": [
+      "lib/features/books/presentation/books_page.dart"
+    ],
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.45.01.png",
+    "pathSha256": "9a1dd32771f30291326a5c142a800e136fc12ffb6c3b7676ef8f1e3d48d8f713",
+    "contactSheet": "evidence/S0-A/attempt-001/contact-sheet-03.jpg",
+    "actuallyViewed": true,
+    "viewMethod": "6张本地联系表逐张打开，覆盖全部69张原图；未上传原图",
+    "observation": "账本列表、当前/默认标识、币种与新增入口可辨。",
+    "goldenEligible": false,
+    "goldenReason": "截图无构建SHA、logicalSize或TextScaler记录，且本轮未重拍当前业务页面"
+  },
+  {
+    "id": "V30",
+    "page": "新增账本币种",
+    "state": "新增账本币种",
+    "route": "/books + book form",
+    "theme": "LIGHT_OBSERVED",
+    "logicalSize": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "textScale": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sourceSha": "6061359de0d6db6597176a9158ee826de490f6c4",
+    "sourceSha256": {
+      "lib/features/books/presentation/widgets/book_form_sheet.dart": "ca3cf2cd7f97ad5711b2a89c6c75ba2acc1f7fe195b93e31bcd9ac619b00dfea"
+    },
+    "sourceFiles": [
+      "lib/features/books/presentation/widgets/book_form_sheet.dart"
+    ],
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.45.06.png",
+    "pathSha256": "7fe28ab1fb325060c02cafd9f33bef750507924292b2cfe67a71676ecf81ced1",
+    "contactSheet": "evidence/S0-A/attempt-001/contact-sheet-03.jpg",
+    "actuallyViewed": true,
+    "viewMethod": "6张本地联系表逐张打开，覆盖全部69张原图；未上传原图",
+    "observation": "高基数币种 chip 墙与创建动作可辨；仅作原问题基线。",
+    "goldenEligible": false,
+    "goldenReason": "截图无构建SHA、logicalSize或TextScaler记录，且本轮未重拍当前业务页面"
+  },
+  {
+    "id": "V31",
+    "page": "新增账本下半屏",
+    "state": "新增账本下半屏",
+    "route": "/books + book form",
+    "theme": "LIGHT_OBSERVED",
+    "logicalSize": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "textScale": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sourceSha": "6061359de0d6db6597176a9158ee826de490f6c4",
+    "sourceSha256": {
+      "lib/features/books/presentation/widgets/book_form_sheet.dart": "ca3cf2cd7f97ad5711b2a89c6c75ba2acc1f7fe195b93e31bcd9ac619b00dfea"
+    },
+    "sourceFiles": [
+      "lib/features/books/presentation/widgets/book_form_sheet.dart"
+    ],
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.45.09.png",
+    "pathSha256": "de26d63b99a85f4455d13cb4c28608595d0f9c5d3d1a74cb44c73485d31bdf10",
+    "contactSheet": "evidence/S0-A/attempt-001/contact-sheet-03.jpg",
+    "actuallyViewed": true,
+    "viewMethod": "6张本地联系表逐张打开，覆盖全部69张原图；未上传原图",
+    "observation": "其余币种、模板、启用、备注和创建动作可辨。",
+    "goldenEligible": false,
+    "goldenReason": "截图无构建SHA、logicalSize或TextScaler记录，且本轮未重拍当前业务页面"
+  },
+  {
+    "id": "V32",
+    "page": "新增分组币种",
+    "state": "新增分组币种",
+    "route": "/groups + group form",
+    "theme": "LIGHT_OBSERVED",
+    "logicalSize": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "textScale": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sourceSha": "6061359de0d6db6597176a9158ee826de490f6c4",
+    "sourceSha256": {
+      "lib/features/books/presentation/widgets/group_form_sheet.dart": "147d0ba61a19e5055010d7c3f578d7b28bfbe9d2c76bcdaf5a981b08f4250f6f"
+    },
+    "sourceFiles": [
+      "lib/features/books/presentation/widgets/group_form_sheet.dart"
+    ],
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.45.15.png",
+    "pathSha256": "d526c7876e2a3e5a47feeeff97679cc5d6cad2ff8574ac65ce1b245701a34386",
+    "contactSheet": "evidence/S0-A/attempt-001/contact-sheet-03.jpg",
+    "actuallyViewed": true,
+    "viewMethod": "6张本地联系表逐张打开，覆盖全部69张原图；未上传原图",
+    "observation": "分组名称、默认币种和创建动作可辨。",
+    "goldenEligible": false,
+    "goldenReason": "截图无构建SHA、logicalSize或TextScaler记录，且本轮未重拍当前业务页面"
+  },
+  {
+    "id": "V33",
+    "page": "新增分组下半屏",
+    "state": "新增分组下半屏",
+    "route": "/groups + group form",
+    "theme": "LIGHT_OBSERVED",
+    "logicalSize": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "textScale": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sourceSha": "6061359de0d6db6597176a9158ee826de490f6c4",
+    "sourceSha256": {
+      "lib/features/books/presentation/widgets/group_form_sheet.dart": "147d0ba61a19e5055010d7c3f578d7b28bfbe9d2c76bcdaf5a981b08f4250f6f"
+    },
+    "sourceFiles": [
+      "lib/features/books/presentation/widgets/group_form_sheet.dart"
+    ],
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.45.18.png",
+    "pathSha256": "264d6085f5f52653d66456d355d2e2fb79b046f19d8328c64c3cf8cf92c18ad3",
+    "contactSheet": "evidence/S0-A/attempt-001/contact-sheet-03.jpg",
+    "actuallyViewed": true,
+    "viewMethod": "6张本地联系表逐张打开，覆盖全部69张原图；未上传原图",
+    "observation": "其余币种、启用、备注与创建动作可辨。",
+    "goldenEligible": false,
+    "goldenReason": "截图无构建SHA、logicalSize或TextScaler记录，且本轮未重拍当前业务页面"
+  },
+  {
+    "id": "V34",
+    "page": "协作成员管理",
+    "state": "协作成员管理",
+    "route": "/group_users",
+    "theme": "LIGHT_OBSERVED",
+    "logicalSize": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "textScale": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sourceSha": "6061359de0d6db6597176a9158ee826de490f6c4",
+    "sourceSha256": {
+      "lib/features/group_users/presentation/group_users_page.dart": "71b1bc2764048ac3536e8f04f16350239dcc7d20265bdbac5c3bc138ad598027"
+    },
+    "sourceFiles": [
+      "lib/features/group_users/presentation/group_users_page.dart"
+    ],
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.45.25.png",
+    "pathSha256": "e9c5a9e9c3eed9ab4f743bc0e97f041a9d3e68016f8bd0431e65acf48ab00043",
+    "contactSheet": "evidence/S0-A/attempt-001/contact-sheet-03.jpg",
+    "actuallyViewed": true,
+    "viewMethod": "6张本地联系表逐张打开，覆盖全部69张原图；未上传原图",
+    "observation": "成员身份、角色与邀请入口可辨；角色权限未由截图证明。",
+    "goldenEligible": false,
+    "goldenReason": "截图无构建SHA、logicalSize或TextScaler记录，且本轮未重拍当前业务页面"
+  },
+  {
+    "id": "V35",
+    "page": "邀请用户",
+    "state": "邀请用户",
+    "route": "/group_users + invite sheet",
+    "theme": "LIGHT_OBSERVED",
+    "logicalSize": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "textScale": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sourceSha": "6061359de0d6db6597176a9158ee826de490f6c4",
+    "sourceSha256": {
+      "lib/features/shared/invite_member_sheet.dart": "03a5ff4b1aab60813783d92712c73423df13761d20188ef0b7aa17adf9915e6c"
+    },
+    "sourceFiles": [
+      "lib/features/shared/invite_member_sheet.dart"
+    ],
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.45.28.png",
+    "pathSha256": "448d67cc5f3f530437c0716b8153f4ad5b22ebde126ed0d157824f348317e53c",
+    "contactSheet": "evidence/S0-A/attempt-001/contact-sheet-03.jpg",
+    "actuallyViewed": true,
+    "viewMethod": "6张本地联系表逐张打开，覆盖全部69张原图；未上传原图",
+    "observation": "账号、角色选项和发送邀请可辨；未执行真实邀请。",
+    "goldenEligible": false,
+    "goldenReason": "截图无构建SHA、logicalSize或TextScaler记录，且本轮未重拍当前业务页面"
+  },
+  {
+    "id": "V36",
+    "page": "分类管理",
+    "state": "分类管理",
+    "route": "/categories",
+    "theme": "LIGHT_OBSERVED",
+    "logicalSize": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "textScale": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sourceSha": "6061359de0d6db6597176a9158ee826de490f6c4",
+    "sourceSha256": {
+      "lib/features/categories/presentation/categories_page.dart": "38a77a727738c4c05895b8f6315506d951765606bdf953de0acdcc013e982462"
+    },
+    "sourceFiles": [
+      "lib/features/categories/presentation/categories_page.dart"
+    ],
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.45.33.png",
+    "pathSha256": "808947fa236b7e1d2d086285e2a563e2e62c3ac20b112b7dea1c5624a505d706",
+    "contactSheet": "evidence/S0-A/attempt-001/contact-sheet-03.jpg",
+    "actuallyViewed": true,
+    "viewMethod": "6张本地联系表逐张打开，覆盖全部69张原图；未上传原图",
+    "observation": "两级分类树、状态筛选、搜索和新增入口可辨。",
+    "goldenEligible": false,
+    "goldenReason": "截图无构建SHA、logicalSize或TextScaler记录，且本轮未重拍当前业务页面"
+  },
+  {
+    "id": "V37",
+    "page": "新增分类",
+    "state": "新增分类",
+    "route": "/categories + form",
+    "theme": "LIGHT_OBSERVED",
+    "logicalSize": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "textScale": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sourceSha": "6061359de0d6db6597176a9158ee826de490f6c4",
+    "sourceSha256": {
+      "lib/features/categories/presentation/widgets/category_form_sheet.dart": "05547fe86637f8c3f347cef0eb7a17dde90904116e312e23f97e54db19a2335d"
+    },
+    "sourceFiles": [
+      "lib/features/categories/presentation/widgets/category_form_sheet.dart"
+    ],
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.45.37.png",
+    "pathSha256": "5493902c32a0a1494ef6f909bc8a2882fccc2448db245a1ca90e8f59efc71abc",
+    "contactSheet": "evidence/S0-A/attempt-001/contact-sheet-04.jpg",
+    "actuallyViewed": true,
+    "viewMethod": "6张本地联系表逐张打开，覆盖全部69张原图；未上传原图",
+    "observation": "名称、类型、父级、排序、启用和创建动作可辨。",
+    "goldenEligible": false,
+    "goldenReason": "截图无构建SHA、logicalSize或TextScaler记录，且本轮未重拍当前业务页面"
+  },
+  {
+    "id": "V38",
+    "page": "编辑分类",
+    "state": "编辑分类",
+    "route": "/categories + form",
+    "theme": "LIGHT_OBSERVED",
+    "logicalSize": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "textScale": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sourceSha": "6061359de0d6db6597176a9158ee826de490f6c4",
+    "sourceSha256": {
+      "lib/features/categories/presentation/widgets/category_form_sheet.dart": "05547fe86637f8c3f347cef0eb7a17dde90904116e312e23f97e54db19a2335d"
+    },
+    "sourceFiles": [
+      "lib/features/categories/presentation/widgets/category_form_sheet.dart"
+    ],
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.45.43.png",
+    "pathSha256": "0d0c9583d10d5a12aecc3297af8360d4f5fb1af0939a2ebc8d38f7bb78db3746",
+    "contactSheet": "evidence/S0-A/attempt-001/contact-sheet-04.jpg",
+    "actuallyViewed": true,
+    "viewMethod": "6张本地联系表逐张打开，覆盖全部69张原图；未上传原图",
+    "observation": "既有分类值与保存动作可辨；未执行修改。",
+    "goldenEligible": false,
+    "goldenReason": "截图无构建SHA、logicalSize或TextScaler记录，且本轮未重拍当前业务页面"
+  },
+  {
+    "id": "V39",
+    "page": "标签管理",
+    "state": "标签管理",
+    "route": "/tags",
+    "theme": "LIGHT_OBSERVED",
+    "logicalSize": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "textScale": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sourceSha": "6061359de0d6db6597176a9158ee826de490f6c4",
+    "sourceSha256": {
+      "lib/features/tags/presentation/tags_page.dart": "bed182bcb4c66f53d4ccde24757c85a5c91bcfe2808e561e2a000ed8e3ef81d0"
+    },
+    "sourceFiles": [
+      "lib/features/tags/presentation/tags_page.dart"
+    ],
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.45.49.png",
+    "pathSha256": "43243b98a7fc273f397b92471dfba7a856750623ce01d1e07058a7978bd9ca04",
+    "contactSheet": "evidence/S0-A/attempt-001/contact-sheet-04.jpg",
+    "actuallyViewed": true,
+    "viewMethod": "6张本地联系表逐张打开，覆盖全部69张原图；未上传原图",
+    "observation": "标签树、状态筛选、回收站与新增入口可辨。",
+    "goldenEligible": false,
+    "goldenReason": "截图无构建SHA、logicalSize或TextScaler记录，且本轮未重拍当前业务页面"
+  },
+  {
+    "id": "V40",
+    "page": "新增标签",
+    "state": "新增标签",
+    "route": "/tags + form",
+    "theme": "LIGHT_OBSERVED",
+    "logicalSize": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "textScale": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sourceSha": "6061359de0d6db6597176a9158ee826de490f6c4",
+    "sourceSha256": {
+      "lib/features/tags/presentation/widgets/tag_form_sheet.dart": "1db96c84961df23f0305b79c67668ae078faea00611ec8219892417300341527"
+    },
+    "sourceFiles": [
+      "lib/features/tags/presentation/widgets/tag_form_sheet.dart"
+    ],
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.45.54.png",
+    "pathSha256": "7d7d60b5892fa7a0479f780d64fdc65752476ee72a694efc17d7402e336fb8e6",
+    "contactSheet": "evidence/S0-A/attempt-001/contact-sheet-04.jpg",
+    "actuallyViewed": true,
+    "viewMethod": "6张本地联系表逐张打开，覆盖全部69张原图；未上传原图",
+    "observation": "名称、父级、类型开关和创建动作可辨。",
+    "goldenEligible": false,
+    "goldenReason": "截图无构建SHA、logicalSize或TextScaler记录，且本轮未重拍当前业务页面"
+  },
+  {
+    "id": "V41",
+    "page": "编辑标签",
+    "state": "编辑标签",
+    "route": "/tags + form",
+    "theme": "LIGHT_OBSERVED",
+    "logicalSize": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "textScale": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sourceSha": "6061359de0d6db6597176a9158ee826de490f6c4",
+    "sourceSha256": {
+      "lib/features/tags/presentation/widgets/tag_form_sheet.dart": "1db96c84961df23f0305b79c67668ae078faea00611ec8219892417300341527"
+    },
+    "sourceFiles": [
+      "lib/features/tags/presentation/widgets/tag_form_sheet.dart"
+    ],
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.45.59.png",
+    "pathSha256": "a58d429b647e288c1d4cb319b8191b963e04d72e5c23e65ed1bc268b8fb814b5",
+    "contactSheet": "evidence/S0-A/attempt-001/contact-sheet-04.jpg",
+    "actuallyViewed": true,
+    "viewMethod": "6张本地联系表逐张打开，覆盖全部69张原图；未上传原图",
+    "observation": "既有标签值、类型开关和保存动作可辨。",
+    "goldenEligible": false,
+    "goldenReason": "截图无构建SHA、logicalSize或TextScaler记录，且本轮未重拍当前业务页面"
+  },
+  {
+    "id": "V42",
+    "page": "标签回收站",
+    "state": "标签回收站",
+    "route": "/tags + recycle segment",
+    "theme": "LIGHT_OBSERVED",
+    "logicalSize": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "textScale": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sourceSha": "6061359de0d6db6597176a9158ee826de490f6c4",
+    "sourceSha256": {
+      "lib/features/tags/presentation/tags_page.dart": "bed182bcb4c66f53d4ccde24757c85a5c91bcfe2808e561e2a000ed8e3ef81d0"
+    },
+    "sourceFiles": [
+      "lib/features/tags/presentation/tags_page.dart"
+    ],
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.46.05.png",
+    "pathSha256": "79b2becfe5d63e74a24f5d6be2c233b92575068111b227e5ba0496fe626c53dd",
+    "contactSheet": "evidence/S0-A/attempt-001/contact-sheet-04.jpg",
+    "actuallyViewed": true,
+    "viewMethod": "6张本地联系表逐张打开，覆盖全部69张原图；未上传原图",
+    "observation": "回收站列表与返回入口可辨，空/失败分支未覆盖。",
+    "goldenEligible": false,
+    "goldenReason": "截图无构建SHA、logicalSize或TextScaler记录，且本轮未重拍当前业务页面"
+  },
+  {
+    "id": "V43",
+    "page": "交易对象管理",
+    "state": "交易对象管理",
+    "route": "/payees",
+    "theme": "LIGHT_OBSERVED",
+    "logicalSize": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "textScale": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sourceSha": "6061359de0d6db6597176a9158ee826de490f6c4",
+    "sourceSha256": {
+      "lib/features/payees/presentation/payees_page.dart": "6c39a7f43b2f5e75a67043f928c90a7b5c7a34ca078201c8f67f89c31a408f1a"
+    },
+    "sourceFiles": [
+      "lib/features/payees/presentation/payees_page.dart"
+    ],
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.46.10.png",
+    "pathSha256": "7e3b532135dacf2d84600eaed319a651dd9bdb5bec2cf237a717b22d181016b4",
+    "contactSheet": "evidence/S0-A/attempt-001/contact-sheet-04.jpg",
+    "actuallyViewed": true,
+    "viewMethod": "6张本地联系表逐张打开，覆盖全部69张原图；未上传原图",
+    "observation": "交易对象列表、类型说明、状态筛选和新增入口可辨。",
+    "goldenEligible": false,
+    "goldenReason": "截图无构建SHA、logicalSize或TextScaler记录，且本轮未重拍当前业务页面"
+  },
+  {
+    "id": "V44",
+    "page": "编辑交易对象",
+    "state": "编辑交易对象",
+    "route": "/payees + form",
+    "theme": "LIGHT_OBSERVED",
+    "logicalSize": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "textScale": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sourceSha": "6061359de0d6db6597176a9158ee826de490f6c4",
+    "sourceSha256": {
+      "lib/features/payees/presentation/widgets/payee_form_sheet.dart": "f8b25b06c3a362fdd07e88b642c6be85a8c31eeda10270354da31eb1eff3a922"
+    },
+    "sourceFiles": [
+      "lib/features/payees/presentation/widgets/payee_form_sheet.dart"
+    ],
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.46.14.png",
+    "pathSha256": "84d4e11add30547b6aa4556adf1f73ee6520e5c7bf2da0013f25f68d4197da3b",
+    "contactSheet": "evidence/S0-A/attempt-001/contact-sheet-04.jpg",
+    "actuallyViewed": true,
+    "viewMethod": "6张本地联系表逐张打开，覆盖全部69张原图；未上传原图",
+    "observation": "名称、排序、类型开关和保存动作可辨。",
+    "goldenEligible": false,
+    "goldenReason": "截图无构建SHA、logicalSize或TextScaler记录，且本轮未重拍当前业务页面"
+  },
+  {
+    "id": "V45",
+    "page": "成员管理",
+    "state": "成员管理",
+    "route": "/members",
+    "theme": "LIGHT_OBSERVED",
+    "logicalSize": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "textScale": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sourceSha": "6061359de0d6db6597176a9158ee826de490f6c4",
+    "sourceSha256": {
+      "lib/features/members/presentation/members_page.dart": "47cfc8896c22f531ecfdb1225beae3345248b665398b1dac71c4b8efce163a5a"
+    },
+    "sourceFiles": [
+      "lib/features/members/presentation/members_page.dart"
+    ],
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.46.20.png",
+    "pathSha256": "56e490e4f4989f23cee5e83a1d466985c55d94d727776d57679bcce6f0c002d5",
+    "contactSheet": "evidence/S0-A/attempt-001/contact-sheet-04.jpg",
+    "actuallyViewed": true,
+    "viewMethod": "6张本地联系表逐张打开，覆盖全部69张原图；未上传原图",
+    "observation": "成员列表、启停和新增入口可辨。",
+    "goldenEligible": false,
+    "goldenReason": "截图无构建SHA、logicalSize或TextScaler记录，且本轮未重拍当前业务页面"
+  },
+  {
+    "id": "V46",
+    "page": "新增成员",
+    "state": "新增成员",
+    "route": "/members + form",
+    "theme": "LIGHT_OBSERVED",
+    "logicalSize": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "textScale": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sourceSha": "6061359de0d6db6597176a9158ee826de490f6c4",
+    "sourceSha256": {
+      "lib/features/members/presentation/widgets/member_form_sheet.dart": "c58afd9d2f8e635f4685d0d4214026308d80fd98ed143dfea66d5257f85c14b6"
+    },
+    "sourceFiles": [
+      "lib/features/members/presentation/widgets/member_form_sheet.dart"
+    ],
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.46.23.png",
+    "pathSha256": "ed3fb2d22d2e02c3a25160a2fac06712e2333661feaf6cd6cd326a9e320aec6d",
+    "contactSheet": "evidence/S0-A/attempt-001/contact-sheet-04.jpg",
+    "actuallyViewed": true,
+    "viewMethod": "6张本地联系表逐张打开，覆盖全部69张原图；未上传原图",
+    "observation": "姓名、排序、备注、启用和创建动作可辨。",
+    "goldenEligible": false,
+    "goldenReason": "截图无构建SHA、logicalSize或TextScaler记录，且本轮未重拍当前业务页面"
+  },
+  {
+    "id": "V47",
+    "page": "成员创建后的列表",
+    "state": "成员创建后的列表",
+    "route": "/members",
+    "theme": "LIGHT_OBSERVED",
+    "logicalSize": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "textScale": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sourceSha": "6061359de0d6db6597176a9158ee826de490f6c4",
+    "sourceSha256": {
+      "lib/features/members/presentation/members_page.dart": "47cfc8896c22f531ecfdb1225beae3345248b665398b1dac71c4b8efce163a5a"
+    },
+    "sourceFiles": [
+      "lib/features/members/presentation/members_page.dart"
+    ],
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.46.48.png",
+    "pathSha256": "82fd66a008abc32f9e09dca329ebe4a69c3e4ae79ef5a7839bb9167e9fcad3fc",
+    "contactSheet": "evidence/S0-A/attempt-001/contact-sheet-04.jpg",
+    "actuallyViewed": true,
+    "viewMethod": "6张本地联系表逐张打开，覆盖全部69张原图；未上传原图",
+    "observation": "创建后两名成员及启用状态可辨；不是本轮新操作证据。",
+    "goldenEligible": false,
+    "goldenReason": "截图无构建SHA、logicalSize或TextScaler记录，且本轮未重拍当前业务页面"
+  },
+  {
+    "id": "V48",
+    "page": "归物列表",
+    "state": "归物列表",
+    "route": "/goods",
+    "theme": "LIGHT_OBSERVED",
+    "logicalSize": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "textScale": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sourceSha": "6061359de0d6db6597176a9158ee826de490f6c4",
+    "sourceSha256": {
+      "lib/features/goods/presentation/goods_page.dart": "f44604d963d03e4a6dd457dd4a41d7d36bc6179f0b8ccbedbdf450d798cfcce3"
+    },
+    "sourceFiles": [
+      "lib/features/goods/presentation/goods_page.dart"
+    ],
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.46.54.png",
+    "pathSha256": "28821bd6b80d4e47889f09473cabb13ab322185bc13f1667fa553ecc16f85ed7",
+    "contactSheet": "evidence/S0-A/attempt-001/contact-sheet-04.jpg",
+    "actuallyViewed": true,
+    "viewMethod": "6张本地联系表逐张打开，覆盖全部69张原图；未上传原图",
+    "observation": "归物卡片、金额、状态和汇总可辨；未覆盖新增与空态。",
+    "goldenEligible": false,
+    "goldenReason": "截图无构建SHA、logicalSize或TextScaler记录，且本轮未重拍当前业务页面"
+  },
+  {
+    "id": "V49",
+    "page": "归物详情",
+    "state": "归物详情",
+    "route": "/goods + detail",
+    "theme": "LIGHT_OBSERVED",
+    "logicalSize": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "textScale": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sourceSha": "6061359de0d6db6597176a9158ee826de490f6c4",
+    "sourceSha256": {
+      "lib/features/goods/presentation/widgets/goods_detail_sheet.dart": "56d31b05edba37df4e31c6f3a7cf519a39e4b4858927904fbe6294a8735f0efa"
+    },
+    "sourceFiles": [
+      "lib/features/goods/presentation/widgets/goods_detail_sheet.dart"
+    ],
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.47.01.png",
+    "pathSha256": "5597f23788c139838e7e413ef1916209ce923bc3f5ba45283983b4e52cd1a5f1",
+    "contactSheet": "evidence/S0-A/attempt-001/contact-sheet-05.jpg",
+    "actuallyViewed": true,
+    "viewMethod": "6张本地联系表逐张打开，覆盖全部69张原图；未上传原图",
+    "observation": "购买信息、成本、分类、标签、保修和状态可辨。",
+    "goldenEligible": false,
+    "goldenReason": "截图无构建SHA、logicalSize或TextScaler记录，且本轮未重拍当前业务页面"
+  },
+  {
+    "id": "V50",
+    "page": "编辑归物上半屏",
+    "state": "编辑归物上半屏",
+    "route": "/goods_editor",
+    "theme": "LIGHT_OBSERVED",
+    "logicalSize": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "textScale": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sourceSha": "6061359de0d6db6597176a9158ee826de490f6c4",
+    "sourceSha256": {
+      "lib/features/goods/presentation/widgets/goods_form_sheet.dart": "9145fb6992d28d6dd75fff56d120e3cd608d3621c8f15c5a45b362b97bfca0ca"
+    },
+    "sourceFiles": [
+      "lib/features/goods/presentation/widgets/goods_form_sheet.dart"
+    ],
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.47.15.png",
+    "pathSha256": "e40a0bc40c2705264328efb21f43d5e3c9db1900ef7009bf2b34b5d4e01be7a5",
+    "contactSheet": "evidence/S0-A/attempt-001/contact-sheet-05.jpg",
+    "actuallyViewed": true,
+    "viewMethod": "6张本地联系表逐张打开，覆盖全部69张原图；未上传原图",
+    "observation": "基础信息、分类标签、保修状态与保存动作可辨。",
+    "goldenEligible": false,
+    "goldenReason": "截图无构建SHA、logicalSize或TextScaler记录，且本轮未重拍当前业务页面"
+  },
+  {
+    "id": "V51",
+    "page": "编辑归物下半屏",
+    "state": "编辑归物下半屏",
+    "route": "/goods_editor",
+    "theme": "LIGHT_OBSERVED",
+    "logicalSize": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "textScale": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sourceSha": "6061359de0d6db6597176a9158ee826de490f6c4",
+    "sourceSha256": {
+      "lib/features/goods/presentation/widgets/goods_form_sheet.dart": "9145fb6992d28d6dd75fff56d120e3cd608d3621c8f15c5a45b362b97bfca0ca"
+    },
+    "sourceFiles": [
+      "lib/features/goods/presentation/widgets/goods_form_sheet.dart"
+    ],
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.47.18.png",
+    "pathSha256": "b0d4b62e7a433c287dfaaae0de1c67f2770c8efae378d8a7c42fdd009026ee29",
+    "contactSheet": "evidence/S0-A/attempt-001/contact-sheet-05.jpg",
+    "actuallyViewed": true,
+    "viewMethod": "6张本地联系表逐张打开，覆盖全部69张原图；未上传原图",
+    "observation": "分类标签、日期、状态、备注附件与保存动作可辨。",
+    "goldenEligible": false,
+    "goldenReason": "截图无构建SHA、logicalSize或TextScaler记录，且本轮未重拍当前业务页面"
+  },
+  {
+    "id": "V52",
+    "page": "单据管理",
+    "state": "单据管理",
+    "route": "/orders",
+    "theme": "LIGHT_OBSERVED",
+    "logicalSize": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "textScale": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sourceSha": "6061359de0d6db6597176a9158ee826de490f6c4",
+    "sourceSha256": {
+      "lib/features/orders/presentation/orders_page.dart": "54982906d0060420cdb49b3b92f414496e26c9ea42549e0bf84da5b584fa1fb2"
+    },
+    "sourceFiles": [
+      "lib/features/orders/presentation/orders_page.dart"
+    ],
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.47.40.png",
+    "pathSha256": "5b79a91d5bf1651885c271be10a3db7985772dff631fff1c25f36cbe6f4b73fe",
+    "contactSheet": "evidence/S0-A/attempt-001/contact-sheet-05.jpg",
+    "actuallyViewed": true,
+    "viewMethod": "6张本地联系表逐张打开，覆盖全部69张原图；未上传原图",
+    "observation": "单据汇总、类型、搜索、筛选和列表可辨；创建流程未覆盖。",
+    "goldenEligible": false,
+    "goldenReason": "截图无构建SHA、logicalSize或TextScaler记录，且本轮未重拍当前业务页面"
+  },
+  {
+    "id": "V53",
+    "page": "单据详情",
+    "state": "单据详情",
+    "route": "/orders/detail",
+    "theme": "LIGHT_OBSERVED",
+    "logicalSize": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "textScale": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sourceSha": "6061359de0d6db6597176a9158ee826de490f6c4",
+    "sourceSha256": {
+      "lib/features/orders/presentation/order_detail_page.dart": "3896a46af02da32a88d4600474c87066fdafbaafb5a4bb302a97ac131523870a"
+    },
+    "sourceFiles": [
+      "lib/features/orders/presentation/order_detail_page.dart"
+    ],
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.47.43.png",
+    "pathSha256": "c5d038350dedbd17961f1d1ad541513a838c8848af7d75b5bd0699be83a32ed8",
+    "contactSheet": "evidence/S0-A/attempt-001/contact-sheet-05.jpg",
+    "actuallyViewed": true,
+    "viewMethod": "6张本地联系表逐张打开，覆盖全部69张原图；未上传原图",
+    "observation": "金额、业务动作、流水和条目动作可辨；未执行真实动作。",
+    "goldenEligible": false,
+    "goldenReason": "截图无构建SHA、logicalSize或TextScaler记录，且本轮未重拍当前业务页面"
+  },
+  {
+    "id": "V54",
+    "page": "单据详情重复采样",
+    "state": "单据详情重复采样",
+    "route": "/orders/detail",
+    "theme": "LIGHT_OBSERVED",
+    "logicalSize": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "textScale": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sourceSha": "6061359de0d6db6597176a9158ee826de490f6c4",
+    "sourceSha256": {
+      "lib/features/orders/presentation/order_detail_page.dart": "3896a46af02da32a88d4600474c87066fdafbaafb5a4bb302a97ac131523870a"
+    },
+    "sourceFiles": [
+      "lib/features/orders/presentation/order_detail_page.dart"
+    ],
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.47.56.png",
+    "pathSha256": "c5d038350dedbd17961f1d1ad541513a838c8848af7d75b5bd0699be83a32ed8",
+    "contactSheet": "evidence/S0-A/attempt-001/contact-sheet-05.jpg",
+    "actuallyViewed": true,
+    "viewMethod": "6张本地联系表逐张打开，覆盖全部69张原图；未上传原图",
+    "observation": "与V53为同一状态的重复采样，不计算独立页面。",
+    "goldenEligible": false,
+    "goldenReason": "截图无构建SHA、logicalSize或TextScaler记录，且本轮未重拍当前业务页面"
+  },
+  {
+    "id": "V55",
+    "page": "周期记账列表",
+    "state": "周期记账列表",
+    "route": "/recurring",
+    "theme": "LIGHT_OBSERVED",
+    "logicalSize": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "textScale": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sourceSha": "6061359de0d6db6597176a9158ee826de490f6c4",
+    "sourceSha256": {
+      "lib/features/recurring/presentation/recurring_page.dart": "ee8369eff0da3acf53d36279c109467a669d7e5d50e7dd9e44240f92724ef2fa"
+    },
+    "sourceFiles": [
+      "lib/features/recurring/presentation/recurring_page.dart"
+    ],
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.48.18.png",
+    "pathSha256": "8072f70fea6d0babe935d69974f87a4e48ee7122b1296a6e264fa935fb4ec069",
+    "contactSheet": "evidence/S0-A/attempt-001/contact-sheet-05.jpg",
+    "actuallyViewed": true,
+    "viewMethod": "6张本地联系表逐张打开，覆盖全部69张原图；未上传原图",
+    "observation": "规则、调度摘要、下次执行、执行次数和启停可辨。",
+    "goldenEligible": false,
+    "goldenReason": "截图无构建SHA、logicalSize或TextScaler记录，且本轮未重拍当前业务页面"
+  },
+  {
+    "id": "V56",
+    "page": "编辑周期规则上半屏",
+    "state": "编辑周期规则上半屏",
+    "route": "/recurring_editor",
+    "theme": "LIGHT_OBSERVED",
+    "logicalSize": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "textScale": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sourceSha": "6061359de0d6db6597176a9158ee826de490f6c4",
+    "sourceSha256": {
+      "lib/features/recurring/presentation/recurring_editor_page.dart": "ade8c9b0bd3152d99ef84da580be0242ace7848e87604a0bfff6967fcffd2af0",
+      "lib/features/recurring/presentation/widgets/cron_schedule_editor.dart": "c22c6014c852554642ab803d0dbe9d6db50a10649bb01836e7dada970cfeac0c"
+    },
+    "sourceFiles": [
+      "lib/features/recurring/presentation/recurring_editor_page.dart",
+      "lib/features/recurring/presentation/widgets/cron_schedule_editor.dart"
+    ],
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.48.27.png",
+    "pathSha256": "c7a780f258af560e33461216fc456df59d31f98cdbf89b459fd934a6f4235325",
+    "contactSheet": "evidence/S0-A/attempt-001/contact-sheet-05.jpg",
+    "actuallyViewed": true,
+    "viewMethod": "6张本地联系表逐张打开，覆盖全部69张原图；未上传原图",
+    "observation": "频率、日期网格、时间、限制与账单模板可辨。",
+    "goldenEligible": false,
+    "goldenReason": "截图无构建SHA、logicalSize或TextScaler记录，且本轮未重拍当前业务页面"
+  },
+  {
+    "id": "V57",
+    "page": "编辑周期规则下半屏",
+    "state": "编辑周期规则下半屏",
+    "route": "/recurring_editor",
+    "theme": "LIGHT_OBSERVED",
+    "logicalSize": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "textScale": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sourceSha": "6061359de0d6db6597176a9158ee826de490f6c4",
+    "sourceSha256": {
+      "lib/features/recurring/presentation/recurring_editor_page.dart": "ade8c9b0bd3152d99ef84da580be0242ace7848e87604a0bfff6967fcffd2af0"
+    },
+    "sourceFiles": [
+      "lib/features/recurring/presentation/recurring_editor_page.dart"
+    ],
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.48.31.png",
+    "pathSha256": "54deb6da0b1362e210a002e51229cfbb2d892dd57201e27ccaa5e69bd244b8a5",
+    "contactSheet": "evidence/S0-A/attempt-001/contact-sheet-05.jpg",
+    "actuallyViewed": true,
+    "viewMethod": "6张本地联系表逐张打开，覆盖全部69张原图；未上传原图",
+    "observation": "起止日期、补偿、启停、模板字段和保存动作可辨。",
+    "goldenEligible": false,
+    "goldenReason": "截图无构建SHA、logicalSize或TextScaler记录，且本轮未重拍当前业务页面"
+  },
+  {
+    "id": "V58",
+    "page": "导入导出",
+    "state": "导入导出",
+    "route": "/io",
+    "theme": "LIGHT_OBSERVED",
+    "logicalSize": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "textScale": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sourceSha": "6061359de0d6db6597176a9158ee826de490f6c4",
+    "sourceSha256": {
+      "lib/features/io/presentation/io_page.dart": "886a3af9e30b362fddd2a6d3bd9357807a234fc7bb528b1a9d966ca3ff4074b7"
+    },
+    "sourceFiles": [
+      "lib/features/io/presentation/io_page.dart"
+    ],
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.48.45.png",
+    "pathSha256": "bdac8a70962bf6ac9f0790372cde505fc2f68a8c997addecd3bc785b53151d32",
+    "contactSheet": "evidence/S0-A/attempt-001/contact-sheet-05.jpg",
+    "actuallyViewed": true,
+    "viewMethod": "6张本地联系表逐张打开，覆盖全部69张原图；未上传原图",
+    "observation": "导出、模板、导入三个入口可辨；用户实际文件交付未证明。",
+    "goldenEligible": false,
+    "goldenReason": "截图无构建SHA、logicalSize或TextScaler记录，且本轮未重拍当前业务页面"
+  },
+  {
+    "id": "V59",
+    "page": "日志列表",
+    "state": "日志列表",
+    "route": "/logs",
+    "theme": "LIGHT_OBSERVED",
+    "logicalSize": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "textScale": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sourceSha": "6061359de0d6db6597176a9158ee826de490f6c4",
+    "sourceSha256": {
+      "lib/features/logs/presentation/logs_page.dart": "3713fe3faf2d63b32a307cce055cbe6e44af1afc2c2539b4c11a15a0e78cfcfc"
+    },
+    "sourceFiles": [
+      "lib/features/logs/presentation/logs_page.dart"
+    ],
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.48.54.png",
+    "pathSha256": "880e917bc13c053f27fe04b49f142423f5db0ef2349388038570ea23a598bdbe",
+    "contactSheet": "evidence/S0-A/attempt-001/contact-sheet-05.jpg",
+    "actuallyViewed": true,
+    "viewMethod": "6张本地联系表逐张打开，覆盖全部69张原图；未上传原图",
+    "observation": "操作/登录日志、搜索、状态与详情入口可辨。",
+    "goldenEligible": false,
+    "goldenReason": "截图无构建SHA、logicalSize或TextScaler记录，且本轮未重拍当前业务页面"
+  },
+  {
+    "id": "V60",
+    "page": "语言选择",
+    "state": "语言选择",
+    "route": "/profile + locale sheet",
+    "theme": "LIGHT_OBSERVED",
+    "logicalSize": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "textScale": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sourceSha": "6061359de0d6db6597176a9158ee826de490f6c4",
+    "sourceSha256": {
+      "lib/features/profile/presentation/profile_page.dart": "363a0c2c01a9fff0c4fd532379916591480ec140c694b8b6a8a6a847fb8d785d"
+    },
+    "sourceFiles": [
+      "lib/features/profile/presentation/profile_page.dart"
+    ],
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.49.04.png",
+    "pathSha256": "2dcf0508e2de4078e6ee2561c0b4a0eaea5c0c5a0520a3e39b13b6097440b1be",
+    "contactSheet": "evidence/S0-A/attempt-001/contact-sheet-05.jpg",
+    "actuallyViewed": true,
+    "viewMethod": "6张本地联系表逐张打开，覆盖全部69张原图；未上传原图",
+    "observation": "跟随系统、中文、English与选中勾可辨；语义需另验。",
+    "goldenEligible": false,
+    "goldenReason": "截图无构建SHA、logicalSize或TextScaler记录，且本轮未重拍当前业务页面"
+  },
+  {
+    "id": "V61",
+    "page": "主题模式",
+    "state": "主题模式",
+    "route": "/profile + theme sheet",
+    "theme": "LIGHT_OBSERVED",
+    "logicalSize": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "textScale": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sourceSha": "6061359de0d6db6597176a9158ee826de490f6c4",
+    "sourceSha256": {
+      "lib/features/profile/presentation/profile_page.dart": "363a0c2c01a9fff0c4fd532379916591480ec140c694b8b6a8a6a847fb8d785d"
+    },
+    "sourceFiles": [
+      "lib/features/profile/presentation/profile_page.dart"
+    ],
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.49.07.png",
+    "pathSha256": "7ae940faabbc7bafa36fb411095ac8e29c6b25b749f54bd6d39fd8214ee0952d",
+    "contactSheet": "evidence/S0-A/attempt-001/contact-sheet-06.jpg",
+    "actuallyViewed": true,
+    "viewMethod": "6张本地联系表逐张打开，覆盖全部69张原图；未上传原图",
+    "observation": "跟随系统、亮色、暗色选项可辨；截图本身仍是浅色。",
+    "goldenEligible": false,
+    "goldenReason": "截图无构建SHA、logicalSize或TextScaler记录，且本轮未重拍当前业务页面"
+  },
+  {
+    "id": "V62",
+    "page": "账单月开始日",
+    "state": "账单月开始日",
+    "route": "/profile + month start sheet",
+    "theme": "LIGHT_OBSERVED",
+    "logicalSize": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "textScale": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sourceSha": "6061359de0d6db6597176a9158ee826de490f6c4",
+    "sourceSha256": {
+      "lib/features/profile/presentation/profile_page.dart": "363a0c2c01a9fff0c4fd532379916591480ec140c694b8b6a8a6a847fb8d785d"
+    },
+    "sourceFiles": [
+      "lib/features/profile/presentation/profile_page.dart"
+    ],
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.49.12.png",
+    "pathSha256": "31e4648b761297ebe69aec7abd3fe4db68980f1a8d63f63c108ef23b11e29971",
+    "contactSheet": "evidence/S0-A/attempt-001/contact-sheet-06.jpg",
+    "actuallyViewed": true,
+    "viewMethod": "6张本地联系表逐张打开，覆盖全部69张原图；未上传原图",
+    "observation": "日期逐项列表和当前选择可辨；实际账期预览未覆盖。",
+    "goldenEligible": false,
+    "goldenReason": "截图无构建SHA、logicalSize或TextScaler记录，且本轮未重拍当前业务页面"
+  },
+  {
+    "id": "V63",
+    "page": "应用锁设置",
+    "state": "应用锁设置",
+    "route": "/profile + app lock",
+    "theme": "LIGHT_OBSERVED",
+    "logicalSize": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "textScale": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sourceSha": "6061359de0d6db6597176a9158ee826de490f6c4",
+    "sourceSha256": {
+      "lib/features/profile/presentation/app_lock_settings_page.dart": "5f5693fa0438d7f2466ab955ec3d93c220d18b958467b258ed7d57f542ce0735"
+    },
+    "sourceFiles": [
+      "lib/features/profile/presentation/app_lock_settings_page.dart"
+    ],
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.49.19.png",
+    "pathSha256": "98e19d57ede90996da00dda720ff25cfee07ccb8866b5c4f9e721c1dfd81f945",
+    "contactSheet": "evidence/S0-A/attempt-001/contact-sheet-06.jpg",
+    "actuallyViewed": true,
+    "viewMethod": "6张本地联系表逐张打开，覆盖全部69张原图；未上传原图",
+    "observation": "回退方式、默认解锁方式和能力说明可辨；未做解锁实测。",
+    "goldenEligible": false,
+    "goldenReason": "截图无构建SHA、logicalSize或TextScaler记录，且本轮未重拍当前业务页面"
+  },
+  {
+    "id": "V64",
+    "page": "账单颜色",
+    "state": "账单颜色",
+    "route": "/profile + finance colors",
+    "theme": "LIGHT_OBSERVED",
+    "logicalSize": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "textScale": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sourceSha": "6061359de0d6db6597176a9158ee826de490f6c4",
+    "sourceSha256": {
+      "lib/features/profile/presentation/widgets/finance_color_editor.dart": "ab4db788365e263d10b4362634deecf786038af3f0dea565aecab880cc7aa7e2"
+    },
+    "sourceFiles": [
+      "lib/features/profile/presentation/widgets/finance_color_editor.dart"
+    ],
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.49.30.png",
+    "pathSha256": "d3abc33a5d29ab5691029aba6a6bb813a602847a76b595d25f5a462bce9626a4",
+    "contactSheet": "evidence/S0-A/attempt-001/contact-sheet-06.jpg",
+    "actuallyViewed": true,
+    "viewMethod": "6张本地联系表逐张打开，覆盖全部69张原图；未上传原图",
+    "observation": "预设与收入/支出/转账色板可辨；未证明所有金额前景对比。",
+    "goldenEligible": false,
+    "goldenReason": "截图无构建SHA、logicalSize或TextScaler记录，且本轮未重拍当前业务页面"
+  },
+  {
+    "id": "V65",
+    "page": "关于好记",
+    "state": "关于好记",
+    "route": "/profile + about sheet",
+    "theme": "LIGHT_OBSERVED",
+    "logicalSize": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "textScale": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sourceSha": "6061359de0d6db6597176a9158ee826de490f6c4",
+    "sourceSha256": {
+      "lib/features/profile/presentation/profile_page.dart": "363a0c2c01a9fff0c4fd532379916591480ec140c694b8b6a8a6a847fb8d785d"
+    },
+    "sourceFiles": [
+      "lib/features/profile/presentation/profile_page.dart"
+    ],
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.49.36.png",
+    "pathSha256": "1e44f3f59f08387e7a5f5c965e001ba5f6448ad1d259c71f3b613247122b5527",
+    "contactSheet": "evidence/S0-A/attempt-001/contact-sheet-06.jpg",
+    "actuallyViewed": true,
+    "viewMethod": "6张本地联系表逐张打开，覆盖全部69张原图；未上传原图",
+    "observation": "应用/API版本与备案信息可辨；属原页面基线。",
+    "goldenEligible": false,
+    "goldenReason": "截图无构建SHA、logicalSize或TextScaler记录，且本轮未重拍当前业务页面"
+  },
+  {
+    "id": "V66",
+    "page": "帮助",
+    "state": "帮助",
+    "route": "/profile + help sheet",
+    "theme": "LIGHT_OBSERVED",
+    "logicalSize": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "textScale": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sourceSha": "6061359de0d6db6597176a9158ee826de490f6c4",
+    "sourceSha256": {
+      "lib/features/profile/presentation/profile_page.dart": "363a0c2c01a9fff0c4fd532379916591480ec140c694b8b6a8a6a847fb8d785d"
+    },
+    "sourceFiles": [
+      "lib/features/profile/presentation/profile_page.dart"
+    ],
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.49.40.png",
+    "pathSha256": "589b2584f9d946bfd387c6aed3829df37d944fb274a91e633e3677953d1bfa41",
+    "contactSheet": "evidence/S0-A/attempt-001/contact-sheet-06.jpg",
+    "actuallyViewed": true,
+    "viewMethod": "6张本地联系表逐张打开，覆盖全部69张原图；未上传原图",
+    "observation": "帮助文段与任务分组可辨；长文阅读和小字仍需S13-A。",
+    "goldenEligible": false,
+    "goldenReason": "截图无构建SHA、logicalSize或TextScaler记录，且本轮未重拍当前业务页面"
+  },
+  {
+    "id": "V67",
+    "page": "退出登录",
+    "state": "退出登录",
+    "route": "/profile + logout sheet",
+    "theme": "LIGHT_OBSERVED",
+    "logicalSize": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "textScale": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sourceSha": "6061359de0d6db6597176a9158ee826de490f6c4",
+    "sourceSha256": {
+      "lib/features/profile/presentation/profile_page.dart": "363a0c2c01a9fff0c4fd532379916591480ec140c694b8b6a8a6a847fb8d785d"
+    },
+    "sourceFiles": [
+      "lib/features/profile/presentation/profile_page.dart"
+    ],
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.49.44.png",
+    "pathSha256": "59a610f9019353dffccd03c9aa9a8db4908ba73d4fcfae6f66d48c13c6c114b2",
+    "contactSheet": "evidence/S0-A/attempt-001/contact-sheet-06.jpg",
+    "actuallyViewed": true,
+    "viewMethod": "6张本地联系表逐张打开，覆盖全部69张原图；未上传原图",
+    "observation": "危险退出、取消与关闭入口可辨；未执行退出。",
+    "goldenEligible": false,
+    "goldenReason": "截图无构建SHA、logicalSize或TextScaler记录，且本轮未重拍当前业务页面"
+  },
+  {
+    "id": "V68",
+    "page": "注册上半屏",
+    "state": "注册上半屏",
+    "route": "/auth + register",
+    "theme": "LIGHT_OBSERVED",
+    "logicalSize": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "textScale": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sourceSha": "6061359de0d6db6597176a9158ee826de490f6c4",
+    "sourceSha256": {
+      "lib/login/view/login_screen.dart": "059b7073e8aa343f9f330f5092ccd8e16cbc8913be23d6d0ba764f09f6d87c69",
+      "lib/login/view/auth_page.dart": "b14f4c22aadfb6e24b937f7f0bd32de91e1c99060d67ab4781db729a6616f951"
+    },
+    "sourceFiles": [
+      "lib/login/view/login_screen.dart",
+      "lib/login/view/auth_page.dart"
+    ],
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.49.55.png",
+    "pathSha256": "7c01c5035e04dd233224e00e3cedc67d2c660a5e6d40e90d3bf2a740bc7d8b46",
+    "contactSheet": "evidence/S0-A/attempt-001/contact-sheet-06.jpg",
+    "actuallyViewed": true,
+    "viewMethod": "6张本地联系表逐张打开，覆盖全部69张原图；未上传原图",
+    "observation": "账号、密码、昵称、性别、邮箱、手机号与条款入口可辨。",
+    "goldenEligible": false,
+    "goldenReason": "截图无构建SHA、logicalSize或TextScaler记录，且本轮未重拍当前业务页面"
+  },
+  {
+    "id": "V69",
+    "page": "注册下半屏",
+    "state": "注册下半屏",
+    "route": "/auth + register",
+    "theme": "LIGHT_OBSERVED",
+    "logicalSize": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "textScale": "UNKNOWN_NOT_RECORDED_IN_PNG",
+    "pixelSize": [
+      1320,
+      2868
+    ],
+    "sourceSha": "6061359de0d6db6597176a9158ee826de490f6c4",
+    "sourceSha256": {
+      "lib/login/view/login_screen.dart": "059b7073e8aa343f9f330f5092ccd8e16cbc8913be23d6d0ba764f09f6d87c69",
+      "lib/login/view/auth_page.dart": "b14f4c22aadfb6e24b937f7f0bd32de91e1c99060d67ab4781db729a6616f951"
+    },
+    "sourceFiles": [
+      "lib/login/view/login_screen.dart",
+      "lib/login/view/auth_page.dart"
+    ],
+    "path": "/Users/zhangchi118/Desktop/Screenshot iPhone 18 Pro Max 2026-11-05 at 09.49.58.png",
+    "pathSha256": "7d54948caf6a160d61edea7ca75961d6edfcc054906bd726cf7f3ef0f292607a",
+    "contactSheet": "evidence/S0-A/attempt-001/contact-sheet-06.jpg",
+    "actuallyViewed": true,
+    "viewMethod": "6张本地联系表逐张打开，覆盖全部69张原图；未上传原图",
+    "observation": "密码、资料、条款和创建账户动作可辨；未执行真实注册。",
+    "goldenEligible": false,
+    "goldenReason": "截图无构建SHA、logicalSize或TextScaler记录，且本轮未重拍当前业务页面"
+  }
+]

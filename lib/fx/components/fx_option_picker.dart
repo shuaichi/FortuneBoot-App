@@ -9,8 +9,26 @@ import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
 import 'package:fortuneboot/generated/l10n.dart';
 
-/// 通用单选属性选择器：搜索 + 连续分组列表 + 选中勾选。
-Future<T?> showFxOptionPicker<T>(
+/// 单值选择的三种互斥结果。
+enum FxSelectionKind { cancelled, cleared, selected }
+
+/// 单值选择结果；只有 [FxSelectionKind.selected] 带有非空 [value]。
+class FxSelectionResult<T> {
+  const FxSelectionResult._(this.kind, this.value);
+
+  const FxSelectionResult.cancelled() : this._(FxSelectionKind.cancelled, null);
+
+  const FxSelectionResult.cleared() : this._(FxSelectionKind.cleared, null);
+
+  const FxSelectionResult.selected(T value)
+    : this._(FxSelectionKind.selected, value);
+
+  final FxSelectionKind kind;
+  final T? value;
+}
+
+/// 通用单选属性选择器，明确区分取消、清空和选中。
+Future<FxSelectionResult<T>> showFxOptionPickerResult<T>(
   BuildContext context, {
   required String title,
   required List<T> options,
@@ -23,8 +41,8 @@ Future<T?> showFxOptionPicker<T>(
   String? emptyText,
   bool? searchable,
   String? searchHint,
-}) {
-  return FxSheet.show<T>(
+}) async {
+  final result = await FxSheet.show<FxSelectionResult<T>>(
     context,
     title: title,
     maxHeightFactor: FxSheet.pickerHeightFactor,
@@ -42,6 +60,39 @@ Future<T?> showFxOptionPicker<T>(
       searchHint: searchHint,
     ),
   );
+  return result ?? FxSelectionResult<T>.cancelled();
+}
+
+/// 兼容旧调用方；新代码使用 [showFxOptionPickerResult] 区分取消与清空。
+Future<T?> showFxOptionPicker<T>(
+  BuildContext context, {
+  required String title,
+  required List<T> options,
+  required String Function(T) labelOf,
+  required int? Function(T) idOf,
+  String Function(T)? subtitleOf,
+  int? selectedId,
+  bool allowClear = false,
+  String? clearLabel,
+  String? emptyText,
+  bool? searchable,
+  String? searchHint,
+}) async {
+  final result = await showFxOptionPickerResult<T>(
+    context,
+    title: title,
+    options: options,
+    labelOf: labelOf,
+    idOf: idOf,
+    subtitleOf: subtitleOf,
+    selectedId: selectedId,
+    allowClear: allowClear,
+    clearLabel: clearLabel,
+    emptyText: emptyText,
+    searchable: searchable,
+    searchHint: searchHint,
+  );
+  return result.kind == FxSelectionKind.selected ? result.value : null;
 }
 
 /// 通用多选属性选择器：搜索 + 连续分组列表 + 确认按钮。
@@ -136,7 +187,7 @@ class _FxOptionPickerBodyState<T> extends State<_FxOptionPickerBody<T>> {
       });
       return;
     }
-    Navigator.of(context).pop<T>(option);
+    Navigator.of(context).pop(FxSelectionResult<T>.selected(option));
   }
 
   void _confirm() {
@@ -159,7 +210,7 @@ class _FxOptionPickerBodyState<T> extends State<_FxOptionPickerBody<T>> {
           multiSelect: false,
           onTap: () {
             HapticFeedback.selectionClick();
-            Navigator.of(context).pop<T>();
+            Navigator.of(context).pop(FxSelectionResult<T>.cleared());
           },
         ),
       for (final option in visible)

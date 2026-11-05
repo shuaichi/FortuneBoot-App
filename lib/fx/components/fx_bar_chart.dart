@@ -69,7 +69,7 @@ class FxBarChart extends StatelessWidget {
                     drawVerticalLine: false,
                     horizontalInterval: maxV <= 0 ? 1 : maxV / 3,
                     getDrawingHorizontalLine: (_) =>
-                        FlLine(color: palette.border, strokeWidth: 1),
+                        FlLine(color: palette.separator, strokeWidth: 1),
                   ),
                   borderData: FlBorderData(show: false),
                   titlesData: FlTitlesData(
@@ -123,7 +123,11 @@ class FxBarChart extends StatelessWidget {
                           BarChartRodData(
                             toY: positive[i].value,
                             color:
-                                positive[i].color ?? FxChartPalette.colorAt(i),
+                                positive[i].color ??
+                                FxChartPalette.colorAt(
+                                  i,
+                                  brightness: Theme.of(context).brightness,
+                                ),
                             width: barWidth,
                             borderRadius: const BorderRadius.vertical(
                               top: Radius.circular(4),

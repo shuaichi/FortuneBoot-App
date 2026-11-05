@@ -1,0 +1,8 @@
+00:00 +0: loading /Users/zhangchi118/代码/FortuneBoot-App/test/fx/components/fx_chart_test.dart
+00:00 +0: /Users/zhangchi118/代码/FortuneBoot-App/test/fx/components/fx_chart_test.dart: chart grids use separator instead of control border
+00:00 +1: /Users/zhangchi118/代码/FortuneBoot-App/test/fx/components/fx_foundation_integration_test.dart: theme preserves compact borderless ledger amount editing
+00:00 +2: /Users/zhangchi118/代码/FortuneBoot-App/test/fx/components/fx_foundation_integration_test.dart: theme preserves compact borderless ledger amount editing
+00:00 +3: /Users/zhangchi118/代码/FortuneBoot-App/test/fx/components/fx_foundation_integration_test.dart: solid dark cards have visible pressed and focused states
+00:00 +4: /Users/zhangchi118/代码/FortuneBoot-App/test/fx/components/fx_foundation_integration_test.dart: solid light cards have visible pressed and focused states
+00:00 +5: /Users/zhangchi118/代码/FortuneBoot-App/test/fx/components/fx_foundation_integration_test.dart: card activation does not emit selection haptics
+00:00 +6: All tests passed!

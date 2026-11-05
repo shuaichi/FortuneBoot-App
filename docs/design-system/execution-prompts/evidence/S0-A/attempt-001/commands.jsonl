@@ -1,0 +1,9 @@
+{"command": ["pwd"], "exitCode": 0, "stdout": "/Users/zhangchi118/代码/FortuneBoot-App\n", "stderr": ""}
+{"command": ["git", "status", "--short"], "exitCode": 0, "stdout": "", "stderr": ""}
+{"command": ["git", "branch", "--show-current"], "exitCode": 0, "stdout": "master\n", "stderr": ""}
+{"command": ["git", "rev-parse", "HEAD"], "exitCode": 0, "stdout": "6061359de0d6db6597176a9158ee826de490f6c4\n", "stderr": ""}
+{"command": ["git", "diff", "--stat"], "exitCode": 0, "stdout": "", "stderr": ""}
+{"command": ["git", "diff", "--name-only"], "exitCode": 0, "stdout": "", "stderr": ""}
+{"command": ["git", "ls-files", "--others", "--exclude-standard"], "exitCode": 0, "stdout": "", "stderr": ""}
+{"command": ["git", "log", "-5", "--oneline", "--decorate"], "exitCode": 0, "stdout": "6061359 (HEAD -> master) chore(文档): 清理过时资料并收敛工作区忽略规则\n26e959d refactor(设计系统): 统一主题令牌与基础组件交互\n87f7203 (origin/master) refactor(界面): 收尾认证流与个人中心系统页\na46d489 refactor(界面): 收敛账户归物与管理属性选择层级\na073b47 refactor(界面): 重构记账编辑器与全局弹层\n", "stderr": ""}
+{"command": ["python3", "docs/design-system/execution-prompts/tools/validate_pack.py"], "exitCode": 0, "stdout": "PASS: 28 main + 16 conditional prompts; 334 audit IDs; unique owners and complete instances\nPASS: dependencies, return sessions, review boundaries, links and complete bundle\nStage states: {'NOT_STARTED': 44}\nThis validates prompt artifacts only; it does not execute or approve any implementation stage.\n", "stderr": ""}

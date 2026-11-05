@@ -1,14 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
 import 'package:fortuneboot/generated/l10n.dart';
 
-/// 表单属性选择行：左侧字段名、右侧当前值、尾部箭头。
-///
-/// 用于分类 / 标签 / 账户 / 成员等属性入口，统一替代各页面自行实现的
-/// ListTile 或大块 chip 云。低频说明和排序等字段应留在编辑表单，不进入本行。
+/// 表单属性选择行：字段名、完整当前值、清除与选择入口。
 class FxSelectRow extends StatelessWidget {
   const FxSelectRow({
     super.key,
@@ -39,88 +35,124 @@ class FxSelectRow extends StatelessWidget {
     final palette = FxPalette.of(context);
     final hasValue = value != null && value!.isNotEmpty;
     final display = hasValue ? value! : placeholder ?? '';
+    final labelText = Text(
+      label,
+      style: FxTypography.label.copyWith(color: palette.textSecondary),
+    );
+    final valueText = Text(
+      display,
+      style: FxTypography.body.copyWith(
+        color: hasValue ? palette.textPrimary : palette.textTertiary,
+      ),
+    );
+    final clear = hasValue && onClear != null
+        ? Semantics(
+            container: true,
+            button: true,
+            label: '${S.of(context).fxClearLabel} $label',
+            child: InkResponse(
+              onTap: onClear,
+              radius: 24,
+              child: SizedBox(
+                width: 44,
+                height: 48,
+                child: Icon(
+                  Icons.close_rounded,
+                  size: 18,
+                  color: palette.textTertiary,
+                ),
+              ),
+            ),
+          )
+        : null;
+    final chevron = Icon(
+      Icons.chevron_right_rounded,
+      size: 20,
+      color: palette.textTertiary,
+    );
 
     return Semantics(
-      button: true,
+      button: onTap != null,
       enabled: onTap != null,
       label: hasValue ? '$label, $display' : label,
       child: InkWell(
-        onTap: onTap == null
-            ? null
-            : () {
-                HapticFeedback.selectionClick();
-                onTap!.call();
-              },
+        onTap: onTap,
         child: ConstrainedBox(
           constraints: const BoxConstraints(minHeight: 48),
           child: Padding(
             padding: padding,
-            child: Row(
-              children: [
-                SizedBox(
-                  width: labelWidth,
-                  child: Row(
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final reflow =
+                    constraints.maxWidth < 360 ||
+                    MediaQuery.textScalerOf(context).scale(1) > 1.3;
+                if (reflow) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      Flexible(
-                        child: Text(
-                          label,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: FxTypography.label.copyWith(
-                            color: palette.textSecondary,
-                          ),
+                      Wrap(
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        children: [
+                          labelText,
+                          if (required)
+                            Text(
+                              ' *',
+                              style: FxTypography.label.copyWith(
+                                color: palette.danger,
+                              ),
+                            ),
+                        ],
+                      ),
+                      const SizedBox(height: FxSpacing.xs),
+                      valueText,
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            if (clear != null) clear,
+                            const SizedBox(width: FxSpacing.xs),
+                            chevron,
+                          ],
                         ),
                       ),
-                      if (required)
-                        Text(
-                          ' *',
-                          style: FxTypography.label.copyWith(
-                            color: palette.danger,
-                          ),
-                        ),
                     ],
-                  ),
-                ),
-                Expanded(
-                  child: Text(
-                    display,
-                    textAlign: TextAlign.right,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: FxTypography.body.copyWith(
-                      color: hasValue
-                          ? palette.textPrimary
-                          : palette.textTertiary,
-                    ),
-                  ),
-                ),
-                if (hasValue && onClear != null) ...[
-                  const SizedBox(width: FxSpacing.xs),
-                  Semantics(
-                    button: true,
-                    label: S.of(context).fxTreePickerClear,
-                    child: InkResponse(
-                      onTap: onClear,
-                      radius: 18,
-                      child: SizedBox(
-                        width: 32,
-                        height: 48,
-                        child: Icon(
-                          Icons.close_rounded,
-                          size: 16,
-                          color: palette.textTertiary,
-                        ),
+                  );
+                }
+                return Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      width: labelWidth,
+                      child: Wrap(
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        children: [
+                          labelText,
+                          if (required)
+                            Text(
+                              ' *',
+                              style: FxTypography.label.copyWith(
+                                color: palette.danger,
+                              ),
+                            ),
+                        ],
                       ),
                     ),
-                  ),
-                ],
-                const SizedBox(width: FxSpacing.sm),
-                Icon(
-                  Icons.chevron_right_rounded,
-                  size: 20,
-                  color: palette.textTertiary,
-                ),
-              ],
+                    Expanded(
+                      child: Align(
+                        alignment: Alignment.centerRight,
+                        child: valueText,
+                      ),
+                    ),
+                    if (clear != null) ...[
+                      const SizedBox(width: FxSpacing.xs),
+                      clear,
+                    ],
+                    const SizedBox(width: FxSpacing.sm),
+                    chevron,
+                  ],
+                );
+              },
             ),
           ),
         ),

@@ -1,0 +1,46 @@
+{
+  "takeoverAnd334Triage": {
+    "status": "PASSED",
+    "evidence": "runtime/issue-checks/S0-A.json; evidence/S0-A/attempt-001/issue-mapping-validation.json"
+  },
+  "baselineAndCurrentVerification": {
+    "status": "PASSED",
+    "evidence": "commands.jsonl; source-sha-comparison.json; results.json"
+  },
+  "contractsConsumersAndMigrationFacts": {
+    "status": "PASSED",
+    "evidence": "reference/contracts-current.md; reference/component-consumers.json; reference/page-migration-map.md"
+  },
+  "disputedContracts": {
+    "status": "PASSED_WITH_EXTERNAL_GAPS_RECORDED",
+    "evidence": "reference/external-gaps.md"
+  },
+  "visualMapping69AndCoveragePlan": {
+    "status": "PASSED",
+    "evidence": "screenshot-index.json; contact-sheet-01.jpg..contact-sheet-06.jpg; preview-index.json"
+  },
+  "runtimeHandoffAndStopBoundary": {
+    "status": "PASSED",
+    "evidence": "handoff/S0-A.md; progress-diff.json; final-validation.log"
+  },
+  "decisiveFullTests": {
+    "status": "PASSED",
+    "evidence": "387 success, 1 skipped, 0 failed; flutter-test.json"
+  },
+  "decisiveAnalysis": {
+    "status": "PASSED_WITH_EXISTING_DIAGNOSTICS",
+    "evidence": "0 error, 252 warning, 907 info; flutter-analyze.log"
+  },
+  "decisiveTargetedFoundationAndAttachment": {
+    "status": "PASSED",
+    "evidence": "6/6 current full-run tests; targeted-tests.json"
+  },
+  "noVerifiedClosed": {
+    "status": "PASSED",
+    "evidence": "runtime/issue-checks/S0-A.json summary.verifiedClosed=0"
+  },
+  "businessSourceReadOnly": {
+    "status": "PASSED",
+    "evidence": "git diff --exit-code -- lib test tool pubspec.yaml pubspec.lock ios android ohos"
+  }
+}

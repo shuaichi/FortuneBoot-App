@@ -1,0 +1,26 @@
+{
+  "components": 59,
+  "componentConsumerEdges": 796,
+  "issues": {
+    "total": 334,
+    "module": 277,
+    "DT": 45,
+    "CX": 12,
+    "verifiedClosed": 0,
+    "preexistingFixBehaviorVerified": 1,
+    "conditionalEntryDisabled": 2,
+    "preexistingFoundationFixes": 17,
+    "preexistingFoundationPartials": 14,
+    "externalLinked": 8,
+    "byObserved": {
+      "REFERENCED_SOURCE_UNCHANGED_BEHAVIOR_PENDING_OWNER_RECHECK": 254,
+      "CLIENT_FACTS_INDEXED_OWNER_BEHAVIOR_RECHECK_REQUIRED": 8,
+      "RELATED_SOURCE_CHANGED_AFTER_AUDIT_OWNER_RECHECK_REQUIRED": 12,
+      "PREEXISTING_FIX_PRESENT": 1,
+      "ENTRY_DISABLED_NOT_REPRODUCIBLE_IN_CURRENT_PRODUCT": 2,
+      "PREEXISTING_FOUNDATION_FIX_PRESENT": 17,
+      "PREEXISTING_FOUNDATION_PARTIAL_CONSUMERS_PENDING": 14,
+      "AUDIT_TEXT_AND_GLOBAL_COMPONENT_FACTS_INDEXED_OWNER_RECHECK_REQUIRED": 26
+    }
+  }
+}

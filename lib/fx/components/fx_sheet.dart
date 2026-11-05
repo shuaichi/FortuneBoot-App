@@ -8,6 +8,68 @@ import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
+import 'package:fortuneboot/generated/l10n.dart';
+
+/// 可组合的弹层退出保护：未修改直接退出，有修改确认，忙碌时阻止退出。
+///
+/// 成功提交前由调用方将 [hasUnsavedChanges] 设为 false，随后可正常 pop。
+/// 键盘与安全区仍由 [FxSheet] 统一处理，本组件不添加额外 inset。
+class FxSheetPopGuard extends StatefulWidget {
+  const FxSheetPopGuard({
+    super.key,
+    required this.hasUnsavedChanges,
+    this.isBusy = false,
+    required this.child,
+  });
+
+  final bool hasUnsavedChanges;
+  final bool isBusy;
+  final Widget child;
+
+  @override
+  State<FxSheetPopGuard> createState() => _FxSheetPopGuardState();
+}
+
+class _FxSheetPopGuardState extends State<FxSheetPopGuard> {
+  var _discardConfirmed = false;
+
+  bool get _canPop =>
+      !widget.isBusy && (!widget.hasUnsavedChanges || _discardConfirmed);
+
+  Future<void> _onPopInvoked(bool didPop, Object? result) async {
+    if (didPop || widget.isBusy || !widget.hasUnsavedChanges) return;
+    final s = S.of(context);
+    final discard = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(s.fxUnsavedChangesTitle),
+        content: Text(s.fxUnsavedChangesMessage),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+            child: Text(s.fxKeepEditing),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(true),
+            child: Text(s.fxDiscardChanges),
+          ),
+        ],
+      ),
+    );
+    if (discard != true || !mounted) return;
+    setState(() => _discardConfirmed = true);
+    Navigator.of(context).pop(result);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return PopScope(
+      canPop: _canPop,
+      onPopInvokedWithResult: _onPopInvoked,
+      child: widget.child,
+    );
+  }
+}
 
 /// 统一 bottom sheet 壳：圆角 + 拖拽条 + 标题与关闭出口。支持亮暗主题。
 class FxSheet extends StatelessWidget {

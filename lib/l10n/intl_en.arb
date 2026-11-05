@@ -192,6 +192,13 @@
   "mine": "My",
   "commonSave": "Save",
   "commonCancel": "Cancel",
+  "fxUnsavedChangesTitle": "Discard unsaved changes?",
+  "fxUnsavedChangesMessage": "Your changes have not been saved. Leaving now will discard them.",
+  "fxKeepEditing": "Keep editing",
+  "fxDiscardChanges": "Discard changes",
+  "fxConfirmFailure": "The action could not be completed. Try again.",
+  "fxClearLabel": "Clear",
+  "fxDeleteLabel": "Delete",
   "commonMoreActions": "More actions",
   "manageSearchBranchResults": "{count} results in this branch",
   "@manageSearchBranchResults": {

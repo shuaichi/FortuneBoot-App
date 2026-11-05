@@ -143,7 +143,8 @@ class FxTextField extends StatelessWidget {
       textInputAction: textInputAction,
       onChanged: onChanged,
       onFieldSubmitted: onSubmitted,
-      onTapOutside: onTapOutside,
+      onTapOutside:
+          onTapOutside ?? (_) => FocusManager.instance.primaryFocus?.unfocus(),
       autofillHints: autofillHints,
       inputFormatters: inputFormatters,
       validator: validator,

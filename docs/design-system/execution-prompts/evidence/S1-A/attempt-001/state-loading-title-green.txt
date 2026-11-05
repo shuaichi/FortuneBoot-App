@@ -1,0 +1,3 @@
+00:00 +0: loading /Users/zhangchi118/代码/FortuneBoot-App/test/fx/components/fx_interaction_accessibility_test.dart
+00:00 +0: state view exposes task title and recovery action
+00:00 +1: All tests passed!

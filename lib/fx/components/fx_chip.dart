@@ -71,7 +71,12 @@ class FxChip extends StatelessWidget {
         child: Opacity(
           opacity: enabled ? 1 : disabledOpacity,
           child: Material(
-            color: Colors.transparent,
+            color: bg,
+            shape: RoundedRectangleBorder(
+              borderRadius: FxRadius.pillBorder,
+              side: BorderSide(color: borderColor),
+            ),
+            clipBehavior: Clip.antiAlias,
             child: InkWell(
               borderRadius: FxRadius.pillBorder,
               onTap: enabled
@@ -89,11 +94,6 @@ class FxChip extends StatelessWidget {
                       horizontal: FxSpacing.md,
                       vertical: FxSpacing.sm,
                     ),
-                decoration: BoxDecoration(
-                  color: bg,
-                  borderRadius: FxRadius.pillBorder,
-                  border: Border.all(color: borderColor),
-                ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.center,

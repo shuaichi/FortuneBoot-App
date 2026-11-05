@@ -1,0 +1,138 @@
+[
+  {
+    "page": "Fx shared component contract fixture",
+    "state": "light-320-1x",
+    "theme": "LIGHT",
+    "logicalSize": [
+      320,
+      1900
+    ],
+    "textScale": 1,
+    "pixelRatio": 1,
+    "sourceSha": "6061359de0d6db6597176a9158ee826de490f6c4",
+    "sourceSha256": "af0a15da889dfeca6e2e73f0ab641f924e1c124f53972de650e6f34349a80025",
+    "path": "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/shared-light-320-1x.png",
+    "pathSha256": "335cb121952b47de21f198fbf71e025e2f647c8e7f688ef8c4176bf6d835b5b4",
+    "actuallyViewed": true,
+    "observation": "已实际打开最终图：长中英文、长金额、选择/列表、分段、静态/操作标签、焦点/禁用、持久错误、多行 CTA、树与恢复动作完整可见；实色卡前景配对，320/2x 标签与动作上下重排，无横向溢出或关键金额省略。仅覆盖共享 fixture，不代表业务页面或真机。"
+  },
+  {
+    "page": "Fx shared component contract fixture",
+    "state": "light-320-2x",
+    "theme": "LIGHT",
+    "logicalSize": [
+      320,
+      3500
+    ],
+    "textScale": 2,
+    "pixelRatio": 1,
+    "sourceSha": "6061359de0d6db6597176a9158ee826de490f6c4",
+    "sourceSha256": "af0a15da889dfeca6e2e73f0ab641f924e1c124f53972de650e6f34349a80025",
+    "path": "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/shared-light-320-2x.png",
+    "pathSha256": "28256c4b9727745d8ec36ddebfe3e1dee1d003f755deeae538ea3489463e887c",
+    "actuallyViewed": true,
+    "observation": "已实际打开最终图：长中英文、长金额、选择/列表、分段、静态/操作标签、焦点/禁用、持久错误、多行 CTA、树与恢复动作完整可见；实色卡前景配对，320/2x 标签与动作上下重排，无横向溢出或关键金额省略。仅覆盖共享 fixture，不代表业务页面或真机。"
+  },
+  {
+    "page": "Fx shared component contract fixture",
+    "state": "light-390-1x",
+    "theme": "LIGHT",
+    "logicalSize": [
+      390,
+      1900
+    ],
+    "textScale": 1,
+    "pixelRatio": 1,
+    "sourceSha": "6061359de0d6db6597176a9158ee826de490f6c4",
+    "sourceSha256": "af0a15da889dfeca6e2e73f0ab641f924e1c124f53972de650e6f34349a80025",
+    "path": "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/shared-light-390-1x.png",
+    "pathSha256": "3fb21c90897bde9d9dd46a04b94ed80d369f717b4645bf27c09ac04de801aa22",
+    "actuallyViewed": true,
+    "observation": "已实际打开最终图：长中英文、长金额、选择/列表、分段、静态/操作标签、焦点/禁用、持久错误、多行 CTA、树与恢复动作完整可见；实色卡前景配对，320/2x 标签与动作上下重排，无横向溢出或关键金额省略。仅覆盖共享 fixture，不代表业务页面或真机。"
+  },
+  {
+    "page": "Fx shared component contract fixture",
+    "state": "light-390-2x",
+    "theme": "LIGHT",
+    "logicalSize": [
+      390,
+      3000
+    ],
+    "textScale": 2,
+    "pixelRatio": 1,
+    "sourceSha": "6061359de0d6db6597176a9158ee826de490f6c4",
+    "sourceSha256": "af0a15da889dfeca6e2e73f0ab641f924e1c124f53972de650e6f34349a80025",
+    "path": "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/shared-light-390-2x.png",
+    "pathSha256": "cb9868e9abaa4e142e917440892df608562456bfd33098c553790a630d77800a",
+    "actuallyViewed": true,
+    "observation": "已实际打开最终图：长中英文、长金额、选择/列表、分段、静态/操作标签、焦点/禁用、持久错误、多行 CTA、树与恢复动作完整可见；实色卡前景配对，320/2x 标签与动作上下重排，无横向溢出或关键金额省略。仅覆盖共享 fixture，不代表业务页面或真机。"
+  },
+  {
+    "page": "Fx shared component contract fixture",
+    "state": "dark-320-1x",
+    "theme": "DARK",
+    "logicalSize": [
+      320,
+      1900
+    ],
+    "textScale": 1,
+    "pixelRatio": 1,
+    "sourceSha": "6061359de0d6db6597176a9158ee826de490f6c4",
+    "sourceSha256": "af0a15da889dfeca6e2e73f0ab641f924e1c124f53972de650e6f34349a80025",
+    "path": "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/shared-dark-320-1x.png",
+    "pathSha256": "7161619314af8bafb63a2cef226c8bb04266c045d3853c15b9465c6abfa395b6",
+    "actuallyViewed": true,
+    "observation": "已实际打开最终图：长中英文、长金额、选择/列表、分段、静态/操作标签、焦点/禁用、持久错误、多行 CTA、树与恢复动作完整可见；实色卡前景配对，320/2x 标签与动作上下重排，无横向溢出或关键金额省略。仅覆盖共享 fixture，不代表业务页面或真机。"
+  },
+  {
+    "page": "Fx shared component contract fixture",
+    "state": "dark-320-2x",
+    "theme": "DARK",
+    "logicalSize": [
+      320,
+      3500
+    ],
+    "textScale": 2,
+    "pixelRatio": 1,
+    "sourceSha": "6061359de0d6db6597176a9158ee826de490f6c4",
+    "sourceSha256": "af0a15da889dfeca6e2e73f0ab641f924e1c124f53972de650e6f34349a80025",
+    "path": "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/shared-dark-320-2x.png",
+    "pathSha256": "8837b6ce9cba4c3354d32cab5ca86851f039d4cc73860d231f8ac0882e62353b",
+    "actuallyViewed": true,
+    "observation": "已实际打开最终图：长中英文、长金额、选择/列表、分段、静态/操作标签、焦点/禁用、持久错误、多行 CTA、树与恢复动作完整可见；实色卡前景配对，320/2x 标签与动作上下重排，无横向溢出或关键金额省略。仅覆盖共享 fixture，不代表业务页面或真机。"
+  },
+  {
+    "page": "Fx shared component contract fixture",
+    "state": "dark-390-1x",
+    "theme": "DARK",
+    "logicalSize": [
+      390,
+      1900
+    ],
+    "textScale": 1,
+    "pixelRatio": 1,
+    "sourceSha": "6061359de0d6db6597176a9158ee826de490f6c4",
+    "sourceSha256": "af0a15da889dfeca6e2e73f0ab641f924e1c124f53972de650e6f34349a80025",
+    "path": "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/shared-dark-390-1x.png",
+    "pathSha256": "a82205957d007ed78327086b6d1d4aec16f455eb5485cf18d47bb965fc45ce1a",
+    "actuallyViewed": true,
+    "observation": "已实际打开最终图：长中英文、长金额、选择/列表、分段、静态/操作标签、焦点/禁用、持久错误、多行 CTA、树与恢复动作完整可见；实色卡前景配对，320/2x 标签与动作上下重排，无横向溢出或关键金额省略。仅覆盖共享 fixture，不代表业务页面或真机。"
+  },
+  {
+    "page": "Fx shared component contract fixture",
+    "state": "dark-390-2x",
+    "theme": "DARK",
+    "logicalSize": [
+      390,
+      3000
+    ],
+    "textScale": 2,
+    "pixelRatio": 1,
+    "sourceSha": "6061359de0d6db6597176a9158ee826de490f6c4",
+    "sourceSha256": "af0a15da889dfeca6e2e73f0ab641f924e1c124f53972de650e6f34349a80025",
+    "path": "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/shared-dark-390-2x.png",
+    "pathSha256": "08f7fa8779f400b58994b5473ccd334979927e596eb4d8cd245da87f4493973e",
+    "actuallyViewed": true,
+    "observation": "已实际打开最终图：长中英文、长金额、选择/列表、分段、静态/操作标签、焦点/禁用、持久错误、多行 CTA、树与恢复动作完整可见；实色卡前景配对，320/2x 标签与动作上下重排，无横向溢出或关键金额省略。仅覆盖共享 fixture，不代表业务页面或真机。"
+  }
+]

@@ -1,0 +1,28 @@
+00:00 +0: loading /Users/zhangchi118/代码/FortuneBoot-App/test/fx/components/fx_interaction_accessibility_test.dart
+00:00 +0: state view exposes task title and recovery action
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: exactly one matching candidate
+  Actual: _TextWidgetFinder:<Found 0 widgets with text "账单": []>
+   Which: means none were found but one was expected
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///Users/zhangchi118/%E4%BB%A3%E7%A0%81/FortuneBoot-App/test/fx/components/fx_interaction_accessibility_test.dart:202:5)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1682:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/zhangchi118/%E4%BB%A3%E7%A0%81/FortuneBoot-App/test/fx/components/fx_interaction_accessibility_test.dart line 202
+The test description was:
+  state view exposes task title and recovery action
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:00 +0 -1: state view exposes task title and recovery action [E]
+  Test failed. See exception logs above.
+  The test description was: state view exposes task title and recovery action
+  
+00:00 +0 -1: Some tests failed.

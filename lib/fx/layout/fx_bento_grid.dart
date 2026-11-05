@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 
 /// 一个 Bento 卡片单元：指定跨列数与跨行数（行高为 [FxBentoGrid.rowHeight] 的倍数）。
@@ -116,6 +117,30 @@ class FxBentoGrid extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
+        final resolvedDuration = FxMotion.resolve(context, animationDuration);
+        final useSummaryList =
+            constraints.maxWidth < 360 ||
+            (constraints.maxWidth < 600 &&
+                MediaQuery.textScalerOf(context).scale(1) > 1.3);
+        if (useSummaryList) {
+          return Padding(
+            padding: padding,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                for (var index = 0; index < tiles.length; index++) ...[
+                  ConstrainedBox(
+                    constraints: BoxConstraints(
+                      minHeight: rowHeight * tiles[index].rowSpan,
+                    ),
+                    child: tiles[index].child,
+                  ),
+                  if (index < tiles.length - 1) SizedBox(height: spacing),
+                ],
+              ],
+            ),
+          );
+        }
         final columns = _columnsFor(constraints.maxWidth);
         final innerWidth = constraints.maxWidth - padding.horizontal;
         final cellWidth = (innerWidth - spacing * (columns - 1)) / columns;
@@ -174,7 +199,7 @@ class FxBentoGrid extends StatelessWidget {
         return Padding(
           padding: padding,
           child: AnimatedSize(
-            duration: animationDuration,
+            duration: resolvedDuration,
             curve: Curves.easeOutCubic,
             alignment: Alignment.topCenter,
             child: SizedBox(
@@ -186,7 +211,7 @@ class FxBentoGrid extends StatelessWidget {
                     .map(
                       (p) => AnimatedPositioned(
                         key: ValueKey(p.id),
-                        duration: animationDuration,
+                        duration: resolvedDuration,
                         curve: Curves.easeOutCubic,
                         left: p.left,
                         top: p.top,

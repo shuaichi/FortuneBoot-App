@@ -1,0 +1,38 @@
+[
+  {
+    "page": "Fx design foundation fixture",
+    "state": "light",
+    "theme": "LIGHT",
+    "logicalSize": [
+      390,
+      920
+    ],
+    "textScale": 1,
+    "pixelRatio": 2,
+    "sourceSha": "6061359de0d6db6597176a9158ee826de490f6c4",
+    "sourceSha256": "aa69de166ddb7c7828f34cd59e31e9f328587596fbfe641893bd9961ee302e80",
+    "path": "docs/design-system/foundation-light.png",
+    "pathSha256": "b4528b58bb0c5edb112c05e0f3d7988be6d6adbc136419140159a2bb35d2d63a",
+    "actuallyViewed": true,
+    "renderedThisAttempt": false,
+    "observation": "已打开当前哈希未变的现有Flutter底座图；标题、金额、文本、输入、按钮和表面在亮暗中可辨。仅证明底座fixture，不覆盖业务页面。"
+  },
+  {
+    "page": "Fx design foundation fixture",
+    "state": "dark",
+    "theme": "DARK",
+    "logicalSize": [
+      390,
+      920
+    ],
+    "textScale": 1,
+    "pixelRatio": 2,
+    "sourceSha": "6061359de0d6db6597176a9158ee826de490f6c4",
+    "sourceSha256": "aa69de166ddb7c7828f34cd59e31e9f328587596fbfe641893bd9961ee302e80",
+    "path": "docs/design-system/foundation-dark.png",
+    "pathSha256": "dde3b4727ad489bd9688620bd3974a37e380ba84c372aeb1b12e4cb5743598e9",
+    "actuallyViewed": true,
+    "renderedThisAttempt": false,
+    "observation": "已打开当前哈希未变的现有Flutter底座图；标题、金额、文本、输入、按钮和表面在亮暗中可辨。仅证明底座fixture，不覆盖业务页面。"
+  }
+]

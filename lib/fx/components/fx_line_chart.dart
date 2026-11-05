@@ -91,7 +91,7 @@ class FxLineChart extends StatelessWidget {
                     drawVerticalLine: false,
                     horizontalInterval: maxY <= 0 ? 1 : maxY / 3,
                     getDrawingHorizontalLine: (_) =>
-                        FlLine(color: palette.border, strokeWidth: 1),
+                        FlLine(color: palette.separator, strokeWidth: 1),
                   ),
                   borderData: FlBorderData(show: false),
                   titlesData: showAxes

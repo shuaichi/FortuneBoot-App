@@ -1,0 +1,43 @@
+00:00 +0: loading /Users/zhangchi118/代码/FortuneBoot-App/test/fx/components/fx_interaction_accessibility_test.dart
+00:00 +0: feedback semantics contain only localized message
+SemanticsNode#0
+ │ Rect.fromLTRB(0.0, 0.0, 2400.0, 1800.0)
+ │
+ └─SemanticsNode#1
+   │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0) scaled by 3.0x
+   │ textDirection: ltr
+   │
+   └─SemanticsNode#2
+     │ Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+     │ sortKey: OrdinalSortKey#b4065(order: 0.0)
+     │
+     └─SemanticsNode#3
+         Rect.fromLTRB(0.0, 0.0, 800.0, 600.0)
+         flags: scopesRoute
+
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: exactly one matching candidate
+  Actual: _ElementPredicateWidgetFinder:<Found 0 widgets with element matching predicate: []>
+   Which: means none were found but one was expected
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///Users/zhangchi118/%E4%BB%A3%E7%A0%81/FortuneBoot-App/test/fx/components/fx_interaction_accessibility_test.dart:209:5)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1682:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/zhangchi118/%E4%BB%A3%E7%A0%81/FortuneBoot-App/test/fx/components/fx_interaction_accessibility_test.dart line 209
+The test description was:
+  feedback semantics contain only localized message
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:00 +0 -1: feedback semantics contain only localized message [E]
+  Test failed. See exception logs above.
+  The test description was: feedback semantics contain only localized message
+  
+00:00 +0 -1: Some tests failed.

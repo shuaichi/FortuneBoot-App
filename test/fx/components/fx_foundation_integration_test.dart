@@ -86,4 +86,39 @@ void main() {
       },
     );
   }
+
+  testWidgets('card activation does not emit selection haptics', (
+    tester,
+  ) async {
+    final calls = <MethodCall>[];
+    tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+      SystemChannels.platform,
+      (call) async {
+        calls.add(call);
+        return null;
+      },
+    );
+    addTearDown(
+      () => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+        SystemChannels.platform,
+        null,
+      ),
+    );
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: FxTheme.light,
+        home: Scaffold(
+          body: FxCard(onTap: () {}, child: const Text('账单详情')),
+        ),
+      ),
+    );
+
+    await tester.tap(find.text('账单详情'));
+    await tester.pump();
+
+    expect(
+      calls.where((call) => call.method == 'HapticFeedback.vibrate'),
+      isEmpty,
+    );
+  });
 }

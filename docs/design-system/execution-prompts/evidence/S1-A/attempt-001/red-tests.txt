@@ -1,0 +1,229 @@
+00:00 +0: loading /Users/zhangchi118/代码/FortuneBoot-App/test/fx/components/fx_selection_contract_test.dart
+test/fx/components/fx_selection_contract_test.dart:26:22: Error: 'FxSelectionResult' isn't a type.
+    final results = <FxSelectionResult<int>>[];
+                     ^^^^^^^^^^^^^^^^^
+test/fx/components/fx_selection_contract_test.dart:29:15: Error: Method not found: 'showFxOptionPickerResult'.
+        await showFxOptionPickerResult<int>(
+              ^^^^^^^^^^^^^^^^^^^^^^^^
+test/fx/components/fx_selection_contract_test.dart:56:33: Error: Undefined name 'FxSelectionKind'.
+    expect(results.single.kind, FxSelectionKind.selected);
+                                ^^^^^^^^^^^^^^^
+test/fx/components/fx_selection_contract_test.dart:63:31: Error: Undefined name 'FxSelectionKind'.
+    expect(results.last.kind, FxSelectionKind.cleared);
+                              ^^^^^^^^^^^^^^^
+test/fx/components/fx_selection_contract_test.dart:70:31: Error: Undefined name 'FxSelectionKind'.
+    expect(results.last.kind, FxSelectionKind.cancelled);
+                              ^^^^^^^^^^^^^^^
+00:00 +0 -1: loading /Users/zhangchi118/代码/FortuneBoot-App/test/fx/components/fx_selection_contract_test.dart [E]
+  Failed to load "/Users/zhangchi118/代码/FortuneBoot-App/test/fx/components/fx_selection_contract_test.dart":
+  Compilation failed for testPath=/Users/zhangchi118/代码/FortuneBoot-App/test/fx/components/fx_selection_contract_test.dart: test/fx/components/fx_selection_contract_test.dart:26:22: Error: 'FxSelectionResult' isn't a type.
+      final results = <FxSelectionResult<int>>[];
+                       ^^^^^^^^^^^^^^^^^
+  test/fx/components/fx_selection_contract_test.dart:29:15: Error: Method not found: 'showFxOptionPickerResult'.
+          await showFxOptionPickerResult<int>(
+                ^^^^^^^^^^^^^^^^^^^^^^^^
+  test/fx/components/fx_selection_contract_test.dart:56:33: Error: Undefined name 'FxSelectionKind'.
+      expect(results.single.kind, FxSelectionKind.selected);
+                                  ^^^^^^^^^^^^^^^
+  test/fx/components/fx_selection_contract_test.dart:63:31: Error: Undefined name 'FxSelectionKind'.
+      expect(results.last.kind, FxSelectionKind.cleared);
+                                ^^^^^^^^^^^^^^^
+  test/fx/components/fx_selection_contract_test.dart:70:31: Error: Undefined name 'FxSelectionKind'.
+      expect(results.last.kind, FxSelectionKind.cancelled);
+                                ^^^^^^^^^^^^^^^
+  .
+  Error: The Dart compiler exited unexpectedly.
+  package:flutter_tools/src/base/common.dart 34:3  throwToolExit
+  package:flutter_tools/src/compile.dart 939:11    DefaultResidentCompiler._compile.<fn>
+  dart:async/zone_root.dart 48:47                  _rootRunUnary
+  dart:async/zone.dart 733:19                      _CustomZone.runUnary
+  dart:async/future_impl.dart 948:45               Future._propagateToListeners.handleValueCallback
+  dart:async/future_impl.dart 977:13               Future._propagateToListeners
+  dart:async/future_impl.dart 862:9                Future._propagateToListeners
+  dart:async/future_impl.dart 720:5                Future._completeWithValue
+  dart:async/future_impl.dart 804:7                Future._asyncCompleteWithValue.<fn>
+  dart:async/zone_root.dart 35:13                  _rootRun
+  dart:async/zone.dart 726:19                      _CustomZone.run
+  dart:async/zone.dart 625:7                       _CustomZone.runGuarded
+  dart:async/zone.dart 666:23                      _CustomZone.bindCallbackGuarded.<fn>
+  dart:async/schedule_microtask.dart 40:35         _microtaskLoop
+  dart:async/schedule_microtask.dart 49:5          _startMicrotaskLoop
+  dart:isolate-patch/isolate_patch.dart 127:13     _runPendingImmediateCallback
+  dart:isolate-patch/isolate_patch.dart 194:5      _RawReceivePort._handleMessage
+  
+test/fx/components/fx_sheet_guard_test.dart:36:20: Error: Method not found: 'FxSheetPopGuard'.
+            child: FxSheetPopGuard(
+                   ^^^^^^^^^^^^^^^
+00:00 +0 -2: loading /Users/zhangchi118/代码/FortuneBoot-App/test/fx/components/fx_sheet_guard_test.dart [E]
+  Failed to load "/Users/zhangchi118/代码/FortuneBoot-App/test/fx/components/fx_sheet_guard_test.dart":
+  Compilation failed for testPath=/Users/zhangchi118/代码/FortuneBoot-App/test/fx/components/fx_sheet_guard_test.dart: test/fx/components/fx_sheet_guard_test.dart:36:20: Error: Method not found: 'FxSheetPopGuard'.
+              child: FxSheetPopGuard(
+                     ^^^^^^^^^^^^^^^
+  .
+00:00 +0 -2: loading /Users/zhangchi118/代码/FortuneBoot-App/test/fx/components/fx_selection_contract_test.dart [E]
+  Error: The Dart compiler exited unexpectedly.
+  package:flutter_tools/src/base/common.dart 34:3  throwToolExit
+  package:flutter_tools/src/compile.dart 939:11    DefaultResidentCompiler._compile.<fn>
+  dart:async/zone_root.dart 48:47                  _rootRunUnary
+  dart:async/zone.dart 733:19                      _CustomZone.runUnary
+  dart:async/future_impl.dart 948:45               Future._propagateToListeners.handleValueCallback
+  dart:async/future_impl.dart 977:13               Future._propagateToListeners
+  dart:async/future_impl.dart 862:9                Future._propagateToListeners
+  dart:async/future_impl.dart 720:5                Future._completeWithValue
+  dart:async/future_impl.dart 804:7                Future._asyncCompleteWithValue.<fn>
+  dart:async/zone_root.dart 35:13                  _rootRun
+  dart:async/zone.dart 726:19                      _CustomZone.run
+  dart:async/zone.dart 625:7                       _CustomZone.runGuarded
+  dart:async/zone.dart 666:23                      _CustomZone.bindCallbackGuarded.<fn>
+  dart:async/schedule_microtask.dart 40:35         _microtaskLoop
+  dart:async/schedule_microtask.dart 49:5          _startMicrotaskLoop
+  dart:isolate-patch/isolate_patch.dart 127:13     _runPendingImmediateCallback
+  dart:isolate-patch/isolate_patch.dart 194:5      _RawReceivePort._handleMessage
+  
+test/fx/components/fx_interaction_accessibility_test.dart:176:11: Error: No named parameter with the name 'title'.
+          title: '账单暂时无法加载',
+          ^^^^^
+lib/fx/components/fx_state_view.dart:38:11: Context: Found this candidate, but the arguments don't match.
+  factory FxStateView.error({
+          ^^^^^
+00:00 +0 -2: /Users/zhangchi118/代码/FortuneBoot-App/test/fx/components/fx_amount_input_test.dart: amount input normalizes common pasted currency text
+00:00 +0 -3: loading /Users/zhangchi118/代码/FortuneBoot-App/test/fx/components/fx_interaction_accessibility_test.dart [E]
+  Failed to load "/Users/zhangchi118/代码/FortuneBoot-App/test/fx/components/fx_interaction_accessibility_test.dart":
+  Compilation failed for testPath=/Users/zhangchi118/代码/FortuneBoot-App/test/fx/components/fx_interaction_accessibility_test.dart: test/fx/components/fx_interaction_accessibility_test.dart:176:11: Error: No named parameter with the name 'title'.
+            title: '账单暂时无法加载',
+            ^^^^^
+  lib/fx/components/fx_state_view.dart:38:11: Context: Found this candidate, but the arguments don't match.
+    factory FxStateView.error({
+            ^^^^^
+  .
+00:00 +0 -3: loading /Users/zhangchi118/代码/FortuneBoot-App/test/fx/components/fx_selection_contract_test.dart [E]
+  Error: The Dart compiler exited unexpectedly.
+  package:flutter_tools/src/base/common.dart 34:3  throwToolExit
+  package:flutter_tools/src/compile.dart 939:11    DefaultResidentCompiler._compile.<fn>
+  dart:async/zone_root.dart 48:47                  _rootRunUnary
+  dart:async/zone.dart 733:19                      _CustomZone.runUnary
+  dart:async/future_impl.dart 948:45               Future._propagateToListeners.handleValueCallback
+  dart:async/future_impl.dart 977:13               Future._propagateToListeners
+  dart:async/future_impl.dart 862:9                Future._propagateToListeners
+  dart:async/future_impl.dart 720:5                Future._completeWithValue
+  dart:async/future_impl.dart 804:7                Future._asyncCompleteWithValue.<fn>
+  dart:async/zone_root.dart 35:13                  _rootRun
+  dart:async/zone.dart 726:19                      _CustomZone.run
+  dart:async/zone.dart 625:7                       _CustomZone.runGuarded
+  dart:async/zone.dart 666:23                      _CustomZone.bindCallbackGuarded.<fn>
+  dart:async/schedule_microtask.dart 40:35         _microtaskLoop
+  dart:async/schedule_microtask.dart 49:5          _startMicrotaskLoop
+  dart:isolate-patch/isolate_patch.dart 127:13     _runPendingImmediateCallback
+  dart:isolate-patch/isolate_patch.dart 194:5      _RawReceivePort._handleMessage
+  
+00:00 +0 -3: /Users/zhangchi118/代码/FortuneBoot-App/test/fx/components/fx_money_text_test.dart: long money text wraps instead of ellipsizing by default
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: <1>
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///Users/zhangchi118/%E4%BB%A3%E7%A0%81/FortuneBoot-App/test/fx/components/fx_money_text_test.dart:36:5)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1682:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/zhangchi118/%E4%BB%A3%E7%A0%81/FortuneBoot-App/test/fx/components/fx_money_text_test.dart line 36
+The test description was:
+  long money text wraps instead of ellipsizing by default
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:00 +0 -4: /Users/zhangchi118/代码/FortuneBoot-App/test/fx/components/fx_amount_input_test.dart: amount input normalizes common pasted currency text
+00:00 +0 -4: /Users/zhangchi118/代码/FortuneBoot-App/test/fx/components/fx_money_text_test.dart: long money text wraps instead of ellipsizing by default [E]
+  Test failed. See exception logs above.
+  The test description was: long money text wraps instead of ellipsizing by default
+  
+00:00 +0 -4: /Users/zhangchi118/代码/FortuneBoot-App/test/fx/components/fx_money_text_test.dart: masked money never exposes exact value to semantics or tooltip
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: '••••'
+  Actual: ''
+   Which: is different. Both strings start the same, but the actual value is missing the following
+trailing characters: ••••
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///Users/zhangchi118/%E4%BB%A3%E7%A0%81/FortuneBoot-App/test/fx/components/fx_money_text_test.dart:59:5)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1682:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/zhangchi118/%E4%BB%A3%E7%A0%81/FortuneBoot-App/test/fx/components/fx_money_text_test.dart line 59
+The test description was:
+  masked money never exposes exact value to semantics or tooltip
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:00 +0 -5: /Users/zhangchi118/代码/FortuneBoot-App/test/fx/components/fx_amount_input_test.dart: amount input normalizes common pasted currency text
+00:00 +0 -5: /Users/zhangchi118/代码/FortuneBoot-App/test/fx/components/fx_money_text_test.dart: masked money never exposes exact value to semantics or tooltip [E]
+  Test failed. See exception logs above.
+  The test description was: masked money never exposes exact value to semantics or tooltip
+  
+00:00 +0 -5: /Users/zhangchi118/代码/FortuneBoot-App/test/fx/components/fx_money_text_test.dart: finance preference color is not reused as small text foreground
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: not Color:<Color(alpha: 1.0000, red: 1.0000, green: 0.9608, blue: 0.6157, colorSpace:
+ColorSpace.sRGB)>
+  Actual: Color:<Color(alpha: 1.0000, red: 1.0000, green: 0.9608, blue: 0.6157, colorSpace:
+ColorSpace.sRGB)>
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///Users/zhangchi118/%E4%BB%A3%E7%A0%81/FortuneBoot-App/test/fx/components/fx_money_text_test.dart:97:5)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1682:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/zhangchi118/%E4%BB%A3%E7%A0%81/FortuneBoot-App/test/fx/components/fx_money_text_test.dart line 97
+The test description was:
+  finance preference color is not reused as small text foreground
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:00 +0 -6: /Users/zhangchi118/代码/FortuneBoot-App/test/fx/components/fx_amount_input_test.dart: amount input normalizes common pasted currency text
+00:00 +0 -6: /Users/zhangchi118/代码/FortuneBoot-App/test/fx/components/fx_money_text_test.dart: finance preference color is not reused as small text foreground [E]
+  Test failed. See exception logs above.
+  The test description was: finance preference color is not reused as small text foreground
+  
+00:00 +0 -6: /Users/zhangchi118/代码/FortuneBoot-App/test/fx/components/fx_amount_input_test.dart: amount input normalizes common pasted currency text
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: '1234.56'
+  Actual: ''
+   Which: is different. Both strings start the same, but the actual value is missing the following
+trailing characters: 1234.56
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///Users/zhangchi118/%E4%BB%A3%E7%A0%81/FortuneBoot-App/test/fx/components/fx_amount_input_test.dart:29:5)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1682:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/zhangchi118/%E4%BB%A3%E7%A0%81/FortuneBoot-App/test/fx/components/fx_amount_input_test.dart line 29
+The test description was:
+  amount input normalizes common pasted currency text
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:00 +0 -7: /Users/zhangchi118/代码/FortuneBoot-App/test/fx/components/fx_amount_input_test.dart: amount input normalizes common pasted currency text [E]
+  Test failed. See exception logs above.
+  The test description was: amount input normalizes common pasted currency text
+  
+00:00 +0 -7: /Users/zhangchi118/代码/FortuneBoot-App/test/fx/components/fx_amount_input_test.dart: done action finishes numeric editing
+00:00 +1 -7: Some tests failed.

@@ -20,13 +20,12 @@ abstract final class FxFeedback {
     final messenger = ScaffoldMessenger.maybeOf(context);
     if (messenger == null) return;
 
-    messenger.hideCurrentSnackBar();
     messenger.showSnackBar(
       SnackBar(
         duration: duration,
         content: Semantics(
           liveRegion: true,
-          label: '${tone.name}: $message',
+          label: message,
           child: Text(message),
         ),
         action: actionLabel == null || onAction == null

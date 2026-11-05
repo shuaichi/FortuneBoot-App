@@ -1,0 +1,57 @@
+[
+  {
+    "path": "docs/design-system/execution-prompts/handoff/S1-A.md",
+    "bytes": 7846,
+    "sha256": "728958bd0a6a84c8712bb3f1a1a594b302149a8f7574358e63fc9da4bf127f41"
+  },
+  {
+    "path": "docs/design-system/execution-prompts/runtime/issue-checks/S1-A.json",
+    "bytes": 115678,
+    "sha256": "920223632da40c5313e4ab2cb569cb855cfe239fc02679579dbbb1d488c0fb47"
+  },
+  {
+    "path": "docs/design-system/execution-prompts/runtime/progress.json",
+    "bytes": 11159,
+    "sha256": "8ff2386819e3bf7f0251c87eba0714b957b34e2deafa907c459986e682db3a5d"
+  },
+  {
+    "path": "docs/design-system/execution-prompts/reference/contracts-current.md",
+    "bytes": 9737,
+    "sha256": "3c1b4e7a6ba33f74a05647815d675834eec9df257a65536b3003495d9eafb7d2"
+  },
+  {
+    "path": "docs/design-system/execution-prompts/reference/component-consumers.json",
+    "bytes": 88527,
+    "sha256": "6ee0c281a43f1b0774fa16f78bc8fe442272f1b4faf0d89bae93f80dbe9d4416"
+  },
+  {
+    "path": "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/results.json",
+    "bytes": 1973,
+    "sha256": "00011b6ff8bb4fe9438c10e4a5eb1561c06f6329f6c8ecce604dff2a52f5eb72"
+  },
+  {
+    "path": "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/commands.json",
+    "bytes": 2083,
+    "sha256": "3b6ff4bcbc92c5b183c8eea194ec0f4c678f51ee2877470c2799d0c9a74e7557"
+  },
+  {
+    "path": "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/screenshot-index.json",
+    "bytes": 7407,
+    "sha256": "6a6265f52967ca0877cce858933b3a690936d0c8f57b23618963dd54d58a4dc8"
+  },
+  {
+    "path": "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/validation.json",
+    "bytes": 664,
+    "sha256": "505da7207ade5e829f0577a33a5fc8c67c2d16c81b9a4840b430a64469b12b31"
+  },
+  {
+    "path": "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/source-sha256.json",
+    "bytes": 4091,
+    "sha256": "ceca519120b36e26878c40d4fd673fc4a97dc234a350dc8352ab5dcfd1b26036"
+  },
+  {
+    "path": "docs/design-system/execution-prompts/evidence/S1-A/attempt-001/final-repo-status.json",
+    "bytes": 4264,
+    "sha256": "0f4bb4409ba854a7cfba3b99427c1a0c6457c51460358d371ba75fc340fb22ba"
+  }
+]

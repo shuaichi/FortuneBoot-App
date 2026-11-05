@@ -1,0 +1,322 @@
+{"protocolVersion":"0.1.1","runnerVersion":null,"pid":64680,"type":"start","time":0}
+{"suite":{"id":0,"platform":"vm","path":"/Users/zhangchi118/代码/FortuneBoot-App/test/features/bill_editor/data/editor_options_service_test.dart"},"type":"suite","time":0}
+{"test":{"id":1,"name":"loading /Users/zhangchi118/代码/FortuneBoot-App/test/features/bill_editor/data/editor_options_service_test.dart","suiteID":0,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":0}
+{"suite":{"id":2,"platform":"vm","path":"/Users/zhangchi118/代码/FortuneBoot-App/test/features/bill_editor/presentation/bill_editor_order_flow_test.dart"},"type":"suite","time":2}
+{"test":{"id":3,"name":"loading /Users/zhangchi118/代码/FortuneBoot-App/test/features/bill_editor/presentation/bill_editor_order_flow_test.dart","suiteID":2,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":2}
+{"suite":{"id":4,"platform":"vm","path":"/Users/zhangchi118/代码/FortuneBoot-App/test/features/bill_editor/presentation/bill_editor_bloc_test.dart"},"type":"suite","time":2}
+{"test":{"id":5,"name":"loading /Users/zhangchi118/代码/FortuneBoot-App/test/features/bill_editor/presentation/bill_editor_bloc_test.dart","suiteID":4,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":2}
+{"suite":{"id":6,"platform":"vm","path":"/Users/zhangchi118/代码/FortuneBoot-App/test/features/bill_editor/presentation/widgets/attachment_grid_test.dart"},"type":"suite","time":2}
+{"test":{"id":7,"name":"loading /Users/zhangchi118/代码/FortuneBoot-App/test/features/bill_editor/presentation/widgets/attachment_grid_test.dart","suiteID":6,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":2}
+{"suite":{"id":8,"platform":"vm","path":"/Users/zhangchi118/代码/FortuneBoot-App/test/features/bill_editor/presentation/widgets/category_split_section_test.dart"},"type":"suite","time":2}
+{"test":{"id":9,"name":"loading /Users/zhangchi118/代码/FortuneBoot-App/test/features/bill_editor/presentation/widgets/category_split_section_test.dart","suiteID":8,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":2}
+{"suite":{"id":10,"platform":"vm","path":"/Users/zhangchi118/代码/FortuneBoot-App/test/features/recurring/data/cron_builder_test.dart"},"type":"suite","time":3}
+{"test":{"id":11,"name":"loading /Users/zhangchi118/代码/FortuneBoot-App/test/features/recurring/data/cron_builder_test.dart","suiteID":10,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":3}
+{"suite":{"id":12,"platform":"vm","path":"/Users/zhangchi118/代码/FortuneBoot-App/test/features/recurring/presentation/recurring_formatters_test.dart"},"type":"suite","time":3}
+{"test":{"id":13,"name":"loading /Users/zhangchi118/代码/FortuneBoot-App/test/features/recurring/presentation/recurring_formatters_test.dart","suiteID":12,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":3}
+{"count":9,"time":3,"type":"allSuites"}
+{"testID":1,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":1646}
+{"group":{"id":14,"suiteID":0,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":2,"line":null,"column":null,"url":null},"type":"group","time":1648}
+{"test":{"id":15,"name":"keeps only reimbursement orders for bill associations","suiteID":0,"groupIDs":[14],"metadata":{"skip":false,"skipReason":null},"line":6,"column":3,"url":"file:///Users/zhangchi118/%E4%BB%A3%E7%A0%81/FortuneBoot-App/test/features/bill_editor/data/editor_options_service_test.dart"},"type":"testStart","time":1648}
+{"testID":15,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":1659}
+{"test":{"id":16,"name":"closed or draft options are returned as disabled instead of replaced","suiteID":0,"groupIDs":[14],"metadata":{"skip":false,"skipReason":null},"line":17,"column":3,"url":"file:///Users/zhangchi118/%E4%BB%A3%E7%A0%81/FortuneBoot-App/test/features/bill_editor/data/editor_options_service_test.dart"},"type":"testStart","time":1659}
+{"testID":16,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":1661}
+{"suite":{"id":17,"platform":"vm","path":"/Users/zhangchi118/代码/FortuneBoot-App/test/features/recurring/presentation/recurring_editor_page_test.dart"},"type":"suite","time":1671}
+{"test":{"id":18,"name":"loading /Users/zhangchi118/代码/FortuneBoot-App/test/features/recurring/presentation/recurring_editor_page_test.dart","suiteID":17,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":1671}
+{"testID":5,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":1761}
+{"group":{"id":19,"suiteID":4,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":19,"line":null,"column":null,"url":null},"type":"group","time":1783}
+{"test":{"id":20,"name":"uses the current time when copying a bill","suiteID":4,"groupIDs":[19],"metadata":{"skip":false,"skipReason":null},"line":19,"column":3,"url":"file:///Users/zhangchi118/%E4%BB%A3%E7%A0%81/FortuneBoot-App/test/features/bill_editor/presentation/bill_editor_bloc_test.dart"},"type":"testStart","time":1783}
+{"testID":20,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":1823}
+{"test":{"id":21,"name":"keeps the source time when copying with the setting disabled","suiteID":4,"groupIDs":[19],"metadata":{"skip":false,"skipReason":null},"line":40,"column":3,"url":"file:///Users/zhangchi118/%E4%BB%A3%E7%A0%81/FortuneBoot-App/test/features/bill_editor/presentation/bill_editor_bloc_test.dart"},"type":"testStart","time":1823}
+{"testID":21,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":1827}
+{"test":{"id":22,"name":"preserves the source time when editing a bill","suiteID":4,"groupIDs":[19],"metadata":{"skip":false,"skipReason":null},"line":57,"column":3,"url":"file:///Users/zhangchi118/%E4%BB%A3%E7%A0%81/FortuneBoot-App/test/features/bill_editor/presentation/bill_editor_bloc_test.dart"},"type":"testStart","time":1827}
+{"testID":22,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":1832}
+{"test":{"id":23,"name":"prefills pending amount for settle preset from the order detail","suiteID":4,"groupIDs":[19],"metadata":{"skip":false,"skipReason":null},"line":78,"column":3,"url":"file:///Users/zhangchi118/%E4%BB%A3%E7%A0%81/FortuneBoot-App/test/features/bill_editor/presentation/bill_editor_bloc_test.dart"},"type":"testStart","time":1832}
+{"testID":23,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":1837}
+{"test":{"id":24,"name":"prefills pending amount into the first category row for reimburse/write-off","suiteID":4,"groupIDs":[19],"metadata":{"skip":false,"skipReason":null},"line":104,"column":3,"url":"file:///Users/zhangchi118/%E4%BB%A3%E7%A0%81/FortuneBoot-App/test/features/bill_editor/presentation/bill_editor_bloc_test.dart"},"type":"testStart","time":1837}
+{"testID":24,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":1842}
+{"test":{"id":25,"name":"round-trips presetAmountCents through route args","suiteID":4,"groupIDs":[19],"metadata":{"skip":false,"skipReason":null},"line":129,"column":3,"url":"file:///Users/zhangchi118/%E4%BB%A3%E7%A0%81/FortuneBoot-App/test/features/bill_editor/presentation/bill_editor_bloc_test.dart"},"type":"testStart","time":1842}
+{"testID":25,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":1843}
+{"test":{"id":26,"name":"updates the surviving category row by stable row ID","suiteID":4,"groupIDs":[19],"metadata":{"skip":false,"skipReason":null},"line":141,"column":3,"url":"file:///Users/zhangchi118/%E4%BB%A3%E7%A0%81/FortuneBoot-App/test/features/bill_editor/presentation/bill_editor_bloc_test.dart"},"type":"testStart","time":1843}
+{"testID":26,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":1850}
+{"test":{"id":27,"name":"adds a non-transfer extra only for a category in the current split","suiteID":4,"groupIDs":[19],"metadata":{"skip":false,"skipReason":null},"line":170,"column":3,"url":"file:///Users/zhangchi118/%E4%BB%A3%E7%A0%81/FortuneBoot-App/test/features/bill_editor/presentation/bill_editor_bloc_test.dart"},"type":"testStart","time":1851}
+{"testID":27,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":1856}
+{"test":{"id":28,"name":"rejects a non-transfer extra whose category leaves the split","suiteID":4,"groupIDs":[19],"metadata":{"skip":false,"skipReason":null},"line":194,"column":3,"url":"file:///Users/zhangchi118/%E4%BB%A3%E7%A0%81/FortuneBoot-App/test/features/bill_editor/presentation/bill_editor_bloc_test.dart"},"type":"testStart","time":1857}
+{"testID":28,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":1864}
+{"test":{"id":29,"name":"preserves non-transfer extra categories when copying a bill","suiteID":4,"groupIDs":[19],"metadata":{"skip":false,"skipReason":null},"line":229,"column":3,"url":"file:///Users/zhangchi118/%E4%BB%A3%E7%A0%81/FortuneBoot-App/test/features/bill_editor/presentation/bill_editor_bloc_test.dart"},"type":"testStart","time":1865}
+{"testID":29,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":1869}
+{"test":{"id":30,"name":"normalizes transfer extra category and account side when prefilling","suiteID":4,"groupIDs":[19],"metadata":{"skip":false,"skipReason":null},"line":254,"column":3,"url":"file:///Users/zhangchi118/%E4%BB%A3%E7%A0%81/FortuneBoot-App/test/features/bill_editor/presentation/bill_editor_bloc_test.dart"},"type":"testStart","time":1869}
+{"testID":30,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":1875}
+{"test":{"id":31,"name":"allows a zero-amount extra draft without a category","suiteID":4,"groupIDs":[19],"metadata":{"skip":false,"skipReason":null},"line":284,"column":3,"url":"file:///Users/zhangchi118/%E4%BB%A3%E7%A0%81/FortuneBoot-App/test/features/bill_editor/presentation/bill_editor_bloc_test.dart"},"type":"testStart","time":1875}
+{"testID":31,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":1883}
+{"test":{"id":32,"name":"submits non-transfer extras with a category from the current split","suiteID":4,"groupIDs":[19],"metadata":{"skip":false,"skipReason":null},"line":307,"column":3,"url":"file:///Users/zhangchi118/%E4%BB%A3%E7%A0%81/FortuneBoot-App/test/features/bill_editor/presentation/bill_editor_bloc_test.dart"},"type":"testStart","time":1883}
+{"testID":7,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":1892}
+{"group":{"id":33,"suiteID":6,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":2,"line":null,"column":null,"url":null},"type":"group","time":1892}
+{"test":{"id":34,"name":"renders a named file card for a non-image attachment","suiteID":6,"groupIDs":[33],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":10,"root_column":3,"root_url":"file:///Users/zhangchi118/%E4%BB%A3%E7%A0%81/FortuneBoot-App/test/features/bill_editor/presentation/widgets/attachment_grid_test.dart"},"type":"testStart","time":1892}
+{"testID":3,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":1894}
+{"group":{"id":35,"suiteID":2,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":13,"line":null,"column":null,"url":null},"type":"group","time":1894}
+{"test":{"id":36,"name":"route parsing checks every order context value","suiteID":2,"groupIDs":[35],"metadata":{"skip":false,"skipReason":null},"line":25,"column":3,"url":"file:///Users/zhangchi118/%E4%BB%A3%E7%A0%81/FortuneBoot-App/test/features/bill_editor/presentation/bill_editor_order_flow_test.dart"},"type":"testStart","time":1894}
+{"testID":32,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":1901}
+{"test":{"id":37,"name":"submits transfer extras with null category IDs and valid sides","suiteID":4,"groupIDs":[19],"metadata":{"skip":false,"skipReason":null},"line":352,"column":3,"url":"file:///Users/zhangchi118/%E4%BB%A3%E7%A0%81/FortuneBoot-App/test/features/bill_editor/presentation/bill_editor_bloc_test.dart"},"type":"testStart","time":1907}
+{"testID":36,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":1913}
+{"test":{"id":38,"name":"option filtering maps each flow to one finance order type","suiteID":2,"groupIDs":[35],"metadata":{"skip":false,"skipReason":null},"line":44,"column":3,"url":"file:///Users/zhangchi118/%E4%BB%A3%E7%A0%81/FortuneBoot-App/test/features/bill_editor/presentation/bill_editor_order_flow_test.dart"},"type":"testStart","time":1913}
+{"testID":37,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":1916}
+{"test":{"id":39,"name":"ignores an update for a removed extra row","suiteID":4,"groupIDs":[19],"metadata":{"skip":false,"skipReason":null},"line":396,"column":3,"url":"file:///Users/zhangchi118/%E4%BB%A3%E7%A0%81/FortuneBoot-App/test/features/bill_editor/presentation/bill_editor_bloc_test.dart"},"type":"testStart","time":1916}
+{"testID":38,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":1916}
+{"test":{"id":40,"name":"submits principal flows as precise single-amount entries","suiteID":2,"groupIDs":[35],"metadata":{"skip":false,"skipReason":null},"line":60,"column":3,"url":"file:///Users/zhangchi118/%E4%BB%A3%E7%A0%81/FortuneBoot-App/test/features/bill_editor/presentation/bill_editor_order_flow_test.dart"},"type":"testStart","time":1917}
+{"testID":39,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":1921}
+{"test":{"id":41,"name":"transfer default title follows from/to account types","suiteID":4,"groupIDs":[19],"metadata":{"skip":false,"skipReason":null},"line":428,"column":3,"url":"file:///Users/zhangchi118/%E4%BB%A3%E7%A0%81/FortuneBoot-App/test/features/bill_editor/presentation/bill_editor_bloc_test.dart"},"type":"testStart","time":1922}
+{"testID":41,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":1925}
+{"test":{"id":42,"name":"income-side associations bind reimburse like income","suiteID":4,"groupIDs":[19],"metadata":{"skip":false,"skipReason":null},"line":476,"column":3,"url":"file:///Users/zhangchi118/%E4%BB%A3%E7%A0%81/FortuneBoot-App/test/features/bill_editor/presentation/bill_editor_bloc_test.dart"},"type":"testStart","time":1925}
+{"testID":42,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":1926}
+{"test":{"id":43,"name":"new advance bills default to an expense-capable account","suiteID":4,"groupIDs":[19],"metadata":{"skip":false,"skipReason":null},"line":489,"column":3,"url":"file:///Users/zhangchi118/%E4%BB%A3%E7%A0%81/FortuneBoot-App/test/features/bill_editor/presentation/bill_editor_bloc_test.dart"},"type":"testStart","time":1926}
+{"testID":43,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":1931}
+{"test":{"id":44,"name":"new reimburse bills default to an income-capable account","suiteID":4,"groupIDs":[19],"metadata":{"skip":false,"skipReason":null},"line":506,"column":3,"url":"file:///Users/zhangchi118/%E4%BB%A3%E7%A0%81/FortuneBoot-App/test/features/bill_editor/presentation/bill_editor_bloc_test.dart"},"type":"testStart","time":1931}
+{"testID":44,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":1935}
+{"suite":{"id":45,"platform":"vm","path":"/Users/zhangchi118/代码/FortuneBoot-App/test/features/recurring/presentation/widgets/cron_schedule_editor_test.dart"},"type":"suite","time":1943}
+{"test":{"id":46,"name":"loading /Users/zhangchi118/代码/FortuneBoot-App/test/features/recurring/presentation/widgets/cron_schedule_editor_test.dart","suiteID":45,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":1943}
+{"testID":40,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":1988}
+{"test":{"id":47,"name":"advance and reimburse still submit category splits as strings","suiteID":2,"groupIDs":[35],"metadata":{"skip":false,"skipReason":null},"line":101,"column":3,"url":"file:///Users/zhangchi118/%E4%BB%A3%E7%A0%81/FortuneBoot-App/test/features/bill_editor/presentation/bill_editor_order_flow_test.dart"},"type":"testStart","time":1988}
+{"testID":47,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":2001}
+{"test":{"id":48,"name":"WRITE_OFF hides accounts, fixes confirm and requires a reason","suiteID":2,"groupIDs":[35],"metadata":{"skip":false,"skipReason":null},"line":143,"column":3,"url":"file:///Users/zhangchi118/%E4%BB%A3%E7%A0%81/FortuneBoot-App/test/features/bill_editor/presentation/bill_editor_order_flow_test.dart"},"type":"testStart","time":2001}
+{"testID":48,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":2009}
+{"test":{"id":49,"name":"normal one, two and three forms do not use the V2 entry service","suiteID":2,"groupIDs":[35],"metadata":{"skip":false,"skipReason":null},"line":185,"column":3,"url":"file:///Users/zhangchi118/%E4%BB%A3%E7%A0%81/FortuneBoot-App/test/features/bill_editor/presentation/bill_editor_order_flow_test.dart"},"type":"testStart","time":2009}
+{"testID":49,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":2017}
+{"test":{"id":50,"name":"retries the same content with one UUID and changes it for new content","suiteID":2,"groupIDs":[35],"metadata":{"skip":false,"skipReason":null},"line":205,"column":3,"url":"file:///Users/zhangchi118/%E4%BB%A3%E7%A0%81/FortuneBoot-App/test/features/bill_editor/presentation/bill_editor_order_flow_test.dart"},"type":"testStart","time":2018}
+{"testID":50,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":2032}
+{"test":{"id":51,"name":"version conflict preserves input and refreshes order detail","suiteID":2,"groupIDs":[35],"metadata":{"skip":false,"skipReason":null},"line":235,"column":3,"url":"file:///Users/zhangchi118/%E4%BB%A3%E7%A0%81/FortuneBoot-App/test/features/bill_editor/presentation/bill_editor_order_flow_test.dart"},"type":"testStart","time":2032}
+{"testID":51,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":2042}
+{"test":{"id":52,"name":"unknown bill types cannot fall back to expense editing","suiteID":2,"groupIDs":[35],"metadata":{"skip":false,"skipReason":null},"line":253,"column":3,"url":"file:///Users/zhangchi118/%E4%BB%A3%E7%A0%81/FortuneBoot-App/test/features/bill_editor/presentation/bill_editor_order_flow_test.dart"},"type":"testStart","time":2042}
+{"testID":52,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":2047}
+{"test":{"id":53,"name":"editing an order entry preserves its attachments","suiteID":2,"groupIDs":[35],"metadata":{"skip":false,"skipReason":null},"line":267,"column":3,"url":"file:///Users/zhangchi118/%E4%BB%A3%E7%A0%81/FortuneBoot-App/test/features/bill_editor/presentation/bill_editor_order_flow_test.dart"},"type":"testStart","time":2047}
+{"testID":9,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":2051}
+{"group":{"id":54,"suiteID":8,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":2,"line":null,"column":null,"url":null},"type":"group","time":2051}
+{"test":{"id":55,"name":"advance bill offers expense categories","suiteID":8,"groupIDs":[54],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":14,"root_column":3,"root_url":"file:///Users/zhangchi118/%E4%BB%A3%E7%A0%81/FortuneBoot-App/test/features/bill_editor/presentation/widgets/category_split_section_test.dart"},"type":"testStart","time":2051}
+{"testID":53,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":2053}
+{"test":{"id":56,"name":"copying an order entry clears the source bill identity","suiteID":2,"groupIDs":[35],"metadata":{"skip":false,"skipReason":null},"line":295,"column":3,"url":"file:///Users/zhangchi118/%E4%BB%A3%E7%A0%81/FortuneBoot-App/test/features/bill_editor/presentation/bill_editor_order_flow_test.dart"},"type":"testStart","time":2053}
+{"testID":56,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":2060}
+{"test":{"id":57,"name":"category total uses a currency symbol instead of CNY","suiteID":2,"groupIDs":[35],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":323,"root_column":3,"root_url":"file:///Users/zhangchi118/%E4%BB%A3%E7%A0%81/FortuneBoot-App/test/features/bill_editor/presentation/bill_editor_order_flow_test.dart"},"type":"testStart","time":2060}
+{"testID":11,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":2353}
+{"group":{"id":58,"suiteID":10,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":3,"line":null,"column":null,"url":null},"type":"group","time":2353}
+{"group":{"id":59,"suiteID":10,"parentID":58,"name":"CronBuilder","metadata":{"skip":false,"skipReason":null},"testCount":3,"line":5,"column":3,"url":"file:///Users/zhangchi118/%E4%BB%A3%E7%A0%81/FortuneBoot-App/test/features/recurring/data/cron_builder_test.dart"},"type":"group","time":2353}
+{"test":{"id":60,"name":"CronBuilder builds and parses monthly last-day cron","suiteID":10,"groupIDs":[58,59],"metadata":{"skip":false,"skipReason":null},"line":6,"column":5,"url":"file:///Users/zhangchi118/%E4%BB%A3%E7%A0%81/FortuneBoot-App/test/features/recurring/data/cron_builder_test.dart"},"type":"testStart","time":2353}
+{"testID":60,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":2368}
+{"test":{"id":61,"name":"CronBuilder builds and parses yearly last-day cron","suiteID":10,"groupIDs":[58,59],"metadata":{"skip":false,"skipReason":null},"line":27,"column":5,"url":"file:///Users/zhangchi118/%E4%BB%A3%E7%A0%81/FortuneBoot-App/test/features/recurring/data/cron_builder_test.dart"},"type":"testStart","time":2368}
+{"testID":61,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":2370}
+{"test":{"id":62,"name":"CronBuilder keeps regular 31st distinct from last day","suiteID":10,"groupIDs":[58,59],"metadata":{"skip":false,"skipReason":null},"line":48,"column":5,"url":"file:///Users/zhangchi118/%E4%BB%A3%E7%A0%81/FortuneBoot-App/test/features/recurring/data/cron_builder_test.dart"},"type":"testStart","time":2370}
+{"testID":62,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":2372}
+{"testID":34,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":2407}
+{"test":{"id":63,"name":"disables attachment removal while submitting","suiteID":6,"groupIDs":[33],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":34,"root_column":3,"root_url":"file:///Users/zhangchi118/%E4%BB%A3%E7%A0%81/FortuneBoot-App/test/features/bill_editor/presentation/widgets/attachment_grid_test.dart"},"type":"testStart","time":2407}
+{"testID":63,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":2462}
+{"testID":13,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":2568}
+{"group":{"id":64,"suiteID":12,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":1,"line":null,"column":null,"url":null},"type":"group","time":2568}
+{"test":{"id":65,"name":"formats execution time for people instead of exposing ISO text","suiteID":12,"groupIDs":[64],"metadata":{"skip":false,"skipReason":null},"line":5,"column":3,"url":"file:///Users/zhangchi118/%E4%BB%A3%E7%A0%81/FortuneBoot-App/test/features/recurring/presentation/recurring_formatters_test.dart"},"type":"testStart","time":2568}
+{"testID":65,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":2585}
+{"testID":57,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":2725}
+{"test":{"id":66,"name":"core editor fields share one continuous grouped form","suiteID":2,"groupIDs":[35],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":344,"root_column":3,"root_url":"file:///Users/zhangchi118/%E4%BB%A3%E7%A0%81/FortuneBoot-App/test/features/bill_editor/presentation/bill_editor_order_flow_test.dart"},"type":"testStart","time":2725}
+{"testID":66,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":2792}
+{"testID":55,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":2793}
+{"test":{"id":67,"name":"reimburse bill offers income categories","suiteID":8,"groupIDs":[54],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":23,"root_column":3,"root_url":"file:///Users/zhangchi118/%E4%BB%A3%E7%A0%81/FortuneBoot-App/test/features/bill_editor/presentation/widgets/category_split_section_test.dart"},"type":"testStart","time":2793}
+{"testID":18,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":2847}
+{"group":{"id":68,"suiteID":17,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":2,"line":null,"column":null,"url":null},"type":"group","time":2847}
+{"test":{"id":69,"name":"an unsupported legacy schedule becomes a visual daily rule","suiteID":17,"groupIDs":[68],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":17,"root_column":3,"root_url":"file:///Users/zhangchi118/%E4%BB%A3%E7%A0%81/FortuneBoot-App/test/features/recurring/presentation/recurring_editor_page_test.dart"},"type":"testStart","time":2847}
+{"testID":67,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":2856}
+{"testID":46,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":2962}
+{"group":{"id":70,"suiteID":45,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":1,"line":null,"column":null,"url":null},"type":"group","time":2963}
+{"test":{"id":71,"name":"monthly days use a seven-column grid with 44pt targets","suiteID":45,"groupIDs":[70],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":10,"root_column":3,"root_url":"file:///Users/zhangchi118/%E4%BB%A3%E7%A0%81/FortuneBoot-App/test/features/recurring/presentation/widgets/cron_schedule_editor_test.dart"},"type":"testStart","time":2963}
+{"testID":69,"messageType":"print","message":"*** Request ***","type":"print","time":3221}
+{"testID":69,"messageType":"print","message":"uri: /fortune/recurring/bill/getRecoveryStrategy","type":"print","time":3221}
+{"testID":69,"messageType":"print","message":"method: GET","type":"print","time":3221}
+{"testID":69,"messageType":"print","message":"responseType: ResponseType.json","type":"print","time":3221}
+{"testID":69,"messageType":"print","message":"followRedirects: true","type":"print","time":3222}
+{"testID":69,"messageType":"print","message":"persistentConnection: true","type":"print","time":3222}
+{"testID":69,"messageType":"print","message":"connectTimeout: 0:00:10.000000","type":"print","time":3222}
+{"testID":69,"messageType":"print","message":"sendTimeout: null","type":"print","time":3222}
+{"testID":69,"messageType":"print","message":"receiveTimeout: 0:00:15.000000","type":"print","time":3222}
+{"testID":69,"messageType":"print","message":"transformTimeout: null","type":"print","time":3222}
+{"testID":69,"messageType":"print","message":"receiveDataWhenStatusError: true","type":"print","time":3222}
+{"testID":69,"messageType":"print","message":"extra: {}","type":"print","time":3223}
+{"testID":69,"messageType":"print","message":"","type":"print","time":3223}
+{"testID":69,"messageType":"print","message":"*** Request ***","type":"print","time":3223}
+{"testID":69,"messageType":"print","message":"uri: /fortune/account/2/getEnableList","type":"print","time":3223}
+{"testID":69,"messageType":"print","message":"method: GET","type":"print","time":3223}
+{"testID":69,"messageType":"print","message":"responseType: ResponseType.json","type":"print","time":3223}
+{"testID":69,"messageType":"print","message":"followRedirects: true","type":"print","time":3223}
+{"testID":69,"messageType":"print","message":"persistentConnection: true","type":"print","time":3223}
+{"testID":69,"messageType":"print","message":"connectTimeout: 0:00:10.000000","type":"print","time":3223}
+{"testID":69,"messageType":"print","message":"sendTimeout: null","type":"print","time":3224}
+{"testID":69,"messageType":"print","message":"receiveTimeout: 0:00:15.000000","type":"print","time":3224}
+{"testID":69,"messageType":"print","message":"transformTimeout: null","type":"print","time":3224}
+{"testID":69,"messageType":"print","message":"receiveDataWhenStatusError: true","type":"print","time":3224}
+{"testID":69,"messageType":"print","message":"extra: {}","type":"print","time":3224}
+{"testID":69,"messageType":"print","message":"","type":"print","time":3224}
+{"testID":69,"messageType":"print","message":"*** Request ***","type":"print","time":3224}
+{"testID":69,"messageType":"print","message":"uri: /fortune/category/1/getEnableList?billType=1","type":"print","time":3224}
+{"testID":69,"messageType":"print","message":"method: GET","type":"print","time":3224}
+{"testID":69,"messageType":"print","message":"responseType: ResponseType.json","type":"print","time":3224}
+{"testID":69,"messageType":"print","message":"followRedirects: true","type":"print","time":3224}
+{"testID":69,"messageType":"print","message":"persistentConnection: true","type":"print","time":3224}
+{"testID":69,"messageType":"print","message":"connectTimeout: 0:00:10.000000","type":"print","time":3225}
+{"testID":69,"messageType":"print","message":"sendTimeout: null","type":"print","time":3225}
+{"testID":69,"messageType":"print","message":"receiveTimeout: 0:00:15.000000","type":"print","time":3225}
+{"testID":69,"messageType":"print","message":"transformTimeout: null","type":"print","time":3225}
+{"testID":69,"messageType":"print","message":"receiveDataWhenStatusError: true","type":"print","time":3225}
+{"testID":69,"messageType":"print","message":"extra: {}","type":"print","time":3225}
+{"testID":69,"messageType":"print","message":"","type":"print","time":3225}
+{"testID":69,"messageType":"print","message":"*** Request ***","type":"print","time":3225}
+{"testID":69,"messageType":"print","message":"uri: /fortune/category/1/getEnableList?billType=2","type":"print","time":3225}
+{"testID":69,"messageType":"print","message":"method: GET","type":"print","time":3225}
+{"testID":69,"messageType":"print","message":"responseType: ResponseType.json","type":"print","time":3225}
+{"testID":69,"messageType":"print","message":"followRedirects: true","type":"print","time":3226}
+{"testID":69,"messageType":"print","message":"persistentConnection: true","type":"print","time":3226}
+{"testID":69,"messageType":"print","message":"connectTimeout: 0:00:10.000000","type":"print","time":3226}
+{"testID":69,"messageType":"print","message":"sendTimeout: null","type":"print","time":3226}
+{"testID":69,"messageType":"print","message":"receiveTimeout: 0:00:15.000000","type":"print","time":3226}
+{"testID":69,"messageType":"print","message":"transformTimeout: null","type":"print","time":3226}
+{"testID":69,"messageType":"print","message":"receiveDataWhenStatusError: true","type":"print","time":3226}
+{"testID":69,"messageType":"print","message":"extra: {}","type":"print","time":3226}
+{"testID":69,"messageType":"print","message":"","type":"print","time":3226}
+{"testID":69,"messageType":"print","message":"*** Request ***","type":"print","time":3226}
+{"testID":69,"messageType":"print","message":"uri: /fortune/tag/1/getEnableList?billType=","type":"print","time":3226}
+{"testID":69,"messageType":"print","message":"method: GET","type":"print","time":3226}
+{"testID":69,"messageType":"print","message":"responseType: ResponseType.json","type":"print","time":3226}
+{"testID":69,"messageType":"print","message":"followRedirects: true","type":"print","time":3227}
+{"testID":69,"messageType":"print","message":"persistentConnection: true","type":"print","time":3227}
+{"testID":69,"messageType":"print","message":"connectTimeout: 0:00:10.000000","type":"print","time":3227}
+{"testID":69,"messageType":"print","message":"sendTimeout: null","type":"print","time":3227}
+{"testID":69,"messageType":"print","message":"receiveTimeout: 0:00:15.000000","type":"print","time":3227}
+{"testID":69,"messageType":"print","message":"transformTimeout: null","type":"print","time":3227}
+{"testID":69,"messageType":"print","message":"receiveDataWhenStatusError: true","type":"print","time":3227}
+{"testID":69,"messageType":"print","message":"extra: {}","type":"print","time":3227}
+{"testID":69,"messageType":"print","message":"","type":"print","time":3227}
+{"testID":69,"messageType":"print","message":"*** Response ***","type":"print","time":3237}
+{"testID":69,"messageType":"print","message":"uri: /fortune/recurring/bill/getRecoveryStrategy","type":"print","time":3237}
+{"testID":69,"messageType":"print","message":"","type":"print","time":3237}
+{"testID":69,"messageType":"print","message":"*** Response ***","type":"print","time":3238}
+{"testID":69,"messageType":"print","message":"uri: /fortune/account/2/getEnableList","type":"print","time":3238}
+{"testID":69,"messageType":"print","message":"","type":"print","time":3238}
+{"testID":69,"messageType":"print","message":"*** Response ***","type":"print","time":3238}
+{"testID":69,"messageType":"print","message":"uri: /fortune/category/1/getEnableList?billType=1","type":"print","time":3238}
+{"testID":69,"messageType":"print","message":"","type":"print","time":3239}
+{"testID":69,"messageType":"print","message":"*** Response ***","type":"print","time":3239}
+{"testID":69,"messageType":"print","message":"uri: /fortune/category/1/getEnableList?billType=2","type":"print","time":3239}
+{"testID":69,"messageType":"print","message":"","type":"print","time":3239}
+{"testID":69,"messageType":"print","message":"*** Response ***","type":"print","time":3239}
+{"testID":69,"messageType":"print","message":"uri: /fortune/tag/1/getEnableList?billType=","type":"print","time":3239}
+{"testID":69,"messageType":"print","message":"","type":"print","time":3239}
+{"testID":69,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":3453}
+{"test":{"id":72,"name":"converted legacy schedule validates and saves the visual rule","suiteID":17,"groupIDs":[68],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":56,"root_column":3,"root_url":"file:///Users/zhangchi118/%E4%BB%A3%E7%A0%81/FortuneBoot-App/test/features/recurring/presentation/recurring_editor_page_test.dart"},"type":"testStart","time":3453}
+{"testID":72,"messageType":"print","message":"*** Request ***","type":"print","time":3475}
+{"testID":72,"messageType":"print","message":"uri: /fortune/recurring/bill/getRecoveryStrategy","type":"print","time":3476}
+{"testID":72,"messageType":"print","message":"method: GET","type":"print","time":3476}
+{"testID":72,"messageType":"print","message":"responseType: ResponseType.json","type":"print","time":3476}
+{"testID":72,"messageType":"print","message":"followRedirects: true","type":"print","time":3476}
+{"testID":72,"messageType":"print","message":"persistentConnection: true","type":"print","time":3476}
+{"testID":72,"messageType":"print","message":"connectTimeout: 0:00:10.000000","type":"print","time":3477}
+{"testID":72,"messageType":"print","message":"sendTimeout: null","type":"print","time":3477}
+{"testID":72,"messageType":"print","message":"receiveTimeout: 0:00:15.000000","type":"print","time":3477}
+{"testID":72,"messageType":"print","message":"transformTimeout: null","type":"print","time":3477}
+{"testID":72,"messageType":"print","message":"receiveDataWhenStatusError: true","type":"print","time":3477}
+{"testID":72,"messageType":"print","message":"extra: {}","type":"print","time":3477}
+{"testID":72,"messageType":"print","message":"","type":"print","time":3477}
+{"testID":72,"messageType":"print","message":"*** Request ***","type":"print","time":3477}
+{"testID":72,"messageType":"print","message":"uri: /fortune/account/2/getEnableList","type":"print","time":3477}
+{"testID":72,"messageType":"print","message":"method: GET","type":"print","time":3477}
+{"testID":72,"messageType":"print","message":"responseType: ResponseType.json","type":"print","time":3477}
+{"testID":72,"messageType":"print","message":"followRedirects: true","type":"print","time":3477}
+{"testID":72,"messageType":"print","message":"persistentConnection: true","type":"print","time":3477}
+{"testID":72,"messageType":"print","message":"connectTimeout: 0:00:10.000000","type":"print","time":3477}
+{"testID":72,"messageType":"print","message":"sendTimeout: null","type":"print","time":3477}
+{"testID":72,"messageType":"print","message":"receiveTimeout: 0:00:15.000000","type":"print","time":3477}
+{"testID":72,"messageType":"print","message":"transformTimeout: null","type":"print","time":3478}
+{"testID":72,"messageType":"print","message":"receiveDataWhenStatusError: true","type":"print","time":3478}
+{"testID":72,"messageType":"print","message":"extra: {}","type":"print","time":3478}
+{"testID":72,"messageType":"print","message":"","type":"print","time":3478}
+{"testID":72,"messageType":"print","message":"*** Request ***","type":"print","time":3478}
+{"testID":72,"messageType":"print","message":"uri: /fortune/category/1/getEnableList?billType=1","type":"print","time":3478}
+{"testID":72,"messageType":"print","message":"method: GET","type":"print","time":3478}
+{"testID":72,"messageType":"print","message":"responseType: ResponseType.json","type":"print","time":3478}
+{"testID":72,"messageType":"print","message":"followRedirects: true","type":"print","time":3478}
+{"testID":72,"messageType":"print","message":"persistentConnection: true","type":"print","time":3478}
+{"testID":72,"messageType":"print","message":"connectTimeout: 0:00:10.000000","type":"print","time":3478}
+{"testID":72,"messageType":"print","message":"sendTimeout: null","type":"print","time":3478}
+{"testID":72,"messageType":"print","message":"receiveTimeout: 0:00:15.000000","type":"print","time":3478}
+{"testID":72,"messageType":"print","message":"transformTimeout: null","type":"print","time":3479}
+{"testID":72,"messageType":"print","message":"receiveDataWhenStatusError: true","type":"print","time":3479}
+{"testID":72,"messageType":"print","message":"extra: {}","type":"print","time":3479}
+{"testID":72,"messageType":"print","message":"","type":"print","time":3479}
+{"testID":72,"messageType":"print","message":"*** Request ***","type":"print","time":3479}
+{"testID":72,"messageType":"print","message":"uri: /fortune/category/1/getEnableList?billType=2","type":"print","time":3479}
+{"testID":72,"messageType":"print","message":"method: GET","type":"print","time":3479}
+{"testID":72,"messageType":"print","message":"responseType: ResponseType.json","type":"print","time":3479}
+{"testID":72,"messageType":"print","message":"followRedirects: true","type":"print","time":3479}
+{"testID":72,"messageType":"print","message":"persistentConnection: true","type":"print","time":3479}
+{"testID":72,"messageType":"print","message":"connectTimeout: 0:00:10.000000","type":"print","time":3479}
+{"testID":72,"messageType":"print","message":"sendTimeout: null","type":"print","time":3479}
+{"testID":72,"messageType":"print","message":"receiveTimeout: 0:00:15.000000","type":"print","time":3480}
+{"testID":72,"messageType":"print","message":"transformTimeout: null","type":"print","time":3480}
+{"testID":72,"messageType":"print","message":"receiveDataWhenStatusError: true","type":"print","time":3480}
+{"testID":72,"messageType":"print","message":"extra: {}","type":"print","time":3480}
+{"testID":72,"messageType":"print","message":"","type":"print","time":3480}
+{"testID":72,"messageType":"print","message":"*** Request ***","type":"print","time":3480}
+{"testID":72,"messageType":"print","message":"uri: /fortune/tag/1/getEnableList?billType=","type":"print","time":3480}
+{"testID":72,"messageType":"print","message":"method: GET","type":"print","time":3480}
+{"testID":72,"messageType":"print","message":"responseType: ResponseType.json","type":"print","time":3480}
+{"testID":72,"messageType":"print","message":"followRedirects: true","type":"print","time":3480}
+{"testID":72,"messageType":"print","message":"persistentConnection: true","type":"print","time":3480}
+{"testID":72,"messageType":"print","message":"connectTimeout: 0:00:10.000000","type":"print","time":3480}
+{"testID":72,"messageType":"print","message":"sendTimeout: null","type":"print","time":3480}
+{"testID":72,"messageType":"print","message":"receiveTimeout: 0:00:15.000000","type":"print","time":3480}
+{"testID":72,"messageType":"print","message":"transformTimeout: null","type":"print","time":3480}
+{"testID":72,"messageType":"print","message":"receiveDataWhenStatusError: true","type":"print","time":3480}
+{"testID":72,"messageType":"print","message":"extra: {}","type":"print","time":3480}
+{"testID":72,"messageType":"print","message":"","type":"print","time":3481}
+{"testID":72,"messageType":"print","message":"*** Response ***","type":"print","time":3483}
+{"testID":72,"messageType":"print","message":"uri: /fortune/recurring/bill/getRecoveryStrategy","type":"print","time":3483}
+{"testID":72,"messageType":"print","message":"","type":"print","time":3483}
+{"testID":72,"messageType":"print","message":"*** Response ***","type":"print","time":3483}
+{"testID":72,"messageType":"print","message":"uri: /fortune/account/2/getEnableList","type":"print","time":3483}
+{"testID":72,"messageType":"print","message":"","type":"print","time":3483}
+{"testID":72,"messageType":"print","message":"*** Response ***","type":"print","time":3483}
+{"testID":72,"messageType":"print","message":"uri: /fortune/category/1/getEnableList?billType=1","type":"print","time":3483}
+{"testID":72,"messageType":"print","message":"","type":"print","time":3483}
+{"testID":72,"messageType":"print","message":"*** Response ***","type":"print","time":3483}
+{"testID":72,"messageType":"print","message":"uri: /fortune/category/1/getEnableList?billType=2","type":"print","time":3483}
+{"testID":72,"messageType":"print","message":"","type":"print","time":3483}
+{"testID":72,"messageType":"print","message":"*** Response ***","type":"print","time":3483}
+{"testID":72,"messageType":"print","message":"uri: /fortune/tag/1/getEnableList?billType=","type":"print","time":3483}
+{"testID":72,"messageType":"print","message":"","type":"print","time":3484}
+{"testID":71,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":3491}
+{"testID":72,"messageType":"print","message":"*** Request ***","type":"print","time":3566}
+{"testID":72,"messageType":"print","message":"uri: /fortune/recurring/bill/checkCronExpression?cronExpression=0+0+9+%2A+%2A+%3F","type":"print","time":3566}
+{"testID":72,"messageType":"print","message":"method: POST","type":"print","time":3566}
+{"testID":72,"messageType":"print","message":"responseType: ResponseType.json","type":"print","time":3566}
+{"testID":72,"messageType":"print","message":"followRedirects: true","type":"print","time":3566}
+{"testID":72,"messageType":"print","message":"persistentConnection: true","type":"print","time":3566}
+{"testID":72,"messageType":"print","message":"connectTimeout: 0:00:10.000000","type":"print","time":3566}
+{"testID":72,"messageType":"print","message":"sendTimeout: null","type":"print","time":3566}
+{"testID":72,"messageType":"print","message":"receiveTimeout: 0:00:15.000000","type":"print","time":3566}
+{"testID":72,"messageType":"print","message":"transformTimeout: null","type":"print","time":3567}
+{"testID":72,"messageType":"print","message":"receiveDataWhenStatusError: true","type":"print","time":3567}
+{"testID":72,"messageType":"print","message":"extra: {}","type":"print","time":3567}
+{"testID":72,"messageType":"print","message":"","type":"print","time":3567}
+{"testID":72,"messageType":"print","message":"*** Response ***","type":"print","time":3567}
+{"testID":72,"messageType":"print","message":"uri: /fortune/recurring/bill/checkCronExpression?cronExpression=0+0+9+%2A+%2A+%3F","type":"print","time":3567}
+{"testID":72,"messageType":"print","message":"","type":"print","time":3567}
+{"testID":72,"messageType":"print","message":"*** Request ***","type":"print","time":3568}
+{"testID":72,"messageType":"print","message":"uri: /fortune/recurring/bill/modifyRule","type":"print","time":3568}
+{"testID":72,"messageType":"print","message":"method: PUT","type":"print","time":3569}
+{"testID":72,"messageType":"print","message":"responseType: ResponseType.json","type":"print","time":3569}
+{"testID":72,"messageType":"print","message":"followRedirects: true","type":"print","time":3569}
+{"testID":72,"messageType":"print","message":"persistentConnection: true","type":"print","time":3569}
+{"testID":72,"messageType":"print","message":"connectTimeout: 0:00:10.000000","type":"print","time":3569}
+{"testID":72,"messageType":"print","message":"sendTimeout: null","type":"print","time":3569}
+{"testID":72,"messageType":"print","message":"receiveTimeout: 0:00:15.000000","type":"print","time":3569}
+{"testID":72,"messageType":"print","message":"transformTimeout: null","type":"print","time":3569}
+{"testID":72,"messageType":"print","message":"receiveDataWhenStatusError: true","type":"print","time":3569}
+{"testID":72,"messageType":"print","message":"extra: {}","type":"print","time":3569}
+{"testID":72,"messageType":"print","message":"","type":"print","time":3569}
+{"testID":72,"messageType":"print","message":"*** Response ***","type":"print","time":3571}
+{"testID":72,"messageType":"print","message":"uri: /fortune/recurring/bill/modifyRule","type":"print","time":3572}
+{"testID":72,"messageType":"print","message":"","type":"print","time":3572}
+{"testID":72,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":3633}
+{"success":true,"type":"done","time":3642}

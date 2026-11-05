@@ -1,0 +1,4 @@
+00:00 +0: loading /Users/zhangchi118/代码/FortuneBoot-App/test/fx/components/fx_selection_contract_test.dart
+00:00 +0: single option picker distinguishes selected clear and cancel
+00:00 +1: single tree picker returns empty selection only for clear
+00:00 +2: All tests passed!

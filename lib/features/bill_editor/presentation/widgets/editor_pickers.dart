@@ -14,8 +14,8 @@ import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
 import 'package:fortuneboot/generated/l10n.dart';
 
-/// 单选选项弹窗。返回所选项（可清除时返回 null 表示清空）。
-Future<T?> showOptionPicker<T>(
+/// 单选选项弹窗，复用共享的取消、清空、选中三态结果。
+Future<FxSelectionResult<T>> showOptionPicker<T>(
   BuildContext context, {
   required String title,
   required List<T> options,
@@ -24,7 +24,7 @@ Future<T?> showOptionPicker<T>(
   int? selectedId,
   bool allowClear = false,
 }) {
-  return showFxOptionPicker<T>(
+  return showFxOptionPickerResult<T>(
     context,
     title: title,
     options: options,

@@ -31,6 +31,7 @@ import 'package:fortuneboot/fx/components/fx_date_picker.dart';
 import 'package:fortuneboot/fx/components/fx_icon_button.dart';
 import 'package:fortuneboot/fx/components/fx_list_section.dart';
 import 'package:fortuneboot/fx/components/fx_money_text.dart';
+import 'package:fortuneboot/fx/components/fx_option_picker.dart';
 import 'package:fortuneboot/fx/components/fx_segmented.dart';
 import 'package:fortuneboot/fx/components/fx_select_row.dart';
 import 'package:fortuneboot/fx/components/fx_state_view.dart';
@@ -877,8 +878,11 @@ class _PayeeRow extends StatelessWidget {
           idOf: (p) => p.payeeId,
           allowClear: true,
         );
-        if (!context.mounted) return;
-        bloc.add(PayeeChanged(picked?.payeeId, picked?.payeeName));
+        if (!context.mounted || picked.kind == FxSelectionKind.cancelled) {
+          return;
+        }
+        final payee = picked.value;
+        bloc.add(PayeeChanged(payee?.payeeId, payee?.payeeName));
       },
     );
   }
@@ -913,8 +917,11 @@ class _OrderRow extends StatelessWidget {
                 selectedId: state.orderId,
                 idOf: (o) => o.orderId,
               );
-              if (!context.mounted) return;
-              bloc.add(OrderChanged(picked?.orderId, picked?.title));
+              if (!context.mounted || picked.kind != FxSelectionKind.selected) {
+                return;
+              }
+              final order = picked.value!;
+              bloc.add(OrderChanged(order.orderId, order.title));
             },
     );
   }

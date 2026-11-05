@@ -57,13 +57,9 @@ class FxMoneyText extends StatelessWidget {
     Color resolved;
     if (color != null) {
       resolved = color!;
-    } else if (billType != null) {
-      resolved = FxFinanceColors.of(context).forBillType(billType);
-    } else if (colorBySign) {
-      final fin = FxFinanceColors.of(context);
-      resolved = amount >= 0 ? fin.income : fin.expense;
     } else {
-      resolved = FxPalette.of(context).textPrimary;
+      // 用户保存的财务色继续用于色点和图形；小字金额默认使用可读中性前景。
+      resolved = palette.textPrimary;
     }
 
     final isMasked = masked;
@@ -120,8 +116,8 @@ class FxMoneyText extends StatelessWidget {
             child: Text(
               displayText,
               style: style,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
+              maxLines: compactWhenNeeded ? 1 : null,
+              overflow: compactWhenNeeded ? TextOverflow.ellipsis : null,
             ),
           ),
         );

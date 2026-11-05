@@ -1,0 +1,52 @@
+[
+  {
+    "command": [
+      "git",
+      "rev-parse",
+      "HEAD"
+    ],
+    "exitCode": 0,
+    "stdout": "6061359de0d6db6597176a9158ee826de490f6c4\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "git",
+      "branch",
+      "--show-current"
+    ],
+    "exitCode": 0,
+    "stdout": "master\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "git",
+      "status",
+      "--short"
+    ],
+    "exitCode": 0,
+    "stdout": " M lib/core/feedback/fx_feedback.dart\n M lib/features/bill_editor/presentation/bill_editor_page.dart\n M lib/features/bill_editor/presentation/widgets/editor_pickers.dart\n M lib/features/bill_editor/presentation/widgets/extras_section.dart\n M lib/features/profile/presentation/profile_edit_page.dart\n M lib/fx/components/fx_action_sheet.dart\n M lib/fx/components/fx_amount_input.dart\n M lib/fx/components/fx_bar_chart.dart\n M lib/fx/components/fx_card.dart\n M lib/fx/components/fx_chart_palette.dart\n M lib/fx/components/fx_chip.dart\n M lib/fx/components/fx_confirm_sheet.dart\n M lib/fx/components/fx_donut_chart.dart\n M lib/fx/components/fx_line_chart.dart\n M lib/fx/components/fx_list_item.dart\n M lib/fx/components/fx_money_text.dart\n M lib/fx/components/fx_option_picker.dart\n M lib/fx/components/fx_segmented.dart\n M lib/fx/components/fx_select_row.dart\n M lib/fx/components/fx_sheet.dart\n M lib/fx/components/fx_state_view.dart\n M lib/fx/components/fx_tag_chip.dart\n M lib/fx/components/fx_text_field.dart\n M lib/fx/layout/fx_bento_grid.dart\n M lib/fx/tree/fx_tree_picker.dart\n M lib/l10n/intl_en.arb\n M lib/l10n/intl_zh.arb\n M test/fx/components/fx_foundation_integration_test.dart\n M test/fx/layout/fx_bento_grid_test.dart\n?? test/fx/components/fx_amount_input_test.dart\n?? test/fx/components/fx_chart_test.dart\n?? test/fx/components/fx_interaction_accessibility_test.dart\n?? test/fx/components/fx_money_text_test.dart\n?? test/fx/components/fx_selection_contract_test.dart\n?? test/fx/components/fx_sheet_guard_test.dart\n?? tool/s1_a_component_preview_test.dart\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "git",
+      "diff",
+      "--stat"
+    ],
+    "exitCode": 0,
+    "stdout": " lib/core/feedback/fx_feedback.dart                 |   3 +-\n .../bill_editor/presentation/bill_editor_page.dart |  15 +-\n .../presentation/widgets/editor_pickers.dart       |   6 +-\n .../presentation/widgets/extras_section.dart       |  17 +-\n .../profile/presentation/profile_edit_page.dart    |   1 -\n lib/fx/components/fx_action_sheet.dart             |   4 +-\n lib/fx/components/fx_amount_input.dart             |  39 +++-\n lib/fx/components/fx_bar_chart.dart                |   8 +-\n lib/fx/components/fx_card.dart                     |   6 +-\n lib/fx/components/fx_chart_palette.dart            |  18 +-\n lib/fx/components/fx_chip.dart                     |  12 +-\n lib/fx/components/fx_confirm_sheet.dart            |  58 +++---\n lib/fx/components/fx_donut_chart.dart              |  15 +-\n lib/fx/components/fx_line_chart.dart               |   2 +-\n lib/fx/components/fx_list_item.dart                | 118 +++++++-----\n lib/fx/components/fx_money_text.dart               |  12 +-\n lib/fx/components/fx_option_picker.dart            |  63 ++++++-\n lib/fx/components/fx_segmented.dart                | 168 ++++++++---------\n lib/fx/components/fx_select_row.dart               | 174 ++++++++++--------\n lib/fx/components/fx_sheet.dart                    |  62 +++++++\n lib/fx/components/fx_state_view.dart               |  34 +++-\n lib/fx/components/fx_tag_chip.dart                 |  95 +++++++---\n lib/fx/components/fx_text_field.dart               |   3 +-\n lib/fx/layout/fx_bento_grid.dart                   |  29 ++-\n lib/fx/tree/fx_tree_picker.dart                    | 199 +++++++++++----------\n lib/l10n/intl_en.arb                               |   7 +\n lib/l10n/intl_zh.arb                               |   7 +\n .../components/fx_foundation_integration_test.dart |  35 ++++\n test/fx/layout/fx_bento_grid_test.dart             |  65 +++++++\n 29 files changed, 874 insertions(+), 401 deletions(-)\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "exitCode": 0,
+    "stdout": "",
+    "stderr": ""
+  }
+]

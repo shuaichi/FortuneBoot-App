@@ -48,7 +48,9 @@ abstract final class FxActionSheet {
                 enabled: action.enabled,
                 iconColor: action.destructive
                     ? palette.danger
-                    : palette.primary,
+                    : action.selected
+                    ? palette.primary
+                    : palette.textSecondary,
                 textColor: action.destructive ? palette.danger : null,
                 onTap: action.enabled
                     ? () {
