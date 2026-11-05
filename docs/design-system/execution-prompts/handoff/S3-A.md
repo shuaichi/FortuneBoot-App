@@ -1,11 +1,11 @@
 # S3-A 交接｜主壳导航、当前范围与跨页返回
 
-最新结论：**PASSED（attempt-001）**。`localGate=PASSED`；`visualGate=PASSED`（12 张真实 Flutter 主壳 fixture 已实际打开查看）；`externalGate=PARTIAL`（真机、读屏、平台编译、真实 Web 刷新未执行）。未提交、未推送、未发布。
+最新结论：**PASSED（attempt-001）**。`localGate=PASSED`；`visualGate=PASSED`（12 张真实 Flutter 主壳 fixture 已实际打开查看）；`externalGate=PARTIAL`（真机、读屏、平台编译、真实 Web 刷新未执行）。按用户要求已在本地提交 `f12d07d603c82b39a230ad6312e9c8b7119abecd`；未推送、未发布。
 
 ## 1. 范围与真实起点
 
 - 工作目录 `/Users/zhangchi118/代码/FortuneBoot-App`，分支 `master`，起点 HEAD `afe309a60ef095cd817721f23188a926c12bfa59`（S1-B 已提交）。
-- 本轮 S3-A 源码在工作区未提交；未 reset/clean/stash/restore，未改服务端、数据库、SDK、依赖、包版本或签名。
+- 本轮 S3-A 源码与证据已按用户要求本地提交 `f12d07d603c82b39a230ad6312e9c8b7119abecd`；未 reset/clean/stash/restore，未改服务端、数据库、SDK、依赖、包版本或签名。
 - 只修改本阶段允许路径：`lib/core/shell/`、`lib/core/navigation/`、`lib/core/session/`、`lib/core/app/fx_app.dart`、`lib/features/*/*registration.dart`，以及同域测试和中英文文案。
 
 ## 2. 实际修改
