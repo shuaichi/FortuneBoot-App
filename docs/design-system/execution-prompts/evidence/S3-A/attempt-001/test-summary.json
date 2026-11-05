@@ -1,0 +1,40 @@
+{
+  "stage": "S3-A",
+  "attempt": 1,
+  "sourceHead": "afc309a60ef095cd817721f23188a926c12bfa59",
+  "branch": "master",
+  "decisive": {
+    "total": 41,
+    "passed": 41,
+    "skipped": 0,
+    "failed": 0,
+    "skippedTests": []
+  },
+  "full": {
+    "total": 450,
+    "passed": 449,
+    "skipped": 1,
+    "failed": 0,
+    "skippedTests": [
+      "uses In-App Purchase for donations on Apple platforms"
+    ],
+    "runnerSuccess": true
+  },
+  "render": {
+    "total": 12,
+    "passed": 12,
+    "failed": 0
+  },
+  "workingTree": {
+    "modified": 28,
+    "untracked": 8,
+    "diffStat": "lib/core/app/fx_app.dart                           |   7 +-\n lib/core/navigation/app_router.dart                |  64 ++-\n lib/core/navigation/startup_route_guard.dart       |   8 +-\n lib/core/session/session_cubit.dart                | 123 ++++--\n lib/core/session/session_state.dart                |  42 +-\n .../session/widgets/session_switcher_sheet.dart    |  67 ++-\n lib/core/shell/main_shell.dart                     | 491 +++++++++++++++++----\n lib/features/accounts/accounts_registration.dart   |  27 +-\n .../bill_editor/bill_editor_registration.dart      |  21 +-\n .../categories/categories_registration.dart        |  21 +-\n lib/features/goods/goods_registration.dart         |  25 +-\n .../group_users/group_users_registration.dart      |  25 +-\n lib/features/io/io_registration.dart               |   6 +-\n lib/features/members/members_registration.dart     |  21 +-\n lib/features/orders/orders_registration.dart       |  71 +--\n lib/features/payees/payees_registration.dart       |  20 +-\n lib/features/profile/profile_registration.dart     |   2 +-\n lib/features/stats/stats_registration.dart         |  20 +-\n lib/features/tags/tags_registration.dart           |  19 +-\n lib/generated/intl/messages_en.dart                | 255 ++++++-----\n lib/generated/intl/messages_zh.dart                | 241 +++++-----\n lib/generated/l10n.dart                            | 170 +++++++\n lib/l10n/intl_en.arb                               |  20 +\n lib/l10n/intl_zh.arb                               |  20 +\n test/core/navigation/app_router_test.dart          |  71 +++\n test/core/navigation/startup_route_guard_test.dart |  22 +\n test/core/session/session_cubit_test.dart          | 159 ++++++-\n .../main_shell_recent_bills_navigation_test.dart   | 329 +++++++++++---\n 28 files changed, 1837 insertions(+), 530 deletions(-)"
+  },
+  "notRun": [
+    "iOS/Android 真机",
+    "VoiceOver/TalkBack",
+    "平台编译/发布",
+    "真实服务器接口与 Web 端到端刷新",
+    "系统键盘与旋转真机"
+  ]
+}

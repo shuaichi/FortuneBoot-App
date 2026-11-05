@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fortuneboot/core/navigation/app_router.dart';
+import 'package:fortuneboot/core/navigation/deep_link_target.dart';
+import 'package:fortuneboot/core/navigation/pending_deep_link.dart';
 import 'package:fortuneboot/core/navigation/routes.dart';
 import 'package:fortuneboot/core/navigation/startup_route_guard.dart';
 import 'package:fortuneboot/login/view/base_url_config_page.dart';
 
 void main() {
+  setUp(PendingDeepLink.instance.clear);
+  tearDown(PendingDeepLink.instance.clear);
+
   // 模拟 Web 刷新深链：浏览器 URL 路径覆盖 MaterialApp.initialRoute，
   // 使功能页成为 Navigator 根路由。
   Widget buildApp(
@@ -45,6 +50,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.byKey(const Key('startup-root')), findsOneWidget);
     expect(find.byKey(const Key('orders-root')), findsNothing);
+    expect(PendingDeepLink.instance.peek()?.route, Routes.orders);
     // 深链根路由被移除后，启动页是栈中唯一路由。
     expect(navigatorKey.currentState!.canPop(), isFalse);
     expect(observer.pushes, pushesBeforeReset + 1);
@@ -66,6 +72,22 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.byKey(const Key('startup-root')), findsOneWidget);
     expect(observer.pushes, pushesBeforeReset);
+    expect(PendingDeepLink.instance.peek(), isNull);
+  });
+
+  test('parses path and query without inventing route arguments', () {
+    final target = DeepLinkTarget.tryParse('/orders/detail?bookId=1&orderId=2');
+
+    expect(target, isNotNull);
+    expect(target!.route, Routes.orderDetail);
+    expect(target.query, {'bookId': '1', 'orderId': '2'});
+    expect(target.arguments, {'bookId': '1', 'orderId': '2'});
+  });
+
+  test('ignores app root and malformed targets', () {
+    expect(DeepLinkTarget.tryParse('/'), isNull);
+    expect(DeepLinkTarget.tryParse(''), isNull);
+    expect(DeepLinkTarget.tryParse('orders'), isNull);
   });
 }
 

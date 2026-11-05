@@ -38,6 +38,7 @@ class SessionSwitcherSheet extends StatelessWidget {
       bloc: cubit,
       builder: (context, state) {
         final loading = state.status == SessionStatus.loading;
+        final pendingGroup = state.pendingGroup;
         return Padding(
           padding: const EdgeInsets.fromLTRB(
             FxSpacing.lg,
@@ -67,7 +68,8 @@ class SessionSwitcherSheet extends StatelessWidget {
                       _GroupPill(
                         group: g,
                         selected: g.groupId == state.currentGroupId,
-                        onTap: loading ? null : () => cubit.switchGroup(g),
+                        pending: g.groupId == pendingGroup?.groupId,
+                        onTap: () => cubit.switchGroup(g),
                       ),
                   ],
                 ),
@@ -89,21 +91,33 @@ class SessionSwitcherSheet extends StatelessWidget {
                     ),
                 ],
               ),
+              if (pendingGroup != null) ...[
+                const SizedBox(height: FxSpacing.xs),
+                Text(
+                  S
+                      .of(context)
+                      .navScopeSwitching(
+                        pendingGroup.groupName ??
+                            S.of(context).booksUnnamedGroup,
+                      ),
+                  style: FxTypography.caption.copyWith(
+                    color: palette.textSecondary,
+                  ),
+                ),
+                const SizedBox(height: FxSpacing.xs),
+                Text(
+                  S.of(context).navScopeSwitchingBooks,
+                  style: FxTypography.caption.copyWith(
+                    color: palette.textTertiary,
+                  ),
+                ),
+              ],
               const SizedBox(height: FxSpacing.sm),
               if (state.status == SessionStatus.error)
                 FxStateView.error(
                   message: S.of(context).dashboardLoadFailed,
                   retryLabel: S.of(context).commonRetry,
-                  onRetry: () {
-                    final target =
-                        state.currentGroup ??
-                        (state.groups.isNotEmpty ? state.groups.first : null);
-                    if (target != null) {
-                      cubit.switchGroup(target);
-                    } else {
-                      cubit.load();
-                    }
-                  },
+                  onRetry: cubit.retryPendingScope,
                 )
               else if (state.books.isEmpty && !loading)
                 _empty(palette, S.of(context).booksGroupNoBooks)
@@ -113,6 +127,7 @@ class SessionSwitcherSheet extends StatelessWidget {
                     book: b,
                     selected: b.bookId == state.currentBookId,
                     isDefault: b.bookId == state.currentGroup?.defaultBookId,
+                    enabled: !loading,
                     onTap: () {
                       HapticFeedback.selectionClick();
                       cubit.switchBook(b);
@@ -167,10 +182,12 @@ class SessionSwitcherSheet extends StatelessWidget {
 class _GroupPill extends StatelessWidget {
   final FortuneGroupVo group;
   final bool selected;
+  final bool pending;
   final VoidCallback? onTap;
   const _GroupPill({
     required this.group,
     required this.selected,
+    this.pending = false,
     required this.onTap,
   });
 
@@ -185,7 +202,7 @@ class _GroupPill extends StatelessWidget {
               onTap!();
             },
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 160),
+        duration: FxMotion.resolve(context, const Duration(milliseconds: 160)),
         padding: const EdgeInsets.symmetric(
           horizontal: FxSpacing.md,
           vertical: FxSpacing.sm,
@@ -194,7 +211,7 @@ class _GroupPill extends StatelessWidget {
           color: selected ? palette.primary : palette.surfaceMuted,
           borderRadius: FxRadius.pillBorder,
           border: Border.all(
-            color: selected ? palette.primary : palette.border,
+            color: selected || pending ? palette.primary : palette.border,
           ),
         ),
         child: Row(
@@ -213,6 +230,17 @@ class _GroupPill extends StatelessWidget {
                 fontWeight: FontWeight.w600,
               ),
             ),
+            if (pending) ...[
+              const SizedBox(width: FxSpacing.xs),
+              SizedBox(
+                width: 12,
+                height: 12,
+                child: CircularProgressIndicator(
+                  strokeWidth: 1.5,
+                  color: selected ? palette.onPrimary : palette.primary,
+                ),
+              ),
+            ],
           ],
         ),
       ),
@@ -224,17 +252,24 @@ class _BookCard extends StatelessWidget {
   final FortuneBookVo book;
   final bool selected;
   final bool isDefault;
+  final bool enabled;
   final VoidCallback onTap;
   const _BookCard({
     required this.book,
     required this.selected,
     required this.isDefault,
+    this.enabled = true,
     required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
     final palette = FxPalette.of(context);
+    final nameColor = !enabled
+        ? palette.textTertiary
+        : selected
+        ? palette.primary
+        : palette.textPrimary;
     return Padding(
       padding: const EdgeInsets.only(bottom: FxSpacing.sm),
       child: Material(
@@ -242,7 +277,7 @@ class _BookCard extends StatelessWidget {
         borderRadius: FxRadius.cardBorder,
         child: InkWell(
           borderRadius: FxRadius.cardBorder,
-          onTap: onTap,
+          onTap: enabled ? onTap : null,
           child: Container(
             padding: const EdgeInsets.symmetric(
               horizontal: FxSpacing.lg,
@@ -269,9 +304,7 @@ class _BookCard extends StatelessWidget {
                       Text(
                         book.bookName ?? '未命名账本',
                         style: FxTypography.bodyStrong.copyWith(
-                          color: selected
-                              ? palette.primary
-                              : palette.textPrimary,
+                          color: nameColor,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,

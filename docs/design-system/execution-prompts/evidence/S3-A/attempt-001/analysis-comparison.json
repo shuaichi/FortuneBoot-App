@@ -1,0 +1,27 @@
+{
+  "baseline": {
+    "source": "HEAD afe309a + 工作区生成文件临时副本",
+    "issues": 1183,
+    "error": 0,
+    "warning": 260,
+    "info": 923,
+    "note": "临时副本路径导致的 include_file_not_found 与工作区同规则，已按规则/文件/文案比对"
+  },
+  "final": {
+    "issues": 1179,
+    "error": 0,
+    "warning": 260,
+    "info": 919
+  },
+  "delta": {
+    "newWarnings": 0,
+    "removedWarnings": 0,
+    "newErrors": 0,
+    "removedInfos": 4,
+    "newInfos": 0,
+    "explanation": "orders_registration 的可推断局部变量改为显式 if 后移除 4 条 prefer_final_locals；本阶段新增代码 0 条诊断"
+  },
+  "commands": [
+    "flutter analyze --no-pub"
+  ]
+}

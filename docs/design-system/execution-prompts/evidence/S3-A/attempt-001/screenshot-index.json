@@ -1,0 +1,194 @@
+[
+  {
+    "page": "Bills tab with long group/book scope",
+    "state": "shell-light-390-1x-bills",
+    "theme": "LIGHT",
+    "logicalSize": [
+      390,
+      900
+    ],
+    "textScale": 1,
+    "sourceHead": "afc309a60ef095cd817721f23188a926c12bfa59",
+    "sourceSha256": "3cb372502663a84b299733e828d03cfec2853f266bcaed8489da5535ef973c2a",
+    "path": "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/shell-light-390-1x-bills.png",
+    "pathSha256": "a5eb84ffc163ef4ee84bb85732f03b87f3dc32c33828e240cb6a380e7437c43f",
+    "actuallyViewed": true,
+    "observation": "已查看：分组说明在上、完整长账本名两行；选中“账单”为蓝色文字+图标胶囊；FAB 在导航上方且不遮挡内容；无溢出。"
+  },
+  {
+    "page": "Dashboard tab",
+    "state": "shell-light-390-1x-dashboard",
+    "theme": "LIGHT",
+    "logicalSize": [
+      390,
+      900
+    ],
+    "textScale": 1,
+    "sourceHead": "afc309a60ef095cd817721f23188a926c12bfa59",
+    "sourceSha256": "3cb372502663a84b299733e828d03cfec2853f266bcaed8489da5535ef973c2a",
+    "path": "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/shell-light-390-1x-dashboard.png",
+    "pathSha256": "9f0c19ea7c234bbeebeae6f3d4212f2fbea87077cf3ce89c67be9d6f70743fc4",
+    "actuallyViewed": true,
+    "observation": "已查看：看板 tab 不重复显示壳层范围条（真实看板自带头部）；标题在状态栏下；FAB 与导航可见。"
+  },
+  {
+    "page": "Stats tab with scope",
+    "state": "shell-light-390-1x-stats",
+    "theme": "LIGHT",
+    "logicalSize": [
+      390,
+      900
+    ],
+    "textScale": 1,
+    "sourceHead": "afc309a60ef095cd817721f23188a926c12bfa59",
+    "sourceSha256": "3cb372502663a84b299733e828d03cfec2853f266bcaed8489da5535ef973c2a",
+    "path": "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/shell-light-390-1x-stats.png",
+    "pathSha256": "13eca21f80cb68c1ea749278d7c883d12019ace5e1f96f2ce0430f90e71ef06f",
+    "actuallyViewed": true,
+    "observation": "已查看：统计 tab 顶部显示当前分组与完整账本名；标题、卡片、导航层级清楚；FAB 保留。"
+  },
+  {
+    "page": "Profile tab dark",
+    "state": "shell-dark-390-1x-profile",
+    "theme": "DARK",
+    "logicalSize": [
+      390,
+      900
+    ],
+    "textScale": 1,
+    "sourceHead": "afc309a60ef095cd817721f23188a926c12bfa59",
+    "sourceSha256": "3cb372502663a84b299733e828d03cfec2853f266bcaed8489da5535ef973c2a",
+    "path": "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/shell-dark-390-1x-profile.png",
+    "pathSha256": "61b152ed27bde58bfaca9d9f7adb8fc6906924f65de7f9abcc60bf6c4c79d2c0",
+    "actuallyViewed": true,
+    "observation": "已查看：暗色下范围条、标题、卡片与底部导航分层可辨；选中“我的”仍可识别；FAB 为高对比圆钮。"
+  },
+  {
+    "page": "Bills tab at 320 width",
+    "state": "shell-light-320-1x-bills",
+    "theme": "LIGHT",
+    "logicalSize": [
+      320,
+      900
+    ],
+    "textScale": 1,
+    "sourceHead": "afc309a60ef095cd817721f23188a926c12bfa59",
+    "sourceSha256": "3cb372502663a84b299733e828d03cfec2853f266bcaed8489da5535ef973c2a",
+    "path": "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/shell-light-320-1x-bills.png",
+    "pathSha256": "c6e640cbfd86d5c3111871209ba8606d299e25c332429308d5eab7aac9e073dc",
+    "actuallyViewed": true,
+    "observation": "已查看：320 宽长账本名换行完整；四 tab 标签单行可读；末行无横向溢出。"
+  },
+  {
+    "page": "Bills tab 2x text",
+    "state": "shell-light-320-2x-bills",
+    "theme": "LIGHT",
+    "logicalSize": [
+      320,
+      1100
+    ],
+    "textScale": 2,
+    "sourceHead": "afc309a60ef095cd817721f23188a926c12bfa59",
+    "sourceSha256": "3cb372502663a84b299733e828d03cfec2853f266bcaed8489da5535ef973c2a",
+    "path": "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/shell-light-320-2x-bills.png",
+    "pathSha256": "56649ff219797774c831ca6d221870bcaaa48c4b5766edfb882a7bc1eb3cb9e4",
+    "actuallyViewed": true,
+    "observation": "已查看：范围条按内容增高，长账本名 3 行完整显示；底部“仪表盘”两行仍完整，导航高度随内容增加；FAB 未遮挡关键文字。"
+  },
+  {
+    "page": "Bills tab dark 2x",
+    "state": "shell-dark-440-2x-bills",
+    "theme": "DARK",
+    "logicalSize": [
+      440,
+      1200
+    ],
+    "textScale": 2,
+    "sourceHead": "afc309a60ef095cd817721f23188a926c12bfa59",
+    "sourceSha256": "3cb372502663a84b299733e828d03cfec2853f266bcaed8489da5535ef973c2a",
+    "path": "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/shell-dark-440-2x-bills.png",
+    "pathSha256": "d2806450f62091c20808b201f67a882572513c6427040a7358d57bd725eacb13",
+    "actuallyViewed": true,
+    "observation": "已查看：440/2x 下长账本名两行完整；暗色表面、选中态和 FAB 对比清楚；无裁切。"
+  },
+  {
+    "page": "Visitor read-only shell",
+    "state": "shell-light-390-1x-visitor",
+    "theme": "LIGHT",
+    "logicalSize": [
+      390,
+      900
+    ],
+    "textScale": 1,
+    "sourceHead": "afc309a60ef095cd817721f23188a926c12bfa59",
+    "sourceSha256": "3cb372502663a84b299733e828d03cfec2853f266bcaed8489da5535ef973c2a",
+    "path": "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/shell-light-390-1x-visitor.png",
+    "pathSha256": "043e79324e1d96367d63073ee5064a4c4ec7b29a71afcbc1b06d1eb2b3aea5d5",
+    "actuallyViewed": true,
+    "observation": "已查看：看板显示“只读”徽标，FAB 完全隐藏；范围条仍可打开切换；长账本名完整换行。"
+  },
+  {
+    "page": "No book selected",
+    "state": "shell-dark-390-1x-nobook",
+    "theme": "DARK",
+    "logicalSize": [
+      390,
+      900
+    ],
+    "textScale": 1,
+    "sourceHead": "afc309a60ef095cd817721f23188a926c12bfa59",
+    "sourceSha256": "3cb372502663a84b299733e828d03cfec2853f266bcaed8489da5535ef973c2a",
+    "path": "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/shell-dark-390-1x-nobook.png",
+    "pathSha256": "172d52eaffec0344be499c4873c88e51a523ab4982d6dc86a30f2e1a8f100ff6",
+    "actuallyViewed": true,
+    "observation": "已查看：范围条明确“未选择账本”，不冒充零金额或旧账本；FAB 隐藏；导航仍可用。"
+  },
+  {
+    "page": "Deep link missing context",
+    "state": "shell-light-390-1x-deeplink-failure",
+    "theme": "LIGHT",
+    "logicalSize": [
+      390,
+      900
+    ],
+    "textScale": 1,
+    "sourceHead": "afc309a60ef095cd817721f23188a926c12bfa59",
+    "sourceSha256": "3cb372502663a84b299733e828d03cfec2853f266bcaed8489da5535ef973c2a",
+    "path": "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/shell-light-390-1x-deeplink-failure.png",
+    "pathSha256": "0fe28b030194a521f5940fab93470ed8a7bb81f262a1d18f41e777f44cc01d29",
+    "actuallyViewed": true,
+    "observation": "已查看：深链缺参数显示标题、原因、返回按钮和“返回首页”，不是空白页；返回控件未被 loading/error 替换。"
+  },
+  {
+    "page": "Landscape 2x shell",
+    "state": "shell-light-640-320-2x-landscape",
+    "theme": "LIGHT",
+    "logicalSize": [
+      640,
+      320
+    ],
+    "textScale": 2,
+    "sourceHead": "afc309a60ef095cd817721f23188a926c12bfa59",
+    "sourceSha256": "3cb372502663a84b299733e828d03cfec2853f266bcaed8489da5535ef973c2a",
+    "path": "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/shell-light-640-320-2x-landscape.png",
+    "pathSha256": "e9f59759a299826ca67c84ab2978beaf0570684d2d09676f994a9868f1a8940c",
+    "actuallyViewed": true,
+    "observation": "已查看：横屏 2x 下范围条与四 tab 仍完整，导航增高没有额外空屏；内容可滚动，FAB 不盖标题。"
+  },
+  {
+    "page": "Keyboard inset simulated",
+    "state": "shell-dark-390-1x-keyboard",
+    "theme": "DARK",
+    "logicalSize": [
+      390,
+      900
+    ],
+    "textScale": 1,
+    "sourceHead": "afc309a60ef095cd817721f23188a926c12bfa59",
+    "sourceSha256": "3cb372502663a84b299733e828d03cfec2853f266bcaed8489da5535ef973c2a",
+    "path": "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/shell-dark-390-1x-keyboard.png",
+    "pathSha256": "a38b92221ab748569968f26e06e75a6f44fc8232bf5757b10513b695a36b80a7",
+    "actuallyViewed": true,
+    "observation": "已查看：viewInsets=300 时 FAB 隐藏，内容不额外预留导航/FAB 空白；这是模拟 inset，不是系统键盘。"
+  }
+]

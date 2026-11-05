@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:fortuneboot/core/navigation/deep_link_target.dart';
+import 'package:fortuneboot/core/navigation/pending_deep_link.dart';
 import 'package:fortuneboot/core/navigation/routes.dart';
 import 'package:fortuneboot/login/view/base_url_config_page.dart';
 
@@ -18,8 +20,8 @@ class StartupRouteGuard {
     if (initialRoute == null || initialRoute == Navigator.defaultRouteName) {
       return false;
     }
-    return initialRoute != BaseUrlConfigPage.routeName &&
-        initialRoute != Routes.auth;
+    final path = DeepLinkTarget.tryParse(initialRoute)?.route ?? initialRoute;
+    return path != BaseUrlConfigPage.routeName && path != Routes.auth;
   }
 
   /// 首帧后执行一次：若初始路由绕过启动流程，则清栈重置回 baseUrlConfig。
@@ -28,6 +30,8 @@ class StartupRouteGuard {
       final navigator = navigatorKey.currentState;
       if (navigator == null) return;
       if (!bypassedStartupFlow(navigator)) return;
+      // 先保留目标，再清栈回启动校验；登录/会话恢复后由主壳继续。
+      PendingDeepLink.instance.capture(navigator.widget.initialRoute);
       navigator.pushNamedAndRemoveUntil(
         BaseUrlConfigPage.routeName,
         (route) => false,

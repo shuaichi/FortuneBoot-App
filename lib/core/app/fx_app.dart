@@ -74,7 +74,11 @@ class _FxAppViewState extends State<_FxAppView> with WidgetsBindingObserver {
         bookId: bookId,
         groupId: session.currentGroupId,
         currencyCode: session.defaultCurrency,
-        hideAmounts: context.read<PreferencesCubit>().state.dashboard.hideAmounts,
+        hideAmounts: context
+            .read<PreferencesCubit>()
+            .state
+            .dashboard
+            .hideAmounts,
       ),
     );
   }
@@ -149,6 +153,7 @@ class _FxAppViewState extends State<_FxAppView> with WidgetsBindingObserver {
           builder: (context, child) =>
               AppLockGate(child: child ?? const SizedBox.shrink()),
           onGenerateRoute: AppRouter.onGenerateRoute,
+          onUnknownRoute: AppRouter.onUnknownRoute,
         );
       },
     );

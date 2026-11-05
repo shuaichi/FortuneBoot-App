@@ -1,0 +1,1719 @@
+{
+  "schemaVersion": 1,
+  "stage": "S3-A",
+  "attempt": 1,
+  "sourceSha": "afc309a60ef095cd817721f23188a926c12bfa59",
+  "sourceSnapshotSha256": "3cb372502663a84b299733e828d03cfec2853f266bcaed8489da5535ef973c2a",
+  "scope": "S3-A shell/navigation/session/entry registrations; no global owner closure.",
+  "summary": {
+    "total": 55,
+    "byState": {
+      "VERIFIED_LOCAL": 13,
+      "CONFIRMED": 2,
+      "DISPROVED": 40
+    }
+  },
+  "items": [
+    {
+      "issueId": "DS-003",
+      "stageId": "S3-A",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "sourcePaths": [
+        "lib/core/session/widgets/session_scope_strip.dart",
+        "lib/core/session/widgets/session_scoped_page.dart",
+        "lib/core/shell/main_shell.dart",
+        "lib/core/session/session_cubit.dart"
+      ],
+      "sourceSha256": {
+        "lib/core/session/widgets/session_scope_strip.dart": "fb4e254d8de3cb39c1ab51d8b6ece47cb126633832c7e0262128280616c10ebd",
+        "lib/core/session/widgets/session_scoped_page.dart": "45d62c4acb50dcbae1d650987076734b37c3e5ce5e79f047c13213be5b5ae0d8",
+        "lib/core/shell/main_shell.dart": "4d7a96a807b2f13922d1b1a3b260bf35e641a57c411afd026cd702a548d4df81",
+        "lib/core/session/session_cubit.dart": "7026426207b0ee956bc1e9876271c24d0c1260c37a92abe7235befb5442ca952"
+      },
+      "observedBehavior": "S3-A scope 内：主壳账单/统计/我的及账户、归物、成员、分类、标签、交易对象、单据、导入导出、资产/借贷/口径页显示当前分组与/或账本；看板保留自身切换头。",
+      "implemented": "新增 SessionScopeStrip / SessionScopedPage；范围切换进行中保留旧数据并标“正在切换”，提交后重建页面 Bloc。",
+      "verified": "Local tests, analysis and viewed screenshots passed",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "净资产卡“分组总资产”文案由 S7-A",
+        "统计顶栏范围/显隐入口由 S8-A",
+        "资产/借贷口径文案由 S8-C"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/decisive-tests.json",
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/handoff/S3-A.md"
+      ],
+      "reason": "仅评 S3-A scope 实例，不代其它 owner 关闭全局编号。"
+    },
+    {
+      "issueId": "BO-071",
+      "stageId": "S3-A",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "sourcePaths": [
+        "lib/features/orders/orders_registration.dart",
+        "lib/core/navigation/fx_route_unavailable_page.dart",
+        "lib/core/navigation/app_router.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/orders/orders_registration.dart": "c33baec559ac9b640aaa5c4581878698fb6f62213345906ad23ef1d7686e6a21",
+        "lib/core/navigation/fx_route_unavailable_page.dart": "349a3b36a1cd1b4510604b61c7e1050221140ae2f86e7f6d3b11b46a5d501d87",
+        "lib/core/navigation/app_router.dart": "f32c5eee22455d8f111ce9ff57222b624f3f188df271b1f17a860be5722c8ef7"
+      },
+      "observedBehavior": "订单详情/核对缺少 bookId/orderId 时不再返回 SizedBox 空白页，显示“无法打开此页面”、原因与返回首页。",
+      "implemented": "orders_registration 容错解析参数并返回 FxRouteUnavailablePage；AppRouter 声明必需深链键。",
+      "verified": "Local tests, analysis and viewed screenshots passed",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "真机/读屏/平台编译/真实接口 NOT_RUN"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/decisive-tests.json",
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/handoff/S3-A.md"
+      ],
+      "reason": "仅评 S3-A scope 实例，不代其它 owner 关闭全局编号。"
+    },
+    {
+      "issueId": "FB-NAV-02",
+      "stageId": "S3-A",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "sourcePaths": [
+        "lib/core/shell/main_shell.dart",
+        "test/core/shell/main_shell_recent_bills_navigation_test.dart"
+      ],
+      "sourceSha256": {
+        "lib/core/shell/main_shell.dart": "4d7a96a807b2f13922d1b1a3b260bf35e641a57c411afd026cd702a548d4df81",
+        "test/core/shell/main_shell_recent_bills_navigation_test.dart": "d747f9128962441f10674f042fc10fd9920db77500d4228837b989c9681c6032"
+      },
+      "observedBehavior": "Scaffold.bottomNavigationBar 已占导航与安全区；壳层不再重复加 88/144，FAB 页仅保留 88，无 FAB 24，宽屏 32+安全区。",
+      "implemented": "重写 ShellContentInsets；增加末项与横屏命中测试。",
+      "verified": "Local tests, analysis and viewed screenshots passed",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "真机/读屏/平台编译/真实接口 NOT_RUN"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/decisive-tests.json",
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/handoff/S3-A.md"
+      ],
+      "reason": "仅评 S3-A scope 实例，不代其它 owner 关闭全局编号。"
+    },
+    {
+      "issueId": "FB-NAV-03",
+      "stageId": "S3-A",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "sourcePaths": [
+        "lib/core/navigation/startup_route_guard.dart",
+        "lib/core/navigation/pending_deep_link.dart",
+        "lib/core/navigation/deep_link_target.dart",
+        "lib/core/shell/main_shell.dart",
+        "lib/core/navigation/fx_route_unavailable_page.dart"
+      ],
+      "sourceSha256": {
+        "lib/core/navigation/startup_route_guard.dart": "f63701fdb501075d82d101ab53e9be2abaf7101255b34aa814a588a2acb10ee3",
+        "lib/core/navigation/pending_deep_link.dart": "891ee6b32462827f6991e0f706846a7f312138e5fe64b4e677b58a5a41f0eefa",
+        "lib/core/navigation/deep_link_target.dart": "35a337c196ea20cc521b449bf0a10410a10fa5d7b20d12ff9abf76052bc86701",
+        "lib/core/shell/main_shell.dart": "4d7a96a807b2f13922d1b1a3b260bf35e641a57c411afd026cd702a548d4df81",
+        "lib/core/navigation/fx_route_unavailable_page.dart": "349a3b36a1cd1b4510604b61c7e1050221140ae2f86e7f6d3b11b46a5d501d87"
+      },
+      "observedBehavior": "Web 深链启动时先捕获 route+query，清栈回启动校验；会话 ready 后恢复 tab/二级页；缺参/未知/无权限/会话失败均有明确出口。",
+      "implemented": "新增 DeepLinkTarget/PendingDeepLink，StartupRouteGuard 捕获，MainShell 消费。",
+      "verified": "Local tests, analysis and viewed screenshots passed",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "真实 Web 刷新端到端 NOT_RUN",
+        "登录过期真机流程 NOT_RUN"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/decisive-tests.json",
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/handoff/S3-A.md"
+      ],
+      "reason": "仅评 S3-A scope 实例，不代其它 owner 关闭全局编号。"
+    },
+    {
+      "issueId": "FB-NAV-04",
+      "stageId": "S3-A",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "sourcePaths": [
+        "lib/core/shell/main_shell.dart",
+        "test/core/shell/main_shell_recent_bills_navigation_test.dart"
+      ],
+      "sourceSha256": {
+        "lib/core/shell/main_shell.dart": "4d7a96a807b2f13922d1b1a3b260bf35e641a57c411afd026cd702a548d4df81",
+        "test/core/shell/main_shell_recent_bills_navigation_test.dart": "d747f9128962441f10674f042fc10fd9920db77500d4228837b989c9681c6032"
+      },
+      "observedBehavior": "手机四 tab 均可记账 FAB（可写且范围 ready），宽屏 rail 同样全局可达；键盘/只读/无账本/更新中隐藏。",
+      "implemented": "showMobileQuickAdd 改为 quickAddAvailable；FAB 不再随 tab 消失。",
+      "verified": "Local tests, analysis and viewed screenshots passed",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "真机/读屏/平台编译/真实接口 NOT_RUN"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/decisive-tests.json",
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/handoff/S3-A.md"
+      ],
+      "reason": "仅评 S3-A scope 实例，不代其它 owner 关闭全局编号。"
+    },
+    {
+      "issueId": "FB-NAV-05",
+      "stageId": "S3-A",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "sourcePaths": [
+        "lib/core/shell/main_shell.dart",
+        "lib/core/session/session_permission.dart"
+      ],
+      "sourceSha256": {
+        "lib/core/shell/main_shell.dart": "4d7a96a807b2f13922d1b1a3b260bf35e641a57c411afd026cd702a548d4df81",
+        "lib/core/session/session_permission.dart": "1a70106e0f0169aa132fa5bbf86f1ec70bfdb5e83cd5852d63f5a357aaeba4ea"
+      },
+      "observedBehavior": "访客身份不再显示记账 FAB；看板范围条显示“只读”徽标，宽屏 rail 显示只读说明；点击前即可理解权限。",
+      "implemented": "权限判断前置到渲染，保留 _openQuickAdd 防御。",
+      "verified": "Local tests, analysis and viewed screenshots passed",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "真机/读屏/平台编译/真实接口 NOT_RUN"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/decisive-tests.json",
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/handoff/S3-A.md"
+      ],
+      "reason": "仅评 S3-A scope 实例，不代其它 owner 关闭全局编号。"
+    },
+    {
+      "issueId": "FB-NAV-06",
+      "stageId": "S3-A",
+      "priority": "P3",
+      "state": "VERIFIED_LOCAL",
+      "sourcePaths": [
+        "lib/core/shell/main_shell.dart",
+        "test/core/shell/main_shell_recent_bills_navigation_test.dart"
+      ],
+      "sourceSha256": {
+        "lib/core/shell/main_shell.dart": "4d7a96a807b2f13922d1b1a3b260bf35e641a57c411afd026cd702a548d4df81",
+        "test/core/shell/main_shell_recent_bills_navigation_test.dart": "d747f9128962441f10674f042fc10fd9920db77500d4228837b989c9681c6032"
+      },
+      "observedBehavior": "用内容驱动自定义底部导航替代固定 64 高 NavigationBar；2x/320 四标签完整，触区≥48，选中态语义保留。",
+      "implemented": "新增 _ShellBottomNav/_ShellNavItem，不夹断 TextScaler。",
+      "verified": "Local tests, analysis and viewed screenshots passed",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "真机 Dynamic Type/VoiceOver NOT_RUN"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/decisive-tests.json",
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/handoff/S3-A.md"
+      ],
+      "reason": "仅评 S3-A scope 实例，不代其它 owner 关闭全局编号。"
+    },
+    {
+      "issueId": "MG-C17",
+      "stageId": "S3-A",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "sourcePaths": [
+        "lib/features/accounts/accounts_registration.dart",
+        "lib/features/categories/categories_registration.dart",
+        "lib/features/tags/tags_registration.dart",
+        "lib/features/payees/payees_registration.dart",
+        "lib/features/members/members_registration.dart",
+        "lib/features/goods/goods_registration.dart",
+        "lib/features/group_users/group_users_registration.dart",
+        "lib/core/session/widgets/session_scoped_page.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/accounts/accounts_registration.dart": "f5a05e109f8d80ea654bb3f133edf77c44d8b965ee22097d030d808a4b42b0ce",
+        "lib/features/categories/categories_registration.dart": "5265585b53263bd98ce05b2ffc1c6b468a13cce51f546a6e864ac1a11dad0268",
+        "lib/features/tags/tags_registration.dart": "8a8b2eb13b397a5ff06e7690e30ba8c0d153052268e8599f0d446ccc0c56d47a",
+        "lib/features/payees/payees_registration.dart": "4df8921ed5cb141c3614f6c2ef15d3dfd6cabd2d97d5cec0c10979e264b9dc97",
+        "lib/features/members/members_registration.dart": "b7e6099113b0b4d372367d167a5274e00c12315b4edec9ce6b6e13d3f7b2df7e",
+        "lib/features/goods/goods_registration.dart": "5ad44a767608b73b7821bd74294300790fa6d265c4425af51a3322d7d3818b04",
+        "lib/features/group_users/group_users_registration.dart": "d69cc1672f66c18e85fa77d50aee3d8078a24f53096865e0f86acbd4f821cd96",
+        "lib/core/session/widgets/session_scoped_page.dart": "45d62c4acb50dcbae1d650987076734b37c3e5ce5e79f047c13213be5b5ae0d8"
+      },
+      "observedBehavior": "账户/归物/成员页显示所属分组或账本；分组协作页保留分组名并补范围条；管理路由统一包 SessionScopedPage。",
+      "implemented": "在 accounts/categories/tags/payees/members/goods/group_users/orders/io/stats 子页注册入口接入范围条；scope 变更按 key 重建页面数据。",
+      "verified": "Local tests, analysis and viewed screenshots passed",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "S1-C 全工程管理页实例仍需核对"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/decisive-tests.json",
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/handoff/S3-A.md"
+      ],
+      "reason": "仅评 S3-A scope 实例，不代其它 owner 关闭全局编号。"
+    },
+    {
+      "issueId": "FB-AUT-11",
+      "stageId": "S3-A",
+      "priority": "P2",
+      "state": "CONFIRMED",
+      "sourcePaths": [
+        "lib/core/navigation/fx_page_route.dart",
+        "lib/login/view/auth_page.dart"
+      ],
+      "sourceSha256": {
+        "lib/core/navigation/fx_page_route.dart": "9801a99514424e5ec4da9102c2bf80eb4ec7532cd8ae64959268da5a1fe27cd2",
+        "lib/login/view/auth_page.dart": "b14f4c22aadfb6e24b937f7f0bd32de91e1c99060d67ab4781db729a6616f951"
+      },
+      "observedBehavior": "路由层 Web fade 已判断 MediaQuery.disableAnimations；认证页 430/586/590/673/690 仍固定 180/220ms，未在本阶段写入范围。",
+      "implemented": "S3-A 只确认并保留路由层分支；认证页内部动画由 S12-A/S12-B 处理。",
+      "verified": null,
+      "disproved": false,
+      "blocked_external": [
+        "S12_AUTH_INTERNAL_ANIMATION_SCOPE"
+      ],
+      "unverified": [
+        "减少动态效果真机/Web 验证 NOT_RUN"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/decisive-tests.json",
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/handoff/S3-A.md"
+      ],
+      "reason": "跨域页面不属 S3-A 允许写入范围；本阶段不宣布全局关闭。"
+    },
+    {
+      "issueId": "FB-NAV-01",
+      "stageId": "S3-A",
+      "priority": "P2",
+      "state": "CONFIRMED",
+      "sourcePaths": [
+        "lib/core/navigation/fx_page_route.dart",
+        "lib/features/profile/presentation/profile_edit_page.dart"
+      ],
+      "sourceSha256": {
+        "lib/core/navigation/fx_page_route.dart": "9801a99514424e5ec4da9102c2bf80eb4ec7532cd8ae64959268da5a1fe27cd2",
+        "lib/features/profile/presentation/profile_edit_page.dart": "eb0673f18970ebed6bac94acab465054c5e5021c600a25d8da318ddc9a6445b2"
+      },
+      "observedBehavior": "AppRouter 在 iOS/macOS 仍创建 CupertinoPageRoute；profile_edit_page 仍以 PopScope(canPop:false) 手动 pop，侧滑返回未修复。",
+      "implemented": "S3-A 保留 Apple 原生路由与返回控件骨架；资料详情页拦截属 S13-A/S13-C。",
+      "verified": null,
+      "disproved": false,
+      "blocked_external": [
+        "S13_PROFILE_PAGE_SCOPE"
+      ],
+      "unverified": [
+        "iOS 左缘侧滑真机 NOT_RUN"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/decisive-tests.json",
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/handoff/S3-A.md"
+      ],
+      "reason": "页面本地 PopScope 不在 S3-A 写入范围；不越界修改资料页。"
+    },
+    {
+      "issueId": "DT-01",
+      "stageId": "S3-A",
+      "priority": "P2",
+      "state": "DISPROVED",
+      "sourcePaths": [
+        "lib/fx/theme/fx_theme.dart",
+        "lib/fx/tokens/fx_colors.dart",
+        "lib/fx/components/fx_sheet.dart"
+      ],
+      "sourceSha256": {
+        "lib/fx/theme/fx_theme.dart": "14696bcb234330fecf2719860372f4d38645e8358f60c1c6a65473de0040ff8d",
+        "lib/fx/tokens/fx_colors.dart": "26d090f792f06e0743e82d3cb79d60b03c8bd0b387abe164c350379cdb14bc8b",
+        "lib/fx/components/fx_sheet.dart": "ddb091b4bab9dcfb473aad06dc014d4c0e60ca3e3553f30aa4876452aecc11b0"
+      },
+      "observedBehavior": "S3-A 表面使用 palette.canvas/surface/surfaceRaised 分工；未回退到仅 canvas/surface/surfaceMuted。",
+      "implemented": "已按 S3-A scope 核对当前源码/测试/截图。",
+      "verified": null,
+      "disproved": true,
+      "blocked_external": [],
+      "unverified": [
+        "真机/读屏/平台编译/真实接口 NOT_RUN"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/decisive-tests.json",
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/handoff/S3-A.md"
+      ],
+      "reason": "仅评 S3-A scope 实例，不代其它 owner 关闭全局编号。"
+    },
+    {
+      "issueId": "DT-02",
+      "stageId": "S3-A",
+      "priority": "P2",
+      "state": "DISPROVED",
+      "sourcePaths": [
+        "lib/fx/theme/fx_theme.dart",
+        "lib/fx/tokens/fx_colors.dart"
+      ],
+      "sourceSha256": {
+        "lib/fx/theme/fx_theme.dart": "14696bcb234330fecf2719860372f4d38645e8358f60c1c6a65473de0040ff8d",
+        "lib/fx/tokens/fx_colors.dart": "26d090f792f06e0743e82d3cb79d60b03c8bd0b387abe164c350379cdb14bc8b"
+      },
+      "observedBehavior": "壳层画布与白色表面由 FxPalette 亮色值区分；本阶段未新增近白叠层。",
+      "implemented": "已按 S3-A scope 核对当前源码/测试/截图。",
+      "verified": null,
+      "disproved": true,
+      "blocked_external": [],
+      "unverified": [
+        "真机/读屏/平台编译/真实接口 NOT_RUN"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/decisive-tests.json",
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/handoff/S3-A.md"
+      ],
+      "reason": "仅评 S3-A scope 实例，不代其它 owner 关闭全局编号。"
+    },
+    {
+      "issueId": "DT-03",
+      "stageId": "S3-A",
+      "priority": "P2",
+      "state": "DISPROVED",
+      "sourcePaths": [
+        "lib/fx/theme/fx_theme.dart",
+        "lib/fx/tokens/fx_colors.dart"
+      ],
+      "sourceSha256": {
+        "lib/fx/theme/fx_theme.dart": "14696bcb234330fecf2719860372f4d38645e8358f60c1c6a65473de0040ff8d",
+        "lib/fx/tokens/fx_colors.dart": "26d090f792f06e0743e82d3cb79d60b03c8bd0b387abe164c350379cdb14bc8b"
+      },
+      "observedBehavior": "暗色壳层使用 #101012/#18181B 等中性灰阶，无蓝底调回退。",
+      "implemented": "已按 S3-A scope 核对当前源码/测试/截图。",
+      "verified": null,
+      "disproved": true,
+      "blocked_external": [],
+      "unverified": [
+        "真机/读屏/平台编译/真实接口 NOT_RUN"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/decisive-tests.json",
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/handoff/S3-A.md"
+      ],
+      "reason": "仅评 S3-A scope 实例，不代其它 owner 关闭全局编号。"
+    },
+    {
+      "issueId": "DT-04",
+      "stageId": "S3-A",
+      "priority": "P2",
+      "state": "DISPROVED",
+      "sourcePaths": [
+        "lib/fx/theme/fx_theme.dart",
+        "lib/fx/tokens/fx_colors.dart"
+      ],
+      "sourceSha256": {
+        "lib/fx/theme/fx_theme.dart": "14696bcb234330fecf2719860372f4d38645e8358f60c1c6a65473de0040ff8d",
+        "lib/fx/tokens/fx_colors.dart": "26d090f792f06e0743e82d3cb79d60b03c8bd0b387abe164c350379cdb14bc8b"
+      },
+      "observedBehavior": "壳层卡片/导航使用 surface+separator/border 语义；范围条无输入/图表混用。",
+      "implemented": "已按 S3-A scope 核对当前源码/测试/截图。",
+      "verified": null,
+      "disproved": true,
+      "blocked_external": [],
+      "unverified": [
+        "真机/读屏/平台编译/真实接口 NOT_RUN"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/decisive-tests.json",
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/handoff/S3-A.md"
+      ],
+      "reason": "仅评 S3-A scope 实例，不代其它 owner 关闭全局编号。"
+    },
+    {
+      "issueId": "DT-05",
+      "stageId": "S3-A",
+      "priority": "P2",
+      "state": "DISPROVED",
+      "sourcePaths": [
+        "lib/core/session/widgets/session_scope_strip.dart"
+      ],
+      "sourceSha256": {
+        "lib/core/session/widgets/session_scope_strip.dart": "fb4e254d8de3cb39c1ab51d8b6ece47cb126633832c7e0262128280616c10ebd"
+      },
+      "observedBehavior": "S3-A 未新增带 alpha 的 border；范围条使用 palette.border 原值。",
+      "implemented": "已按 S3-A scope 核对当前源码/测试/截图。",
+      "verified": null,
+      "disproved": true,
+      "blocked_external": [],
+      "unverified": [
+        "真机/读屏/平台编译/真实接口 NOT_RUN"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/decisive-tests.json",
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/handoff/S3-A.md"
+      ],
+      "reason": "仅评 S3-A scope 实例，不代其它 owner 关闭全局编号。"
+    },
+    {
+      "issueId": "DT-06",
+      "stageId": "S3-A",
+      "priority": "P2",
+      "state": "DISPROVED",
+      "sourcePaths": [
+        "lib/fx/theme/fx_theme.dart",
+        "lib/fx/tokens/fx_colors.dart"
+      ],
+      "sourceSha256": {
+        "lib/fx/theme/fx_theme.dart": "14696bcb234330fecf2719860372f4d38645e8358f60c1c6a65473de0040ff8d",
+        "lib/fx/tokens/fx_colors.dart": "26d090f792f06e0743e82d3cb79d60b03c8bd0b387abe164c350379cdb14bc8b"
+      },
+      "observedBehavior": "暗色 primary 使用 #70A7FF 配深色前景；导航选中不使用白字压亮蓝。",
+      "implemented": "已按 S3-A scope 核对当前源码/测试/截图。",
+      "verified": null,
+      "disproved": true,
+      "blocked_external": [],
+      "unverified": [
+        "真机/读屏/平台编译/真实接口 NOT_RUN"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/decisive-tests.json",
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/handoff/S3-A.md"
+      ],
+      "reason": "仅评 S3-A scope 实例，不代其它 owner 关闭全局编号。"
+    },
+    {
+      "issueId": "DT-07",
+      "stageId": "S3-A",
+      "priority": "P2",
+      "state": "DISPROVED",
+      "sourcePaths": [
+        "lib/fx/theme/fx_theme.dart",
+        "lib/fx/tokens/fx_colors.dart"
+      ],
+      "sourceSha256": {
+        "lib/fx/theme/fx_theme.dart": "14696bcb234330fecf2719860372f4d38645e8358f60c1c6a65473de0040ff8d",
+        "lib/fx/tokens/fx_colors.dart": "26d090f792f06e0743e82d3cb79d60b03c8bd0b387abe164c350379cdb14bc8b"
+      },
+      "observedBehavior": "危险色仅用于错误文案/图标；未新增白字压 #EF4444。",
+      "implemented": "已按 S3-A scope 核对当前源码/测试/截图。",
+      "verified": null,
+      "disproved": true,
+      "blocked_external": [],
+      "unverified": [
+        "真机/读屏/平台编译/真实接口 NOT_RUN"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/decisive-tests.json",
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/handoff/S3-A.md"
+      ],
+      "reason": "仅评 S3-A scope 实例，不代其它 owner 关闭全局编号。"
+    },
+    {
+      "issueId": "DT-08",
+      "stageId": "S3-A",
+      "priority": "P2",
+      "state": "DISPROVED",
+      "sourcePaths": [
+        "lib/fx/theme/fx_theme.dart",
+        "lib/fx/tokens/fx_colors.dart"
+      ],
+      "sourceSha256": {
+        "lib/fx/theme/fx_theme.dart": "14696bcb234330fecf2719860372f4d38645e8358f60c1c6a65473de0040ff8d",
+        "lib/fx/tokens/fx_colors.dart": "26d090f792f06e0743e82d3cb79d60b03c8bd0b387abe164c350379cdb14bc8b"
+      },
+      "observedBehavior": "壳层不借用 secondary/tertiary 表达业务状态。",
+      "implemented": "已按 S3-A scope 核对当前源码/测试/截图。",
+      "verified": null,
+      "disproved": true,
+      "blocked_external": [],
+      "unverified": [
+        "真机/读屏/平台编译/真实接口 NOT_RUN"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/decisive-tests.json",
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/handoff/S3-A.md"
+      ],
+      "reason": "仅评 S3-A scope 实例，不代其它 owner 关闭全局编号。"
+    },
+    {
+      "issueId": "DT-09",
+      "stageId": "S3-A",
+      "priority": "P2",
+      "state": "DISPROVED",
+      "sourcePaths": [
+        "lib/fx/theme/fx_theme.dart",
+        "lib/fx/tokens/fx_colors.dart"
+      ],
+      "sourceSha256": {
+        "lib/fx/theme/fx_theme.dart": "14696bcb234330fecf2719860372f4d38645e8358f60c1c6a65473de0040ff8d",
+        "lib/fx/tokens/fx_colors.dart": "26d090f792f06e0743e82d3cb79d60b03c8bd0b387abe164c350379cdb14bc8b"
+      },
+      "observedBehavior": "ColorScheme surfaceContainer 映射已在 S1 落地；壳层未覆盖回默认。",
+      "implemented": "已按 S3-A scope 核对当前源码/测试/截图。",
+      "verified": null,
+      "disproved": true,
+      "blocked_external": [],
+      "unverified": [
+        "真机/读屏/平台编译/真实接口 NOT_RUN"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/decisive-tests.json",
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/handoff/S3-A.md"
+      ],
+      "reason": "仅评 S3-A scope 实例，不代其它 owner 关闭全局编号。"
+    },
+    {
+      "issueId": "DT-10",
+      "stageId": "S3-A",
+      "priority": "P2",
+      "state": "DISPROVED",
+      "sourcePaths": [
+        "lib/fx/theme/fx_theme.dart",
+        "lib/fx/tokens/fx_colors.dart"
+      ],
+      "sourceSha256": {
+        "lib/fx/theme/fx_theme.dart": "14696bcb234330fecf2719860372f4d38645e8358f60c1c6a65473de0040ff8d",
+        "lib/fx/tokens/fx_colors.dart": "26d090f792f06e0743e82d3cb79d60b03c8bd0b387abe164c350379cdb14bc8b"
+      },
+      "observedBehavior": "壳层无模态；范围条不使用 shadow 作 scrim。",
+      "implemented": "已按 S3-A scope 核对当前源码/测试/截图。",
+      "verified": null,
+      "disproved": true,
+      "blocked_external": [],
+      "unverified": [
+        "真机/读屏/平台编译/真实接口 NOT_RUN"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/decisive-tests.json",
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/handoff/S3-A.md"
+      ],
+      "reason": "仅评 S3-A scope 实例，不代其它 owner 关闭全局编号。"
+    },
+    {
+      "issueId": "DT-11",
+      "stageId": "S3-A",
+      "priority": "P2",
+      "state": "DISPROVED",
+      "sourcePaths": [
+        "lib/core/session/widgets/session_scope_strip.dart"
+      ],
+      "sourceSha256": {
+        "lib/core/session/widgets/session_scope_strip.dart": "fb4e254d8de3cb39c1ab51d8b6ece47cb126633832c7e0262128280616c10ebd"
+      },
+      "observedBehavior": "范围条组名用 textSecondary、书名用 textPrimary，层级由字号/字重承担。",
+      "implemented": "已按 S3-A scope 核对当前源码/测试/截图。",
+      "verified": null,
+      "disproved": true,
+      "blocked_external": [],
+      "unverified": [
+        "真机/读屏/平台编译/真实接口 NOT_RUN"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/decisive-tests.json",
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/handoff/S3-A.md"
+      ],
+      "reason": "仅评 S3-A scope 实例，不代其它 owner 关闭全局编号。"
+    },
+    {
+      "issueId": "DT-12",
+      "stageId": "S3-A",
+      "priority": "P1",
+      "state": "DISPROVED",
+      "sourcePaths": [
+        "lib/core/shell/main_shell.dart",
+        "lib/core/session/widgets/session_scope_strip.dart",
+        "lib/core/session/widgets/session_scoped_page.dart",
+        "lib/core/navigation/app_router.dart",
+        "lib/core/navigation/deep_link_target.dart",
+        "lib/core/navigation/pending_deep_link.dart",
+        "lib/core/navigation/startup_route_guard.dart"
+      ],
+      "sourceSha256": {
+        "lib/core/shell/main_shell.dart": "4d7a96a807b2f13922d1b1a3b260bf35e641a57c411afd026cd702a548d4df81",
+        "lib/core/session/widgets/session_scope_strip.dart": "fb4e254d8de3cb39c1ab51d8b6ece47cb126633832c7e0262128280616c10ebd",
+        "lib/core/session/widgets/session_scoped_page.dart": "45d62c4acb50dcbae1d650987076734b37c3e5ce5e79f047c13213be5b5ae0d8",
+        "lib/core/navigation/app_router.dart": "f32c5eee22455d8f111ce9ff57222b624f3f188df271b1f17a860be5722c8ef7",
+        "lib/core/navigation/deep_link_target.dart": "35a337c196ea20cc521b449bf0a10410a10fa5d7b20d12ff9abf76052bc86701",
+        "lib/core/navigation/pending_deep_link.dart": "891ee6b32462827f6991e0f706846a7f312138e5fe64b4e677b58a5a41f0eefa",
+        "lib/core/navigation/startup_route_guard.dart": "f63701fdb501075d82d101ab53e9be2abaf7101255b34aa814a588a2acb10ee3"
+      },
+      "observedBehavior": "S3-A 壳层无收入/支出彩色文字；不把业务色当金额前景。",
+      "implemented": "已按 S3-A scope 核对当前源码/测试/截图。",
+      "verified": null,
+      "disproved": true,
+      "blocked_external": [],
+      "unverified": [
+        "真机/读屏/平台编译/真实接口 NOT_RUN"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/decisive-tests.json",
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/handoff/S3-A.md"
+      ],
+      "reason": "仅评 S3-A scope 实例，不代其它 owner 关闭全局编号。"
+    },
+    {
+      "issueId": "DT-13",
+      "stageId": "S3-A",
+      "priority": "P2",
+      "state": "DISPROVED",
+      "sourcePaths": [
+        "lib/core/shell/main_shell.dart",
+        "lib/core/session/widgets/session_scope_strip.dart",
+        "lib/core/session/widgets/session_scoped_page.dart",
+        "lib/core/navigation/app_router.dart",
+        "lib/core/navigation/deep_link_target.dart",
+        "lib/core/navigation/pending_deep_link.dart",
+        "lib/core/navigation/startup_route_guard.dart"
+      ],
+      "sourceSha256": {
+        "lib/core/shell/main_shell.dart": "4d7a96a807b2f13922d1b1a3b260bf35e641a57c411afd026cd702a548d4df81",
+        "lib/core/session/widgets/session_scope_strip.dart": "fb4e254d8de3cb39c1ab51d8b6ece47cb126633832c7e0262128280616c10ebd",
+        "lib/core/session/widgets/session_scoped_page.dart": "45d62c4acb50dcbae1d650987076734b37c3e5ce5e79f047c13213be5b5ae0d8",
+        "lib/core/navigation/app_router.dart": "f32c5eee22455d8f111ce9ff57222b624f3f188df271b1f17a860be5722c8ef7",
+        "lib/core/navigation/deep_link_target.dart": "35a337c196ea20cc521b449bf0a10410a10fa5d7b20d12ff9abf76052bc86701",
+        "lib/core/navigation/pending_deep_link.dart": "891ee6b32462827f6991e0f706846a7f312138e5fe64b4e677b58a5a41f0eefa",
+        "lib/core/navigation/startup_route_guard.dart": "f63701fdb501075d82d101ab53e9be2abaf7101255b34aa814a588a2acb10ee3"
+      },
+      "observedBehavior": "S3-A 不含图表 categorical 调色。",
+      "implemented": "已按 S3-A scope 核对当前源码/测试/截图。",
+      "verified": null,
+      "disproved": true,
+      "blocked_external": [],
+      "unverified": [
+        "真机/读屏/平台编译/真实接口 NOT_RUN"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/decisive-tests.json",
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/handoff/S3-A.md"
+      ],
+      "reason": "仅评 S3-A scope 实例，不代其它 owner 关闭全局编号。"
+    },
+    {
+      "issueId": "DT-14",
+      "stageId": "S3-A",
+      "priority": "P2",
+      "state": "DISPROVED",
+      "sourcePaths": [
+        "lib/core/shell/main_shell.dart",
+        "lib/core/session/widgets/session_scope_strip.dart",
+        "lib/core/session/widgets/session_scoped_page.dart",
+        "lib/core/navigation/app_router.dart",
+        "lib/core/navigation/deep_link_target.dart",
+        "lib/core/navigation/pending_deep_link.dart",
+        "lib/core/navigation/startup_route_guard.dart"
+      ],
+      "sourceSha256": {
+        "lib/core/shell/main_shell.dart": "4d7a96a807b2f13922d1b1a3b260bf35e641a57c411afd026cd702a548d4df81",
+        "lib/core/session/widgets/session_scope_strip.dart": "fb4e254d8de3cb39c1ab51d8b6ece47cb126633832c7e0262128280616c10ebd",
+        "lib/core/session/widgets/session_scoped_page.dart": "45d62c4acb50dcbae1d650987076734b37c3e5ce5e79f047c13213be5b5ae0d8",
+        "lib/core/navigation/app_router.dart": "f32c5eee22455d8f111ce9ff57222b624f3f188df271b1f17a860be5722c8ef7",
+        "lib/core/navigation/deep_link_target.dart": "35a337c196ea20cc521b449bf0a10410a10fa5d7b20d12ff9abf76052bc86701",
+        "lib/core/navigation/pending_deep_link.dart": "891ee6b32462827f6991e0f706846a7f312138e5fe64b4e677b58a5a41f0eefa",
+        "lib/core/navigation/startup_route_guard.dart": "f63701fdb501075d82d101ab53e9be2abaf7101255b34aa814a588a2acb10ee3"
+      },
+      "observedBehavior": "S3-A 不新增净资产/借贷红绿大面积色域。",
+      "implemented": "已按 S3-A scope 核对当前源码/测试/截图。",
+      "verified": null,
+      "disproved": true,
+      "blocked_external": [],
+      "unverified": [
+        "真机/读屏/平台编译/真实接口 NOT_RUN"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/decisive-tests.json",
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/handoff/S3-A.md"
+      ],
+      "reason": "仅评 S3-A scope 实例，不代其它 owner 关闭全局编号。"
+    },
+    {
+      "issueId": "DT-15",
+      "stageId": "S3-A",
+      "priority": "P1",
+      "state": "DISPROVED",
+      "sourcePaths": [
+        "lib/core/shell/main_shell.dart",
+        "lib/core/session/widgets/session_scope_strip.dart",
+        "lib/core/session/widgets/session_scoped_page.dart",
+        "lib/core/navigation/app_router.dart",
+        "lib/core/navigation/deep_link_target.dart",
+        "lib/core/navigation/pending_deep_link.dart",
+        "lib/core/navigation/startup_route_guard.dart"
+      ],
+      "sourceSha256": {
+        "lib/core/shell/main_shell.dart": "4d7a96a807b2f13922d1b1a3b260bf35e641a57c411afd026cd702a548d4df81",
+        "lib/core/session/widgets/session_scope_strip.dart": "fb4e254d8de3cb39c1ab51d8b6ece47cb126633832c7e0262128280616c10ebd",
+        "lib/core/session/widgets/session_scoped_page.dart": "45d62c4acb50dcbae1d650987076734b37c3e5ce5e79f047c13213be5b5ae0d8",
+        "lib/core/navigation/app_router.dart": "f32c5eee22455d8f111ce9ff57222b624f3f188df271b1f17a860be5722c8ef7",
+        "lib/core/navigation/deep_link_target.dart": "35a337c196ea20cc521b449bf0a10410a10fa5d7b20d12ff9abf76052bc86701",
+        "lib/core/navigation/pending_deep_link.dart": "891ee6b32462827f6991e0f706846a7f312138e5fe64b4e677b58a5a41f0eefa",
+        "lib/core/navigation/startup_route_guard.dart": "f63701fdb501075d82d101ab53e9be2abaf7101255b34aa814a588a2acb10ee3"
+      },
+      "observedBehavior": "S3-A 无小票费用/优惠标签。",
+      "implemented": "已按 S3-A scope 核对当前源码/测试/截图。",
+      "verified": null,
+      "disproved": true,
+      "blocked_external": [],
+      "unverified": [
+        "真机/读屏/平台编译/真实接口 NOT_RUN"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/decisive-tests.json",
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/handoff/S3-A.md"
+      ],
+      "reason": "仅评 S3-A scope 实例，不代其它 owner 关闭全局编号。"
+    },
+    {
+      "issueId": "DT-16",
+      "stageId": "S3-A",
+      "priority": "P2",
+      "state": "DISPROVED",
+      "sourcePaths": [
+        "lib/fx/tokens/fx_typography.dart",
+        "lib/core/shell/main_shell.dart",
+        "lib/core/session/widgets/session_scope_strip.dart"
+      ],
+      "sourceSha256": {
+        "lib/fx/tokens/fx_typography.dart": "50ef1a62747520689df0cac356128c14478702cffb6a1d338cae6f855bcbe959",
+        "lib/core/shell/main_shell.dart": "4d7a96a807b2f13922d1b1a3b260bf35e641a57c411afd026cd702a548d4df81",
+        "lib/core/session/widgets/session_scope_strip.dart": "fb4e254d8de3cb39c1ab51d8b6ece47cb126633832c7e0262128280616c10ebd"
+      },
+      "observedBehavior": "壳层标题/范围/导航全部走 FxTypography 与 Material textTheme 映射。",
+      "implemented": "已按 S3-A scope 核对当前源码/测试/截图。",
+      "verified": null,
+      "disproved": true,
+      "blocked_external": [],
+      "unverified": [
+        "真机/读屏/平台编译/真实接口 NOT_RUN"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/decisive-tests.json",
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/handoff/S3-A.md"
+      ],
+      "reason": "仅评 S3-A scope 实例，不代其它 owner 关闭全局编号。"
+    },
+    {
+      "issueId": "DT-17",
+      "stageId": "S3-A",
+      "priority": "P2",
+      "state": "DISPROVED",
+      "sourcePaths": [
+        "lib/fx/tokens/fx_typography.dart",
+        "lib/core/shell/main_shell.dart",
+        "lib/core/session/widgets/session_scope_strip.dart"
+      ],
+      "sourceSha256": {
+        "lib/fx/tokens/fx_typography.dart": "50ef1a62747520689df0cac356128c14478702cffb6a1d338cae6f855bcbe959",
+        "lib/core/shell/main_shell.dart": "4d7a96a807b2f13922d1b1a3b260bf35e641a57c411afd026cd702a548d4df81",
+        "lib/core/session/widgets/session_scope_strip.dart": "fb4e254d8de3cb39c1ab51d8b6ece47cb126633832c7e0262128280616c10ebd"
+      },
+      "observedBehavior": "导航 13/600、范围 13/15、标题 22/600；未把全部标题设 700。",
+      "implemented": "已按 S3-A scope 核对当前源码/测试/截图。",
+      "verified": null,
+      "disproved": true,
+      "blocked_external": [],
+      "unverified": [
+        "真机/读屏/平台编译/真实接口 NOT_RUN"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/decisive-tests.json",
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/handoff/S3-A.md"
+      ],
+      "reason": "仅评 S3-A scope 实例，不代其它 owner 关闭全局编号。"
+    },
+    {
+      "issueId": "DT-18",
+      "stageId": "S3-A",
+      "priority": "P1",
+      "state": "DISPROVED",
+      "sourcePaths": [
+        "lib/fx/tokens/fx_typography.dart",
+        "lib/core/shell/main_shell.dart",
+        "lib/core/session/widgets/session_scope_strip.dart"
+      ],
+      "sourceSha256": {
+        "lib/fx/tokens/fx_typography.dart": "50ef1a62747520689df0cac356128c14478702cffb6a1d338cae6f855bcbe959",
+        "lib/core/shell/main_shell.dart": "4d7a96a807b2f13922d1b1a3b260bf35e641a57c411afd026cd702a548d4df81",
+        "lib/core/session/widgets/session_scope_strip.dart": "fb4e254d8de3cb39c1ab51d8b6ece47cb126633832c7e0262128280616c10ebd"
+      },
+      "observedBehavior": "范围说明最小 13、账本 15，导航 13；未把关键范围降到 caption 以下。",
+      "implemented": "已按 S3-A scope 核对当前源码/测试/截图。",
+      "verified": null,
+      "disproved": true,
+      "blocked_external": [],
+      "unverified": [
+        "真机/读屏/平台编译/真实接口 NOT_RUN"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/decisive-tests.json",
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/handoff/S3-A.md"
+      ],
+      "reason": "仅评 S3-A scope 实例，不代其它 owner 关闭全局编号。"
+    },
+    {
+      "issueId": "DT-19",
+      "stageId": "S3-A",
+      "priority": "P1",
+      "state": "DISPROVED",
+      "sourcePaths": [
+        "lib/fx/tokens/fx_typography.dart",
+        "lib/core/shell/main_shell.dart",
+        "lib/core/session/widgets/session_scope_strip.dart"
+      ],
+      "sourceSha256": {
+        "lib/fx/tokens/fx_typography.dart": "50ef1a62747520689df0cac356128c14478702cffb6a1d338cae6f855bcbe959",
+        "lib/core/shell/main_shell.dart": "4d7a96a807b2f13922d1b1a3b260bf35e641a57c411afd026cd702a548d4df81",
+        "lib/core/session/widgets/session_scope_strip.dart": "fb4e254d8de3cb39c1ab51d8b6ece47cb126633832c7e0262128280616c10ebd"
+      },
+      "observedBehavior": "S3-A 无 9/10/11/12 或 12.5/13.5 游离字号。",
+      "implemented": "已按 S3-A scope 核对当前源码/测试/截图。",
+      "verified": null,
+      "disproved": true,
+      "blocked_external": [],
+      "unverified": [
+        "真机/读屏/平台编译/真实接口 NOT_RUN"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/decisive-tests.json",
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/handoff/S3-A.md"
+      ],
+      "reason": "仅评 S3-A scope 实例，不代其它 owner 关闭全局编号。"
+    },
+    {
+      "issueId": "DT-20",
+      "stageId": "S3-A",
+      "priority": "P2",
+      "state": "DISPROVED",
+      "sourcePaths": [
+        "lib/fx/tokens/fx_typography.dart",
+        "lib/core/shell/main_shell.dart",
+        "lib/core/session/widgets/session_scope_strip.dart"
+      ],
+      "sourceSha256": {
+        "lib/fx/tokens/fx_typography.dart": "50ef1a62747520689df0cac356128c14478702cffb6a1d338cae6f855bcbe959",
+        "lib/core/shell/main_shell.dart": "4d7a96a807b2f13922d1b1a3b260bf35e641a57c411afd026cd702a548d4df81",
+        "lib/core/session/widgets/session_scope_strip.dart": "fb4e254d8de3cb39c1ab51d8b6ece47cb126633832c7e0262128280616c10ebd"
+      },
+      "observedBehavior": "范围条/导航使用 FxTypography height 比例；未设局部 height 1。",
+      "implemented": "已按 S3-A scope 核对当前源码/测试/截图。",
+      "verified": null,
+      "disproved": true,
+      "blocked_external": [],
+      "unverified": [
+        "真机/读屏/平台编译/真实接口 NOT_RUN"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/decisive-tests.json",
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/handoff/S3-A.md"
+      ],
+      "reason": "仅评 S3-A scope 实例，不代其它 owner 关闭全局编号。"
+    },
+    {
+      "issueId": "DT-21",
+      "stageId": "S3-A",
+      "priority": "P2",
+      "state": "DISPROVED",
+      "sourcePaths": [
+        "lib/fx/tokens/fx_typography.dart",
+        "lib/core/shell/main_shell.dart",
+        "lib/core/session/widgets/session_scope_strip.dart"
+      ],
+      "sourceSha256": {
+        "lib/fx/tokens/fx_typography.dart": "50ef1a62747520689df0cac356128c14478702cffb6a1d338cae6f855bcbe959",
+        "lib/core/shell/main_shell.dart": "4d7a96a807b2f13922d1b1a3b260bf35e641a57c411afd026cd702a548d4df81",
+        "lib/core/session/widgets/session_scope_strip.dart": "fb4e254d8de3cb39c1ab51d8b6ece47cb126633832c7e0262128280616c10ebd"
+      },
+      "observedBehavior": "S3-A 不引用 RobotoMono；导航/范围使用系统字体。",
+      "implemented": "已按 S3-A scope 核对当前源码/测试/截图。",
+      "verified": null,
+      "disproved": true,
+      "blocked_external": [],
+      "unverified": [
+        "真机/读屏/平台编译/真实接口 NOT_RUN"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/decisive-tests.json",
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/handoff/S3-A.md"
+      ],
+      "reason": "仅评 S3-A scope 实例，不代其它 owner 关闭全局编号。"
+    },
+    {
+      "issueId": "DT-22",
+      "stageId": "S3-A",
+      "priority": "P2",
+      "state": "DISPROVED",
+      "sourcePaths": [
+        "lib/fx/tokens/fx_typography.dart",
+        "lib/core/shell/main_shell.dart",
+        "lib/core/session/widgets/session_scope_strip.dart"
+      ],
+      "sourceSha256": {
+        "lib/fx/tokens/fx_typography.dart": "50ef1a62747520689df0cac356128c14478702cffb6a1d338cae6f855bcbe959",
+        "lib/core/shell/main_shell.dart": "4d7a96a807b2f13922d1b1a3b260bf35e641a57c411afd026cd702a548d4df81",
+        "lib/core/session/widgets/session_scope_strip.dart": "fb4e254d8de3cb39c1ab51d8b6ece47cb126633832c7e0262128280616c10ebd"
+      },
+      "observedBehavior": "FxTypography letterSpacing=0，未继承 Material 字距到中文范围。",
+      "implemented": "已按 S3-A scope 核对当前源码/测试/截图。",
+      "verified": null,
+      "disproved": true,
+      "blocked_external": [],
+      "unverified": [
+        "真机/读屏/平台编译/真实接口 NOT_RUN"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/decisive-tests.json",
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/handoff/S3-A.md"
+      ],
+      "reason": "仅评 S3-A scope 实例，不代其它 owner 关闭全局编号。"
+    },
+    {
+      "issueId": "DT-23",
+      "stageId": "S3-A",
+      "priority": "P1",
+      "state": "DISPROVED",
+      "sourcePaths": [
+        "lib/core/shell/main_shell.dart",
+        "lib/core/session/widgets/session_scope_strip.dart",
+        "lib/core/session/widgets/session_scoped_page.dart",
+        "lib/core/navigation/app_router.dart",
+        "lib/core/navigation/deep_link_target.dart",
+        "lib/core/navigation/pending_deep_link.dart",
+        "lib/core/navigation/startup_route_guard.dart"
+      ],
+      "sourceSha256": {
+        "lib/core/shell/main_shell.dart": "4d7a96a807b2f13922d1b1a3b260bf35e641a57c411afd026cd702a548d4df81",
+        "lib/core/session/widgets/session_scope_strip.dart": "fb4e254d8de3cb39c1ab51d8b6ece47cb126633832c7e0262128280616c10ebd",
+        "lib/core/session/widgets/session_scoped_page.dart": "45d62c4acb50dcbae1d650987076734b37c3e5ce5e79f047c13213be5b5ae0d8",
+        "lib/core/navigation/app_router.dart": "f32c5eee22455d8f111ce9ff57222b624f3f188df271b1f17a860be5722c8ef7",
+        "lib/core/navigation/deep_link_target.dart": "35a337c196ea20cc521b449bf0a10410a10fa5d7b20d12ff9abf76052bc86701",
+        "lib/core/navigation/pending_deep_link.dart": "891ee6b32462827f6991e0f706846a7f312138e5fe64b4e677b58a5a41f0eefa",
+        "lib/core/navigation/startup_route_guard.dart": "f63701fdb501075d82d101ab53e9be2abaf7101255b34aa814a588a2acb10ee3"
+      },
+      "observedBehavior": "S3-A 不显示金额；壳层无金额 ellipsis 实例。",
+      "implemented": "已按 S3-A scope 核对当前源码/测试/截图。",
+      "verified": null,
+      "disproved": true,
+      "blocked_external": [],
+      "unverified": [
+        "真机/读屏/平台编译/真实接口 NOT_RUN"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/decisive-tests.json",
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/handoff/S3-A.md"
+      ],
+      "reason": "仅评 S3-A scope 实例，不代其它 owner 关闭全局编号。"
+    },
+    {
+      "issueId": "DT-24",
+      "stageId": "S3-A",
+      "priority": "P2",
+      "state": "DISPROVED",
+      "sourcePaths": [
+        "lib/fx/tokens/fx_typography.dart",
+        "lib/core/shell/main_shell.dart",
+        "lib/core/session/widgets/session_scope_strip.dart"
+      ],
+      "sourceSha256": {
+        "lib/fx/tokens/fx_typography.dart": "50ef1a62747520689df0cac356128c14478702cffb6a1d338cae6f855bcbe959",
+        "lib/core/shell/main_shell.dart": "4d7a96a807b2f13922d1b1a3b260bf35e641a57c411afd026cd702a548d4df81",
+        "lib/core/session/widgets/session_scope_strip.dart": "fb4e254d8de3cb39c1ab51d8b6ece47cb126633832c7e0262128280616c10ebd"
+      },
+      "observedBehavior": "范围条组名 400、书名 600；导航未选 500/选中 600，未同时堆 600。",
+      "implemented": "已按 S3-A scope 核对当前源码/测试/截图。",
+      "verified": null,
+      "disproved": true,
+      "blocked_external": [],
+      "unverified": [
+        "真机/读屏/平台编译/真实接口 NOT_RUN"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/decisive-tests.json",
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/handoff/S3-A.md"
+      ],
+      "reason": "仅评 S3-A scope 实例，不代其它 owner 关闭全局编号。"
+    },
+    {
+      "issueId": "DT-25",
+      "stageId": "S3-A",
+      "priority": "P2",
+      "state": "DISPROVED",
+      "sourcePaths": [
+        "lib/core/session/widgets/session_scope_strip.dart"
+      ],
+      "sourceSha256": {
+        "lib/core/session/widgets/session_scope_strip.dart": "fb4e254d8de3cb39c1ab51d8b6ece47cb126633832c7e0262128280616c10ebd"
+      },
+      "observedBehavior": "范围条账本名最多 3 行并保留完整值；组名作为次级一行。",
+      "implemented": "已按 S3-A scope 核对当前源码/测试/截图。",
+      "verified": null,
+      "disproved": true,
+      "blocked_external": [],
+      "unverified": [
+        "真机/读屏/平台编译/真实接口 NOT_RUN"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/decisive-tests.json",
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/handoff/S3-A.md"
+      ],
+      "reason": "仅评 S3-A scope 实例，不代其它 owner 关闭全局编号。"
+    },
+    {
+      "issueId": "DT-26",
+      "stageId": "S3-A",
+      "priority": "P2",
+      "state": "DISPROVED",
+      "sourcePaths": [
+        "lib/fx/theme/fx_theme.dart",
+        "lib/fx/tokens/fx_colors.dart"
+      ],
+      "sourceSha256": {
+        "lib/fx/theme/fx_theme.dart": "14696bcb234330fecf2719860372f4d38645e8358f60c1c6a65473de0040ff8d",
+        "lib/fx/tokens/fx_colors.dart": "26d090f792f06e0743e82d3cb79d60b03c8bd0b387abe164c350379cdb14bc8b"
+      },
+      "observedBehavior": "S1 对比度测试已改 Color.computeLuminance；壳层颜色来自该 palette。",
+      "implemented": "已按 S3-A scope 核对当前源码/测试/截图。",
+      "verified": null,
+      "disproved": true,
+      "blocked_external": [],
+      "unverified": [
+        "真机/读屏/平台编译/真实接口 NOT_RUN"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/decisive-tests.json",
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/handoff/S3-A.md"
+      ],
+      "reason": "仅评 S3-A scope 实例，不代其它 owner 关闭全局编号。"
+    },
+    {
+      "issueId": "DT-27",
+      "stageId": "S3-A",
+      "priority": "P2",
+      "state": "DISPROVED",
+      "sourcePaths": [
+        "lib/fx/tokens/fx_spacing.dart",
+        "lib/core/shell/main_shell.dart",
+        "lib/core/session/widgets/session_scope_strip.dart"
+      ],
+      "sourceSha256": {
+        "lib/fx/tokens/fx_spacing.dart": "07da8325b12f4b4bc9f99f6b6eb834fc2ad30ba75c8ff5ff2a76e053a3cf9cb7",
+        "lib/core/shell/main_shell.dart": "4d7a96a807b2f13922d1b1a3b260bf35e641a57c411afd026cd702a548d4df81",
+        "lib/core/session/widgets/session_scope_strip.dart": "fb4e254d8de3cb39c1ab51d8b6ece47cb126633832c7e0262128280616c10ebd"
+      },
+      "observedBehavior": "壳层使用 4/8/12/16/20/24/32 语义间距。",
+      "implemented": "已按 S3-A scope 核对当前源码/测试/截图。",
+      "verified": null,
+      "disproved": true,
+      "blocked_external": [],
+      "unverified": [
+        "真机/读屏/平台编译/真实接口 NOT_RUN"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/decisive-tests.json",
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/handoff/S3-A.md"
+      ],
+      "reason": "仅评 S3-A scope 实例，不代其它 owner 关闭全局编号。"
+    },
+    {
+      "issueId": "DT-28",
+      "stageId": "S3-A",
+      "priority": "P2",
+      "state": "DISPROVED",
+      "sourcePaths": [
+        "lib/fx/tokens/fx_spacing.dart",
+        "lib/core/shell/main_shell.dart",
+        "lib/core/session/widgets/session_scope_strip.dart"
+      ],
+      "sourceSha256": {
+        "lib/fx/tokens/fx_spacing.dart": "07da8325b12f4b4bc9f99f6b6eb834fc2ad30ba75c8ff5ff2a76e053a3cf9cb7",
+        "lib/core/shell/main_shell.dart": "4d7a96a807b2f13922d1b1a3b260bf35e641a57c411afd026cd702a548d4df81",
+        "lib/core/session/widgets/session_scope_strip.dart": "fb4e254d8de3cb39c1ab51d8b6ece47cb126633832c7e0262128280616c10ebd"
+      },
+      "observedBehavior": "主壳/范围条无多层 16 叠加；页内卡片由页面 owner 处理。",
+      "implemented": "已按 S3-A scope 核对当前源码/测试/截图。",
+      "verified": null,
+      "disproved": true,
+      "blocked_external": [],
+      "unverified": [
+        "真机/读屏/平台编译/真实接口 NOT_RUN"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/decisive-tests.json",
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/handoff/S3-A.md"
+      ],
+      "reason": "仅评 S3-A scope 实例，不代其它 owner 关闭全局编号。"
+    },
+    {
+      "issueId": "DT-29",
+      "stageId": "S3-A",
+      "priority": "P2",
+      "state": "DISPROVED",
+      "sourcePaths": [
+        "lib/core/session/widgets/session_scope_strip.dart"
+      ],
+      "sourceSha256": {
+        "lib/core/session/widgets/session_scope_strip.dart": "fb4e254d8de3cb39c1ab51d8b6ece47cb126633832c7e0262128280616c10ebd"
+      },
+      "observedBehavior": "范围条页边距 20、内距 8/12；未新增显式 16 标题。",
+      "implemented": "已按 S3-A scope 核对当前源码/测试/截图。",
+      "verified": null,
+      "disproved": true,
+      "blocked_external": [],
+      "unverified": [
+        "真机/读屏/平台编译/真实接口 NOT_RUN"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/decisive-tests.json",
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/handoff/S3-A.md"
+      ],
+      "reason": "仅评 S3-A scope 实例，不代其它 owner 关闭全局编号。"
+    },
+    {
+      "issueId": "DT-30",
+      "stageId": "S3-A",
+      "priority": "P1",
+      "state": "DISPROVED",
+      "sourcePaths": [
+        "lib/fx/components/fx_button.dart",
+        "lib/core/shell/main_shell.dart"
+      ],
+      "sourceSha256": {
+        "lib/fx/components/fx_button.dart": "c0653f86c2f89119b1e954a456b45cd055ced734cf0d0262c5a04cedd879b049",
+        "lib/core/shell/main_shell.dart": "4d7a96a807b2f13922d1b1a3b260bf35e641a57c411afd026cd702a548d4df81"
+      },
+      "observedBehavior": "壳层 FxButton 为 minHeight 并允许增高；S1 已修。",
+      "implemented": "已按 S3-A scope 核对当前源码/测试/截图。",
+      "verified": null,
+      "disproved": true,
+      "blocked_external": [],
+      "unverified": [
+        "真机/读屏/平台编译/真实接口 NOT_RUN"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/decisive-tests.json",
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/handoff/S3-A.md"
+      ],
+      "reason": "仅评 S3-A scope 实例，不代其它 owner 关闭全局编号。"
+    },
+    {
+      "issueId": "DT-31",
+      "stageId": "S3-A",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "sourcePaths": [
+        "lib/core/shell/main_shell.dart",
+        "test/core/shell/main_shell_recent_bills_navigation_test.dart"
+      ],
+      "sourceSha256": {
+        "lib/core/shell/main_shell.dart": "4d7a96a807b2f13922d1b1a3b260bf35e641a57c411afd026cd702a548d4df81",
+        "test/core/shell/main_shell_recent_bills_navigation_test.dart": "d747f9128962441f10674f042fc10fd9920db77500d4228837b989c9681c6032"
+      },
+      "observedBehavior": "底部导航改为内容高度，2x/320 不夹断；范围条按内容增高。",
+      "implemented": "已在壳层/范围条落地并用本地测试与截图验证。",
+      "verified": "Local tests and viewed screenshots passed",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "真机/读屏/平台编译/真实接口 NOT_RUN"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/decisive-tests.json",
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/handoff/S3-A.md"
+      ],
+      "reason": "仅评 S3-A scope 实例，不代其它 owner 关闭全局编号。"
+    },
+    {
+      "issueId": "DT-32",
+      "stageId": "S3-A",
+      "priority": "P2",
+      "state": "DISPROVED",
+      "sourcePaths": [
+        "lib/core/shell/main_shell.dart",
+        "lib/core/session/widgets/session_scope_strip.dart",
+        "lib/core/session/widgets/session_scoped_page.dart",
+        "lib/core/navigation/app_router.dart",
+        "lib/core/navigation/deep_link_target.dart",
+        "lib/core/navigation/pending_deep_link.dart",
+        "lib/core/navigation/startup_route_guard.dart"
+      ],
+      "sourceSha256": {
+        "lib/core/shell/main_shell.dart": "4d7a96a807b2f13922d1b1a3b260bf35e641a57c411afd026cd702a548d4df81",
+        "lib/core/session/widgets/session_scope_strip.dart": "fb4e254d8de3cb39c1ab51d8b6ece47cb126633832c7e0262128280616c10ebd",
+        "lib/core/session/widgets/session_scoped_page.dart": "45d62c4acb50dcbae1d650987076734b37c3e5ce5e79f047c13213be5b5ae0d8",
+        "lib/core/navigation/app_router.dart": "f32c5eee22455d8f111ce9ff57222b624f3f188df271b1f17a860be5722c8ef7",
+        "lib/core/navigation/deep_link_target.dart": "35a337c196ea20cc521b449bf0a10410a10fa5d7b20d12ff9abf76052bc86701",
+        "lib/core/navigation/pending_deep_link.dart": "891ee6b32462827f6991e0f706846a7f312138e5fe64b4e677b58a5a41f0eefa",
+        "lib/core/navigation/startup_route_guard.dart": "f63701fdb501075d82d101ab53e9be2abaf7101255b34aa814a588a2acb10ee3"
+      },
+      "observedBehavior": "S3-A 无小字号胶囊墙；导航选中胶囊是导航语义。",
+      "implemented": "已按 S3-A scope 核对当前源码/测试/截图。",
+      "verified": null,
+      "disproved": true,
+      "blocked_external": [],
+      "unverified": [
+        "真机/读屏/平台编译/真实接口 NOT_RUN"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/decisive-tests.json",
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/handoff/S3-A.md"
+      ],
+      "reason": "仅评 S3-A scope 实例，不代其它 owner 关闭全局编号。"
+    },
+    {
+      "issueId": "DT-33",
+      "stageId": "S3-A",
+      "priority": "P2",
+      "state": "DISPROVED",
+      "sourcePaths": [
+        "lib/core/shell/main_shell.dart",
+        "lib/core/session/widgets/session_scope_strip.dart",
+        "lib/core/session/widgets/session_scoped_page.dart",
+        "lib/core/navigation/app_router.dart",
+        "lib/core/navigation/deep_link_target.dart",
+        "lib/core/navigation/pending_deep_link.dart",
+        "lib/core/navigation/startup_route_guard.dart"
+      ],
+      "sourceSha256": {
+        "lib/core/shell/main_shell.dart": "4d7a96a807b2f13922d1b1a3b260bf35e641a57c411afd026cd702a548d4df81",
+        "lib/core/session/widgets/session_scope_strip.dart": "fb4e254d8de3cb39c1ab51d8b6ece47cb126633832c7e0262128280616c10ebd",
+        "lib/core/session/widgets/session_scoped_page.dart": "45d62c4acb50dcbae1d650987076734b37c3e5ce5e79f047c13213be5b5ae0d8",
+        "lib/core/navigation/app_router.dart": "f32c5eee22455d8f111ce9ff57222b624f3f188df271b1f17a860be5722c8ef7",
+        "lib/core/navigation/deep_link_target.dart": "35a337c196ea20cc521b449bf0a10410a10fa5d7b20d12ff9abf76052bc86701",
+        "lib/core/navigation/pending_deep_link.dart": "891ee6b32462827f6991e0f706846a7f312138e5fe64b4e677b58a5a41f0eefa",
+        "lib/core/navigation/startup_route_guard.dart": "f63701fdb501075d82d101ab53e9be2abaf7101255b34aa814a588a2acb10ee3"
+      },
+      "observedBehavior": "S3-A 无图表留白/图例。",
+      "implemented": "已按 S3-A scope 核对当前源码/测试/截图。",
+      "verified": null,
+      "disproved": true,
+      "blocked_external": [],
+      "unverified": [
+        "真机/读屏/平台编译/真实接口 NOT_RUN"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/decisive-tests.json",
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/handoff/S3-A.md"
+      ],
+      "reason": "仅评 S3-A scope 实例，不代其它 owner 关闭全局编号。"
+    },
+    {
+      "issueId": "DT-34",
+      "stageId": "S3-A",
+      "priority": "P1",
+      "state": "DISPROVED",
+      "sourcePaths": [
+        "lib/core/shell/main_shell.dart",
+        "lib/core/session/widgets/session_scope_strip.dart",
+        "lib/core/session/widgets/session_scoped_page.dart",
+        "lib/core/navigation/app_router.dart",
+        "lib/core/navigation/deep_link_target.dart",
+        "lib/core/navigation/pending_deep_link.dart",
+        "lib/core/navigation/startup_route_guard.dart"
+      ],
+      "sourceSha256": {
+        "lib/core/shell/main_shell.dart": "4d7a96a807b2f13922d1b1a3b260bf35e641a57c411afd026cd702a548d4df81",
+        "lib/core/session/widgets/session_scope_strip.dart": "fb4e254d8de3cb39c1ab51d8b6ece47cb126633832c7e0262128280616c10ebd",
+        "lib/core/session/widgets/session_scoped_page.dart": "45d62c4acb50dcbae1d650987076734b37c3e5ce5e79f047c13213be5b5ae0d8",
+        "lib/core/navigation/app_router.dart": "f32c5eee22455d8f111ce9ff57222b624f3f188df271b1f17a860be5722c8ef7",
+        "lib/core/navigation/deep_link_target.dart": "35a337c196ea20cc521b449bf0a10410a10fa5d7b20d12ff9abf76052bc86701",
+        "lib/core/navigation/pending_deep_link.dart": "891ee6b32462827f6991e0f706846a7f312138e5fe64b4e677b58a5a41f0eefa",
+        "lib/core/navigation/startup_route_guard.dart": "f63701fdb501075d82d101ab53e9be2abaf7101255b34aa814a588a2acb10ee3"
+      },
+      "observedBehavior": "S3-A 无 clear/select 小目标；导航/FAB/范围条均≥44/48。",
+      "implemented": "已按 S3-A scope 核对当前源码/测试/截图。",
+      "verified": null,
+      "disproved": true,
+      "blocked_external": [],
+      "unverified": [
+        "真机/读屏/平台编译/真实接口 NOT_RUN"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/decisive-tests.json",
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/handoff/S3-A.md"
+      ],
+      "reason": "仅评 S3-A scope 实例，不代其它 owner 关闭全局编号。"
+    },
+    {
+      "issueId": "DT-35",
+      "stageId": "S3-A",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "sourcePaths": [
+        "lib/core/shell/main_shell.dart",
+        "test/core/shell/main_shell_recent_bills_navigation_test.dart"
+      ],
+      "sourceSha256": {
+        "lib/core/shell/main_shell.dart": "4d7a96a807b2f13922d1b1a3b260bf35e641a57c411afd026cd702a548d4df81",
+        "test/core/shell/main_shell_recent_bills_navigation_test.dart": "d747f9128962441f10674f042fc10fd9920db77500d4228837b989c9681c6032"
+      },
+      "observedBehavior": "移除重复导航/安全区预留；末项与 FAB 命中测试通过，横屏无额外空屏。",
+      "implemented": "已在壳层/范围条落地并用本地测试与截图验证。",
+      "verified": "Local tests and viewed screenshots passed",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "真机/读屏/平台编译/真实接口 NOT_RUN"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/decisive-tests.json",
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/handoff/S3-A.md"
+      ],
+      "reason": "仅评 S3-A scope 实例，不代其它 owner 关闭全局编号。"
+    },
+    {
+      "issueId": "DT-36",
+      "stageId": "S3-A",
+      "priority": "P2",
+      "state": "DISPROVED",
+      "sourcePaths": [
+        "lib/fx/tokens/fx_radius.dart",
+        "lib/core/session/widgets/session_scope_strip.dart"
+      ],
+      "sourceSha256": {
+        "lib/fx/tokens/fx_radius.dart": "42a850cc5a8b403808abd1f68d1744a5aa61f51687da3b6e05e3dc5655f800b2",
+        "lib/core/session/widgets/session_scope_strip.dart": "fb4e254d8de3cb39c1ab51d8b6ece47cb126633832c7e0262128280616c10ebd"
+      },
+      "observedBehavior": "壳层/范围条使用 FxRadius token；未新增 10/14/18 圆角。",
+      "implemented": "已按 S3-A scope 核对当前源码/测试/截图。",
+      "verified": null,
+      "disproved": true,
+      "blocked_external": [],
+      "unverified": [
+        "真机/读屏/平台编译/真实接口 NOT_RUN"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/decisive-tests.json",
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/handoff/S3-A.md"
+      ],
+      "reason": "仅评 S3-A scope 实例，不代其它 owner 关闭全局编号。"
+    },
+    {
+      "issueId": "DT-37",
+      "stageId": "S3-A",
+      "priority": "P2",
+      "state": "DISPROVED",
+      "sourcePaths": [
+        "lib/core/shell/main_shell.dart",
+        "lib/core/session/widgets/session_scope_strip.dart",
+        "lib/core/session/widgets/session_scoped_page.dart",
+        "lib/core/navigation/app_router.dart",
+        "lib/core/navigation/deep_link_target.dart",
+        "lib/core/navigation/pending_deep_link.dart",
+        "lib/core/navigation/startup_route_guard.dart"
+      ],
+      "sourceSha256": {
+        "lib/core/shell/main_shell.dart": "4d7a96a807b2f13922d1b1a3b260bf35e641a57c411afd026cd702a548d4df81",
+        "lib/core/session/widgets/session_scope_strip.dart": "fb4e254d8de3cb39c1ab51d8b6ece47cb126633832c7e0262128280616c10ebd",
+        "lib/core/session/widgets/session_scoped_page.dart": "45d62c4acb50dcbae1d650987076734b37c3e5ce5e79f047c13213be5b5ae0d8",
+        "lib/core/navigation/app_router.dart": "f32c5eee22455d8f111ce9ff57222b624f3f188df271b1f17a860be5722c8ef7",
+        "lib/core/navigation/deep_link_target.dart": "35a337c196ea20cc521b449bf0a10410a10fa5d7b20d12ff9abf76052bc86701",
+        "lib/core/navigation/pending_deep_link.dart": "891ee6b32462827f6991e0f706846a7f312138e5fe64b4e677b58a5a41f0eefa",
+        "lib/core/navigation/startup_route_guard.dart": "f63701fdb501075d82d101ab53e9be2abaf7101255b34aa814a588a2acb10ee3"
+      },
+      "observedBehavior": "S3-A 未新增筛选/状态/颜色/树属性胶囊；只保留导航选中态。",
+      "implemented": "已按 S3-A scope 核对当前源码/测试/截图。",
+      "verified": null,
+      "disproved": true,
+      "blocked_external": [],
+      "unverified": [
+        "真机/读屏/平台编译/真实接口 NOT_RUN"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/decisive-tests.json",
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/handoff/S3-A.md"
+      ],
+      "reason": "仅评 S3-A scope 实例，不代其它 owner 关闭全局编号。"
+    },
+    {
+      "issueId": "DT-38",
+      "stageId": "S3-A",
+      "priority": "P2",
+      "state": "DISPROVED",
+      "sourcePaths": [
+        "lib/core/shell/main_shell.dart",
+        "lib/core/session/widgets/session_scope_strip.dart",
+        "lib/core/session/widgets/session_scoped_page.dart",
+        "lib/core/navigation/app_router.dart",
+        "lib/core/navigation/deep_link_target.dart",
+        "lib/core/navigation/pending_deep_link.dart",
+        "lib/core/navigation/startup_route_guard.dart"
+      ],
+      "sourceSha256": {
+        "lib/core/shell/main_shell.dart": "4d7a96a807b2f13922d1b1a3b260bf35e641a57c411afd026cd702a548d4df81",
+        "lib/core/session/widgets/session_scope_strip.dart": "fb4e254d8de3cb39c1ab51d8b6ece47cb126633832c7e0262128280616c10ebd",
+        "lib/core/session/widgets/session_scoped_page.dart": "45d62c4acb50dcbae1d650987076734b37c3e5ce5e79f047c13213be5b5ae0d8",
+        "lib/core/navigation/app_router.dart": "f32c5eee22455d8f111ce9ff57222b624f3f188df271b1f17a860be5722c8ef7",
+        "lib/core/navigation/deep_link_target.dart": "35a337c196ea20cc521b449bf0a10410a10fa5d7b20d12ff9abf76052bc86701",
+        "lib/core/navigation/pending_deep_link.dart": "891ee6b32462827f6991e0f706846a7f312138e5fe64b4e677b58a5a41f0eefa",
+        "lib/core/navigation/startup_route_guard.dart": "f63701fdb501075d82d101ab53e9be2abaf7101255b34aa814a588a2acb10ee3"
+      },
+      "observedBehavior": "壳层/范围条无卡片套内卡/输入框套圆图标。",
+      "implemented": "已按 S3-A scope 核对当前源码/测试/截图。",
+      "verified": null,
+      "disproved": true,
+      "blocked_external": [],
+      "unverified": [
+        "真机/读屏/平台编译/真实接口 NOT_RUN"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/decisive-tests.json",
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/handoff/S3-A.md"
+      ],
+      "reason": "仅评 S3-A scope 实例，不代其它 owner 关闭全局编号。"
+    },
+    {
+      "issueId": "DT-39",
+      "stageId": "S3-A",
+      "priority": "P2",
+      "state": "DISPROVED",
+      "sourcePaths": [
+        "lib/core/shell/main_shell.dart"
+      ],
+      "sourceSha256": {
+        "lib/core/shell/main_shell.dart": "4d7a96a807b2f13922d1b1a3b260bf35e641a57c411afd026cd702a548d4df81"
+      },
+      "observedBehavior": "FAB elevation 0；导航/范围条无阴影。",
+      "implemented": "已按 S3-A scope 核对当前源码/测试/截图。",
+      "verified": null,
+      "disproved": true,
+      "blocked_external": [],
+      "unverified": [
+        "真机/读屏/平台编译/真实接口 NOT_RUN"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/decisive-tests.json",
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/handoff/S3-A.md"
+      ],
+      "reason": "仅评 S3-A scope 实例，不代其它 owner 关闭全局编号。"
+    },
+    {
+      "issueId": "DT-40",
+      "stageId": "S3-A",
+      "priority": "P2",
+      "state": "DISPROVED",
+      "sourcePaths": [
+        "lib/core/shell/main_shell.dart",
+        "lib/core/session/widgets/session_scope_strip.dart",
+        "lib/core/session/widgets/session_scoped_page.dart",
+        "lib/core/navigation/app_router.dart",
+        "lib/core/navigation/deep_link_target.dart",
+        "lib/core/navigation/pending_deep_link.dart",
+        "lib/core/navigation/startup_route_guard.dart"
+      ],
+      "sourceSha256": {
+        "lib/core/shell/main_shell.dart": "4d7a96a807b2f13922d1b1a3b260bf35e641a57c411afd026cd702a548d4df81",
+        "lib/core/session/widgets/session_scope_strip.dart": "fb4e254d8de3cb39c1ab51d8b6ece47cb126633832c7e0262128280616c10ebd",
+        "lib/core/session/widgets/session_scoped_page.dart": "45d62c4acb50dcbae1d650987076734b37c3e5ce5e79f047c13213be5b5ae0d8",
+        "lib/core/navigation/app_router.dart": "f32c5eee22455d8f111ce9ff57222b624f3f188df271b1f17a860be5722c8ef7",
+        "lib/core/navigation/deep_link_target.dart": "35a337c196ea20cc521b449bf0a10410a10fa5d7b20d12ff9abf76052bc86701",
+        "lib/core/navigation/pending_deep_link.dart": "891ee6b32462827f6991e0f706846a7f312138e5fe64b4e677b58a5a41f0eefa",
+        "lib/core/navigation/startup_route_guard.dart": "f63701fdb501075d82d101ab53e9be2abaf7101255b34aa814a588a2acb10ee3"
+      },
+      "observedBehavior": "S3-A 无拖动/分段/移除阴影。",
+      "implemented": "已按 S3-A scope 核对当前源码/测试/截图。",
+      "verified": null,
+      "disproved": true,
+      "blocked_external": [],
+      "unverified": [
+        "真机/读屏/平台编译/真实接口 NOT_RUN"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/decisive-tests.json",
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/handoff/S3-A.md"
+      ],
+      "reason": "仅评 S3-A scope 实例，不代其它 owner 关闭全局编号。"
+    },
+    {
+      "issueId": "DT-41",
+      "stageId": "S3-A",
+      "priority": "P2",
+      "state": "DISPROVED",
+      "sourcePaths": [
+        "lib/core/shell/main_shell.dart"
+      ],
+      "sourceSha256": {
+        "lib/core/shell/main_shell.dart": "4d7a96a807b2f13922d1b1a3b260bf35e641a57c411afd026cd702a548d4df81"
+      },
+      "observedBehavior": "壳层导航以 Material+InkWell 绘制，无不透明 Container 遮水波纹。",
+      "implemented": "已按 S3-A scope 核对当前源码/测试/截图。",
+      "verified": null,
+      "disproved": true,
+      "blocked_external": [],
+      "unverified": [
+        "真机/读屏/平台编译/真实接口 NOT_RUN"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/decisive-tests.json",
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/handoff/S3-A.md"
+      ],
+      "reason": "仅评 S3-A scope 实例，不代其它 owner 关闭全局编号。"
+    },
+    {
+      "issueId": "DT-42",
+      "stageId": "S3-A",
+      "priority": "P2",
+      "state": "DISPROVED",
+      "sourcePaths": [
+        "lib/core/shell/main_shell.dart",
+        "lib/core/session/widgets/session_scope_strip.dart",
+        "lib/core/session/widgets/session_scoped_page.dart",
+        "lib/core/navigation/app_router.dart",
+        "lib/core/navigation/deep_link_target.dart",
+        "lib/core/navigation/pending_deep_link.dart",
+        "lib/core/navigation/startup_route_guard.dart"
+      ],
+      "sourceSha256": {
+        "lib/core/shell/main_shell.dart": "4d7a96a807b2f13922d1b1a3b260bf35e641a57c411afd026cd702a548d4df81",
+        "lib/core/session/widgets/session_scope_strip.dart": "fb4e254d8de3cb39c1ab51d8b6ece47cb126633832c7e0262128280616c10ebd",
+        "lib/core/session/widgets/session_scoped_page.dart": "45d62c4acb50dcbae1d650987076734b37c3e5ce5e79f047c13213be5b5ae0d8",
+        "lib/core/navigation/app_router.dart": "f32c5eee22455d8f111ce9ff57222b624f3f188df271b1f17a860be5722c8ef7",
+        "lib/core/navigation/deep_link_target.dart": "35a337c196ea20cc521b449bf0a10410a10fa5d7b20d12ff9abf76052bc86701",
+        "lib/core/navigation/pending_deep_link.dart": "891ee6b32462827f6991e0f706846a7f312138e5fe64b4e677b58a5a41f0eefa",
+        "lib/core/navigation/startup_route_guard.dart": "f63701fdb501075d82d101ab53e9be2abaf7101255b34aa814a588a2acb10ee3"
+      },
+      "observedBehavior": "S3-A 无 FxChip/TagChip 实例。",
+      "implemented": "已按 S3-A scope 核对当前源码/测试/截图。",
+      "verified": null,
+      "disproved": true,
+      "blocked_external": [],
+      "unverified": [
+        "真机/读屏/平台编译/真实接口 NOT_RUN"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/decisive-tests.json",
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/handoff/S3-A.md"
+      ],
+      "reason": "仅评 S3-A scope 实例，不代其它 owner 关闭全局编号。"
+    },
+    {
+      "issueId": "DT-43",
+      "stageId": "S3-A",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "sourcePaths": [
+        "lib/core/shell/main_shell.dart",
+        "lib/core/navigation/fx_page_route.dart"
+      ],
+      "sourceSha256": {
+        "lib/core/shell/main_shell.dart": "4d7a96a807b2f13922d1b1a3b260bf35e641a57c411afd026cd702a548d4df81",
+        "lib/core/navigation/fx_page_route.dart": "9801a99514424e5ec4da9102c2bf80eb4ec7532cd8ae64959268da5a1fe27cd2"
+      },
+      "observedBehavior": "导航选中态用 FxMotion.resolve；范围条不引入自写长动画；Web fade 已有 disableAnimations 分支。",
+      "implemented": "已在壳层/范围条落地并用本地测试与截图验证。",
+      "verified": "Local tests and viewed screenshots passed",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "真机/读屏/平台编译/真实接口 NOT_RUN"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/decisive-tests.json",
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/handoff/S3-A.md"
+      ],
+      "reason": "仅评 S3-A scope 实例，不代其它 owner 关闭全局编号。"
+    },
+    {
+      "issueId": "DT-44",
+      "stageId": "S3-A",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "sourcePaths": [
+        "lib/core/shell/main_shell.dart",
+        "lib/core/session/widgets/session_scope_strip.dart"
+      ],
+      "sourceSha256": {
+        "lib/core/shell/main_shell.dart": "4d7a96a807b2f13922d1b1a3b260bf35e641a57c411afd026cd702a548d4df81",
+        "lib/core/session/widgets/session_scope_strip.dart": "fb4e254d8de3cb39c1ab51d8b6ece47cb126633832c7e0262128280616c10ebd"
+      },
+      "observedBehavior": "导航每次切换仅一次 selectionClick；范围条点击不叠加触感。",
+      "implemented": "已在壳层/范围条落地并用本地测试与截图验证。",
+      "verified": "Local tests and viewed screenshots passed",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "真机/读屏/平台编译/真实接口 NOT_RUN"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/decisive-tests.json",
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/handoff/S3-A.md"
+      ],
+      "reason": "仅评 S3-A scope 实例，不代其它 owner 关闭全局编号。"
+    },
+    {
+      "issueId": "DT-45",
+      "stageId": "S3-A",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "sourcePaths": [
+        "lib/core/navigation/fx_route_unavailable_page.dart",
+        "lib/core/session/widgets/session_scope_strip.dart"
+      ],
+      "sourceSha256": {
+        "lib/core/navigation/fx_route_unavailable_page.dart": "349a3b36a1cd1b4510604b61c7e1050221140ae2f86e7f6d3b11b46a5d501d87",
+        "lib/core/session/widgets/session_scope_strip.dart": "fb4e254d8de3cb39c1ab51d8b6ece47cb126633832c7e0262128280616c10ebd"
+      },
+      "observedBehavior": "深链失败页保留标题/返回；范围条 loading/error 不替换页面与返回控件。",
+      "implemented": "已在壳层/范围条落地并用本地测试与截图验证。",
+      "verified": "Local tests and viewed screenshots passed",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "真机/读屏/平台编译/真实接口 NOT_RUN"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/decisive-tests.json",
+        "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/screenshot-index.json",
+        "docs/design-system/execution-prompts/handoff/S3-A.md"
+      ],
+      "reason": "仅评 S3-A scope 实例，不代其它 owner 关闭全局编号。"
+    }
+  ]
+}

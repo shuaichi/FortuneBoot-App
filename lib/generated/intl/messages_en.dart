@@ -141,116 +141,122 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m53(name) => "Move \"${name}\" to the recycle bin?";
 
-  static String m54(time) => "Archived ${time}";
+  static String m54(group) => "Current group ${group}";
 
-  static String m55(type) => "Edit ${type}";
+  static String m55(group, book) => "Current group ${group}, ledger ${book}";
 
-  static String m56(count) => "${count} orders";
+  static String m56(name) => "Switching to \"${name}\"…";
 
-  static String m57(count) => "${count} orphan legacy bills need review";
+  static String m57(time) => "Archived ${time}";
 
-  static String m58(count) => "${count} pending";
+  static String m58(type) => "Edit ${type}";
 
-  static String m59(id) => "Bill #${id}";
+  static String m59(count) => "${count} orders";
 
-  static String m60(id) => "Order #${id}";
+  static String m60(count) => "${count} orphan legacy bills need review";
 
-  static String m61(name) => "Delete \"${name}\"?";
+  static String m61(count) => "${count} pending";
 
-  static String m62(count) =>
+  static String m62(id) => "Bill #${id}";
+
+  static String m63(id) => "Order #${id}";
+
+  static String m64(name) => "Delete \"${name}\"?";
+
+  static String m65(count) =>
       "${count} orders need review and are excluded from these totals";
 
-  static String m63(time) => "Submitted ${time}";
+  static String m66(time) => "Submitted ${time}";
 
-  static String m64(type) => "${type} Title";
+  static String m67(type) => "${type} Title";
 
-  static String m65(amount) => "Voiding will roll back funds: ${amount}.";
+  static String m68(amount) => "Voiding will roll back funds: ${amount}.";
 
-  static String m66(amount) =>
+  static String m69(amount) =>
       "Adjustment: ${amount}. It will be recorded in income/expense but will not change account balances again.";
 
-  static String m67(name) =>
+  static String m70(name) =>
       "Permanently delete \"${name}\"? This action cannot be undone.";
 
-  static String m68(name) => "Move \"${name}\" to the recycle bin?";
+  static String m71(name) => "Move \"${name}\" to the recycle bin?";
 
-  static String m69(sort) => "Sort ${sort}";
+  static String m72(sort) => "Sort ${sort}";
 
-  static String m70(error) => "Refresh failed: ${error}";
+  static String m73(error) => "Refresh failed: ${error}";
 
-  static String m71(day) => "Day ${day} of each month";
+  static String m74(day) => "Day ${day} of each month";
 
-  static String m72(error) => "Change failed: ${error}";
+  static String m75(error) => "Change failed: ${error}";
 
-  static String m73(error) => "Save failed: ${error}";
+  static String m76(error) => "Save failed: ${error}";
 
-  static String m74(days, hours, minutes) =>
+  static String m77(days, hours, minutes) =>
       "${days}d ${hours}h ${minutes}m left";
 
-  static String m75(date) => "Until ${date}";
+  static String m78(date) => "Until ${date}";
 
-  static String m76(error) => "Upload failed: ${error}";
+  static String m79(error) => "Upload failed: ${error}";
 
-  static String m77(day) => "Day ${day}";
+  static String m80(day) => "Day ${day}";
 
-  static String m78(count) => "${count} times";
+  static String m81(count) => "${count} times";
 
-  static String m79(id) => "Bill #${id}";
+  static String m82(id) => "Bill #${id}";
 
-  static String m80(ms) => "Took ${ms}ms";
+  static String m83(ms) => "Took ${ms}ms";
 
-  static String m81(name) => "Execution Logs · ${name}";
+  static String m84(name) => "Execution Logs · ${name}";
 
-  static String m82(month) => "Month ${month}";
+  static String m85(month) => "Month ${month}";
 
-  static String m83(name) =>
+  static String m86(name) =>
       "Delete \"${name}\"? This action cannot be undone.";
 
-  static String m84(time) => "Every day at ${time}";
+  static String m87(time) => "Every day at ${time}";
 
-  static String m85(day, time) => "Day ${day} monthly at ${time}";
+  static String m88(day, time) => "Day ${day} monthly at ${time}";
 
-  static String m86(days, time) => "Every ${days} at ${time}";
+  static String m89(days, time) => "Every ${days} at ${time}";
 
-  static String m87(month, day, time) => "${month}/${day} yearly at ${time}";
+  static String m90(month, day, time) => "${month}/${day} yearly at ${time}";
 
-  static String m88(count) => "Bar chart, ${count} items";
+  static String m91(count) => "Bar chart, ${count} items";
 
-  static String m89(count) => "${count} bills";
+  static String m92(count) => "${count} bills";
 
-  static String m90(date) => "${date} income & expense";
+  static String m93(date) => "${date} income & expense";
 
-  static String m91(count) => "${count} expense";
+  static String m94(count) => "${count} expense";
 
-  static String m92(count) => "${count} income";
+  static String m95(count) => "${count} income";
 
-  static String m93(count) => "${count} total";
+  static String m96(count) => "${count} total";
 
-  static String m94(billing, repayment) =>
+  static String m97(billing, repayment) =>
       "Billing ${billing} · Repayment ${repayment}";
 
-  static String m95(count) => "Donut chart, ${count} items";
+  static String m98(count) => "Donut chart, ${count} items";
 
-  static String m96(count) => "Line chart, ${count} points";
+  static String m99(count) => "Line chart, ${count} points";
 
-  static String m97(count) => "${count} entries pending confirmation";
+  static String m100(count) => "${count} entries pending confirmation";
 
-  static String m98(date) => "Date:${date}";
+  static String m101(date) => "Date:${date}";
 
-  static String m99(amount) => "Discount ${amount}";
+  static String m102(amount) => "Discount ${amount}";
 
-  static String m100(amount) => "Fees ${amount}";
+  static String m103(amount) => "Fees ${amount}";
 
-  static String m101(id) => "No.:${id}";
+  static String m104(id) => "No.:${id}";
 
-  static String m102(count) => "Chart data table, ${count} rows";
+  static String m105(count) => "Chart data table, ${count} rows";
 
-  static String m103(name) =>
+  static String m106(name) =>
       "Permanently delete \"${name}\"? This action cannot be undone.";
 
-  static String m104(name) => "Move \"${name}\" to the recycle bin?";
+  static String m107(name) => "Move \"${name}\" to the recycle bin?";
 
-  static String m105(todoTitle) => "Todo \"${todoTitle}\" deleted.";
+  static String m108(todoTitle) => "Todo \"${todoTitle}\" deleted.";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -1737,6 +1743,32 @@ class MessageLookup extends MessageLookupByLibrary {
     "navDashboard": MessageLookupByLibrary.simpleMessage("Dashboard"),
     "navInDevelopment": MessageLookupByLibrary.simpleMessage("In development"),
     "navProfile": MessageLookupByLibrary.simpleMessage("Mine"),
+    "navScopeCurrentGroupSemantics": m54,
+    "navScopeCurrentSemantics": m55,
+    "navScopeLoading": MessageLookupByLibrary.simpleMessage(
+      "Loading current scope…",
+    ),
+    "navScopeNoBook": MessageLookupByLibrary.simpleMessage(
+      "No ledger selected",
+    ),
+    "navScopeNoGroup": MessageLookupByLibrary.simpleMessage("No group loaded"),
+    "navScopeReadOnly": MessageLookupByLibrary.simpleMessage("Read-only"),
+    "navScopeReadOnlyHint": MessageLookupByLibrary.simpleMessage(
+      "Visitor access: recording is disabled",
+    ),
+    "navScopeSwitchFailed": MessageLookupByLibrary.simpleMessage(
+      "Current scope was not updated",
+    ),
+    "navScopeSwitching": m56,
+    "navScopeSwitchingBooks": MessageLookupByLibrary.simpleMessage(
+      "Ledger list is unavailable until the switch completes",
+    ),
+    "navScopeTapToSwitch": MessageLookupByLibrary.simpleMessage(
+      "Tap to switch the current ledger",
+    ),
+    "navScopeUpdating": MessageLookupByLibrary.simpleMessage(
+      "Updating current scope…",
+    ),
     "navStats": MessageLookupByLibrary.simpleMessage("Stats"),
     "nickname_required": MessageLookupByLibrary.simpleMessage(
       "Nickname cannot be empty",
@@ -1803,7 +1835,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "ordersArchiveTooltip": MessageLookupByLibrary.simpleMessage(
       "Archived orders are excluded from statistics",
     ),
-    "ordersArchivedTime": m54,
+    "ordersArchivedTime": m57,
     "ordersAuditTitle": MessageLookupByLibrary.simpleMessage("Audit log"),
     "ordersComponentFee": MessageLookupByLibrary.simpleMessage("Fee"),
     "ordersComponentInterest": MessageLookupByLibrary.simpleMessage("Interest"),
@@ -1844,7 +1876,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "ordersEditEntry": MessageLookupByLibrary.simpleMessage("Edit entry"),
     "ordersEditMetadata": MessageLookupByLibrary.simpleMessage("Edit metadata"),
-    "ordersEditTitle": m55,
+    "ordersEditTitle": m58,
     "ordersEmpty": MessageLookupByLibrary.simpleMessage(
       "No orders yet. Tap + in the top right to add one.",
     ),
@@ -1879,7 +1911,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "ordersLoadMoreFailed": MessageLookupByLibrary.simpleMessage(
       "Could not load more. Please retry.",
     ),
-    "ordersMetricCount": m56,
+    "ordersMetricCount": m59,
     "ordersMoreActions": MessageLookupByLibrary.simpleMessage("More actions"),
     "ordersOpenFocusedOrder": MessageLookupByLibrary.simpleMessage(
       "Open this order",
@@ -1887,7 +1919,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "ordersOrderTitle": MessageLookupByLibrary.simpleMessage(
       "Reimbursement Order Title",
     ),
-    "ordersOrphanLegacyCount": m57,
+    "ordersOrphanLegacyCount": m60,
     "ordersOutLabel": MessageLookupByLibrary.simpleMessage("Out "),
     "ordersOverdue": MessageLookupByLibrary.simpleMessage("Overdue"),
     "ordersOverdueOnly": MessageLookupByLibrary.simpleMessage("Overdue only"),
@@ -1906,7 +1938,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "ordersPendingConfirmation": MessageLookupByLibrary.simpleMessage(
       "Pending confirmation",
     ),
-    "ordersPendingEntryCount": m58,
+    "ordersPendingEntryCount": m61,
     "ordersPendingPayable": MessageLookupByLibrary.simpleMessage("To repay"),
     "ordersPendingReceivable": MessageLookupByLibrary.simpleMessage(
       "To recover",
@@ -1914,7 +1946,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "ordersPendingReimbursement": MessageLookupByLibrary.simpleMessage(
       "To reimburse",
     ),
-    "ordersReconciliationBillTitle": m59,
+    "ordersReconciliationBillTitle": m62,
     "ordersReconciliationCandidatePending":
         MessageLookupByLibrary.simpleMessage("Pending to review"),
     "ordersReconciliationCashUnknown": MessageLookupByLibrary.simpleMessage(
@@ -1926,7 +1958,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "ordersReconciliationInAmount": MessageLookupByLibrary.simpleMessage(
       "Original in",
     ),
-    "ordersReconciliationOrderTitle": m60,
+    "ordersReconciliationOrderTitle": m63,
     "ordersReconciliationOriginalIn": MessageLookupByLibrary.simpleMessage(
       "Original in",
     ),
@@ -1949,7 +1981,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "ordersRemarkOptional": MessageLookupByLibrary.simpleMessage(
       "Remark (optional)",
     ),
-    "ordersRemoveMessage": m61,
+    "ordersRemoveMessage": m64,
     "ordersRemoveTitle": MessageLookupByLibrary.simpleMessage(
       "Delete Reimbursement Order",
     ),
@@ -1970,7 +2002,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "ordersReviewRequired": MessageLookupByLibrary.simpleMessage(
       "Needs review",
     ),
-    "ordersReviewRequiredCount": m62,
+    "ordersReviewRequiredCount": m65,
     "ordersReviewRequiredHint": MessageLookupByLibrary.simpleMessage(
       "This order’s amounts cannot be calculated reliably and are excluded from totals. Check the reconciliation report, or fix related entries before reviewing again.",
     ),
@@ -1995,7 +2027,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Unrecognized order status",
     ),
     "ordersStatusUsing": MessageLookupByLibrary.simpleMessage("Active"),
-    "ordersSubmitTime": m63,
+    "ordersSubmitTime": m66,
     "ordersThisOrder": MessageLookupByLibrary.simpleMessage(
       "this reimbursement order",
     ),
@@ -2003,7 +2035,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "ordersTitleHint": MessageLookupByLibrary.simpleMessage(
       "e.g. August travel reimbursement",
     ),
-    "ordersTitleOfType": m64,
+    "ordersTitleOfType": m67,
     "ordersTitleRequired": MessageLookupByLibrary.simpleMessage(
       "Please enter an order title",
     ),
@@ -2027,7 +2059,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Review report",
     ),
     "ordersVoid": MessageLookupByLibrary.simpleMessage("Void"),
-    "ordersVoidCashRollback": m65,
+    "ordersVoidCashRollback": m68,
     "ordersVoidConfirmTitle": MessageLookupByLibrary.simpleMessage(
       "Confirm voiding?",
     ),
@@ -2036,7 +2068,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "ordersVoided": MessageLookupByLibrary.simpleMessage("Voided"),
     "ordersWriteOff": MessageLookupByLibrary.simpleMessage("Write off"),
-    "ordersWriteOffConfirmMessage": m66,
+    "ordersWriteOffConfirmMessage": m69,
     "ordersWriteOffConfirmTitle": MessageLookupByLibrary.simpleMessage(
       "Confirm write-off?",
     ),
@@ -2060,7 +2092,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "payeesDeletePermanently": MessageLookupByLibrary.simpleMessage(
       "Delete permanently",
     ),
-    "payeesDeletePermanentlyConfirm": m67,
+    "payeesDeletePermanentlyConfirm": m70,
     "payeesEdit": MessageLookupByLibrary.simpleMessage("Edit payee"),
     "payeesEmpty": MessageLookupByLibrary.simpleMessage(
       "No payees yet. Tap + in the top right to add one.",
@@ -2069,7 +2101,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "payeesMoveToRecycleBin": MessageLookupByLibrary.simpleMessage(
       "Move to recycle bin",
     ),
-    "payeesMoveToRecycleBinConfirm": m68,
+    "payeesMoveToRecycleBinConfirm": m71,
     "payeesNameHint": MessageLookupByLibrary.simpleMessage("e.g. KFC"),
     "payeesNameLabel": MessageLookupByLibrary.simpleMessage("Payee name"),
     "payeesNameRequired": MessageLookupByLibrary.simpleMessage(
@@ -2092,7 +2124,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "payeesSortLabel": MessageLookupByLibrary.simpleMessage(
       "Sort order (optional)",
     ),
-    "payeesSortValue": m69,
+    "payeesSortValue": m72,
     "payeesThisPayee": MessageLookupByLibrary.simpleMessage("this payee"),
     "payeesTitle": MessageLookupByLibrary.simpleMessage("Payees"),
     "payeesUnnamed": MessageLookupByLibrary.simpleMessage("Unnamed"),
@@ -2234,7 +2266,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "profileCurrencyRefresh": MessageLookupByLibrary.simpleMessage(
       "Refresh rates",
     ),
-    "profileCurrencyRefreshFailed": m70,
+    "profileCurrencyRefreshFailed": m73,
     "profileCurrencyRefreshed": MessageLookupByLibrary.simpleMessage(
       "Exchange rates refreshed",
     ),
@@ -2395,7 +2427,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "profileMonthStartDayHint": MessageLookupByLibrary.simpleMessage(
       "Short months use the last day automatically",
     ),
-    "profileMonthStartDayValue": m71,
+    "profileMonthStartDayValue": m74,
     "profileNewPassword": MessageLookupByLibrary.simpleMessage("New password"),
     "profileNickname": MessageLookupByLibrary.simpleMessage("Nickname"),
     "profileNicknameHint": MessageLookupByLibrary.simpleMessage(
@@ -2409,7 +2441,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "profileNotSet": MessageLookupByLibrary.simpleMessage("Not set"),
     "profileOldPassword": MessageLookupByLibrary.simpleMessage("Old password"),
     "profileOrdersManage": MessageLookupByLibrary.simpleMessage("Documents"),
-    "profilePasswordChangeFailed": m72,
+    "profilePasswordChangeFailed": m75,
     "profilePasswordChanged": MessageLookupByLibrary.simpleMessage(
       "Password changed successfully",
     ),
@@ -2436,7 +2468,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Restore default",
     ),
     "profileRole": MessageLookupByLibrary.simpleMessage("Role"),
-    "profileSaveFailed": m73,
+    "profileSaveFailed": m76,
     "profileSaveFailedRetry": MessageLookupByLibrary.simpleMessage(
       "Save failed, please try again",
     ),
@@ -2460,9 +2492,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "profileSex": MessageLookupByLibrary.simpleMessage("Gender"),
     "profileSexFemale": MessageLookupByLibrary.simpleMessage("Female"),
     "profileSexMale": MessageLookupByLibrary.simpleMessage("Male"),
-    "profileSigningCountdown": m74,
+    "profileSigningCountdown": m77,
     "profileSigningExpired": MessageLookupByLibrary.simpleMessage("Expired"),
-    "profileSigningExpiresOn": m75,
+    "profileSigningExpiresOn": m78,
     "profileSigningValidity": MessageLookupByLibrary.simpleMessage(
       "Signing validity",
     ),
@@ -2482,7 +2514,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "profileThemeLight": MessageLookupByLibrary.simpleMessage("Light"),
     "profileThemeMode": MessageLookupByLibrary.simpleMessage("Theme mode"),
     "profileToolbox": MessageLookupByLibrary.simpleMessage("Toolbox"),
-    "profileUploadFailed": m76,
+    "profileUploadFailed": m79,
     "profileUsername": MessageLookupByLibrary.simpleMessage("Username"),
     "profileViewProfile": MessageLookupByLibrary.simpleMessage("View profile"),
     "protocol": MessageLookupByLibrary.simpleMessage("Protocol"),
@@ -2534,7 +2566,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "recurringCustomSchedule": MessageLookupByLibrary.simpleMessage(
       "Custom schedule",
     ),
-    "recurringDayOfMonthValue": m77,
+    "recurringDayOfMonthValue": m80,
     "recurringDelete": MessageLookupByLibrary.simpleMessage("Delete"),
     "recurringDiscardCustomCronMessage": MessageLookupByLibrary.simpleMessage(
       "The current custom cron expression cannot be converted to a visual rule.",
@@ -2556,7 +2588,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "recurringEndDateOptional": MessageLookupByLibrary.simpleMessage(
       "End Date (optional)",
     ),
-    "recurringExecutedCount": m78,
+    "recurringExecutedCount": m81,
     "recurringExecutedLabel": MessageLookupByLibrary.simpleMessage("Executed"),
     "recurringFreqDaily": MessageLookupByLibrary.simpleMessage("Daily"),
     "recurringFreqMonthly": MessageLookupByLibrary.simpleMessage("Monthly"),
@@ -2566,17 +2598,17 @@ class MessageLookup extends MessageLookupByLibrary {
     "recurringLegacyVisualNotice": MessageLookupByLibrary.simpleMessage(
       "The previous schedule could not be shown visually and has been changed to every day at 09:00. Review it before saving.",
     ),
-    "recurringLogBillId": m79,
-    "recurringLogDuration": m80,
+    "recurringLogBillId": m82,
+    "recurringLogDuration": m83,
     "recurringLogs": MessageLookupByLibrary.simpleMessage("Execution Logs"),
-    "recurringLogsTitle": m81,
+    "recurringLogsTitle": m84,
     "recurringMaxExecutionsHint": MessageLookupByLibrary.simpleMessage(
       "Leave empty for unlimited",
     ),
     "recurringMaxExecutionsOptional": MessageLookupByLibrary.simpleMessage(
       "Max Executions (optional)",
     ),
-    "recurringMonthValue": m82,
+    "recurringMonthValue": m85,
     "recurringNextExecution": MessageLookupByLibrary.simpleMessage("Next run"),
     "recurringNoLogs": MessageLookupByLibrary.simpleMessage(
       "No execution records",
@@ -2592,7 +2624,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "recurringRecoveryStrategy": MessageLookupByLibrary.simpleMessage(
       "Recovery Strategy",
     ),
-    "recurringRemoveMessage": m83,
+    "recurringRemoveMessage": m86,
     "recurringRemoveTitle": MessageLookupByLibrary.simpleMessage("Delete Rule"),
     "recurringRuleName": MessageLookupByLibrary.simpleMessage("Rule Name"),
     "recurringRuleNameHint": MessageLookupByLibrary.simpleMessage(
@@ -2618,10 +2650,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "recurringStartDateOptional": MessageLookupByLibrary.simpleMessage(
       "Start Date (optional)",
     ),
-    "recurringSummaryDaily": m84,
-    "recurringSummaryMonthly": m85,
-    "recurringSummaryWeekly": m86,
-    "recurringSummaryYearly": m87,
+    "recurringSummaryDaily": m87,
+    "recurringSummaryMonthly": m88,
+    "recurringSummaryWeekly": m89,
+    "recurringSummaryYearly": m90,
     "recurringTagsOptional": MessageLookupByLibrary.simpleMessage(
       "Tags (multiple, optional)",
     ),
@@ -2650,6 +2682,24 @@ class MessageLookup extends MessageLookupByLibrary {
     "register": MessageLookupByLibrary.simpleMessage("REGISTER"),
     "registration_failed": MessageLookupByLibrary.simpleMessage(
       "Registration failed",
+    ),
+    "routeUnavailableBackHome": MessageLookupByLibrary.simpleMessage(
+      "Back to home",
+    ),
+    "routeUnavailableMissingContext": MessageLookupByLibrary.simpleMessage(
+      "The link is missing the parameters or object information needed to open this page.",
+    ),
+    "routeUnavailablePermission": MessageLookupByLibrary.simpleMessage(
+      "Your current role does not have permission to open this page.",
+    ),
+    "routeUnavailableSession": MessageLookupByLibrary.simpleMessage(
+      "The session has not recovered yet, so the link target can\'t be opened.",
+    ),
+    "routeUnavailableTitle": MessageLookupByLibrary.simpleMessage(
+      "Can\'t open this page",
+    ),
+    "routeUnavailableUnknown": MessageLookupByLibrary.simpleMessage(
+      "The linked page does not exist or is no longer available.",
     ),
     "serverConnectionFailed": MessageLookupByLibrary.simpleMessage(
       "Cannot connect to server. Please check the address, port, or network.",
@@ -2686,10 +2736,10 @@ class MessageLookup extends MessageLookupByLibrary {
       "Assets, liabilities, net worth trend and credit cards",
     ),
     "statsAssetsTitle": MessageLookupByLibrary.simpleMessage("Asset stats"),
-    "statsBarChartSemantics": m88,
+    "statsBarChartSemantics": m91,
     "statsBasicTitle": MessageLookupByLibrary.simpleMessage("Cashflow insight"),
-    "statsBillCount": m89,
-    "statsCalendarDateSummary": m90,
+    "statsBillCount": m92,
+    "statsCalendarDateSummary": m93,
     "statsCalendarDayBills": MessageLookupByLibrary.simpleMessage(
       "Bills this day",
     ),
@@ -2697,14 +2747,14 @@ class MessageLookup extends MessageLookupByLibrary {
       "No bills this day",
     ),
     "statsCalendarExpense": MessageLookupByLibrary.simpleMessage("Expense"),
-    "statsCalendarExpenseCount": m91,
+    "statsCalendarExpenseCount": m94,
     "statsCalendarHistory": MessageLookupByLibrary.simpleMessage("History"),
     "statsCalendarIncome": MessageLookupByLibrary.simpleMessage("Income"),
-    "statsCalendarIncomeCount": m92,
+    "statsCalendarIncomeCount": m95,
     "statsCalendarMonth": MessageLookupByLibrary.simpleMessage("Month"),
     "statsCalendarNext": MessageLookupByLibrary.simpleMessage("Next"),
     "statsCalendarPrevious": MessageLookupByLibrary.simpleMessage("Previous"),
-    "statsCalendarTotalCount": m93,
+    "statsCalendarTotalCount": m96,
     "statsCalendarViewBills": MessageLookupByLibrary.simpleMessage(
       "Open in Bills",
     ),
@@ -2715,11 +2765,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "statsCompletedTodoCountLabel": MessageLookupByLibrary.simpleMessage(
       "Completed todos",
     ),
-    "statsCreditCardDates": m94,
+    "statsCreditCardDates": m97,
     "statsCreditCardOverview": MessageLookupByLibrary.simpleMessage(
       "Credit cards",
     ),
-    "statsDonutChartSemantics": m95,
+    "statsDonutChartSemantics": m98,
     "statsExpense": MessageLookupByLibrary.simpleMessage("Expense"),
     "statsExpenseAnalytics": MessageLookupByLibrary.simpleMessage(
       "Expense analytics",
@@ -2748,10 +2798,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "statsIncomePayees": MessageLookupByLibrary.simpleMessage("Income payees"),
     "statsIncomeTags": MessageLookupByLibrary.simpleMessage("Income tags"),
     "statsIncomeTrend": MessageLookupByLibrary.simpleMessage("Income trend"),
-    "statsLineChartSemantics": m96,
+    "statsLineChartSemantics": m99,
     "statsLoanOverview": MessageLookupByLibrary.simpleMessage("Loan overview"),
     "statsLoanPayable": MessageLookupByLibrary.simpleMessage("Payable"),
-    "statsLoanPendingCount": m97,
+    "statsLoanPendingCount": m100,
     "statsLoanReceivable": MessageLookupByLibrary.simpleMessage("Receivable"),
     "statsLoansEntrySubtitle": MessageLookupByLibrary.simpleMessage(
       "Receivables, payables, finance P/L and pending bills",
@@ -2809,9 +2859,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "statsReceiptCashier": MessageLookupByLibrary.simpleMessage(
       "Cashier: HaoJi",
     ),
-    "statsReceiptDate": m98,
-    "statsReceiptDiscountTotal": m99,
-    "statsReceiptFeeTotal": m100,
+    "statsReceiptDate": m101,
+    "statsReceiptDiscountTotal": m102,
+    "statsReceiptFeeTotal": m103,
     "statsReceiptFooterCounter": MessageLookupByLibrary.simpleMessage(
       "Nothing is supported yet",
     ),
@@ -2842,7 +2892,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "statsReceiptQty": MessageLookupByLibrary.simpleMessage("Qty"),
     "statsReceiptSave": MessageLookupByLibrary.simpleMessage("Save receipt"),
-    "statsReceiptSerial": m101,
+    "statsReceiptSerial": m104,
     "statsReceiptSoldGoods": MessageLookupByLibrary.simpleMessage("Sold items"),
     "statsReceiptThanks": MessageLookupByLibrary.simpleMessage("Thank you"),
     "statsReceiptTransferCount": MessageLookupByLibrary.simpleMessage(
@@ -2858,7 +2908,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "statsSurplus": MessageLookupByLibrary.simpleMessage("Surplus"),
     "statsTableDetail": MessageLookupByLibrary.simpleMessage("Detail"),
     "statsTableItem": MessageLookupByLibrary.simpleMessage("Item"),
-    "statsTableSemantics": m102,
+    "statsTableSemantics": m105,
     "statsTableShare": MessageLookupByLibrary.simpleMessage("Share"),
     "statsTableValue": MessageLookupByLibrary.simpleMessage("Value"),
     "statsTags": MessageLookupByLibrary.simpleMessage("Tags"),
@@ -2874,7 +2924,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "tagsDeletePermanently": MessageLookupByLibrary.simpleMessage(
       "Delete permanently",
     ),
-    "tagsDeletePermanentlyConfirm": m103,
+    "tagsDeletePermanentlyConfirm": m106,
     "tagsEdit": MessageLookupByLibrary.simpleMessage("Edit tag"),
     "tagsEmpty": MessageLookupByLibrary.simpleMessage(
       "No tags yet. Tap + in the top right to add one.",
@@ -2883,7 +2933,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "tagsMoveToRecycleBin": MessageLookupByLibrary.simpleMessage(
       "Move to recycle bin",
     ),
-    "tagsMoveToRecycleBinConfirm": m104,
+    "tagsMoveToRecycleBinConfirm": m107,
     "tagsNameHint": MessageLookupByLibrary.simpleMessage("e.g. Gathering"),
     "tagsNameLabel": MessageLookupByLibrary.simpleMessage("Tag name"),
     "tagsNameRequired": MessageLookupByLibrary.simpleMessage(
@@ -2959,7 +3009,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "todosOverviewOptionsTooltip": MessageLookupByLibrary.simpleMessage(
       "Options",
     ),
-    "todosOverviewTodoDeletedSnackbarText": m105,
+    "todosOverviewTodoDeletedSnackbarText": m108,
     "todosOverviewUndoDeletionButtonText": MessageLookupByLibrary.simpleMessage(
       "Undo",
     ),

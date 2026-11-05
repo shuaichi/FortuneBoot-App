@@ -26,12 +26,28 @@ class SessionCubit extends Cubit<SessionState> {
   final BookService _bookService;
   final BooksService _booksService;
 
+  /// 范围请求代号。只允许最后一次显式选择提交结果，避免快速切换时旧请求
+  /// 晚到并覆盖用户最新选择。
+  int _scopeRequestId = 0;
+
+  bool _isCurrentRequest(int requestId) => requestId == _scopeRequestId;
+
   /// 启动拉取链：默认分组 → 分组列表 → 该分组账本 → 默认账本。
   Future<void> load() async {
-    emit(state.copyWith(status: SessionStatus.loading));
+    final requestId = ++_scopeRequestId;
+    // 保留最近一次成功的范围内容；界面据 status/pending 标注更新中。
+    emit(
+      state.copyWith(
+        status: SessionStatus.loading,
+        pendingGroup: null,
+        errorMessage: null,
+        failure: null,
+      ),
+    );
     try {
       // 1. 分组列表
       final groupsData = FxApi.unwrap(await _groupService.getEnableList());
+      if (!_isCurrentRequest(requestId)) return;
       final groups = (groupsData as List? ?? [])
           .map(
             (e) => FortuneGroupVo.fromJson(Map<String, dynamic>.from(e as Map)),
@@ -39,7 +55,7 @@ class SessionCubit extends Cubit<SessionState> {
           .toList();
 
       if (groups.isEmpty) {
-        emit(state.copyWith(status: SessionStatus.empty, groups: const []));
+        emit(const SessionState(status: SessionStatus.empty));
         return;
       }
 
@@ -51,6 +67,7 @@ class SessionCubit extends Cubit<SessionState> {
       } catch (_) {
         defaultGroupId = null;
       }
+      if (!_isCurrentRequest(requestId)) return;
 
       final selectedGroup = groups.firstWhere(
         (g) => g.groupId == defaultGroupId,
@@ -61,26 +78,31 @@ class SessionCubit extends Cubit<SessionState> {
         throw StateError('Selected group has no groupId');
       }
 
-      await _loadGroupAndBooks(groups, groupId);
+      await _loadGroupAndBooks(groups, groupId, requestId: requestId);
     } on Object catch (error) {
+      if (!_isCurrentRequest(requestId)) return;
       _emitFailure(error);
     }
   }
 
-  void _emitFailure(Object error) {
+  void _emitFailure(Object error, {FortuneGroupVo? pendingGroup}) {
     emit(
       state.copyWith(
         status: SessionStatus.error,
+        pendingGroup: pendingGroup,
         failure: FxFailureMapper.map(error),
+        errorMessage: null,
       ),
     );
   }
 
   Future<void> _loadGroupAndBooks(
     List<FortuneGroupVo> groups,
-    int groupId,
-  ) async {
+    int groupId, {
+    required int requestId,
+  }) async {
     final groupData = FxApi.unwrap(await _groupService.getByGroupId(groupId));
+    if (!_isCurrentRequest(requestId)) return;
     if (groupData is! Map) {
       throw StateError('Group detail is invalid');
     }
@@ -103,6 +125,7 @@ class SessionCubit extends Cubit<SessionState> {
 
     // 历史脏数据：defaultCurrency 误存成 currencyId（如 "33"），启动时自动写回币种代码。
     currentGroup = await _repairGroupCurrency(currentGroup);
+    if (!_isCurrentRequest(requestId)) return;
     final updatedGroups = [
       for (final g in groups)
         if (g.groupId == currentGroup.groupId) currentGroup else g,
@@ -111,10 +134,12 @@ class SessionCubit extends Cubit<SessionState> {
     final booksData = FxApi.unwrap(
       await _bookService.getByGroupId(currentGroupId),
     );
+    if (!_isCurrentRequest(requestId)) return;
     var books = (booksData as List? ?? [])
         .map((e) => FortuneBookVo.fromJson(Map<String, dynamic>.from(e as Map)))
         .toList();
     books = await _repairBookCurrencies(books);
+    if (!_isCurrentRequest(requestId)) return;
 
     FortuneBookVo? currentBook;
     if (books.isNotEmpty) {
@@ -124,8 +149,9 @@ class SessionCubit extends Cubit<SessionState> {
       );
     }
 
+    // 分组、账本与列表在同一帧提交，避免范围名和旧数据短暂错配。
     emit(
-      state.copyWith(
+      SessionState(
         status: currentBook == null ? SessionStatus.empty : SessionStatus.ready,
         groups: updatedGroups,
         currentGroup: currentGroup,
@@ -212,33 +238,57 @@ class SessionCubit extends Cubit<SessionState> {
 
   /// 切换分组：重拉该分组账本并选默认账本。
   Future<void> switchGroup(FortuneGroupVo group) async {
-    if (group.groupId == state.currentGroupId &&
-        state.status != SessionStatus.error) {
+    if (group.groupId != null &&
+        group.groupId == state.currentGroupId &&
+        state.status == SessionStatus.ready &&
+        state.pendingGroup == null) {
       return;
     }
-    emit(
-      SessionState(
-        status: SessionStatus.loading,
-        groups: state.groups,
-        currentGroup: group,
-      ),
-    );
     final groupId = group.groupId;
     if (groupId == null) {
       _emitFailure(StateError('Selected group has no groupId'));
       return;
     }
+    if (state.status == SessionStatus.loading &&
+        state.pendingGroup?.groupId == groupId) {
+      return;
+    }
+    final requestId = ++_scopeRequestId;
+    // 先记录意图，但不改 currentGroup/currentBook；旧数据仍属于旧范围。
+    emit(
+      state.copyWith(
+        status: SessionStatus.loading,
+        pendingGroup: group,
+        errorMessage: null,
+        failure: null,
+      ),
+    );
     try {
-      await _loadGroupAndBooks(state.groups, groupId);
+      await _loadGroupAndBooks(state.groups, groupId, requestId: requestId);
     } on Object catch (error) {
-      _emitFailure(error);
+      if (!_isCurrentRequest(requestId)) return;
+      _emitFailure(error, pendingGroup: group);
     }
   }
 
   /// 切换账本。
   void switchBook(FortuneBookVo book) {
-    if (book.bookId == state.currentBookId) return;
-    emit(state.copyWith(currentBook: book, status: SessionStatus.ready));
+    if (book.bookId == state.currentBookId &&
+        state.status == SessionStatus.ready &&
+        state.pendingGroup == null) {
+      return;
+    }
+    // 显式选择账本会让仍在路上的分组切换失效，避免它晚到后覆盖新选择。
+    ++_scopeRequestId;
+    emit(
+      SessionState(
+        status: SessionStatus.ready,
+        groups: state.groups,
+        currentGroup: state.currentGroup,
+        books: state.books,
+        currentBook: book,
+      ),
+    );
   }
 
   /// 原子切换到指定分组下的指定账本：保证 currentGroup 与 currentBook 属于同一分组，
@@ -249,39 +299,62 @@ class SessionCubit extends Cubit<SessionState> {
     FortuneBookVo book,
   ) async {
     if (group.groupId == null) return;
-    if (group.groupId == state.currentGroupId) {
+    if (group.groupId == state.currentGroupId && state.pendingGroup == null) {
       switchBook(book);
       return;
     }
-    emit(state.copyWith(status: SessionStatus.loading));
+    final requestId = ++_scopeRequestId;
+    emit(
+      state.copyWith(
+        status: SessionStatus.loading,
+        pendingGroup: group,
+        errorMessage: null,
+        failure: null,
+      ),
+    );
     try {
       final booksData = FxApi.unwrap(
         await _bookService.getByGroupId(group.groupId!),
       );
+      if (!_isCurrentRequest(requestId)) return;
       var books = (booksData as List? ?? [])
           .map(
             (e) => FortuneBookVo.fromJson(Map<String, dynamic>.from(e as Map)),
           )
           .toList();
       books = await _repairBookCurrencies(books);
+      if (!_isCurrentRequest(requestId)) return;
       final repairedGroup = await _repairGroupCurrency(group);
+      if (!_isCurrentRequest(requestId)) return;
       // 用列表中的同 id 实例，避免持有过期副本。
       final target = books.firstWhere(
         (b) => b.bookId == book.bookId,
         orElse: () => book,
       );
       emit(
-        state.copyWith(
+        SessionState(
           status: SessionStatus.ready,
+          groups: state.groups,
           currentGroup: repairedGroup,
           books: books,
           currentBook: target,
         ),
       );
     } on Object catch (error) {
-      _emitFailure(error);
+      if (!_isCurrentRequest(requestId)) return;
+      _emitFailure(error, pendingGroup: group);
     }
   }
 
-  void reset() => emit(const SessionState());
+  /// 重试最近一次未完成的范围切换；没有待切换目标时重新加载会话。
+  Future<void> retryPendingScope() {
+    final target = state.pendingGroup;
+    if (target != null) return switchGroup(target);
+    return load();
+  }
+
+  void reset() {
+    ++_scopeRequestId;
+    emit(const SessionState());
+  }
 }

@@ -1612,6 +1612,186 @@ class S {
     );
   }
 
+  /// `Loading current scope…`
+  String get navScopeLoading {
+    return Intl.message(
+      'Loading current scope…',
+      name: 'navScopeLoading',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No group loaded`
+  String get navScopeNoGroup {
+    return Intl.message(
+      'No group loaded',
+      name: 'navScopeNoGroup',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No ledger selected`
+  String get navScopeNoBook {
+    return Intl.message(
+      'No ledger selected',
+      name: 'navScopeNoBook',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Switching to "{name}"…`
+  String navScopeSwitching(String name) {
+    return Intl.message(
+      'Switching to "$name"…',
+      name: 'navScopeSwitching',
+      desc: '',
+      args: [name],
+    );
+  }
+
+  /// `Updating current scope…`
+  String get navScopeUpdating {
+    return Intl.message(
+      'Updating current scope…',
+      name: 'navScopeUpdating',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Current scope was not updated`
+  String get navScopeSwitchFailed {
+    return Intl.message(
+      'Current scope was not updated',
+      name: 'navScopeSwitchFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Read-only`
+  String get navScopeReadOnly {
+    return Intl.message(
+      'Read-only',
+      name: 'navScopeReadOnly',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Visitor access: recording is disabled`
+  String get navScopeReadOnlyHint {
+    return Intl.message(
+      'Visitor access: recording is disabled',
+      name: 'navScopeReadOnlyHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tap to switch the current ledger`
+  String get navScopeTapToSwitch {
+    return Intl.message(
+      'Tap to switch the current ledger',
+      name: 'navScopeTapToSwitch',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Current group {group}, ledger {book}`
+  String navScopeCurrentSemantics(String group, String book) {
+    return Intl.message(
+      'Current group $group, ledger $book',
+      name: 'navScopeCurrentSemantics',
+      desc: '',
+      args: [group, book],
+    );
+  }
+
+  /// `Current group {group}`
+  String navScopeCurrentGroupSemantics(String group) {
+    return Intl.message(
+      'Current group $group',
+      name: 'navScopeCurrentGroupSemantics',
+      desc: '',
+      args: [group],
+    );
+  }
+
+  /// `Ledger list is unavailable until the switch completes`
+  String get navScopeSwitchingBooks {
+    return Intl.message(
+      'Ledger list is unavailable until the switch completes',
+      name: 'navScopeSwitchingBooks',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Can't open this page`
+  String get routeUnavailableTitle {
+    return Intl.message(
+      'Can\'t open this page',
+      name: 'routeUnavailableTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The linked page does not exist or is no longer available.`
+  String get routeUnavailableUnknown {
+    return Intl.message(
+      'The linked page does not exist or is no longer available.',
+      name: 'routeUnavailableUnknown',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The link is missing the parameters or object information needed to open this page.`
+  String get routeUnavailableMissingContext {
+    return Intl.message(
+      'The link is missing the parameters or object information needed to open this page.',
+      name: 'routeUnavailableMissingContext',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The session has not recovered yet, so the link target can't be opened.`
+  String get routeUnavailableSession {
+    return Intl.message(
+      'The session has not recovered yet, so the link target can\'t be opened.',
+      name: 'routeUnavailableSession',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Your current role does not have permission to open this page.`
+  String get routeUnavailablePermission {
+    return Intl.message(
+      'Your current role does not have permission to open this page.',
+      name: 'routeUnavailablePermission',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Back to home`
+  String get routeUnavailableBackHome {
+    return Intl.message(
+      'Back to home',
+      name: 'routeUnavailableBackHome',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Language`
   String get commonLanguage {
     return Intl.message('Language', name: 'commonLanguage', desc: '', args: []);

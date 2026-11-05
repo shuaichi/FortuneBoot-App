@@ -1,0 +1,5 @@
+Flutter 3.41.9 • channel stable • https://github.com/flutter/flutter.git
+Framework • revision 00b0c91f06 (6 months ago) • 2026-04-29 10:03:19 -0700
+Engine • hash 9161402dc0e134b3fb5adee5046b6e84b1a5e1c1 (revision 42d3d75a56) (6 months ago) • 2026-04-28 17:31:55.000Z
+Tools • Dart 3.11.5 • DevTools 2.54.2
+Dart SDK version: 3.11.5 (stable) (Wed Apr 15 00:36:32 2026 -0700) on "macos_arm64"

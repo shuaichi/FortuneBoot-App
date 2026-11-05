@@ -24,5 +24,5 @@ void registerProfileFeature() {
         ? args.profile
         : const UserProfile();
     return ProfileEditPage(profile: profile);
-  });
+  }, deepLinkRestorable: false);
 }

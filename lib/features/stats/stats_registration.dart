@@ -3,6 +3,8 @@ import 'package:fortuneboot/core/navigation/app_router.dart';
 import 'package:fortuneboot/core/navigation/routes.dart';
 import 'package:fortuneboot/core/preferences/preferences_cubit.dart';
 import 'package:fortuneboot/core/session/session_cubit.dart';
+import 'package:fortuneboot/core/session/widgets/session_scope_strip.dart';
+import 'package:fortuneboot/core/session/widgets/session_scoped_page.dart';
 import 'package:fortuneboot/core/shell/main_shell.dart';
 import 'package:fortuneboot/features/stats/presentation/bloc/stats_bloc.dart';
 import 'package:fortuneboot/features/stats/presentation/stats_assets_page.dart';
@@ -29,7 +31,19 @@ void registerStatsSlot() {
     );
   };
 
-  AppRouter.register(Routes.statsAssets, (_) => const StatsAssetsPage());
-  AppRouter.register(Routes.statsLoans, (_) => const StatsLoansPage());
-  AppRouter.register(Routes.statsPolicy, (_) => const StatsPolicyPage());
+  AppRouter.register(
+    Routes.statsAssets,
+    (_) => const SessionScopedPage(
+      level: SessionScopeLevel.group,
+      child: StatsAssetsPage(),
+    ),
+  );
+  AppRouter.register(
+    Routes.statsLoans,
+    (_) => const SessionScopedPage(child: StatsLoansPage()),
+  );
+  AppRouter.register(
+    Routes.statsPolicy,
+    (_) => const SessionScopedPage(child: StatsPolicyPage()),
+  );
 }

@@ -1,0 +1,15 @@
+{
+  "fixture": "docs/design-system/execution-prompts/evidence/S3-A/attempt-001/s3_a_shell_render_test.dart",
+  "realBusinessWidget": "MainShell + SessionScopeStrip + 四 tab 槽位；tab 内容为明确标注的 shell-level fixture",
+  "total": 12,
+  "passed": 12,
+  "failed": 0,
+  "screenshotIndex": "screenshot-index.json",
+  "viewed": 12,
+  "notEvidenceFor": [
+    "真实账单/统计页面业务数据",
+    "真机状态栏/键盘/旋转",
+    "VoiceOver/TalkBack",
+    "Web 深链端到端刷新"
+  ]
+}

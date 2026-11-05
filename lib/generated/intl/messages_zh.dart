@@ -130,110 +130,116 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m53(name) => "确定将「${name}」移入回收站吗？";
 
-  static String m54(time) => "归档 ${time}";
+  static String m54(group) => "当前分组 ${group}";
 
-  static String m55(type) => "编辑${type}";
+  static String m55(group, book) => "当前分组 ${group}，账本 ${book}";
 
-  static String m56(count) => "${count} 张";
+  static String m56(name) => "正在切换到「${name}」…";
 
-  static String m57(count) => "${count} 条孤立历史流水待核对";
+  static String m57(time) => "归档 ${time}";
 
-  static String m58(count) => "待确认 ${count} 笔";
+  static String m58(type) => "编辑${type}";
 
-  static String m59(id) => "流水 #${id}";
+  static String m59(count) => "${count} 张";
 
-  static String m60(id) => "单据 #${id}";
+  static String m60(count) => "${count} 条孤立历史流水待核对";
 
-  static String m61(name) => "确定删除「${name}」吗？";
+  static String m61(count) => "待确认 ${count} 笔";
 
-  static String m62(count) => "${count} 张单据待核对，未计入以上金额";
+  static String m62(id) => "流水 #${id}";
 
-  static String m63(time) => "提交 ${time}";
+  static String m63(id) => "单据 #${id}";
 
-  static String m64(type) => "${type}标题";
+  static String m64(name) => "确定删除「${name}」吗？";
 
-  static String m65(amount) => "作废后将回滚资金：${amount}。";
+  static String m65(count) => "${count} 张单据待核对，未计入以上金额";
 
-  static String m66(amount) => "调整额：${amount}。该操作会计入收支，但不会再次改变账户余额。";
+  static String m66(time) => "提交 ${time}";
 
-  static String m67(name) => "确定彻底删除「${name}」吗？此操作不可撤销。";
+  static String m67(type) => "${type}标题";
 
-  static String m68(name) => "确定将「${name}」移入回收站吗？";
+  static String m68(amount) => "作废后将回滚资金：${amount}。";
 
-  static String m69(sort) => "排序 ${sort}";
+  static String m69(amount) => "调整额：${amount}。该操作会计入收支，但不会再次改变账户余额。";
 
-  static String m70(error) => "刷新失败：${error}";
+  static String m70(name) => "确定彻底删除「${name}」吗？此操作不可撤销。";
 
-  static String m71(day) => "每月 ${day} 日";
+  static String m71(name) => "确定将「${name}」移入回收站吗？";
 
-  static String m72(error) => "修改失败：${error}";
+  static String m72(sort) => "排序 ${sort}";
 
-  static String m73(error) => "保存失败：${error}";
+  static String m73(error) => "刷新失败：${error}";
 
-  static String m74(days, hours, minutes) =>
+  static String m74(day) => "每月 ${day} 日";
+
+  static String m75(error) => "修改失败：${error}";
+
+  static String m76(error) => "保存失败：${error}";
+
+  static String m77(days, hours, minutes) =>
       "剩余 ${days} 天 ${hours} 时 ${minutes} 分";
 
-  static String m75(date) => "至 ${date}";
+  static String m78(date) => "至 ${date}";
 
-  static String m76(error) => "上传失败：${error}";
+  static String m79(error) => "上传失败：${error}";
 
-  static String m77(day) => "${day} 号";
+  static String m80(day) => "${day} 号";
 
-  static String m78(count) => "${count} 次";
+  static String m81(count) => "${count} 次";
 
-  static String m79(id) => "账单 #${id}";
+  static String m82(id) => "账单 #${id}";
 
-  static String m80(ms) => "耗时 ${ms}ms";
+  static String m83(ms) => "耗时 ${ms}ms";
 
-  static String m81(name) => "执行日志 · ${name}";
+  static String m84(name) => "执行日志 · ${name}";
 
-  static String m82(month) => "${month} 月";
+  static String m85(month) => "${month} 月";
 
-  static String m83(name) => "确定删除「${name}」吗？此操作不可撤销。";
+  static String m86(name) => "确定删除「${name}」吗？此操作不可撤销。";
 
-  static String m84(time) => "每天 ${time}";
+  static String m87(time) => "每天 ${time}";
 
-  static String m85(day, time) => "每月 ${day} 号 ${time}";
+  static String m88(day, time) => "每月 ${day} 号 ${time}";
 
-  static String m86(days, time) => "每周 ${days} ${time}";
+  static String m89(days, time) => "每周 ${days} ${time}";
 
-  static String m87(month, day, time) => "每年 ${month}月${day}号 ${time}";
+  static String m90(month, day, time) => "每年 ${month}月${day}号 ${time}";
 
-  static String m88(count) => "柱状图，共 ${count} 项";
+  static String m91(count) => "柱状图，共 ${count} 项";
 
-  static String m89(count) => "${count} 笔";
+  static String m92(count) => "${count} 笔";
 
-  static String m90(date) => "${date} 收支";
+  static String m93(date) => "${date} 收支";
 
-  static String m91(count) => "支出 ${count} 笔";
+  static String m94(count) => "支出 ${count} 笔";
 
-  static String m92(count) => "收入 ${count} 笔";
+  static String m95(count) => "收入 ${count} 笔";
 
-  static String m93(count) => "共 ${count} 笔";
+  static String m96(count) => "共 ${count} 笔";
 
-  static String m94(billing, repayment) => "账单日 ${billing} · 还款日 ${repayment}";
+  static String m97(billing, repayment) => "账单日 ${billing} · 还款日 ${repayment}";
 
-  static String m95(count) => "环形图，共 ${count} 项";
+  static String m98(count) => "环形图，共 ${count} 项";
 
-  static String m96(count) => "折线图，共 ${count} 个数据点";
+  static String m99(count) => "折线图，共 ${count} 个数据点";
 
-  static String m97(count) => "待确认流水 ${count} 笔";
+  static String m100(count) => "待确认流水 ${count} 笔";
 
-  static String m98(date) => "日期:${date}";
+  static String m101(date) => "日期:${date}";
 
-  static String m99(amount) => "共优惠${amount}";
+  static String m102(amount) => "共优惠${amount}";
 
-  static String m100(amount) => "手续费共${amount}";
+  static String m103(amount) => "手续费共${amount}";
 
-  static String m101(id) => "流水号:${id}";
+  static String m104(id) => "流水号:${id}";
 
-  static String m102(count) => "图表数据表，共 ${count} 行";
+  static String m105(count) => "图表数据表，共 ${count} 行";
 
-  static String m103(name) => "确定彻底删除「${name}」吗？此操作不可撤销。";
+  static String m106(name) => "确定彻底删除「${name}」吗？此操作不可撤销。";
 
-  static String m104(name) => "确定将「${name}」移入回收站吗？";
+  static String m107(name) => "确定将「${name}」移入回收站吗？";
 
-  static String m105(todoTitle) => "账单明细「${todoTitle}」已删除。";
+  static String m108(todoTitle) => "账单明细「${todoTitle}」已删除。";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -1256,6 +1262,20 @@ class MessageLookup extends MessageLookupByLibrary {
     "navDashboard": MessageLookupByLibrary.simpleMessage("仪表盘"),
     "navInDevelopment": MessageLookupByLibrary.simpleMessage("开发中"),
     "navProfile": MessageLookupByLibrary.simpleMessage("我的"),
+    "navScopeCurrentGroupSemantics": m54,
+    "navScopeCurrentSemantics": m55,
+    "navScopeLoading": MessageLookupByLibrary.simpleMessage("正在加载当前范围…"),
+    "navScopeNoBook": MessageLookupByLibrary.simpleMessage("未选择账本"),
+    "navScopeNoGroup": MessageLookupByLibrary.simpleMessage("未加载分组"),
+    "navScopeReadOnly": MessageLookupByLibrary.simpleMessage("只读"),
+    "navScopeReadOnlyHint": MessageLookupByLibrary.simpleMessage("访客身份，不能记账"),
+    "navScopeSwitchFailed": MessageLookupByLibrary.simpleMessage("当前范围未更新"),
+    "navScopeSwitching": m56,
+    "navScopeSwitchingBooks": MessageLookupByLibrary.simpleMessage(
+      "账本列表暂不可操作，完成后自动更新",
+    ),
+    "navScopeTapToSwitch": MessageLookupByLibrary.simpleMessage("点击切换当前账本"),
+    "navScopeUpdating": MessageLookupByLibrary.simpleMessage("正在更新当前范围…"),
     "navStats": MessageLookupByLibrary.simpleMessage("统计"),
     "nickname_required": MessageLookupByLibrary.simpleMessage("昵称不能为空"),
     "not_match": MessageLookupByLibrary.simpleMessage("不匹配！"),
@@ -1296,7 +1316,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "ordersArchiveTooltip": MessageLookupByLibrary.simpleMessage(
       "归档后此订单不再算入统计",
     ),
-    "ordersArchivedTime": m54,
+    "ordersArchivedTime": m57,
     "ordersAuditTitle": MessageLookupByLibrary.simpleMessage("操作审计"),
     "ordersComponentFee": MessageLookupByLibrary.simpleMessage("手续费"),
     "ordersComponentInterest": MessageLookupByLibrary.simpleMessage("利息"),
@@ -1321,7 +1341,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "ordersDueDateOptional": MessageLookupByLibrary.simpleMessage("到期日（可选）"),
     "ordersEditEntry": MessageLookupByLibrary.simpleMessage("编辑流水"),
     "ordersEditMetadata": MessageLookupByLibrary.simpleMessage("编辑元数据"),
-    "ordersEditTitle": m55,
+    "ordersEditTitle": m58,
     "ordersEmpty": MessageLookupByLibrary.simpleMessage("暂无单据，点击右上角 + 新增"),
     "ordersEntriesEmpty": MessageLookupByLibrary.simpleMessage("暂无流水"),
     "ordersFeeAmount": MessageLookupByLibrary.simpleMessage("手续费"),
@@ -1344,11 +1364,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "ordersIssuedLoanOut": MessageLookupByLibrary.simpleMessage("累计借出"),
     "ordersLoadMore": MessageLookupByLibrary.simpleMessage("加载更多"),
     "ordersLoadMoreFailed": MessageLookupByLibrary.simpleMessage("加载更多失败，请重试"),
-    "ordersMetricCount": m56,
+    "ordersMetricCount": m59,
     "ordersMoreActions": MessageLookupByLibrary.simpleMessage("更多操作"),
     "ordersOpenFocusedOrder": MessageLookupByLibrary.simpleMessage("打开该单据"),
     "ordersOrderTitle": MessageLookupByLibrary.simpleMessage("报销单标题"),
-    "ordersOrphanLegacyCount": m57,
+    "ordersOrphanLegacyCount": m60,
     "ordersOutLabel": MessageLookupByLibrary.simpleMessage("支出 "),
     "ordersOverdue": MessageLookupByLibrary.simpleMessage("逾期"),
     "ordersOverdueOnly": MessageLookupByLibrary.simpleMessage("仅逾期"),
@@ -1357,11 +1377,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "ordersOverdueReimbursement": MessageLookupByLibrary.simpleMessage("逾期待报销"),
     "ordersPartiallySettled": MessageLookupByLibrary.simpleMessage("部分结清"),
     "ordersPendingConfirmation": MessageLookupByLibrary.simpleMessage("待确认"),
-    "ordersPendingEntryCount": m58,
+    "ordersPendingEntryCount": m61,
     "ordersPendingPayable": MessageLookupByLibrary.simpleMessage("待归还"),
     "ordersPendingReceivable": MessageLookupByLibrary.simpleMessage("待收回"),
     "ordersPendingReimbursement": MessageLookupByLibrary.simpleMessage("待报销"),
-    "ordersReconciliationBillTitle": m59,
+    "ordersReconciliationBillTitle": m62,
     "ordersReconciliationCandidatePending":
         MessageLookupByLibrary.simpleMessage("待核对余额"),
     "ordersReconciliationCashUnknown": MessageLookupByLibrary.simpleMessage(
@@ -1371,7 +1391,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "暂无历史核对明细。单据仍可能处于「待核对」，请打开单据详情核对流水。",
     ),
     "ordersReconciliationInAmount": MessageLookupByLibrary.simpleMessage("原收入"),
-    "ordersReconciliationOrderTitle": m60,
+    "ordersReconciliationOrderTitle": m63,
     "ordersReconciliationOriginalIn": MessageLookupByLibrary.simpleMessage(
       "原收入",
     ),
@@ -1390,7 +1410,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "ordersRemarkHint": MessageLookupByLibrary.simpleMessage("备注"),
     "ordersRemarkOptional": MessageLookupByLibrary.simpleMessage("备注（可选）"),
-    "ordersRemoveMessage": m61,
+    "ordersRemoveMessage": m64,
     "ordersRemoveTitle": MessageLookupByLibrary.simpleMessage("删除报销单"),
     "ordersReopen": MessageLookupByLibrary.simpleMessage("重开"),
     "ordersReopenConfirmMessage": MessageLookupByLibrary.simpleMessage(
@@ -1403,7 +1423,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "ordersRestoreConfirmTitle": MessageLookupByLibrary.simpleMessage("确认恢复？"),
     "ordersReviewRequired": MessageLookupByLibrary.simpleMessage("待核对"),
-    "ordersReviewRequiredCount": m62,
+    "ordersReviewRequiredCount": m65,
     "ordersReviewRequiredHint": MessageLookupByLibrary.simpleMessage(
       "该单据金额尚无法可靠计算，已从汇总中排除。请先查看核对报告，或补录/修正关联流水后再核对。",
     ),
@@ -1422,11 +1442,11 @@ class MessageLookup extends MessageLookupByLibrary {
       "该订单状态无法识别",
     ),
     "ordersStatusUsing": MessageLookupByLibrary.simpleMessage("进行中"),
-    "ordersSubmitTime": m63,
+    "ordersSubmitTime": m66,
     "ordersThisOrder": MessageLookupByLibrary.simpleMessage("该报销单"),
     "ordersTitle": MessageLookupByLibrary.simpleMessage("单据管理"),
     "ordersTitleHint": MessageLookupByLibrary.simpleMessage("如：8月差旅报销"),
-    "ordersTitleOfType": m64,
+    "ordersTitleOfType": m67,
     "ordersTitleRequired": MessageLookupByLibrary.simpleMessage("请输入单据标题"),
     "ordersType": MessageLookupByLibrary.simpleMessage("类型"),
     "ordersTypeLockedReason": MessageLookupByLibrary.simpleMessage(
@@ -1440,14 +1460,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "ordersUse": MessageLookupByLibrary.simpleMessage("使用"),
     "ordersViewReconciliation": MessageLookupByLibrary.simpleMessage("核对报告"),
     "ordersVoid": MessageLookupByLibrary.simpleMessage("作废"),
-    "ordersVoidCashRollback": m65,
+    "ordersVoidCashRollback": m68,
     "ordersVoidConfirmTitle": MessageLookupByLibrary.simpleMessage("确认作废？"),
     "ordersVoidNoCashChange": MessageLookupByLibrary.simpleMessage(
       "作废后金额不再计入统计，但不会改变账户余额。",
     ),
     "ordersVoided": MessageLookupByLibrary.simpleMessage("已作废"),
     "ordersWriteOff": MessageLookupByLibrary.simpleMessage("差额结清"),
-    "ordersWriteOffConfirmMessage": m66,
+    "ordersWriteOffConfirmMessage": m69,
     "ordersWriteOffConfirmTitle": MessageLookupByLibrary.simpleMessage(
       "确认差额结清？",
     ),
@@ -1467,12 +1487,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "payeesCreate": MessageLookupByLibrary.simpleMessage("创建交易对象"),
     "payeesDelete": MessageLookupByLibrary.simpleMessage("删除"),
     "payeesDeletePermanently": MessageLookupByLibrary.simpleMessage("彻底删除"),
-    "payeesDeletePermanentlyConfirm": m67,
+    "payeesDeletePermanentlyConfirm": m70,
     "payeesEdit": MessageLookupByLibrary.simpleMessage("编辑交易对象"),
     "payeesEmpty": MessageLookupByLibrary.simpleMessage("暂无交易对象，点击右上角 + 新增"),
     "payeesMove": MessageLookupByLibrary.simpleMessage("移入"),
     "payeesMoveToRecycleBin": MessageLookupByLibrary.simpleMessage("移入回收站"),
-    "payeesMoveToRecycleBinConfirm": m68,
+    "payeesMoveToRecycleBinConfirm": m71,
     "payeesNameHint": MessageLookupByLibrary.simpleMessage("如：肯德基"),
     "payeesNameLabel": MessageLookupByLibrary.simpleMessage("交易对象名称"),
     "payeesNameRequired": MessageLookupByLibrary.simpleMessage("请输入交易对象名称"),
@@ -1483,7 +1503,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "payeesSelectBookFirst": MessageLookupByLibrary.simpleMessage("请先选择账本"),
     "payeesSortHint": MessageLookupByLibrary.simpleMessage("数字越小越靠前"),
     "payeesSortLabel": MessageLookupByLibrary.simpleMessage("排序（可选）"),
-    "payeesSortValue": m69,
+    "payeesSortValue": m72,
     "payeesThisPayee": MessageLookupByLibrary.simpleMessage("该交易对象"),
     "payeesTitle": MessageLookupByLibrary.simpleMessage("交易对象"),
     "payeesUnnamed": MessageLookupByLibrary.simpleMessage("未命名"),
@@ -1595,7 +1615,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "关闭后，复制的新账单沿用原账单时间",
     ),
     "profileCurrencyRefresh": MessageLookupByLibrary.simpleMessage("汇率刷新"),
-    "profileCurrencyRefreshFailed": m70,
+    "profileCurrencyRefreshFailed": m73,
     "profileCurrencyRefreshed": MessageLookupByLibrary.simpleMessage("汇率已刷新"),
     "profileCurrencyRefreshing": MessageLookupByLibrary.simpleMessage(
       "正在刷新汇率…",
@@ -1718,7 +1738,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "profileMonthStartDayHint": MessageLookupByLibrary.simpleMessage(
       "短月份自动使用当月最后一天",
     ),
-    "profileMonthStartDayValue": m71,
+    "profileMonthStartDayValue": m74,
     "profileNewPassword": MessageLookupByLibrary.simpleMessage("新密码"),
     "profileNickname": MessageLookupByLibrary.simpleMessage("昵称"),
     "profileNicknameHint": MessageLookupByLibrary.simpleMessage("请输入昵称"),
@@ -1728,7 +1748,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "profileNotSet": MessageLookupByLibrary.simpleMessage("未设置"),
     "profileOldPassword": MessageLookupByLibrary.simpleMessage("旧密码"),
     "profileOrdersManage": MessageLookupByLibrary.simpleMessage("单据管理"),
-    "profilePasswordChangeFailed": m72,
+    "profilePasswordChangeFailed": m75,
     "profilePasswordChanged": MessageLookupByLibrary.simpleMessage("密码修改成功"),
     "profilePasswordFillOldNew": MessageLookupByLibrary.simpleMessage(
       "请填写旧密码和新密码",
@@ -1749,7 +1769,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "profileRemark": MessageLookupByLibrary.simpleMessage("备注"),
     "profileRestoreDefault": MessageLookupByLibrary.simpleMessage("恢复默认"),
     "profileRole": MessageLookupByLibrary.simpleMessage("角色"),
-    "profileSaveFailed": m73,
+    "profileSaveFailed": m76,
     "profileSaveFailedRetry": MessageLookupByLibrary.simpleMessage("保存失败，请重试"),
     "profileSaved": MessageLookupByLibrary.simpleMessage("资料已保存"),
     "profileScreenCaptureAllowed": MessageLookupByLibrary.simpleMessage(
@@ -1767,9 +1787,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "profileSex": MessageLookupByLibrary.simpleMessage("性别"),
     "profileSexFemale": MessageLookupByLibrary.simpleMessage("女"),
     "profileSexMale": MessageLookupByLibrary.simpleMessage("男"),
-    "profileSigningCountdown": m74,
+    "profileSigningCountdown": m77,
     "profileSigningExpired": MessageLookupByLibrary.simpleMessage("已过期"),
-    "profileSigningExpiresOn": m75,
+    "profileSigningExpiresOn": m78,
     "profileSigningValidity": MessageLookupByLibrary.simpleMessage("签名有效期"),
     "profileStatsAssets": MessageLookupByLibrary.simpleMessage("资产统计"),
     "profileStatsLoans": MessageLookupByLibrary.simpleMessage("借贷理财"),
@@ -1781,7 +1801,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "profileThemeLight": MessageLookupByLibrary.simpleMessage("亮色"),
     "profileThemeMode": MessageLookupByLibrary.simpleMessage("主题模式"),
     "profileToolbox": MessageLookupByLibrary.simpleMessage("工具箱"),
-    "profileUploadFailed": m76,
+    "profileUploadFailed": m79,
     "profileUsername": MessageLookupByLibrary.simpleMessage("账号"),
     "profileViewProfile": MessageLookupByLibrary.simpleMessage("查看个人资料"),
     "protocol": MessageLookupByLibrary.simpleMessage("协议"),
@@ -1817,7 +1837,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "recurringCronValid": MessageLookupByLibrary.simpleMessage("cron 表达式有效"),
     "recurringCustomSchedule": MessageLookupByLibrary.simpleMessage("特殊调度"),
-    "recurringDayOfMonthValue": m77,
+    "recurringDayOfMonthValue": m80,
     "recurringDelete": MessageLookupByLibrary.simpleMessage("删除"),
     "recurringDiscardCustomCronMessage": MessageLookupByLibrary.simpleMessage(
       "当前自定义 cron 表达式无法转换为可视化规则。",
@@ -1835,7 +1855,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "recurringEndDateOptional": MessageLookupByLibrary.simpleMessage(
       "结束日期（可选）",
     ),
-    "recurringExecutedCount": m78,
+    "recurringExecutedCount": m81,
     "recurringExecutedLabel": MessageLookupByLibrary.simpleMessage("已执行"),
     "recurringFreqDaily": MessageLookupByLibrary.simpleMessage("每天"),
     "recurringFreqMonthly": MessageLookupByLibrary.simpleMessage("每月"),
@@ -1845,15 +1865,15 @@ class MessageLookup extends MessageLookupByLibrary {
     "recurringLegacyVisualNotice": MessageLookupByLibrary.simpleMessage(
       "原调度无法通过可视化选项展示，已切换为每天 09:00，请确认后保存。",
     ),
-    "recurringLogBillId": m79,
-    "recurringLogDuration": m80,
+    "recurringLogBillId": m82,
+    "recurringLogDuration": m83,
     "recurringLogs": MessageLookupByLibrary.simpleMessage("执行日志"),
-    "recurringLogsTitle": m81,
+    "recurringLogsTitle": m84,
     "recurringMaxExecutionsHint": MessageLookupByLibrary.simpleMessage("留空为不限"),
     "recurringMaxExecutionsOptional": MessageLookupByLibrary.simpleMessage(
       "最大执行次数（可选）",
     ),
-    "recurringMonthValue": m82,
+    "recurringMonthValue": m85,
     "recurringNextExecution": MessageLookupByLibrary.simpleMessage("下次执行"),
     "recurringNoLogs": MessageLookupByLibrary.simpleMessage("暂无执行记录"),
     "recurringNoOptions": MessageLookupByLibrary.simpleMessage("暂无可选项"),
@@ -1861,7 +1881,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "recurringOnDays": MessageLookupByLibrary.simpleMessage("重复"),
     "recurringOnMonth": MessageLookupByLibrary.simpleMessage("月份"),
     "recurringRecoveryStrategy": MessageLookupByLibrary.simpleMessage("补偿策略"),
-    "recurringRemoveMessage": m83,
+    "recurringRemoveMessage": m86,
     "recurringRemoveTitle": MessageLookupByLibrary.simpleMessage("删除规则"),
     "recurringRuleName": MessageLookupByLibrary.simpleMessage("规则名称"),
     "recurringRuleNameHint": MessageLookupByLibrary.simpleMessage("如：每月房租"),
@@ -1877,10 +1897,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "recurringStartDateOptional": MessageLookupByLibrary.simpleMessage(
       "开始日期（可选）",
     ),
-    "recurringSummaryDaily": m84,
-    "recurringSummaryMonthly": m85,
-    "recurringSummaryWeekly": m86,
-    "recurringSummaryYearly": m87,
+    "recurringSummaryDaily": m87,
+    "recurringSummaryMonthly": m88,
+    "recurringSummaryWeekly": m89,
+    "recurringSummaryYearly": m90,
     "recurringTagsOptional": MessageLookupByLibrary.simpleMessage("标签（可多选，可选）"),
     "recurringThisRule": MessageLookupByLibrary.simpleMessage("该规则"),
     "recurringTitle": MessageLookupByLibrary.simpleMessage("周期记账"),
@@ -1900,6 +1920,20 @@ class MessageLookup extends MessageLookupByLibrary {
     "recurringWeekdayWed": MessageLookupByLibrary.simpleMessage("周三"),
     "register": MessageLookupByLibrary.simpleMessage("注册"),
     "registration_failed": MessageLookupByLibrary.simpleMessage("注册失败"),
+    "routeUnavailableBackHome": MessageLookupByLibrary.simpleMessage("返回首页"),
+    "routeUnavailableMissingContext": MessageLookupByLibrary.simpleMessage(
+      "链接缺少打开该页面所需的参数或对象信息。",
+    ),
+    "routeUnavailablePermission": MessageLookupByLibrary.simpleMessage(
+      "当前身份没有打开该页面的权限。",
+    ),
+    "routeUnavailableSession": MessageLookupByLibrary.simpleMessage(
+      "当前会话未恢复，暂不能打开链接目标。",
+    ),
+    "routeUnavailableTitle": MessageLookupByLibrary.simpleMessage("无法打开此页面"),
+    "routeUnavailableUnknown": MessageLookupByLibrary.simpleMessage(
+      "链接指向的页面不存在或已失效。",
+    ),
     "serverConnectionFailed": MessageLookupByLibrary.simpleMessage(
       "无法连接服务器，请检查地址、端口或网络",
     ),
@@ -1927,32 +1961,32 @@ class MessageLookup extends MessageLookupByLibrary {
       "资产负债构成、净资产趋势和信用卡概览",
     ),
     "statsAssetsTitle": MessageLookupByLibrary.simpleMessage("资产统计"),
-    "statsBarChartSemantics": m88,
+    "statsBarChartSemantics": m91,
     "statsBasicTitle": MessageLookupByLibrary.simpleMessage("收支洞察"),
-    "statsBillCount": m89,
-    "statsCalendarDateSummary": m90,
+    "statsBillCount": m92,
+    "statsCalendarDateSummary": m93,
     "statsCalendarDayBills": MessageLookupByLibrary.simpleMessage("当天账单"),
     "statsCalendarDayBillsEmpty": MessageLookupByLibrary.simpleMessage(
       "当天暂无账单",
     ),
     "statsCalendarExpense": MessageLookupByLibrary.simpleMessage("支"),
-    "statsCalendarExpenseCount": m91,
+    "statsCalendarExpenseCount": m94,
     "statsCalendarHistory": MessageLookupByLibrary.simpleMessage("历史"),
     "statsCalendarIncome": MessageLookupByLibrary.simpleMessage("收"),
-    "statsCalendarIncomeCount": m92,
+    "statsCalendarIncomeCount": m95,
     "statsCalendarMonth": MessageLookupByLibrary.simpleMessage("月"),
     "statsCalendarNext": MessageLookupByLibrary.simpleMessage("下一个"),
     "statsCalendarPrevious": MessageLookupByLibrary.simpleMessage("上一个"),
-    "statsCalendarTotalCount": m93,
+    "statsCalendarTotalCount": m96,
     "statsCalendarViewBills": MessageLookupByLibrary.simpleMessage("在账单页查看"),
     "statsCalendarYear": MessageLookupByLibrary.simpleMessage("年"),
     "statsCategoryShare": MessageLookupByLibrary.simpleMessage("分类占比"),
     "statsCompletedTodoCountLabel": MessageLookupByLibrary.simpleMessage(
       "已完成账单明细",
     ),
-    "statsCreditCardDates": m94,
+    "statsCreditCardDates": m97,
     "statsCreditCardOverview": MessageLookupByLibrary.simpleMessage("信用卡概览"),
-    "statsDonutChartSemantics": m95,
+    "statsDonutChartSemantics": m98,
     "statsExpense": MessageLookupByLibrary.simpleMessage("支出"),
     "statsExpenseAnalytics": MessageLookupByLibrary.simpleMessage("支出分析"),
     "statsExpenseCategoryShare": MessageLookupByLibrary.simpleMessage("支出分类占比"),
@@ -1967,10 +2001,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "statsIncomePayees": MessageLookupByLibrary.simpleMessage("收入交易对象"),
     "statsIncomeTags": MessageLookupByLibrary.simpleMessage("收入标签"),
     "statsIncomeTrend": MessageLookupByLibrary.simpleMessage("收入趋势"),
-    "statsLineChartSemantics": m96,
+    "statsLineChartSemantics": m99,
     "statsLoanOverview": MessageLookupByLibrary.simpleMessage("借贷概览"),
     "statsLoanPayable": MessageLookupByLibrary.simpleMessage("待归还"),
-    "statsLoanPendingCount": m97,
+    "statsLoanPendingCount": m100,
     "statsLoanReceivable": MessageLookupByLibrary.simpleMessage("待收回"),
     "statsLoansEntrySubtitle": MessageLookupByLibrary.simpleMessage(
       "借贷应收应付、理财盈亏和待确认账单",
@@ -2010,9 +2044,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "statsRangeYear": MessageLookupByLibrary.simpleMessage("本年"),
     "statsReceiptAmountCol": MessageLookupByLibrary.simpleMessage("金额"),
     "statsReceiptCashier": MessageLookupByLibrary.simpleMessage("收银员：好记"),
-    "statsReceiptDate": m98,
-    "statsReceiptDiscountTotal": m99,
-    "statsReceiptFeeTotal": m100,
+    "statsReceiptDate": m101,
+    "statsReceiptDiscountTotal": m102,
+    "statsReceiptFeeTotal": m103,
     "statsReceiptFooterCounter": MessageLookupByLibrary.simpleMessage(
       "当前什么都不支持",
     ),
@@ -2037,7 +2071,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "statsReceiptPayment": MessageLookupByLibrary.simpleMessage("付款方式：刷脸"),
     "statsReceiptQty": MessageLookupByLibrary.simpleMessage("数量"),
     "statsReceiptSave": MessageLookupByLibrary.simpleMessage("保存小票"),
-    "statsReceiptSerial": m101,
+    "statsReceiptSerial": m104,
     "statsReceiptSoldGoods": MessageLookupByLibrary.simpleMessage("售出商品数"),
     "statsReceiptThanks": MessageLookupByLibrary.simpleMessage("谢谢惠顾"),
     "statsReceiptTransferCount": MessageLookupByLibrary.simpleMessage("转账数"),
@@ -2047,7 +2081,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "statsSurplus": MessageLookupByLibrary.simpleMessage("结余"),
     "statsTableDetail": MessageLookupByLibrary.simpleMessage("详情"),
     "statsTableItem": MessageLookupByLibrary.simpleMessage("项目"),
-    "statsTableSemantics": m102,
+    "statsTableSemantics": m105,
     "statsTableShare": MessageLookupByLibrary.simpleMessage("占比"),
     "statsTableValue": MessageLookupByLibrary.simpleMessage("数值"),
     "statsTags": MessageLookupByLibrary.simpleMessage("标签"),
@@ -2061,12 +2095,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "tagsCreate": MessageLookupByLibrary.simpleMessage("创建标签"),
     "tagsDelete": MessageLookupByLibrary.simpleMessage("删除"),
     "tagsDeletePermanently": MessageLookupByLibrary.simpleMessage("彻底删除"),
-    "tagsDeletePermanentlyConfirm": m103,
+    "tagsDeletePermanentlyConfirm": m106,
     "tagsEdit": MessageLookupByLibrary.simpleMessage("编辑标签"),
     "tagsEmpty": MessageLookupByLibrary.simpleMessage("暂无标签，点击右上角 + 新增"),
     "tagsMove": MessageLookupByLibrary.simpleMessage("移入"),
     "tagsMoveToRecycleBin": MessageLookupByLibrary.simpleMessage("移入回收站"),
-    "tagsMoveToRecycleBinConfirm": m104,
+    "tagsMoveToRecycleBinConfirm": m107,
     "tagsNameHint": MessageLookupByLibrary.simpleMessage("如：聚餐"),
     "tagsNameLabel": MessageLookupByLibrary.simpleMessage("标签名称"),
     "tagsNameRequired": MessageLookupByLibrary.simpleMessage("请输入标签名称"),
@@ -2116,7 +2150,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "todosOverviewOptionsMarkAllIncomplete":
         MessageLookupByLibrary.simpleMessage("全部标记为未完成"),
     "todosOverviewOptionsTooltip": MessageLookupByLibrary.simpleMessage("操作"),
-    "todosOverviewTodoDeletedSnackbarText": m105,
+    "todosOverviewTodoDeletedSnackbarText": m108,
     "todosOverviewUndoDeletionButtonText": MessageLookupByLibrary.simpleMessage(
       "撤销",
     ),

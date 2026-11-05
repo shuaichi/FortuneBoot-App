@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
-  "currentStage": null,
-  "nextStage": "S3-A",
-  "lastCompletedStage": null,
-  "note": "只生成提示词包，所有阶段未执行；历史底座结果不是本包阶段通过记录。",
+  "currentStage": "S3-A",
+  "nextStage": "S4-A",
+  "lastCompletedStage": "S3-A",
+  "note": "S3-A attempt-001 本地实现/验证/视觉已通过；真机、读屏、平台编译、真实 Web 刷新与联调待外部验收。",
   "stages": {
     "S0-A": {
       "status": "PASSED",
@@ -64,14 +64,22 @@
       ]
     },
     "S3-A": {
-      "status": "NOT_STARTED",
-      "localGate": "NOT_RUN",
-      "visualGate": "NOT_RUN",
-      "externalGate": "NOT_RUN",
-      "attempt": 0,
-      "handoff": null,
-      "evidence": [],
-      "blockingIssues": []
+      "status": "PASSED",
+      "localGate": "PASSED",
+      "visualGate": "PASSED",
+      "externalGate": "PARTIAL",
+      "attempt": 1,
+      "handoff": "handoff/S3-A.md",
+      "evidence": [
+        "evidence/S3-A/attempt-001"
+      ],
+      "blockingIssues": [
+        "DEVICE_AND_PLATFORM_ACCEPTANCE",
+        "S12_AUTH_INTERNAL_ANIMATION_SCOPE",
+        "S13_PROFILE_PAGE_SCOPE",
+        "WEB_DEEP_LINK_E2E_NOT_RUN",
+        "VISUAL_DEVICE_DYNAMIC_TYPE"
+      ]
     },
     "S4-A": {
       "status": "NOT_STARTED",

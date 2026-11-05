@@ -83,7 +83,8 @@ void main() {
     final shellInsets = tester.widget<ShellContentInsets>(
       find.byType(ShellContentInsets),
     );
-    expect(shellInsets.bottom, 144);
+    // 空会话没有可写账本，不显示 FAB，也不再重复预留导航高度。
+    expect(shellInsets.bottom, 24);
 
     await tester.tap(find.text('全部'));
     await tester.pump();
@@ -151,77 +152,251 @@ void main() {
     );
   });
 
-  testWidgets('stats tab hides quick add and releases its content inset', (
+  testWidgets('quick add stays available on stats with one FAB inset', (
     tester,
   ) async {
-    final originalDashboard = MainShellSlots.dashboard;
-    final originalBills = MainShellSlots.bills;
-    final originalStats = MainShellSlots.stats;
-    final originalProfile = MainShellSlots.profile;
-    addTearDown(() {
-      MainShellSlots.dashboard = originalDashboard;
-      MainShellSlots.bills = originalBills;
-      MainShellSlots.stats = originalStats;
-      MainShellSlots.profile = originalProfile;
-    });
+    _useSlots(statsBody: const Center(child: Text('Stats tab')));
+    await _pumpShell(tester, session: _readySession());
 
-    MainShellSlots.dashboard = (_) => const SizedBox.shrink();
-    MainShellSlots.bills = (_) => const SizedBox.shrink();
-    MainShellSlots.stats = (_) => const Center(child: Text('Stats tab'));
-    MainShellSlots.profile = (_) => const SizedBox.shrink();
-
-    final session = SessionCubit(
-      groupService: const _EmptyGroupService(),
-      bookService: const _UnusedBookService(),
-    );
-    final preferences = PreferencesCubit();
-    final appLock = AppLockCubit(
-      settingsStore: const _FakeAppLockSettingsStore(),
-      secretStore: const _FakeAppLockSecretStore(),
-      biometricAuthenticator: const _FakeAppLockBiometricAuthenticator(),
-    );
-    addTearDown(session.close);
-    addTearDown(preferences.close);
-    addTearDown(appLock.close);
-
-    await tester.pumpWidget(
-      MultiBlocProvider(
-        providers: [
-          BlocProvider.value(value: session),
-          BlocProvider.value(value: preferences),
-          BlocProvider.value(value: appLock),
-        ],
-        child: MaterialApp(
-          theme: FxTheme.light,
-          locale: const Locale('zh'),
-          localizationsDelegates: const [
-            GlobalMaterialLocalizations.delegate,
-            GlobalWidgetsLocalizations.delegate,
-            GlobalCupertinoLocalizations.delegate,
-            S.delegate,
-          ],
-          supportedLocales: S.delegate.supportedLocales,
-          home: const MainShell(),
-        ),
-      ),
-    );
-    await tester.pump();
-
-    final dashboardInset = tester
-        .widget<ShellContentInsets>(find.byType(ShellContentInsets))
-        .bottom;
     expect(find.byType(FloatingActionButton), findsOneWidget);
+    expect(_shellInset(tester), 88);
 
     await tester.tap(find.text('统计'));
     await tester.pumpAndSettle();
 
-    final statsInset = tester
-        .widget<ShellContentInsets>(find.byType(ShellContentInsets))
-        .bottom;
     expect(find.text('Stats tab'), findsOneWidget);
-    expect(find.byType(FloatingActionButton), findsNothing);
-    expect(statsInset, lessThan(dashboardInset));
+    expect(find.byType(FloatingActionButton), findsOneWidget);
+    expect(_shellInset(tester), 88);
+    expect(find.text('Book 11'), findsOneWidget);
+    expect(tester.takeException(), isNull);
   });
+
+  testWidgets('visitor sees read-only scope and no quick add action', (
+    tester,
+  ) async {
+    _useSlots();
+    await _pumpShell(tester, session: _readySession(roleType: 3));
+
+    expect(find.byType(FloatingActionButton), findsNothing);
+    expect(find.text('只读'), findsOneWidget);
+    expect(_shellInset(tester), 24);
+  });
+
+  testWidgets(
+    'keyboard hides quick add and does not add another bottom inset',
+    (tester) async {
+      tester.view.viewInsets = const FakeViewPadding(bottom: 300);
+      addTearDown(tester.view.resetViewInsets);
+      _useSlots();
+      await _pumpShell(tester, session: _readySession());
+
+      expect(find.byType(FloatingActionButton), findsNothing);
+      expect(_shellInset(tester), 24);
+    },
+  );
+
+  testWidgets('large labels keep four nav items readable and selected', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(320, 900);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    _useSlots();
+    await _pumpShell(
+      tester,
+      session: _readySession(bookName: '家庭共同生活与长期储蓄账本 2026 年度'),
+      textScale: 2,
+    );
+
+    expect(find.text('仪表盘'), findsOneWidget);
+    expect(find.text('账单'), findsOneWidget);
+    expect(find.text('统计'), findsOneWidget);
+    expect(find.text('我的'), findsOneWidget);
+    final navItem = find.ancestor(
+      of: find.text('仪表盘'),
+      matching: find.byType(InkWell),
+    );
+    expect(navItem, findsWidgets);
+    expect(tester.getSize(navItem.first).height, greaterThan(64));
+    final semantics = tester.ensureSemantics();
+    expect(
+      tester.getSemantics(find.bySemanticsLabel('仪表盘')),
+      isSemantics(isButton: true, isSelected: true, label: '仪表盘'),
+    );
+    semantics.dispose();
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('scope strip opens the switcher from a secondary tab', (
+    tester,
+  ) async {
+    _useSlots();
+    await _pumpShell(tester, session: _readySession());
+
+    await tester.tap(find.text('统计'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Book 11'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('分组与账本'), findsWidgets);
+    expect(find.text('Group 1'), findsWidgets);
+  });
+
+  testWidgets('last list action stays tappable above nav and FAB', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(390, 844);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    _useSlots(billsBody: const _TailProbe());
+    await _pumpShell(tester, session: _readySession());
+
+    await tester.tap(find.text('账单'));
+    await tester.pumpAndSettle();
+    await tester.drag(find.byType(ListView), const Offset(0, -4000));
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const Key('tail-action')), findsOneWidget);
+    await tester.tap(find.byKey(const Key('tail-action')));
+    await tester.pump();
+    expect(find.text('tail-action-tapped'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('landscape keeps the tail action reachable', (tester) async {
+    tester.view.physicalSize = const Size(640, 320);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    _useSlots(billsBody: const _TailProbe());
+    await _pumpShell(tester, session: _readySession(), textScale: 2);
+
+    await tester.tap(find.text('账单'));
+    await tester.pumpAndSettle();
+    await tester.drag(find.byType(ListView), const Offset(0, -5000));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byKey(const Key('tail-action')));
+    await tester.pump();
+    expect(find.text('tail-action-tapped'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('wide rail stays usable with 2x text', (tester) async {
+    tester.view.physicalSize = const Size(1280, 800);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    _useSlots();
+    await _pumpShell(tester, session: _readySession(), textScale: 2);
+
+    expect(find.byType(NavigationRail), findsOneWidget);
+    expect(find.text('仪表盘'), findsOneWidget);
+    expect(find.byType(FloatingActionButton), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
+}
+
+void _useSlots({Widget? statsBody, Widget? billsBody}) {
+  final originalDashboard = MainShellSlots.dashboard;
+  final originalBills = MainShellSlots.bills;
+  final originalStats = MainShellSlots.stats;
+  final originalProfile = MainShellSlots.profile;
+  addTearDown(() {
+    MainShellSlots.dashboard = originalDashboard;
+    MainShellSlots.bills = originalBills;
+    MainShellSlots.stats = originalStats;
+    MainShellSlots.profile = originalProfile;
+  });
+  MainShellSlots.dashboard = (_) => const SizedBox.shrink();
+  MainShellSlots.bills = (_) => billsBody ?? const SizedBox.shrink();
+  MainShellSlots.stats = (_) => statsBody ?? const SizedBox.shrink();
+  MainShellSlots.profile = (_) => const SizedBox.shrink();
+}
+
+SessionCubit _readySession({int roleType = 1, String bookName = 'Book 11'}) {
+  final session = SessionCubit(
+    groupService: _ReadyGroupService(roleType: roleType),
+    bookService: _ReadyBookService(bookName: bookName),
+  );
+  addTearDown(session.close);
+  return session;
+}
+
+Future<void> _pumpShell(
+  WidgetTester tester, {
+  required SessionCubit session,
+  double textScale = 1,
+}) async {
+  final preferences = PreferencesCubit();
+  final appLock = AppLockCubit(
+    settingsStore: const _FakeAppLockSettingsStore(),
+    secretStore: const _FakeAppLockSecretStore(),
+    biometricAuthenticator: const _FakeAppLockBiometricAuthenticator(),
+  );
+  addTearDown(preferences.close);
+  addTearDown(appLock.close);
+  await tester.pumpWidget(
+    MultiBlocProvider(
+      providers: [
+        BlocProvider.value(value: session),
+        BlocProvider.value(value: preferences),
+        BlocProvider.value(value: appLock),
+      ],
+      child: MaterialApp(
+        theme: FxTheme.light,
+        locale: const Locale('zh'),
+        builder: (context, child) => MediaQuery(
+          data: MediaQuery.of(
+            context,
+          ).copyWith(textScaler: TextScaler.linear(textScale)),
+          child: child ?? const SizedBox.shrink(),
+        ),
+        localizationsDelegates: const [
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+          S.delegate,
+        ],
+        supportedLocales: S.delegate.supportedLocales,
+        home: const MainShell(),
+      ),
+    ),
+  );
+  await tester.pumpAndSettle();
+}
+
+double _shellInset(WidgetTester tester) =>
+    tester.widget<ShellContentInsets>(find.byType(ShellContentInsets)).bottom;
+
+class _TailProbe extends StatefulWidget {
+  const _TailProbe();
+
+  @override
+  State<_TailProbe> createState() => _TailProbeState();
+}
+
+class _TailProbeState extends State<_TailProbe> {
+  var _tapped = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final bottom = ShellContentInsets.bottomOf(context);
+    return ListView.builder(
+      padding: EdgeInsets.only(bottom: bottom),
+      itemCount: 31,
+      itemBuilder: (context, index) {
+        if (index == 30) {
+          return Center(
+            child: TextButton(
+              key: const Key('tail-action'),
+              onPressed: () => setState(() => _tapped = true),
+              child: Text(_tapped ? 'tail-action-tapped' : 'tail-action'),
+            ),
+          );
+        }
+        return SizedBox(height: 56, child: Center(child: Text('Row $index')));
+      },
+    );
+  }
 }
 
 class _EmptyGroupService implements GroupService {
@@ -236,6 +411,55 @@ class _EmptyGroupService implements GroupService {
 
   @override
   Future<HJResponse> getByGroupId(int groupId) => throw UnimplementedError();
+}
+
+class _ReadyGroupService implements GroupService {
+  const _ReadyGroupService({this.roleType = 1});
+
+  final int roleType;
+
+  @override
+  Future<HJResponse> getEnableList() async => HJResponse(0, 'ok', [
+    <String, dynamic>{
+      'groupId': 1,
+      'groupName': 'Group 1',
+      'defaultCurrency': 'CNY',
+      'roleType': roleType,
+      'defaultBookId': 11,
+    },
+  ]);
+
+  @override
+  Future<HJResponse> getDefaultGroupId() async => HJResponse(0, 'ok', 1);
+
+  @override
+  Future<HJResponse> getByGroupId(int groupId) async =>
+      HJResponse(0, 'ok', <String, dynamic>{
+        'groupId': 1,
+        'groupName': 'Group 1',
+        'defaultCurrency': 'CNY',
+        'defaultBookId': 11,
+      });
+}
+
+class _ReadyBookService implements BookService {
+  const _ReadyBookService({required this.bookName});
+
+  final String bookName;
+
+  @override
+  Future<HJResponse> getByGroupId(int groupId) async => HJResponse(0, 'ok', [
+    <String, dynamic>{
+      'bookId': 11,
+      'groupId': 1,
+      'bookName': bookName,
+      'defaultCurrency': 'CNY',
+    },
+  ]);
+
+  @override
+  Future<HJResponse> getEnableList(int id, {int? type}) =>
+      throw UnimplementedError();
 }
 
 class _UnusedBookService implements BookService {

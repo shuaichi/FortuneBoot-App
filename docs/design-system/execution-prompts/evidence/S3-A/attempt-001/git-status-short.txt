@@ -1,0 +1,36 @@
+ M lib/core/app/fx_app.dart
+ M lib/core/navigation/app_router.dart
+ M lib/core/navigation/startup_route_guard.dart
+ M lib/core/session/session_cubit.dart
+ M lib/core/session/session_state.dart
+ M lib/core/session/widgets/session_switcher_sheet.dart
+ M lib/core/shell/main_shell.dart
+ M lib/features/accounts/accounts_registration.dart
+ M lib/features/bill_editor/bill_editor_registration.dart
+ M lib/features/categories/categories_registration.dart
+ M lib/features/goods/goods_registration.dart
+ M lib/features/group_users/group_users_registration.dart
+ M lib/features/io/io_registration.dart
+ M lib/features/members/members_registration.dart
+ M lib/features/orders/orders_registration.dart
+ M lib/features/payees/payees_registration.dart
+ M lib/features/profile/profile_registration.dart
+ M lib/features/stats/stats_registration.dart
+ M lib/features/tags/tags_registration.dart
+ M lib/generated/intl/messages_en.dart
+ M lib/generated/intl/messages_zh.dart
+ M lib/generated/l10n.dart
+ M lib/l10n/intl_en.arb
+ M lib/l10n/intl_zh.arb
+ M test/core/navigation/app_router_test.dart
+ M test/core/navigation/startup_route_guard_test.dart
+ M test/core/session/session_cubit_test.dart
+ M test/core/shell/main_shell_recent_bills_navigation_test.dart
+?? lib/core/navigation/deep_link_target.dart
+?? lib/core/navigation/fx_route_unavailable_page.dart
+?? lib/core/navigation/pending_deep_link.dart
+?? lib/core/session/widgets/session_scope_strip.dart
+?? lib/core/session/widgets/session_scoped_page.dart
+?? test/core/navigation/deep_link_restore_test.dart
+?? test/core/navigation/orders_route_guard_test.dart
+?? test/core/session/session_scope_strip_test.dart
