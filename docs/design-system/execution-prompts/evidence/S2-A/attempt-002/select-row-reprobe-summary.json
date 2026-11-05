@@ -1,0 +1,24 @@
+{
+  "testDoneEvents": 2,
+  "realTests": 1,
+  "passed": 0,
+  "skipped": 0,
+  "failed": 1,
+  "skippedTests": [],
+  "failedTests": [
+    "CX-02 select row keeps Counterparty in one line at 440/1x"
+  ],
+  "loadingEvents": 1,
+  "lifecycleEvents": 0,
+  "errorEvents": [
+    "Test failed. See exception logs above.\nThe test description was: CX-02 select row keeps Counterparty in one line at 440/1x"
+  ],
+  "runner": [
+    {
+      "success": false,
+      "type": "done",
+      "time": 4512
+    }
+  ],
+  "countingRule": "realTests excludes synthetic loading/setUpAll/tearDownAll entries"
+}

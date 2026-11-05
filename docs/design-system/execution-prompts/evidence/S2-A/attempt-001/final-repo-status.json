@@ -1,0 +1,8 @@
+{
+  "head": "00a8f2f4e682eda9dd04c9372d95bc054673708b",
+  "trackedWorktreeChanges": [
+    " M docs/design-system/execution-prompts/runtime/progress.json"
+  ],
+  "businessSourceDiff": [],
+  "note": "New S2-A Markdown/JSON/PNG/probe files exist under the prompt pack but are ignored by repository Markdown/evidence ignore rules; runtime/progress.json is the only tracked modification."
+}

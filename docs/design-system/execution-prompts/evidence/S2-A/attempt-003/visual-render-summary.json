@@ -1,0 +1,20 @@
+{
+  "testDoneEvents": 15,
+  "realTests": 12,
+  "passed": 12,
+  "skipped": 0,
+  "failed": 0,
+  "skippedTests": [],
+  "failedTests": [],
+  "loadingEvents": 1,
+  "lifecycleEvents": 2,
+  "errorEvents": [],
+  "runner": [
+    {
+      "success": true,
+      "type": "done",
+      "time": 3682
+    }
+  ],
+  "countingRule": "realTests excludes synthetic loading/setUpAll/tearDownAll entries"
+}

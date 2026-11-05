@@ -1,0 +1,26 @@
+{
+  "testDoneEvents": 3,
+  "realTests": 2,
+  "passed": 0,
+  "skipped": 0,
+  "failed": 2,
+  "skippedTests": [],
+  "failedTests": [
+    "S2A-001 decimal digits stay with integer at 390.0/2x",
+    "S2A-001 decimal digits stay with integer at 440.0/2x"
+  ],
+  "loadingEvents": 1,
+  "lifecycleEvents": 0,
+  "errorEvents": [
+    "Test failed. See exception logs above.\nThe test description was: S2A-001 decimal digits stay with integer at 390.0/2x",
+    "Test failed. See exception logs above.\nThe test description was: S2A-001 decimal digits stay with integer at 440.0/2x"
+  ],
+  "runner": [
+    {
+      "success": false,
+      "type": "done",
+      "time": 2301
+    }
+  ],
+  "countingRule": "realTests excludes synthetic loading/setUpAll/tearDownAll entries"
+}

@@ -1,0 +1,8 @@
+{
+  "reviewId": "S2-A-attempt-003",
+  "sourceSnapshot": "00a8f2f4e682eda9dd04c9372d95bc054673708b + S1-B attempt-002 uncommitted SHA256 in evidence/S2-A/attempt-003/source-snapshot.json",
+  "orderedRepairs": [],
+  "returnTo": "S2-A",
+  "nextStage": "S3-A",
+  "reason": "S2A-001、S2A-002、S2A-003 均有独立探针与实际渲染闭合证据，无本地基础返修项。外部设备/平台验收继续单列。"
+}

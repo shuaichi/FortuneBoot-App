@@ -110,16 +110,53 @@ class FxMoneyText extends StatelessWidget {
           painter.dispose();
         }
 
+        Widget visualText;
+        var useFinancialTokens = false;
+        if (!isMasked && !compactWhenNeeded && constraints.hasBoundedWidth) {
+          final painter = TextPainter(
+            text: TextSpan(text: text, style: style),
+            textDirection: Directionality.of(context),
+            textScaler: MediaQuery.textScalerOf(context),
+            locale: Localizations.localeOf(context),
+            maxLines: 1,
+          )..layout(maxWidth: constraints.maxWidth);
+          useFinancialTokens = painter.didExceedMaxLines;
+          painter.dispose();
+        }
+        if (isMasked || compactWhenNeeded || !useFinancialTokens) {
+          visualText = Text(
+            displayText,
+            style: style,
+            maxLines: compactWhenNeeded ? 1 : null,
+            overflow: compactWhenNeeded ? TextOverflow.ellipsis : null,
+            softWrap: compactWhenNeeded,
+          );
+        } else {
+          final numericText = FxMoneyFormatter.format(
+            amount,
+            locale: localeName,
+            showSign: showSign,
+          );
+          final prefix = text.substring(0, text.length - numericText.length);
+          visualText = Wrap(
+            crossAxisAlignment: WrapCrossAlignment.center,
+            children: [
+              if (prefix.isNotEmpty) Text(prefix, style: style),
+              for (final token in _financialTokens(numericText))
+                Text(
+                  token,
+                  style: style,
+                  maxLines: 1,
+                  softWrap: false,
+                  overflow: TextOverflow.visible,
+                ),
+            ],
+          );
+        }
+
         final amountText = Semantics(
           label: text,
-          child: ExcludeSemantics(
-            child: Text(
-              displayText,
-              style: style,
-              maxLines: compactWhenNeeded ? 1 : null,
-              overflow: compactWhenNeeded ? TextOverflow.ellipsis : null,
-            ),
-          ),
+          child: ExcludeSemantics(child: visualText),
         );
         if (displayText == text) {
           return amountText;
@@ -128,4 +165,10 @@ class FxMoneyText extends StatelessWidget {
       },
     );
   }
+}
+
+List<String> _financialTokens(String numericText) {
+  return RegExp(
+    r'\d+(?:\.\d+)?[,.]?|[^\d]+',
+  ).allMatches(numericText).map((match) => match.group(0)!).toList();
 }

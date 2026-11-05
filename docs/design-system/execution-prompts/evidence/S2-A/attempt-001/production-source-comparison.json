@@ -1,0 +1,7 @@
+{
+  "s1EvidenceFileCount": 36,
+  "changed": [],
+  "missing": [],
+  "currentHead": "00a8f2f4e682eda9dd04c9372d95bc054673708b",
+  "note": "S1-A was later committed as 00a8f2f; all 36 recorded production/test/preview files still match the S1-A uncommitted evidence byte-for-byte."
+}

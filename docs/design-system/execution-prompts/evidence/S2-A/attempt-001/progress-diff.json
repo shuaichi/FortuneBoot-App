@@ -1,0 +1,9 @@
+{
+  "updated": [
+    "stages.S2-A",
+    "nextStage"
+  ],
+  "nextStage": "S1-B",
+  "otherStagesUnchanged": true,
+  "otherStagesSha256": "046739a38f6bdc3e31f6c8cf9031b5d4ec800f23edcce0d5054451ed0fa23ca3"
+}

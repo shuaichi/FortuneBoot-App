@@ -1,0 +1,100 @@
+{
+  "schemaVersion": 1,
+  "stage": "S1-B",
+  "attempt": 2,
+  "sourceSha": "00a8f2f4e682eda9dd04c9372d95bc054673708b",
+  "reviewRouting": "docs/design-system/execution-prompts/reviews/S2-A/attempt-002/repair-routing.json",
+  "scope": "Only S2A-001 and S2A-003 assigned to S1; S2A-002 already VERIFIED_CLOSED and untouched.",
+  "summary": {
+    "total": 2,
+    "byState": {
+      "VERIFIED_LOCAL": 2
+    },
+    "verifiedClosed": 0
+  },
+  "items": [
+    {
+      "issueId": "S2A-001",
+      "stageId": "S1-B",
+      "state": "VERIFIED_LOCAL",
+      "originAuditIds": [
+        "DT-23"
+      ],
+      "reviewId": "S2-A-attempt-002",
+      "sourceSnapshot": "00a8f2f4e682eda9dd04c9372d95bc054673708b + S1-B attempt-001 SHA256",
+      "sourcePaths": [
+        "lib/fx/components/fx_money_text.dart",
+        "test/fx/components/fx_money_text_test.dart",
+        "test/fx/components/fx_s1_b_repair_test.dart"
+      ],
+      "sourceSha256": {
+        "lib/fx/components/fx_money_text.dart": "fe744cf619e32667769a4b98dec4e4dc9cc0c2d0dd27a7a8b72ee9712060e25b",
+        "test/fx/components/fx_money_text_test.dart": "0f8c3583b93bb6a96b756f91399536af653223fd7bbdbfa5ecbc01c3a5e6f9a7",
+        "test/fx/components/fx_s1_b_repair_test.dart": "e934b0dd72ff447dac0b6659068c3ed55e6c5969e3bc739188e3896151c91a29"
+      },
+      "observedBehavior": "S2-A attempt-002 原始探针在 390/440、2x 均复现 890. top=308、12 top=404，小数位孤立。",
+      "implemented": "财务 token 正则将最后整数组、小数点与小数位合并为 890.12；短金额单 Text、masked/compact 与完整 Semantics/Tooltip 不变。",
+      "verified": "原始探针按新分组断言 890.12 同排并通过；既有金额矩阵、masked/compact/零负值、全量消费者通过；12 张图实际查看。",
+      "disproved": false,
+      "blocked_external": [
+        "S2-A attempt-003 独立复审",
+        "真机/VoiceOver/TalkBack/平台验收 NOT_RUN"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S1-B/attempt-002/targeted-tests.json",
+        "docs/design-system/execution-prompts/evidence/S1-B/attempt-002/direct-consumer-tests.json",
+        "docs/design-system/execution-prompts/evidence/S1-B/attempt-002/full-tests.json",
+        "docs/design-system/execution-prompts/evidence/S1-B/attempt-002/screenshot-index.json",
+        "docs/design-system/execution-prompts/evidence/S1-B/attempt-002/review-probes-red.txt",
+        "docs/design-system/execution-prompts/evidence/S1-B/attempt-002/review-probes-green.txt"
+      ],
+      "unverified": [
+        "S2-A attempt-003",
+        "真实设备文字与读屏"
+      ],
+      "reason": "修复者只写 VERIFIED_LOCAL，不替 S2 关闭。",
+      "closure": "PENDING_S2-A_ATTEMPT_003"
+    },
+    {
+      "issueId": "S2A-003",
+      "stageId": "S1-B",
+      "state": "VERIFIED_LOCAL",
+      "originAuditIds": [
+        "CX-02"
+      ],
+      "reviewId": "S2-A-attempt-002",
+      "sourceSnapshot": "00a8f2f4e682eda9dd04c9372d95bc054673708b + S1-B attempt-001 SHA256",
+      "sourcePaths": [
+        "lib/fx/components/fx_select_row.dart",
+        "docs/design-system/execution-prompts/evidence/S1-B/attempt-002/select_row_matrix_test.dart"
+      ],
+      "sourceSha256": {
+        "lib/fx/components/fx_select_row.dart": "978d91464ec9ecaaf43a8cde8bb105964e1e061df101fef041e2cf937aea2a4f",
+        "docs/design-system/execution-prompts/evidence/S1-B/attempt-002/select_row_matrix_test.dart": "c46c4c4b019ad4f61f3a611050e7f821832f91c292d22ca6f5e80be626c737dd"
+      },
+      "observedBehavior": "440/1x 时 maxWidth=368 进入固定 96 标签列，Counterparty 被拆为两行；原始探针 2 个 top。",
+      "implemented": "按实际标签排版宽度与 TextScaler 选择行内/上下重排；重排标签按空格 token 保持英文单词完整，短标签保留单 Text。清空语义、44×48 目标、长值与只读行为保持。",
+      "verified": "原审查探针通过；320/390/440 × 1x/2x × 清空/只读 12 组通过；三个直接消费者 58 通过；12 张图实际查看。",
+      "disproved": false,
+      "blocked_external": [
+        "S2-A attempt-003 独立复审",
+        "真机/VoiceOver/TalkBack/平台验收 NOT_RUN"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S1-B/attempt-002/targeted-tests.json",
+        "docs/design-system/execution-prompts/evidence/S1-B/attempt-002/direct-consumer-tests.json",
+        "docs/design-system/execution-prompts/evidence/S1-B/attempt-002/full-tests.json",
+        "docs/design-system/execution-prompts/evidence/S1-B/attempt-002/screenshot-index.json",
+        "docs/design-system/execution-prompts/evidence/S1-B/attempt-002/review-probes-red.txt",
+        "docs/design-system/execution-prompts/evidence/S1-B/attempt-002/review-probes-green.txt",
+        "docs/design-system/execution-prompts/evidence/S1-B/attempt-002/select-row-matrix.txt"
+      ],
+      "unverified": [
+        "S2-A attempt-003",
+        "真实设备文字与读屏"
+      ],
+      "reason": "仅 CX-02 共享实例 VERIFIED_LOCAL，不替全局消费者或 S2 关闭。",
+      "closure": "PENDING_S2-A_ATTEMPT_003"
+    }
+  ]
+}

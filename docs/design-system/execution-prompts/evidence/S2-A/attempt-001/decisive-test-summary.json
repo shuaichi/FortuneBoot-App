@@ -1,0 +1,19 @@
+{
+  "events": 197,
+  "testDone": 80,
+  "results": {
+    "success": 80
+  },
+  "passed": 80,
+  "skipped": 0,
+  "failures": [],
+  "skippedTests": [],
+  "errorEvents": [],
+  "runner": [
+    {
+      "success": true,
+      "type": "done",
+      "time": 5271
+    }
+  ]
+}

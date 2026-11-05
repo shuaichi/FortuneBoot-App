@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fortuneboot/core/money/fx_money_formatter.dart';
 import 'package:fortuneboot/fx/components/fx_money_text.dart';
@@ -32,10 +33,63 @@ void main() {
       ),
     );
 
-    final text = tester.widget<Text>(find.byType(Text));
-    expect(text.maxLines, isNull);
-    expect(text.overflow, isNot(TextOverflow.ellipsis));
+    for (final token in ['1,', '234,', '567,', '890.12']) {
+      final text = tester.widget<Text>(find.text(token));
+      expect(text.maxLines, 1);
+      expect(text.softWrap, isFalse);
+      final paragraph = tester.renderObject<RenderParagraph>(
+        find.descendant(of: find.text(token), matching: find.byType(RichText)),
+      );
+      final boxes = paragraph.getBoxesForSelection(
+        TextSelection(baseOffset: 0, extentOffset: token.length),
+      );
+      expect(boxes.map((box) => box.top.round()).toSet().length, 1);
+    }
     expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('masked text keeps the placeholder on one readable line', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: FxTheme.light,
+        home: const Scaffold(
+          body: FxMoneyText(amount: 0, currencyCode: 'CNY', masked: true),
+        ),
+      ),
+    );
+    expect(find.text(FxMoneyFormatter.hiddenPlaceholder), findsOneWidget);
+    expect(
+      find.bySemanticsLabel(FxMoneyFormatter.hiddenPlaceholder),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('compact negative amount preserves exact semantics and tooltip', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: FxTheme.light,
+        home: const Scaffold(
+          body: SizedBox(
+            width: 48,
+            child: FxMoneyText(
+              amount: -1234567.89,
+              currencyCode: 'CNY',
+              compactWhenNeeded: true,
+            ),
+          ),
+        ),
+      ),
+    );
+
+    expect(find.bySemanticsLabel(RegExp('1,234,567.89')), findsOneWidget);
+    expect(
+      tester.widget<Tooltip>(find.byType(Tooltip)).message,
+      contains('1,234,567.89'),
+    );
   });
 
   testWidgets(
@@ -96,9 +150,10 @@ void main() {
         ),
       );
 
-      final text = tester.widget<Text>(find.byType(Text));
-      expect(text.style?.color, isNot(businessColor));
-      expect(text.style?.color, FxPalette.light.textPrimary);
+      for (final text in tester.widgetList<Text>(find.byType(Text))) {
+        expect(text.style?.color, isNot(businessColor));
+        expect(text.style?.color, FxPalette.light.textPrimary);
+      }
     },
   );
 }

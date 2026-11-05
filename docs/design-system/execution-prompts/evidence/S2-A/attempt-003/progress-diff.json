@@ -1,0 +1,14 @@
+{
+  "updated": [
+    "stages.S2-A",
+    "nextStage"
+  ],
+  "nextStage": "S3-A",
+  "evidence": [
+    "evidence/S2-A/attempt-001",
+    "evidence/S2-A/attempt-002",
+    "evidence/S2-A/attempt-003"
+  ],
+  "otherStagesUnchanged": true,
+  "otherStagesSha256": "5991761b82e25bcf9367463435f630f17f5cbfd24c565b3fae6ac1d94fa94b11"
+}

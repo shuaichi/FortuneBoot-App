@@ -20,7 +20,7 @@
 
 - 唯一持久化隐藏开关仍为 `PreferencesCubit._hideAmountsKey = fortune.preferences.dashboard.hideAmounts`，状态保存在 `DashboardDisplayPreferences.hideAmounts`。本轮没有新增第二份开关或修改持久化逻辑。
 - `FxMoneyText` 不自行读取偏好；默认 `masked=false`、`maskedText=FxMoneyFormatter.hiddenPlaceholder`、`fontSize=17`、`fontWeight=600`。金额格式继续使用 `FxMoneyFormatter`、现有整数分/财务服务路径和币种符号，本轮未用浮点重算业务账目。
-- 默认 `compactWhenNeeded=false`：可见金额按系统 TextScaler 完整换行，不再默认单行 ellipsis。`Semantics.label` 使用当前可见语义值；未掩码且紧凑显示时，Tooltip 保留完整精确值。
+- 默认 `compactWhenNeeded=false`：可见金额保持系统 TextScaler 和完整精确值。空间足够时保留单个完整字符串 `Text`，不改变短金额消费者结构；空间不足时按货币/符号、千分位数字组和小数 token 重排（例如 `¥1,234,` / `567,` / `890.` / `12`），不拆数字组，最后整数组与小数合并（如 `890.12`），不孤立小数位、不裁切。`Semantics.label` 始终保留完整值；未掩码且紧凑显示时，Tooltip 保留完整精确值。
 - `masked=true`：可见文本与 Semantics 均为掩码，不生成包含精确值的 Tooltip。显示、读屏和 Tooltip 的本地行为测试见 `test/fx/components/fx_money_text_test.dart`。分享/导出仍由各自 owner 显式绑定同一偏好，本轮未改文件交付。
 - `compactWhenNeeded=true` 是调用方明确选择的紧凑模式，可能压缩或省略可见文本；不能据此把精确值暴露给掩码语义。
 - 用户保存的 `FxFinanceColors`/`FinanceColorPreferences` 业务色不改写，继续用于色点、色条和图形填色。`FxMoneyText` 未显式传 `color` 时默认使用当前主题的 `textPrimary`，不再把低对比业务色直接当作普通金额小字前景。
@@ -86,8 +86,8 @@ FxSheetPopGuard(
 
 - 主题保持 34/22/17/15/13 字阶、400/500/600/700 用途、4pt 网格、44/48 最小触区和 12/16/24 圆角。全局 `InputDecorationTheme` 不注入几何边框；`FxTextField` 自己管理 1px/2px 边界，原有无边框金额输入合同不变。
 - `FxTextField` 默认点击外部 unfocus；`FxAmountInput` 的数字键盘 Done 也结束编辑。常见粘贴内容先去除空格、千分位和 `¥/￥/$/€/£`，兼容全角数字/小数点/负号，再执行原两位小数校验；非法内容不被静默改为 0。
-- `FxSelectRow` 清除目标至少 44×48，字段名进入清除语义；窄屏/大字时标签、完整值、动作上下重排。`FxListItem` 标题默认完整换行，副标题默认最多 3 行，长 trailing 在大字时移到下一行。
-- `FxTagChip` 静态标签无按钮语义；可操作/删除标签使用 Ink 和至少 44 的命名目标。`FxChip` 背景与边框绘制在 Material 上，Ink 之上不再放不透明 Container。`FxSegmented` 面向少量选项，内容决定高度、不使用单行省略；更多或很长选项使用共享选择列表。
+- `FxSelectRow` 清除目标至少 44×48，字段名进入清除语义；标签按实际排版宽度与 TextScaler 决定行内或上下重排，重排时按空格 token 保持英文单词完整；完整值与动作不缩水。`FxListItem` 标题默认完整换行，副标题默认最多 3 行，长 trailing 在大字时移到下一行。
+- `FxTagChip` 静态标签无按钮语义；可操作/删除标签使用 Ink 和至少 44 的命名目标。`FxChip` 背景与边框绘制在 Material 上，Ink 之上不再放不透明 Container。`FxSegmented` 面向少量选项，内容决定高度、不使用单行省略；TextScaler > 1.3 时每个选项独占整行，避免长中英文在等宽列中断词，更多或很长选项使用共享选择列表。
 - `FxStateView.loading/error/empty` 均新增可选 `title`，用于保留对象和任务上下文；恢复动作继续使用 `onRetry/retryLabel`。`FxFeedback` 不再向读屏拼接英文 `tone.name`，也不再主动替换尚未结束的旧 SnackBar；字段错误继续由 `FxTextField.errorText` 持久承载。
 - `FxActionSheet` 普通图标使用 `textSecondary`，仅选中/危险强调。普通 `FxCard/FxSelectRow/FxListItem` 激活不发送 selection haptic，避免与回调重复触感；实际选择 chip/segmented/tree 保留选择反馈。
 - `FxBentoGrid` 在窄于 360 或中等宽度且大字时转为内容固有高度的单列摘要清单；普通网格动画统一 `FxMotion.resolve`。这不是可访问排序协议，Dashboard/Stats 的上移/下移、跨屏拖动和占位行为仍由 S7-A/S8-A 实现。

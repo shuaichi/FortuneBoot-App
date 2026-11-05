@@ -1,0 +1,25 @@
+{
+  "head": "00a8f2f4e682eda9dd04c9372d95bc054673708b",
+  "status": " M docs/design-system/execution-prompts/reference/component-consumers.json\n M docs/design-system/execution-prompts/reference/contracts-current.md\n M docs/design-system/execution-prompts/runtime/progress.json\n M lib/fx/components/fx_money_text.dart\n M lib/fx/components/fx_segmented.dart\n M test/fx/components/fx_money_text_test.dart\n?? test/fx/components/fx_s1_b_repair_test.dart\n",
+  "s1bEvidenceMatches": {
+    "lib/fx/components/fx_money_text.dart": true,
+    "lib/fx/components/fx_segmented.dart": true,
+    "test/fx/components/fx_money_text_test.dart": true,
+    "test/fx/components/fx_s1_b_repair_test.dart": true,
+    "docs/design-system/execution-prompts/evidence/S1-B/attempt-001/s1_b_component_preview_test.dart": true
+  },
+  "files": {
+    "lib/fx/components/fx_money_text.dart": "d3fdb0c10f4782816594b19bcd5add14fb480006dbb65367a6d133a1edaeabf8",
+    "lib/fx/components/fx_segmented.dart": "e82525c412526264325b92def699d89e85b6e7e8bfe0cc5a922230b06b5a2f71",
+    "test/fx/components/fx_money_text_test.dart": "c7a8d82b515696fed6f8009fe584c8b831ccf7e9c013ce645636762050f103ae",
+    "test/fx/components/fx_s1_b_repair_test.dart": "0bfdeb0bd4b1162d12fc7a5ef2b22393600c0c75482a1cde329c7ae528531c7f",
+    "docs/design-system/execution-prompts/evidence/S1-B/attempt-001/s1_b_component_preview_test.dart": "b44e87f1a87c1e4519d5794e2a6876877e64843119a1e0043d9631c8d00f224b"
+  },
+  "probeSha256": {
+    "docs/design-system/execution-prompts/evidence/S2-A/attempt-002/s2_a_component_preview_test.dart": "42646a36f4e42b612e34c3465b120a5fdd288b7bea7a9d38a13ae58e8b17a1f0",
+    "docs/design-system/execution-prompts/evidence/S2-A/attempt-002/s2_a_decimal_reprobe_test.dart": "de75e1a945f8a9934c8caa2c3de788f51b497477562af075b65d845d5efac0e6",
+    "docs/design-system/execution-prompts/evidence/S2-A/attempt-002/s2_a_modal_probe_test.dart": "9ea7787f9a8839b097f8241dacd6321b843f4a1160864ecde4a6437ec37f5772",
+    "docs/design-system/execution-prompts/evidence/S2-A/attempt-002/s2_a_segmented_reprobe_test.dart": "f21f9d8f1879297fe29c27c0b5be06cb88d5f0d58a43e5078fc038e3581a9883",
+    "docs/design-system/execution-prompts/evidence/S2-A/attempt-002/s2_a_select_row_reprobe_test.dart": "aeab19f426ae91e095cdd2d637b2088a01fc6d330d2209c4fd865759eb566284"
+  }
+}

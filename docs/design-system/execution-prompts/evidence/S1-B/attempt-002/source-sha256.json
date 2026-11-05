@@ -1,0 +1,11 @@
+{
+  "lib/fx/components/fx_money_text.dart": "fe744cf619e32667769a4b98dec4e4dc9cc0c2d0dd27a7a8b72ee9712060e25b",
+  "lib/fx/components/fx_select_row.dart": "978d91464ec9ecaaf43a8cde8bb105964e1e061df101fef041e2cf937aea2a4f",
+  "lib/fx/components/fx_segmented.dart": "e82525c412526264325b92def699d89e85b6e7e8bfe0cc5a922230b06b5a2f71",
+  "test/fx/components/fx_money_text_test.dart": "0f8c3583b93bb6a96b756f91399536af653223fd7bbdbfa5ecbc01c3a5e6f9a7",
+  "test/fx/components/fx_s1_b_repair_test.dart": "e934b0dd72ff447dac0b6659068c3ed55e6c5969e3bc739188e3896151c91a29",
+  "docs/design-system/execution-prompts/evidence/S1-B/attempt-002/s1_b_component_preview_test.dart": "443685ed56869a026ac4651243480cbdc40267c72e315ec94b2abb4d01c4675d",
+  "docs/design-system/execution-prompts/evidence/S1-B/attempt-002/s1_b_decimal_reprobe_test.dart": "8bf9a4e5274b945f8d155ba241f964619717b32e4854e42c24f88c452c0d5366",
+  "docs/design-system/execution-prompts/evidence/S1-B/attempt-002/s1_b_select_row_reprobe_test.dart": "532e147fe0a4862bb953e542feabfbb02d6cd04c51c90937081eb3ba98d15a37",
+  "docs/design-system/execution-prompts/evidence/S1-B/attempt-002/select_row_matrix_test.dart": "c46c4c4b019ad4f61f3a611050e7f821832f91c292d22ca6f5e80be626c737dd"
+}

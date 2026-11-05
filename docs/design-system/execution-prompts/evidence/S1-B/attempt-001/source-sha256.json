@@ -1,0 +1,7 @@
+{
+  "lib/fx/components/fx_money_text.dart": "d3fdb0c10f4782816594b19bcd5add14fb480006dbb65367a6d133a1edaeabf8",
+  "lib/fx/components/fx_segmented.dart": "e82525c412526264325b92def699d89e85b6e7e8bfe0cc5a922230b06b5a2f71",
+  "test/fx/components/fx_money_text_test.dart": "c7a8d82b515696fed6f8009fe584c8b831ccf7e9c013ce645636762050f103ae",
+  "test/fx/components/fx_s1_b_repair_test.dart": "0bfdeb0bd4b1162d12fc7a5ef2b22393600c0c75482a1cde329c7ae528531c7f",
+  "docs/design-system/execution-prompts/evidence/S1-B/attempt-001/s1_b_component_preview_test.dart": "b44e87f1a87c1e4519d5794e2a6876877e64843119a1e0043d9631c8d00f224b"
+}

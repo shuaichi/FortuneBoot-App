@@ -1,0 +1,51 @@
+{
+  "head": "00a8f2f4e682eda9dd04c9372d95bc054673708b",
+  "artifacts": [
+    {
+      "path": "reviews/S2-A/attempt-001/review.md",
+      "sha256": "0cdb11ef885afe9038d84548d5f429f6b90262fb75685d3e81c24bf559ca2f61"
+    },
+    {
+      "path": "reviews/S2-A/attempt-001/review.json",
+      "sha256": "490133218bede2cf9359eeeec0c7caf03a19150542592ef691829f6f90fce43e"
+    },
+    {
+      "path": "reviews/S2-A/attempt-001/repair-routing.json",
+      "sha256": "0a2b831c94e506d5346f01d3449f88a706ea0dae0d6a0aea486403c9b47331cc"
+    },
+    {
+      "path": "handoff/S2-A.md",
+      "sha256": "c5b887b0694323193b119ac1d94e3a5686e9936bfe49230bb1a256c95bbca1ed"
+    },
+    {
+      "path": "runtime/issue-checks/S2-A.json",
+      "sha256": "8a94fb6be3620053c1ce391099ab3ede1d23bb191805b9c8e78b852d2ea8bb5e"
+    },
+    {
+      "path": "runtime/progress.json",
+      "sha256": "e14d58ecc23a3274f750e9a154c4b2e3e0c998518b81032a19cab01807810a40"
+    },
+    {
+      "path": "evidence/S2-A/attempt-001/results.json",
+      "sha256": "0e9523c50b7d1b702390d3da6afd4d0914cc9201a6b88d2a00bb12a1650df8df"
+    },
+    {
+      "path": "evidence/S2-A/attempt-001/screenshot-index.json",
+      "sha256": "503035d4db38cad053bed501707f84a427ef6e82d99fc9f0556ed694a6fd3d45"
+    },
+    {
+      "path": "evidence/S2-A/attempt-001/verification-commands.md",
+      "sha256": "289cd1d622b18c361281bf84c2f5a66bfdeb29c5a5578277ecaaf56032338858"
+    }
+  ],
+  "businessSourceDiff": [],
+  "trackedWorktreeChanges": [
+    " M docs/design-system/execution-prompts/runtime/progress.json"
+  ],
+  "packValidation": "PASS",
+  "customValidation": {
+    "jsonFilesValid": 6,
+    "screenshotsActuallyViewedAndShaVerified": 9,
+    "otherStagesPreserved": true
+  }
+}

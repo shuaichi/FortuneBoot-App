@@ -35,9 +35,15 @@ class FxSelectRow extends StatelessWidget {
     final palette = FxPalette.of(context);
     final hasValue = value != null && value!.isNotEmpty;
     final display = hasValue ? value! : placeholder ?? '';
-    final labelText = Text(
-      label,
-      style: FxTypography.label.copyWith(color: palette.textSecondary),
+    final labelStyle = FxTypography.label.copyWith(
+      color: palette.textSecondary,
+    );
+    final labelText = Text(label, style: labelStyle);
+    final reflowLabelText = Wrap(
+      children: [
+        for (final token in label.split(' '))
+          Text(token, style: labelStyle, maxLines: 1, softWrap: false),
+      ],
     );
     final valueText = Text(
       display,
@@ -83,9 +89,18 @@ class FxSelectRow extends StatelessWidget {
             padding: padding,
             child: LayoutBuilder(
               builder: (context, constraints) {
+                final labelPainter = TextPainter(
+                  text: TextSpan(text: label, style: labelStyle),
+                  textDirection: Directionality.of(context),
+                  textScaler: MediaQuery.textScalerOf(context),
+                  maxLines: 1,
+                )..layout();
+                final labelFitsInline = labelPainter.width <= labelWidth;
+                labelPainter.dispose();
                 final reflow =
                     constraints.maxWidth < 360 ||
-                    MediaQuery.textScalerOf(context).scale(1) > 1.3;
+                    MediaQuery.textScalerOf(context).scale(1) > 1.3 ||
+                    !labelFitsInline;
                 if (reflow) {
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -93,7 +108,7 @@ class FxSelectRow extends StatelessWidget {
                       Wrap(
                         crossAxisAlignment: WrapCrossAlignment.center,
                         children: [
-                          labelText,
+                          reflowLabelText,
                           if (required)
                             Text(
                               ' *',

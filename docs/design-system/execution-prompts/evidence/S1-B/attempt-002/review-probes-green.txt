@@ -1,0 +1,18 @@
+00:00 +0: loading /Users/zhangchi118/代码/FortuneBoot-App/docs/design-system/execution-prompts/evidence/S1-B/attempt-002/s1_b_decimal_reprobe_test.dart
+00:00 +0: /Users/zhangchi118/代码/FortuneBoot-App/docs/design-system/execution-prompts/evidence/S1-B/attempt-002/s1_b_decimal_reprobe_test.dart: S2A-001 decimal digits stay with integer at 390.0/2x
+00:00 +1: /Users/zhangchi118/代码/FortuneBoot-App/docs/design-system/execution-prompts/evidence/S1-B/attempt-002/s1_b_select_row_reprobe_test.dart: CX-02 select row keeps Counterparty in one line at 440/1x
+00:00 +2: /Users/zhangchi118/代码/FortuneBoot-App/docs/design-system/execution-prompts/evidence/S1-B/attempt-002/s1_b_select_row_reprobe_test.dart: CX-02 select row keeps Counterparty in one line at 440/1x
+00:01 +3: /Users/zhangchi118/代码/FortuneBoot-App/test/fx/components/fx_money_text_test.dart: long money text wraps instead of ellipsizing by default
+00:01 +4: /Users/zhangchi118/代码/FortuneBoot-App/test/fx/components/fx_s1_b_repair_test.dart: S2A-001 amount preserves financial groups 280.0/1.0
+00:01 +5: /Users/zhangchi118/代码/FortuneBoot-App/test/fx/components/fx_s1_b_repair_test.dart: S2A-001 amount preserves financial groups 280.0/1.0
+00:01 +6: /Users/zhangchi118/代码/FortuneBoot-App/test/fx/components/fx_s1_b_repair_test.dart: S2A-001 amount preserves financial groups 280.0/1.0
+00:01 +7: /Users/zhangchi118/代码/FortuneBoot-App/test/fx/components/fx_s1_b_repair_test.dart: S2A-001 amount preserves financial groups 280.0/1.0
+00:01 +8: /Users/zhangchi118/代码/FortuneBoot-App/test/fx/components/fx_s1_b_repair_test.dart: S2A-001 amount preserves financial groups 280.0/1.0
+00:01 +9: /Users/zhangchi118/代码/FortuneBoot-App/test/fx/components/fx_s1_b_repair_test.dart: S2A-001 amount preserves financial groups 280.0/2.0
+00:01 +10: /Users/zhangchi118/代码/FortuneBoot-App/test/fx/components/fx_s1_b_repair_test.dart: S2A-001 amount preserves financial groups 350.0/2.0
+00:01 +11: /Users/zhangchi118/代码/FortuneBoot-App/test/fx/components/fx_s1_b_repair_test.dart: S2A-001 amount preserves financial groups 400.0/2.0
+00:01 +12: /Users/zhangchi118/代码/FortuneBoot-App/test/fx/components/fx_s1_b_repair_test.dart: S2A-002 segmented reflows 320.0/2.0/false
+00:01 +13: /Users/zhangchi118/代码/FortuneBoot-App/test/fx/components/fx_s1_b_repair_test.dart: S2A-002 segmented reflows 390.0/2.0/false
+00:01 +14: /Users/zhangchi118/代码/FortuneBoot-App/test/fx/components/fx_s1_b_repair_test.dart: S2A-002 segmented reflows 440.0/2.0/false
+00:01 +15: /Users/zhangchi118/代码/FortuneBoot-App/test/fx/components/fx_s1_b_repair_test.dart: S2A-002 segmented reflows 320.0/2.0/true
+00:01 +16: All tests passed!

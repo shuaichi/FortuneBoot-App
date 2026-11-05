@@ -1,0 +1,14 @@
+{
+  "head": "00a8f2f4e682eda9dd04c9372d95bc054673708b",
+  "trackedWorktreeChanges": [
+    " M docs/design-system/execution-prompts/reference/component-consumers.json",
+    " M docs/design-system/execution-prompts/reference/contracts-current.md",
+    " M docs/design-system/execution-prompts/runtime/progress.json",
+    " M lib/fx/components/fx_money_text.dart",
+    " M lib/fx/components/fx_segmented.dart",
+    " M test/fx/components/fx_money_text_test.dart",
+    "?? test/fx/components/fx_s1_b_repair_test.dart"
+  ],
+  "s1bSourceSnapshotUnchangedDuringReview": true,
+  "note": "Existing lib/test changes belong to S1-B and matched its evidence before and after S2-A. New S2-A reports/evidence are present under the prompt pack; runtime/progress.json is atomically updated."
+}

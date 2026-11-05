@@ -1,0 +1,51 @@
+{
+  "flutterVersion": "3.41.9",
+  "dartVersion": "3.11.5",
+  "commands": [
+    {
+      "command": "flutter --version",
+      "exitCode": 0
+    },
+    {
+      "command": "python3 docs/design-system/execution-prompts/tools/validate_pack.py --runtime",
+      "exitCode": 0
+    },
+    {
+      "command": "flutter test --no-pub --reporter json test/fx test/features/bill_editor/presentation/bill_editor_order_flow_test.dart",
+      "exitCode": 0
+    },
+    {
+      "command": "flutter test --no-pub --reporter json evidence/s2_a_component_preview_test.dart",
+      "exitCode": 0
+    },
+    {
+      "command": "flutter test --no-pub --reporter json evidence/s2_a_modal_probe_test.dart",
+      "exitCode": 0
+    },
+    {
+      "command": "flutter test --no-pub --reporter json test/features/bill_editor test/features/recurring",
+      "exitCode": 0
+    },
+    {
+      "command": "flutter test --no-pub --reporter json",
+      "exitCode": 0
+    },
+    {
+      "command": "flutter analyze --no-pub (initial)",
+      "exitCode": 1
+    },
+    {
+      "command": "flutter test --no-pub --reporter json evidence/s2_a_modal_probe_test.dart (final)",
+      "exitCode": 0
+    },
+    {
+      "command": "flutter analyze --no-pub (final)",
+      "exitCode": 1
+    },
+    {
+      "command": "git diff --check 6061359..HEAD",
+      "exitCode": 2
+    }
+  ],
+  "note": "Nonzero analyzer is caused by existing 252 warnings and 907 infos; final path/code/message diff has zero additions/removals. diff --check findings are pre-existing committed docs/evidence."
+}

@@ -1,0 +1,40 @@
+diff --git a/docs/design-system/execution-prompts/runtime/progress.json b/docs/design-system/execution-prompts/runtime/progress.json
+index 7b640ae..e0c3a6c 100644
+--- a/docs/design-system/execution-prompts/runtime/progress.json
++++ b/docs/design-system/execution-prompts/runtime/progress.json
+@@ -1,7 +1,7 @@
+ {
+   "schemaVersion": 1,
+   "currentStage": null,
+-  "nextStage": "S2-A",
++  "nextStage": "S1-B",
+   "lastCompletedStage": null,
+   "note": "只生成提示词包，所有阶段未执行；历史底座结果不是本包阶段通过记录。",
+   "stages": {
+@@ -48,14 +48,19 @@
+       ]
+     },
+     "S2-A": {
+-      "status": "NOT_STARTED",
+-      "localGate": "NOT_RUN",
+-      "visualGate": "NOT_RUN",
++      "status": "FAILED",
++      "localGate": "PASSED",
++      "visualGate": "FAILED",
+       "externalGate": "NOT_RUN",
+-      "attempt": 0,
+-      "handoff": null,
+-      "evidence": [],
+-      "blockingIssues": []
++      "attempt": 1,
++      "handoff": "handoff/S2-A.md",
++      "evidence": [
++        "evidence/S2-A/attempt-001"
++      ],
++      "blockingIssues": [
++        "S2A-001",
++        "S2A-002"
++      ]
+     },
+     "S3-A": {
+       "status": "NOT_STARTED",

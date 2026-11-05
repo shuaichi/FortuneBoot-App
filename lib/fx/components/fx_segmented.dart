@@ -21,17 +21,22 @@ class FxSegmented<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final palette = FxPalette.of(context);
-    return Container(
-      decoration: BoxDecoration(
-        color: palette.surfaceMuted,
-        borderRadius: FxRadius.tileBorder,
-      ),
-      child: IntrinsicHeight(
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            for (final segment in segments)
-              Expanded(
+    final reflow = MediaQuery.textScalerOf(context).scale(1) > 1.3;
+    final children = [
+      for (final segment in segments)
+        reflow
+            ? SizedBox(
+                width: double.infinity,
+                child: Padding(
+                  padding: const EdgeInsets.all(3),
+                  child: _FxSegmentButton<T>(
+                    segment: segment,
+                    selected: segment.value == value,
+                    onChanged: onChanged,
+                  ),
+                ),
+              )
+            : Expanded(
                 child: Padding(
                   padding: const EdgeInsets.all(3),
                   child: _FxSegmentButton<T>(
@@ -41,9 +46,24 @@ class FxSegmented<T> extends StatelessWidget {
                   ),
                 ),
               ),
-          ],
-        ),
+    ];
+    return Container(
+      decoration: BoxDecoration(
+        color: palette.surfaceMuted,
+        borderRadius: FxRadius.tileBorder,
       ),
+      child: reflow
+          ? Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: children,
+            )
+          : IntrinsicHeight(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: children,
+              ),
+            ),
     );
   }
 }

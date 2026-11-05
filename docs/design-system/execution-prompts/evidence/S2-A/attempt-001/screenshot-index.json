@@ -1,0 +1,156 @@
+[
+  {
+    "page": "Fx shared component contract fixture",
+    "state": "light-320-1x",
+    "theme": "LIGHT",
+    "logicalSize": [
+      320,
+      1900
+    ],
+    "textScale": 1,
+    "sourceHead": "00a8f2f4e682eda9dd04c9372d95bc054673708b",
+    "sourceSha256": "fbf6714eb5e5a036546c4fbdc5487a542d6340a2907c057e42e2aab6240ba0ea",
+    "productionSourceSnapshotSha256": "d7059fee993141f8c73bbe75beff901a6d6f90edb31301ba16c3e7e97516b28b",
+    "path": "docs/design-system/execution-prompts/evidence/S2-A/attempt-001/shared-light-320-1x.png",
+    "pathSha256": "335cb121952b47de21f198fbf71e025e2f647c8e7f688ef8c4176bf6d835b5b4",
+    "actuallyViewed": true,
+    "observation": "已打开查看：品牌卡、输入框、选择器及长文本完整可见；主金额把 .12 单独换到下一行，千分位组与小数未被作为不可拆分的财务阅读单元，视觉门槛不通过。"
+  },
+  {
+    "page": "Fx shared component contract fixture",
+    "state": "light-320-2x",
+    "theme": "LIGHT",
+    "logicalSize": [
+      320,
+      3500
+    ],
+    "textScale": 2,
+    "sourceHead": "00a8f2f4e682eda9dd04c9372d95bc054673708b",
+    "sourceSha256": "fbf6714eb5e5a036546c4fbdc5487a542d6340a2907c057e42e2aab6240ba0ea",
+    "productionSourceSnapshotSha256": "d7059fee993141f8c73bbe75beff901a6d6f90edb31301ba16c3e7e97516b28b",
+    "path": "docs/design-system/execution-prompts/evidence/S2-A/attempt-001/shared-light-320-2x.png",
+    "pathSha256": "28256c4b9727745d8ec36ddebfe3e1dee1d003f755deeae538ea3489463e887c",
+    "actuallyViewed": true,
+    "observation": "已打开查看：无横向溢出，但主金额拆成 ¥1,234, / 567,89 / 0.12，列表金额末位换行，Expense 拆为 Expens/e；金额与分段大字视觉门槛不通过。"
+  },
+  {
+    "page": "Fx shared component contract fixture",
+    "state": "light-390-1x",
+    "theme": "LIGHT",
+    "logicalSize": [
+      390,
+      1900
+    ],
+    "textScale": 1,
+    "sourceHead": "00a8f2f4e682eda9dd04c9372d95bc054673708b",
+    "sourceSha256": "fbf6714eb5e5a036546c4fbdc5487a542d6340a2907c057e42e2aab6240ba0ea",
+    "productionSourceSnapshotSha256": "d7059fee993141f8c73bbe75beff901a6d6f90edb31301ba16c3e7e97516b28b",
+    "path": "docs/design-system/execution-prompts/evidence/S2-A/attempt-001/shared-light-390-1x.png",
+    "pathSha256": "3fb21c90897bde9d9dd46a04b94ed80d369f717b4645bf27c09ac04de801aa22",
+    "actuallyViewed": true,
+    "observation": "已打开查看：亮暗层级、品牌实色卡前景、聚焦/错误输入、长中英文、选择行、分段和底部 CTA 完整可见，未见横向溢出或关键内容省略；此图不证明其它宽度/字号。"
+  },
+  {
+    "page": "Fx shared component contract fixture",
+    "state": "light-390-2x",
+    "theme": "LIGHT",
+    "logicalSize": [
+      390,
+      3000
+    ],
+    "textScale": 2,
+    "sourceHead": "00a8f2f4e682eda9dd04c9372d95bc054673708b",
+    "sourceSha256": "fbf6714eb5e5a036546c4fbdc5487a542d6340a2907c057e42e2aab6240ba0ea",
+    "productionSourceSnapshotSha256": "d7059fee993141f8c73bbe75beff901a6d6f90edb31301ba16c3e7e97516b28b",
+    "path": "docs/design-system/execution-prompts/evidence/S2-A/attempt-001/shared-light-390-2x.png",
+    "pathSha256": "cb9868e9abaa4e142e917440892df608562456bfd33098c553790a630d77800a",
+    "actuallyViewed": true,
+    "observation": "已打开查看：无横向溢出，分段标签完整；主金额拆成 ¥1,234,5 / 67,890.1 / 2，千分位组和小数位被拆开，金额大字视觉门槛不通过。"
+  },
+  {
+    "page": "Fx shared component contract fixture",
+    "state": "dark-320-1x",
+    "theme": "DARK",
+    "logicalSize": [
+      320,
+      1900
+    ],
+    "textScale": 1,
+    "sourceHead": "00a8f2f4e682eda9dd04c9372d95bc054673708b",
+    "sourceSha256": "fbf6714eb5e5a036546c4fbdc5487a542d6340a2907c057e42e2aab6240ba0ea",
+    "productionSourceSnapshotSha256": "d7059fee993141f8c73bbe75beff901a6d6f90edb31301ba16c3e7e97516b28b",
+    "path": "docs/design-system/execution-prompts/evidence/S2-A/attempt-001/shared-dark-320-1x.png",
+    "pathSha256": "7161619314af8bafb63a2cef226c8bb04266c045d3853c15b9465c6abfa395b6",
+    "actuallyViewed": true,
+    "observation": "已打开查看：品牌卡、输入框、选择器及长文本完整可见；主金额把 .12 单独换到下一行，千分位组与小数未被作为不可拆分的财务阅读单元，视觉门槛不通过。"
+  },
+  {
+    "page": "Fx shared component contract fixture",
+    "state": "dark-320-2x",
+    "theme": "DARK",
+    "logicalSize": [
+      320,
+      3500
+    ],
+    "textScale": 2,
+    "sourceHead": "00a8f2f4e682eda9dd04c9372d95bc054673708b",
+    "sourceSha256": "fbf6714eb5e5a036546c4fbdc5487a542d6340a2907c057e42e2aab6240ba0ea",
+    "productionSourceSnapshotSha256": "d7059fee993141f8c73bbe75beff901a6d6f90edb31301ba16c3e7e97516b28b",
+    "path": "docs/design-system/execution-prompts/evidence/S2-A/attempt-001/shared-dark-320-2x.png",
+    "pathSha256": "8837b6ce9cba4c3354d32cab5ca86851f039d4cc73860d231f8ac0882e62353b",
+    "actuallyViewed": true,
+    "observation": "已打开查看：无横向溢出，但主金额拆成 ¥1,234, / 567,89 / 0.12，列表金额末位换行，Expense 拆为 Expens/e；金额与分段大字视觉门槛不通过。"
+  },
+  {
+    "page": "Fx shared component contract fixture",
+    "state": "dark-390-1x",
+    "theme": "DARK",
+    "logicalSize": [
+      390,
+      1900
+    ],
+    "textScale": 1,
+    "sourceHead": "00a8f2f4e682eda9dd04c9372d95bc054673708b",
+    "sourceSha256": "fbf6714eb5e5a036546c4fbdc5487a542d6340a2907c057e42e2aab6240ba0ea",
+    "productionSourceSnapshotSha256": "d7059fee993141f8c73bbe75beff901a6d6f90edb31301ba16c3e7e97516b28b",
+    "path": "docs/design-system/execution-prompts/evidence/S2-A/attempt-001/shared-dark-390-1x.png",
+    "pathSha256": "a82205957d007ed78327086b6d1d4aec16f455eb5485cf18d47bb965fc45ce1a",
+    "actuallyViewed": true,
+    "observation": "已打开查看：亮暗层级、品牌实色卡前景、聚焦/错误输入、长中英文、选择行、分段和底部 CTA 完整可见，未见横向溢出或关键内容省略；此图不证明其它宽度/字号。"
+  },
+  {
+    "page": "Fx shared component contract fixture",
+    "state": "dark-390-2x",
+    "theme": "DARK",
+    "logicalSize": [
+      390,
+      3000
+    ],
+    "textScale": 2,
+    "sourceHead": "00a8f2f4e682eda9dd04c9372d95bc054673708b",
+    "sourceSha256": "fbf6714eb5e5a036546c4fbdc5487a542d6340a2907c057e42e2aab6240ba0ea",
+    "productionSourceSnapshotSha256": "d7059fee993141f8c73bbe75beff901a6d6f90edb31301ba16c3e7e97516b28b",
+    "path": "docs/design-system/execution-prompts/evidence/S2-A/attempt-001/shared-dark-390-2x.png",
+    "pathSha256": "08f7fa8779f400b58994b5473ccd334979927e596eb4d8cd245da87f4493973e",
+    "actuallyViewed": true,
+    "observation": "已打开查看：无横向溢出，分段标签完整；主金额拆成 ¥1,234,5 / 67,890.1 / 2，千分位组和小数位被拆开，金额大字视觉门槛不通过。"
+  },
+  {
+    "page": "FxSheet busy guarded form fixture",
+    "state": "busy-dirty-keyboard-inset",
+    "theme": "LIGHT",
+    "logicalSize": [
+      390,
+      844
+    ],
+    "textScale": 1,
+    "sourceHead": "00a8f2f4e682eda9dd04c9372d95bc054673708b",
+    "sourceSha256": "a9b5e57eeee4d8596875487673fcec87bba474b1912129134901dca7eb46cad3",
+    "productionSourceSnapshotSha256": "d7059fee993141f8c73bbe75beff901a6d6f90edb31301ba16c3e7e97516b28b",
+    "path": "docs/design-system/execution-prompts/evidence/S2-A/attempt-001/modal-keyboard-busy-light-390-1x.png",
+    "pathSha256": "ab59443437be63d4698703491ae920cc9e0c6d7df4dc18775030ce8b639320e4",
+    "actuallyViewed": true,
+    "keyboardRepresentation": "SIMULATED_240_LOGICAL_PIXEL_VIEW_INSET_NOT_PLATFORM_KEYBOARD",
+    "observation": "已打开查看：弹层位于模拟键盘 inset 上方，未保存输入、标题、关闭出口和加载底部动作均可见，inset 只应用一次；空白下部是模拟占位，不是真实系统键盘或真机证据。"
+  }
+]

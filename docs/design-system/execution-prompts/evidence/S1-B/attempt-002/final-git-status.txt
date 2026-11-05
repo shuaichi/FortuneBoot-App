@@ -1,0 +1,8 @@
+ M docs/design-system/execution-prompts/reference/component-consumers.json
+ M docs/design-system/execution-prompts/reference/contracts-current.md
+ M docs/design-system/execution-prompts/runtime/progress.json
+ M lib/fx/components/fx_money_text.dart
+ M lib/fx/components/fx_segmented.dart
+ M lib/fx/components/fx_select_row.dart
+ M test/fx/components/fx_money_text_test.dart
+?? test/fx/components/fx_s1_b_repair_test.dart

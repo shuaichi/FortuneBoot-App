@@ -759,7 +759,7 @@
     {
       "symbol": "FxMoneyText",
       "definition": "lib/fx/components/fx_money_text.dart",
-      "definitionSha256": "300241e41d2fbc23eeb6f80058e864a36fab7e0032df483323d057be255b707e",
+      "definitionSha256": "fe744cf619e32667769a4b98dec4e4dc9cc0c2d0dd27a7a8b72ee9712060e25b",
       "directConsumers": [
         "lib/features/accounts/presentation/accounts_page.dart",
         "lib/features/accounts/presentation/widgets/account_card.dart",
@@ -802,8 +802,11 @@
         "S8-C"
       ],
       "testAndPreviewReferences": [
+        "docs/design-system/execution-prompts/evidence/S1-B/attempt-001/s1_b_component_preview_test.dart",
+        "docs/design-system/execution-prompts/evidence/S1-B/attempt-002/s1_b_component_preview_test.dart",
         "test/fx/components/fx_ledger_row_test.dart",
         "test/fx/components/fx_money_text_test.dart",
+        "test/fx/components/fx_s1_b_repair_test.dart",
         "tool/design_system_preview_test.dart",
         "tool/s1_a_component_preview_test.dart"
       ]
@@ -1178,19 +1181,21 @@
     {
       "symbol": "FxSegmented",
       "definition": "lib/fx/components/fx_segmented.dart",
-      "definitionSha256": "5f2f151fd283f71a60757fbaaa44a4e41a0e001cfc96af1bdca98f4fe782cd58",
+      "definitionSha256": "e82525c412526264325b92def699d89e85b6e7e8bfe0cc5a922230b06b5a2f71",
       "directConsumers": [],
       "consumerCount": 0,
       "consumerStages": [],
       "testAndPreviewReferences": [
+        "docs/design-system/execution-prompts/evidence/S1-B/attempt-001/s1_b_component_preview_test.dart",
         "test/fx/components/fx_interaction_accessibility_test.dart",
+        "test/fx/components/fx_s1_b_repair_test.dart",
         "tool/s1_a_component_preview_test.dart"
       ]
     },
     {
       "symbol": "FxSelectRow",
       "definition": "lib/fx/components/fx_select_row.dart",
-      "definitionSha256": "2275c752c9e06b9ba5ab5a6447dc1fe9b7b9fd01dff6dd9189ab86349ade037d",
+      "definitionSha256": "978d91464ec9ecaaf43a8cde8bb105964e1e061df101fef041e2cf937aea2a4f",
       "directConsumers": [
         "lib/features/bill_editor/presentation/bill_editor_page.dart",
         "lib/features/goods/presentation/widgets/goods_form_sheet.dart",
@@ -1203,6 +1208,9 @@
         "S5-A"
       ],
       "testAndPreviewReferences": [
+        "docs/design-system/execution-prompts/evidence/S1-B/attempt-002/s1_b_component_preview_test.dart",
+        "docs/design-system/execution-prompts/evidence/S1-B/attempt-002/s1_b_select_row_reprobe_test.dart",
+        "docs/design-system/execution-prompts/evidence/S1-B/attempt-002/select_row_matrix_test.dart",
         "test/fx/components/fx_interaction_accessibility_test.dart",
         "test/fx/components/fx_select_row_test.dart",
         "tool/s1_a_component_preview_test.dart"

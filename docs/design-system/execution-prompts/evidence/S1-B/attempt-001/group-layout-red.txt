@@ -1,0 +1,110 @@
+00:00 +0: loading /Users/zhangchi118/代码/FortuneBoot-App/test/fx/components/fx_s1_b_repair_test.dart
+00:00 +0: S2A-001 amount preserves financial groups 280.0/1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: exactly one matching candidate
+  Actual: _TextWidgetFinder:<Found 0 widgets with text "1,": []>
+   Which: means none were found but one was expected
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///Users/zhangchi118/%E4%BB%A3%E7%A0%81/FortuneBoot-App/test/fx/components/fx_s1_b_repair_test.dart:60:11)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1682:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/zhangchi118/%E4%BB%A3%E7%A0%81/FortuneBoot-App/test/fx/components/fx_s1_b_repair_test.dart line 60
+The test description was:
+  S2A-001 amount preserves financial groups 280.0/1.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:00 +0 -1: S2A-001 amount preserves financial groups 280.0/1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: S2A-001 amount preserves financial groups 280.0/1.0
+  
+00:00 +0 -1: S2A-001 amount preserves financial groups 280.0/2.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: exactly one matching candidate
+  Actual: _TextWidgetFinder:<Found 0 widgets with text "1,": []>
+   Which: means none were found but one was expected
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///Users/zhangchi118/%E4%BB%A3%E7%A0%81/FortuneBoot-App/test/fx/components/fx_s1_b_repair_test.dart:60:11)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1682:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/zhangchi118/%E4%BB%A3%E7%A0%81/FortuneBoot-App/test/fx/components/fx_s1_b_repair_test.dart line 60
+The test description was:
+  S2A-001 amount preserves financial groups 280.0/2.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:00 +0 -2: S2A-001 amount preserves financial groups 280.0/2.0 [E]
+  Test failed. See exception logs above.
+  The test description was: S2A-001 amount preserves financial groups 280.0/2.0
+  
+00:00 +0 -2: S2A-001 amount preserves financial groups 350.0/2.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: exactly one matching candidate
+  Actual: _TextWidgetFinder:<Found 0 widgets with text "1,": []>
+   Which: means none were found but one was expected
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///Users/zhangchi118/%E4%BB%A3%E7%A0%81/FortuneBoot-App/test/fx/components/fx_s1_b_repair_test.dart:60:11)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1682:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/zhangchi118/%E4%BB%A3%E7%A0%81/FortuneBoot-App/test/fx/components/fx_s1_b_repair_test.dart line 60
+The test description was:
+  S2A-001 amount preserves financial groups 350.0/2.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:00 +0 -3: S2A-001 amount preserves financial groups 350.0/2.0 [E]
+  Test failed. See exception logs above.
+  The test description was: S2A-001 amount preserves financial groups 350.0/2.0
+  
+00:00 +0 -3: S2A-001 amount preserves financial groups 400.0/2.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: exactly one matching candidate
+  Actual: _TextWidgetFinder:<Found 0 widgets with text "1,": []>
+   Which: means none were found but one was expected
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///Users/zhangchi118/%E4%BB%A3%E7%A0%81/FortuneBoot-App/test/fx/components/fx_s1_b_repair_test.dart:60:11)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1682:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/zhangchi118/%E4%BB%A3%E7%A0%81/FortuneBoot-App/test/fx/components/fx_s1_b_repair_test.dart line 60
+The test description was:
+  S2A-001 amount preserves financial groups 400.0/2.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:00 +0 -4: S2A-001 amount preserves financial groups 400.0/2.0 [E]
+  Test failed. See exception logs above.
+  The test description was: S2A-001 amount preserves financial groups 400.0/2.0
+  
+00:00 +0 -4: S2A-002 segmented reflows 320.0/2.0/false
+00:00 +1 -4: S2A-002 segmented reflows 390.0/2.0/false
+00:00 +2 -4: S2A-002 segmented reflows 440.0/2.0/false
+00:00 +3 -4: S2A-002 segmented reflows 320.0/2.0/true
+00:00 +4 -4: Some tests failed.

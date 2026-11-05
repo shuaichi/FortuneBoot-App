@@ -1,0 +1,134 @@
+00:00 +0: loading /Users/zhangchi118/代码/FortuneBoot-App/test/fx/components/fx_s1_b_repair_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: S2A-001 amount preserves financial groups 280.0/1.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: contains '⁠'
+  Actual: '¥1,234,567,890.12'
+   Which: does not contain '⁠'
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///Users/zhangchi118/%E4%BB%A3%E7%A0%81/FortuneBoot-App/test/fx/components/fx_s1_b_repair_test.dart:99:9)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1682:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/zhangchi118/%E4%BB%A3%E7%A0%81/FortuneBoot-App/test/fx/components/fx_s1_b_repair_test.dart line 99
+The test description was:
+  S2A-001 amount preserves financial groups 280.0/1.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:00 +0 -1: S2A-001 amount preserves financial groups 280.0/1.0 [E]
+  Test failed. See exception logs above.
+  The test description was: S2A-001 amount preserves financial groups 280.0/1.0
+  
+00:00 +0 -1: S2A-001 amount preserves financial groups 280.0/2.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: contains '⁠'
+  Actual: '¥1,234,567,890.12'
+   Which: does not contain '⁠'
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///Users/zhangchi118/%E4%BB%A3%E7%A0%81/FortuneBoot-App/test/fx/components/fx_s1_b_repair_test.dart:99:9)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1682:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/zhangchi118/%E4%BB%A3%E7%A0%81/FortuneBoot-App/test/fx/components/fx_s1_b_repair_test.dart line 99
+The test description was:
+  S2A-001 amount preserves financial groups 280.0/2.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:00 +0 -2: S2A-001 amount preserves financial groups 280.0/2.0 [E]
+  Test failed. See exception logs above.
+  The test description was: S2A-001 amount preserves financial groups 280.0/2.0
+  
+00:00 +0 -2: S2A-001 amount preserves financial groups 350.0/2.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: contains '⁠'
+  Actual: '¥1,234,567,890.12'
+   Which: does not contain '⁠'
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///Users/zhangchi118/%E4%BB%A3%E7%A0%81/FortuneBoot-App/test/fx/components/fx_s1_b_repair_test.dart:99:9)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1682:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/zhangchi118/%E4%BB%A3%E7%A0%81/FortuneBoot-App/test/fx/components/fx_s1_b_repair_test.dart line 99
+The test description was:
+  S2A-001 amount preserves financial groups 350.0/2.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:00 +0 -3: S2A-001 amount preserves financial groups 350.0/2.0 [E]
+  Test failed. See exception logs above.
+  The test description was: S2A-001 amount preserves financial groups 350.0/2.0
+  
+00:00 +0 -3: S2A-001 amount preserves financial groups 400.0/2.0
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: contains '⁠'
+  Actual: '¥1,234,567,890.12'
+   Which: does not contain '⁠'
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///Users/zhangchi118/%E4%BB%A3%E7%A0%81/FortuneBoot-App/test/fx/components/fx_s1_b_repair_test.dart:99:9)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1682:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/zhangchi118/%E4%BB%A3%E7%A0%81/FortuneBoot-App/test/fx/components/fx_s1_b_repair_test.dart line 99
+The test description was:
+  S2A-001 amount preserves financial groups 400.0/2.0
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:00 +0 -4: S2A-001 amount preserves financial groups 400.0/2.0 [E]
+  Test failed. See exception logs above.
+  The test description was: S2A-001 amount preserves financial groups 400.0/2.0
+  
+00:00 +0 -4: S2A-002 large segmented labels reflow to full-width rows
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: a value greater than or equal to <211.0>
+  Actual: <31.0>
+   Which: is not a value greater than or equal to <211.0>
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///Users/zhangchi118/%E4%BB%A3%E7%A0%81/FortuneBoot-App/test/fx/components/fx_s1_b_repair_test.dart:130:5)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1682:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/zhangchi118/%E4%BB%A3%E7%A0%81/FortuneBoot-App/test/fx/components/fx_s1_b_repair_test.dart line 130
+The test description was:
+  S2A-002 large segmented labels reflow to full-width rows
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:00 +0 -5: S2A-002 large segmented labels reflow to full-width rows [E]
+  Test failed. See exception logs above.
+  The test description was: S2A-002 large segmented labels reflow to full-width rows
+  
+00:00 +0 -5: (tearDownAll)
+00:00 +0 -5: Some tests failed.

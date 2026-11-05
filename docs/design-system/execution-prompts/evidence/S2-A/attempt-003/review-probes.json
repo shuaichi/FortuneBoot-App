@@ -1,0 +1,23 @@
+{"protocolVersion":"0.1.1","runnerVersion":null,"pid":49989,"type":"start","time":0}
+{"suite":{"id":0,"platform":"vm","path":"/Users/zhangchi118/代码/FortuneBoot-App/docs/design-system/execution-prompts/evidence/S2-A/attempt-003/s2_a_decimal_reprobe_test.dart"},"type":"suite","time":0}
+{"test":{"id":1,"name":"loading /Users/zhangchi118/代码/FortuneBoot-App/docs/design-system/execution-prompts/evidence/S2-A/attempt-003/s2_a_decimal_reprobe_test.dart","suiteID":0,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":0}
+{"suite":{"id":2,"platform":"vm","path":"/Users/zhangchi118/代码/FortuneBoot-App/docs/design-system/execution-prompts/evidence/S2-A/attempt-003/s2_a_select_row_reprobe_test.dart"},"type":"suite","time":2}
+{"test":{"id":3,"name":"loading /Users/zhangchi118/代码/FortuneBoot-App/docs/design-system/execution-prompts/evidence/S2-A/attempt-003/s2_a_select_row_reprobe_test.dart","suiteID":2,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":2}
+{"suite":{"id":4,"platform":"vm","path":"/Users/zhangchi118/代码/FortuneBoot-App/docs/design-system/execution-prompts/evidence/S2-A/attempt-003/s2_a_segmented_reprobe_test.dart"},"type":"suite","time":3}
+{"test":{"id":5,"name":"loading /Users/zhangchi118/代码/FortuneBoot-App/docs/design-system/execution-prompts/evidence/S2-A/attempt-003/s2_a_segmented_reprobe_test.dart","suiteID":4,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":3}
+{"count":3,"time":3,"type":"allSuites"}
+{"testID":1,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":1727}
+{"group":{"id":6,"suiteID":0,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":2,"line":null,"column":null,"url":null},"type":"group","time":1730}
+{"test":{"id":7,"name":"S2A-001 decimal digits stay with integer at 390.0/2x","suiteID":0,"groupIDs":[6],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":8,"root_column":5,"root_url":"file:///Users/zhangchi118/%E4%BB%A3%E7%A0%81/FortuneBoot-App/docs/design-system/execution-prompts/evidence/S2-A/attempt-003/s2_a_decimal_reprobe_test.dart"},"type":"testStart","time":1731}
+{"testID":3,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":1812}
+{"group":{"id":8,"suiteID":2,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":1,"line":null,"column":null,"url":null},"type":"group","time":1812}
+{"test":{"id":9,"name":"CX-02 select row keeps Counterparty in one line at 440/1x","suiteID":2,"groupIDs":[8],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":10,"root_column":3,"root_url":"file:///Users/zhangchi118/%E4%BB%A3%E7%A0%81/FortuneBoot-App/docs/design-system/execution-prompts/evidence/S2-A/attempt-003/s2_a_select_row_reprobe_test.dart"},"type":"testStart","time":1812}
+{"testID":5,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":1885}
+{"group":{"id":10,"suiteID":4,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":1,"line":null,"column":null,"url":null},"type":"group","time":1885}
+{"test":{"id":11,"name":"S2A-002 vertical segmented remains tappable at 320/2x","suiteID":4,"groupIDs":[10],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":7,"root_column":3,"root_url":"file:///Users/zhangchi118/%E4%BB%A3%E7%A0%81/FortuneBoot-App/docs/design-system/execution-prompts/evidence/S2-A/attempt-003/s2_a_segmented_reprobe_test.dart"},"type":"testStart","time":1885}
+{"testID":7,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":2284}
+{"test":{"id":12,"name":"S2A-001 decimal digits stay with integer at 440.0/2x","suiteID":0,"groupIDs":[6],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":8,"root_column":5,"root_url":"file:///Users/zhangchi118/%E4%BB%A3%E7%A0%81/FortuneBoot-App/docs/design-system/execution-prompts/evidence/S2-A/attempt-003/s2_a_decimal_reprobe_test.dart"},"type":"testStart","time":2285}
+{"testID":12,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":2318}
+{"testID":9,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":2478}
+{"testID":11,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":2517}
+{"success":true,"type":"done","time":2525}

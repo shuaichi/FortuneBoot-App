@@ -1,0 +1,79 @@
+{
+  "stage": "S1-B",
+  "attempt": 1,
+  "status": "PASSED",
+  "sourceShaBefore": "00a8f2f4e682eda9dd04c9372d95bc054673708b",
+  "sourceShaAfter": "00a8f2f4e682eda9dd04c9372d95bc054673708b",
+  "sourceSnapshot": "Uncommitted S1-B changes; per-file SHA256 in source-sha256.json",
+  "targeted": {
+    "totalVisible": 87,
+    "passed": 87,
+    "skipped": 0,
+    "failed": 0,
+    "errorEvents": 0,
+    "runner": [
+      {
+        "success": true,
+        "type": "done",
+        "time": 8059
+      }
+    ]
+  },
+  "affectedConsumers": {
+    "totalVisible": 225,
+    "passed": 225,
+    "skipped": 0,
+    "failed": 0,
+    "errorEvents": 0,
+    "runner": [
+      {
+        "success": true,
+        "type": "done",
+        "time": 16461
+      }
+    ]
+  },
+  "full": {
+    "totalVisible": 534,
+    "passed": 533,
+    "skipped": 1,
+    "failed": 0,
+    "errorEvents": 0,
+    "runner": [
+      {
+        "success": true,
+        "type": "done",
+        "time": 35540
+      }
+    ]
+  },
+  "analysis": {
+    "baselineCount": 1159,
+    "currentCount": 1159,
+    "bySeverity": {
+      "error": 0,
+      "warning": 252,
+      "info": 907
+    },
+    "new": [],
+    "removed": []
+  },
+  "visual": {
+    "rendered": 12,
+    "actuallyViewed": 12,
+    "index": "screenshot-index.json"
+  },
+  "issueChecks": {
+    "total": 2,
+    "byState": {
+      "VERIFIED_LOCAL": 2
+    },
+    "verifiedClosed": 0
+  },
+  "deviceGate": {
+    "simulatorOrDevice": "NOT_RUN",
+    "voiceOverTalkBack": "NOT_RUN",
+    "platformBuild": "NOT_RUN",
+    "serverIntegration": "NOT_RUN"
+  }
+}

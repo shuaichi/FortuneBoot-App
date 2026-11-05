@@ -1,0 +1,62 @@
+{
+  "head": "00a8f2f4e682eda9dd04c9372d95bc054673708b",
+  "artifacts": [
+    {
+      "path": "reviews/S2-A/attempt-002/review.md",
+      "sha256": "7abb257d8cfc77454c7f5e08cc32bfb550c594c2e48ffc9fa790b7dd5241ffb6"
+    },
+    {
+      "path": "reviews/S2-A/attempt-002/review.json",
+      "sha256": "937604efd770c65ae2dac787f6449ab981b26c61f87657fee2d08a7e07a52609"
+    },
+    {
+      "path": "reviews/S2-A/attempt-002/repair-routing.json",
+      "sha256": "2b49cb4fe71c1f24aaa818b953b5e09dd4dfa67a33248b64ae23954729c5c289"
+    },
+    {
+      "path": "handoff/S2-A.md",
+      "sha256": "ae67cd3649c701e4a438d26e37a61700f994dd4568291bf615f1e93744957eee"
+    },
+    {
+      "path": "runtime/issue-checks/S2-A.json",
+      "sha256": "9f3d409581af54b1db4ab6692646cfff6aad81f62ed709ec7749715c78ff894b"
+    },
+    {
+      "path": "runtime/progress.json",
+      "sha256": "2ec8dfff36a67027506720690fcfb94980a163c2e3b42cef7b376e115285f1c6"
+    },
+    {
+      "path": "evidence/S2-A/attempt-002/results.json",
+      "sha256": "dcdcc002a91630b690aa7e1613a6b455db77de6a57a95a0575bb234e99c97cb2"
+    },
+    {
+      "path": "evidence/S2-A/attempt-002/screenshot-index.json",
+      "sha256": "b2d0aa97f27b6e4cc77ffca466eab0ce1aa95c3555b0ae5669c3227177ba2b7d"
+    },
+    {
+      "path": "evidence/S2-A/attempt-002/verification-commands.md",
+      "sha256": "e3515f2a20a1ab9aba92bfbaee11583a5f032d380ff5d2699cde3406235c12b8"
+    }
+  ],
+  "s1bSourceSnapshotUnchangedDuringReview": true,
+  "trackedWorktreeChanges": [
+    " M docs/design-system/execution-prompts/reference/component-consumers.json",
+    " M docs/design-system/execution-prompts/reference/contracts-current.md",
+    " M docs/design-system/execution-prompts/runtime/progress.json",
+    " M lib/fx/components/fx_money_text.dart",
+    " M lib/fx/components/fx_segmented.dart",
+    " M test/fx/components/fx_money_text_test.dart",
+    "?? test/fx/components/fx_s1_b_repair_test.dart"
+  ],
+  "packValidation": "PASS",
+  "customValidation": {
+    "jsonFilesValid": 7,
+    "screenshotsActuallyViewedAndShaVerified": 13,
+    "otherStagesPreserved": true,
+    "defectStatus": {
+      "S2A-001": "OPEN",
+      "S2A-002": "VERIFIED_CLOSED",
+      "S2A-003": "OPEN"
+    }
+  }
+}

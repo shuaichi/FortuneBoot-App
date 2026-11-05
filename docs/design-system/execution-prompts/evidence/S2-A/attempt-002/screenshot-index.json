@@ -1,0 +1,249 @@
+[
+  {
+    "page": "Fx shared component re-review fixture",
+    "state": "light-320-1x",
+    "theme": "LIGHT",
+    "logicalSize": [
+      320,
+      1900
+    ],
+    "textScale": 1,
+    "sourceHead": "00a8f2f4e682eda9dd04c9372d95bc054673708b",
+    "sourceSha256": "42646a36f4e42b612e34c3465b120a5fdd288b7bea7a9d38a13ae58e8b17a1f0",
+    "productionSourceSnapshotSha256": "15bf7082d81cea219f5c5b488b05d7eb7ad158a50746f7a72e7044a90fb9e9a4",
+    "path": "docs/design-system/execution-prompts/evidence/S2-A/attempt-002/shared-light-320-1x.png",
+    "pathSha256": "c71fe75bba22815555c5958fe0a49eff530ca184207da7aa788895fbad620c48",
+    "actuallyViewed": true,
+    "defectIds": [],
+    "observation": "已打开查看：金额分组和小数完整，选择行/分段/品牌卡/输入/树/CTA 可读，未见横向溢出或关键内容省略。"
+  },
+  {
+    "page": "Fx shared component re-review fixture",
+    "state": "light-320-2x",
+    "theme": "LIGHT",
+    "logicalSize": [
+      320,
+      3500
+    ],
+    "textScale": 2,
+    "sourceHead": "00a8f2f4e682eda9dd04c9372d95bc054673708b",
+    "sourceSha256": "42646a36f4e42b612e34c3465b120a5fdd288b7bea7a9d38a13ae58e8b17a1f0",
+    "productionSourceSnapshotSha256": "15bf7082d81cea219f5c5b488b05d7eb7ad158a50746f7a72e7044a90fb9e9a4",
+    "path": "docs/design-system/execution-prompts/evidence/S2-A/attempt-002/shared-light-320-2x.png",
+    "pathSha256": "e6384ae74aabb582a107897b6afb602637211a83344bb2b63924450e7f18e8c5",
+    "actuallyViewed": true,
+    "defectIds": [],
+    "observation": "已打开查看：金额按千分位组重排，末组 890.12 同行；分段每项整行且 Income/Expense 不断词，长文本、品牌卡、输入和 CTA 无裁切。"
+  },
+  {
+    "page": "Fx shared component re-review fixture",
+    "state": "light-390-1x",
+    "theme": "LIGHT",
+    "logicalSize": [
+      390,
+      1900
+    ],
+    "textScale": 1,
+    "sourceHead": "00a8f2f4e682eda9dd04c9372d95bc054673708b",
+    "sourceSha256": "42646a36f4e42b612e34c3465b120a5fdd288b7bea7a9d38a13ae58e8b17a1f0",
+    "productionSourceSnapshotSha256": "15bf7082d81cea219f5c5b488b05d7eb7ad158a50746f7a72e7044a90fb9e9a4",
+    "path": "docs/design-system/execution-prompts/evidence/S2-A/attempt-002/shared-light-390-1x.png",
+    "pathSha256": "3fb21c90897bde9d9dd46a04b94ed80d369f717b4645bf27c09ac04de801aa22",
+    "actuallyViewed": true,
+    "defectIds": [],
+    "observation": "已打开查看：金额分组和小数完整，选择行/分段/品牌卡/输入/树/CTA 可读，未见横向溢出或关键内容省略。"
+  },
+  {
+    "page": "Fx shared component re-review fixture",
+    "state": "light-390-2x",
+    "theme": "LIGHT",
+    "logicalSize": [
+      390,
+      3000
+    ],
+    "textScale": 2,
+    "sourceHead": "00a8f2f4e682eda9dd04c9372d95bc054673708b",
+    "sourceSha256": "42646a36f4e42b612e34c3465b120a5fdd288b7bea7a9d38a13ae58e8b17a1f0",
+    "productionSourceSnapshotSha256": "15bf7082d81cea219f5c5b488b05d7eb7ad158a50746f7a72e7044a90fb9e9a4",
+    "path": "docs/design-system/execution-prompts/evidence/S2-A/attempt-002/shared-light-390-2x.png",
+    "pathSha256": "867487c893d0b8635b44a302c29238588b7662e3348fc7a1173c4e249a1ab27a",
+    "actuallyViewed": true,
+    "defectIds": [
+      "S2A-001"
+    ],
+    "observation": "已打开查看：大字分段每项整行且英文不断词；金额为 ¥1,234, / 567,890. / 12，小数位 12 独占第三行，S2A-001 未闭合。"
+  },
+  {
+    "page": "Fx shared component re-review fixture",
+    "state": "light-440-1x",
+    "theme": "LIGHT",
+    "logicalSize": [
+      440,
+      1900
+    ],
+    "textScale": 1,
+    "sourceHead": "00a8f2f4e682eda9dd04c9372d95bc054673708b",
+    "sourceSha256": "42646a36f4e42b612e34c3465b120a5fdd288b7bea7a9d38a13ae58e8b17a1f0",
+    "productionSourceSnapshotSha256": "15bf7082d81cea219f5c5b488b05d7eb7ad158a50746f7a72e7044a90fb9e9a4",
+    "path": "docs/design-system/execution-prompts/evidence/S2-A/attempt-002/shared-light-440-1x.png",
+    "pathSha256": "9526f287b2e446816cd403fd8277abd37b54040685ec903905ea0e43f10a56d5",
+    "actuallyViewed": true,
+    "defectIds": [
+      "S2A-003"
+    ],
+    "observation": "已打开查看：主金额一行完整，普通分段完整；FxSelectRow 标签 Counterparty 拆为 Counterpart / y，S2A-003 确认。"
+  },
+  {
+    "page": "Fx shared component re-review fixture",
+    "state": "light-440-2x",
+    "theme": "LIGHT",
+    "logicalSize": [
+      440,
+      3000
+    ],
+    "textScale": 2,
+    "sourceHead": "00a8f2f4e682eda9dd04c9372d95bc054673708b",
+    "sourceSha256": "42646a36f4e42b612e34c3465b120a5fdd288b7bea7a9d38a13ae58e8b17a1f0",
+    "productionSourceSnapshotSha256": "15bf7082d81cea219f5c5b488b05d7eb7ad158a50746f7a72e7044a90fb9e9a4",
+    "path": "docs/design-system/execution-prompts/evidence/S2-A/attempt-002/shared-light-440-2x.png",
+    "pathSha256": "4a21218fd2d034b135bfe76065b1c5fb9419e43e61a1378066d7dacb141b3837",
+    "actuallyViewed": true,
+    "defectIds": [
+      "S2A-001"
+    ],
+    "observation": "已打开查看：大字分段每项整行且英文不断词；金额为 ¥1,234, / 567,890. / 12，小数位 12 独占第三行，S2A-001 未闭合。"
+  },
+  {
+    "page": "Fx shared component re-review fixture",
+    "state": "dark-320-1x",
+    "theme": "DARK",
+    "logicalSize": [
+      320,
+      1900
+    ],
+    "textScale": 1,
+    "sourceHead": "00a8f2f4e682eda9dd04c9372d95bc054673708b",
+    "sourceSha256": "42646a36f4e42b612e34c3465b120a5fdd288b7bea7a9d38a13ae58e8b17a1f0",
+    "productionSourceSnapshotSha256": "15bf7082d81cea219f5c5b488b05d7eb7ad158a50746f7a72e7044a90fb9e9a4",
+    "path": "docs/design-system/execution-prompts/evidence/S2-A/attempt-002/shared-dark-320-1x.png",
+    "pathSha256": "69ca1df40340038fae9dd14f2a442114cd878a004cbc6946a7e162d2fadd8bdc",
+    "actuallyViewed": true,
+    "defectIds": [],
+    "observation": "已打开查看：金额分组和小数完整，选择行/分段/品牌卡/输入/树/CTA 可读，未见横向溢出或关键内容省略。"
+  },
+  {
+    "page": "Fx shared component re-review fixture",
+    "state": "dark-320-2x",
+    "theme": "DARK",
+    "logicalSize": [
+      320,
+      3500
+    ],
+    "textScale": 2,
+    "sourceHead": "00a8f2f4e682eda9dd04c9372d95bc054673708b",
+    "sourceSha256": "42646a36f4e42b612e34c3465b120a5fdd288b7bea7a9d38a13ae58e8b17a1f0",
+    "productionSourceSnapshotSha256": "15bf7082d81cea219f5c5b488b05d7eb7ad158a50746f7a72e7044a90fb9e9a4",
+    "path": "docs/design-system/execution-prompts/evidence/S2-A/attempt-002/shared-dark-320-2x.png",
+    "pathSha256": "d3c587f1cd74037a146bfdab144c6ef3f8f4f10c1f9a2c9989c4fdfb092bfd34",
+    "actuallyViewed": true,
+    "defectIds": [],
+    "observation": "已打开查看：金额按千分位组重排，末组 890.12 同行；分段每项整行且 Income/Expense 不断词，长文本、品牌卡、输入和 CTA 无裁切。"
+  },
+  {
+    "page": "Fx shared component re-review fixture",
+    "state": "dark-390-1x",
+    "theme": "DARK",
+    "logicalSize": [
+      390,
+      1900
+    ],
+    "textScale": 1,
+    "sourceHead": "00a8f2f4e682eda9dd04c9372d95bc054673708b",
+    "sourceSha256": "42646a36f4e42b612e34c3465b120a5fdd288b7bea7a9d38a13ae58e8b17a1f0",
+    "productionSourceSnapshotSha256": "15bf7082d81cea219f5c5b488b05d7eb7ad158a50746f7a72e7044a90fb9e9a4",
+    "path": "docs/design-system/execution-prompts/evidence/S2-A/attempt-002/shared-dark-390-1x.png",
+    "pathSha256": "a82205957d007ed78327086b6d1d4aec16f455eb5485cf18d47bb965fc45ce1a",
+    "actuallyViewed": true,
+    "defectIds": [],
+    "observation": "已打开查看：金额分组和小数完整，选择行/分段/品牌卡/输入/树/CTA 可读，未见横向溢出或关键内容省略。"
+  },
+  {
+    "page": "Fx shared component re-review fixture",
+    "state": "dark-390-2x",
+    "theme": "DARK",
+    "logicalSize": [
+      390,
+      3000
+    ],
+    "textScale": 2,
+    "sourceHead": "00a8f2f4e682eda9dd04c9372d95bc054673708b",
+    "sourceSha256": "42646a36f4e42b612e34c3465b120a5fdd288b7bea7a9d38a13ae58e8b17a1f0",
+    "productionSourceSnapshotSha256": "15bf7082d81cea219f5c5b488b05d7eb7ad158a50746f7a72e7044a90fb9e9a4",
+    "path": "docs/design-system/execution-prompts/evidence/S2-A/attempt-002/shared-dark-390-2x.png",
+    "pathSha256": "3db8f04fb48a5c822bc06aaf2d59072101560b1b3e7136de8024820cb23b0b5f",
+    "actuallyViewed": true,
+    "defectIds": [
+      "S2A-001"
+    ],
+    "observation": "已打开查看：大字分段每项整行且英文不断词；金额为 ¥1,234, / 567,890. / 12，小数位 12 独占第三行，S2A-001 未闭合。"
+  },
+  {
+    "page": "Fx shared component re-review fixture",
+    "state": "dark-440-1x",
+    "theme": "DARK",
+    "logicalSize": [
+      440,
+      1900
+    ],
+    "textScale": 1,
+    "sourceHead": "00a8f2f4e682eda9dd04c9372d95bc054673708b",
+    "sourceSha256": "42646a36f4e42b612e34c3465b120a5fdd288b7bea7a9d38a13ae58e8b17a1f0",
+    "productionSourceSnapshotSha256": "15bf7082d81cea219f5c5b488b05d7eb7ad158a50746f7a72e7044a90fb9e9a4",
+    "path": "docs/design-system/execution-prompts/evidence/S2-A/attempt-002/shared-dark-440-1x.png",
+    "pathSha256": "6317928358870c893ea271ec3804da3f8fecd6290ebe9e7d8b9399218754c656",
+    "actuallyViewed": true,
+    "defectIds": [
+      "S2A-003"
+    ],
+    "observation": "已打开查看：主金额一行完整，普通分段完整；FxSelectRow 标签 Counterparty 拆为 Counterpart / y，S2A-003 确认。"
+  },
+  {
+    "page": "Fx shared component re-review fixture",
+    "state": "dark-440-2x",
+    "theme": "DARK",
+    "logicalSize": [
+      440,
+      3000
+    ],
+    "textScale": 2,
+    "sourceHead": "00a8f2f4e682eda9dd04c9372d95bc054673708b",
+    "sourceSha256": "42646a36f4e42b612e34c3465b120a5fdd288b7bea7a9d38a13ae58e8b17a1f0",
+    "productionSourceSnapshotSha256": "15bf7082d81cea219f5c5b488b05d7eb7ad158a50746f7a72e7044a90fb9e9a4",
+    "path": "docs/design-system/execution-prompts/evidence/S2-A/attempt-002/shared-dark-440-2x.png",
+    "pathSha256": "56336029ff7a41cc0f203db6305c922891a2d2aa1c6563f9339ec05e3d8dc92f",
+    "actuallyViewed": true,
+    "defectIds": [
+      "S2A-001"
+    ],
+    "observation": "已打开查看：大字分段每项整行且英文不断词；金额为 ¥1,234, / 567,890. / 12，小数位 12 独占第三行，S2A-001 未闭合。"
+  },
+  {
+    "page": "FxSheet busy guarded form fixture",
+    "state": "busy-dirty-keyboard-inset",
+    "theme": "LIGHT",
+    "logicalSize": [
+      390,
+      844
+    ],
+    "textScale": 1,
+    "sourceHead": "00a8f2f4e682eda9dd04c9372d95bc054673708b",
+    "sourceSha256": "9ea7787f9a8839b097f8241dacd6321b843f4a1160864ecde4a6437ec37f5772",
+    "productionSourceSnapshotSha256": "15bf7082d81cea219f5c5b488b05d7eb7ad158a50746f7a72e7044a90fb9e9a4",
+    "path": "docs/design-system/execution-prompts/evidence/S2-A/attempt-002/modal-keyboard-busy-light-390-1x.png",
+    "pathSha256": "ab59443437be63d4698703491ae920cc9e0c6d7df4dc18775030ce8b639320e4",
+    "actuallyViewed": true,
+    "keyboardRepresentation": "SIMULATED_240_LOGICAL_PIXEL_VIEW_INSET_NOT_PLATFORM_KEYBOARD",
+    "defectIds": [],
+    "observation": "已打开查看：弹层位于模拟键盘 inset 上方，未保存输入、标题、关闭出口与加载动作可见，inset 只应用一次；不是系统键盘或真机证据。"
+  }
+]

@@ -1,0 +1,22 @@
+{
+  "testDoneEvents": 534,
+  "realTests": 424,
+  "passed": 423,
+  "skipped": 1,
+  "failed": 0,
+  "skippedTests": [
+    "uses In-App Purchase for donations on Apple platforms"
+  ],
+  "failedTests": [],
+  "loadingEvents": 106,
+  "lifecycleEvents": 4,
+  "errorEvents": [],
+  "runner": [
+    {
+      "success": true,
+      "type": "done",
+      "time": 64673
+    }
+  ],
+  "countingRule": "realTests excludes synthetic loading/setUpAll/tearDownAll entries"
+}

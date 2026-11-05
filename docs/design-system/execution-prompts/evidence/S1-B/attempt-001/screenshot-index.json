@@ -1,0 +1,206 @@
+[
+  {
+    "page": "S2-A shared repair fixture",
+    "state": "light-320-1x",
+    "theme": "LIGHT",
+    "logicalSize": [
+      320,
+      1900
+    ],
+    "textScale": 1,
+    "pixelRatio": 1,
+    "sourceSha": "00a8f2f4e682eda9dd04c9372d95bc054673708b",
+    "sourceSha256": "b44e87f1a87c1e4519d5794e2a6876877e64843119a1e0043d9631c8d00f224b",
+    "path": "docs/design-system/execution-prompts/evidence/S1-B/attempt-001/shared-light-320-1x.png",
+    "pathSha256": "c71fe75bba22815555c5958fe0a49eff530ca184207da7aa788895fbad620c48",
+    "actuallyViewed": true,
+    "observation": "已实际打开最终图：空间足够的金额保持完整字符串；空间不足按货币符号、千分位组和小数 token 重排，不拆数字组、不孤立小数点/小数位、不裁切。大字分段每项独占整行，英文不断词，触区可见。仅共享 Flutter fixture，不是业务页面或真机。"
+  },
+  {
+    "page": "S2-A shared repair fixture",
+    "state": "light-320-2x",
+    "theme": "LIGHT",
+    "logicalSize": [
+      320,
+      3500
+    ],
+    "textScale": 2,
+    "pixelRatio": 1,
+    "sourceSha": "00a8f2f4e682eda9dd04c9372d95bc054673708b",
+    "sourceSha256": "b44e87f1a87c1e4519d5794e2a6876877e64843119a1e0043d9631c8d00f224b",
+    "path": "docs/design-system/execution-prompts/evidence/S1-B/attempt-001/shared-light-320-2x.png",
+    "pathSha256": "e6384ae74aabb582a107897b6afb602637211a83344bb2b63924450e7f18e8c5",
+    "actuallyViewed": true,
+    "observation": "已实际打开最终图：空间足够的金额保持完整字符串；空间不足按货币符号、千分位组和小数 token 重排，不拆数字组、不孤立小数点/小数位、不裁切。大字分段每项独占整行，英文不断词，触区可见。仅共享 Flutter fixture，不是业务页面或真机。"
+  },
+  {
+    "page": "S2-A shared repair fixture",
+    "state": "light-390-1x",
+    "theme": "LIGHT",
+    "logicalSize": [
+      390,
+      1900
+    ],
+    "textScale": 1,
+    "pixelRatio": 1,
+    "sourceSha": "00a8f2f4e682eda9dd04c9372d95bc054673708b",
+    "sourceSha256": "b44e87f1a87c1e4519d5794e2a6876877e64843119a1e0043d9631c8d00f224b",
+    "path": "docs/design-system/execution-prompts/evidence/S1-B/attempt-001/shared-light-390-1x.png",
+    "pathSha256": "3fb21c90897bde9d9dd46a04b94ed80d369f717b4645bf27c09ac04de801aa22",
+    "actuallyViewed": true,
+    "observation": "已实际打开最终图：空间足够的金额保持完整字符串；空间不足按货币符号、千分位组和小数 token 重排，不拆数字组、不孤立小数点/小数位、不裁切。大字分段每项独占整行，英文不断词，触区可见。仅共享 Flutter fixture，不是业务页面或真机。"
+  },
+  {
+    "page": "S2-A shared repair fixture",
+    "state": "light-390-2x",
+    "theme": "LIGHT",
+    "logicalSize": [
+      390,
+      3000
+    ],
+    "textScale": 2,
+    "pixelRatio": 1,
+    "sourceSha": "00a8f2f4e682eda9dd04c9372d95bc054673708b",
+    "sourceSha256": "b44e87f1a87c1e4519d5794e2a6876877e64843119a1e0043d9631c8d00f224b",
+    "path": "docs/design-system/execution-prompts/evidence/S1-B/attempt-001/shared-light-390-2x.png",
+    "pathSha256": "867487c893d0b8635b44a302c29238588b7662e3348fc7a1173c4e249a1ab27a",
+    "actuallyViewed": true,
+    "observation": "已实际打开最终图：空间足够的金额保持完整字符串；空间不足按货币符号、千分位组和小数 token 重排，不拆数字组、不孤立小数点/小数位、不裁切。大字分段每项独占整行，英文不断词，触区可见。仅共享 Flutter fixture，不是业务页面或真机。"
+  },
+  {
+    "page": "S2-A shared repair fixture",
+    "state": "light-440-1x",
+    "theme": "LIGHT",
+    "logicalSize": [
+      440,
+      1900
+    ],
+    "textScale": 1,
+    "pixelRatio": 1,
+    "sourceSha": "00a8f2f4e682eda9dd04c9372d95bc054673708b",
+    "sourceSha256": "b44e87f1a87c1e4519d5794e2a6876877e64843119a1e0043d9631c8d00f224b",
+    "path": "docs/design-system/execution-prompts/evidence/S1-B/attempt-001/shared-light-440-1x.png",
+    "pathSha256": "9526f287b2e446816cd403fd8277abd37b54040685ec903905ea0e43f10a56d5",
+    "actuallyViewed": true,
+    "observation": "已实际打开最终图：空间足够的金额保持完整字符串；空间不足按货币符号、千分位组和小数 token 重排，不拆数字组、不孤立小数点/小数位、不裁切。大字分段每项独占整行，英文不断词，触区可见。仅共享 Flutter fixture，不是业务页面或真机。"
+  },
+  {
+    "page": "S2-A shared repair fixture",
+    "state": "light-440-2x",
+    "theme": "LIGHT",
+    "logicalSize": [
+      440,
+      3000
+    ],
+    "textScale": 2,
+    "pixelRatio": 1,
+    "sourceSha": "00a8f2f4e682eda9dd04c9372d95bc054673708b",
+    "sourceSha256": "b44e87f1a87c1e4519d5794e2a6876877e64843119a1e0043d9631c8d00f224b",
+    "path": "docs/design-system/execution-prompts/evidence/S1-B/attempt-001/shared-light-440-2x.png",
+    "pathSha256": "4a21218fd2d034b135bfe76065b1c5fb9419e43e61a1378066d7dacb141b3837",
+    "actuallyViewed": true,
+    "observation": "已实际打开最终图：空间足够的金额保持完整字符串；空间不足按货币符号、千分位组和小数 token 重排，不拆数字组、不孤立小数点/小数位、不裁切。大字分段每项独占整行，英文不断词，触区可见。仅共享 Flutter fixture，不是业务页面或真机。"
+  },
+  {
+    "page": "S2-A shared repair fixture",
+    "state": "dark-320-1x",
+    "theme": "DARK",
+    "logicalSize": [
+      320,
+      1900
+    ],
+    "textScale": 1,
+    "pixelRatio": 1,
+    "sourceSha": "00a8f2f4e682eda9dd04c9372d95bc054673708b",
+    "sourceSha256": "b44e87f1a87c1e4519d5794e2a6876877e64843119a1e0043d9631c8d00f224b",
+    "path": "docs/design-system/execution-prompts/evidence/S1-B/attempt-001/shared-dark-320-1x.png",
+    "pathSha256": "69ca1df40340038fae9dd14f2a442114cd878a004cbc6946a7e162d2fadd8bdc",
+    "actuallyViewed": true,
+    "observation": "已实际打开最终图：空间足够的金额保持完整字符串；空间不足按货币符号、千分位组和小数 token 重排，不拆数字组、不孤立小数点/小数位、不裁切。大字分段每项独占整行，英文不断词，触区可见。仅共享 Flutter fixture，不是业务页面或真机。"
+  },
+  {
+    "page": "S2-A shared repair fixture",
+    "state": "dark-320-2x",
+    "theme": "DARK",
+    "logicalSize": [
+      320,
+      3500
+    ],
+    "textScale": 2,
+    "pixelRatio": 1,
+    "sourceSha": "00a8f2f4e682eda9dd04c9372d95bc054673708b",
+    "sourceSha256": "b44e87f1a87c1e4519d5794e2a6876877e64843119a1e0043d9631c8d00f224b",
+    "path": "docs/design-system/execution-prompts/evidence/S1-B/attempt-001/shared-dark-320-2x.png",
+    "pathSha256": "d3c587f1cd74037a146bfdab144c6ef3f8f4f10c1f9a2c9989c4fdfb092bfd34",
+    "actuallyViewed": true,
+    "observation": "已实际打开最终图：空间足够的金额保持完整字符串；空间不足按货币符号、千分位组和小数 token 重排，不拆数字组、不孤立小数点/小数位、不裁切。大字分段每项独占整行，英文不断词，触区可见。仅共享 Flutter fixture，不是业务页面或真机。"
+  },
+  {
+    "page": "S2-A shared repair fixture",
+    "state": "dark-390-1x",
+    "theme": "DARK",
+    "logicalSize": [
+      390,
+      1900
+    ],
+    "textScale": 1,
+    "pixelRatio": 1,
+    "sourceSha": "00a8f2f4e682eda9dd04c9372d95bc054673708b",
+    "sourceSha256": "b44e87f1a87c1e4519d5794e2a6876877e64843119a1e0043d9631c8d00f224b",
+    "path": "docs/design-system/execution-prompts/evidence/S1-B/attempt-001/shared-dark-390-1x.png",
+    "pathSha256": "a82205957d007ed78327086b6d1d4aec16f455eb5485cf18d47bb965fc45ce1a",
+    "actuallyViewed": true,
+    "observation": "已实际打开最终图：空间足够的金额保持完整字符串；空间不足按货币符号、千分位组和小数 token 重排，不拆数字组、不孤立小数点/小数位、不裁切。大字分段每项独占整行，英文不断词，触区可见。仅共享 Flutter fixture，不是业务页面或真机。"
+  },
+  {
+    "page": "S2-A shared repair fixture",
+    "state": "dark-390-2x",
+    "theme": "DARK",
+    "logicalSize": [
+      390,
+      3000
+    ],
+    "textScale": 2,
+    "pixelRatio": 1,
+    "sourceSha": "00a8f2f4e682eda9dd04c9372d95bc054673708b",
+    "sourceSha256": "b44e87f1a87c1e4519d5794e2a6876877e64843119a1e0043d9631c8d00f224b",
+    "path": "docs/design-system/execution-prompts/evidence/S1-B/attempt-001/shared-dark-390-2x.png",
+    "pathSha256": "3db8f04fb48a5c822bc06aaf2d59072101560b1b3e7136de8024820cb23b0b5f",
+    "actuallyViewed": true,
+    "observation": "已实际打开最终图：空间足够的金额保持完整字符串；空间不足按货币符号、千分位组和小数 token 重排，不拆数字组、不孤立小数点/小数位、不裁切。大字分段每项独占整行，英文不断词，触区可见。仅共享 Flutter fixture，不是业务页面或真机。"
+  },
+  {
+    "page": "S2-A shared repair fixture",
+    "state": "dark-440-1x",
+    "theme": "DARK",
+    "logicalSize": [
+      440,
+      1900
+    ],
+    "textScale": 1,
+    "pixelRatio": 1,
+    "sourceSha": "00a8f2f4e682eda9dd04c9372d95bc054673708b",
+    "sourceSha256": "b44e87f1a87c1e4519d5794e2a6876877e64843119a1e0043d9631c8d00f224b",
+    "path": "docs/design-system/execution-prompts/evidence/S1-B/attempt-001/shared-dark-440-1x.png",
+    "pathSha256": "6317928358870c893ea271ec3804da3f8fecd6290ebe9e7d8b9399218754c656",
+    "actuallyViewed": true,
+    "observation": "已实际打开最终图：空间足够的金额保持完整字符串；空间不足按货币符号、千分位组和小数 token 重排，不拆数字组、不孤立小数点/小数位、不裁切。大字分段每项独占整行，英文不断词，触区可见。仅共享 Flutter fixture，不是业务页面或真机。"
+  },
+  {
+    "page": "S2-A shared repair fixture",
+    "state": "dark-440-2x",
+    "theme": "DARK",
+    "logicalSize": [
+      440,
+      3000
+    ],
+    "textScale": 2,
+    "pixelRatio": 1,
+    "sourceSha": "00a8f2f4e682eda9dd04c9372d95bc054673708b",
+    "sourceSha256": "b44e87f1a87c1e4519d5794e2a6876877e64843119a1e0043d9631c8d00f224b",
+    "path": "docs/design-system/execution-prompts/evidence/S1-B/attempt-001/shared-dark-440-2x.png",
+    "pathSha256": "56336029ff7a41cc0f203db6305c922891a2d2aa1c6563f9339ec05e3d8dc92f",
+    "actuallyViewed": true,
+    "observation": "已实际打开最终图：空间足够的金额保持完整字符串；空间不足按货币符号、千分位组和小数 token 重排，不拆数字组、不孤立小数点/小数位、不裁切。大字分段每项独占整行，英文不断词，触区可见。仅共享 Flutter fixture，不是业务页面或真机。"
+  }
+]

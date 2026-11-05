@@ -1,0 +1,134 @@
+{
+  "schemaVersion": 1,
+  "stage": "S2-A",
+  "attempt": 3,
+  "sourceSha": "00a8f2f4e682eda9dd04c9372d95bc054673708b",
+  "sourceSnapshot": "Uncommitted S1-A/S1-B files hashed in evidence/S2-A/attempt-003/source-snapshot.json",
+  "scope": "Final re-review of S2A-001/S2A-002/S2A-003 and shared contracts; no other owner closures.",
+  "summary": {
+    "total": 3,
+    "byState": {
+      "VERIFIED_CLOSED": 3
+    },
+    "verifiedClosed": 3
+  },
+  "items": [
+    {
+      "stageId": "S2-A",
+      "implemented": "S1-B implementation independently re-reviewed; S2-A made no production edits",
+      "disproved": false,
+      "blocked_external": [
+        "DEVICE_AND_PLATFORM_ACCEPTANCE",
+        "VOICEOVER_TALKBACK_NOT_RUN"
+      ],
+      "sourceSha256": {
+        "lib/fx/components/fx_money_text.dart": "fe744cf619e32667769a4b98dec4e4dc9cc0c2d0dd27a7a8b72ee9712060e25b",
+        "lib/fx/components/fx_segmented.dart": "e82525c412526264325b92def699d89e85b6e7e8bfe0cc5a922230b06b5a2f71",
+        "lib/fx/components/fx_select_row.dart": "978d91464ec9ecaaf43a8cde8bb105964e1e061df101fef041e2cf937aea2a4f",
+        "test/fx/components/fx_s1_b_repair_test.dart": "e934b0dd72ff447dac0b6659068c3ed55e6c5969e3bc739188e3896151c91a29",
+        "test/fx/components/fx_money_text_test.dart": "0f8c3583b93bb6a96b756f91399536af653223fd7bbdbfa5ecbc01c3a5e6f9a7"
+      },
+      "unverified": [
+        "真实设备文字与读屏",
+        "平台编译和真实接口",
+        "后续页面/更多项迁移由各自 owner 验证"
+      ],
+      "issueId": "S2A-001",
+      "originAuditIds": [
+        "DT-23"
+      ],
+      "priority": "P1",
+      "state": "VERIFIED_CLOSED",
+      "sourcePaths": [
+        "lib/fx/components/fx_money_text.dart",
+        "test/fx/components/fx_s1_b_repair_test.dart",
+        "test/fx/components/fx_money_text_test.dart"
+      ],
+      "observedBehavior": "390/440、2x 的 890.12 不再孤立；320/390/440 全矩阵按财务组重排，无裁切。",
+      "verified": "CLOSED for S2-A shared instance: fresh independent probe and actual Flutter image review passed; full behavior regressions green",
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/reviews/S2-A/attempt-003/review.json",
+        "docs/design-system/execution-prompts/evidence/S2-A/attempt-003/review-probes.json",
+        "docs/design-system/execution-prompts/evidence/S2-A/attempt-003/shared-light-390-2x.png"
+      ],
+      "reason": "仅关闭 S2-A 分配共享实例，不代替其它页面 owner 或外部设备验收。"
+    },
+    {
+      "stageId": "S2-A",
+      "implemented": "S1-B implementation independently re-reviewed; S2-A made no production edits",
+      "disproved": false,
+      "blocked_external": [
+        "DEVICE_AND_PLATFORM_ACCEPTANCE",
+        "VOICEOVER_TALKBACK_NOT_RUN"
+      ],
+      "sourceSha256": {
+        "lib/fx/components/fx_money_text.dart": "fe744cf619e32667769a4b98dec4e4dc9cc0c2d0dd27a7a8b72ee9712060e25b",
+        "lib/fx/components/fx_segmented.dart": "e82525c412526264325b92def699d89e85b6e7e8bfe0cc5a922230b06b5a2f71",
+        "lib/fx/components/fx_select_row.dart": "978d91464ec9ecaaf43a8cde8bb105964e1e061df101fef041e2cf937aea2a4f",
+        "test/fx/components/fx_s1_b_repair_test.dart": "e934b0dd72ff447dac0b6659068c3ed55e6c5969e3bc739188e3896151c91a29",
+        "test/fx/components/fx_money_text_test.dart": "0f8c3583b93bb6a96b756f91399536af653223fd7bbdbfa5ecbc01c3a5e6f9a7"
+      },
+      "unverified": [
+        "真实设备文字与读屏",
+        "平台编译和真实接口",
+        "后续页面/更多项迁移由各自 owner 验证"
+      ],
+      "issueId": "S2A-002",
+      "originAuditIds": [
+        "CX-07"
+      ],
+      "priority": "P2",
+      "state": "VERIFIED_CLOSED",
+      "sourcePaths": [
+        "lib/fx/components/fx_segmented.dart",
+        "test/fx/components/fx_s1_b_repair_test.dart"
+      ],
+      "observedBehavior": "320/390/440、2x 分段整行，英文不断词，48 触区和点击切换通过。",
+      "verified": "CLOSED for S2-A shared instance: fresh independent probe and actual Flutter image review passed; full behavior regressions green",
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/reviews/S2-A/attempt-003/review.json",
+        "docs/design-system/execution-prompts/evidence/S2-A/attempt-003/review-probes.json",
+        "docs/design-system/execution-prompts/evidence/S2-A/attempt-003/shared-light-320-2x.png"
+      ],
+      "reason": "仅关闭 S2-A 分配共享实例，不代替其它页面 owner 或外部设备验收。"
+    },
+    {
+      "stageId": "S2-A",
+      "implemented": "S1-B implementation independently re-reviewed; S2-A made no production edits",
+      "disproved": false,
+      "blocked_external": [
+        "DEVICE_AND_PLATFORM_ACCEPTANCE",
+        "VOICEOVER_TALKBACK_NOT_RUN"
+      ],
+      "sourceSha256": {
+        "lib/fx/components/fx_money_text.dart": "fe744cf619e32667769a4b98dec4e4dc9cc0c2d0dd27a7a8b72ee9712060e25b",
+        "lib/fx/components/fx_segmented.dart": "e82525c412526264325b92def699d89e85b6e7e8bfe0cc5a922230b06b5a2f71",
+        "lib/fx/components/fx_select_row.dart": "978d91464ec9ecaaf43a8cde8bb105964e1e061df101fef041e2cf937aea2a4f",
+        "test/fx/components/fx_s1_b_repair_test.dart": "e934b0dd72ff447dac0b6659068c3ed55e6c5969e3bc739188e3896151c91a29",
+        "test/fx/components/fx_money_text_test.dart": "0f8c3583b93bb6a96b756f91399536af653223fd7bbdbfa5ecbc01c3a5e6f9a7"
+      },
+      "unverified": [
+        "真实设备文字与读屏",
+        "平台编译和真实接口",
+        "后续页面/更多项迁移由各自 owner 验证"
+      ],
+      "issueId": "S2A-003",
+      "originAuditIds": [
+        "CX-02"
+      ],
+      "priority": "P2",
+      "state": "VERIFIED_CLOSED",
+      "sourcePaths": [
+        "lib/fx/components/fx_select_row.dart"
+      ],
+      "observedBehavior": "440/1x 的 Counterparty 不再断词，长值、清空语义和触区保留。",
+      "verified": "CLOSED for S2-A shared instance: fresh independent probe and actual Flutter image review passed; full behavior regressions green",
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/reviews/S2-A/attempt-003/review.json",
+        "docs/design-system/execution-prompts/evidence/S2-A/attempt-003/review-probes.json",
+        "docs/design-system/execution-prompts/evidence/S2-A/attempt-003/shared-light-440-1x.png"
+      ],
+      "reason": "仅关闭 S2-A 分配共享实例，不代替其它页面 owner 或外部设备验收。"
+    }
+  ]
+}

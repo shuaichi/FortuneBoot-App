@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "currentStage": null,
-  "nextStage": "S2-A",
+  "nextStage": "S3-A",
   "lastCompletedStage": null,
   "note": "只生成提示词包，所有阶段未执行；历史底座结果不是本包阶段通过记录。",
   "stages": {
@@ -48,14 +48,20 @@
       ]
     },
     "S2-A": {
-      "status": "NOT_STARTED",
-      "localGate": "NOT_RUN",
-      "visualGate": "NOT_RUN",
-      "externalGate": "NOT_RUN",
-      "attempt": 0,
-      "handoff": null,
-      "evidence": [],
-      "blockingIssues": []
+      "status": "PASSED",
+      "localGate": "PASSED",
+      "visualGate": "PASSED",
+      "externalGate": "PARTIAL",
+      "attempt": 3,
+      "handoff": "handoff/S2-A.md",
+      "evidence": [
+        "evidence/S2-A/attempt-001",
+        "evidence/S2-A/attempt-002",
+        "evidence/S2-A/attempt-003"
+      ],
+      "blockingIssues": [
+        "DEVICE_AND_PLATFORM_ACCEPTANCE"
+      ]
     },
     "S3-A": {
       "status": "NOT_STARTED",
@@ -308,14 +314,20 @@
       "blockingIssues": []
     },
     "S1-B": {
-      "status": "NOT_STARTED",
-      "localGate": "NOT_RUN",
-      "visualGate": "NOT_RUN",
-      "externalGate": "NOT_RUN",
-      "attempt": 0,
-      "handoff": null,
-      "evidence": [],
-      "blockingIssues": []
+      "status": "PASSED",
+      "localGate": "PASSED",
+      "visualGate": "PASSED",
+      "externalGate": "PARTIAL",
+      "attempt": 2,
+      "handoff": "handoff/S1-B.md",
+      "evidence": [
+        "evidence/S1-B/attempt-001",
+        "evidence/S1-B/attempt-002"
+      ],
+      "blockingIssues": [
+        "S2-A_ATTEMPT_003_REVIEW",
+        "DEVICE_AND_PLATFORM_ACCEPTANCE"
+      ]
     },
     "S1-D": {
       "status": "NOT_STARTED",

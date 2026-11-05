@@ -1,0 +1,206 @@
+[
+  {
+    "page": "S2-A attempt-002 repair fixture",
+    "state": "light-320-1x",
+    "theme": "LIGHT",
+    "logicalSize": [
+      320,
+      1900
+    ],
+    "textScale": 1,
+    "pixelRatio": 1,
+    "sourceSha": "00a8f2f4e682eda9dd04c9372d95bc054673708b",
+    "sourceSha256": "443685ed56869a026ac4651243480cbdc40267c72e315ec94b2abb4d01c4675d",
+    "path": "docs/design-system/execution-prompts/evidence/S1-B/attempt-002/shared-light-320-1x.png",
+    "pathSha256": "f0f9fedec6bcc4b8ded48c3e39a78056077f12fbd49b6327b43dd5ba1d5ef196",
+    "actuallyViewed": true,
+    "observation": "已实际打开最终图：短金额完整；大额按千分位组重排，最后整数组与小数合并为 890.12，不孤立小数位或裁切。FxSelectRow 按标签宽度重排，Counterparty 不断词，长值/动作完整。仅共享 Flutter fixture，不是业务页面或真机。"
+  },
+  {
+    "page": "S2-A attempt-002 repair fixture",
+    "state": "light-320-2x",
+    "theme": "LIGHT",
+    "logicalSize": [
+      320,
+      3500
+    ],
+    "textScale": 2,
+    "pixelRatio": 1,
+    "sourceSha": "00a8f2f4e682eda9dd04c9372d95bc054673708b",
+    "sourceSha256": "443685ed56869a026ac4651243480cbdc40267c72e315ec94b2abb4d01c4675d",
+    "path": "docs/design-system/execution-prompts/evidence/S1-B/attempt-002/shared-light-320-2x.png",
+    "pathSha256": "b9fa7e2d4560487f2bfb08fca87e828a813e148c736cada68e25d87caadc137d",
+    "actuallyViewed": true,
+    "observation": "已实际打开最终图：短金额完整；大额按千分位组重排，最后整数组与小数合并为 890.12，不孤立小数位或裁切。FxSelectRow 按标签宽度重排，Counterparty 不断词，长值/动作完整。仅共享 Flutter fixture，不是业务页面或真机。"
+  },
+  {
+    "page": "S2-A attempt-002 repair fixture",
+    "state": "light-390-1x",
+    "theme": "LIGHT",
+    "logicalSize": [
+      390,
+      1900
+    ],
+    "textScale": 1,
+    "pixelRatio": 1,
+    "sourceSha": "00a8f2f4e682eda9dd04c9372d95bc054673708b",
+    "sourceSha256": "443685ed56869a026ac4651243480cbdc40267c72e315ec94b2abb4d01c4675d",
+    "path": "docs/design-system/execution-prompts/evidence/S1-B/attempt-002/shared-light-390-1x.png",
+    "pathSha256": "ac70fff3a85352a749e46f77121abe5980a6719e61bab58de44410124fb39644",
+    "actuallyViewed": true,
+    "observation": "已实际打开最终图：短金额完整；大额按千分位组重排，最后整数组与小数合并为 890.12，不孤立小数位或裁切。FxSelectRow 按标签宽度重排，Counterparty 不断词，长值/动作完整。仅共享 Flutter fixture，不是业务页面或真机。"
+  },
+  {
+    "page": "S2-A attempt-002 repair fixture",
+    "state": "light-390-2x",
+    "theme": "LIGHT",
+    "logicalSize": [
+      390,
+      3000
+    ],
+    "textScale": 2,
+    "pixelRatio": 1,
+    "sourceSha": "00a8f2f4e682eda9dd04c9372d95bc054673708b",
+    "sourceSha256": "443685ed56869a026ac4651243480cbdc40267c72e315ec94b2abb4d01c4675d",
+    "path": "docs/design-system/execution-prompts/evidence/S1-B/attempt-002/shared-light-390-2x.png",
+    "pathSha256": "d5ecd4fafc21e4216494f5d9c284bc9b604ba91ec4f5224a4c999f1e92bf557d",
+    "actuallyViewed": true,
+    "observation": "已实际打开最终图：短金额完整；大额按千分位组重排，最后整数组与小数合并为 890.12，不孤立小数位或裁切。FxSelectRow 按标签宽度重排，Counterparty 不断词，长值/动作完整。仅共享 Flutter fixture，不是业务页面或真机。"
+  },
+  {
+    "page": "S2-A attempt-002 repair fixture",
+    "state": "light-440-1x",
+    "theme": "LIGHT",
+    "logicalSize": [
+      440,
+      1900
+    ],
+    "textScale": 1,
+    "pixelRatio": 1,
+    "sourceSha": "00a8f2f4e682eda9dd04c9372d95bc054673708b",
+    "sourceSha256": "443685ed56869a026ac4651243480cbdc40267c72e315ec94b2abb4d01c4675d",
+    "path": "docs/design-system/execution-prompts/evidence/S1-B/attempt-002/shared-light-440-1x.png",
+    "pathSha256": "4211a7aca36ce148cb9f5de94e72c62f3f30dc0323d5f50bdfc2eafcf8572a2d",
+    "actuallyViewed": true,
+    "observation": "已实际打开最终图：短金额完整；大额按千分位组重排，最后整数组与小数合并为 890.12，不孤立小数位或裁切。FxSelectRow 按标签宽度重排，Counterparty 不断词，长值/动作完整。仅共享 Flutter fixture，不是业务页面或真机。"
+  },
+  {
+    "page": "S2-A attempt-002 repair fixture",
+    "state": "light-440-2x",
+    "theme": "LIGHT",
+    "logicalSize": [
+      440,
+      3000
+    ],
+    "textScale": 2,
+    "pixelRatio": 1,
+    "sourceSha": "00a8f2f4e682eda9dd04c9372d95bc054673708b",
+    "sourceSha256": "443685ed56869a026ac4651243480cbdc40267c72e315ec94b2abb4d01c4675d",
+    "path": "docs/design-system/execution-prompts/evidence/S1-B/attempt-002/shared-light-440-2x.png",
+    "pathSha256": "ce87d43c99d97d3adb002907132b12d1e69cbde404fe3ff4582628f0913842c3",
+    "actuallyViewed": true,
+    "observation": "已实际打开最终图：短金额完整；大额按千分位组重排，最后整数组与小数合并为 890.12，不孤立小数位或裁切。FxSelectRow 按标签宽度重排，Counterparty 不断词，长值/动作完整。仅共享 Flutter fixture，不是业务页面或真机。"
+  },
+  {
+    "page": "S2-A attempt-002 repair fixture",
+    "state": "dark-320-1x",
+    "theme": "DARK",
+    "logicalSize": [
+      320,
+      1900
+    ],
+    "textScale": 1,
+    "pixelRatio": 1,
+    "sourceSha": "00a8f2f4e682eda9dd04c9372d95bc054673708b",
+    "sourceSha256": "443685ed56869a026ac4651243480cbdc40267c72e315ec94b2abb4d01c4675d",
+    "path": "docs/design-system/execution-prompts/evidence/S1-B/attempt-002/shared-dark-320-1x.png",
+    "pathSha256": "c162bf3fb4963cb12fa08a0da3c01085987739775e912c2b21d856a356f8da4c",
+    "actuallyViewed": true,
+    "observation": "已实际打开最终图：短金额完整；大额按千分位组重排，最后整数组与小数合并为 890.12，不孤立小数位或裁切。FxSelectRow 按标签宽度重排，Counterparty 不断词，长值/动作完整。仅共享 Flutter fixture，不是业务页面或真机。"
+  },
+  {
+    "page": "S2-A attempt-002 repair fixture",
+    "state": "dark-320-2x",
+    "theme": "DARK",
+    "logicalSize": [
+      320,
+      3500
+    ],
+    "textScale": 2,
+    "pixelRatio": 1,
+    "sourceSha": "00a8f2f4e682eda9dd04c9372d95bc054673708b",
+    "sourceSha256": "443685ed56869a026ac4651243480cbdc40267c72e315ec94b2abb4d01c4675d",
+    "path": "docs/design-system/execution-prompts/evidence/S1-B/attempt-002/shared-dark-320-2x.png",
+    "pathSha256": "b453e2ecf3d667c793f327a5a090a7b0c72ae98797d11b5129317eef03f34eb9",
+    "actuallyViewed": true,
+    "observation": "已实际打开最终图：短金额完整；大额按千分位组重排，最后整数组与小数合并为 890.12，不孤立小数位或裁切。FxSelectRow 按标签宽度重排，Counterparty 不断词，长值/动作完整。仅共享 Flutter fixture，不是业务页面或真机。"
+  },
+  {
+    "page": "S2-A attempt-002 repair fixture",
+    "state": "dark-390-1x",
+    "theme": "DARK",
+    "logicalSize": [
+      390,
+      1900
+    ],
+    "textScale": 1,
+    "pixelRatio": 1,
+    "sourceSha": "00a8f2f4e682eda9dd04c9372d95bc054673708b",
+    "sourceSha256": "443685ed56869a026ac4651243480cbdc40267c72e315ec94b2abb4d01c4675d",
+    "path": "docs/design-system/execution-prompts/evidence/S1-B/attempt-002/shared-dark-390-1x.png",
+    "pathSha256": "1a4d534fd06c9dbf9766e6b28be65388946d28e8d0d010b88872917c0c93a379",
+    "actuallyViewed": true,
+    "observation": "已实际打开最终图：短金额完整；大额按千分位组重排，最后整数组与小数合并为 890.12，不孤立小数位或裁切。FxSelectRow 按标签宽度重排，Counterparty 不断词，长值/动作完整。仅共享 Flutter fixture，不是业务页面或真机。"
+  },
+  {
+    "page": "S2-A attempt-002 repair fixture",
+    "state": "dark-390-2x",
+    "theme": "DARK",
+    "logicalSize": [
+      390,
+      3000
+    ],
+    "textScale": 2,
+    "pixelRatio": 1,
+    "sourceSha": "00a8f2f4e682eda9dd04c9372d95bc054673708b",
+    "sourceSha256": "443685ed56869a026ac4651243480cbdc40267c72e315ec94b2abb4d01c4675d",
+    "path": "docs/design-system/execution-prompts/evidence/S1-B/attempt-002/shared-dark-390-2x.png",
+    "pathSha256": "09adaca2eaf867f0b16b47be6f618d05ff5aaf28cc786705323a629758f796b6",
+    "actuallyViewed": true,
+    "observation": "已实际打开最终图：短金额完整；大额按千分位组重排，最后整数组与小数合并为 890.12，不孤立小数位或裁切。FxSelectRow 按标签宽度重排，Counterparty 不断词，长值/动作完整。仅共享 Flutter fixture，不是业务页面或真机。"
+  },
+  {
+    "page": "S2-A attempt-002 repair fixture",
+    "state": "dark-440-1x",
+    "theme": "DARK",
+    "logicalSize": [
+      440,
+      1900
+    ],
+    "textScale": 1,
+    "pixelRatio": 1,
+    "sourceSha": "00a8f2f4e682eda9dd04c9372d95bc054673708b",
+    "sourceSha256": "443685ed56869a026ac4651243480cbdc40267c72e315ec94b2abb4d01c4675d",
+    "path": "docs/design-system/execution-prompts/evidence/S1-B/attempt-002/shared-dark-440-1x.png",
+    "pathSha256": "2c8dfa9d25b77faf1c528d6fa3eabcd1cecd389cf392268c99c4fb567453a01a",
+    "actuallyViewed": true,
+    "observation": "已实际打开最终图：短金额完整；大额按千分位组重排，最后整数组与小数合并为 890.12，不孤立小数位或裁切。FxSelectRow 按标签宽度重排，Counterparty 不断词，长值/动作完整。仅共享 Flutter fixture，不是业务页面或真机。"
+  },
+  {
+    "page": "S2-A attempt-002 repair fixture",
+    "state": "dark-440-2x",
+    "theme": "DARK",
+    "logicalSize": [
+      440,
+      3000
+    ],
+    "textScale": 2,
+    "pixelRatio": 1,
+    "sourceSha": "00a8f2f4e682eda9dd04c9372d95bc054673708b",
+    "sourceSha256": "443685ed56869a026ac4651243480cbdc40267c72e315ec94b2abb4d01c4675d",
+    "path": "docs/design-system/execution-prompts/evidence/S1-B/attempt-002/shared-dark-440-2x.png",
+    "pathSha256": "4edebafa9be46b8cd4edb4ecd3a8eee18c4fbc8f623f12837a4a44f2b13671e1",
+    "actuallyViewed": true,
+    "observation": "已实际打开最终图：短金额完整；大额按千分位组重排，最后整数组与小数合并为 890.12，不孤立小数位或裁切。FxSelectRow 按标签宽度重排，Counterparty 不断词，长值/动作完整。仅共享 Flutter fixture，不是业务页面或真机。"
+  }
+]

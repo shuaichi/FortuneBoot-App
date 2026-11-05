@@ -1,0 +1,173 @@
+{
+  "stage": "S2-A",
+  "attempt": 3,
+  "status": "PASSED",
+  "localGate": "PASSED",
+  "visualGate": "PASSED",
+  "externalGate": "PARTIAL",
+  "sourceShaBefore": "00a8f2f4e682eda9dd04c9372d95bc054673708b",
+  "sourceShaAfter": "00a8f2f4e682eda9dd04c9372d95bc054673708b",
+  "sourceSnapshot": "Uncommitted S1-A/S1-B changes; per-file SHA256 in source-snapshot.json",
+  "defects": [
+    {
+      "id": "S2A-001",
+      "status": "VERIFIED_CLOSED",
+      "priority": "P1"
+    },
+    {
+      "id": "S2A-002",
+      "status": "VERIFIED_CLOSED",
+      "priority": "P2"
+    },
+    {
+      "id": "S2A-003",
+      "status": "VERIFIED_CLOSED",
+      "priority": "P2"
+    }
+  ],
+  "decisive": {
+    "testDoneEvents": 91,
+    "realTests": 73,
+    "passed": 73,
+    "skipped": 0,
+    "failed": 0,
+    "skippedTests": [],
+    "failedTests": [],
+    "loadingEvents": 18,
+    "lifecycleEvents": 0,
+    "errorEvents": [],
+    "runner": [
+      {
+        "success": true,
+        "type": "done",
+        "time": 10799
+      }
+    ],
+    "countingRule": "realTests excludes synthetic loading/setUpAll/tearDownAll entries"
+  },
+  "reviewProbes": {
+    "testDoneEvents": 7,
+    "realTests": 4,
+    "passed": 4,
+    "skipped": 0,
+    "failed": 0,
+    "skippedTests": [],
+    "failedTests": [],
+    "loadingEvents": 3,
+    "lifecycleEvents": 0,
+    "errorEvents": [],
+    "runner": [
+      {
+        "success": true,
+        "type": "done",
+        "time": 2525
+      }
+    ],
+    "countingRule": "realTests excludes synthetic loading/setUpAll/tearDownAll entries"
+  },
+  "affectedConsumers": {
+    "testDoneEvents": 225,
+    "realTests": 176,
+    "passed": 176,
+    "skipped": 0,
+    "failed": 0,
+    "skippedTests": [],
+    "failedTests": [],
+    "loadingEvents": 45,
+    "lifecycleEvents": 4,
+    "errorEvents": [],
+    "runner": [
+      {
+        "success": true,
+        "type": "done",
+        "time": 21258
+      }
+    ],
+    "countingRule": "realTests excludes synthetic loading/setUpAll/tearDownAll entries"
+  },
+  "full": {
+    "testDoneEvents": 534,
+    "realTests": 424,
+    "passed": 423,
+    "skipped": 1,
+    "failed": 0,
+    "skippedTests": [
+      "uses In-App Purchase for donations on Apple platforms"
+    ],
+    "failedTests": [],
+    "loadingEvents": 106,
+    "lifecycleEvents": 4,
+    "errorEvents": [],
+    "runner": [
+      {
+        "success": true,
+        "type": "done",
+        "time": 64673
+      }
+    ],
+    "countingRule": "realTests excludes synthetic loading/setUpAll/tearDownAll entries"
+  },
+  "visualRender": {
+    "testDoneEvents": 15,
+    "realTests": 12,
+    "passed": 12,
+    "skipped": 0,
+    "failed": 0,
+    "skippedTests": [],
+    "failedTests": [],
+    "loadingEvents": 1,
+    "lifecycleEvents": 2,
+    "errorEvents": [],
+    "runner": [
+      {
+        "success": true,
+        "type": "done",
+        "time": 3682
+      }
+    ],
+    "countingRule": "realTests excludes synthetic loading/setUpAll/tearDownAll entries"
+  },
+  "modalProbe": {
+    "testDoneEvents": 5,
+    "realTests": 2,
+    "passed": 2,
+    "skipped": 0,
+    "failed": 0,
+    "skippedTests": [],
+    "failedTests": [],
+    "loadingEvents": 1,
+    "lifecycleEvents": 2,
+    "errorEvents": [],
+    "runner": [
+      {
+        "success": true,
+        "type": "done",
+        "time": 2413
+      }
+    ],
+    "countingRule": "realTests excludes synthetic loading/setUpAll/tearDownAll entries"
+  },
+  "analysis": {
+    "baselineCount": 1159,
+    "currentCount": 1159,
+    "bySeverity": {
+      "info": 907,
+      "warning": 252
+    },
+    "new": [],
+    "removed": []
+  },
+  "visual": {
+    "rendered": 13,
+    "actuallyViewed": 13,
+    "index": "screenshot-index.json",
+    "openDefects": []
+  },
+  "deviceGate": {
+    "simulatorOrDevice": "NOT_RUN",
+    "voiceOverTalkBack": "NOT_RUN",
+    "platformBuild": "NOT_RUN",
+    "serverIntegration": "NOT_RUN"
+  },
+  "nextStage": "S3-A"
+}

@@ -1,0 +1,151 @@
+{
+  "reviewId": "S2-A-attempt-001",
+  "stageId": "S2-A",
+  "sourceSnapshot": {
+    "head": "00a8f2f4e682eda9dd04c9372d95bc054673708b",
+    "s1BaselineHead": "6061359de0d6db6597176a9158ee826de490f6c4",
+    "s1ImplementationCommit": "00a8f2f4e682eda9dd04c9372d95bc054673708b",
+    "worktreeInitiallyClean": true,
+    "s1EvidenceFilesCompared": 36,
+    "s1EvidenceFilesChanged": 0,
+    "sourceSnapshot": "docs/design-system/execution-prompts/evidence/S2-A/attempt-001/source-snapshot.json",
+    "sourceComparison": "docs/design-system/execution-prompts/evidence/S2-A/attempt-001/production-source-comparison.json"
+  },
+  "verdict": "FAILED",
+  "issueResults": [
+    {
+      "area": "SOURCE_AND_DIRECT_CONSUMERS",
+      "originAuditIds": [],
+      "result": "VERIFIED_LOCAL",
+      "evidence": "36 个 S1-A 记录文件与当前源码逐字节一致；showOptionPicker 三个直接调用点均消费 FxSelectionResult，旧 showFxOptionPicker 与树选择器调用保持既有合同。",
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S2-A/attempt-001/production-source-comparison.json",
+        "lib/features/bill_editor/presentation/bill_editor_page.dart:872",
+        "lib/features/bill_editor/presentation/widgets/extras_section.dart:46"
+      ]
+    },
+    {
+      "area": "THEME_PLATFORM_BUTTON_AND_FINANCE_STORAGE",
+      "originAuditIds": ["DT-04", "DT-12", "DT-41"],
+      "result": "VERIFIED_LOCAL",
+      "evidence": "全局 InputDecorationTheme 仅设置文本角色；AmountField 正常/聚焦均为 InputBorder.none。平台主题仍使用 Material 3 标准密度，FxButton 仅 minHeight 可增长；FinanceColorPreferences 未改。",
+      "evidencePaths": [
+        "lib/fx/theme/fx_theme.dart:410",
+        "test/fx/components/fx_foundation_integration_test.dart:9",
+        "test/fx/components/fx_button_test.dart:8",
+        "lib/core/preferences/finance_color_preferences.dart:27"
+      ]
+    },
+    {
+      "area": "PICKER_MODAL_SEMANTICS_AND_PRIVACY",
+      "originAuditIds": ["BO-004", "BO-006", "CX-01", "CX-02", "CX-03", "CX-06", "CX-11"],
+      "result": "VERIFIED_LOCAL",
+      "evidence": "picker 三态、树清空、未保存离开、忙碌退出、确认失败/成功、字段语义和金额掩码合同可消费；独立成功确认探针通过。",
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S2-A/attempt-001/decisive-tests.json",
+        "docs/design-system/execution-prompts/evidence/S2-A/attempt-001/modal-probe-final.json",
+        "test/fx/components/fx_money_text_test.dart:41"
+      ]
+    },
+    {
+      "area": "MONEY_LARGE_TEXT_VISUAL",
+      "originAuditIds": ["DT-23"],
+      "result": "CONFIRMED",
+      "defectId": "S2A-001",
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S2-A/attempt-001/shared-light-320-1x.png",
+        "docs/design-system/execution-prompts/evidence/S2-A/attempt-001/shared-dark-320-2x.png",
+        "docs/design-system/execution-prompts/evidence/S2-A/attempt-001/shared-light-390-2x.png"
+      ]
+    },
+    {
+      "area": "SEGMENTED_LARGE_TEXT_VISUAL",
+      "originAuditIds": ["CX-07"],
+      "result": "CONFIRMED",
+      "defectId": "S2A-002",
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S2-A/attempt-001/shared-light-320-2x.png",
+        "docs/design-system/execution-prompts/evidence/S2-A/attempt-001/shared-dark-320-2x.png"
+      ]
+    },
+    {
+      "area": "DEVICE_AND_PLATFORM_ACCEPTANCE",
+      "originAuditIds": [],
+      "result": "NOT_RUN",
+      "evidence": "未运行模拟器/真机、VoiceOver/TalkBack、平台编译或真实接口；widget 测试和模拟 viewInset 不代替这些验收。"
+    }
+  ],
+  "defects": [
+    {
+      "reviewIssueId": "S2A-001",
+      "originAuditIds": ["DT-23"],
+      "priority": "P1",
+      "fileAndLine": [
+        "lib/fx/components/fx_money_text.dart:87",
+        "lib/fx/components/fx_money_text.dart:113",
+        "lib/fx/components/fx_money_text.dart:119"
+      ],
+      "trigger": "在真实 FxMoneyText fixture 中使用 CNY 1,234,567,890.12，分别查看 320×1900/1x、320×3500/2x、390×3000/2x，保持系统 TextScaler 与 20 逻辑像素页面边距。",
+      "expected": "金额允许增长和按可读边界重排，但千分位组、整数与小数应作为可辨认的财务单元；不能任意拆开数字组或把孤立小数位放到下一行，也不能缩小字号或省略精确值。",
+      "actual": "320/1x 将 .12 单独放到第二行；320/2x 显示为 ¥1,234, / 567,89 / 0.12；390/2x 显示为 ¥1,234,5 / 67,890.1 / 2。普通 Text 的任意换行虽保留字符，却破坏金额快速核对。",
+      "impact": "所有默认 compactWhenNeeded=false 的 FxMoneyText 消费者在大额、窄屏或放大字体下都可能出现难以辨认的精确金额；现有测试只断言 maxLines/overflow，没有检查财务分组换行。",
+      "affectedConsumers": [
+        "lib/features/shared/presentation/bills/bill_detail_sheet.dart",
+        "lib/features/bills/presentation/bills_page.dart",
+        "lib/features/accounts/presentation/widgets/net_worth_card.dart",
+        "lib/features/dashboard/presentation/widgets/net_worth_card.dart",
+        "lib/features/stats/presentation/widgets/stats_overview_bar.dart",
+        "其余 FxMoneyText 直接消费者见 reference/component-consumers.json"
+      ],
+      "ownerSession": "S1",
+      "repairPrompt": "S1-B",
+      "affectedContracts": [
+        "reference/contract-requirements.md 金额精度/文本触区",
+        "reference/contracts-current.md 第3节金额格式、精度、隐私与前景",
+        "DT-23 S1-A 共享实例"
+      ],
+      "requiredChecks": [
+        "新增能抓住数字组/小数拆分的可测渲染或文本布局验证，不只断言 maxLines 为 null。",
+        "复查 320/390/440、1x/2x、亮暗、零/负/大额、masked、compactWhenNeeded 两类模式。",
+        "保留系统 TextScaler、完整精确值、掩码语义/Tooltip 不泄露和默认中性前景。",
+        "重跑 test/fx、受影响消费者、全量测试和分析，并实际打开改后图片。"
+      ],
+      "status": "OPEN"
+    },
+    {
+      "reviewIssueId": "S2A-002",
+      "originAuditIds": ["CX-07"],
+      "priority": "P2",
+      "fileAndLine": [
+        "lib/fx/components/fx_segmented.dart:24",
+        "lib/fx/components/fx_segmented.dart:29",
+        "lib/fx/components/fx_segmented.dart:94"
+      ],
+      "trigger": "在两个分段中使用“收入分类 / Income”和“支出分类 / Expense”，以 320 逻辑宽、2x TextScaler 渲染真实 FxSegmented。",
+      "expected": "少量分段在大字/长值时采用可辨认的重排；完整标签不能靠单词中断或 ellipsis 塞入等宽列，更多/更长选项应按合同使用选择列表。",
+      "actual": "等宽 Row 始终保持两列，Expense 被拆为 Expens/e；中文也逐字断行。现有测试只验证 maxLines 非 1 且无 ellipsis，未检查标签可读性。",
+      "impact": "记账类型、周期频率、统计、日志、账本和管理页等 FxSegmented 消费者在 320/2x 与长英文下难以快速辨认选项。",
+      "affectedConsumers": [
+        "lib/features/bill_editor/presentation/bill_editor_page.dart",
+        "lib/features/recurring/presentation/recurring_editor_page.dart",
+        "lib/features/logs/presentation/logs_page.dart",
+        "lib/features/stats/presentation/widgets/stats_top_bar.dart",
+        "lib/features/books/presentation/books_page.dart",
+        "其余 FxSegmented 直接消费者见 reference/component-consumers.json"
+      ],
+      "ownerSession": "S1",
+      "repairPrompt": "S1-B",
+      "affectedContracts": [
+        "reference/contract-requirements.md 文本/触区",
+        "reference/contracts-current.md 第6节 FxSegmented",
+        "CX-07 S1-A 共享实例"
+      ],
+      "requiredChecks": [
+        "为大字长中英文增加可失败的决定性布局验证，保证标签可辨认且每项触区至少 44/48。",
+        "检查两项及多项分段在 320/390/440、1x/2x、亮暗下的重排，不夹断 TextScaler。",
+        "重跑 test/fx、受影响消费者、全量测试和分析，并实际打开改后图片。"
+      ],
+      "status": "OPEN"
+    }
+  ]
+}

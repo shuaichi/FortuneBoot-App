@@ -1,0 +1,24 @@
+{
+  "testDoneEvents": 2,
+  "realTests": 1,
+  "passed": 0,
+  "skipped": 0,
+  "failed": 1,
+  "skippedTests": [],
+  "failedTests": [
+    "S2A-002 vertical segmented remains tappable at 320/2x"
+  ],
+  "loadingEvents": 1,
+  "lifecycleEvents": 0,
+  "errorEvents": [
+    "Test failed. See exception logs above.\nThe test description was: S2A-002 vertical segmented remains tappable at 320/2x"
+  ],
+  "runner": [
+    {
+      "success": false,
+      "type": "done",
+      "time": 2020
+    }
+  ],
+  "countingRule": "realTests excludes synthetic loading/setUpAll/tearDownAll entries"
+}

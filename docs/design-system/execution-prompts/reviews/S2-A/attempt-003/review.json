@@ -1,0 +1,122 @@
+{
+  "reviewId": "S2-A-attempt-003",
+  "stageId": "S2-A",
+  "sourceSnapshot": {
+    "head": "00a8f2f4e682eda9dd04c9372d95bc054673708b",
+    "snapshot": "Uncommitted S1-A and S1-B changes on HEAD; per-file SHA256 recorded in evidence",
+    "s1bAttempt": 2,
+    "s1bEvidenceFilesCompared": 9,
+    "s1bEvidenceFilesChanged": 0,
+    "sourceSnapshot": "docs/design-system/execution-prompts/evidence/S2-A/attempt-003/source-snapshot.json",
+    "previousReview": "docs/design-system/execution-prompts/reviews/S2-A/attempt-002/review.json"
+  },
+  "verdict": "PASSED",
+  "issueResults": [
+    {
+      "area": "S2A-001_MONEY_DECIMAL_GROUPING",
+      "originAuditIds": ["DT-23"],
+      "result": "VERIFIED_CLOSED",
+      "defectId": "S2A-001",
+      "evidence": "最后整数组、小数点和小数位合并为 890.12。390/440、2x 独立探针通过；320/390/440、1x/2x 亮暗图已实际查看，无孤立小数位、数字组拆分或裁切。",
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S2-A/attempt-003/review-probes.json",
+        "docs/design-system/execution-prompts/evidence/S2-A/attempt-003/shared-light-390-2x.png",
+        "docs/design-system/execution-prompts/evidence/S2-A/attempt-003/shared-dark-440-2x.png"
+      ]
+    },
+    {
+      "area": "S2A-002_SEGMENTED_REFLOW",
+      "originAuditIds": ["CX-07"],
+      "result": "VERIFIED_CLOSED",
+      "defectId": "S2A-002",
+      "evidence": "保持 attempt-002 已闭合实现；320/390/440、2x 整行重排，英文不断词，独立 48 高触区与点击切换探针继续通过。",
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S2-A/attempt-003/review-probes.json",
+        "docs/design-system/execution-prompts/evidence/S2-A/attempt-003/shared-light-320-2x.png"
+      ]
+    },
+    {
+      "area": "S2A-003_SELECT_ROW_LONG_LABEL",
+      "originAuditIds": ["CX-02"],
+      "result": "VERIFIED_CLOSED",
+      "defectId": "S2A-003",
+      "evidence": "按实际标签宽度重排，Counterparty 作为独立 token 不再断词；440/1x 原失败探针通过，亮暗图与长值/清空动作已查看。",
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S2-A/attempt-003/review-probes.json",
+        "docs/design-system/execution-prompts/evidence/S2-A/attempt-003/shared-light-440-1x.png",
+        "docs/design-system/execution-prompts/evidence/S2-A/attempt-003/shared-dark-440-1x.png"
+      ]
+    },
+    {
+      "area": "PICKER_MODAL_SEMANTICS_PRIVACY_THEME_AND_CONSUMERS",
+      "originAuditIds": ["BO-004", "BO-006", "CX-11", "DT-04", "DT-12"],
+      "result": "VERIFIED_LOCAL",
+      "evidence": "三态 picker、modal、语义、掩码、无边框金额、按钮和财务色合同通过；弹层成功退出与忙碌 inset 探针通过；176 个业务消费者测试通过。",
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S2-A/attempt-003/decisive-tests.json",
+        "docs/design-system/execution-prompts/evidence/S2-A/attempt-003/modal-probe.json",
+        "docs/design-system/execution-prompts/evidence/S2-A/attempt-003/affected-consumer-tests.json"
+      ]
+    },
+    {
+      "area": "DEVICE_AND_PLATFORM_ACCEPTANCE",
+      "originAuditIds": [],
+      "result": "NOT_RUN",
+      "evidence": "模拟器/真机、VoiceOver/TalkBack、平台编译和真实接口均未执行；模拟 viewInset 不是系统键盘。这些外部缺口不阻断 S2-A 本地共享底座放行，但不得标为已通过。"
+    }
+  ],
+  "defects": [
+    {
+      "reviewIssueId": "S2A-001",
+      "originAuditIds": ["DT-23"],
+      "priority": "P1",
+      "fileAndLine": ["lib/fx/components/fx_money_text.dart:141", "lib/fx/components/fx_money_text.dart:170"],
+      "trigger": "390/440、2x、CNY 1,234,567,890.12、fontSize=34、页面边距 20。",
+      "expected": "千分位组不拆，小数位不孤立，不裁切、不缩小字号，保留完整 Semantics。",
+      "actual": "已修复为 ¥1,234, / 567, / 890.12；原 890. / 12 分离条件不再出现，独立探针与实际亮暗图通过。",
+      "impact": "共享金额实例闭合；其它页面金额布局和真机文字由各自 owner/外部验收继续核对。",
+      "affectedConsumers": ["25 个 FxMoneyText 直接消费者见 reference/component-consumers.json"],
+      "ownerSession": "S1",
+      "repairPrompt": "S1-B",
+      "affectedContracts": ["reference/contracts-current.md 第3节金额格式与完整精确值"],
+      "requiredChecks": ["后续保持末组与小数合并、masked/compact、短金额单 Text 和完整语义回归。"],
+      "status": "VERIFIED_CLOSED"
+    },
+    {
+      "reviewIssueId": "S2A-002",
+      "originAuditIds": ["CX-07"],
+      "priority": "P2",
+      "fileAndLine": ["lib/fx/components/fx_segmented.dart:24", "lib/fx/components/fx_segmented.dart:55"],
+      "trigger": "320/390/440、2x、长中英文分段及点击。",
+      "expected": "整行可辨认、英文不断词、48 高触区、点击切换。",
+      "actual": "持续满足，复审探针通过。",
+      "impact": "共享分段实例闭合，不代表更多项选择列表或页面迁移完成。",
+      "affectedConsumers": ["FxSegment/FxSegmented 直接消费者见 reference/component-consumers.json"],
+      "ownerSession": "S1",
+      "repairPrompt": "S1-B",
+      "affectedContracts": ["reference/contracts-current.md 第6节 FxSegmented"],
+      "requiredChecks": ["后续保持整行重排和触区/点击行为。"],
+      "status": "VERIFIED_CLOSED"
+    },
+    {
+      "reviewIssueId": "S2A-003",
+      "originAuditIds": ["CX-02"],
+      "priority": "P2",
+      "fileAndLine": ["lib/fx/components/fx_select_row.dart:42", "lib/fx/components/fx_select_row.dart:92"],
+      "trigger": "440/1x、20 页面边距、交易对象 / Counterparty、长值和清空/chevron。",
+      "expected": "Counterparty 不断词，完整长值和 44×48 清空目标保留。",
+      "actual": "已按实际标签宽度重排，Counterparty 独立 token 单行，原失败探针通过。",
+      "impact": "共享选择行实例闭合；三个直接消费者由本轮业务回归覆盖。",
+      "affectedConsumers": [
+        "lib/features/bill_editor/presentation/bill_editor_page.dart",
+        "lib/features/goods/presentation/widgets/goods_form_sheet.dart",
+        "lib/features/recurring/presentation/recurring_editor_page.dart"
+      ],
+      "ownerSession": "S1",
+      "repairPrompt": "S1-B",
+      "affectedContracts": ["reference/contracts-current.md 第6节 FxSelectRow 长文本重排"],
+      "requiredChecks": ["后续保持实际标签宽度判断、英文 token 完整和清空语义/触区。"],
+      "status": "VERIFIED_CLOSED"
+    }
+  ]
+}

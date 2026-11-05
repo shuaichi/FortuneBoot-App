@@ -1,0 +1,150 @@
+{
+  "stage": "S2-A",
+  "attempt": 1,
+  "status": "FAILED",
+  "localGate": "PASSED",
+  "visualGate": "FAILED",
+  "externalGate": "NOT_RUN",
+  "sourceShaBefore": "00a8f2f4e682eda9dd04c9372d95bc054673708b",
+  "sourceShaAfter": "00a8f2f4e682eda9dd04c9372d95bc054673708b",
+  "defects": [
+    {
+      "id": "S2A-001",
+      "originAuditId": "DT-23",
+      "priority": "P1"
+    },
+    {
+      "id": "S2A-002",
+      "originAuditId": "CX-07",
+      "priority": "P2"
+    }
+  ],
+  "decisive": {
+    "testDoneEvents": 80,
+    "realTests": 63,
+    "passed": 63,
+    "skipped": 0,
+    "failed": 0,
+    "skippedTests": [],
+    "failedTests": [],
+    "loadingEvents": 17,
+    "lifecycleEvents": 0,
+    "errorEvents": [],
+    "runner": [
+      {
+        "success": true,
+        "type": "done",
+        "time": 5271
+      }
+    ],
+    "countingRule": "realTests excludes synthetic loading/setUpAll/tearDownAll entries; testDoneEvents retains all reporter testDone events"
+  },
+  "affectedConsumers": {
+    "testDoneEvents": 54,
+    "realTests": 45,
+    "passed": 45,
+    "skipped": 0,
+    "failed": 0,
+    "skippedTests": [],
+    "failedTests": [],
+    "loadingEvents": 9,
+    "lifecycleEvents": 0,
+    "errorEvents": [],
+    "runner": [
+      {
+        "success": true,
+        "type": "done",
+        "time": 3418
+      }
+    ],
+    "countingRule": "realTests excludes synthetic loading/setUpAll/tearDownAll entries; testDoneEvents retains all reporter testDone events"
+  },
+  "full": {
+    "testDoneEvents": 523,
+    "realTests": 414,
+    "passed": 413,
+    "skipped": 1,
+    "failed": 0,
+    "skippedTests": [
+      "uses In-App Purchase for donations on Apple platforms"
+    ],
+    "failedTests": [],
+    "loadingEvents": 105,
+    "lifecycleEvents": 4,
+    "errorEvents": [],
+    "runner": [
+      {
+        "success": true,
+        "type": "done",
+        "time": 35973
+      }
+    ],
+    "countingRule": "realTests excludes synthetic loading/setUpAll/tearDownAll entries; testDoneEvents retains all reporter testDone events"
+  },
+  "visualRender": {
+    "testDoneEvents": 11,
+    "realTests": 8,
+    "passed": 8,
+    "skipped": 0,
+    "failed": 0,
+    "skippedTests": [],
+    "failedTests": [],
+    "loadingEvents": 1,
+    "lifecycleEvents": 2,
+    "errorEvents": [],
+    "runner": [
+      {
+        "success": true,
+        "type": "done",
+        "time": 2630
+      }
+    ],
+    "countingRule": "realTests excludes synthetic loading/setUpAll/tearDownAll entries; testDoneEvents retains all reporter testDone events"
+  },
+  "modalProbeFinal": {
+    "testDoneEvents": 5,
+    "realTests": 2,
+    "passed": 2,
+    "skipped": 0,
+    "failed": 0,
+    "skippedTests": [],
+    "failedTests": [],
+    "loadingEvents": 1,
+    "lifecycleEvents": 2,
+    "errorEvents": [],
+    "runner": [
+      {
+        "success": true,
+        "type": "done",
+        "time": 2582
+      }
+    ],
+    "countingRule": "realTests excludes synthetic loading/setUpAll/tearDownAll entries; testDoneEvents retains all reporter testDone events"
+  },
+  "analysis": {
+    "baselineCount": 1159,
+    "currentCount": 1159,
+    "bySeverity": {
+      "info": 907,
+      "warning": 252
+    },
+    "new": [],
+    "removed": []
+  },
+  "visual": {
+    "rendered": 9,
+    "actuallyViewed": 9,
+    "index": "screenshot-index.json",
+    "defects": [
+      "S2A-001",
+      "S2A-002"
+    ]
+  },
+  "deviceGate": {
+    "simulatorOrDevice": "NOT_RUN",
+    "voiceOverTalkBack": "NOT_RUN",
+    "platformBuild": "NOT_RUN",
+    "serverIntegration": "NOT_RUN"
+  },
+  "nextStage": "S1-B"
+}

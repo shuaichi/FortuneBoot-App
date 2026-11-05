@@ -1,0 +1,61 @@
+{
+  "head": "00a8f2f4e682eda9dd04c9372d95bc054673708b",
+  "artifacts": [
+    {
+      "path": "reviews/S2-A/attempt-003/review.md",
+      "sha256": "af4a30a18115fa51b3214e3dd090a82a1d0e2cc14214d947fee8875be0875958"
+    },
+    {
+      "path": "reviews/S2-A/attempt-003/review.json",
+      "sha256": "6d834a1666cbdaa93bfce5a3b707756e34147a71a4a67e193ee5ccb4336ff028"
+    },
+    {
+      "path": "reviews/S2-A/attempt-003/repair-routing.json",
+      "sha256": "eac5239ecf1dc0fcec3e95cfc6da7539f9dd9b8172bd74c5e22cac2edc449235"
+    },
+    {
+      "path": "handoff/S2-A.md",
+      "sha256": "a0b5ceb6318e8975e9a16571746271b3bab4ffdc64ee6bc8d354df89d30294de"
+    },
+    {
+      "path": "runtime/issue-checks/S2-A.json",
+      "sha256": "62d24d4a4e179a73d7e348b2479f12e61bc589e5b16ca6d0d4bc344228c4dfb6"
+    },
+    {
+      "path": "runtime/progress.json",
+      "sha256": "3a2bc7949cb3c587978e22f62e994b37f65da15aa00048ddb71bf55e5ed379dd"
+    },
+    {
+      "path": "evidence/S2-A/attempt-003/results.json",
+      "sha256": "229649ddcd90c9d24ae60b261e034cd9b7518650757582d6a5bd53108ff1765f"
+    },
+    {
+      "path": "evidence/S2-A/attempt-003/screenshot-index.json",
+      "sha256": "6b633fa3c24c79109e81940ed234ebacf5a2508db315ca0969cbe10fd6eeb249"
+    },
+    {
+      "path": "evidence/S2-A/attempt-003/verification-commands.md",
+      "sha256": "db842acf6070e6f06a559638e887d3bd16829e0d0cc9bf0c8180a7ef6cb35d05"
+    }
+  ],
+  "s1bSourceSnapshotUnchangedDuringReview": true,
+  "trackedWorktreeChanges": [
+    " M docs/design-system/execution-prompts/reference/component-consumers.json",
+    " M docs/design-system/execution-prompts/reference/contracts-current.md",
+    " M docs/design-system/execution-prompts/runtime/progress.json",
+    " M lib/fx/components/fx_money_text.dart",
+    " M lib/fx/components/fx_segmented.dart",
+    " M lib/fx/components/fx_select_row.dart",
+    " M test/fx/components/fx_money_text_test.dart",
+    "?? test/fx/components/fx_s1_b_repair_test.dart"
+  ],
+  "packValidation": "PASS",
+  "customValidation": {
+    "jsonFilesValid": 7,
+    "screenshotsActuallyViewedAndShaVerified": 13,
+    "otherStagesPreserved": true,
+    "verdict": "PASSED",
+    "defectsClosed": 3,
+    "orderedRepairs": []
+  }
+}

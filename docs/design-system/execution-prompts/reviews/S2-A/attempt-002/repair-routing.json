@@ -1,0 +1,16 @@
+{
+  "reviewId": "S2-A-attempt-002",
+  "sourceSnapshot": "00a8f2f4e682eda9dd04c9372d95bc054673708b + S1-B uncommitted SHA256 in evidence/S2-A/attempt-002/source-snapshot.json",
+  "orderedRepairs": [
+    {
+      "promptId": "S1-B",
+      "session": "S1",
+      "defectIds": ["S2A-001", "S2A-003"],
+      "requires": [],
+      "reason": "S2A-001 在 390/440、2x 仍孤立小数位；S2A-003 是同一共享选择器 CX-02 的正常字号长标签缺口。S2A-002 已闭合，不需要返修。"
+    }
+  ],
+  "returnTo": "S2-A",
+  "nextAttempt": 3,
+  "s3Release": "BLOCKED_UNTIL_S2-A_PASSES"
+}
