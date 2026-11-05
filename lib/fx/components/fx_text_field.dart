@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
+import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
 
 /// 统一输入框：静态标签在框外，输入区只保留提示与错误，不使用浮动标签。
@@ -171,12 +172,10 @@ class FxTextField extends StatelessWidget {
         ),
         filled: true,
         fillColor: enabled
-            ? palette.surfaceMuted
+            ? palette.surface
             : palette.surfaceMuted.withValues(alpha: 0.55),
         isDense: false,
-        contentPadding:
-            contentPadding ??
-            const EdgeInsets.symmetric(horizontal: 14, vertical: 16),
+        contentPadding: contentPadding ?? FxSpacing.fieldPad,
         counterText: showCounter ? null : '',
         helperMaxLines: 2,
         errorMaxLines: 3,
@@ -189,11 +188,11 @@ class FxTextField extends StatelessWidget {
         suffixIconColor: palette.textSecondary,
         border: OutlineInputBorder(
           borderRadius: FxRadius.tileBorder,
-          borderSide: BorderSide(color: palette.border),
+          borderSide: BorderSide(color: palette.borderStrong),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: FxRadius.tileBorder,
-          borderSide: BorderSide(color: palette.border),
+          borderSide: BorderSide(color: palette.borderStrong),
         ),
         disabledBorder: OutlineInputBorder(
           borderRadius: FxRadius.tileBorder,
@@ -201,7 +200,10 @@ class FxTextField extends StatelessWidget {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: FxRadius.tileBorder,
-          borderSide: BorderSide(color: palette.primary, width: 1.5),
+          borderSide: BorderSide(
+            color: palette.primary,
+            width: FxSpacing.focusWidth,
+          ),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: FxRadius.tileBorder,
@@ -209,7 +211,10 @@ class FxTextField extends StatelessWidget {
         ),
         focusedErrorBorder: OutlineInputBorder(
           borderRadius: FxRadius.tileBorder,
-          borderSide: BorderSide(color: palette.danger, width: 1.5),
+          borderSide: BorderSide(
+            color: palette.danger,
+            width: FxSpacing.focusWidth,
+          ),
         ),
       ),
     );

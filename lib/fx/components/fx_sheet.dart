@@ -205,7 +205,9 @@ class FxSheet extends StatelessWidget {
     return showModalBottomSheet<R>(
       context: context,
       isScrollControlled: isScrollControlled,
-      backgroundColor: palette.surface,
+      backgroundColor: palette.surfaceRaised,
+      barrierColor: palette.scrim,
+      useSafeArea: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: FxRadius.sheetRadius),
       ),
@@ -281,8 +283,10 @@ class _FxSheetActionFooterState extends State<_FxSheetActionFooter> {
     final palette = FxPalette.of(context);
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: palette.surface,
-        border: Border(top: BorderSide(color: palette.border)),
+        color: palette.surfaceRaised,
+        border: Border(
+          top: BorderSide(color: palette.separator, width: FxSpacing.hairline),
+        ),
       ),
       child: Padding(
         padding: const EdgeInsets.fromLTRB(

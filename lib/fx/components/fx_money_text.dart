@@ -6,8 +6,8 @@ import 'package:fortuneboot/util/currency_symbol.dart';
 
 /// 等宽金额文本：tabular figures + 正负色 + 币种符号 + 千分位。
 ///
-/// [billType] 提供时按业务语义色渲染（1支出红 2收入绿 3转账紫 4调整橙 7垫付 8报销）。
-/// 否则按 [signed] 与金额正负决定颜色（正绿负红），或用 [color] 强制。
+/// [billType] 提供时使用用户配置的业务语义色。
+/// 否则按 [colorBySign] 与金额正负决定语义色，或用 [color] 强制。
 /// [masked] 为 true 时隐藏真实金额，显示 [maskedText]（用于首页金额隐私）。
 class FxMoneyText extends StatelessWidget {
   final double amount;
@@ -41,7 +41,7 @@ class FxMoneyText extends StatelessWidget {
     this.currencyCode,
     this.billType,
     this.color,
-    this.fontSize = 16,
+    this.fontSize = 17,
     this.fontWeight = FontWeight.w600,
     this.showSign = false,
     this.colorBySign = false,

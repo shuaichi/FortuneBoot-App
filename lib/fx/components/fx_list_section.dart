@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
+import 'package:fortuneboot/fx/tokens/fx_radius.dart';
+import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 
 /// 连续业务列表的单一表面：行间使用细分隔线，不为每行重复制造卡片。
 class FxListSection extends StatelessWidget {
@@ -19,8 +21,8 @@ class FxListSection extends StatelessWidget {
       color: palette.surface,
       clipBehavior: Clip.antiAlias,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(14),
-        side: BorderSide(color: palette.border.withValues(alpha: 0.72)),
+        borderRadius: FxRadius.cardBorder,
+        side: BorderSide(color: palette.border, width: FxSpacing.hairline),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -29,9 +31,9 @@ class FxListSection extends StatelessWidget {
             if (index > 0)
               Divider(
                 height: 1,
-                thickness: 0.5,
+                thickness: FxSpacing.hairline,
                 indent: dividerIndent,
-                color: palette.border.withValues(alpha: 0.72),
+                color: palette.separator,
               ),
             children[index],
           ],

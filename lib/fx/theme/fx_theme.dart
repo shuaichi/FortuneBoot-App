@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fortuneboot/core/preferences/finance_color_preferences.dart';
 import 'package:fortuneboot/fx/tokens/fx_colors.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
+import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
 
 /// 中性 / 表面色 ThemeExtension：承载亮暗两套背景、文字、边框。
@@ -26,6 +27,21 @@ class FxPalette extends ThemeExtension<FxPalette> {
   final Color info;
   final Color shadow;
 
+  /// 模态遮罩，独立于投影透明度。
+  final Color scrim;
+
+  /// 危险操作实色背景上的前景。
+  final Color onDanger;
+
+  /// 输入框等控件边界，与装饰边框分开。
+  final Color borderStrong;
+
+  /// 装饰性分隔线，不承担控件识别。
+  final Color separator;
+
+  /// 模态、菜单等浮层表面。
+  final Color surfaceRaised;
+
   const FxPalette({
     required this.primary,
     required this.primaryContainer,
@@ -42,6 +58,11 @@ class FxPalette extends ThemeExtension<FxPalette> {
     required this.danger,
     required this.info,
     required this.shadow,
+    this.scrim = const Color(0x66000000),
+    this.onDanger = const Color(0xFFFFFFFF),
+    this.borderStrong = const Color(0xFF84848D),
+    this.separator = const Color(0xFFEAEAED),
+    this.surfaceRaised = const Color(0xFFFFFFFF),
   });
 
   static const FxPalette light = FxPalette(
@@ -63,21 +84,26 @@ class FxPalette extends ThemeExtension<FxPalette> {
   );
 
   static const FxPalette dark = FxPalette(
-    primary: Color(0xFF4D94FF),
-    primaryContainer: Color(0xFF13294D),
-    onPrimary: Color(0xFFFFFFFF),
-    canvas: Color(0xFF0B0F17),
-    surface: Color(0xFF161B24),
-    surfaceMuted: Color(0xFF1F2630),
-    border: Color(0xFF2A323D),
-    textPrimary: Color(0xFFF2F4F7),
-    textSecondary: Color(0xFFA6AEBB),
-    textTertiary: Color(0xFF98A2B3),
-    success: Color(0xFF34D07A),
-    warning: Color(0xFFFBBF4D),
-    danger: Color(0xFFF87171),
-    info: Color(0xFF38BDF8),
+    primary: Color(0xFF70A7FF),
+    primaryContainer: Color(0xFF192C49),
+    onPrimary: Color(0xFF121215),
+    canvas: Color(0xFF101012),
+    surface: Color(0xFF18181B),
+    surfaceMuted: Color(0xFF202024),
+    border: Color(0xFF34343B),
+    textPrimary: Color(0xFFFAFAFA),
+    textSecondary: Color(0xFFBCBCC5),
+    textTertiary: Color(0xFFA0A0AB),
+    success: Color(0xFF6FD59B),
+    warning: Color(0xFFEFC477),
+    danger: Color(0xFFFF8C88),
+    info: Color(0xFF7BCEEF),
     shadow: Color(0x66000000),
+    scrim: Color(0x99000000),
+    onDanger: Color(0xFF121215),
+    borderStrong: Color(0xFF777780),
+    separator: Color(0xFF2B2B31),
+    surfaceRaised: Color(0xFF28282D),
   );
 
   static FxPalette of(BuildContext context) =>
@@ -100,6 +126,11 @@ class FxPalette extends ThemeExtension<FxPalette> {
     Color? danger,
     Color? info,
     Color? shadow,
+    Color? scrim,
+    Color? onDanger,
+    Color? borderStrong,
+    Color? separator,
+    Color? surfaceRaised,
   }) {
     return FxPalette(
       primary: primary ?? this.primary,
@@ -117,6 +148,11 @@ class FxPalette extends ThemeExtension<FxPalette> {
       danger: danger ?? this.danger,
       info: info ?? this.info,
       shadow: shadow ?? this.shadow,
+      scrim: scrim ?? this.scrim,
+      onDanger: onDanger ?? this.onDanger,
+      borderStrong: borderStrong ?? this.borderStrong,
+      separator: separator ?? this.separator,
+      surfaceRaised: surfaceRaised ?? this.surfaceRaised,
     );
   }
 
@@ -143,6 +179,11 @@ class FxPalette extends ThemeExtension<FxPalette> {
       danger: Color.lerp(danger, other.danger, t)!,
       info: Color.lerp(info, other.info, t)!,
       shadow: Color.lerp(shadow, other.shadow, t)!,
+      scrim: Color.lerp(scrim, other.scrim, t)!,
+      onDanger: Color.lerp(onDanger, other.onDanger, t)!,
+      borderStrong: Color.lerp(borderStrong, other.borderStrong, t)!,
+      separator: Color.lerp(separator, other.separator, t)!,
+      surfaceRaised: Color.lerp(surfaceRaised, other.surfaceRaised, t)!,
     );
   }
 }
@@ -336,30 +377,34 @@ abstract final class FxTheme {
       onPrimary: palette.onPrimary,
       primaryContainer: palette.primaryContainer,
       onPrimaryContainer: palette.textPrimary,
-      secondary: palette.info,
+      secondary: palette.primary,
       onSecondary: palette.onPrimary,
       secondaryContainer: palette.surfaceMuted,
       onSecondaryContainer: palette.textPrimary,
-      tertiary: palette.warning,
-      onTertiary: palette.canvas,
+      tertiary: palette.primary,
+      onTertiary: palette.onPrimary,
       tertiaryContainer: palette.surfaceMuted,
       onTertiaryContainer: palette.textPrimary,
       error: palette.danger,
-      onError: palette.onPrimary,
+      onError: palette.onDanger,
       errorContainer: palette.danger.withValues(alpha: 0.16),
       onErrorContainer: palette.textPrimary,
       surface: palette.surface,
       onSurface: palette.textPrimary,
+      surfaceContainerLowest: palette.canvas,
+      surfaceContainerLow: palette.surface,
+      surfaceContainer: palette.surface,
+      surfaceContainerHigh: palette.surfaceRaised,
       surfaceContainerHighest: palette.surfaceMuted,
       onSurfaceVariant: palette.textSecondary,
-      outline: palette.border,
+      outline: palette.borderStrong,
       outlineVariant: palette.border,
       shadow: palette.shadow,
-      scrim: palette.shadow,
+      scrim: palette.scrim,
       inverseSurface: palette.textPrimary,
       onInverseSurface: palette.surface,
       inversePrimary: palette.primary,
-      surfaceTint: palette.primary,
+      surfaceTint: Colors.transparent,
     );
 
     return base.copyWith(
@@ -367,7 +412,16 @@ abstract final class FxTheme {
       scaffoldBackgroundColor: palette.canvas,
       canvasColor: palette.canvas,
       primaryColor: palette.primary,
-      dividerColor: palette.border,
+      dividerColor: palette.separator,
+      dividerTheme: DividerThemeData(
+        color: palette.separator,
+        thickness: FxSpacing.hairline,
+        space: FxSpacing.borderWidth,
+      ),
+      visualDensity: VisualDensity.standard,
+      materialTapTargetSize: MaterialTapTargetSize.padded,
+      iconTheme: IconThemeData(color: palette.textSecondary, size: 22),
+      focusColor: palette.primary.withValues(alpha: 0.12),
       splashColor: palette.primary.withValues(alpha: 0.08),
       highlightColor: palette.primary.withValues(alpha: 0.04),
       appBarTheme: AppBarTheme(
@@ -378,15 +432,87 @@ abstract final class FxTheme {
         centerTitle: false,
         titleTextStyle: FxTypography.title.copyWith(color: palette.textPrimary),
       ),
-      textTheme: base.textTheme.apply(
+      textTheme: FxTypography.textTheme(base.textTheme).apply(
         bodyColor: palette.textPrimary,
         displayColor: palette.textPrimary,
       ),
       bottomSheetTheme: BottomSheetThemeData(
-        backgroundColor: palette.surface,
+        backgroundColor: palette.surfaceRaised,
+        modalBackgroundColor: palette.surfaceRaised,
+        modalBarrierColor: palette.scrim,
+        elevation: 0,
+        modalElevation: 0,
+        showDragHandle: false,
         surfaceTintColor: Colors.transparent,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: FxRadius.sheetRadius),
+        ),
+      ),
+      cardTheme: CardThemeData(
+        color: palette.surface,
+        surfaceTintColor: Colors.transparent,
+        elevation: 0,
+        margin: EdgeInsets.zero,
+        shape: RoundedRectangleBorder(
+          borderRadius: FxRadius.cardBorder,
+          side: BorderSide(color: palette.border, width: FxSpacing.hairline),
+        ),
+      ),
+      dialogTheme: DialogThemeData(
+        backgroundColor: palette.surfaceRaised,
+        surfaceTintColor: Colors.transparent,
+        elevation: 0,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(FxRadius.sheetRadius),
+        ),
+        titleTextStyle: FxTypography.titleLarge.copyWith(
+          color: palette.textPrimary,
+        ),
+        contentTextStyle: FxTypography.body.copyWith(
+          color: palette.textPrimary,
+        ),
+      ),
+      // 全局仅定义文本角色；几何/填充由 FxTextField 管理，保留旧的
+      // border: InputBorder.none 金额输入和搜索框的显式无边框契约。
+      inputDecorationTheme: InputDecorationTheme(
+        hintStyle: FxTypography.body.copyWith(color: palette.textTertiary),
+        labelStyle: FxTypography.label.copyWith(color: palette.textSecondary),
+        helperStyle: FxTypography.caption.copyWith(
+          color: palette.textSecondary,
+        ),
+        errorStyle: FxTypography.caption.copyWith(color: palette.danger),
+      ),
+      listTileTheme: ListTileThemeData(
+        titleTextStyle: FxTypography.body.copyWith(color: palette.textPrimary),
+        subtitleTextStyle: FxTypography.caption.copyWith(
+          color: palette.textSecondary,
+        ),
+        iconColor: palette.textSecondary,
+        minTileHeight: FxSpacing.rowHeight,
+      ),
+      textSelectionTheme: TextSelectionThemeData(
+        cursorColor: palette.primary,
+        selectionColor: palette.primary.withValues(alpha: 0.20),
+        selectionHandleColor: palette.primary,
+      ),
+      filledButtonTheme: FilledButtonThemeData(
+        style: FilledButton.styleFrom(
+          backgroundColor: palette.primary,
+          foregroundColor: palette.onPrimary,
+          textStyle: FxTypography.bodyStrong,
+          minimumSize: const Size(
+            FxSpacing.controlHeight,
+            FxSpacing.controlHeight,
+          ),
+          padding: FxSpacing.fieldPad,
+          shape: RoundedRectangleBorder(borderRadius: FxRadius.tileBorder),
+        ),
+      ),
+      textButtonTheme: TextButtonThemeData(
+        style: TextButton.styleFrom(
+          foregroundColor: palette.primary,
+          textStyle: FxTypography.label,
+          minimumSize: const Size(FxSpacing.touchTarget, FxSpacing.touchTarget),
         ),
       ),
       snackBarTheme: SnackBarThemeData(

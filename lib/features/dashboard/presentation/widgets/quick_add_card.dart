@@ -19,8 +19,9 @@ class QuickAddCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = FxPalette.of(context);
     return FxCard(
-      background: FxPalette.of(context).primary,
+      background: palette.primary,
       onTap: () {
         HapticFeedback.selectionClick();
         final group = context.read<SessionCubit>().state.currentGroup;
@@ -39,13 +40,13 @@ class QuickAddCard extends StatelessWidget {
           children: [
             Icon(
               Icons.add_rounded,
-              color: Colors.white,
+              color: palette.onPrimary,
               size: enlarged ? 44 : 34,
             ),
             const SizedBox(height: FxSpacing.xs),
             Text(
               S.of(context).dashboardQuickAdd,
-              style: FxTypography.bodyStrong.copyWith(color: Colors.white),
+              style: FxTypography.bodyStrong.copyWith(color: palette.onPrimary),
             ),
           ],
         ),

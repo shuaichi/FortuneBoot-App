@@ -578,7 +578,7 @@ class _BillsPageState extends State<BillsPage> {
                         '$activeCount',
                         textAlign: TextAlign.center,
                         style: FxTypography.caption.copyWith(
-                          color: Colors.white,
+                          color: palette.onPrimary,
                           fontSize: 10,
                           height: 1,
                           fontWeight: FontWeight.w600,
@@ -953,12 +953,14 @@ class _BillsPageState extends State<BillsPage> {
       background: _swipeBg(
         alignment: Alignment.centerLeft,
         color: palette.primary,
+        foreground: palette.onPrimary,
         icon: Icons.copy_rounded,
         label: S.of(context).billsCopy,
       ),
       secondaryBackground: _swipeBg(
         alignment: Alignment.centerRight,
         color: palette.danger,
+        foreground: palette.onDanger,
         icon: Icons.delete_outline_rounded,
         label: S.of(context).billsDelete,
       ),
@@ -977,6 +979,7 @@ class _BillsPageState extends State<BillsPage> {
   Widget _swipeBg({
     required Alignment alignment,
     required Color color,
+    required Color foreground,
     required IconData icon,
     required String label,
   }) {
@@ -990,11 +993,11 @@ class _BillsPageState extends State<BillsPage> {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, color: Colors.white, size: 20),
+          Icon(icon, color: foreground, size: 20),
           const SizedBox(width: FxSpacing.xs),
           Text(
             label,
-            style: FxTypography.bodyStrong.copyWith(color: Colors.white),
+            style: FxTypography.bodyStrong.copyWith(color: foreground),
           ),
         ],
       ),

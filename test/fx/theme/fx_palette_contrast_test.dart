@@ -3,11 +3,26 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 
 void main() {
+  test('enabled action labels remain readable in both themes', () {
+    for (final palette in [FxPalette.light, FxPalette.dark]) {
+      expect(
+        _contrastRatio(palette.onPrimary, palette.primary),
+        greaterThanOrEqualTo(4.5),
+        reason: 'primary action label',
+      );
+      expect(
+        _contrastRatio(palette.onDanger, palette.danger),
+        greaterThanOrEqualTo(4.5),
+        reason: 'critical action label',
+      );
+    }
+  });
   test('light text roles remain readable on every page surface', () {
     for (final surface in [
       FxPalette.light.surface,
       FxPalette.light.surfaceMuted,
       FxPalette.light.canvas,
+      FxPalette.light.surfaceRaised,
     ]) {
       expect(
         _contrastRatio(FxPalette.light.textSecondary, surface),
@@ -25,6 +40,7 @@ void main() {
       FxPalette.dark.surface,
       FxPalette.dark.surfaceMuted,
       FxPalette.dark.canvas,
+      FxPalette.dark.surfaceRaised,
     ]) {
       expect(
         _contrastRatio(FxPalette.dark.textSecondary, surface),
@@ -50,17 +66,4 @@ double _contrastRatio(Color foreground, Color background) {
   return (lighter + 0.05) / (darker + 0.05);
 }
 
-double _relativeLuminance(Color color) {
-  final red = _linearChannel(color.r);
-  final green = _linearChannel(color.g);
-  final blue = _linearChannel(color.b);
-  return 0.2126 * red + 0.7152 * green + 0.0722 * blue;
-}
-
-double _linearChannel(double channel) {
-  return channel <= 0.04045
-      ? channel / 12.92
-      : ((channel + 0.055) / 1.055) *
-            ((channel + 0.055) / 1.055) *
-            ((channel + 0.055) / 1.055);
-}
+double _relativeLuminance(Color color) => color.computeLuminance();

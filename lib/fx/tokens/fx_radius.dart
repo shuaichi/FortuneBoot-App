@@ -1,10 +1,10 @@
 import 'package:flutter/widgets.dart';
 
-/// 圆角体系。
+/// 控件 12、容器 16、模态表面 24；胶囊仅用于短状态或筛选项。
 abstract final class FxRadius {
   static const double tile = 12;
   static const double card = 16;
-  static const double sheet = 20;
+  static const double sheet = 24;
   static const double pill = 999;
 
   static const Radius cardRadius = Radius.circular(card);

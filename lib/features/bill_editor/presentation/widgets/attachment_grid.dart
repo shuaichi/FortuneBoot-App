@@ -27,6 +27,14 @@ class AttachmentGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // 文件名保留两行空间；辅助文字放大后缩略图同步增长。
+    final labelHeight =
+        MediaQuery.textScalerOf(context).scale(FxTypography.caption.fontSize!) *
+        FxTypography.caption.height!;
+    final tileSize = (FxSpacing.lg + 24 + FxSpacing.xs + labelHeight * 2).clamp(
+      _tile,
+      double.infinity,
+    );
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -56,11 +64,12 @@ class AttachmentGrid extends StatelessWidget {
             for (int i = 0; i < files.length; i++)
               _Thumb(
                 attachment: files[i],
+                size: tileSize,
                 index: i,
                 enabled: enabled,
                 onRemove: () => onRemove(i),
               ),
-            _AddTile(onTap: onAdd, enabled: enabled),
+            _AddTile(onTap: onAdd, enabled: enabled, size: tileSize),
           ],
         ),
       ],
@@ -71,11 +80,13 @@ class AttachmentGrid extends StatelessWidget {
 class _Thumb extends StatelessWidget {
   const _Thumb({
     required this.attachment,
+    required this.size,
     required this.index,
     required this.enabled,
     required this.onRemove,
   });
   final BillAttachment attachment;
+  final double size;
   final int index;
   final bool enabled;
   final VoidCallback onRemove;
@@ -85,8 +96,8 @@ class _Thumb extends StatelessWidget {
     final palette = FxPalette.of(context);
     final fileName = attachment.name;
     return SizedBox(
-      width: AttachmentGrid._tile,
-      height: AttachmentGrid._tile,
+      width: size,
+      height: size,
       child: Stack(
         clipBehavior: Clip.none,
         children: [
@@ -94,9 +105,13 @@ class _Thumb extends StatelessWidget {
             borderRadius: FxRadius.tileBorder,
             child: buildBillAttachmentPreview(
               attachment: attachment,
-              size: AttachmentGrid._tile,
+              size: size,
               fileName: fileName,
-              fallback: _FileTile(fileName: fileName, palette: palette),
+              fallback: _FileTile(
+                fileName: fileName,
+                palette: palette,
+                size: size,
+              ),
             ),
           ),
           Positioned(
@@ -116,24 +131,33 @@ class _Thumb extends StatelessWidget {
 }
 
 class _FileTile extends StatelessWidget {
-  const _FileTile({required this.fileName, required this.palette});
+  const _FileTile({
+    required this.fileName,
+    required this.palette,
+    required this.size,
+  });
 
   final String fileName;
   final FxPalette palette;
+  final double size;
 
   @override
   Widget build(BuildContext context) {
     return Semantics(
       label: fileName,
       child: Container(
-        width: AttachmentGrid._tile,
-        height: AttachmentGrid._tile,
+        width: size,
+        height: size,
         color: palette.surfaceMuted,
         padding: const EdgeInsets.all(FxSpacing.sm),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.insert_drive_file_rounded, color: palette.textTertiary),
+            Icon(
+              Icons.insert_drive_file_rounded,
+              size: 24,
+              color: palette.textTertiary,
+            ),
             const SizedBox(height: FxSpacing.xs),
             Text(
               fileName,
@@ -152,9 +176,14 @@ class _FileTile extends StatelessWidget {
 }
 
 class _AddTile extends StatelessWidget {
-  const _AddTile({required this.onTap, required this.enabled});
+  const _AddTile({
+    required this.onTap,
+    required this.enabled,
+    required this.size,
+  });
   final VoidCallback onTap;
   final bool enabled;
+  final double size;
 
   @override
   Widget build(BuildContext context) {
@@ -167,8 +196,8 @@ class _AddTile extends StatelessWidget {
         onTap: enabled ? onTap : null,
         borderRadius: FxRadius.tileBorder,
         child: Container(
-          width: AttachmentGrid._tile,
-          height: AttachmentGrid._tile,
+          width: size,
+          height: size,
           decoration: BoxDecoration(
             color: palette.surfaceMuted,
             borderRadius: FxRadius.tileBorder,

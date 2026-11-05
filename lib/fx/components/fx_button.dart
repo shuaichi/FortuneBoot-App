@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
+import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
 
 enum FxButtonVariant { filled, tonal, text, critical }
@@ -21,7 +22,7 @@ class FxButton extends StatelessWidget {
   final bool hugContent;
   final bool loading;
 
-  /// 主次操作统一使用 48dp 高度；认证等单列页面可显式提升到 50dp。
+  /// 最小高度；文字放大或换行时允许按钮自然增高。
   final double height;
 
   /// 加载态文案；为空时只展示进度指示器。
@@ -36,7 +37,7 @@ class FxButton extends StatelessWidget {
     this.expand = false,
     this.hugContent = false,
     this.loading = false,
-    this.height = 48,
+    this.height = FxSpacing.controlHeight,
     this.loadingLabel,
   });
 
@@ -48,7 +49,7 @@ class FxButton extends StatelessWidget {
     this.expand = false,
     this.hugContent = false,
     this.loading = false,
-    this.height = 48,
+    this.height = FxSpacing.controlHeight,
     this.loadingLabel,
   }) : variant = FxButtonVariant.tonal;
 
@@ -60,7 +61,7 @@ class FxButton extends StatelessWidget {
     this.expand = false,
     this.hugContent = false,
     this.loading = false,
-    this.height = 48,
+    this.height = FxSpacing.controlHeight,
     this.loadingLabel,
   }) : variant = FxButtonVariant.text;
 
@@ -72,7 +73,7 @@ class FxButton extends StatelessWidget {
     this.expand = false,
     this.hugContent = false,
     this.loading = false,
-    this.height = 48,
+    this.height = FxSpacing.controlHeight,
     this.loadingLabel,
   }) : variant = FxButtonVariant.critical;
 
@@ -93,7 +94,7 @@ class FxButton extends StatelessWidget {
         fg = palette.primary;
       case FxButtonVariant.critical:
         bg = palette.danger;
-        fg = Colors.white;
+        fg = palette.onDanger;
     }
 
     final disabled = onPressed == null || loading;
@@ -113,8 +114,7 @@ class FxButton extends StatelessWidget {
                 Flexible(
                   child: Text(
                     loadingLabel!,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.center,
                     style: FxTypography.bodyStrong.copyWith(color: fg),
                   ),
                 ),
@@ -132,8 +132,7 @@ class FxButton extends StatelessWidget {
               Flexible(
                 child: Text(
                   label,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.center,
                   style: FxTypography.bodyStrong.copyWith(color: fg),
                 ),
               ),
@@ -159,16 +158,30 @@ class FxButton extends StatelessWidget {
                   HapticFeedback.selectionClick();
                   onPressed!();
                 },
-          child: Container(
-            height: height,
-            alignment: hug ? null : Alignment.center,
-            padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
-            child: child,
+          child: ConstrainedBox(
+            constraints: BoxConstraints(minHeight: height),
+            child: Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: horizontalPadding,
+                vertical: FxSpacing.md,
+              ),
+              // 只按内容增高，不能吞掉 bottomNavigationBar 的剩余视口高度。
+              child: Center(
+                widthFactor: hug ? 1 : null,
+                heightFactor: 1,
+                child: child,
+              ),
+            ),
           ),
         ),
       ),
     );
 
-    return expand ? SizedBox(width: double.infinity, child: button) : button;
+    return Semantics(
+      button: true,
+      enabled: !disabled,
+      liveRegion: loading,
+      child: expand ? SizedBox(width: double.infinity, child: button) : button,
+    );
   }
 }
