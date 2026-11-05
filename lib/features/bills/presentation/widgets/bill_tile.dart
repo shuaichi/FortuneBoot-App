@@ -10,6 +10,7 @@ import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
 import 'package:fortuneboot/fx/tokens/fx_typography.dart';
 import 'package:fortuneboot/generated/l10n.dart';
+import 'package:fortuneboot/util/currency_symbol.dart';
 import 'package:intl/intl.dart';
 
 /// 单条账单行：左图标徽标 + 标题/副行，右金额/时间/手续费·优惠标签。
@@ -72,63 +73,57 @@ class BillTile extends StatelessWidget {
         .where((s) => s.isNotEmpty)
         .toList();
     final locale = Localizations.localeOf(context).toString();
-    final hasExtras = bill.hasExtrasAdjustment && !masked;
+    final hasExtras = bill.hasExtrasAdjustment;
+    final showExtraValues = hasExtras && !masked;
     final fee = bill.feeTotal;
     final discount = bill.discountTotal;
 
-    final amountCaptionParts = <String>[
+    final primaryCaptionParts = <String>[
+      if (showExtraValues) S.of(context).billsSettledAmount,
       if (bill.tradeTime != null) DateFormat.Hm(locale).format(bill.tradeTime!),
-      if (hasExtras && fee > 0)
+    ];
+    final adjustmentCaptionParts = <String>[
+      if (showExtraValues)
+        '${S.of(context).billsOriginalAmount} ${FxMoneyFormatter.format(bill.displayAmount, locale: locale)}',
+      if (showExtraValues && fee > 0)
         '${S.of(context).billsFee} ${FxMoneyFormatter.format(fee, locale: locale)}',
-      if (hasExtras && discount > 0)
+      if (showExtraValues && discount > 0)
         '${S.of(context).billsDiscount} ${FxMoneyFormatter.format(discount, locale: locale)}',
     ];
+    final amountCaption = [
+      if (primaryCaptionParts.isNotEmpty) primaryCaptionParts.join(' · '),
+      if (adjustmentCaptionParts.isNotEmpty) adjustmentCaptionParts.join(' · '),
+    ].join('\n');
     return FxLedgerRow(
       title: _titleOf(context),
       subtitle: _subtitle,
       leading: FxIconBadge.forBill(_iconInput),
       semanticLabel: _titleOf(context),
       onTap: onTap,
-      amount: FxMoneyText(
-        amount:
-            FxBillType.fromValue(bill.billType)?.signedFlowAmount(
-              hasExtras ? bill.settledAmount : bill.displayAmount,
-            ) ??
-            (hasExtras ? bill.settledAmount : bill.displayAmount),
-        currencyCode: bill.currencyCode,
-        billType: bill.billType,
-        showSign:
-            bill.billType != FxBillType.transfer.value &&
-            bill.billType != FxBillType.adjust.value,
-        masked: masked,
-        compactWhenNeeded: true,
-      ),
-      amountCaption: amountCaptionParts.isEmpty
-          ? null
-          : amountCaptionParts.join(' · '),
+      amount: _BillFlowAmount(bill: bill, masked: masked),
+      amountCaption: amountCaption.isEmpty ? null : amountCaption,
       titleAccessory: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          if (hasExtras)
-            Padding(
-              padding: const EdgeInsets.only(right: FxSpacing.xs),
-              child: Text(
-                FxMoneyFormatter.format(bill.displayAmount, locale: locale),
-                style: FxTypography.caption.copyWith(
-                  color: palette.textTertiary,
-                  decoration: TextDecoration.lineThrough,
+          if (bill.hasFile)
+            Tooltip(
+              message: S.of(context).billsAttachments,
+              child: Semantics(
+                label: S.of(context).billsAttachments,
+                child: Icon(
+                  Icons.attach_file_rounded,
+                  size: 18,
+                  color: palette.textSecondary,
                 ),
               ),
             ),
-          if (bill.hasFile)
-            Icon(
-              Icons.attach_file_rounded,
-              size: 14,
-              color: palette.textTertiary,
-            ),
           if (!bill.confirm) ...[
             const SizedBox(width: FxSpacing.xs),
-            _flagDot(S.of(context).billsPendingConfirm, palette.warning),
+            _flagDot(
+              context,
+              S.of(context).billsPendingConfirm,
+              palette.warning,
+            ),
           ],
         ],
       ),
@@ -145,16 +140,77 @@ class BillTile extends StatelessWidget {
     );
   }
 
-  Widget _flagDot(String label, Color color) {
+  Widget _flagDot(BuildContext context, String label, Color color) {
+    final palette = FxPalette.of(context);
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(999),
       ),
       child: Text(
         label,
-        style: FxTypography.caption.copyWith(color: color, fontSize: 10),
+        style: FxTypography.caption.copyWith(color: palette.textPrimary),
+      ),
+    );
+  }
+}
+
+/// 在账单边界显式表达方向，保留共享组件的完整金额多行排版。
+class _BillFlowAmount extends StatelessWidget {
+  const _BillFlowAmount({required this.bill, required this.masked});
+
+  final FortuneBillVo bill;
+  final bool masked;
+
+  @override
+  Widget build(BuildContext context) {
+    final type = FxBillType.fromValue(bill.billType);
+    final sourceAmount = bill.hasExtrasAdjustment
+        ? bill.settledAmount
+        : bill.displayAmount;
+    final signedAmount = type?.signedFlowAmount(sourceAmount) ?? sourceAmount;
+    final showSign =
+        bill.billType != FxBillType.transfer.value &&
+        bill.billType != FxBillType.adjust.value;
+    final sign = masked || !showSign || signedAmount == 0
+        ? ''
+        : signedAmount < 0
+        ? '-'
+        : '+';
+    final locale = Localizations.localeOf(context).toString();
+    final currencySymbol = bill.currencyCode == null
+        ? ''
+        : getCurrencySymbol(bill.currencyCode!);
+    final semanticLabel = masked
+        ? FxMoneyFormatter.hiddenPlaceholder
+        : FxMoneyFormatter.format(
+            signedAmount,
+            locale: locale,
+            currencySymbol: currencySymbol,
+            showSign: showSign,
+          );
+    final amountStyle = FxTypography.money.copyWith(
+      color: FxPalette.of(context).textPrimary,
+    );
+    return Semantics(
+      label: semanticLabel,
+      child: ExcludeSemantics(
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (sign.isNotEmpty) Text(sign, style: amountStyle),
+            Flexible(
+              child: FxMoneyText(
+                amount: signedAmount.abs(),
+                currencyCode: bill.currencyCode,
+                billType: bill.billType,
+                masked: masked,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

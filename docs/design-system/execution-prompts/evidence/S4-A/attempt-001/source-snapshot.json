@@ -1,0 +1,32 @@
+{
+  "sourceHead": "878b2dafa8fc18a3f5e7f2e08372b9b491f256de",
+  "workingTreeBase": "878b2dafa8fc18a3f5e7f2e08372b9b491f256de",
+  "files": {
+    "lib/features/bills/bills_registration.dart": "64b3e5466c559e840ec392e1a49700aa9b687c8b605ece120e6bc153080935e5",
+    "lib/features/bills/data/bills_filter.dart": "57ea1a4560ee2c244595b1bf0dd14a54c16052a5a9de6acbe753e5eb8bb9c8ad",
+    "lib/features/bills/data/bills_filter_options_service.dart": "c990da81fc91700f9ce0cc1d9b8942435c7d80bdea5b9af2b0be3ec65e027d94",
+    "lib/features/bills/presentation/bills_page.dart": "ff2b7c074b6f05f1e1c4d0a8d8c905f6f0c630ee9b28b25c0eac03876d9ec085",
+    "lib/features/bills/presentation/bloc/bills_bloc.dart": "fcd54ed5fa12d1f85fee1a83c769f3806d56bba091559c9cd634b8b931494eb6",
+    "lib/features/bills/presentation/bloc/bills_event.dart": "c6a43c9e1c2fb5f9b057e2dba9d3f0805ae2b1c195405122d5222fbd2e86750d",
+    "lib/features/bills/presentation/bloc/bills_state.dart": "42ad2bfd317406aef1e5aeb86b49b9a409bec0befba532206261619a129baf04",
+    "lib/features/bills/presentation/pages/bills_filter_page.dart": "9e4d8c3f66d1b07297102bdddfff823e847517dc24694f9d9974b86657427452",
+    "lib/features/bills/presentation/widgets/bill_tile.dart": "d41f186029d8080acf57692591916015eac590d41db31403a861b8d72cf1a5dd",
+    "lib/features/bills/presentation/widgets/bills_filter_sheet.dart": "4a4201dfdcba3e13b64f77672034ec20120b146dee16d4be256c877a188c98df",
+    "lib/features/bills/presentation/widgets/bills_period_picker.dart": "88f37c8dccc262aa9d6016fcbca384626b74efd075ef6da0cc672f179012f03e",
+    "lib/features/bills/presentation/widgets/bills_period_summary.dart": "5ed867c71d5aa64b4b4aec4f7c6024422eac1b78226536b4ba24073ed87e4faf",
+    "lib/generated/intl/messages_en.dart": "bf77fda33bd96c3c0bb338055691ba5a9f0cd250fe7aa2ee31bf10330f2d6e23",
+    "lib/generated/intl/messages_zh.dart": "7778deee872134a3919277aa4015655289eb2ebd57085bcfea5be0593c4076fa",
+    "lib/generated/l10n.dart": "a0f24cfb8b7da605f0c707672bc22f94b7941c6eb364ce968374fc32eef59cad",
+    "lib/l10n/intl_en.arb": "e494cce4af418e440526fbdbcff05cd5e5bffeff777adb08df2d44a87e3ef580",
+    "lib/l10n/intl_zh.arb": "66e33b7eec8823d2c4d50983ac999d9c614ef0751bdb418663215abb871cef13",
+    "test/features/bills/bills_bloc_test.dart": "19a21fec59d9b8124528e693e8cd23d48d77c8ef04ae452391b7801a499663ee",
+    "test/features/bills/bills_filter_test.dart": "142a69d3c5717213f90074d3503091f0ce11342524c48be63f7ec7b8b70833cc",
+    "test/features/bills/bills_state_test.dart": "6c1e0e1a9744ccb3362cb8c6fd41ea181baec17dfe0782a6a38e51dab7e58dd6",
+    "test/features/bills/presentation/bills_page_test.dart": "6d4f3dca1263e1eb3d74224e9f018cafa5038a5343d1e70e1ced6700597fe097",
+    "test/features/bills/presentation/widgets/bill_tile_test.dart": "4de9e3984a4faf497ec3d9b03290ca2d7fb734cd5e55d393595d66cd1bdd37ca",
+    "test/features/bills/presentation/widgets/bills_filter_sheet_test.dart": "8152ef9e96c6cf68fd1273ed465461cac9eea275b573cff54d9b0b23cf65ceec",
+    "test/features/bills/presentation/widgets/bills_period_summary_test.dart": "4ff70060149d403c0da50271fbf78fd0deaf8277e50b74a05d02fd64af6330ab"
+  },
+  "sourceSnapshotSha256": "d20a4a09cd2cde91b6a951b81dcf427f5dfaedac62ec6f31bd026a6c9ac15cc2",
+  "count": 24
+}

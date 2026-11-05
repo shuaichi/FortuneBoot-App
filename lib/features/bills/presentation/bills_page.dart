@@ -10,16 +10,18 @@ import 'package:fortuneboot/core/session/session_cubit.dart';
 import 'package:fortuneboot/core/shell/bills_navigation_controller.dart';
 import 'package:fortuneboot/core/shell/main_shell.dart';
 import 'package:fortuneboot/core/time/month_window_resolver.dart';
+import 'package:fortuneboot/features/bills/data/bills_filter.dart';
 import 'package:fortuneboot/features/bills/presentation/bloc/bills_bloc.dart';
 import 'package:fortuneboot/features/bills/presentation/pages/bills_filter_page.dart';
 import 'package:fortuneboot/features/bills/presentation/widgets/bill_tile.dart';
+import 'package:fortuneboot/features/bills/presentation/widgets/bills_period_picker.dart';
+import 'package:fortuneboot/features/bills/presentation/widgets/bills_period_summary.dart';
 import 'package:fortuneboot/features/shared/data/bill_models.dart';
 import 'package:fortuneboot/features/shared/data/bill_service.dart';
 import 'package:fortuneboot/features/shared/presentation/bills/bill_delete_confirmation.dart';
 import 'package:fortuneboot/features/shared/presentation/bills/bill_detail_flow.dart';
 import 'package:fortuneboot/fx/components/fx_icon_button.dart';
 import 'package:fortuneboot/fx/components/fx_list_section.dart';
-import 'package:fortuneboot/fx/components/fx_money_text.dart';
 import 'package:fortuneboot/fx/components/fx_sheet.dart';
 import 'package:fortuneboot/fx/components/fx_state_view.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
@@ -42,9 +44,10 @@ class BillsPage extends StatefulWidget {
 
 class _BillsPageState extends State<BillsPage> {
   static const _paginationTriggerDistance = 240.0;
-  static const _headerAnchorOffset = 120.0;
+  static const _headerAnchorOffset = 64.0;
 
   final ScrollController _scrollController = ScrollController();
+  final GlobalKey _listKey = GlobalKey();
   late final BillService _service;
   BillsNavigationController? _billsNavigation;
   var _lastNavigationRevision = 0;
@@ -148,25 +151,30 @@ class _BillsPageState extends State<BillsPage> {
     _updateVisibleAnchor();
   }
 
-  /// 根据各账期探针相对视口顶部的位置，选出"最后一个已越过顶部"的账期，
-  /// 即当前时间流顶部正在展示的账期，写入 [_visibleAnchor]。
+  /// 选择距列表顶部最近的账期。最后一个账期内容较短时无法滚到顶，
+  /// 仍应成为当前定位结果，而不是回退到最新账期。
   void _updateVisibleAnchor() {
     DateTime? current;
-    double bestTop = double.negativeInfinity;
+    var bestDistance = double.infinity;
+    final threshold = _anchorThreshold;
     for (final entry in _monthKeys.entries) {
       final ctx = entry.value.currentContext;
       if (ctx == null) continue;
       final box = ctx.findRenderObject();
       if (box is! RenderBox || !box.hasSize) continue;
       final dy = box.localToGlobal(Offset.zero).dy;
-      // 探针已滚过顶部（dy<=阈值）且最靠近顶部者胜出。
-      if (dy <= _anchorThreshold && dy > bestTop) {
-        bestTop = dy;
+      final distance = (dy - threshold).abs();
+      if (distance < bestDistance) {
+        bestDistance = distance;
         current = entry.key;
       }
     }
-    // 尚无探针越过顶部时，取第一个（最新账期）。
     current ??= _firstAnchor();
+    if (_scrollController.hasClients &&
+        _scrollController.position.maxScrollExtent == 0 &&
+        _monthKeys.containsKey(_visibleAnchor.value)) {
+      return;
+    }
     if (current != null && current != _visibleAnchor.value) {
       _visibleAnchor.value = current;
     }
@@ -174,6 +182,10 @@ class _BillsPageState extends State<BillsPage> {
 
   /// 顶栏下沿的 y 阈值：探针 dy 小于它即视为"已进入顶部区域"。
   double get _anchorThreshold {
+    final listBox = _listKey.currentContext?.findRenderObject();
+    if (listBox is RenderBox && listBox.hasSize) {
+      return listBox.localToGlobal(Offset.zero).dy + 1;
+    }
     final topPad = MediaQuery.of(context).padding.top;
     return topPad + _headerAnchorOffset;
   }
@@ -220,6 +232,54 @@ class _BillsPageState extends State<BillsPage> {
     await _scrollToAnchor(anchors[target]);
   }
 
+  Future<void> _openPeriodPicker() async {
+    final current = _normalizeAnchor(_visibleAnchor.value ?? _bloc.state.month);
+    final selected = await FxSheet.show<DateTime>(
+      context,
+      title: S.of(context).billsPeriodPickerTitle,
+      maxHeightFactor: FxSheet.pickerHeightFactor,
+      child: BillsPeriodPicker(
+        loadedAnchors: _presentAnchors(),
+        currentAnchor: current,
+        onSelected: (anchor) => Navigator.of(context).pop(anchor),
+      ),
+    );
+    if (selected != null && mounted) await _jumpToPeriod(selected);
+  }
+
+  Future<void> _jumpToPeriod(DateTime selected) async {
+    final target = _normalizeAnchor(selected);
+    var anchors = _presentAnchors();
+    if (anchors.contains(target)) {
+      await _scrollToAnchor(target);
+      return;
+    }
+    while (anchors.isNotEmpty &&
+        target.isBefore(anchors.last) &&
+        _bloc.state.hasMore) {
+      final grew = await _loadMoreAndWait();
+      if (!mounted) return;
+      anchors = _presentAnchors();
+      if (anchors.contains(target)) {
+        await _scrollToAnchor(target);
+        return;
+      }
+      if (!grew) break;
+    }
+    if (!mounted) return;
+    if (_bloc.state.paginationErrorMessage != null) {
+      FxFeedback.show(
+        context,
+        message: S.of(context).billsPeriodLoadFailed,
+        tone: FxFeedbackTone.error,
+        actionLabel: S.of(context).commonRetry,
+        onAction: () => _jumpToPeriod(target),
+      );
+    } else {
+      FxFeedback.info(context, message: S.of(context).billsPeriodUnavailable);
+    }
+  }
+
   /// 触发下一页加载并等待其完成，返回列表是否增长。
   Future<bool> _loadMoreAndWait() async {
     final before = _bloc.state.bills.length;
@@ -248,13 +308,33 @@ class _BillsPageState extends State<BillsPage> {
       if (!mounted) return;
       ctx = _monthKeys[_normalizeAnchor(anchor)]?.currentContext;
     }
-    if (ctx == null || !mounted) return;
-    await Scrollable.ensureVisible(
-      ctx,
-      duration: FxMotion.normal,
-      curve: FxMotion.standard,
-    );
-    if (mounted) _visibleAnchor.value = _normalizeAnchor(anchor);
+    if (ctx == null || !ctx.mounted) return;
+    final probeBox = ctx.findRenderObject();
+    final listBox = _listKey.currentContext?.findRenderObject();
+    if (probeBox is RenderBox && listBox is RenderBox) {
+      final delta =
+          probeBox.localToGlobal(Offset.zero).dy -
+          listBox.localToGlobal(Offset.zero).dy;
+      final position = _scrollController.position;
+      final offset = (position.pixels + delta).clamp(
+        0.0,
+        position.maxScrollExtent,
+      );
+      await _scrollController.animateTo(
+        offset,
+        duration: FxMotion.normal,
+        curve: FxMotion.standard,
+      );
+    } else {
+      await Scrollable.ensureVisible(
+        ctx,
+        duration: FxMotion.normal,
+        curve: FxMotion.standard,
+      );
+    }
+    if (mounted) {
+      _visibleAnchor.value = _normalizeAnchor(anchor);
+    }
   }
 
   BillsBloc get _bloc => context.read<BillsBloc>();
@@ -368,34 +448,17 @@ class _BillsPageState extends State<BillsPage> {
               builder: (context, state) {
                 return Column(
                   children: [
-                    ValueListenableBuilder<DateTime?>(
-                      valueListenable: _visibleAnchor,
-                      builder: (context, anchor, _) {
-                        final effective = anchor ?? state.month;
-                        return Column(
-                          children: [
-                            _buildHeader(
-                              state,
-                              effective,
-                              hideAmounts,
-                              monthStartDay,
-                            ),
-                            _buildSummaryBar(
-                              state,
-                              effective,
-                              hideAmounts,
-                              monthStartDay,
-                            ),
-                          ],
-                        );
-                      },
-                    ),
+                    _buildTitleBar(state),
                     Expanded(
-                      child: _buildBody(
-                        state,
-                        bookId,
-                        hideAmounts,
-                        monthStartDay,
+                      child: ValueListenableBuilder<DateTime?>(
+                        valueListenable: _visibleAnchor,
+                        builder: (context, anchor, _) => _buildBody(
+                          state,
+                          bookId,
+                          hideAmounts,
+                          monthStartDay,
+                          anchor ?? state.month,
+                        ),
                       ),
                     ),
                   ],
@@ -408,17 +471,42 @@ class _BillsPageState extends State<BillsPage> {
     );
   }
 
-  Widget _buildHeader(
+  Widget _buildTitleBar(BillsState state) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(
+        FxSpacing.lg,
+        FxSpacing.sm,
+        FxSpacing.lg,
+        0,
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(
+              S.of(context).navBills,
+              textAlign: TextAlign.start,
+              style: FxTypography.titleLarge,
+            ),
+          ),
+          _filterButton(state, state.filter.activeCount),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPeriodControls(
     BillsState state,
     DateTime anchor,
     bool hideAmounts,
     int monthStartDay,
   ) {
     final palette = FxPalette.of(context);
-    final activeCount = state.filter.activeCount;
-    final canNavigateOlder = state.hasMore && !state.isLoadingMore;
-    final canNavigateNewer =
-        (_visibleAnchor.value ?? state.month) != state.month;
+    final anchors = _presentAnchors();
+    final currentIndex = anchors.indexOf(_normalizeAnchor(anchor));
+    final canNavigateOlder =
+        (currentIndex >= 0 && currentIndex < anchors.length - 1) ||
+        (state.hasMore && !state.isLoadingMore);
+    final canNavigateNewer = currentIndex > 0;
     final window = MonthWindowResolver.resolveForAnchor(anchor, monthStartDay);
     final rangeLabel =
         '${_rangeFormat.format(window.start)} - '
@@ -432,40 +520,47 @@ class _BillsPageState extends State<BillsPage> {
       ),
       child: Column(
         children: [
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  S.of(context).navBills,
-                  textAlign: TextAlign.start,
-                  style: FxTypography.titleLarge,
-                ),
-              ),
-              _filterButton(state, activeCount),
-            ],
-          ),
-          Row(
-            children: [
-              _iconButton(
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final older = _iconButton(
+                key: const ValueKey('bills-older-period'),
                 Icons.chevron_left_rounded,
-                tooltip: MaterialLocalizations.of(context).previousPageTooltip,
+                tooltip: S.of(context).billsPreviousCycle,
                 enabled: canNavigateOlder,
                 onTap: () => _navigateMonth(-1),
-              ),
-              Expanded(
-                child: Center(
+              );
+              final newer = _iconButton(
+                key: const ValueKey('bills-newer-period'),
+                Icons.chevron_right_rounded,
+                tooltip: S.of(context).billsNextCycle,
+                enabled: canNavigateNewer,
+                onTap: () => _navigateMonth(1),
+              );
+              final visibility = _amountVisibilityButton(hideAmounts);
+              final selector = InkResponse(
+                key: const ValueKey('bills-period-selector'),
+                onTap: _openPeriodPicker,
+                radius: 24,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: FxSpacing.xs,
+                    vertical: FxSpacing.xs,
+                  ),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
+                        key: const ValueKey('bills-current-period-label'),
                         S
                             .of(context)
                             .billsBillingCycle(_monthFormat.format(anchor)),
+                        textAlign: TextAlign.center,
                         style: FxTypography.title,
                       ),
                       const SizedBox(height: 2),
                       Text(
                         rangeLabel,
+                        textAlign: TextAlign.center,
                         style: FxTypography.caption.copyWith(
                           color: palette.textSecondary,
                         ),
@@ -473,17 +568,34 @@ class _BillsPageState extends State<BillsPage> {
                     ],
                   ),
                 ),
-              ),
-              _iconButton(
-                Icons.chevron_right_rounded,
-                tooltip: MaterialLocalizations.of(context).nextPageTooltip,
-                enabled: canNavigateNewer,
-                onTap: () => _navigateMonth(1),
-              ),
-              const SizedBox(width: FxSpacing.xs),
-              _amountVisibilityButton(hideAmounts),
-            ],
+              );
+              if (MediaQuery.textScalerOf(context).scale(1) > 1.3) {
+                return Column(
+                  children: [
+                    selector,
+                    const SizedBox(height: FxSpacing.xs),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [older, visibility, newer],
+                    ),
+                  ],
+                );
+              }
+              return Row(
+                children: [
+                  older,
+                  Expanded(child: selector),
+                  newer,
+                  const SizedBox(width: FxSpacing.xs),
+                  visibility,
+                ],
+              );
+            },
           ),
+          _buildSummaryBar(state, anchor, hideAmounts, monthStartDay),
+          if (state.errorMessage != null && state.status == BillsStatus.loaded)
+            _buildRefreshError(),
+          if (!state.filter.isEmpty) _buildActiveFilterSummary(state),
         ],
       ),
     );
@@ -491,6 +603,7 @@ class _BillsPageState extends State<BillsPage> {
 
   Widget _iconButton(
     IconData icon, {
+    Key? key,
     required String tooltip,
     required bool enabled,
     required VoidCallback onTap,
@@ -503,6 +616,7 @@ class _BillsPageState extends State<BillsPage> {
       child: Tooltip(
         message: tooltip,
         child: InkResponse(
+          key: key,
           onTap: enabled ? onTap : null,
           radius: 22,
           child: SizedBox(
@@ -544,12 +658,15 @@ class _BillsPageState extends State<BillsPage> {
 
   Widget _filterButton(BillsState state, int activeCount) {
     final palette = FxPalette.of(context);
+    final label = activeCount == 0
+        ? S.of(context).billsFilterTitle
+        : '${S.of(context).billsFilterTitle}，'
+              '$activeCount ${S.of(context).billsFilterActiveCount}';
     return Semantics(
       button: true,
-      label: S.of(context).billsFilterTitle,
-      value: activeCount == 0 ? null : '$activeCount',
+      label: label,
       child: Tooltip(
-        message: S.of(context).billsFilterTitle,
+        message: label,
         child: InkResponse(
           onTap: () => _openFilter(state),
           radius: 22,
@@ -565,22 +682,23 @@ class _BillsPageState extends State<BillsPage> {
                     right: 0,
                     top: 0,
                     child: Container(
-                      padding: const EdgeInsets.all(4),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 5,
+                        vertical: 2,
+                      ),
                       decoration: BoxDecoration(
                         color: palette.primary,
-                        shape: BoxShape.circle,
+                        borderRadius: BorderRadius.circular(10),
                       ),
                       constraints: const BoxConstraints(
-                        minWidth: 16,
-                        minHeight: 16,
+                        minWidth: 20,
+                        minHeight: 20,
                       ),
                       child: Text(
                         '$activeCount',
                         textAlign: TextAlign.center,
                         style: FxTypography.caption.copyWith(
                           color: palette.onPrimary,
-                          fontSize: 10,
-                          height: 1,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -600,96 +718,159 @@ class _BillsPageState extends State<BillsPage> {
     bool hideAmounts,
     int monthStartDay,
   ) {
-    final palette = FxPalette.of(context);
-    final finance = FxFinanceColors.of(context);
-    final stats = state.summaryForAnchor(anchor, monthStartDay);
-    if (!state.isSummaryAvailable || state.statistics == null) {
-      return const SizedBox.shrink();
+    BillStatistics? stats;
+    var filteredRange = false;
+    if (state.filter.dateRange != null) {
+      filteredRange = true;
+      stats = state.isSummaryAvailable ? state.statistics : null;
+    } else if (_normalizeAnchor(anchor) == _normalizeAnchor(state.month)) {
+      stats = state.isSummaryAvailable ? state.statistics : null;
+    } else {
+      final key = MonthWindowResolver.resolveForAnchor(
+        anchor,
+        monthStartDay,
+      ).anchorMonth;
+      stats = state.monthStatistics[key];
     }
+    if (stats == null) return const SizedBox.shrink();
     return Container(
       margin: const EdgeInsets.fromLTRB(
+        FxSpacing.lg,
+        FxSpacing.sm,
+        FxSpacing.lg,
+        FxSpacing.sm,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (filteredRange)
+            Padding(
+              padding: const EdgeInsets.only(bottom: FxSpacing.xs),
+              child: Text(
+                S.of(context).billsFilteredRangeSummary,
+                style: FxTypography.caption.copyWith(
+                  color: FxPalette.of(context).textSecondary,
+                ),
+              ),
+            ),
+          BillsPeriodSummary(statistics: stats, masked: hideAmounts),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildActiveFilterSummary(BillsState state) {
+    final palette = FxPalette.of(context);
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(
         FxSpacing.lg,
         0,
         FxSpacing.lg,
         FxSpacing.sm,
       ),
-      padding: const EdgeInsets.symmetric(
-        horizontal: FxSpacing.lg,
-        vertical: FxSpacing.md,
+      child: Container(
+        padding: const EdgeInsets.all(FxSpacing.md),
+        decoration: BoxDecoration(
+          color: palette.surfaceMuted,
+          borderRadius: FxRadius.cardBorder,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    '${state.filter.activeCount} '
+                    '${S.of(context).billsFilterActiveCount}',
+                    style: FxTypography.label,
+                  ),
+                ),
+                if (!state.isEmpty)
+                  TextButton(
+                    onPressed: () =>
+                        _bloc.add(BillsFilterApplied(BillsFilter.empty)),
+                    child: Text(S.of(context).billsClearFilters),
+                  ),
+              ],
+            ),
+            Text(
+              _filterDescription(state),
+              style: FxTypography.caption.copyWith(
+                color: palette.textSecondary,
+              ),
+            ),
+          ],
+        ),
       ),
-      decoration: BoxDecoration(
-        color: palette.surface,
-        borderRadius: FxRadius.tileBorder,
-        border: Border.all(color: palette.border.withValues(alpha: 0.72)),
+    );
+  }
+
+  String _filterDescription(BillsState state) {
+    final filter = state.filter;
+    final locale = _localeName;
+    final parts = <String>[
+      if (filter.title?.isNotEmpty == true)
+        '${S.of(context).billsFilterByTitle}：${filter.title}',
+      if (filter.billTypes.isNotEmpty)
+        '${S.of(context).billsFilterBillType}：${(filter.billTypes.toList()..sort()).map((value) => FxBillType.fromValue(value)?.localizedLabel(context) ?? '$value').join('、')}',
+      if (filter.amountMin != null || filter.amountMax != null)
+        '${S.of(context).billsFilterAmountRange}：${filter.amountMin?.toStringAsFixed(2) ?? '—'} – ${filter.amountMax?.toStringAsFixed(2) ?? '—'}',
+      if (filter.dateRange != null)
+        '${S.of(context).billsFilterTitle}：${DateFormat.yMMMd(locale).format(filter.dateRange!.start)} – ${DateFormat.yMMMd(locale).format(filter.dateRange!.end)}',
+      if (filter.confirm != null)
+        filter.confirm!
+            ? S.of(context).billsFilterConfirmed
+            : S.of(context).billsFilterUnconfirmed,
+      if (filter.include != null)
+        filter.include!
+            ? S.of(context).billsFilterIncluded
+            : S.of(context).billsFilterExcluded,
+      if (filter.categoryIds?.isNotEmpty == true)
+        '${S.of(context).billsCategoryDetail} ${filter.categoryIds!.length}',
+      if (filter.tagIds?.isNotEmpty == true)
+        '${S.of(context).billsTags} ${filter.tagIds!.length}',
+      if (filter.accountId != null) S.of(context).billsTransferOutAccount,
+      if (filter.payeeId != null) S.of(context).billsPayee,
+      if (filter.memberIds?.isNotEmpty == true)
+        '${S.of(context).billsMembers} ${filter.memberIds!.length}',
+    ];
+    return parts.join(' · ');
+  }
+
+  Widget _buildRefreshError() {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(
+        FxSpacing.lg,
+        0,
+        FxSpacing.lg,
+        FxSpacing.sm,
       ),
       child: Row(
         children: [
-          _summaryItem(
-            S.of(context).billsExpense,
-            stats.expense,
-            finance.expense,
-            masked: hideAmounts,
-          ),
-          _divider(),
-          _summaryItem(
-            S.of(context).billsIncome,
-            stats.income,
-            finance.income,
-            masked: hideAmounts,
-          ),
-          _divider(),
-          _summaryItem(
-            S.of(context).billsBalance,
-            stats.surplus,
-            palette.textPrimary,
-            masked: hideAmounts,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _summaryItem(
-    String label,
-    double amount,
-    Color color, {
-    required bool masked,
-  }) {
-    return Expanded(
-      child: Column(
-        children: [
-          Text(
-            label,
-            style: FxTypography.caption.copyWith(
-              color: FxPalette.of(context).textTertiary,
+          Expanded(
+            child: Text(
+              S.of(context).billsRefreshFailed,
+              style: FxTypography.caption.copyWith(
+                color: FxPalette.of(context).danger,
+              ),
             ),
           ),
-          const SizedBox(height: FxSpacing.xs),
-          FxMoneyText(
-            amount: amount,
-            color: color,
-            fontSize: 15,
-            fontWeight: FontWeight.w700,
-            masked: masked,
-            compactWhenNeeded: true,
+          TextButton(
+            onPressed: () => _bloc.add(const BillsRefreshed()),
+            child: Text(S.of(context).commonRetry),
           ),
         ],
       ),
     );
   }
-
-  Widget _divider() => Container(
-    width: 1,
-    height: 28,
-    color: FxPalette.of(context).border,
-    margin: const EdgeInsets.symmetric(horizontal: FxSpacing.sm),
-  );
 
   Widget _buildBody(
     BillsState state,
     int? bookId,
     bool hideAmounts,
     int monthStartDay,
+    DateTime anchor,
   ) {
     if (bookId == null) {
       return FxStateView.empty(message: S.of(context).billsSelectBookFirst);
@@ -697,36 +878,66 @@ class _BillsPageState extends State<BillsPage> {
     switch (state.status) {
       case BillsStatus.initial:
       case BillsStatus.loading:
-        return FxStateView.loading();
+        return ListView(
+          children: [
+            _buildPeriodControls(state, anchor, hideAmounts, monthStartDay),
+            FxStateView.loading(title: S.of(context).navBills),
+          ],
+        );
       case BillsStatus.error:
-        return FxStateView.error(
-          message: state.errorMessage,
-          onRetry: () => _bloc.add(const BillsRefreshed()),
+        return ListView(
+          children: [
+            _buildPeriodControls(state, anchor, hideAmounts, monthStartDay),
+            FxStateView.error(
+              title: S.of(context).navBills,
+              message: state.errorMessage,
+              onRetry: () => _bloc.add(const BillsRefreshed()),
+            ),
+          ],
         );
       case BillsStatus.loaded:
         if (state.isEmpty) {
+          final filtered = !state.filter.isEmpty;
           return RefreshIndicator(
             onRefresh: _refresh,
             child: ListView(
               children: [
-                SizedBox(
-                  height:
-                      MediaQuery.of(context).size.height *
-                      FxSheet.hintHeightFactor,
-                  child: FxStateView.empty(
-                    message: S.of(context).billsEmpty,
-                    icon: Icons.receipt_long_rounded,
-                  ),
+                _buildPeriodControls(state, anchor, hideAmounts, monthStartDay),
+                FxStateView.empty(
+                  title: S.of(context).navBills,
+                  message: filtered
+                      ? S.of(context).billsFilterNoResults
+                      : S.of(context).billsEmpty,
+                  icon: Icons.receipt_long_rounded,
+                  onRetry: filtered
+                      ? () => _bloc.add(BillsFilterApplied(BillsFilter.empty))
+                      : null,
+                  retryLabel: filtered ? S.of(context).billsClearFilters : null,
                 ),
+                if (filtered)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: FxSpacing.lg,
+                    ),
+                    child: OutlinedButton(
+                      onPressed: () => _openFilter(state),
+                      child: Text(S.of(context).billsAdjustFilters),
+                    ),
+                  ),
               ],
             ),
           );
         }
-        return _buildList(state, hideAmounts, monthStartDay);
+        return _buildList(state, hideAmounts, monthStartDay, anchor);
     }
   }
 
-  Widget _buildList(BillsState state, bool hideAmounts, int monthStartDay) {
+  Widget _buildList(
+    BillsState state,
+    bool hideAmounts,
+    int monthStartDay,
+    DateTime anchor,
+  ) {
     final groups = state.monthGroups(monthStartDay);
     // 重建探针 key 集合，仅保留当前分组锚点。
     final anchors = groups.map((g) => g.window.anchorMonth).toSet();
@@ -738,9 +949,18 @@ class _BillsPageState extends State<BillsPage> {
     return RefreshIndicator(
       onRefresh: _refresh,
       child: CustomScrollView(
+        key: _listKey,
         controller: _scrollController,
         physics: const AlwaysScrollableScrollPhysics(),
         slivers: [
+          SliverToBoxAdapter(
+            child: _buildPeriodControls(
+              state,
+              anchor,
+              hideAmounts,
+              monthStartDay,
+            ),
+          ),
           for (var i = 0; i < groups.length; i++) ...[
             SliverToBoxAdapter(
               child: SizedBox(
@@ -788,11 +1008,21 @@ class _BillsPageState extends State<BillsPage> {
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.all(FxSpacing.lg),
-                child: Center(
-                  child: TextButton(
-                    onPressed: () => _bloc.add(const BillsPaginationRetried()),
-                    child: Text(S.of(context).commonRetry),
-                  ),
+                child: Column(
+                  children: [
+                    Text(
+                      S.of(context).billsPaginationLoadFailed,
+                      textAlign: TextAlign.center,
+                      style: FxTypography.caption.copyWith(
+                        color: FxPalette.of(context).textSecondary,
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () =>
+                          _bloc.add(const BillsPaginationRetried()),
+                      child: Text(S.of(context).commonRetry),
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -806,7 +1036,6 @@ class _BillsPageState extends State<BillsPage> {
 
   Widget _monthHeader(BillMonthGroup group, bool hideAmounts) {
     final palette = FxPalette.of(context);
-    final finance = FxFinanceColors.of(context);
     final stats = group.statistics;
     final range =
         '${_rangeFormat.format(group.window.start)} - '
@@ -818,100 +1047,47 @@ class _BillsPageState extends State<BillsPage> {
         FxSpacing.lg,
         FxSpacing.xs,
       ),
-      child: Container(
-        padding: const EdgeInsets.all(FxSpacing.md),
-        decoration: BoxDecoration(
-          color: palette.surface,
-          borderRadius: FxRadius.cardBorder,
-          boxShadow: [
-            BoxShadow(
-              color: palette.shadow,
-              blurRadius: 10,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Text(
-                  S
-                      .of(context)
-                      .billsBillingCycle(
-                        _monthFormat.format(group.window.anchorMonth),
-                      ),
-                  style: FxTypography.label.copyWith(
-                    color: FxPalette.of(context).textSecondary,
-                  ),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final stacked =
+              constraints.maxWidth < 280 ||
+              MediaQuery.textScalerOf(context).scale(1) > 1.3;
+          final title = Text(
+            S
+                .of(context)
+                .billsBillingCycle(
+                  _monthFormat.format(group.window.anchorMonth),
                 ),
-                const Spacer(),
-                Text(
-                  range,
-                  style: FxTypography.caption.copyWith(
-                    color: palette.textSecondary,
-                  ),
+            style: FxTypography.title,
+          );
+          final rangeText = Text(
+            range,
+            textAlign: stacked ? TextAlign.start : TextAlign.end,
+            style: FxTypography.caption.copyWith(color: palette.textSecondary),
+          );
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (stacked) ...[
+                title,
+                const SizedBox(height: FxSpacing.xs),
+                rangeText,
+              ] else
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(child: title),
+                    const SizedBox(width: FxSpacing.md),
+                    Flexible(child: rangeText),
+                  ],
                 ),
+              if (stats != null) ...[
+                const SizedBox(height: FxSpacing.md),
+                BillsPeriodSummary(statistics: stats, masked: hideAmounts),
               ],
-            ),
-            if (stats != null) ...[
-              const SizedBox(height: FxSpacing.sm),
-              Row(
-                children: [
-                  _miniSummary(
-                    S.of(context).billsExpense,
-                    stats.expense,
-                    finance.expense,
-                    masked: hideAmounts,
-                  ),
-                  _miniSummary(
-                    S.of(context).billsIncome,
-                    stats.income,
-                    finance.income,
-                    masked: hideAmounts,
-                  ),
-                  _miniSummary(
-                    S.of(context).billsBalance,
-                    stats.surplus,
-                    palette.textPrimary,
-                    masked: hideAmounts,
-                  ),
-                ],
-              ),
             ],
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _miniSummary(
-    String label,
-    double amount,
-    Color color, {
-    required bool masked,
-  }) {
-    return Expanded(
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            '$label ',
-            style: FxTypography.caption.copyWith(
-              color: FxPalette.of(context).textTertiary,
-            ),
-          ),
-          Flexible(
-            child: FxMoneyText(
-              amount: amount,
-              color: color,
-              fontSize: 12,
-              fontWeight: FontWeight.w700,
-              masked: masked,
-            ),
-          ),
-        ],
+          );
+        },
       ),
     );
   }
@@ -1049,11 +1225,13 @@ class SliverStickyGroup extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textScale = MediaQuery.textScalerOf(context).scale(1);
+    final headerHeight = 20 * textScale + FxSpacing.sm + FxSpacing.xs;
     return SliverMainAxisGroup(
       slivers: [
         SliverPersistentHeader(
           pinned: true,
-          delegate: _DayHeaderDelegate(child: header),
+          delegate: _DayHeaderDelegate(child: header, height: headerHeight),
         ),
         SliverList(delegate: SliverChildListDelegate(children)),
       ],
@@ -1063,15 +1241,14 @@ class SliverStickyGroup extends StatelessWidget {
 
 class _DayHeaderDelegate extends SliverPersistentHeaderDelegate {
   final Widget child;
-  const _DayHeaderDelegate({required this.child});
-
-  static const double _height = 32;
-
-  @override
-  double get minExtent => _height;
+  final double height;
+  const _DayHeaderDelegate({required this.child, required this.height});
 
   @override
-  double get maxExtent => _height;
+  double get minExtent => height;
+
+  @override
+  double get maxExtent => height;
 
   @override
   Widget build(
@@ -1079,10 +1256,10 @@ class _DayHeaderDelegate extends SliverPersistentHeaderDelegate {
     double shrinkOffset,
     bool overlapsContent,
   ) {
-    return SizedBox(height: _height, child: child);
+    return SizedBox(height: height, child: child);
   }
 
   @override
   bool shouldRebuild(_DayHeaderDelegate oldDelegate) =>
-      oldDelegate.child != child;
+      oldDelegate.child != child || oldDelegate.height != height;
 }

@@ -1,0 +1,47 @@
+{
+  "comparison": "multiset by file/rule/message/severity; generated formatting line shifts ignored",
+  "baseline": {
+    "source": "S3-A attempt-001 final analysis, same starting production HEAD",
+    "issues": 1179,
+    "error": 0,
+    "warning": 260,
+    "info": 919
+  },
+  "final": {
+    "issues": 1175,
+    "error": 0,
+    "warning": 260,
+    "info": 915
+  },
+  "added": [],
+  "removed": [
+    {
+      "file": "lib/features/bills/presentation/widgets/bills_filter_sheet.dart",
+      "rule": "prefer_const_constructors",
+      "message": "Use 'const' with the constructor to improve performance",
+      "severity": "info",
+      "count": 1
+    },
+    {
+      "file": "lib/features/bills/presentation/widgets/bills_filter_sheet.dart",
+      "rule": "prefer_const_constructors",
+      "message": "Use 'const' with the constructor to improve performance",
+      "severity": "info",
+      "count": 1
+    },
+    {
+      "file": "lib/features/bills/presentation/widgets/bills_filter_sheet.dart",
+      "rule": "deprecated_member_use",
+      "message": "'value' is deprecated and shouldn't be used. Use initialValue instead. This will set the initial value for the form field. This feature was deprecated after v3.33.0-1.0.pre",
+      "severity": "info",
+      "count": 1
+    },
+    {
+      "file": "lib/features/bills/presentation/bills_page.dart",
+      "rule": "use_build_context_synchronously",
+      "message": "Don't use 'BuildContext's across async gaps, guarded by an unrelated 'mounted' check",
+      "severity": "info",
+      "count": 1
+    }
+  ]
+}

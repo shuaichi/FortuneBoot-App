@@ -2957,6 +2957,241 @@ class S {
     return Intl.message('Any', name: 'billsFilterAny', desc: '', args: []);
   }
 
+  /// `Choose billing period`
+  String get billsPeriodPickerTitle {
+    return Intl.message(
+      'Choose billing period',
+      name: 'billsPeriodPickerTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Year`
+  String get billsPeriodYear {
+    return Intl.message('Year', name: 'billsPeriodYear', desc: '', args: []);
+  }
+
+  /// `Periods with a dot are loaded and ready to open`
+  String get billsPeriodLoadedHint {
+    return Intl.message(
+      'Periods with a dot are loaded and ready to open',
+      name: 'billsPeriodLoadedHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Loaded`
+  String get billsPeriodLoaded {
+    return Intl.message(
+      'Loaded',
+      name: 'billsPeriodLoaded',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No transactions were found for this period`
+  String get billsPeriodUnavailable {
+    return Intl.message(
+      'No transactions were found for this period',
+      name: 'billsPeriodUnavailable',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Could not load this period. Try again.`
+  String get billsPeriodLoadFailed {
+    return Intl.message(
+      'Could not load this period. Try again.',
+      name: 'billsPeriodLoadFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Previous billing period`
+  String get billsPreviousCycle {
+    return Intl.message(
+      'Previous billing period',
+      name: 'billsPreviousCycle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Next billing period`
+  String get billsNextCycle {
+    return Intl.message(
+      'Next billing period',
+      name: 'billsNextCycle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `filters active`
+  String get billsFilterActiveCount {
+    return Intl.message(
+      'filters active',
+      name: 'billsFilterActiveCount',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No bills match the current filters`
+  String get billsFilterNoResults {
+    return Intl.message(
+      'No bills match the current filters',
+      name: 'billsFilterNoResults',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Clear filters`
+  String get billsClearFilters {
+    return Intl.message(
+      'Clear filters',
+      name: 'billsClearFilters',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Adjust filters`
+  String get billsAdjustFilters {
+    return Intl.message(
+      'Adjust filters',
+      name: 'billsAdjustFilters',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Advanced filters`
+  String get billsAdvancedFilters {
+    return Intl.message(
+      'Advanced filters',
+      name: 'billsAdvancedFilters',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Confirmation, statistics, categories, and people`
+  String get billsAdvancedFiltersHint {
+    return Intl.message(
+      'Confirmation, statistics, categories, and people',
+      name: 'billsAdvancedFiltersHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Minimum amount`
+  String get billsFilterMinLabel {
+    return Intl.message(
+      'Minimum amount',
+      name: 'billsFilterMinLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Maximum amount`
+  String get billsFilterMaxLabel {
+    return Intl.message(
+      'Maximum amount',
+      name: 'billsFilterMaxLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Minimum amount is not a valid number`
+  String get billsFilterMinInvalid {
+    return Intl.message(
+      'Minimum amount is not a valid number',
+      name: 'billsFilterMinInvalid',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Maximum amount is not a valid number`
+  String get billsFilterMaxInvalid {
+    return Intl.message(
+      'Maximum amount is not a valid number',
+      name: 'billsFilterMaxInvalid',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Maximum amount must be at least the minimum`
+  String get billsFilterMaxLessThanMin {
+    return Intl.message(
+      'Maximum amount must be at least the minimum',
+      name: 'billsFilterMaxLessThanMin',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Selected date range summary`
+  String get billsFilteredRangeSummary {
+    return Intl.message(
+      'Selected date range summary',
+      name: 'billsFilteredRangeSummary',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Could not load more bills. Existing bills are still here.`
+  String get billsPaginationLoadFailed {
+    return Intl.message(
+      'Could not load more bills. Existing bills are still here.',
+      name: 'billsPaginationLoadFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Refresh failed. Existing bills are still here.`
+  String get billsRefreshFailed {
+    return Intl.message(
+      'Refresh failed. Existing bills are still here.',
+      name: 'billsRefreshFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Settled`
+  String get billsSettledAmount {
+    return Intl.message(
+      'Settled',
+      name: 'billsSettledAmount',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Original`
+  String get billsOriginalAmount {
+    return Intl.message(
+      'Original',
+      name: 'billsOriginalAmount',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Please select a ledger before adding a bill`
   String get billEditorSelectBookFirst {
     return Intl.message(

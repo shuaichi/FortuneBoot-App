@@ -1,0 +1,25 @@
+{
+  "originalValidation": "FAIL: Source audit IDs changed or duplicated",
+  "originalOccurrences": 391,
+  "uniqueAuditIds": 334,
+  "issueMapIds": 334,
+  "mappingMatches": true,
+  "duplicatePositions": [
+    {
+      "id": "DT-01",
+      "lines": [
+        86,
+        427
+      ]
+    },
+    {
+      "id": "CX-01",
+      "lines": [
+        350,
+        691
+      ]
+    }
+  ],
+  "originalFileModified": false,
+  "note": "保留原报告；通过首次出现去重仅作本轮只读结构核验，不伪造 validate_pack.py 退出 0。"
+}

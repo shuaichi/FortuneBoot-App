@@ -1,0 +1,2152 @@
+{
+  "schemaVersion": 1,
+  "stage": "S4-A",
+  "attempt": 1,
+  "sourceSha": "878b2dafa8fc18a3f5e7f2e08372b9b491f256de",
+  "sourceSnapshotSha256": "d20a4a09cd2cde91b6a951b81dcf427f5dfaedac62ec6f31bd026a6c9ac15cc2",
+  "scope": "lib/features/bills plus same-domain tests, required ARB/generated localization and S4-A evidence only",
+  "summary": {
+    "total": 61,
+    "byState": {
+      "VERIFIED_LOCAL": 59,
+      "NOT_APPLICABLE": 2
+    }
+  },
+  "items": [
+    {
+      "issueId": "BO-011",
+      "priority": "P1",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-A",
+      "sourcePaths": [
+        "lib/features/bills/presentation/bills_page.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/bills/presentation/bills_page.dart": "ff2b7c074b6f05f1e1c4d0a8d8c905f6f0c630ee9b28b25c0eac03876d9ec085",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "d41f186029d8080acf57692591916015eac590d41db31403a861b8d72cf1a5dd",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart": "4a4201dfdcba3e13b64f77672034ec20120b146dee16d4be256c877a188c98df",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart": "88f37c8dccc262aa9d6016fcbca384626b74efd075ef6da0cc672f179012f03e",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart": "5ed867c71d5aa64b4b4aec4f7c6024422eac1b78226536b4ba24073ed87e4faf"
+      },
+      "verified": "39/39 bills tests; 584 passed/1 skipped full suite; 11/11 viewed Flutter business renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "VoiceOver/TalkBack、测试站真实接口与模拟器原生点击 NOT_RUN；按用户 2026-11-05 新规则不阻塞本阶段分配问题完成。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/decisive-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/full-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/render-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/screenshot-index.json"
+      ],
+      "reason": "仅评 S4-A 账单域实例，不代其它 owner 或全局 DT 宣布关闭。",
+      "observedBehavior": "旧箭头只由 hasMore 控制，已加载历史月份仍可能不可点。",
+      "implemented": "按已加载 anchors 的索引启用；未加载历史按需分页，失败保留列表。"
+    },
+    {
+      "issueId": "BO-012",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-A",
+      "sourcePaths": [
+        "lib/features/bills/presentation/bills_page.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/bills/presentation/bills_page.dart": "ff2b7c074b6f05f1e1c4d0a8d8c905f6f0c630ee9b28b25c0eac03876d9ec085",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "d41f186029d8080acf57692591916015eac590d41db31403a861b8d72cf1a5dd",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart": "4a4201dfdcba3e13b64f77672034ec20120b146dee16d4be256c877a188c98df",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart": "88f37c8dccc262aa9d6016fcbca384626b74efd075ef6da0cc672f179012f03e",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart": "5ed867c71d5aa64b4b4aec4f7c6024422eac1b78226536b4ba24073ed87e4faf"
+      },
+      "verified": "39/39 bills tests; 584 passed/1 skipped full suite; 11/11 viewed Flutter business renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "VoiceOver/TalkBack、测试站真实接口与模拟器原生点击 NOT_RUN；按用户 2026-11-05 新规则不阻塞本阶段分配问题完成。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/decisive-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/full-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/render-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/screenshot-index.json"
+      ],
+      "reason": "仅评 S4-A 账单域实例，不代其它 owner 或全局 DT 宣布关闭。",
+      "observedBehavior": "只能逐次箭头，不能快速定位指定年月。",
+      "implemented": "新增年月选择器；已加载直接定位，未加载旧账期逐页加载；短列表保留明确选择。"
+    },
+    {
+      "issueId": "BO-013",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-A",
+      "sourcePaths": [
+        "lib/features/bills/presentation/bills_page.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/bills/presentation/bills_page.dart": "ff2b7c074b6f05f1e1c4d0a8d8c905f6f0c630ee9b28b25c0eac03876d9ec085",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "d41f186029d8080acf57692591916015eac590d41db31403a861b8d72cf1a5dd",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart": "4a4201dfdcba3e13b64f77672034ec20120b146dee16d4be256c877a188c98df",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart": "88f37c8dccc262aa9d6016fcbca384626b74efd075ef6da0cc672f179012f03e",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart": "5ed867c71d5aa64b4b4aec4f7c6024422eac1b78226536b4ba24073ed87e4faf"
+      },
+      "verified": "39/39 bills tests; 584 passed/1 skipped full suite; 11/11 viewed Flutter business renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "VoiceOver/TalkBack、测试站真实接口与模拟器原生点击 NOT_RUN；按用户 2026-11-05 新规则不阻塞本阶段分配问题完成。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/decisive-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/full-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/render-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/screenshot-index.json"
+      ],
+      "reason": "仅评 S4-A 账单域实例，不代其它 owner 或全局 DT 宣布关闭。",
+      "observedBehavior": "筛选仅剩角标，零结果无法就地恢复。",
+      "implemented": "显示生效条件摘要与数量；零结果提供清除筛选和调整筛选。"
+    },
+    {
+      "issueId": "BO-014",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-A",
+      "sourcePaths": [
+        "lib/features/bills/presentation/bills_page.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/bills/presentation/bills_page.dart": "ff2b7c074b6f05f1e1c4d0a8d8c905f6f0c630ee9b28b25c0eac03876d9ec085",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "d41f186029d8080acf57692591916015eac590d41db31403a861b8d72cf1a5dd",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart": "4a4201dfdcba3e13b64f77672034ec20120b146dee16d4be256c877a188c98df",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart": "88f37c8dccc262aa9d6016fcbca384626b74efd075ef6da0cc672f179012f03e",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart": "5ed867c71d5aa64b4b4aec4f7c6024422eac1b78226536b4ba24073ed87e4faf"
+      },
+      "verified": "39/39 bills tests; 584 passed/1 skipped full suite; 11/11 viewed Flutter business renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "VoiceOver/TalkBack、测试站真实接口与模拟器原生点击 NOT_RUN；按用户 2026-11-05 新规则不阻塞本阶段分配问题完成。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/decisive-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/full-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/render-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/screenshot-index.json"
+      ],
+      "reason": "仅评 S4-A 账单域实例，不代其它 owner 或全局 DT 宣布关闭。",
+      "observedBehavior": "粘性日头固定 32，2x 会裁切。",
+      "implemented": "按 TextScaler 和 20px 行高计算 extent，320/2x 已验证。"
+    },
+    {
+      "issueId": "BO-015",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-A",
+      "sourcePaths": [
+        "lib/features/bills/presentation/bills_page.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/bills/presentation/bills_page.dart": "ff2b7c074b6f05f1e1c4d0a8d8c905f6f0c630ee9b28b25c0eac03876d9ec085",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "d41f186029d8080acf57692591916015eac590d41db31403a861b8d72cf1a5dd",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart": "4a4201dfdcba3e13b64f77672034ec20120b146dee16d4be256c877a188c98df",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart": "88f37c8dccc262aa9d6016fcbca384626b74efd075ef6da0cc672f179012f03e",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart": "5ed867c71d5aa64b4b4aec4f7c6024422eac1b78226536b4ba24073ed87e4faf"
+      },
+      "verified": "39/39 bills tests; 584 passed/1 skipped full suite; 11/11 viewed Flutter business renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "VoiceOver/TalkBack、测试站真实接口与模拟器原生点击 NOT_RUN；按用户 2026-11-05 新规则不阻塞本阶段分配问题完成。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/decisive-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/full-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/render-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/screenshot-index.json"
+      ],
+      "reason": "仅评 S4-A 账单域实例，不代其它 owner 或全局 DT 宣布关闭。",
+      "observedBehavior": "当前汇总与历史月份阴影、字号、布局不一致。",
+      "implemented": "统一 BillsPeriodSummary，无阴影、0.5 边框、13 标签/17 金额；首屏即请求各历史月统计。"
+    },
+    {
+      "issueId": "BO-016",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-A",
+      "sourcePaths": [
+        "lib/features/bills/presentation/bills_page.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/bills/presentation/bills_page.dart": "ff2b7c074b6f05f1e1c4d0a8d8c905f6f0c630ee9b28b25c0eac03876d9ec085",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "d41f186029d8080acf57692591916015eac590d41db31403a861b8d72cf1a5dd",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart": "4a4201dfdcba3e13b64f77672034ec20120b146dee16d4be256c877a188c98df",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart": "88f37c8dccc262aa9d6016fcbca384626b74efd075ef6da0cc672f179012f03e",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart": "5ed867c71d5aa64b4b4aec4f7c6024422eac1b78226536b4ba24073ed87e4faf"
+      },
+      "verified": "39/39 bills tests; 584 passed/1 skipped full suite; 11/11 viewed Flutter business renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "VoiceOver/TalkBack、测试站真实接口与模拟器原生点击 NOT_RUN；按用户 2026-11-05 新规则不阻塞本阶段分配问题完成。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/decisive-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/full-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/render-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/screenshot-index.json"
+      ],
+      "reason": "仅评 S4-A 账单域实例，不代其它 owner 或全局 DT 宣布关闭。",
+      "observedBehavior": "紧凑摘要与历史标题缺窄屏重排。",
+      "implemented": "320/2x、440/2x 下汇总转上下行，账期标题与日期重排。"
+    },
+    {
+      "issueId": "BO-017",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-A",
+      "sourcePaths": [
+        "lib/features/bills/presentation/bills_page.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/bills/presentation/bills_page.dart": "ff2b7c074b6f05f1e1c4d0a8d8c905f6f0c630ee9b28b25c0eac03876d9ec085",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "d41f186029d8080acf57692591916015eac590d41db31403a861b8d72cf1a5dd",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart": "4a4201dfdcba3e13b64f77672034ec20120b146dee16d4be256c877a188c98df",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart": "88f37c8dccc262aa9d6016fcbca384626b74efd075ef6da0cc672f179012f03e",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart": "5ed867c71d5aa64b4b4aec4f7c6024422eac1b78226536b4ba24073ed87e4faf"
+      },
+      "verified": "39/39 bills tests; 584 passed/1 skipped full suite; 11/11 viewed Flutter business renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "VoiceOver/TalkBack、测试站真实接口与模拟器原生点击 NOT_RUN；按用户 2026-11-05 新规则不阻塞本阶段分配问题完成。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/decisive-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/full-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/render-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/screenshot-index.json"
+      ],
+      "reason": "仅评 S4-A 账单域实例，不代其它 owner 或全局 DT 宣布关闭。",
+      "observedBehavior": "金额区间错误泛化且不定位字段。",
+      "implemented": "最小/最大非法数字分开提示；min>max 绑定最大字段并聚焦/滚动首错。"
+    },
+    {
+      "issueId": "BO-018",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-A",
+      "sourcePaths": [
+        "lib/features/bills/presentation/bills_page.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/bills/presentation/bills_page.dart": "ff2b7c074b6f05f1e1c4d0a8d8c905f6f0c630ee9b28b25c0eac03876d9ec085",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "d41f186029d8080acf57692591916015eac590d41db31403a861b8d72cf1a5dd",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart": "4a4201dfdcba3e13b64f77672034ec20120b146dee16d4be256c877a188c98df",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart": "88f37c8dccc262aa9d6016fcbca384626b74efd075ef6da0cc672f179012f03e",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart": "5ed867c71d5aa64b4b4aec4f7c6024422eac1b78226536b4ba24073ed87e4faf"
+      },
+      "verified": "39/39 bills tests; 584 passed/1 skipped full suite; 11/11 viewed Flutter business renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "VoiceOver/TalkBack、测试站真实接口与模拟器原生点击 NOT_RUN；按用户 2026-11-05 新规则不阻塞本阶段分配问题完成。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/decisive-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/full-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/render-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/screenshot-index.json"
+      ],
+      "reason": "仅评 S4-A 账单域实例，不代其它 owner 或全局 DT 宣布关闭。",
+      "observedBehavior": "异构条件全部等权展开。",
+      "implemented": "标题/类型/金额/日期为常用；确认/统计/分类/标签/账户/对象/成员归入高级筛选。"
+    },
+    {
+      "issueId": "BO-019",
+      "priority": "P3",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-A",
+      "sourcePaths": [
+        "lib/features/bills/presentation/bills_page.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/bills/presentation/bills_page.dart": "ff2b7c074b6f05f1e1c4d0a8d8c905f6f0c630ee9b28b25c0eac03876d9ec085",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "d41f186029d8080acf57692591916015eac590d41db31403a861b8d72cf1a5dd",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart": "4a4201dfdcba3e13b64f77672034ec20120b146dee16d4be256c877a188c98df",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart": "88f37c8dccc262aa9d6016fcbca384626b74efd075ef6da0cc672f179012f03e",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart": "5ed867c71d5aa64b4b4aec4f7c6024422eac1b78226536b4ba24073ed87e4faf"
+      },
+      "verified": "39/39 bills tests; 584 passed/1 skipped full suite; 11/11 viewed Flutter business renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "VoiceOver/TalkBack、测试站真实接口与模拟器原生点击 NOT_RUN；按用户 2026-11-05 新规则不阻塞本阶段分配问题完成。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/decisive-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/full-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/render-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/screenshot-index.json"
+      ],
+      "reason": "仅评 S4-A 账单域实例，不代其它 owner 或全局 DT 宣布关闭。",
+      "observedBehavior": "图标说明和徽标语义不清。",
+      "implemented": "附件图标补 Tooltip/语义，待确认使用可读 caption，筛选角标语义含条件数。"
+    },
+    {
+      "issueId": "BO-004",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-A",
+      "sourcePaths": [
+        "lib/features/bills/presentation/bills_page.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/bills/presentation/bills_page.dart": "ff2b7c074b6f05f1e1c4d0a8d8c905f6f0c630ee9b28b25c0eac03876d9ec085",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "d41f186029d8080acf57692591916015eac590d41db31403a861b8d72cf1a5dd",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart": "4a4201dfdcba3e13b64f77672034ec20120b146dee16d4be256c877a188c98df",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart": "88f37c8dccc262aa9d6016fcbca384626b74efd075ef6da0cc672f179012f03e",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart": "5ed867c71d5aa64b4b4aec4f7c6024422eac1b78226536b4ba24073ed87e4faf"
+      },
+      "verified": "39/39 bills tests; 584 passed/1 skipped full suite; 11/11 viewed Flutter business renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "VoiceOver/TalkBack、测试站真实接口与模拟器原生点击 NOT_RUN；按用户 2026-11-05 新规则不阻塞本阶段分配问题完成。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/decisive-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/full-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/render-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/screenshot-index.json"
+      ],
+      "reason": "仅评 S4-A 账单域实例，不代其它 owner 或全局 DT 宣布关闭。",
+      "observedBehavior": "表单视觉标签与输入语义关联不足。",
+      "implemented": "标题和金额使用 FxTextField/FxAmountInput 显式 label 与 MergeSemantics。"
+    },
+    {
+      "issueId": "BO-006",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-A",
+      "sourcePaths": [
+        "lib/features/bills/presentation/bills_page.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/bills/presentation/bills_page.dart": "ff2b7c074b6f05f1e1c4d0a8d8c905f6f0c630ee9b28b25c0eac03876d9ec085",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "d41f186029d8080acf57692591916015eac590d41db31403a861b8d72cf1a5dd",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart": "4a4201dfdcba3e13b64f77672034ec20120b146dee16d4be256c877a188c98df",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart": "88f37c8dccc262aa9d6016fcbca384626b74efd075ef6da0cc672f179012f03e",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart": "5ed867c71d5aa64b4b4aec4f7c6024422eac1b78226536b4ba24073ed87e4faf"
+      },
+      "verified": "39/39 bills tests; 584 passed/1 skipped full suite; 11/11 viewed Flutter business renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "VoiceOver/TalkBack、测试站真实接口与模拟器原生点击 NOT_RUN；按用户 2026-11-05 新规则不阻塞本阶段分配问题完成。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/decisive-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/full-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/render-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/screenshot-index.json"
+      ],
+      "reason": "仅评 S4-A 账单域实例，不代其它 owner 或全局 DT 宣布关闭。",
+      "observedBehavior": "金额输入静默拒绝常见粘贴。",
+      "implemented": "复用共享正规化，￥、千分位等粘贴转换后进入真实查询。"
+    },
+    {
+      "issueId": "BO-009",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-A",
+      "sourcePaths": [
+        "lib/features/bills/presentation/bills_page.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/bills/presentation/bills_page.dart": "ff2b7c074b6f05f1e1c4d0a8d8c905f6f0c630ee9b28b25c0eac03876d9ec085",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "d41f186029d8080acf57692591916015eac590d41db31403a861b8d72cf1a5dd",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart": "4a4201dfdcba3e13b64f77672034ec20120b146dee16d4be256c877a188c98df",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart": "88f37c8dccc262aa9d6016fcbca384626b74efd075ef6da0cc672f179012f03e",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart": "5ed867c71d5aa64b4b4aec4f7c6024422eac1b78226536b4ba24073ed87e4faf"
+      },
+      "verified": "39/39 bills tests; 584 passed/1 skipped full suite; 11/11 viewed Flutter business renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "VoiceOver/TalkBack、测试站真实接口与模拟器原生点击 NOT_RUN；按用户 2026-11-05 新规则不阻塞本阶段分配问题完成。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/decisive-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/full-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/render-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/screenshot-index.json"
+      ],
+      "reason": "仅评 S4-A 账单域实例，不代其它 owner 或全局 DT 宣布关闭。",
+      "observedBehavior": "关键状态和对账辅助金额过小。",
+      "implemented": "汇总金额 17，费用主口径 17；费用分解 caption，待确认 13。"
+    },
+    {
+      "issueId": "BO-010",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-A",
+      "sourcePaths": [
+        "lib/features/bills/presentation/bills_page.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/bills/presentation/bills_page.dart": "ff2b7c074b6f05f1e1c4d0a8d8c905f6f0c630ee9b28b25c0eac03876d9ec085",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "d41f186029d8080acf57692591916015eac590d41db31403a861b8d72cf1a5dd",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart": "4a4201dfdcba3e13b64f77672034ec20120b146dee16d4be256c877a188c98df",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart": "88f37c8dccc262aa9d6016fcbca384626b74efd075ef6da0cc672f179012f03e",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart": "5ed867c71d5aa64b4b4aec4f7c6024422eac1b78226536b4ba24073ed87e4faf"
+      },
+      "verified": "39/39 bills tests; 584 passed/1 skipped full suite; 11/11 viewed Flutter business renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "VoiceOver/TalkBack、测试站真实接口与模拟器原生点击 NOT_RUN；按用户 2026-11-05 新规则不阻塞本阶段分配问题完成。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/decisive-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/full-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/render-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/screenshot-index.json"
+      ],
+      "reason": "仅评 S4-A 账单域实例，不代其它 owner 或全局 DT 宣布关闭。",
+      "observedBehavior": "强色表面配对前景需核对。",
+      "implemented": "保留 onPrimary/onDanger 侧滑与筛选角标；暗色图片已看，媒体预览不在本阶段。"
+    },
+    {
+      "issueId": "BO-021",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-A",
+      "sourcePaths": [
+        "lib/features/bills/presentation/bills_page.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/bills/presentation/bills_page.dart": "ff2b7c074b6f05f1e1c4d0a8d8c905f6f0c630ee9b28b25c0eac03876d9ec085",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "d41f186029d8080acf57692591916015eac590d41db31403a861b8d72cf1a5dd",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart": "4a4201dfdcba3e13b64f77672034ec20120b146dee16d4be256c877a188c98df",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart": "88f37c8dccc262aa9d6016fcbca384626b74efd075ef6da0cc672f179012f03e",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart": "5ed867c71d5aa64b4b4aec4f7c6024422eac1b78226536b4ba24073ed87e4faf"
+      },
+      "verified": "39/39 bills tests; 584 passed/1 skipped full suite; 11/11 viewed Flutter business renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "VoiceOver/TalkBack、测试站真实接口与模拟器原生点击 NOT_RUN；按用户 2026-11-05 新规则不阻塞本阶段分配问题完成。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/decisive-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/full-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/render-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/screenshot-index.json"
+      ],
+      "reason": "仅评 S4-A 账单域实例，不代其它 owner 或全局 DT 宣布关闭。",
+      "observedBehavior": "列表实付与原额/手续费/优惠缺少核对标签。",
+      "implemented": "账单行标实付、原额、手续费、优惠；不改金额计算。编辑器由 S5-A。"
+    },
+    {
+      "issueId": "BO-063",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-A",
+      "sourcePaths": [
+        "lib/features/bills/presentation/bills_page.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/bills/presentation/bills_page.dart": "ff2b7c074b6f05f1e1c4d0a8d8c905f6f0c630ee9b28b25c0eac03876d9ec085",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "d41f186029d8080acf57692591916015eac590d41db31403a861b8d72cf1a5dd",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart": "4a4201dfdcba3e13b64f77672034ec20120b146dee16d4be256c877a188c98df",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart": "88f37c8dccc262aa9d6016fcbca384626b74efd075ef6da0cc672f179012f03e",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart": "5ed867c71d5aa64b4b4aec4f7c6024422eac1b78226536b4ba24073ed87e4faf"
+      },
+      "verified": "39/39 bills tests; 584 passed/1 skipped full suite; 11/11 viewed Flutter business renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "VoiceOver/TalkBack、测试站真实接口与模拟器原生点击 NOT_RUN；按用户 2026-11-05 新规则不阻塞本阶段分配问题完成。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/decisive-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/full-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/render-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/screenshot-index.json"
+      ],
+      "reason": "仅评 S4-A 账单域实例，不代其它 owner 或全局 DT 宣布关闭。",
+      "observedBehavior": "列表实付与详情原额口径可能混淆。",
+      "implemented": "列表明确标实付及原额分解；详情统一口径仍由 S4-B。"
+    },
+    {
+      "issueId": "BO-074",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-A",
+      "sourcePaths": [
+        "lib/features/bills/presentation/bills_page.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/bills/presentation/bills_page.dart": "ff2b7c074b6f05f1e1c4d0a8d8c905f6f0c630ee9b28b25c0eac03876d9ec085",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "d41f186029d8080acf57692591916015eac590d41db31403a861b8d72cf1a5dd",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart": "4a4201dfdcba3e13b64f77672034ec20120b146dee16d4be256c877a188c98df",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart": "88f37c8dccc262aa9d6016fcbca384626b74efd075ef6da0cc672f179012f03e",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart": "5ed867c71d5aa64b4b4aec4f7c6024422eac1b78226536b4ba24073ed87e4faf"
+      },
+      "verified": "39/39 bills tests; 584 passed/1 skipped full suite; 11/11 viewed Flutter business renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "VoiceOver/TalkBack、测试站真实接口与模拟器原生点击 NOT_RUN；按用户 2026-11-05 新规则不阻塞本阶段分配问题完成。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/decisive-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/full-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/render-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/screenshot-index.json"
+      ],
+      "reason": "仅评 S4-A 账单域实例，不代其它 owner 或全局 DT 宣布关闭。",
+      "observedBehavior": "标题/账期/汇总固定挤占小高度正文。",
+      "implemented": "仅标题与筛选固定，其余进入连续滚动；640×320/2x 验证。"
+    },
+    {
+      "issueId": "DT-01",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-A",
+      "sourcePaths": [
+        "lib/features/bills/presentation/bills_page.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/bills/presentation/bills_page.dart": "ff2b7c074b6f05f1e1c4d0a8d8c905f6f0c630ee9b28b25c0eac03876d9ec085",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "d41f186029d8080acf57692591916015eac590d41db31403a861b8d72cf1a5dd",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart": "4a4201dfdcba3e13b64f77672034ec20120b146dee16d4be256c877a188c98df",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart": "88f37c8dccc262aa9d6016fcbca384626b74efd075ef6da0cc672f179012f03e",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart": "5ed867c71d5aa64b4b4aec4f7c6024422eac1b78226536b4ba24073ed87e4faf"
+      },
+      "verified": "39/39 bills tests; 584 passed/1 skipped full suite; 11/11 viewed Flutter business renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "VoiceOver/TalkBack、测试站真实接口与模拟器原生点击 NOT_RUN；按用户 2026-11-05 新规则不阻塞本阶段分配问题完成。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/decisive-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/full-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/render-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/screenshot-index.json"
+      ],
+      "reason": "仅评 S4-A 账单域实例，不代其它 owner 或全局 DT 宣布关闭。",
+      "observedBehavior": "账单页 canvas、surface、surfaceMuted/surfaceRaised 由 FxSheet 既有底座承担；无新增错误表面。",
+      "implemented": "S4-A 账单实例按当前 Fx 合同落地或验证；仅本 scope。"
+    },
+    {
+      "issueId": "DT-02",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-A",
+      "sourcePaths": [
+        "lib/features/bills/presentation/bills_page.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/bills/presentation/bills_page.dart": "ff2b7c074b6f05f1e1c4d0a8d8c905f6f0c630ee9b28b25c0eac03876d9ec085",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "d41f186029d8080acf57692591916015eac590d41db31403a861b8d72cf1a5dd",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart": "4a4201dfdcba3e13b64f77672034ec20120b146dee16d4be256c877a188c98df",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart": "88f37c8dccc262aa9d6016fcbca384626b74efd075ef6da0cc672f179012f03e",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart": "5ed867c71d5aa64b4b4aec4f7c6024422eac1b78226536b4ba24073ed87e4faf"
+      },
+      "verified": "39/39 bills tests; 584 passed/1 skipped full suite; 11/11 viewed Flutter business renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "VoiceOver/TalkBack、测试站真实接口与模拟器原生点击 NOT_RUN；按用户 2026-11-05 新规则不阻塞本阶段分配问题完成。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/decisive-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/full-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/render-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/screenshot-index.json"
+      ],
+      "reason": "仅评 S4-A 账单域实例，不代其它 owner 或全局 DT 宣布关闭。",
+      "observedBehavior": "连续列表与统一汇总使用中性 canvas/surface，亮暗截图可辨。",
+      "implemented": "S4-A 账单实例按当前 Fx 合同落地或验证；仅本 scope。"
+    },
+    {
+      "issueId": "DT-03",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-A",
+      "sourcePaths": [
+        "lib/features/bills/presentation/bills_page.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/bills/presentation/bills_page.dart": "ff2b7c074b6f05f1e1c4d0a8d8c905f6f0c630ee9b28b25c0eac03876d9ec085",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "d41f186029d8080acf57692591916015eac590d41db31403a861b8d72cf1a5dd",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart": "4a4201dfdcba3e13b64f77672034ec20120b146dee16d4be256c877a188c98df",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart": "88f37c8dccc262aa9d6016fcbca384626b74efd075ef6da0cc672f179012f03e",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart": "5ed867c71d5aa64b4b4aec4f7c6024422eac1b78226536b4ba24073ed87e4faf"
+      },
+      "verified": "39/39 bills tests; 584 passed/1 skipped full suite; 11/11 viewed Flutter business renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "VoiceOver/TalkBack、测试站真实接口与模拟器原生点击 NOT_RUN；按用户 2026-11-05 新规则不阻塞本阶段分配问题完成。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/decisive-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/full-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/render-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/screenshot-index.json"
+      ],
+      "reason": "仅评 S4-A 账单域实例，不代其它 owner 或全局 DT 宣布关闭。",
+      "observedBehavior": "暗色账单无蓝色底调新增覆盖，沿用中性 Fx 表面。",
+      "implemented": "S4-A 账单实例按当前 Fx 合同落地或验证；仅本 scope。"
+    },
+    {
+      "issueId": "DT-04",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-A",
+      "sourcePaths": [
+        "lib/features/bills/presentation/bills_page.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/bills/presentation/bills_page.dart": "ff2b7c074b6f05f1e1c4d0a8d8c905f6f0c630ee9b28b25c0eac03876d9ec085",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "d41f186029d8080acf57692591916015eac590d41db31403a861b8d72cf1a5dd",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart": "4a4201dfdcba3e13b64f77672034ec20120b146dee16d4be256c877a188c98df",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart": "88f37c8dccc262aa9d6016fcbca384626b74efd075ef6da0cc672f179012f03e",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart": "5ed867c71d5aa64b4b4aec4f7c6024422eac1b78226536b4ba24073ed87e4faf"
+      },
+      "verified": "39/39 bills tests; 584 passed/1 skipped full suite; 11/11 viewed Flutter business renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "VoiceOver/TalkBack、测试站真实接口与模拟器原生点击 NOT_RUN；按用户 2026-11-05 新规则不阻塞本阶段分配问题完成。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/decisive-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/full-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/render-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/screenshot-index.json"
+      ],
+      "reason": "仅评 S4-A 账单域实例，不代其它 owner 或全局 DT 宣布关闭。",
+      "observedBehavior": "汇总 0.5 装饰线用 border；列表/分隔职责由底座承担。",
+      "implemented": "S4-A 账单实例按当前 Fx 合同落地或验证；仅本 scope。"
+    },
+    {
+      "issueId": "DT-05",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-A",
+      "sourcePaths": [
+        "lib/features/bills/presentation/bills_page.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/bills/presentation/bills_page.dart": "ff2b7c074b6f05f1e1c4d0a8d8c905f6f0c630ee9b28b25c0eac03876d9ec085",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "d41f186029d8080acf57692591916015eac590d41db31403a861b8d72cf1a5dd",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart": "4a4201dfdcba3e13b64f77672034ec20120b146dee16d4be256c877a188c98df",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart": "88f37c8dccc262aa9d6016fcbca384626b74efd075ef6da0cc672f179012f03e",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart": "5ed867c71d5aa64b4b4aec4f7c6024422eac1b78226536b4ba24073ed87e4faf"
+      },
+      "verified": "39/39 bills tests; 584 passed/1 skipped full suite; 11/11 viewed Flutter business renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "VoiceOver/TalkBack、测试站真实接口与模拟器原生点击 NOT_RUN；按用户 2026-11-05 新规则不阻塞本阶段分配问题完成。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/decisive-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/full-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/render-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/screenshot-index.json"
+      ],
+      "reason": "仅评 S4-A 账单域实例，不代其它 owner 或全局 DT 宣布关闭。",
+      "observedBehavior": "汇总不再对 border 加 0.72 alpha；无历史阴影。",
+      "implemented": "S4-A 账单实例按当前 Fx 合同落地或验证；仅本 scope。"
+    },
+    {
+      "issueId": "DT-06",
+      "priority": "P1",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-A",
+      "sourcePaths": [
+        "lib/features/bills/presentation/bills_page.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/bills/presentation/bills_page.dart": "ff2b7c074b6f05f1e1c4d0a8d8c905f6f0c630ee9b28b25c0eac03876d9ec085",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "d41f186029d8080acf57692591916015eac590d41db31403a861b8d72cf1a5dd",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart": "4a4201dfdcba3e13b64f77672034ec20120b146dee16d4be256c877a188c98df",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart": "88f37c8dccc262aa9d6016fcbca384626b74efd075ef6da0cc672f179012f03e",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart": "5ed867c71d5aa64b4b4aec4f7c6024422eac1b78226536b4ba24073ed87e4faf"
+      },
+      "verified": "39/39 bills tests; 584 passed/1 skipped full suite; 11/11 viewed Flutter business renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "VoiceOver/TalkBack、测试站真实接口与模拟器原生点击 NOT_RUN；按用户 2026-11-05 新规则不阻塞本阶段分配问题完成。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/decisive-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/full-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/render-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/screenshot-index.json"
+      ],
+      "reason": "仅评 S4-A 账单域实例，不代其它 owner 或全局 DT 宣布关闭。",
+      "observedBehavior": "筛选徽标 primary 配 onPrimary，侧滑复制同配对。",
+      "implemented": "S4-A 账单实例按当前 Fx 合同落地或验证；仅本 scope。"
+    },
+    {
+      "issueId": "DT-07",
+      "priority": "P1",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-A",
+      "sourcePaths": [
+        "lib/features/bills/presentation/bills_page.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/bills/presentation/bills_page.dart": "ff2b7c074b6f05f1e1c4d0a8d8c905f6f0c630ee9b28b25c0eac03876d9ec085",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "d41f186029d8080acf57692591916015eac590d41db31403a861b8d72cf1a5dd",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart": "4a4201dfdcba3e13b64f77672034ec20120b146dee16d4be256c877a188c98df",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart": "88f37c8dccc262aa9d6016fcbca384626b74efd075ef6da0cc672f179012f03e",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart": "5ed867c71d5aa64b4b4aec4f7c6024422eac1b78226536b4ba24073ed87e4faf"
+      },
+      "verified": "39/39 bills tests; 584 passed/1 skipped full suite; 11/11 viewed Flutter business renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "VoiceOver/TalkBack、测试站真实接口与模拟器原生点击 NOT_RUN；按用户 2026-11-05 新规则不阻塞本阶段分配问题完成。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/decisive-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/full-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/render-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/screenshot-index.json"
+      ],
+      "reason": "仅评 S4-A 账单域实例，不代其它 owner 或全局 DT 宣布关闭。",
+      "observedBehavior": "删除侧滑 danger 配 onDanger，既有确认语义保留。",
+      "implemented": "S4-A 账单实例按当前 Fx 合同落地或验证；仅本 scope。"
+    },
+    {
+      "issueId": "DT-08",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-A",
+      "sourcePaths": [
+        "lib/features/bills/presentation/bills_page.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/bills/presentation/bills_page.dart": "ff2b7c074b6f05f1e1c4d0a8d8c905f6f0c630ee9b28b25c0eac03876d9ec085",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "d41f186029d8080acf57692591916015eac590d41db31403a861b8d72cf1a5dd",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart": "4a4201dfdcba3e13b64f77672034ec20120b146dee16d4be256c877a188c98df",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart": "88f37c8dccc262aa9d6016fcbca384626b74efd075ef6da0cc672f179012f03e",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart": "5ed867c71d5aa64b4b4aec4f7c6024422eac1b78226536b4ba24073ed87e4faf"
+      },
+      "verified": "39/39 bills tests; 584 passed/1 skipped full suite; 11/11 viewed Flutter business renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "VoiceOver/TalkBack、测试站真实接口与模拟器原生点击 NOT_RUN；按用户 2026-11-05 新规则不阻塞本阶段分配问题完成。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/decisive-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/full-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/render-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/screenshot-index.json"
+      ],
+      "reason": "仅评 S4-A 账单域实例，不代其它 owner 或全局 DT 宣布关闭。",
+      "observedBehavior": "账单未引入借用 info/warning 的 Material secondary/tertiary。",
+      "implemented": "S4-A 账单实例按当前 Fx 合同落地或验证；仅本 scope。"
+    },
+    {
+      "issueId": "DT-09",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-A",
+      "sourcePaths": [
+        "lib/features/bills/presentation/bills_page.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/bills/presentation/bills_page.dart": "ff2b7c074b6f05f1e1c4d0a8d8c905f6f0c630ee9b28b25c0eac03876d9ec085",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "d41f186029d8080acf57692591916015eac590d41db31403a861b8d72cf1a5dd",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart": "4a4201dfdcba3e13b64f77672034ec20120b146dee16d4be256c877a188c98df",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart": "88f37c8dccc262aa9d6016fcbca384626b74efd075ef6da0cc672f179012f03e",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart": "5ed867c71d5aa64b4b4aec4f7c6024422eac1b78226536b4ba24073ed87e4faf"
+      },
+      "verified": "39/39 bills tests; 584 passed/1 skipped full suite; 11/11 viewed Flutter business renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "VoiceOver/TalkBack、测试站真实接口与模拟器原生点击 NOT_RUN；按用户 2026-11-05 新规则不阻塞本阶段分配问题完成。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/decisive-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/full-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/render-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/screenshot-index.json"
+      ],
+      "reason": "仅评 S4-A 账单域实例，不代其它 owner 或全局 DT 宣布关闭。",
+      "observedBehavior": "sheet/菜单沿用 FxTheme 显式 surface 映射。",
+      "implemented": "S4-A 账单实例按当前 Fx 合同落地或验证；仅本 scope。"
+    },
+    {
+      "issueId": "DT-10",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-A",
+      "sourcePaths": [
+        "lib/features/bills/presentation/bills_page.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/bills/presentation/bills_page.dart": "ff2b7c074b6f05f1e1c4d0a8d8c905f6f0c630ee9b28b25c0eac03876d9ec085",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "d41f186029d8080acf57692591916015eac590d41db31403a861b8d72cf1a5dd",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart": "4a4201dfdcba3e13b64f77672034ec20120b146dee16d4be256c877a188c98df",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart": "88f37c8dccc262aa9d6016fcbca384626b74efd075ef6da0cc672f179012f03e",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart": "5ed867c71d5aa64b4b4aec4f7c6024422eac1b78226536b4ba24073ed87e4faf"
+      },
+      "verified": "39/39 bills tests; 584 passed/1 skipped full suite; 11/11 viewed Flutter business renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "VoiceOver/TalkBack、测试站真实接口与模拟器原生点击 NOT_RUN；按用户 2026-11-05 新规则不阻塞本阶段分配问题完成。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/decisive-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/full-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/render-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/screenshot-index.json"
+      ],
+      "reason": "仅评 S4-A 账单域实例，不代其它 owner 或全局 DT 宣布关闭。",
+      "observedBehavior": "账期/筛选弹层沿用独立 scrim。",
+      "implemented": "S4-A 账单实例按当前 Fx 合同落地或验证；仅本 scope。"
+    },
+    {
+      "issueId": "DT-11",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-A",
+      "sourcePaths": [
+        "lib/features/bills/presentation/bills_page.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/bills/presentation/bills_page.dart": "ff2b7c074b6f05f1e1c4d0a8d8c905f6f0c630ee9b28b25c0eac03876d9ec085",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "d41f186029d8080acf57692591916015eac590d41db31403a861b8d72cf1a5dd",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart": "4a4201dfdcba3e13b64f77672034ec20120b146dee16d4be256c877a188c98df",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart": "88f37c8dccc262aa9d6016fcbca384626b74efd075ef6da0cc672f179012f03e",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart": "5ed867c71d5aa64b4b4aec4f7c6024422eac1b78226536b4ba24073ed87e4faf"
+      },
+      "verified": "39/39 bills tests; 584 passed/1 skipped full suite; 11/11 viewed Flutter business renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "VoiceOver/TalkBack、测试站真实接口与模拟器原生点击 NOT_RUN；按用户 2026-11-05 新规则不阻塞本阶段分配问题完成。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/decisive-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/full-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/render-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/screenshot-index.json"
+      ],
+      "reason": "仅评 S4-A 账单域实例，不代其它 owner 或全局 DT 宣布关闭。",
+      "observedBehavior": "日期、范围、辅助文字使用 textSecondary，金额 textPrimary。",
+      "implemented": "S4-A 账单实例按当前 Fx 合同落地或验证；仅本 scope。"
+    },
+    {
+      "issueId": "DT-12",
+      "priority": "P1",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-A",
+      "sourcePaths": [
+        "lib/features/bills/presentation/bills_page.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/bills/presentation/bills_page.dart": "ff2b7c074b6f05f1e1c4d0a8d8c905f6f0c630ee9b28b25c0eac03876d9ec085",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "d41f186029d8080acf57692591916015eac590d41db31403a861b8d72cf1a5dd",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart": "4a4201dfdcba3e13b64f77672034ec20120b146dee16d4be256c877a188c98df",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart": "88f37c8dccc262aa9d6016fcbca384626b74efd075ef6da0cc672f179012f03e",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart": "5ed867c71d5aa64b4b4aec4f7c6024422eac1b78226536b4ba24073ed87e4faf"
+      },
+      "verified": "39/39 bills tests; 584 passed/1 skipped full suite; 11/11 viewed Flutter business renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "VoiceOver/TalkBack、测试站真实接口与模拟器原生点击 NOT_RUN；按用户 2026-11-05 新规则不阻塞本阶段分配问题完成。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/decisive-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/full-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/render-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/screenshot-index.json"
+      ],
+      "reason": "仅评 S4-A 账单域实例，不代其它 owner 或全局 DT 宣布关闭。",
+      "observedBehavior": "汇总与账单主金额不再把财务偏好色直接当普通文字。",
+      "implemented": "S4-A 账单实例按当前 Fx 合同落地或验证；仅本 scope。"
+    },
+    {
+      "issueId": "DT-13",
+      "priority": "P2",
+      "state": "NOT_APPLICABLE",
+      "stageId": "S4-A",
+      "sourcePaths": [
+        "lib/features/bills/presentation/bills_page.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/bills/presentation/bills_page.dart": "ff2b7c074b6f05f1e1c4d0a8d8c905f6f0c630ee9b28b25c0eac03876d9ec085",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "d41f186029d8080acf57692591916015eac590d41db31403a861b8d72cf1a5dd",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart": "4a4201dfdcba3e13b64f77672034ec20120b146dee16d4be256c877a188c98df",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart": "88f37c8dccc262aa9d6016fcbca384626b74efd075ef6da0cc672f179012f03e",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart": "5ed867c71d5aa64b4b4aec4f7c6024422eac1b78226536b4ba24073ed87e4faf"
+      },
+      "verified": "39/39 bills tests; 584 passed/1 skipped full suite; 11/11 viewed Flutter business renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "VoiceOver/TalkBack、测试站真实接口与模拟器原生点击 NOT_RUN；按用户 2026-11-05 新规则不阻塞本阶段分配问题完成。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/decisive-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/full-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/render-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/screenshot-index.json"
+      ],
+      "reason": "仅评 S4-A 账单域实例，不代其它 owner 或全局 DT 宣布关闭。",
+      "observedBehavior": "本阶段无图表，不评全局图表。",
+      "implemented": "S4-A 账单实例按当前 Fx 合同落地或验证；仅本 scope。"
+    },
+    {
+      "issueId": "DT-14",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-A",
+      "sourcePaths": [
+        "lib/features/bills/presentation/bills_page.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/bills/presentation/bills_page.dart": "ff2b7c074b6f05f1e1c4d0a8d8c905f6f0c630ee9b28b25c0eac03876d9ec085",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "d41f186029d8080acf57692591916015eac590d41db31403a861b8d72cf1a5dd",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart": "4a4201dfdcba3e13b64f77672034ec20120b146dee16d4be256c877a188c98df",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart": "88f37c8dccc262aa9d6016fcbca384626b74efd075ef6da0cc672f179012f03e",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart": "5ed867c71d5aa64b4b4aec4f7c6024422eac1b78226536b4ba24073ed87e4faf"
+      },
+      "verified": "39/39 bills tests; 584 passed/1 skipped full suite; 11/11 viewed Flutter business renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "VoiceOver/TalkBack、测试站真实接口与模拟器原生点击 NOT_RUN；按用户 2026-11-05 新规则不阻塞本阶段分配问题完成。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/decisive-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/full-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/render-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/screenshot-index.json"
+      ],
+      "reason": "仅评 S4-A 账单域实例，不代其它 owner 或全局 DT 宣布关闭。",
+      "observedBehavior": "账单未新增大面积红绿；方向由符号/标签表达。",
+      "implemented": "S4-A 账单实例按当前 Fx 合同落地或验证；仅本 scope。"
+    },
+    {
+      "issueId": "DT-15",
+      "priority": "P1",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-A",
+      "sourcePaths": [
+        "lib/features/bills/presentation/bills_page.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/bills/presentation/bills_page.dart": "ff2b7c074b6f05f1e1c4d0a8d8c905f6f0c630ee9b28b25c0eac03876d9ec085",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "d41f186029d8080acf57692591916015eac590d41db31403a861b8d72cf1a5dd",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart": "4a4201dfdcba3e13b64f77672034ec20120b146dee16d4be256c877a188c98df",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart": "88f37c8dccc262aa9d6016fcbca384626b74efd075ef6da0cc672f179012f03e",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart": "5ed867c71d5aa64b4b4aec4f7c6024422eac1b78226536b4ba24073ed87e4faf"
+      },
+      "verified": "39/39 bills tests; 584 passed/1 skipped full suite; 11/11 viewed Flutter business renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "VoiceOver/TalkBack、测试站真实接口与模拟器原生点击 NOT_RUN；按用户 2026-11-05 新规则不阻塞本阶段分配问题完成。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/decisive-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/full-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/render-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/screenshot-index.json"
+      ],
+      "reason": "仅评 S4-A 账单域实例，不代其它 owner 或全局 DT 宣布关闭。",
+      "observedBehavior": "费用不再使用 10px 强色小票样式；主口径 17、分解 13 可读。",
+      "implemented": "S4-A 账单实例按当前 Fx 合同落地或验证；仅本 scope。"
+    },
+    {
+      "issueId": "DT-16",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-A",
+      "sourcePaths": [
+        "lib/features/bills/presentation/bills_page.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/bills/presentation/bills_page.dart": "ff2b7c074b6f05f1e1c4d0a8d8c905f6f0c630ee9b28b25c0eac03876d9ec085",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "d41f186029d8080acf57692591916015eac590d41db31403a861b8d72cf1a5dd",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart": "4a4201dfdcba3e13b64f77672034ec20120b146dee16d4be256c877a188c98df",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart": "88f37c8dccc262aa9d6016fcbca384626b74efd075ef6da0cc672f179012f03e",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart": "5ed867c71d5aa64b4b4aec4f7c6024422eac1b78226536b4ba24073ed87e4faf"
+      },
+      "verified": "39/39 bills tests; 584 passed/1 skipped full suite; 11/11 viewed Flutter business renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "VoiceOver/TalkBack、测试站真实接口与模拟器原生点击 NOT_RUN；按用户 2026-11-05 新规则不阻塞本阶段分配问题完成。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/decisive-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/full-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/render-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/screenshot-index.json"
+      ],
+      "reason": "仅评 S4-A 账单域实例，不代其它 owner 或全局 DT 宣布关闭。",
+      "observedBehavior": "使用 FxTypography 统一角色，不另立字阶。",
+      "implemented": "S4-A 账单实例按当前 Fx 合同落地或验证；仅本 scope。"
+    },
+    {
+      "issueId": "DT-17",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-A",
+      "sourcePaths": [
+        "lib/features/bills/presentation/bills_page.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/bills/presentation/bills_page.dart": "ff2b7c074b6f05f1e1c4d0a8d8c905f6f0c630ee9b28b25c0eac03876d9ec085",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "d41f186029d8080acf57692591916015eac590d41db31403a861b8d72cf1a5dd",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart": "4a4201dfdcba3e13b64f77672034ec20120b146dee16d4be256c877a188c98df",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart": "88f37c8dccc262aa9d6016fcbca384626b74efd075ef6da0cc672f179012f03e",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart": "5ed867c71d5aa64b4b4aec4f7c6024422eac1b78226536b4ba24073ed87e4faf"
+      },
+      "verified": "39/39 bills tests; 584 passed/1 skipped full suite; 11/11 viewed Flutter business renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "VoiceOver/TalkBack、测试站真实接口与模拟器原生点击 NOT_RUN；按用户 2026-11-05 新规则不阻塞本阶段分配问题完成。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/decisive-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/full-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/render-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/screenshot-index.json"
+      ],
+      "reason": "仅评 S4-A 账单域实例，不代其它 owner 或全局 DT 宣布关闭。",
+      "observedBehavior": "账期 title 600，正文 400/500，未全部 700。",
+      "implemented": "S4-A 账单实例按当前 Fx 合同落地或验证；仅本 scope。"
+    },
+    {
+      "issueId": "DT-18",
+      "priority": "P1",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-A",
+      "sourcePaths": [
+        "lib/features/bills/presentation/bills_page.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/bills/presentation/bills_page.dart": "ff2b7c074b6f05f1e1c4d0a8d8c905f6f0c630ee9b28b25c0eac03876d9ec085",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "d41f186029d8080acf57692591916015eac590d41db31403a861b8d72cf1a5dd",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart": "4a4201dfdcba3e13b64f77672034ec20120b146dee16d4be256c877a188c98df",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart": "88f37c8dccc262aa9d6016fcbca384626b74efd075ef6da0cc672f179012f03e",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart": "5ed867c71d5aa64b4b4aec4f7c6024422eac1b78226536b4ba24073ed87e4faf"
+      },
+      "verified": "39/39 bills tests; 584 passed/1 skipped full suite; 11/11 viewed Flutter business renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "VoiceOver/TalkBack、测试站真实接口与模拟器原生点击 NOT_RUN；按用户 2026-11-05 新规则不阻塞本阶段分配问题完成。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/decisive-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/full-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/render-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/screenshot-index.json"
+      ],
+      "reason": "仅评 S4-A 账单域实例，不代其它 owner 或全局 DT 宣布关闭。",
+      "observedBehavior": "账单主金额/标题使用 body/17，状态与日期 caption/13，不再 10px。",
+      "implemented": "S4-A 账单实例按当前 Fx 合同落地或验证；仅本 scope。"
+    },
+    {
+      "issueId": "DT-19",
+      "priority": "P1",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-A",
+      "sourcePaths": [
+        "lib/features/bills/presentation/bills_page.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/bills/presentation/bills_page.dart": "ff2b7c074b6f05f1e1c4d0a8d8c905f6f0c630ee9b28b25c0eac03876d9ec085",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "d41f186029d8080acf57692591916015eac590d41db31403a861b8d72cf1a5dd",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart": "4a4201dfdcba3e13b64f77672034ec20120b146dee16d4be256c877a188c98df",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart": "88f37c8dccc262aa9d6016fcbca384626b74efd075ef6da0cc672f179012f03e",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart": "5ed867c71d5aa64b4b4aec4f7c6024422eac1b78226536b4ba24073ed87e4faf"
+      },
+      "verified": "39/39 bills tests; 584 passed/1 skipped full suite; 11/11 viewed Flutter business renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "VoiceOver/TalkBack、测试站真实接口与模拟器原生点击 NOT_RUN；按用户 2026-11-05 新规则不阻塞本阶段分配问题完成。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/decisive-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/full-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/render-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/screenshot-index.json"
+      ],
+      "reason": "仅评 S4-A 账单域实例，不代其它 owner 或全局 DT 宣布关闭。",
+      "observedBehavior": "无 9/10/12.5/13.5 游离字号；筛选角标升 13。",
+      "implemented": "S4-A 账单实例按当前 Fx 合同落地或验证；仅本 scope。"
+    },
+    {
+      "issueId": "DT-20",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-A",
+      "sourcePaths": [
+        "lib/features/bills/presentation/bills_page.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/bills/presentation/bills_page.dart": "ff2b7c074b6f05f1e1c4d0a8d8c905f6f0c630ee9b28b25c0eac03876d9ec085",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "d41f186029d8080acf57692591916015eac590d41db31403a861b8d72cf1a5dd",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart": "4a4201dfdcba3e13b64f77672034ec20120b146dee16d4be256c877a188c98df",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart": "88f37c8dccc262aa9d6016fcbca384626b74efd075ef6da0cc672f179012f03e",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart": "5ed867c71d5aa64b4b4aec4f7c6024422eac1b78226536b4ba24073ed87e4faf"
+      },
+      "verified": "39/39 bills tests; 584 passed/1 skipped full suite; 11/11 viewed Flutter business renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "VoiceOver/TalkBack、测试站真实接口与模拟器原生点击 NOT_RUN；按用户 2026-11-05 新规则不阻塞本阶段分配问题完成。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/decisive-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/full-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/render-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/screenshot-index.json"
+      ],
+      "reason": "仅评 S4-A 账单域实例，不代其它 owner 或全局 DT 宣布关闭。",
+      "observedBehavior": "日头按 20px 行高和 TextScaler 增高。",
+      "implemented": "S4-A 账单实例按当前 Fx 合同落地或验证；仅本 scope。"
+    },
+    {
+      "issueId": "DT-21",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-A",
+      "sourcePaths": [
+        "lib/features/bills/presentation/bills_page.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/bills/presentation/bills_page.dart": "ff2b7c074b6f05f1e1c4d0a8d8c905f6f0c630ee9b28b25c0eac03876d9ec085",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "d41f186029d8080acf57692591916015eac590d41db31403a861b8d72cf1a5dd",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart": "4a4201dfdcba3e13b64f77672034ec20120b146dee16d4be256c877a188c98df",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart": "88f37c8dccc262aa9d6016fcbca384626b74efd075ef6da0cc672f179012f03e",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart": "5ed867c71d5aa64b4b4aec4f7c6024422eac1b78226536b4ba24073ed87e4faf"
+      },
+      "verified": "39/39 bills tests; 584 passed/1 skipped full suite; 11/11 viewed Flutter business renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "VoiceOver/TalkBack、测试站真实接口与模拟器原生点击 NOT_RUN；按用户 2026-11-05 新规则不阻塞本阶段分配问题完成。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/decisive-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/full-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/render-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/screenshot-index.json"
+      ],
+      "reason": "仅评 S4-A 账单域实例，不代其它 owner 或全局 DT 宣布关闭。",
+      "observedBehavior": "使用系统 tabular figures，未新增 RobotoMono。",
+      "implemented": "S4-A 账单实例按当前 Fx 合同落地或验证；仅本 scope。"
+    },
+    {
+      "issueId": "DT-22",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-A",
+      "sourcePaths": [
+        "lib/features/bills/presentation/bills_page.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/bills/presentation/bills_page.dart": "ff2b7c074b6f05f1e1c4d0a8d8c905f6f0c630ee9b28b25c0eac03876d9ec085",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "d41f186029d8080acf57692591916015eac590d41db31403a861b8d72cf1a5dd",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart": "4a4201dfdcba3e13b64f77672034ec20120b146dee16d4be256c877a188c98df",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart": "88f37c8dccc262aa9d6016fcbca384626b74efd075ef6da0cc672f179012f03e",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart": "5ed867c71d5aa64b4b4aec4f7c6024422eac1b78226536b4ba24073ed87e4faf"
+      },
+      "verified": "39/39 bills tests; 584 passed/1 skipped full suite; 11/11 viewed Flutter business renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "VoiceOver/TalkBack、测试站真实接口与模拟器原生点击 NOT_RUN；按用户 2026-11-05 新规则不阻塞本阶段分配问题完成。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/decisive-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/full-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/render-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/screenshot-index.json"
+      ],
+      "reason": "仅评 S4-A 账单域实例，不代其它 owner 或全局 DT 宣布关闭。",
+      "observedBehavior": "FxTypography letterSpacing=0，中文不继承随机字距。",
+      "implemented": "S4-A 账单实例按当前 Fx 合同落地或验证；仅本 scope。"
+    },
+    {
+      "issueId": "DT-23",
+      "priority": "P1",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-A",
+      "sourcePaths": [
+        "lib/features/bills/presentation/bills_page.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/bills/presentation/bills_page.dart": "ff2b7c074b6f05f1e1c4d0a8d8c905f6f0c630ee9b28b25c0eac03876d9ec085",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "d41f186029d8080acf57692591916015eac590d41db31403a861b8d72cf1a5dd",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart": "4a4201dfdcba3e13b64f77672034ec20120b146dee16d4be256c877a188c98df",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart": "88f37c8dccc262aa9d6016fcbca384626b74efd075ef6da0cc672f179012f03e",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart": "5ed867c71d5aa64b4b4aec4f7c6024422eac1b78226536b4ba24073ed87e4faf"
+      },
+      "verified": "39/39 bills tests; 584 passed/1 skipped full suite; 11/11 viewed Flutter business renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "VoiceOver/TalkBack、测试站真实接口与模拟器原生点击 NOT_RUN；按用户 2026-11-05 新规则不阻塞本阶段分配问题完成。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/decisive-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/full-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/render-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/screenshot-index.json"
+      ],
+      "reason": "仅评 S4-A 账单域实例，不代其它 owner 或全局 DT 宣布关闭。",
+      "observedBehavior": "主金额不 compact；完整换行且语义/Tooltip 隐私一致。",
+      "implemented": "S4-A 账单实例按当前 Fx 合同落地或验证；仅本 scope。"
+    },
+    {
+      "issueId": "DT-24",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-A",
+      "sourcePaths": [
+        "lib/features/bills/presentation/bills_page.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/bills/presentation/bills_page.dart": "ff2b7c074b6f05f1e1c4d0a8d8c905f6f0c630ee9b28b25c0eac03876d9ec085",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "d41f186029d8080acf57692591916015eac590d41db31403a861b8d72cf1a5dd",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart": "4a4201dfdcba3e13b64f77672034ec20120b146dee16d4be256c877a188c98df",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart": "88f37c8dccc262aa9d6016fcbca384626b74efd075ef6da0cc672f179012f03e",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart": "5ed867c71d5aa64b4b4aec4f7c6024422eac1b78226536b4ba24073ed87e4faf"
+      },
+      "verified": "39/39 bills tests; 584 passed/1 skipped full suite; 11/11 viewed Flutter business renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "VoiceOver/TalkBack、测试站真实接口与模拟器原生点击 NOT_RUN；按用户 2026-11-05 新规则不阻塞本阶段分配问题完成。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/decisive-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/full-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/render-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/screenshot-index.json"
+      ],
+      "reason": "仅评 S4-A 账单域实例，不代其它 owner 或全局 DT 宣布关闭。",
+      "observedBehavior": "标题/金额/次级操作不再全部 600/700。",
+      "implemented": "S4-A 账单实例按当前 Fx 合同落地或验证；仅本 scope。"
+    },
+    {
+      "issueId": "DT-25",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-A",
+      "sourcePaths": [
+        "lib/features/bills/presentation/bills_page.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/bills/presentation/bills_page.dart": "ff2b7c074b6f05f1e1c4d0a8d8c905f6f0c630ee9b28b25c0eac03876d9ec085",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "d41f186029d8080acf57692591916015eac590d41db31403a861b8d72cf1a5dd",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart": "4a4201dfdcba3e13b64f77672034ec20120b146dee16d4be256c877a188c98df",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart": "88f37c8dccc262aa9d6016fcbca384626b74efd075ef6da0cc672f179012f03e",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart": "5ed867c71d5aa64b4b4aec4f7c6024422eac1b78226536b4ba24073ed87e4faf"
+      },
+      "verified": "39/39 bills tests; 584 passed/1 skipped full suite; 11/11 viewed Flutter business renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "VoiceOver/TalkBack、测试站真实接口与模拟器原生点击 NOT_RUN；按用户 2026-11-05 新规则不阻塞本阶段分配问题完成。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/decisive-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/full-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/render-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/screenshot-index.json"
+      ],
+      "reason": "仅评 S4-A 账单域实例，不代其它 owner 或全局 DT 宣布关闭。",
+      "observedBehavior": "筛选树摘要取消永久单行 ellipsis，长英文可换行。",
+      "implemented": "S4-A 账单实例按当前 Fx 合同落地或验证；仅本 scope。"
+    },
+    {
+      "issueId": "DT-26",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-A",
+      "sourcePaths": [
+        "lib/features/bills/presentation/bills_page.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/bills/presentation/bills_page.dart": "ff2b7c074b6f05f1e1c4d0a8d8c905f6f0c630ee9b28b25c0eac03876d9ec085",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "d41f186029d8080acf57692591916015eac590d41db31403a861b8d72cf1a5dd",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart": "4a4201dfdcba3e13b64f77672034ec20120b146dee16d4be256c877a188c98df",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart": "88f37c8dccc262aa9d6016fcbca384626b74efd075ef6da0cc672f179012f03e",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart": "5ed867c71d5aa64b4b4aec4f7c6024422eac1b78226536b4ba24073ed87e4faf"
+      },
+      "verified": "39/39 bills tests; 584 passed/1 skipped full suite; 11/11 viewed Flutter business renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "VoiceOver/TalkBack、测试站真实接口与模拟器原生点击 NOT_RUN；按用户 2026-11-05 新规则不阻塞本阶段分配问题完成。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/decisive-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/full-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/render-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/screenshot-index.json"
+      ],
+      "reason": "仅评 S4-A 账单域实例，不代其它 owner 或全局 DT 宣布关闭。",
+      "observedBehavior": "沿用 Color.computeLuminance 底座验证，未新增错误公式。",
+      "implemented": "S4-A 账单实例按当前 Fx 合同落地或验证；仅本 scope。"
+    },
+    {
+      "issueId": "DT-27",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-A",
+      "sourcePaths": [
+        "lib/features/bills/presentation/bills_page.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/bills/presentation/bills_page.dart": "ff2b7c074b6f05f1e1c4d0a8d8c905f6f0c630ee9b28b25c0eac03876d9ec085",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "d41f186029d8080acf57692591916015eac590d41db31403a861b8d72cf1a5dd",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart": "4a4201dfdcba3e13b64f77672034ec20120b146dee16d4be256c877a188c98df",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart": "88f37c8dccc262aa9d6016fcbca384626b74efd075ef6da0cc672f179012f03e",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart": "5ed867c71d5aa64b4b4aec4f7c6024422eac1b78226536b4ba24073ed87e4faf"
+      },
+      "verified": "39/39 bills tests; 584 passed/1 skipped full suite; 11/11 viewed Flutter business renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "VoiceOver/TalkBack、测试站真实接口与模拟器原生点击 NOT_RUN；按用户 2026-11-05 新规则不阻塞本阶段分配问题完成。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/decisive-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/full-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/render-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/screenshot-index.json"
+      ],
+      "reason": "仅评 S4-A 账单域实例，不代其它 owner 或全局 DT 宣布关闭。",
+      "observedBehavior": "页面 20、内容 16、区块/字段按语义间距。",
+      "implemented": "S4-A 账单实例按当前 Fx 合同落地或验证；仅本 scope。"
+    },
+    {
+      "issueId": "DT-28",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-A",
+      "sourcePaths": [
+        "lib/features/bills/presentation/bills_page.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/bills/presentation/bills_page.dart": "ff2b7c074b6f05f1e1c4d0a8d8c905f6f0c630ee9b28b25c0eac03876d9ec085",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "d41f186029d8080acf57692591916015eac590d41db31403a861b8d72cf1a5dd",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart": "4a4201dfdcba3e13b64f77672034ec20120b146dee16d4be256c877a188c98df",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart": "88f37c8dccc262aa9d6016fcbca384626b74efd075ef6da0cc672f179012f03e",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart": "5ed867c71d5aa64b4b4aec4f7c6024422eac1b78226536b4ba24073ed87e4faf"
+      },
+      "verified": "39/39 bills tests; 584 passed/1 skipped full suite; 11/11 viewed Flutter business renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "VoiceOver/TalkBack、测试站真实接口与模拟器原生点击 NOT_RUN；按用户 2026-11-05 新规则不阻塞本阶段分配问题完成。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/decisive-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/full-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/render-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/screenshot-index.json"
+      ],
+      "reason": "仅评 S4-A 账单域实例，不代其它 owner 或全局 DT 宣布关闭。",
+      "observedBehavior": "筛选页 20、内字段/汇总 16，减少无意义叠框。",
+      "implemented": "S4-A 账单实例按当前 Fx 合同落地或验证；仅本 scope。"
+    },
+    {
+      "issueId": "DT-29",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-A",
+      "sourcePaths": [
+        "lib/features/bills/presentation/bills_page.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/bills/presentation/bills_page.dart": "ff2b7c074b6f05f1e1c4d0a8d8c905f6f0c630ee9b28b25c0eac03876d9ec085",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "d41f186029d8080acf57692591916015eac590d41db31403a861b8d72cf1a5dd",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart": "4a4201dfdcba3e13b64f77672034ec20120b146dee16d4be256c877a188c98df",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart": "88f37c8dccc262aa9d6016fcbca384626b74efd075ef6da0cc672f179012f03e",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart": "5ed867c71d5aa64b4b4aec4f7c6024422eac1b78226536b4ba24073ed87e4faf"
+      },
+      "verified": "39/39 bills tests; 584 passed/1 skipped full suite; 11/11 viewed Flutter business renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "VoiceOver/TalkBack、测试站真实接口与模拟器原生点击 NOT_RUN；按用户 2026-11-05 新规则不阻塞本阶段分配问题完成。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/decisive-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/full-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/render-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/screenshot-index.json"
+      ],
+      "reason": "仅评 S4-A 账单域实例，不代其它 owner 或全局 DT 宣布关闭。",
+      "observedBehavior": "账期控制/筛选页均 20 水平边距。",
+      "implemented": "S4-A 账单实例按当前 Fx 合同落地或验证；仅本 scope。"
+    },
+    {
+      "issueId": "DT-30",
+      "priority": "P1",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-A",
+      "sourcePaths": [
+        "lib/features/bills/presentation/bills_page.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/bills/presentation/bills_page.dart": "ff2b7c074b6f05f1e1c4d0a8d8c905f6f0c630ee9b28b25c0eac03876d9ec085",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "d41f186029d8080acf57692591916015eac590d41db31403a861b8d72cf1a5dd",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart": "4a4201dfdcba3e13b64f77672034ec20120b146dee16d4be256c877a188c98df",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart": "88f37c8dccc262aa9d6016fcbca384626b74efd075ef6da0cc672f179012f03e",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart": "5ed867c71d5aa64b4b4aec4f7c6024422eac1b78226536b4ba24073ed87e4faf"
+      },
+      "verified": "39/39 bills tests; 584 passed/1 skipped full suite; 11/11 viewed Flutter business renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "VoiceOver/TalkBack、测试站真实接口与模拟器原生点击 NOT_RUN；按用户 2026-11-05 新规则不阻塞本阶段分配问题完成。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/decisive-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/full-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/render-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/screenshot-index.json"
+      ],
+      "reason": "仅评 S4-A 账单域实例，不代其它 owner 或全局 DT 宣布关闭。",
+      "observedBehavior": "恢复/应用操作由 FxButton/FxStateView 内容增高，无单行裁切。",
+      "implemented": "S4-A 账单实例按当前 Fx 合同落地或验证；仅本 scope。"
+    },
+    {
+      "issueId": "DT-31",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-A",
+      "sourcePaths": [
+        "lib/features/bills/presentation/bills_page.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/bills/presentation/bills_page.dart": "ff2b7c074b6f05f1e1c4d0a8d8c905f6f0c630ee9b28b25c0eac03876d9ec085",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "d41f186029d8080acf57692591916015eac590d41db31403a861b8d72cf1a5dd",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart": "4a4201dfdcba3e13b64f77672034ec20120b146dee16d4be256c877a188c98df",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart": "88f37c8dccc262aa9d6016fcbca384626b74efd075ef6da0cc672f179012f03e",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart": "5ed867c71d5aa64b4b4aec4f7c6024422eac1b78226536b4ba24073ed87e4faf"
+      },
+      "verified": "39/39 bills tests; 584 passed/1 skipped full suite; 11/11 viewed Flutter business renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "VoiceOver/TalkBack、测试站真实接口与模拟器原生点击 NOT_RUN；按用户 2026-11-05 新规则不阻塞本阶段分配问题完成。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/decisive-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/full-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/render-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/screenshot-index.json"
+      ],
+      "reason": "仅评 S4-A 账单域实例，不代其它 owner 或全局 DT 宣布关闭。",
+      "observedBehavior": "粘性头、账期导航、汇总均随大字/内容增高。",
+      "implemented": "S4-A 账单实例按当前 Fx 合同落地或验证；仅本 scope。"
+    },
+    {
+      "issueId": "DT-32",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-A",
+      "sourcePaths": [
+        "lib/features/bills/presentation/bills_page.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/bills/presentation/bills_page.dart": "ff2b7c074b6f05f1e1c4d0a8d8c905f6f0c630ee9b28b25c0eac03876d9ec085",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "d41f186029d8080acf57692591916015eac590d41db31403a861b8d72cf1a5dd",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart": "4a4201dfdcba3e13b64f77672034ec20120b146dee16d4be256c877a188c98df",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart": "88f37c8dccc262aa9d6016fcbca384626b74efd075ef6da0cc672f179012f03e",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart": "5ed867c71d5aa64b4b4aec4f7c6024422eac1b78226536b4ba24073ed87e4faf"
+      },
+      "verified": "39/39 bills tests; 584 passed/1 skipped full suite; 11/11 viewed Flutter business renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "VoiceOver/TalkBack、测试站真实接口与模拟器原生点击 NOT_RUN；按用户 2026-11-05 新规则不阻塞本阶段分配问题完成。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/decisive-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/full-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/render-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/screenshot-index.json"
+      ],
+      "reason": "仅评 S4-A 账单域实例，不代其它 owner 或全局 DT 宣布关闭。",
+      "observedBehavior": "类型与高级筛选保留必要 chip；未把全部状态再胶囊化。",
+      "implemented": "S4-A 账单实例按当前 Fx 合同落地或验证；仅本 scope。"
+    },
+    {
+      "issueId": "DT-33",
+      "priority": "P2",
+      "state": "NOT_APPLICABLE",
+      "stageId": "S4-A",
+      "sourcePaths": [
+        "lib/features/bills/presentation/bills_page.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/bills/presentation/bills_page.dart": "ff2b7c074b6f05f1e1c4d0a8d8c905f6f0c630ee9b28b25c0eac03876d9ec085",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "d41f186029d8080acf57692591916015eac590d41db31403a861b8d72cf1a5dd",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart": "4a4201dfdcba3e13b64f77672034ec20120b146dee16d4be256c877a188c98df",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart": "88f37c8dccc262aa9d6016fcbca384626b74efd075ef6da0cc672f179012f03e",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart": "5ed867c71d5aa64b4b4aec4f7c6024422eac1b78226536b4ba24073ed87e4faf"
+      },
+      "verified": "39/39 bills tests; 584 passed/1 skipped full suite; 11/11 viewed Flutter business renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "VoiceOver/TalkBack、测试站真实接口与模拟器原生点击 NOT_RUN；按用户 2026-11-05 新规则不阻塞本阶段分配问题完成。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/decisive-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/full-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/render-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/screenshot-index.json"
+      ],
+      "reason": "仅评 S4-A 账单域实例，不代其它 owner 或全局 DT 宣布关闭。",
+      "observedBehavior": "本阶段无图表。",
+      "implemented": "S4-A 账单实例按当前 Fx 合同落地或验证；仅本 scope。"
+    },
+    {
+      "issueId": "DT-34",
+      "priority": "P1",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-A",
+      "sourcePaths": [
+        "lib/features/bills/presentation/bills_page.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/bills/presentation/bills_page.dart": "ff2b7c074b6f05f1e1c4d0a8d8c905f6f0c630ee9b28b25c0eac03876d9ec085",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "d41f186029d8080acf57692591916015eac590d41db31403a861b8d72cf1a5dd",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart": "4a4201dfdcba3e13b64f77672034ec20120b146dee16d4be256c877a188c98df",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart": "88f37c8dccc262aa9d6016fcbca384626b74efd075ef6da0cc672f179012f03e",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart": "5ed867c71d5aa64b4b4aec4f7c6024422eac1b78226536b4ba24073ed87e4faf"
+      },
+      "verified": "39/39 bills tests; 584 passed/1 skipped full suite; 11/11 viewed Flutter business renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "VoiceOver/TalkBack、测试站真实接口与模拟器原生点击 NOT_RUN；按用户 2026-11-05 新规则不阻塞本阶段分配问题完成。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/decisive-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/full-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/render-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/screenshot-index.json"
+      ],
+      "reason": "仅评 S4-A 账单域实例，不代其它 owner 或全局 DT 宣布关闭。",
+      "observedBehavior": "月份/显隐 48；输入清除由共享 44+ 合同承担。",
+      "implemented": "S4-A 账单实例按当前 Fx 合同落地或验证；仅本 scope。"
+    },
+    {
+      "issueId": "DT-35",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-A",
+      "sourcePaths": [
+        "lib/features/bills/presentation/bills_page.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/bills/presentation/bills_page.dart": "ff2b7c074b6f05f1e1c4d0a8d8c905f6f0c630ee9b28b25c0eac03876d9ec085",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "d41f186029d8080acf57692591916015eac590d41db31403a861b8d72cf1a5dd",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart": "4a4201dfdcba3e13b64f77672034ec20120b146dee16d4be256c877a188c98df",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart": "88f37c8dccc262aa9d6016fcbca384626b74efd075ef6da0cc672f179012f03e",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart": "5ed867c71d5aa64b4b4aec4f7c6024422eac1b78226536b4ba24073ed87e4faf"
+      },
+      "verified": "39/39 bills tests; 584 passed/1 skipped full suite; 11/11 viewed Flutter business renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "VoiceOver/TalkBack、测试站真实接口与模拟器原生点击 NOT_RUN；按用户 2026-11-05 新规则不阻塞本阶段分配问题完成。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/decisive-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/full-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/render-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/screenshot-index.json"
+      ],
+      "reason": "仅评 S4-A 账单域实例，不代其它 owner 或全局 DT 宣布关闭。",
+      "observedBehavior": "继续使用 ShellContentInsets，不重复预留主壳导航。",
+      "implemented": "S4-A 账单实例按当前 Fx 合同落地或验证；仅本 scope。"
+    },
+    {
+      "issueId": "DT-36",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-A",
+      "sourcePaths": [
+        "lib/features/bills/presentation/bills_page.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/bills/presentation/bills_page.dart": "ff2b7c074b6f05f1e1c4d0a8d8c905f6f0c630ee9b28b25c0eac03876d9ec085",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "d41f186029d8080acf57692591916015eac590d41db31403a861b8d72cf1a5dd",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart": "4a4201dfdcba3e13b64f77672034ec20120b146dee16d4be256c877a188c98df",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart": "88f37c8dccc262aa9d6016fcbca384626b74efd075ef6da0cc672f179012f03e",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart": "5ed867c71d5aa64b4b4aec4f7c6024422eac1b78226536b4ba24073ed87e4faf"
+      },
+      "verified": "39/39 bills tests; 584 passed/1 skipped full suite; 11/11 viewed Flutter business renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "VoiceOver/TalkBack、测试站真实接口与模拟器原生点击 NOT_RUN；按用户 2026-11-05 新规则不阻塞本阶段分配问题完成。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/decisive-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/full-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/render-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/screenshot-index.json"
+      ],
+      "reason": "仅评 S4-A 账单域实例，不代其它 owner 或全局 DT 宣布关闭。",
+      "observedBehavior": "统一 card/sheet 既有圆角，无新增 10/8 圆角。",
+      "implemented": "S4-A 账单实例按当前 Fx 合同落地或验证；仅本 scope。"
+    },
+    {
+      "issueId": "DT-37",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-A",
+      "sourcePaths": [
+        "lib/features/bills/presentation/bills_page.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/bills/presentation/bills_page.dart": "ff2b7c074b6f05f1e1c4d0a8d8c905f6f0c630ee9b28b25c0eac03876d9ec085",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "d41f186029d8080acf57692591916015eac590d41db31403a861b8d72cf1a5dd",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart": "4a4201dfdcba3e13b64f77672034ec20120b146dee16d4be256c877a188c98df",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart": "88f37c8dccc262aa9d6016fcbca384626b74efd075ef6da0cc672f179012f03e",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart": "5ed867c71d5aa64b4b4aec4f7c6024422eac1b78226536b4ba24073ed87e4faf"
+      },
+      "verified": "39/39 bills tests; 584 passed/1 skipped full suite; 11/11 viewed Flutter business renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "VoiceOver/TalkBack、测试站真实接口与模拟器原生点击 NOT_RUN；按用户 2026-11-05 新规则不阻塞本阶段分配问题完成。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/decisive-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/full-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/render-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/screenshot-index.json"
+      ],
+      "reason": "仅评 S4-A 账单域实例，不代其它 owner 或全局 DT 宣布关闭。",
+      "observedBehavior": "筛选、状态、附件语义区分，不新增含混胶囊。",
+      "implemented": "S4-A 账单实例按当前 Fx 合同落地或验证；仅本 scope。"
+    },
+    {
+      "issueId": "DT-38",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-A",
+      "sourcePaths": [
+        "lib/features/bills/presentation/bills_page.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/bills/presentation/bills_page.dart": "ff2b7c074b6f05f1e1c4d0a8d8c905f6f0c630ee9b28b25c0eac03876d9ec085",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "d41f186029d8080acf57692591916015eac590d41db31403a861b8d72cf1a5dd",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart": "4a4201dfdcba3e13b64f77672034ec20120b146dee16d4be256c877a188c98df",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart": "88f37c8dccc262aa9d6016fcbca384626b74efd075ef6da0cc672f179012f03e",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart": "5ed867c71d5aa64b4b4aec4f7c6024422eac1b78226536b4ba24073ed87e4faf"
+      },
+      "verified": "39/39 bills tests; 584 passed/1 skipped full suite; 11/11 viewed Flutter business renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "VoiceOver/TalkBack、测试站真实接口与模拟器原生点击 NOT_RUN；按用户 2026-11-05 新规则不阻塞本阶段分配问题完成。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/decisive-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/full-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/render-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/screenshot-index.json"
+      ],
+      "reason": "仅评 S4-A 账单域实例，不代其它 owner 或全局 DT 宣布关闭。",
+      "observedBehavior": "连续流水单表面，汇总不再额外历史阴影卡。",
+      "implemented": "S4-A 账单实例按当前 Fx 合同落地或验证；仅本 scope。"
+    },
+    {
+      "issueId": "DT-39",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-A",
+      "sourcePaths": [
+        "lib/features/bills/presentation/bills_page.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/bills/presentation/bills_page.dart": "ff2b7c074b6f05f1e1c4d0a8d8c905f6f0c630ee9b28b25c0eac03876d9ec085",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "d41f186029d8080acf57692591916015eac590d41db31403a861b8d72cf1a5dd",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart": "4a4201dfdcba3e13b64f77672034ec20120b146dee16d4be256c877a188c98df",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart": "88f37c8dccc262aa9d6016fcbca384626b74efd075ef6da0cc672f179012f03e",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart": "5ed867c71d5aa64b4b4aec4f7c6024422eac1b78226536b4ba24073ed87e4faf"
+      },
+      "verified": "39/39 bills tests; 584 passed/1 skipped full suite; 11/11 viewed Flutter business renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "VoiceOver/TalkBack、测试站真实接口与模拟器原生点击 NOT_RUN；按用户 2026-11-05 新规则不阻塞本阶段分配问题完成。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/decisive-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/full-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/render-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/screenshot-index.json"
+      ],
+      "reason": "仅评 S4-A 账单域实例，不代其它 owner 或全局 DT 宣布关闭。",
+      "observedBehavior": "本阶段无显式阴影；历史 boxShadow 删除。",
+      "implemented": "S4-A 账单实例按当前 Fx 合同落地或验证；仅本 scope。"
+    },
+    {
+      "issueId": "DT-40",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-A",
+      "sourcePaths": [
+        "lib/features/bills/presentation/bills_page.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/bills/presentation/bills_page.dart": "ff2b7c074b6f05f1e1c4d0a8d8c905f6f0c630ee9b28b25c0eac03876d9ec085",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "d41f186029d8080acf57692591916015eac590d41db31403a861b8d72cf1a5dd",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart": "4a4201dfdcba3e13b64f77672034ec20120b146dee16d4be256c877a188c98df",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart": "88f37c8dccc262aa9d6016fcbca384626b74efd075ef6da0cc672f179012f03e",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart": "5ed867c71d5aa64b4b4aec4f7c6024422eac1b78226536b4ba24073ed87e4faf"
+      },
+      "verified": "39/39 bills tests; 584 passed/1 skipped full suite; 11/11 viewed Flutter business renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "VoiceOver/TalkBack、测试站真实接口与模拟器原生点击 NOT_RUN；按用户 2026-11-05 新规则不阻塞本阶段分配问题完成。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/decisive-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/full-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/render-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/screenshot-index.json"
+      ],
+      "reason": "仅评 S4-A 账单域实例，不代其它 owner 或全局 DT 宣布关闭。",
+      "observedBehavior": "无拖动/首页 elevation 新增。",
+      "implemented": "S4-A 账单实例按当前 Fx 合同落地或验证；仅本 scope。"
+    },
+    {
+      "issueId": "DT-41",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-A",
+      "sourcePaths": [
+        "lib/features/bills/presentation/bills_page.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/bills/presentation/bills_page.dart": "ff2b7c074b6f05f1e1c4d0a8d8c905f6f0c630ee9b28b25c0eac03876d9ec085",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "d41f186029d8080acf57692591916015eac590d41db31403a861b8d72cf1a5dd",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart": "4a4201dfdcba3e13b64f77672034ec20120b146dee16d4be256c877a188c98df",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart": "88f37c8dccc262aa9d6016fcbca384626b74efd075ef6da0cc672f179012f03e",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart": "5ed867c71d5aa64b4b4aec4f7c6024422eac1b78226536b4ba24073ed87e4faf"
+      },
+      "verified": "39/39 bills tests; 584 passed/1 skipped full suite; 11/11 viewed Flutter business renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "VoiceOver/TalkBack、测试站真实接口与模拟器原生点击 NOT_RUN；按用户 2026-11-05 新规则不阻塞本阶段分配问题完成。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/decisive-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/full-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/render-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/screenshot-index.json"
+      ],
+      "reason": "仅评 S4-A 账单域实例，不代其它 owner 或全局 DT 宣布关闭。",
+      "observedBehavior": "账单行沿用 Material InkWell，未新增不透明遮罩。",
+      "implemented": "S4-A 账单实例按当前 Fx 合同落地或验证；仅本 scope。"
+    },
+    {
+      "issueId": "DT-42",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-A",
+      "sourcePaths": [
+        "lib/features/bills/presentation/bills_page.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/bills/presentation/bills_page.dart": "ff2b7c074b6f05f1e1c4d0a8d8c905f6f0c630ee9b28b25c0eac03876d9ec085",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "d41f186029d8080acf57692591916015eac590d41db31403a861b8d72cf1a5dd",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart": "4a4201dfdcba3e13b64f77672034ec20120b146dee16d4be256c877a188c98df",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart": "88f37c8dccc262aa9d6016fcbca384626b74efd075ef6da0cc672f179012f03e",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart": "5ed867c71d5aa64b4b4aec4f7c6024422eac1b78226536b4ba24073ed87e4faf"
+      },
+      "verified": "39/39 bills tests; 584 passed/1 skipped full suite; 11/11 viewed Flutter business renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "VoiceOver/TalkBack、测试站真实接口与模拟器原生点击 NOT_RUN；按用户 2026-11-05 新规则不阻塞本阶段分配问题完成。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/decisive-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/full-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/render-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/screenshot-index.json"
+      ],
+      "reason": "仅评 S4-A 账单域实例，不代其它 owner 或全局 DT 宣布关闭。",
+      "observedBehavior": "使用 FxTagChip；无裸 GestureDetector 新增。",
+      "implemented": "S4-A 账单实例按当前 Fx 合同落地或验证；仅本 scope。"
+    },
+    {
+      "issueId": "DT-43",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-A",
+      "sourcePaths": [
+        "lib/features/bills/presentation/bills_page.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/bills/presentation/bills_page.dart": "ff2b7c074b6f05f1e1c4d0a8d8c905f6f0c630ee9b28b25c0eac03876d9ec085",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "d41f186029d8080acf57692591916015eac590d41db31403a861b8d72cf1a5dd",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart": "4a4201dfdcba3e13b64f77672034ec20120b146dee16d4be256c877a188c98df",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart": "88f37c8dccc262aa9d6016fcbca384626b74efd075ef6da0cc672f179012f03e",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart": "5ed867c71d5aa64b4b4aec4f7c6024422eac1b78226536b4ba24073ed87e4faf"
+      },
+      "verified": "39/39 bills tests; 584 passed/1 skipped full suite; 11/11 viewed Flutter business renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "VoiceOver/TalkBack、测试站真实接口与模拟器原生点击 NOT_RUN；按用户 2026-11-05 新规则不阻塞本阶段分配问题完成。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/decisive-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/full-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/render-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/screenshot-index.json"
+      ],
+      "reason": "仅评 S4-A 账单域实例，不代其它 owner 或全局 DT 宣布关闭。",
+      "observedBehavior": "账期滚动沿用 FxMotion.normal/standard。",
+      "implemented": "S4-A 账单实例按当前 Fx 合同落地或验证；仅本 scope。"
+    },
+    {
+      "issueId": "DT-44",
+      "priority": "P2",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-A",
+      "sourcePaths": [
+        "lib/features/bills/presentation/bills_page.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/bills/presentation/bills_page.dart": "ff2b7c074b6f05f1e1c4d0a8d8c905f6f0c630ee9b28b25c0eac03876d9ec085",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "d41f186029d8080acf57692591916015eac590d41db31403a861b8d72cf1a5dd",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart": "4a4201dfdcba3e13b64f77672034ec20120b146dee16d4be256c877a188c98df",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart": "88f37c8dccc262aa9d6016fcbca384626b74efd075ef6da0cc672f179012f03e",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart": "5ed867c71d5aa64b4b4aec4f7c6024422eac1b78226536b4ba24073ed87e4faf"
+      },
+      "verified": "39/39 bills tests; 584 passed/1 skipped full suite; 11/11 viewed Flutter business renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "VoiceOver/TalkBack、测试站真实接口与模拟器原生点击 NOT_RUN；按用户 2026-11-05 新规则不阻塞本阶段分配问题完成。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/decisive-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/full-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/render-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/screenshot-index.json"
+      ],
+      "reason": "仅评 S4-A 账单域实例，不代其它 owner 或全局 DT 宣布关闭。",
+      "observedBehavior": "未给普通卡新增重复 selection haptic。",
+      "implemented": "S4-A 账单实例按当前 Fx 合同落地或验证；仅本 scope。"
+    },
+    {
+      "issueId": "DT-45",
+      "priority": "P1",
+      "state": "VERIFIED_LOCAL",
+      "stageId": "S4-A",
+      "sourcePaths": [
+        "lib/features/bills/presentation/bills_page.dart",
+        "lib/features/bills/presentation/widgets/bill_tile.dart",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart"
+      ],
+      "sourceSha256": {
+        "lib/features/bills/presentation/bills_page.dart": "ff2b7c074b6f05f1e1c4d0a8d8c905f6f0c630ee9b28b25c0eac03876d9ec085",
+        "lib/features/bills/presentation/widgets/bill_tile.dart": "d41f186029d8080acf57692591916015eac590d41db31403a861b8d72cf1a5dd",
+        "lib/features/bills/presentation/widgets/bills_filter_sheet.dart": "4a4201dfdcba3e13b64f77672034ec20120b146dee16d4be256c877a188c98df",
+        "lib/features/bills/presentation/widgets/bills_period_picker.dart": "88f37c8dccc262aa9d6016fcbca384626b74efd075ef6da0cc672f179012f03e",
+        "lib/features/bills/presentation/widgets/bills_period_summary.dart": "5ed867c71d5aa64b4b4aec4f7c6024422eac1b78226536b4ba24073ed87e4faf"
+      },
+      "verified": "39/39 bills tests; 584 passed/1 skipped full suite; 11/11 viewed Flutter business renders; analysis no new diagnostics.",
+      "disproved": false,
+      "blocked_external": [],
+      "unverified": [
+        "VoiceOver/TalkBack、测试站真实接口与模拟器原生点击 NOT_RUN；按用户 2026-11-05 新规则不阻塞本阶段分配问题完成。"
+      ],
+      "evidencePaths": [
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/decisive-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/full-tests-final.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/render-tests-final-007.json",
+        "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/screenshot-index.json"
+      ],
+      "reason": "仅评 S4-A 账单域实例，不代其它 owner 或全局 DT 宣布关闭。",
+      "observedBehavior": "加载/失败保留账单标题、账期和旧列表；恢复动作明确。",
+      "implemented": "S4-A 账单实例按当前 Fx 合同落地或验证；仅本 scope。"
+    }
+  ]
+}

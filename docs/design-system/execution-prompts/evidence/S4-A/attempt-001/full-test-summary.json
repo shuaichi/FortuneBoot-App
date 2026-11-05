@@ -1,0 +1,13 @@
+{
+  "total": 585,
+  "passed": 584,
+  "failed": 0,
+  "skipped": 1,
+  "failedTests": [],
+  "skippedTests": [
+    "uses In-App Purchase for donations on Apple platforms"
+  ],
+  "runnerSuccess": [
+    true
+  ]
+}

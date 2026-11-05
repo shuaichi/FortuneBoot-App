@@ -121,4 +121,74 @@ void main() {
     );
     expect(scroll.padding, EdgeInsets.zero);
   });
+
+  testWidgets('invalid reversed range identifies the maximum field', (
+    tester,
+  ) async {
+    BillsFilter? applied;
+    await tester.pumpWidget(
+      _filterHarness(BillsFilter.empty, (value) => applied = value),
+    );
+
+    await tester.enterText(
+      find.byKey(const ValueKey('bills-filter-min')),
+      '20',
+    );
+    await tester.enterText(
+      find.byKey(const ValueKey('bills-filter-max')),
+      '10',
+    );
+    await tester.tap(find.text('应用'));
+    await tester.pump();
+
+    expect(applied, isNull);
+    expect(find.text('最大金额不能小于最小金额'), findsOneWidget);
+    expect(find.text('最小金额不是有效数字'), findsNothing);
+  });
+
+  testWidgets('common pasted currency and separators are normalized', (
+    tester,
+  ) async {
+    BillsFilter? applied;
+    await tester.pumpWidget(
+      _filterHarness(BillsFilter.empty, (value) => applied = value),
+    );
+
+    await tester.enterText(
+      find.byKey(const ValueKey('bills-filter-min')),
+      '￥1,234.50',
+    );
+    await tester.tap(find.text('应用'));
+
+    expect(applied?.amountMin, 1234.50);
+  });
+
+  testWidgets('advanced conditions are layered behind an explicit section', (
+    tester,
+  ) async {
+    await tester.pumpWidget(_filterHarness(BillsFilter.empty, (_) {}));
+
+    expect(find.text('高级筛选'), findsOneWidget);
+    expect(find.text('确认状态'), findsNothing);
+    await tester.tap(find.text('高级筛选'));
+    await tester.pumpAndSettle();
+    expect(find.text('确认状态'), findsOneWidget);
+  });
+}
+
+Widget _filterHarness(BillsFilter initial, ValueChanged<BillsFilter> onApply) {
+  return MaterialApp(
+    theme: FxTheme.light,
+    locale: const Locale('zh'),
+    localizationsDelegates: const [
+      GlobalMaterialLocalizations.delegate,
+      GlobalWidgetsLocalizations.delegate,
+      GlobalCupertinoLocalizations.delegate,
+      S.delegate,
+    ],
+    supportedLocales: S.delegate.supportedLocales,
+    home: Scaffold(
+      body: BillsFilterPage(initial: initial, onApply: onApply),
+    ),
+  );
 }

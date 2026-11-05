@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:fortuneboot/features/bills/data/bills_filter.dart';
 import 'package:fortuneboot/features/bills/data/bills_filter_options_service.dart';
 import 'package:fortuneboot/features/shared/data/bill_models.dart';
+import 'package:fortuneboot/fx/components/fx_amount_input.dart';
 import 'package:fortuneboot/fx/components/fx_tag_chip.dart';
+import 'package:fortuneboot/fx/components/fx_text_field.dart';
 import 'package:fortuneboot/fx/theme/fx_theme.dart';
 import 'package:fortuneboot/fx/tokens/fx_radius.dart';
 import 'package:fortuneboot/fx/tokens/fx_spacing.dart';
@@ -51,6 +53,8 @@ class BillsFilterSheetState extends State<BillsFilterSheet> {
   Future<BillsFilterOptions>? _optionsFuture;
   String? _minError;
   String? _maxError;
+  final _minFocusNode = FocusNode();
+  final _maxFocusNode = FocusNode();
 
   @override
   void initState() {
@@ -80,6 +84,8 @@ class BillsFilterSheetState extends State<BillsFilterSheet> {
     _titleCtrl.dispose();
     _minCtrl.dispose();
     _maxCtrl.dispose();
+    _minFocusNode.dispose();
+    _maxFocusNode.dispose();
     super.dispose();
   }
 
@@ -109,19 +115,11 @@ class BillsFilterSheetState extends State<BillsFilterSheet> {
     });
   }
 
-  double? _amountOf(TextEditingController controller, bool isMin) {
+  double? _amountOf(TextEditingController controller) {
     final text = controller.text.trim();
     if (text.isEmpty) return null;
     final value = double.tryParse(text);
-    if (value == null || !value.isFinite) {
-      if (isMin) {
-        _minError = S.of(context).billsFilterAmountRange;
-      } else {
-        _maxError = S.of(context).billsFilterAmountRange;
-      }
-      return null;
-    }
-    return value;
+    return value == null || !value.isFinite ? null : value;
   }
 
   void _apply() {
@@ -129,17 +127,24 @@ class BillsFilterSheetState extends State<BillsFilterSheet> {
       _minError = null;
       _maxError = null;
     });
-    final min = _amountOf(_minCtrl, true);
-    final max = _amountOf(_maxCtrl, false);
+    final min = _amountOf(_minCtrl);
+    final max = _amountOf(_maxCtrl);
+    if (_minCtrl.text.trim().isNotEmpty && min == null) {
+      _minError = S.of(context).billsFilterMinInvalid;
+    }
+    if (_maxCtrl.text.trim().isNotEmpty && max == null) {
+      _maxError = S.of(context).billsFilterMaxInvalid;
+    }
     if (_minError != null || _maxError != null) {
       setState(() {});
+      _revealFirstAmountError();
       return;
     }
     if (min != null && max != null && min > max) {
       setState(() {
-        _minError = S.of(context).billsFilterAmountRange;
-        _maxError = S.of(context).billsFilterAmountRange;
+        _maxError = S.of(context).billsFilterMaxLessThanMin;
       });
+      _revealFirstAmountError();
       return;
     }
     widget.onApply(
@@ -158,6 +163,22 @@ class BillsFilterSheetState extends State<BillsFilterSheet> {
         title: _titleCtrl.text.trim().isEmpty ? null : _titleCtrl.text.trim(),
       ),
     );
+  }
+
+  void _revealFirstAmountError() {
+    final focusNode = _minError != null ? _minFocusNode : _maxFocusNode;
+    focusNode.requestFocus();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final fieldContext = focusNode.context;
+      if (fieldContext != null) {
+        Scrollable.ensureVisible(
+          fieldContext,
+          alignment: 0.2,
+          duration: const Duration(milliseconds: 160),
+        );
+      }
+    });
   }
 
   Future<void> _selectDateRange() async {
@@ -188,7 +209,6 @@ class BillsFilterSheetState extends State<BillsFilterSheet> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _label(S.of(context).billsFilterByTitle),
           _titleField(),
           const SizedBox(height: FxSpacing.lg),
           _label(S.of(context).billsFilterBillType),
@@ -199,28 +219,55 @@ class BillsFilterSheetState extends State<BillsFilterSheet> {
           const SizedBox(height: FxSpacing.lg),
           _label(S.of(context).billsBillingCycle('')),
           _dateRangeControl(),
-          const SizedBox(height: FxSpacing.lg),
-          _label(S.of(context).billsFilterConfirmStatus),
-          _tristate(
-            current: _confirm,
-            trueLabel: S.of(context).billsFilterConfirmed,
-            falseLabel: S.of(context).billsFilterUnconfirmed,
-            onChanged: (value) => setState(() => _confirm = value),
+          const SizedBox(height: FxSpacing.md),
+          ExpansionTile(
+            key: const ValueKey('bills-advanced-filters'),
+            initiallyExpanded: _hasAdvancedConditions,
+            tilePadding: EdgeInsets.zero,
+            childrenPadding: const EdgeInsets.only(bottom: FxSpacing.lg),
+            title: Text(
+              S.of(context).billsAdvancedFilters,
+              style: FxTypography.title,
+            ),
+            subtitle: Text(
+              S.of(context).billsAdvancedFiltersHint,
+              style: FxTypography.caption.copyWith(
+                color: FxPalette.of(context).textSecondary,
+              ),
+            ),
+            children: [
+              _label(S.of(context).billsFilterConfirmStatus),
+              _tristate(
+                current: _confirm,
+                trueLabel: S.of(context).billsFilterConfirmed,
+                falseLabel: S.of(context).billsFilterUnconfirmed,
+                onChanged: (value) => setState(() => _confirm = value),
+              ),
+              const SizedBox(height: FxSpacing.lg),
+              _label(S.of(context).billsFilterIncludeStatus),
+              _tristate(
+                current: _include,
+                trueLabel: S.of(context).billsFilterIncluded,
+                falseLabel: S.of(context).billsFilterExcluded,
+                onChanged: (value) => setState(() => _include = value),
+              ),
+              const SizedBox(height: FxSpacing.lg),
+              _optionsControls(),
+            ],
           ),
-          const SizedBox(height: FxSpacing.lg),
-          _label(S.of(context).billsFilterIncludeStatus),
-          _tristate(
-            current: _include,
-            trueLabel: S.of(context).billsFilterIncluded,
-            falseLabel: S.of(context).billsFilterExcluded,
-            onChanged: (value) => setState(() => _include = value),
-          ),
-          const SizedBox(height: FxSpacing.lg),
-          _optionsControls(),
         ],
       ),
     );
   }
+
+  bool get _hasAdvancedConditions =>
+      _confirm != null ||
+      _include != null ||
+      _accountId != null ||
+      _payeeId != null ||
+      _categoryIds.isNotEmpty ||
+      _tagIds.isNotEmpty ||
+      _memberIds.isNotEmpty;
 
   /// 由固定操作区触发，避免重置按钮随长表单滚出屏幕。
   void reset() => _reset();
@@ -255,27 +302,45 @@ class BillsFilterSheetState extends State<BillsFilterSheet> {
   }
 
   Widget _amountRange() {
-    return Row(
-      children: [
-        Expanded(
-          child: _amountField(
-            _minCtrl,
-            S.of(context).billsFilterMin,
-            _minError,
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: FxSpacing.sm),
-          child: Text('—', style: FxTypography.label),
-        ),
-        Expanded(
-          child: _amountField(
-            _maxCtrl,
-            S.of(context).billsFilterMax,
-            _maxError,
-          ),
-        ),
-      ],
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final stacked =
+            constraints.maxWidth < 280 ||
+            MediaQuery.textScalerOf(context).scale(1) > 1.3;
+        final min = _amountField(
+          _minCtrl,
+          key: const ValueKey('bills-filter-min'),
+          focusNode: _minFocusNode,
+          label: S.of(context).billsFilterMinLabel,
+          errorText: _minError,
+          onChanged: () => setState(() => _minError = null),
+        );
+        final max = _amountField(
+          _maxCtrl,
+          key: const ValueKey('bills-filter-max'),
+          focusNode: _maxFocusNode,
+          label: S.of(context).billsFilterMaxLabel,
+          errorText: _maxError,
+          onChanged: () => setState(() => _maxError = null),
+        );
+        if (stacked) {
+          return Column(
+            children: [
+              min,
+              const SizedBox(height: FxSpacing.md),
+              max,
+            ],
+          );
+        }
+        return Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(child: min),
+            const SizedBox(width: FxSpacing.md),
+            Expanded(child: max),
+          ],
+        );
+      },
     );
   }
 
@@ -410,8 +475,6 @@ class BillsFilterSheetState extends State<BillsFilterSheet> {
               Expanded(
                 child: Text(
                   summary,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
                   style: FxTypography.body.copyWith(
                     color: selected.isEmpty
                         ? palette.textTertiary
@@ -472,7 +535,7 @@ class BillsFilterSheetState extends State<BillsFilterSheet> {
     ValueChanged<int?> onChanged,
   ) {
     return DropdownButtonFormField<int?>(
-      value: selected,
+      initialValue: selected,
       isExpanded: true,
       decoration: InputDecoration(
         filled: true,
@@ -490,7 +553,7 @@ class BillsFilterSheetState extends State<BillsFilterSheet> {
         ...options.map(
           (option) => DropdownMenuItem<int?>(
             value: option.id,
-            child: Text(option.label, overflow: TextOverflow.ellipsis),
+            child: Text(option.label),
           ),
         ),
       ],
@@ -509,52 +572,28 @@ class BillsFilterSheetState extends State<BillsFilterSheet> {
   );
 
   Widget _titleField() {
-    return TextField(
+    return FxTextField(
+      label: S.of(context).billsFilterByTitle,
       controller: _titleCtrl,
-      style: FxTypography.body,
-      decoration: InputDecoration(
-        hintText: S.of(context).billsFilterTitleHint,
-        isDense: true,
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: FxSpacing.md,
-          vertical: FxSpacing.md,
-        ),
-        filled: true,
-        fillColor: FxPalette.of(context).surfaceMuted,
-        border: OutlineInputBorder(
-          borderRadius: FxRadius.tileBorder,
-          borderSide: BorderSide.none,
-        ),
-      ),
+      hintText: S.of(context).billsFilterTitleHint,
     );
   }
 
   Widget _amountField(
-    TextEditingController controller,
-    String hint,
-    String? errorText,
-  ) {
-    final palette = FxPalette.of(context);
-    return TextField(
+    TextEditingController controller, {
+    required Key key,
+    required FocusNode focusNode,
+    required String label,
+    required String? errorText,
+    required VoidCallback onChanged,
+  }) {
+    return FxAmountInput(
+      key: key,
       controller: controller,
-      keyboardType: const TextInputType.numberWithOptions(decimal: true),
-      style: FxTypography.body,
-      decoration: InputDecoration(
-        hintText: hint,
-        errorText: errorText,
-        hintStyle: FxTypography.caption.copyWith(color: palette.textTertiary),
-        isDense: true,
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: FxSpacing.md,
-          vertical: FxSpacing.md,
-        ),
-        filled: true,
-        fillColor: palette.surfaceMuted,
-        border: OutlineInputBorder(
-          borderRadius: FxRadius.tileBorder,
-          borderSide: BorderSide.none,
-        ),
-      ),
+      focusNode: focusNode,
+      label: label,
+      errorText: errorText,
+      onChanged: (_) => onChanged(),
     );
   }
 

@@ -247,6 +247,10 @@ class BillsBloc extends Bloc<BillsEvent, BillsState> {
       final page = results[0] as BillPage;
       final stats = results[1] as BillStatistics?;
       if (version != _loadVersion) return;
+      final monthStats = _canShowCompleteStatistics
+          ? await _fetchMonthStatistics(page.rows)
+          : const <DateTime, BillStatistics>{};
+      if (version != _loadVersion) return;
       _loadedPages = 1;
       emit(
         state.copyWith(
@@ -258,7 +262,7 @@ class BillsBloc extends Bloc<BillsEvent, BillsState> {
           isRefreshing: false,
           statistics: stats,
           isSummaryAvailable: _canShowCompleteStatistics && stats != null,
-          monthStatistics: const {},
+          monthStatistics: monthStats,
           clearPaginationError: true,
         ),
       );

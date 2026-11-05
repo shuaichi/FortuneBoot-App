@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
-  "currentStage": "S3-A",
-  "nextStage": "S4-A",
-  "lastCompletedStage": "S3-A",
-  "note": "S3-A attempt-001 本地实现/验证/视觉已通过；真机、读屏、平台编译、真实 Web 刷新与联调待外部验收。",
+  "currentStage": "S4-A",
+  "nextStage": "S4-B",
+  "lastCompletedStage": "S4-A",
+  "note": "S4-A attempt-001 本地、视觉和 iPhone 模拟器验收通过；按用户 2026-11-05 新规则，模拟器可替代真机且分配问题完成不依赖测试站联调。测试站未提供账号，真实接口 NOT_RUN。",
   "stages": {
     "S0-A": {
       "status": "PASSED",
@@ -82,14 +82,20 @@
       ]
     },
     "S4-A": {
-      "status": "NOT_STARTED",
-      "localGate": "NOT_RUN",
-      "visualGate": "NOT_RUN",
-      "externalGate": "NOT_RUN",
-      "attempt": 0,
-      "handoff": null,
-      "evidence": [],
-      "blockingIssues": []
+      "status": "PASSED",
+      "localGate": "PASSED",
+      "visualGate": "PASSED",
+      "externalGate": "PASSED",
+      "attempt": 1,
+      "handoff": "handoff/S4-A.md",
+      "evidence": [
+        "evidence/S4-A/attempt-001"
+      ],
+      "blockingIssues": [
+        "ORIGINAL_AUDIT_DUPLICATE_ID_BLOCKS_PACK_VALIDATION",
+        "SHARED_FX_MONEY_NEGATIVE_CURRENCY_WRAP_REVIEW",
+        "REAL_SERVER_NOT_RUN_NO_CREDENTIALS"
+      ]
     },
     "S4-B": {
       "status": "NOT_STARTED",

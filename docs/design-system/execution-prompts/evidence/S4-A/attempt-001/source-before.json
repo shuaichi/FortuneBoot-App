@@ -1,0 +1,20 @@
+{
+  "head": "878b2dafa8fc18a3f5e7f2e08372b9b491f256de",
+  "status": "On branch master\nYour branch is ahead of 'origin/master' by 6 commits.\n  (use \"git push\" to publish your local commits)\n\nnothing to commit, working tree clean\n",
+  "sourceSha256": {
+    "lib/features/bills/bills_registration.dart": "64b3e5466c559e840ec392e1a49700aa9b687c8b605ece120e6bc153080935e5",
+    "lib/features/bills/data/bills_filter.dart": "57ea1a4560ee2c244595b1bf0dd14a54c16052a5a9de6acbe753e5eb8bb9c8ad",
+    "lib/features/bills/data/bills_filter_options_service.dart": "c990da81fc91700f9ce0cc1d9b8942435c7d80bdea5b9af2b0be3ec65e027d94",
+    "lib/features/bills/presentation/bills_page.dart": "b7fd42c9aec7038b6a387ba4359430d67576fa125542885ce74f79c8a56b4b15",
+    "lib/features/bills/presentation/bloc/bills_bloc.dart": "040fb3aea9002cfbca520e9a02a851f3eec346d32847003ca9eb91edfdcbeb5e",
+    "lib/features/bills/presentation/bloc/bills_event.dart": "c6a43c9e1c2fb5f9b057e2dba9d3f0805ae2b1c195405122d5222fbd2e86750d",
+    "lib/features/bills/presentation/bloc/bills_state.dart": "42ad2bfd317406aef1e5aeb86b49b9a409bec0befba532206261619a129baf04",
+    "lib/features/bills/presentation/pages/bills_filter_page.dart": "9e4d8c3f66d1b07297102bdddfff823e847517dc24694f9d9974b86657427452",
+    "lib/features/bills/presentation/widgets/bill_tile.dart": "c2669842b582344f50b04b18a3451623cb8f417b6f217fd45c69e6392ed1cf53",
+    "lib/features/bills/presentation/widgets/bills_filter_sheet.dart": "3fccf45dff945532525a8f4dd176f3405f38b88b5a4fbe7854025d11eaa8e43e",
+    "test/features/bills/bills_filter_test.dart": "142a69d3c5717213f90074d3503091f0ce11342524c48be63f7ec7b8b70833cc",
+    "test/features/bills/bills_state_test.dart": "6c1e0e1a9744ccb3362cb8c6fd41ea181baec17dfe0782a6a38e51dab7e58dd6",
+    "test/features/bills/presentation/widgets/bill_tile_test.dart": "853e88a83396805bc2bf50cc102f46b0f2748b00afb667dfb10ff85cb16d1b44",
+    "test/features/bills/presentation/widgets/bills_filter_sheet_test.dart": "a1d3d210655f2655c34816d66c2796046294cd5101ba095b45c4ae14d9fa9bb9"
+  }
+}

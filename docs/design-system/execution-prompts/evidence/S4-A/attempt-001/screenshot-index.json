@@ -1,0 +1,178 @@
+[
+  {
+    "page": "Bills cross-year multi-currency",
+    "state": "cross-year",
+    "theme": "LIGHT",
+    "logicalSize": [
+      390,
+      1000
+    ],
+    "textScale": 1,
+    "sourceHead": "878b2dafa8fc18a3f5e7f2e08372b9b491f256de",
+    "sourceSha256": "d20a4a09cd2cde91b6a951b81dcf427f5dfaedac62ec6f31bd026a6c9ac15cc2",
+    "path": "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/bills-light-390-1x-cross-year.png",
+    "pathSha256": "c507286e30ab507d9a8227c2559466fcc8416bd4093069921ae6adedcddf62c7",
+    "actuallyViewed": true,
+    "observation": "跨年、CNY/USD 分组、完整费用与统一无阴影汇总已查看；金额方向与币种正确。"
+  },
+  {
+    "page": "Bills cross-year dark",
+    "state": "cross-year",
+    "theme": "DARK",
+    "logicalSize": [
+      390,
+      1000
+    ],
+    "textScale": 1,
+    "sourceHead": "878b2dafa8fc18a3f5e7f2e08372b9b491f256de",
+    "sourceSha256": "d20a4a09cd2cde91b6a951b81dcf427f5dfaedac62ec6f31bd026a6c9ac15cc2",
+    "path": "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/bills-dark-390-1x-cross-year.png",
+    "pathSha256": "6497f10e388f014012bef906eadeb0c8be0918480c1f9bf41d4151f2a348ce81",
+    "actuallyViewed": true,
+    "observation": "暗色下卡片、汇总和金额前景清晰，历史与当前表面一致，已查看。"
+  },
+  {
+    "page": "Bills long amount 2x",
+    "state": "long-amount",
+    "theme": "LIGHT",
+    "logicalSize": [
+      320,
+      1200
+    ],
+    "textScale": 2,
+    "sourceHead": "878b2dafa8fc18a3f5e7f2e08372b9b491f256de",
+    "sourceSha256": "d20a4a09cd2cde91b6a951b81dcf427f5dfaedac62ec6f31bd026a6c9ac15cc2",
+    "path": "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/bills-light-320-2x-long-amount.png",
+    "pathSha256": "b4294cce5812d25ff9be9cfed9a78c5f57a65512edf428d52c30b7f8d122fbe7",
+    "actuallyViewed": true,
+    "observation": "320/2x 账期标题重排，完整大金额、费用分解与粘性日头无溢出，已查看。"
+  },
+  {
+    "page": "Bills masked dark 2x",
+    "state": "masked",
+    "theme": "DARK",
+    "logicalSize": [
+      440,
+      1200
+    ],
+    "textScale": 2,
+    "sourceHead": "878b2dafa8fc18a3f5e7f2e08372b9b491f256de",
+    "sourceSha256": "d20a4a09cd2cde91b6a951b81dcf427f5dfaedac62ec6f31bd026a6c9ac15cc2",
+    "path": "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/bills-dark-440-2x-masked.png",
+    "pathSha256": "d184554f22f29d0cfddfc7aa7d99e21fe06a2318b73df20341bfc47350123eef",
+    "actuallyViewed": true,
+    "observation": "440/2x 掩码不显示方向符号或精确金额，标题和分组仍完整，已查看。"
+  },
+  {
+    "page": "Bills filtered empty",
+    "state": "filtered-empty",
+    "theme": "LIGHT",
+    "logicalSize": [
+      390,
+      900
+    ],
+    "textScale": 1,
+    "sourceHead": "878b2dafa8fc18a3f5e7f2e08372b9b491f256de",
+    "sourceSha256": "d20a4a09cd2cde91b6a951b81dcf427f5dfaedac62ec6f31bd026a6c9ac15cc2",
+    "path": "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/bills-light-390-1x-filtered-empty.png",
+    "pathSha256": "92c3be70567ce5732df629bbef1ac23e27821578e8eed9502118901341cfeb0d",
+    "actuallyViewed": true,
+    "observation": "显示真实筛选摘要，空结果提供清除和调整，已查看。"
+  },
+  {
+    "page": "Bills pagination failure",
+    "state": "pagination-failure",
+    "theme": "LIGHT",
+    "logicalSize": [
+      390,
+      900
+    ],
+    "textScale": 1,
+    "sourceHead": "878b2dafa8fc18a3f5e7f2e08372b9b491f256de",
+    "sourceSha256": "d20a4a09cd2cde91b6a951b81dcf427f5dfaedac62ec6f31bd026a6c9ac15cc2",
+    "path": "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/bills-light-390-1x-pagination-failure.png",
+    "pathSha256": "7bd4b8810c3092efb832c71e6b7e68ce211e5b39983a4b96a23756085bd9f30a",
+    "actuallyViewed": true,
+    "observation": "失败保留已读账单，后续失败说明与重试可见，已查看。"
+  },
+  {
+    "page": "Bills refresh failure dark",
+    "state": "refresh-failure",
+    "theme": "DARK",
+    "logicalSize": [
+      390,
+      900
+    ],
+    "textScale": 1,
+    "sourceHead": "878b2dafa8fc18a3f5e7f2e08372b9b491f256de",
+    "sourceSha256": "d20a4a09cd2cde91b6a951b81dcf427f5dfaedac62ec6f31bd026a6c9ac15cc2",
+    "path": "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/bills-dark-390-1x-refresh-failure.png",
+    "pathSha256": "032106f603d6da30844a852305528a4224d876a90464a491d17d082daeb547c7",
+    "actuallyViewed": true,
+    "observation": "刷新失败保留旧账单与账期，说明和重试存在，已查看。"
+  },
+  {
+    "page": "Bills landscape 2x",
+    "state": "landscape",
+    "theme": "LIGHT",
+    "logicalSize": [
+      640,
+      320
+    ],
+    "textScale": 2,
+    "sourceHead": "878b2dafa8fc18a3f5e7f2e08372b9b491f256de",
+    "sourceSha256": "d20a4a09cd2cde91b6a951b81dcf427f5dfaedac62ec6f31bd026a6c9ac15cc2",
+    "path": "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/bills-light-640-320-2x-landscape.png",
+    "pathSha256": "ecfa921632bda71b610c633e45f7e19aa025bf4b1ed9ead796346d6284f6ea93",
+    "actuallyViewed": true,
+    "observation": "横屏 2x 仅标题固定，账期/汇总随列表滚动；加载过渡帧溢出已修复，已查看。"
+  },
+  {
+    "page": "Bills filter common form",
+    "state": "filter-form",
+    "theme": "LIGHT",
+    "logicalSize": [
+      390,
+      900
+    ],
+    "textScale": 1,
+    "sourceHead": "878b2dafa8fc18a3f5e7f2e08372b9b491f256de",
+    "sourceSha256": "d20a4a09cd2cde91b6a951b81dcf427f5dfaedac62ec6f31bd026a6c9ac15cc2",
+    "path": "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/bills-light-390-1x-filter-form.png",
+    "pathSha256": "1363dd4f176e1168514f54d367241bfbde4e09f1e289a0b8b7ca0bc96ca8ead6",
+    "actuallyViewed": true,
+    "observation": "常用条件在前，高级筛选折叠且中文完整，底部重置/应用固定，已查看。"
+  },
+  {
+    "page": "Bills filter field error 2x",
+    "state": "filter-error",
+    "theme": "LIGHT",
+    "logicalSize": [
+      320,
+      1000
+    ],
+    "textScale": 2,
+    "sourceHead": "878b2dafa8fc18a3f5e7f2e08372b9b491f256de",
+    "sourceSha256": "d20a4a09cd2cde91b6a951b81dcf427f5dfaedac62ec6f31bd026a6c9ac15cc2",
+    "path": "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/bills-light-320-2x-filter-error.png",
+    "pathSha256": "2d8120f189e5919ae0709e5d8dbb8348a674257daa09ecab43ddabd551e5cb68",
+    "actuallyViewed": true,
+    "observation": "320/2x 最大金额字段持久错误完整，首错聚焦且高级说明换行，已查看。"
+  },
+  {
+    "page": "Bills filter English dark 2x",
+    "state": "filter-en",
+    "theme": "DARK",
+    "logicalSize": [
+      440,
+      1200
+    ],
+    "textScale": 2,
+    "sourceHead": "878b2dafa8fc18a3f5e7f2e08372b9b491f256de",
+    "sourceSha256": "d20a4a09cd2cde91b6a951b81dcf427f5dfaedac62ec6f31bd026a6c9ac15cc2",
+    "path": "docs/design-system/execution-prompts/evidence/S4-A/attempt-001/bills-dark-440-2x-filter-en.png",
+    "pathSha256": "e6b1c35dca147c0f2c6605d2843d980f733be2d9754f5a12a0b9f675640b7aa4",
+    "actuallyViewed": true,
+    "observation": "英文 2x 标题、类型、金额标签与底部操作完整，无裁切，已查看。"
+  }
+]

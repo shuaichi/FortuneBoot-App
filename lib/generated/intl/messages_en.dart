@@ -799,6 +799,15 @@ class MessageLookup extends MessageLookupByLibrary {
     "billTypeLoanRepay": MessageLookupByLibrary.simpleMessage("Repay loan"),
     "billTypeReimburse": MessageLookupByLibrary.simpleMessage("Reimburse"),
     "billTypeTransfer": MessageLookupByLibrary.simpleMessage("Transfer"),
+    "billsAdjustFilters": MessageLookupByLibrary.simpleMessage(
+      "Adjust filters",
+    ),
+    "billsAdvancedFilters": MessageLookupByLibrary.simpleMessage(
+      "Advanced filters",
+    ),
+    "billsAdvancedFiltersHint": MessageLookupByLibrary.simpleMessage(
+      "Confirmation, statistics, categories, and people",
+    ),
     "billsApply": MessageLookupByLibrary.simpleMessage("Apply"),
     "billsAttachments": MessageLookupByLibrary.simpleMessage("Attachments"),
     "billsBalance": MessageLookupByLibrary.simpleMessage("Balance"),
@@ -808,6 +817,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Category breakdown",
     ),
     "billsCharge": MessageLookupByLibrary.simpleMessage("Charge"),
+    "billsClearFilters": MessageLookupByLibrary.simpleMessage("Clear filters"),
     "billsClose": MessageLookupByLibrary.simpleMessage("Close"),
     "billsCopy": MessageLookupByLibrary.simpleMessage("Copy"),
     "billsDayExpense": m17,
@@ -825,6 +835,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "billsExtraWithSide": m20,
     "billsExtras": MessageLookupByLibrary.simpleMessage("Extra charges"),
     "billsFee": MessageLookupByLibrary.simpleMessage("Fee"),
+    "billsFilterActiveCount": MessageLookupByLibrary.simpleMessage(
+      "filters active",
+    ),
     "billsFilterAmountRange": MessageLookupByLibrary.simpleMessage(
       "Amount range",
     ),
@@ -841,7 +854,25 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "billsFilterIncluded": MessageLookupByLibrary.simpleMessage("Included"),
     "billsFilterMax": MessageLookupByLibrary.simpleMessage("Max"),
+    "billsFilterMaxInvalid": MessageLookupByLibrary.simpleMessage(
+      "Maximum amount is not a valid number",
+    ),
+    "billsFilterMaxLabel": MessageLookupByLibrary.simpleMessage(
+      "Maximum amount",
+    ),
+    "billsFilterMaxLessThanMin": MessageLookupByLibrary.simpleMessage(
+      "Maximum amount must be at least the minimum",
+    ),
     "billsFilterMin": MessageLookupByLibrary.simpleMessage("Min"),
+    "billsFilterMinInvalid": MessageLookupByLibrary.simpleMessage(
+      "Minimum amount is not a valid number",
+    ),
+    "billsFilterMinLabel": MessageLookupByLibrary.simpleMessage(
+      "Minimum amount",
+    ),
+    "billsFilterNoResults": MessageLookupByLibrary.simpleMessage(
+      "No bills match the current filters",
+    ),
     "billsFilterTitle": MessageLookupByLibrary.simpleMessage("Filter"),
     "billsFilterTitleHint": MessageLookupByLibrary.simpleMessage(
       "Search by bill title",
@@ -849,21 +880,52 @@ class MessageLookup extends MessageLookupByLibrary {
     "billsFilterUnconfirmed": MessageLookupByLibrary.simpleMessage(
       "Unconfirmed",
     ),
+    "billsFilteredRangeSummary": MessageLookupByLibrary.simpleMessage(
+      "Selected date range summary",
+    ),
     "billsIncome": MessageLookupByLibrary.simpleMessage("Income"),
     "billsMembers": MessageLookupByLibrary.simpleMessage("Members"),
+    "billsNextCycle": MessageLookupByLibrary.simpleMessage(
+      "Next billing period",
+    ),
     "billsNoAttachments": MessageLookupByLibrary.simpleMessage(
       "No attachments",
     ),
+    "billsOriginalAmount": MessageLookupByLibrary.simpleMessage("Original"),
+    "billsPaginationLoadFailed": MessageLookupByLibrary.simpleMessage(
+      "Could not load more bills. Existing bills are still here.",
+    ),
     "billsPayee": MessageLookupByLibrary.simpleMessage("Payee"),
     "billsPendingConfirm": MessageLookupByLibrary.simpleMessage("Pending"),
+    "billsPeriodLoadFailed": MessageLookupByLibrary.simpleMessage(
+      "Could not load this period. Try again.",
+    ),
+    "billsPeriodLoaded": MessageLookupByLibrary.simpleMessage("Loaded"),
+    "billsPeriodLoadedHint": MessageLookupByLibrary.simpleMessage(
+      "Periods with a dot are loaded and ready to open",
+    ),
+    "billsPeriodPickerTitle": MessageLookupByLibrary.simpleMessage(
+      "Choose billing period",
+    ),
+    "billsPeriodUnavailable": MessageLookupByLibrary.simpleMessage(
+      "No transactions were found for this period",
+    ),
+    "billsPeriodYear": MessageLookupByLibrary.simpleMessage("Year"),
+    "billsPreviousCycle": MessageLookupByLibrary.simpleMessage(
+      "Previous billing period",
+    ),
     "billsReceivedAmount": MessageLookupByLibrary.simpleMessage(
       "Received amount",
+    ),
+    "billsRefreshFailed": MessageLookupByLibrary.simpleMessage(
+      "Refresh failed. Existing bills are still here.",
     ),
     "billsRemark": MessageLookupByLibrary.simpleMessage("Note"),
     "billsReset": MessageLookupByLibrary.simpleMessage("Reset"),
     "billsSelectBookFirst": MessageLookupByLibrary.simpleMessage(
       "Please select a ledger first",
     ),
+    "billsSettledAmount": MessageLookupByLibrary.simpleMessage("Settled"),
     "billsSideIn": MessageLookupByLibrary.simpleMessage("In"),
     "billsSideOut": MessageLookupByLibrary.simpleMessage("Out"),
     "billsTags": MessageLookupByLibrary.simpleMessage("Tags"),

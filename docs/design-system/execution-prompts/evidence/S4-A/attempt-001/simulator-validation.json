@@ -1,0 +1,24 @@
+{
+  "device": "iPhone 18 Pro Max iOS simulator",
+  "deviceId": "FEBD5ED1-45FF-44F3-9B16-5D436B4114CA",
+  "runtime": "com.apple.CoreSimulator.SimRuntime.iOS-27-0",
+  "productionBuildAndLaunch": "PASSED; flutter run --debug --no-pub --no-resident completed; startup screenshot showed demo.fortuneboot.com:443 without auth.",
+  "simulatorBusinessRendering": "PASSED; isolated evidence-only entry using real BillsPage/BillsBloc and local fictitious service, not production route.",
+  "viewed": [
+    "simulator-startup.png: demo endpoint configuration, no credentials or real ledger access.",
+    "simulator-bills-cross-year.png: actual iOS simulator rendering of cross-year CNY/USD list and unified summaries.",
+    "simulator-bills-accessibility.png: actual system accessibility-extra-extra-extra-large rendering, complete amounts and reflow.",
+    "simulator-bills-dark-accessibility.png: actual dark appearance and max accessibility text rendering."
+  ],
+  "nativeInput": "NOT_RUN: current simctl has no tap operation; desktop driver did not resolve Simulator and System Events process lookup was refused. No claim of native taps.",
+  "filterAndPeriodInteractions": "COVERED_BY_WIDGET_BLOC_TESTS not native simulator taps.",
+  "realServer": "NOT_RUN: no credentials supplied; no login or real financial writes. demo endpoint observed in production startup only.",
+  "restoration": "Default light appearance and large content size restored; production entry relaunched.",
+  "acceptanceRule": "Per user 2026-11-05: simulator may substitute physical device acceptance; assigned issue completion is not blocked by real-device or server testing.",
+  "artifacts": {
+    "simulator-startup.png": "2a88cb487629d394d0c60056c758eb899f513595e548fdaccf2e7c0e6621863f",
+    "simulator-bills-cross-year.png": "3e722481a9143cd869f406f88a04b742197b322468adc2095829be2317cb02a5",
+    "simulator-bills-accessibility.png": "85268c073153a5af59d03c480d92a5b4d1a0abe6d95212a6b7393d4eec63fa6a",
+    "simulator-bills-dark-accessibility.png": "4cea93f670b0a6e6567d1874d150d553180922d1c0253f94ba9c11b51db78750"
+  }
+}
