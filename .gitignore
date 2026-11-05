@@ -157,9 +157,11 @@ Thumbs.db
 *.keystore
 android/keystore/
 
-# Local agent and audit artifacts
-*.md
-!docs/environment.md
+# Local audit/prompt evidence and historical interface snapshots.
+# Keep each directory together: Markdown, JSON, images and runtime state are local.
+/docs/design-system/
+/docs/reference/
+/.claude/settings.local.json
 /.skillflow/
 /.xcross/
 # Local CodeGenie nested repo (broken path on this machine)

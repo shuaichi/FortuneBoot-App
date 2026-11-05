@@ -3,7 +3,7 @@
 同一份仓库可打 **Android APK** 和 **纯血鸿蒙 HAP**，不必改 `pubspec.yaml`。  
 两套构建用的是 **两套 Flutter，不能混用**。
 
-仓库忽略了 `*.g.dart`、`android/local.properties`。clone 后必须自己生成代码、写本地路径。
+多数 `*.g.dart` 和 `lib/generated/` 为本地生成；少量已跟踪文件以 Git 清单为准。`android/local.properties` 为本机配置，检出后须生成代码并配置 SDK 路径。
 
 建议国内镜像：
 
@@ -26,6 +26,7 @@ FLUTTER_STORAGE_BASE_URL=https://storage.flutter-io.cn
 ```powershell
 flutter pub get
 dart run build_runner build --delete-conflicting-outputs
+dart run intl_utils:generate
 ```
 
 ---
@@ -34,9 +35,9 @@ dart run build_runner build --delete-conflicting-outputs
 
 | 组件 | 要求 |
 |------|------|
-| Flutter（Google） | `>= 3.32`（Dart `>= 3.8`，随 SDK 安装）。本仓库曾用 3.47 打通过 |
-| JDK | **17**（Gradle）。源码 `jvmTarget` 为 11 |
-| Android SDK | Android Studio 一并安装即可。Flutter 3.47 一般需要 API 35/36、build-tools |
+| Flutter（Google） | 约束见 `pubspec.yaml`：`>= 3.32`；2026-11-05 本地回归使用 3.41.9 / Dart 3.11.5 |
+| JDK | 直接构建按已验证工具链配置；`build.sh` 在 macOS 优先找 21、其次17，源码 `jvmTarget` 为11 |
+| Android SDK | 按所用 Flutter SDK 安装；工程 `compileSdk/targetSdk` 取 Flutter 配置，不在本文另写易过时数值 |
 | Android Studio | 可选，便于第一次 Gradle 同步 |
 
 clone 后新建 `android/local.properties`（不要提交）：
@@ -94,7 +95,7 @@ flutter build apk --release
 | Flutter | Google Flutter | 鸿蒙 Flutter |
 | IDE | Android Studio（可选） | DevEco Studio |
 | SDK | Android SDK | HarmonyOS SDK |
-| Java | JDK 17 | DevEco JBR |
+| Java | 使用已验证的 JDK；脚本优先21、其次17 | DevEco JBR |
 
 打哪一端，就把哪一端的 `flutter\bin` 放到 PATH 前面，或写全路径。
 
